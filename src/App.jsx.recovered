@@ -1,0 +1,399 @@
+import React, { useState, useEffect } from 'react';
+import { Shuffle, CheckCircle2, Bot, Sparkles, HelpCircle, Globe, Trash2 } from 'lucide-react';
+
+const THEMES_KO = {
+  '일상': ['ㅋㅋㅋㅋ', '오늘도 고생 많았어요', '미안해요', '좋아요', '힘내요', '사랑해요', '더워요', '피곤해요', '최고!', '오예', '안녕', '응원해요', '맛점하세요', '확인완료', '꿀잼'],
+  '직장인': ['넵!', '확인했습니다', '수정 부탁드립니다', '감사합니다', '퇴근하겠습니다', '회의 중입니다', '파일 첨부했습니다', '점심 맛있게 드세요', '화이팅!', '죄송합니다', '일정 확인', '수고하셨습니다', '먼저 들어가보겠습니다', '네 알겠습니다', '검토 부탁드립니다'],
+  '유머/밈': ['현기증 나요', '아아악', '살려주세요', '퇴사 마렵다', '집에 갈래', '격렬하게 쉬고싶다', '오히려 좋아', '가보자고', '어림없지', '응 아니야', '킹받네', '폼 미쳤다', '이게 맞나', '머쓱', '야근 당첨'],
+  '커플': ['보고싶어', '사랑해', '뭐해?', '밥 먹었어?', '잘자', '빨리 와', '삐졌어', '미안해', '우앙', '최고야', '알라뷰', '뽀뽀', '데이트 가자', '기다릴게', '행복해']
+};
+
+const THEMES_EN = {
+  'Daily': ['LMAO', 'Good job today', 'Sorry', 'Sounds good', 'Cheer up', 'Love you', 'So hot', 'Tired', 'Awesome!', 'Oh yeah', 'Hello', 'Rooting for you', 'Have a good lunch', 'Confirmed', 'So fun'],
+  'Office': ['Yes sir!', 'Understood', 'Please revise', 'Thank you', 'Leaving work', 'In a meeting', 'File attached', 'Enjoy your lunch', 'Fighting!', 'My apologies', 'Check schedule', 'Great work', 'I\'ll head out first', 'Got it', 'Please review'],
+  'Meme': ['Dizzy', 'Aaahhh', 'Save me', 'Wanna quit', 'Wanna go home', 'Need rest badly', 'Actually good', 'Let\'s go', 'No way', 'Nope', 'So annoying', 'Crazy form', 'Is this right?', 'Awkward', 'Night shift'],
+  'Couple': ['Miss you', 'Love you', 'Whatcha doing?', 'Ate yet?', 'Good night', 'Come quick', 'I\'m mad', 'Sorry', 'Wow', 'You\'re the best', 'I love u', 'Kiss', 'Let\'s date', 'I\'ll wait', 'Happy']
+};
+
+const CHARACTER_TAGS_KO = {
+  '🐱 동물': ['시바견', '치즈냥', '포메라니안', '아기 펭귄', '똥실똥실 토끼', '장난꾸러기 원숭이', '햄스터', '다람쥐'],
+  '👦 인물': ['단발머리 소녀', '안경 쓴 모범생', '투블럭 남학생', '뽀글머리 아줌마', '수염 난 아저씨', '포니테일 체육생'],
+  '✨ 성격': ['장난기 많은', '시크하고 도도한', '순둥순둥 착한', '늘 피곤에 찌든', '애교가 넘치는', '화가 많은', '느긋한'],
+  '🎨 소품/직업': ['의사 가운', '요리사 앞치마', '회사원 정장', '스마트폰을 든', '커피잔을 든', '선글라스를 낀']
+};
+
+const CHARACTER_TAGS_EN = {
+  '🐱 Animal': ['Shiba Inu', 'Orange Cat', 'Pomeranian', 'Baby Penguin', 'Chubby Bunny', 'Playful Monkey', 'Hamster', 'Squirrel'],
+  '👦 Person': ['Bob hair girl', 'Nerd with glasses', 'Two-block boy', 'Curly hair lady', 'Bearded man', 'Ponytail athlete'],
+  '✨ Trait': ['Playful', 'Chic and haughty', 'Gentle and kind', 'Always tired', 'Full of aegyo (cute)', 'Angry', 'Laid-back'],
+  '🎨 Prop/Job': ['Doctor coat', 'Chef apron', 'Office suit', 'Holding a smartphone', 'Holding a coffee cup', 'Wearing sunglasses']
+};
+
+const I18N = {
+  ko: {
+    title: 'Prompt Studio',
+    step1: '캐릭터 설정',
+    whatCharacter: '캐릭터 묘사',
+    clear: '지우기',
+    placeholder: '예: 동글동글 귀여운 노란 고양이',
+    phrases: '이모티콘 문구 그리드',
+    themeSelect: '테마 선택',
+    randomMix: '랜덤',
+    gptCopy: 'Copy for ChatGPT',
+    geminiCopy: 'Copy for Gemini',
+    previewTitle: '프롬프트 미리보기',
+    forGpt: 'ChatGPT용',
+    forGemini: 'Gemini용',
+    guideTitle: '활용 가이드',
+    guide1Q: '🤔 AI 이모티콘 프롬프트 메이커란?',
+    guide1A: '카카오톡, 라인(LINE) 등에 이모티콘을 출시하고 싶지만 그림 실력이 부족해 고민하셨나요? 누구나 쉽게 고품질의 이모티콘 시트를 AI로 생성할 수 있도록 완벽하게 최적화된 마법의 텍스트(프롬프트)를 자동으로 조합해 주는 웹 유틸리티입니다.',
+    guide2Q: '💡 ChatGPT vs Gemini 어떤 것을 써야 할까요?',
+    guide2A: 'ChatGPT(DALL-E 3)는 한글 텍스트 렌더링에 강력하여 글씨가 들어간 이모티콘에 적합하고, Gemini(Imagen 3)는 깔끔한 2D 벡터 일러스트레이션 아트워크나 역동적인 모션 디자인 퀄리티가 우수합니다.',
+  },
+  en: {
+    title: 'Prompt Studio',
+    step1: 'Character Description',
+    whatCharacter: 'Description',
+    clear: 'Clear',
+    placeholder: 'e.g., A round, yellow cat who loves bread',
+    phrases: 'Phrase Grid',
+    themeSelect: 'Select Theme',
+    randomMix: 'Random Mix',
+    gptCopy: 'Copy for ChatGPT',
+    geminiCopy: 'Copy for Gemini',
+    previewTitle: 'Prompt Preview',
+    forGpt: 'For ChatGPT',
+    forGemini: 'For Gemini',
+    guideTitle: 'User Guide',
+    guide1Q: '🤔 What is AI Emoji Prompt Maker?',
+    guide1A: 'Want to release emojis on LINE or KakaoTalk but lack drawing skills? This is a web utility that automatically combines magical text (prompts) optimized to help anyone easily generate high-quality emoji sheets using AI.',
+    guide2Q: '💡 ChatGPT vs Gemini: Which one to use?',
+    guide2A: 'ChatGPT (DALL-E 3) is powerful at rendering text inside images, making it suitable for text-heavy emojis. Gemini (Imagen 3) excels in clean 2D vector artwork and dynamic motion design quality.',
+  }
+};
+
+const AdBanner = () => {
+  useEffect(() => {
+    try {
+      (window.adsbygoogle = window.adsbygoogle || []).push({});
+    } catch (e) {}
+  }, []);
+
+  return (
+    <div className="text-center mt-xl p-md bg-surface-container-lowest rounded-lg border border-outline-variant shadow-diffused">
+      <p className="text-[12px] text-neutral-500 mb-2 text-left">Advertisement</p>
+      <ins className="adsbygoogle"
+           style={{display: 'block', minHeight: '90px'}}
+           data-ad-client="ca-pub-0000000000000000"
+           data-ad-slot="1234567890"
+           data-ad-format="auto"
+           data-full-width-responsive="true"></ins>
+    </div>
+  );
+};
+
+const InfoSection = ({ t }) => {
+  return (
+    <div className="bg-surface-container-lowest rounded-lg p-md shadow-diffused mt-xl mb-xl border border-outline-variant">
+      <h2 className="flex items-center gap-2 mb-md text-headline-sm font-bold text-on-surface">
+        <HelpCircle size={24} className="text-primary" />
+        {t.guideTitle}
+      </h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-lg">
+        <div>
+          <h3 className="text-[17px] font-bold mb-2 text-on-surface">{t.guide1Q}</h3>
+          <p className="text-[15px] leading-relaxed text-secondary">{t.guide1A}</p>
+        </div>
+        <div>
+          <h3 className="text-[17px] font-bold mb-2 text-on-surface">{t.guide2Q}</h3>
+          <p className="text-[15px] leading-relaxed text-secondary">{t.guide2A}</p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+function App() {
+  const [lang, setLang] = useState('ko');
+  const t = I18N[lang];
+  
+  const currentThemes = lang === 'ko' ? THEMES_KO : THEMES_EN;
+  const currentTags = lang === 'ko' ? CHARACTER_TAGS_KO : CHARACTER_TAGS_EN;
+  const themeKeys = Object.keys(currentThemes);
+  const categoryKeys = Object.keys(currentTags);
+  
+  const [characterDesc, setCharacterDesc] = useState('');
+  const [activeTagCategory, setActiveTagCategory] = useState(categoryKeys[0]);
+  
+  const [emoticons, setEmoticons] = useState(currentThemes[themeKeys[0]]);
+  const [activeTheme, setActiveTheme] = useState(themeKeys[0]);
+  
+  const [copiedType, setCopiedType] = useState(null);
+  const [previewMode, setPreviewMode] = useState('gpt');
+
+  const toggleLanguage = () => {
+    const newLang = lang === 'ko' ? 'en' : 'ko';
+    setLang(newLang);
+    const newThemes = newLang === 'ko' ? THEMES_KO : THEMES_EN;
+    const newTags = newLang === 'ko' ? CHARACTER_TAGS_KO : CHARACTER_TAGS_EN;
+    const newThemeKeys = Object.keys(newThemes);
+    
+    setActiveTagCategory(Object.keys(newTags)[0]);
+    setEmoticons(newThemes[newThemeKeys[0]]);
+    setActiveTheme(newThemeKeys[0]);
+    setCharacterDesc('');
+  };
+
+  const handleEmoticonChange = (index, value) => {
+    const newEmoticons = [...emoticons];
+    newEmoticons[index] = value;
+    setEmoticons(newEmoticons);
+    setActiveTheme('custom');
+  };
+
+  const handleThemeSelect = (e) => {
+    const themeName = e.target.value;
+    if (currentThemes[themeName]) {
+      setEmoticons(currentThemes[themeName]);
+      setActiveTheme(themeName);
+    }
+  };
+
+  const shuffleEmoticons = () => {
+    const ALL_PHRASES = Array.from(new Set(Object.values(currentThemes).flat()));
+    const shuffled = [...ALL_PHRASES].sort(() => 0.5 - Math.random());
+    setEmoticons(shuffled.slice(0, 15));
+    setActiveTheme('custom');
+  };
+
+  const appendTag = (tag) => {
+    setCharacterDesc(prev => prev ? `${prev}, ${tag}` : tag);
+  };
+  
+  const clearTags = () => setCharacterDesc('');
+
+  const generateGptPrompt = () => {
+    const defaultChar = lang === 'ko' ? '동글동글 귀여운 스타일' : 'Cute round style';
+    const charContext = characterDesc.trim() || defaultChar;
+    
+    if (lang === 'ko') {
+      return `아래 기재된 캐릭터의 특징을 잘 살려서 메신저 이모티콘 시트를 그려주세요.
+**[캐릭터 컨셉]**
+${charContext}
+
+**[스타일 및 구도 조건]**
+1. 전체 배경은 순수한 흰색(White)이어야 합니다.
+2. 캔버스 하나에 총 15개의 이모티콘을 3행 5열(3x5) 그리드로 배치해주세요.
+3. 2D 일러스트레이션(SD 비율)으로 귀엽게 표현해주세요.
+4. 15개의 이모티콘 모두 동일한 캐릭터로 일관성을 유지해주세요.
+
+**[텍스트 및 표현 조건]**
+아래 15개의 문구를 각 이모티콘 위에 굵은 폰트로 절대 깨지지 않게 정확히 적어주세요.
+
+${emoticons.map((e, i) => `${i+1}. "${e}"`).join('\n')}
+
+문구에 맞춰 표정, 몸짓, 이펙트를 과장되게 표현해주세요!`;
+    } else {
+      return `Please draw a messenger sticker sheet based on the character concept below.
+**[Character Concept]**
+${charContext}
+
+**[Style & Layout]**
+1. Pure white background.
+2. Exactly 15 stickers in a 3x5 grid on a single canvas.
+3. Cute 2D illustration style (SD proportions).
+4. Maintain strict character consistency across all 15 stickers.
+
+**[Text & Expressions]**
+Write the following 15 phrases exactly as they are on each sticker, using a thick, clear font without breaking.
+
+${emoticons.map((e, i) => `${i+1}. "${e}"`).join('\n')}
+
+Exaggerate the facial expressions and body language to match the text!`;
+    }
+  };
+
+  const generateGeminiPrompt = () => {
+    const defaultChar = lang === 'ko' ? '귀여운 SD 캐릭터' : 'Cute round sd character';
+    const charContext = characterDesc.trim() || defaultChar;
+    return `[Concept] A professional messenger sticker sheet featuring 15 distinct emoji variations based on this character concept:
+[Character Concept] ${charContext}
+[Style Tags] Flat 2D vector illustration, cute sticker art style, minimal shading, thick clean outlines, kawaii anime style, perfectly isolated on a pure white background. 
+[Layout] Exactly 15 stickers arranged in a neat 3x5 grid layout with equal spacing.
+
+Make sure every single sticker shows the EXACT SAME character but with extremely different, highly exaggerated emotional expressions and dynamic body languages. Include comic-style visual effects.
+
+Context for the 15 stickers in order:
+${emoticons.map((e, i) => `${i+1}. [${e}]`).join(' / ')}
+
+Focus heavily on the visual facial expressions and body language so the emotion is 100% clear. Highly detailed, masterpiece, sticker sheet design.`;
+  };
+
+  const copyToClipboard = (type) => {
+    const textToCopy = type === 'gpt' ? generateGptPrompt() : generateGeminiPrompt();
+    navigator.clipboard.writeText(textToCopy);
+    setCopiedType(type);
+    setTimeout(() => setCopiedType(null), 2500);
+  };
+
+  return (
+    <div className="font-body-md text-body-md antialiased pb-32">
+      {/* TopAppBar */}
+      <header className="w-full top-0 bg-background flex items-center justify-between px-gutter h-14 max-w-7xl mx-auto z-40 sticky shadow-sm md:shadow-none">
+        <div className="flex items-center gap-2">
+          <span className="material-symbols-outlined text-primary text-[24px]">smart_toy</span>
+          <h1 className="font-headline-md text-[22px] font-bold text-primary tracking-tight">{t.title}</h1>
+        </div>
+        <button 
+          onClick={toggleLanguage}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-container-lowest border border-outline-variant text-[14px] font-bold text-on-surface hover:bg-surface-variant transition-colors shadow-sm"
+        >
+          <Globe size={16} />
+          {lang === 'ko' ? 'EN' : 'KO'}
+        </button>
+      </header>
+
+      <main className="max-w-3xl mx-auto px-container-margin mt-md md:mt-xl flex flex-col gap-xl">
+        
+        {/* Section 1: Character Setup */}
+        <section className="flex flex-col gap-md">
+          <div className="flex justify-between items-center">
+            <h2 className="font-headline-sm text-headline-sm text-on-surface">{t.step1}</h2>
+            <button onClick={clearTags} className="flex items-center gap-1 text-[13px] font-bold text-error hover:opacity-80">
+              <Trash2 size={14} /> {t.clear}
+            </button>
+          </div>
+          
+          <div className="bg-surface-container-lowest rounded-lg p-md shadow-diffused border border-outline-variant">
+            <textarea 
+              className="w-full bg-surface-container-highest rounded-md p-3 text-on-surface font-body-md placeholder:text-on-secondary-container focus:outline-none focus:ring-2 focus:ring-primary border-none resize-y min-h-[100px]" 
+              placeholder={t.placeholder}
+              value={characterDesc}
+              onChange={(e) => setCharacterDesc(e.target.value)}
+            />
+            
+            <div className="mt-md bg-surface-container-highest rounded-md overflow-hidden">
+              <div className="flex overflow-x-auto no-scrollbar bg-[#e5effc] px-2 border-b border-outline-variant">
+                {categoryKeys.map(category => (
+                  <button
+                    key={category}
+                    onClick={() => setActiveTagCategory(category)}
+                    className={`whitespace-nowrap px-3 py-2 text-[13px] font-bold transition-colors ${
+                      activeTagCategory === category 
+                        ? 'text-primary border-b-2 border-primary' 
+                        : 'text-secondary hover:text-on-surface border-b-2 border-transparent'
+                    }`}
+                  >
+                    {category}
+                  </button>
+                ))}
+              </div>
+              <div className="p-3 flex flex-wrap gap-2 bg-surface-container-lowest min-h-[80px]">
+                {currentTags[activeTagCategory]?.map(tag => (
+                  <button
+                    key={tag}
+                    onClick={() => appendTag(tag)}
+                    className="px-3 py-1.5 rounded-full bg-surface-container-highest text-[13px] text-on-surface font-label-md hover:bg-primary hover:text-[#191919] transition-colors border border-transparent hover:border-primary"
+                  >
+                    + {tag}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Section 2: Emoji Phrases */}
+        <section className="flex flex-col gap-md">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <h2 className="font-headline-sm text-headline-sm text-on-surface">{t.phrases}</h2>
+            <div className="flex gap-2">
+              <select 
+                value={currentThemes[activeTheme] ? activeTheme : ''} 
+                onChange={handleThemeSelect}
+                className="px-3 py-1.5 text-[14px] font-bold rounded-md border border-outline-variant bg-surface-container-lowest text-on-surface cursor-pointer focus:outline-none"
+              >
+                <option value="" disabled>{t.themeSelect}</option>
+                {themeKeys.map(theme => (
+                  <option key={theme} value={theme}>{theme}</option>
+                ))}
+              </select>
+              
+              <button 
+                onClick={shuffleEmoticons}
+                className="flex items-center gap-1 px-3 py-1.5 text-[14px] font-bold rounded-md bg-surface-container-high text-on-surface hover:bg-surface-variant transition-colors"
+              >
+                <Shuffle size={14} /> {t.randomMix}
+              </button>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-sm md:gap-md bg-surface-container-lowest rounded-lg p-md shadow-diffused border border-outline-variant">
+            {emoticons.map((text, idx) => (
+              <input 
+                key={idx}
+                type="text" 
+                value={text}
+                onChange={(e) => handleEmoticonChange(idx, e.target.value)}
+                className="w-full h-[48px] bg-surface-container-highest rounded-md px-2 text-center text-on-surface font-label-md placeholder:text-on-secondary-container focus:outline-none focus:ring-2 focus:ring-primary border-none" 
+                placeholder={`Phrase ${idx+1}`}
+              />
+            ))}
+          </div>
+        </section>
+
+        {/* Section 3: Prompt Preview */}
+        <section className="flex flex-col gap-md">
+          <div className="flex justify-between items-end">
+            <h2 className="font-headline-sm text-headline-sm text-on-surface">{t.previewTitle}</h2>
+            <div className="flex gap-1 bg-surface-container-highest p-1 rounded-md">
+              <button 
+                onClick={() => setPreviewMode('gpt')}
+                className={`px-3 py-1 text-[13px] font-bold rounded ${previewMode === 'gpt' ? 'bg-primary text-[#191919] shadow-sm' : 'text-secondary'}`}
+              >
+                {t.forGpt}
+              </button>
+              <button 
+                onClick={() => setPreviewMode('gemini')}
+                className={`px-3 py-1 text-[13px] font-bold rounded ${previewMode === 'gemini' ? 'bg-[#191919] text-white shadow-sm' : 'text-secondary'}`}
+              >
+                {t.forGemini}
+              </button>
+            </div>
+          </div>
+          <div className="bg-surface-container-lowest rounded-lg p-md shadow-diffused border border-outline-variant">
+            <textarea 
+              className="w-full bg-surface-container-highest rounded-md p-4 text-on-surface font-body-md focus:outline-none border-none resize-y min-h-[200px]" 
+              readOnly
+              value={previewMode === 'gpt' ? generateGptPrompt() : generateGeminiPrompt()}
+            />
+          </div>
+        </section>
+
+        {/* Actions */}
+        <section className="flex flex-col sm:flex-row gap-4 mt-sm pb-xl">
+          <button 
+            onClick={() => copyToClipboard('gpt')}
+            className="flex-1 h-[64px] rounded-lg bg-primary-container text-[#191919] font-headline-sm flex items-center justify-center gap-2 hover:opacity-90 transition-all active:scale-95 shadow-sm"
+          >
+            {copiedType === 'gpt' ? <CheckCircle2 size={24} /> : <Bot size={24} />}
+            {t.gptCopy}
+          </button>
+          
+          <button 
+            onClick={() => copyToClipboard('gemini')}
+            className="flex-1 h-[64px] rounded-lg bg-[#191919] text-[#ffffff] font-headline-sm flex items-center justify-center gap-2 hover:opacity-90 transition-all active:scale-95 shadow-sm"
+          >
+            {copiedType === 'gemini' ? <CheckCircle2 size={24} /> : <Sparkles size={24} />}
+            {t.geminiCopy}
+          </button>
+        </section>
+        
+        <InfoSection t={t} />
+        <AdBanner />
+      </main>
+    </div>
+  );
+}
+
+export default App;
