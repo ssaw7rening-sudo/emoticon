@@ -1158,16 +1158,16 @@ ${textPolicy}
 ${textExclusion} No watermark, outer frame, duplicate character, extra limbs, cropped body, half-body bust shot, dull background, or photorealism.`;
     }
 
-    const panelPlan = emoticons.map((phrase, index) => `Cell ${index + 1}: "${phrase.trim()}"`).join('\n');
+    const panelPlan = emoticons.map((phrase, index) => `Sticker ${index + 1}: "${phrase.trim()}"`).join('\n');
     const textPolicy = geminiTextMode === 'text'
       ? 'Render each quoted Korean phrase naturally beside or above its corresponding character in playful hand-drawn calligraphy. Do NOT use parentheses (), brackets [], quotation marks, or rectangular text boxes.'
-      : 'Do not render any text, letters, or numbers. Use each phrase only as visual context for its cell\'s emotion and posture.';
+      : 'Do not render any text, letters, or numbers. Use each phrase only as visual context for its sticker\'s emotion and posture.';
     const textExclusion = geminiTextMode === 'text'
-      ? 'No extra words, altered spelling, random letters, cell numbers, parentheses, quotation marks, or text boxes.'
-      : 'No text, letters, numbers, typography, cell labels, or meaningless symbols.';
+      ? 'No extra words, altered spelling, random letters, sticker numbers, parentheses, quotation marks, or text boxes.'
+      : 'No text, letters, numbers, typography, sticker labels, or meaningless symbols.';
 
     return `[GOAL]
-Create a master 15-panel 2D messenger sticker sheet (KakaoTalk / LINE style) featuring an ultra-cute Chibi SD mascot character across all cells.
+Create a master 15-sticker 2D messenger sheet (KakaoTalk / LINE style) featuring an ultra-cute Chibi SD mascot character across all stickers.
 
 [VISUAL REFERENCE & IDENTITY]
 ${referenceInstruction}
@@ -1176,21 +1176,21 @@ ${referenceInstruction}
 - Outfit: ${character.outfit}
 
 [ART DIRECTION & PROPORTIONS]
-${character.artStyle}. Adorable 2.5-head Chibi SD manga/anime mascot proportion with a big round head, huge sparkling expressive eyes, chubby cheeks, soft glossy hair highlights, clean crisp vector outlines, vibrant colors, and soft cell shading. Maintain identical character proportions and style across all 15 cells.
+${character.artStyle}. Adorable 2.5-head Chibi SD manga/anime mascot proportion with a big round head, huge sparkling expressive eyes, chubby cheeks, soft glossy hair highlights, clean crisp vector outlines, vibrant colors, and soft cell shading. Maintain identical character proportions and style across all 15 stickers.
 
-[15 CELL DYNAMIC POSES & EXPRESSIONS]
-For each cell, infer a unique, highly expressive cute facial emotion and a DYNAMIC full-body pose (e.g. sitting, crouching, jumping, holding props, winking, eating, or cheering). Every cell MUST show a complete full-body character visible head-to-toe. Do NOT repeat static standing half-body poses:
+[15 DYNAMIC POSES & EXPRESSIONS]
+For each sticker, infer a unique, highly expressive cute facial emotion and a DYNAMIC full-body pose (e.g. sitting, crouching, jumping, holding props, winking, eating, or cheering). Every sticker MUST show a complete full-body character visible head-to-toe:
 ${panelPlan}
 Supporting props & sparkle effects: ${character.props}, ${character.effects}, cute heart/star accents.
 
-[CANVAS & GRID COMPOSITION]
-Landscape canvas with 5 columns and 3 rows (15 equal cells). Place exactly one complete full-body character inside each cell with generous spacing. Seamless solid white background sheet. Absolutely NO grid division lines, NO cell border lines, NO grid frames, NO lines separating cells, NO cell numbers. Each character has a subtle crisp sticker die-cut white outline.
+[CANVAS & LAYOUT — SEAMLESS WHITE SHEET]
+Single continuous pure white background sheet. Arrange all 15 full-body stickers floating freely with generous spacing. Each character has a subtle crisp sticker die-cut white outline. Pure blank white background across the entire canvas. Absolutely NO guide lines, NO grid lines, NO cell borders, NO table lines, NO dividing lines, NO crop marks, NO bounding boxes, NO sticker numbers.
 
 [TEXT POLICY]
 ${textPolicy}
 
 [DO NOT INCLUDE]
-${textExclusion} No grid lines, no cell division lines, no border lines between cells, no cell frames, no watermark, no outer frame, no duplicate character inside a single cell, no extra limbs, no cropped body, no half-body bust shot, no dull background color, or photorealism.`;
+${textExclusion} No guide lines, no grid lines, no cell dividers, no border lines, no table lines, no crop marks, no panel boxes, no watermark, no outer frame, no duplicate character inside a single sticker, no extra limbs, no cropped body, no half-body bust shot, no dull background color, or photorealism.`;
   };
 
   const getGeminiRepairPrompt = (repairType) => {
