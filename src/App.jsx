@@ -1124,14 +1124,14 @@ ${textExclusion} No watermark, full-sheet frame, duplicate character inside a ce
 
     if (generationMode === 'individual' || hasPhraseOverride) {
       const textPolicy = geminiTextMode === 'text'
-        ? `Render the exact phrase "${targetPhrase}" once in clear hand-drawn lettering integrated into the sticker design. No text box.`
+        ? `Render the exact phrase "${targetPhrase}" once in playful, hand-drawn Korean calligraphy lettering beside the character. No parentheses (), brackets [], or rectangular text boxes.`
         : `Do not render text, letters, or numbers. Use "${targetPhrase}" only as visual context for expression and pose.`;
       const textExclusion = geminiTextMode === 'text'
-        ? 'No extra words, altered spelling, random letters, numbers, or text box.'
+        ? 'No extra words, altered spelling, random letters, numbers, parentheses, or text boxes.'
         : 'No text, letters, numbers, typography, or meaningless symbols.';
 
       return `[GOAL]
-Generate a high-quality 2D messenger sticker (KakaoTalk / LINE style) featuring a consistent character.
+Create a high-end 2D messenger sticker (KakaoTalk / LINE style) with an ultra-cute Chibi SD mascot character.
 
 [VISUAL REFERENCE & IDENTITY]
 ${referenceInstruction}
@@ -1139,35 +1139,35 @@ ${referenceInstruction}
 - Appearance & Features: ${character.appearance}
 - Outfit: ${character.outfit}
 
-[ART DIRECTION]
-${character.artStyle}. Crisp 2D vector sticker illustration, clean linework, vibrant colors, cell shading.
+[ART DIRECTION & PROPORTIONS]
+${character.artStyle}. Adorable 2.5-head Chibi SD manga/anime mascot proportion with a big round head, huge sparkling expressive eyes, chubby cheeks, soft glossy hair highlights, clean crisp vector outlines, vibrant colors, and soft cell shading.
 
-[SCENE & EXPRESSION]
+[SCENE, POSE & EXPRESSION]
 - Target Phrase / Mood: "${targetPhrase}"
-- Facial Expression: Highly expressive, unmistakable emotion matching "${targetPhrase}".
-- Body Pose: Energetic, full-body action pose corresponding to "${targetPhrase}".
-- Props & Effects: ${character.props}, ${character.effects}.
+- Facial Expression: Highly expressive, cute, unmistakable emotion matching "${targetPhrase}".
+- Body Pose: Dynamic, energetic full-body posture (e.g. sitting, crouching, jumping, holding props, or waving). Never use a static half-body bust pose.
+- Supporting Props & Sparkle Effects: ${character.props}, ${character.effects}, cute little heart/star accents.
 
 [CANVAS & COMPOSITION]
-Square 1:1 canvas. Exactly one complete centered character with 15% margin. Solid clean high-contrast background.
+Square 1:1 canvas. Exactly one complete centered full-body character visible from head to toe with 15% margin on all sides. Clean solid white background with a subtle crisp sticker die-cut white outline.
 
 [TEXT POLICY]
 ${textPolicy}
 
 [DO NOT INCLUDE]
-${textExclusion} No watermark, frame, duplicate character, extra limbs, cropped body, complex scenery, or photorealism.`;
+${textExclusion} No watermark, outer frame, duplicate character, extra limbs, cropped body, half-body bust shot, dull background, or photorealism.`;
     }
 
     const panelPlan = emoticons.map((phrase, index) => `Cell ${index + 1}: "${phrase.trim()}"`).join('\n');
     const textPolicy = geminiTextMode === 'text'
-      ? 'Render each quoted phrase exactly once in its corresponding cell in clean hand-drawn lettering.'
-      : 'Do not render any text, letters, or numbers. Use each phrase only as context for expression and pose.';
+      ? 'Render each quoted Korean phrase naturally beside or above its corresponding character in playful hand-drawn calligraphy. Do NOT use parentheses (), brackets [], quotation marks, or rectangular text boxes.'
+      : 'Do not render any text, letters, or numbers. Use each phrase only as visual context for its cell\'s emotion and posture.';
     const textExclusion = geminiTextMode === 'text'
-      ? 'No extra words, altered spelling, random letters, cell numbers, quotation marks, or text boxes.'
+      ? 'No extra words, altered spelling, random letters, cell numbers, parentheses, quotation marks, or text boxes.'
       : 'No text, letters, numbers, typography, cell labels, or meaningless symbols.';
 
     return `[GOAL]
-Create a master 15-panel 2D messenger sticker draft sheet (KakaoTalk / LINE style) featuring the same character across all cells.
+Create a master 15-panel 2D messenger sticker sheet (KakaoTalk / LINE style) featuring an ultra-cute Chibi SD mascot character across all cells.
 
 [VISUAL REFERENCE & IDENTITY]
 ${referenceInstruction}
@@ -1175,22 +1175,22 @@ ${referenceInstruction}
 - Appearance & Features: ${character.appearance}
 - Outfit: ${character.outfit}
 
-[ART DIRECTION]
-${character.artStyle}. Consistent 2D vector sticker illustration style, identical linework, texture, and colors across all 15 cells.
+[ART DIRECTION & PROPORTIONS]
+${character.artStyle}. Adorable 2.5-head Chibi SD manga/anime mascot proportion with a big round head, huge sparkling expressive eyes, chubby cheeks, soft glossy hair highlights, clean crisp vector outlines, vibrant colors, and soft cell shading. Maintain identical character proportions and style across all 15 cells.
 
-[15 CELL EMOTIONS & POSES]
-Infer a unique facial emotion and dynamic full-body pose for each cell:
+[15 CELL DYNAMIC POSES & EXPRESSIONS]
+For each cell, infer a unique, highly expressive cute facial emotion and a DYNAMIC full-body pose (e.g. sitting, crouching, jumping, holding props, winking, eating, or cheering). Every cell MUST show a complete full-body character visible head-to-toe. Do NOT repeat static standing half-body poses:
 ${panelPlan}
-Supporting props & effects: ${character.props}, ${character.effects}.
+Supporting props & sparkle effects: ${character.props}, ${character.effects}, cute heart/star accents.
 
 [CANVAS & GRID COMPOSITION]
-Landscape canvas with 5 columns and 3 rows (15 equal cells). Place exactly one complete character inside each cell with generous spacing. No element may cross cell borders. Solid uniform high-contrast background.
+Landscape canvas with 5 columns and 3 rows (15 equal cells). Place exactly one complete full-body character inside each cell with generous spacing. Each character has a subtle crisp sticker die-cut white outline. Clean solid white background across the entire sheet. No grid lines or cell numbers.
 
 [TEXT POLICY]
 ${textPolicy}
 
 [DO NOT INCLUDE]
-${textExclusion} No watermark, outer frame, duplicate character inside a single cell, extra limbs, cropped body, or photorealism.`;
+${textExclusion} No watermark, outer frame, duplicate character inside a single cell, extra limbs, cropped body, half-body bust shot, dull background color, or photorealism.`;
   };
 
   const getGeminiRepairPrompt = (repairType) => {
