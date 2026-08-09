@@ -1688,9 +1688,9 @@ ${textExclusion} No guide lines, no grid lines, no cell dividers, no border line
           <button 
             onClick={() => copyToClipboard('gpt')}
             disabled={Boolean(promptValidationError)}
-            className="interactive-control w-full min-h-[64px] flex-none sm:flex-1 rounded-3xl bg-[#D2F1E6] text-[#1E5D49] border border-[#9EE0C7] font-headline-sm flex items-center justify-center gap-2 hover:bg-[#BCEAD7] shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2D7D64] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-[#D2F1E6]"
+            className="interactive-control w-full min-h-[64px] flex-none sm:flex-1 rounded-3xl bg-[#FFE8B5] text-[#5A461B] border border-[#E8C66A] font-headline-sm flex items-center justify-center gap-2 hover:bg-[#FFDB80] shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E8C66A] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-[#FFE8B5]"
           >
-            {copiedType === 'gpt' ? <CheckCircle2 size={24} /> : <Bot size={24} />}
+            {copiedType === 'gpt' ? <CheckCircle2 size={24} className="text-[#2D7D64]" /> : <Bot size={24} className="text-[#2D7D64]" />}
             {t.gptCopy}
           </button>
           
@@ -1699,7 +1699,7 @@ ${textExclusion} No guide lines, no grid lines, no cell dividers, no border line
             disabled={Boolean(visiblePromptValidationError)}
             className="interactive-control w-full min-h-[64px] flex-none sm:flex-1 rounded-3xl bg-[#FFE8B5] text-[#5A461B] border border-[#E8C66A] font-headline-sm flex items-center justify-center gap-2 hover:bg-[#FFDB80] shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E8C66A] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-[#FFE8B5]"
           >
-            {copiedType === 'gemini' ? <CheckCircle2 size={24} /> : <Sparkles size={24} />}
+            {copiedType === 'gemini' ? <CheckCircle2 size={24} className="text-[#D97706]" /> : <Sparkles size={24} className="text-[#D97706]" />}
             {t.geminiCopy}
           </button>
         </section>
