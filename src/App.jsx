@@ -765,23 +765,23 @@ function App() {
 
     const modeInstructions = {
       exact: {
-        ko: '얼굴형, 눈·코·입, 헤어스타일, 털색이나 무늬 등 식별 가능한 특징을 최대한 닮게 유지해주세요.',
-        en: 'Match the recognizable features as closely as possible, including face shape, facial features, hairstyle, fur color, or markings.',
+        ko: '[최대한 실물 닮게 - High Fidelity] 사진 속 대상의 실제 얼굴 비율, 눈·코·입 생김새, 헤어스타일, 털색/무늬, 실물 인상을 95% 이상 극도로 사실적이고 정교하게 그대로 유지해주세요. 과도한 만화적 변형(데포르메)을 피하고 실물과 거의 동일한 이목구비와 인상을 재현하세요.',
+        en: '[HIGH LIKENESS FIDELITY] Preserve the subject\'s exact facial structure, eye/nose/mouth shapes, hairstyle, skin/fur tone, and real-life features with 95%+ visual similarity. Avoid heavy cartoonization or chibi proportions. Maintain strong realistic resemblance.',
       },
       features: {
-        ko: '사진의 핵심적인 얼굴, 헤어스타일, 색상과 분위기만 유지하고 나머지는 자연스럽게 단순화해주세요.',
-        en: 'Keep only the key facial features, hairstyle, colors, and overall vibe, while naturally simplifying the rest.',
+        ko: '[핵심 특징만 포인트 반영 - Signature Feature Extraction] 사진에서 가장 대표적인 아이코닉 요소(안경, 특이한 헤어스타일, 점, 고유 표정, 의상 포인트)만 뚜렷하게 추출하여 캐릭터에 합성해주세요. 전체 조형은 감각적이고 깔끔한 2D 벡터 일러스트 스타일로 정돈하되 핵심 포인트만 강렬하게 살려주세요.',
+        en: '[SIGNATURE FEATURE EXTRACTION] Extract only the iconic signature elements (e.g., glasses, unique haircut, facial mark, distinct expression/outfit) from the reference photo. Render in a clean, stylish 2D vector illustration while accentuating those key signature traits.',
       },
       characterize: {
-        ko: '사진 속 대상임을 알아볼 수 있는 핵심 특징은 유지하되, 귀엽고 친근한 캐릭터 비율로 재해석해주세요.',
-        en: 'Preserve enough key traits to recognize the subject, while reinterpreting them with cute, friendly character proportions.',
+        ko: '[극도로 귀여운 SD/Chibi 이모티콘 캐릭터화 - Cute Chibi Mascot] 2.5등신의 커다란 머리, 동글동글한 몸통, 초롱초롱한 눈망울, 과장되고 사랑스러운 이모티콘 마스코트로 파격 재해석해주세요. 원본 사진의 느낌만 살짝 남기고 극강의 귀여운 2D 마스코트 캐릭터로 변환해주세요.',
+        en: '[ULTRA-CUTE CHIBI SD MASCOT] Reinterpret the subject into an extremely cute 2D Chibi SD mascot with a big head, small chubby body, huge sparkling expressive eyes, and exaggerated adorable emoji proportions. Maximize cuteness.',
       },
     };
     const promptLang = promptLanguage === 'ko' ? 'ko' : 'en';
     const intro = promptLang === 'ko'
       ? '이 프롬프트를 사용할 때 AI 채팅에 함께 첨부한 사진을 최우선 참고 이미지로 사용해주세요.'
       : 'Use the photo attached in the AI chat as the primary visual reference.';
-    return `${intro} ${modeInstructions[photoReferenceMode][promptLang]}`;
+    return `${intro}\n${modeInstructions[photoReferenceMode][promptLang]}`;
   };
 
   const getSelectedPhrase = () => {
@@ -838,10 +838,22 @@ function App() {
       ...(additionalDescription ? [additionalDescription] : []),
     ];
 
+    const photoAppearanceEn = {
+      exact: 'preserve exact high-fidelity resemblance (95%+ likeness) to the reference photo with realistic proportions',
+      features: 'extract signature iconic features (hair, glasses, distinct traits) and stylize into a clean 2D vector graphic',
+      characterize: 'reinterpret into an ultra-cute 2D Chibi/SD mascot with a big head, chubby body, and huge expressive eyes',
+    }[photoReferenceMode];
+
+    const photoAppearanceKo = {
+      exact: '참고 사진 속 대상과 95% 이상 극도로 닮게 이목구비와 비율을 사실적으로 재현',
+      features: '참고 사진의 핵심 시그니처 포인트(안경, 헤어, 특이점)만 강렬하게 추출하여 2D 벡터 아트 스타일로 정돈',
+      characterize: '2.5등신 커다란 머리와 동통한 몸체의 극도로 귀여운 SD/Chibi 이모티콘 마스코트로 파격 변환',
+    }[photoReferenceMode];
+
     return {
       subject: subjectParts.join(', ') || 'a cute original character',
       appearance: appearances.join(', ') || (characterSource === 'photo'
-        ? 'preserve the recognizable visual features from the reference photo'
+        ? photoAppearanceEn
         : 'use a simple, recognizable silhouette and keep it unchanged'),
       personality: personalities.join(', ') || 'friendly and expressive',
       outfit: outfits.join(', ') || 'no fixed outfit specified; once chosen, keep it unchanged',
@@ -862,10 +874,22 @@ function App() {
       ...(additionalDescription ? [additionalDescription] : []),
     ];
 
+    const photoAppearanceEn = {
+      exact: 'preserve exact high-fidelity resemblance (95%+ likeness) to the reference photo with realistic proportions',
+      features: 'extract signature iconic features (hair, glasses, distinct traits) and stylize into a clean 2D vector graphic',
+      characterize: 'reinterpret into an ultra-cute 2D Chibi/SD mascot with a big head, chubby body, and huge expressive eyes',
+    }[photoReferenceMode];
+
+    const photoAppearanceKo = {
+      exact: '참고 사진 속 대상과 95% 이상 극도로 닮게 이목구비와 비율을 사실적으로 재현',
+      features: '참고 사진의 핵심 시그니처 포인트(안경, 헤어, 특이점)만 강렬하게 추출하여 2D 벡터 아트 스타일로 정돈',
+      characterize: '2.5등신 커다란 머리와 동통한 몸체의 극도로 귀여운 SD/Chibi 이모티콘 마스코트로 파격 변환',
+    }[photoReferenceMode];
+
     return {
       subject: subjectParts.join(', ') || (isKo ? '귀여운 오리지널 캐릭터' : 'a cute original character'),
       appearance: appearances.join(', ') || (characterSource === 'photo'
-        ? (isKo ? '참고 사진에서 알아볼 수 있는 외형 특징 유지' : 'preserve recognizable visual features from the reference photo')
+        ? (isKo ? photoAppearanceKo : photoAppearanceEn)
         : (isKo ? '단순하고 알아보기 쉬운 실루엣을 정한 뒤 그대로 유지' : 'use a simple recognizable silhouette and keep it unchanged')),
       personality: personalities.join(', ') || (isKo ? '친근하고 표정이 풍부한' : 'friendly and expressive'),
       outfit: outfits.join(', ') || (isKo ? '지정 없음. 처음 정한 의상은 모든 이미지에서 유지' : 'not specified; once chosen, keep it unchanged'),
