@@ -768,8 +768,8 @@ function App() {
         en: '[HIGH-FIDELITY REALISTIC PHOTO CARICATURE] Create a photo-realistic caricature cutout sticker preserving 95%+ exact visual resemblance to the attached person photo. Do NOT render as a 2D vector cartoon. Preserve real photographic face texture, skin tone, hairstyle, and authentic outfit texture, stylized into a high-end photo cutout sticker.',
       },
       features: {
-        ko: '[핵심 특징만 포인트 반영 - Signature Feature Extraction] 사진에서 가장 대표적인 아이코닉 요소(안경, 특이한 헤어스타일, 점, 고유 표정, 의상 포인트)만 뚜렷하게 추출하여 캐릭터에 합성해주세요. 전체 조형은 감각적이고 깔끔한 2D 벡터 일러스트 스타일로 정돈하되 핵심 포인트만 강렬하게 살려주세요.',
-        en: '[SIGNATURE FEATURE EXTRACTION] Extract only the iconic signature elements (e.g., glasses, unique haircut, facial mark, distinct expression/outfit) from the reference photo. Render in a clean, stylish 2D vector illustration while accentuating those key signature traits.',
+        ko: '[핵심 특징만 포인트 반영 - Soft 3D Stylized Avatar] 사진의 시그니처 포인트(헤어, 안경, 의상)를 강렬하게 살린 소프트 3D 아바타 일러스트 캐릭터 짤 스티커로 제작해주세요. 평면 2D 선화가 아닌, 3D 입체 헤어 결, 매끄러운 3D 피부 질감, 소프트 조명이 느껴지는 고급스러운 반실사 3D 캐릭터 스타일을 적용하세요.',
+        en: '[SIGNATURE FEATURE EXTRACTION - SOFT 3D STYLIZED AVATAR] Create a soft 3D stylized digital avatar caricature sticker capturing key signature traits (hair, glasses, outfit). Do NOT use flat 2D line art. Render with smooth 3D skin texture, realistic volumetric hair flow, soft studio 3D lighting, and a high-end semi-realistic 3D artwork finish.',
       },
       characterize: {
         ko: '[극도로 귀여운 SD/Chibi 이모티콘 캐릭터화 - Cute Chibi Mascot] 2.5등신의 커다란 머리, 동글동글한 몸통, 초롱초롱한 눈망울, 과장되고 사랑스러운 이모티콘 마스코트로 파격 재해석해주세요. 원본 사진의 느낌만 살짝 남기고 극강의 귀여운 2D 마스코트 캐릭터로 변환해주세요.',
@@ -1124,7 +1124,7 @@ ${textExclusion} No grid lines, no cell division lines, no border lines between 
 
     const geminiProportions = characterSource === 'photo' ? {
       exact: 'High-fidelity photo-realistic caricature cutout sticker style matching the attached reference photo accurately, with real photographic face texture, hair, skin tone, and authentic outfit details. Do NOT render as 2D vector cartoon.',
-      features: 'Stylish 2D graphic vector illustration with clean stylized proportions, extracting iconic signature features (hair, glasses, distinct traits).',
+      features: 'Soft 3D stylized digital avatar caricature sticker capturing signature traits (hair, glasses, outfit) with smooth 3D skin texture, volumetric hair flow, soft studio 3D lighting, and high-end semi-realistic 3D artwork finish. Do NOT use flat 2D line art.',
       characterize: 'Adorable 2.5-head Chibi SD manga/anime mascot proportion with a big round head, huge sparkling expressive eyes, chubby cheeks, and soft glossy hair highlights.',
     }[photoReferenceMode] : 'Adorable 2.5-head Chibi SD manga/anime mascot proportion with a big round head, huge sparkling expressive eyes, chubby cheeks, and soft glossy hair highlights.';
 
