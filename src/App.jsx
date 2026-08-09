@@ -665,7 +665,6 @@ function App() {
   const [gptTextMode, setGptTextMode] = useState('text');
   const [gptBackgroundMode, setGptBackgroundMode] = useState('transparent');
   const [geminiTextMode, setGeminiTextMode] = useState('visual');
-  const [geminiWorkflowStage, setGeminiWorkflowStage] = useState('reference');
 
   const toggleLanguage = () => {
     const newLang = lang === 'ko' ? 'en' : 'ko';
@@ -1123,108 +1122,74 @@ ${textExclusion} No watermark, full-sheet frame, duplicate character inside a ce
       : (phraseOverride || '').trim();
     const referenceInstruction = `${characterSource === 'photo' ? `Photo reference style: ${getPhotoModeLabel('en')}. ` : ''}${getReferenceImageInstruction('en')}`;
 
-    if (geminiWorkflowStage === 'reference') {
-      return `[TASK: MASTER BASE CHARACTER REFERENCE]
-Create one definitive 2D master character reference sheet for a KakaoTalk / LINE sticker series. This image will serve as the exact visual model for all future variations.
-
-[SOURCE PHOTO REFERENCE DIRECTION]
-${referenceInstruction}
-
-[CHARACTER MODEL DESIGN]
-- Subject: ${character.subject}
-- Visual Details & Appearance: ${character.appearance}
-- Personality & Vibe: ${character.personality}
-- Signature Outfit: ${character.outfit}
-
-[ART STYLE & RENDERING]
-${character.artStyle}. High-end 2D vector sticker illustration, crisp clean linework, vibrant harmonious colors, soft cell shading, studio quality messenger sticker art.
-
-[COMPOSITION & POSE]
-Square 1:1 canvas. Show exactly one complete character standing in a friendly, relaxed 3/4 front pose with a clear neutral expression. Keep the full body visible with 15% margin on all sides. Use a clean, solid background with high contrast against the character.
-
-[LOCK IDENTITY]
-Establish a distinctive face shape, hair, eyes, body proportions, color palette, and outfit that can be perfectly replicated.
-
-[DO NOT INCLUDE]
-No text, no letters, no words, no speech bubbles, no watermark, no frame, no duplicate characters, no extra limbs, no cropped limbs, no complex background, no photorealism.`;
-    }
-
-    const lockedReferenceInstruction = `Recreate the exact character from the attached base reference image. Preserve the identical facial features, body proportions, hair, outfit, color palette, and line weight. This is an action variation of the reference character.`;
-
     if (generationMode === 'individual' || hasPhraseOverride) {
       const textPolicy = geminiTextMode === 'text'
         ? `Render the exact phrase "${targetPhrase}" once in clear hand-drawn lettering integrated into the sticker design. No text box.`
-        : `Do not render text, letters, or numbers. Use the mood of "${targetPhrase}" solely for expression and pose.`;
+        : `Do not render text, letters, or numbers. Use "${targetPhrase}" only as visual context for expression and pose.`;
       const textExclusion = geminiTextMode === 'text'
         ? 'No extra words, altered spelling, random letters, numbers, or text box.'
         : 'No text, letters, numbers, typography, or meaningless symbols.';
 
-      return `[TASK: EXPRESSIVE MESSENGER STICKER VARIATION]
-Generate one high-quality, expressive 2D messenger sticker based on the attached reference character.
+      return `[GOAL]
+Generate a high-quality 2D messenger sticker (KakaoTalk / LINE style) featuring a consistent character.
 
-[REFERENCE MATCHING]
+[VISUAL REFERENCE & IDENTITY]
 ${referenceInstruction}
-${lockedReferenceInstruction}
-
-[CHARACTER IDENTITY]
-Subject: ${character.subject}
-Appearance: ${character.appearance}
-Outfit: ${character.outfit}
+- Subject: ${character.subject}
+- Appearance & Features: ${character.appearance}
+- Outfit: ${character.outfit}
 
 [ART DIRECTION]
-${character.artStyle}. Crisp 2D vector sticker art, clean outlines, vibrant colors.
+${character.artStyle}. Crisp 2D vector sticker illustration, clean linework, vibrant colors, cell shading.
 
 [SCENE & EXPRESSION]
-- Target Phrase Context: "${targetPhrase}"
-- Facial Expression: Highly expressive, unmistakable facial emotion matching "${targetPhrase}".
-- Body Pose: Energetic, full-body action pose corresponding to "${targetPhrase}". Do not use a static pose.
+- Target Phrase / Mood: "${targetPhrase}"
+- Facial Expression: Highly expressive, unmistakable emotion matching "${targetPhrase}".
+- Body Pose: Energetic, full-body action pose corresponding to "${targetPhrase}".
 - Props & Effects: ${character.props}, ${character.effects}.
 
-[COMPOSITION]
-Square 1:1 canvas. Exactly one complete centered character with 12% margin. Solid high-contrast background.
+[CANVAS & COMPOSITION]
+Square 1:1 canvas. Exactly one complete centered character with 15% margin. Solid clean high-contrast background.
 
 [TEXT POLICY]
 ${textPolicy}
 
-[EXCLUDE]
-${textExclusion} No watermark, frame, duplicate character, extra limbs, cropped body, complex background, or photorealism.`;
+[DO NOT INCLUDE]
+${textExclusion} No watermark, frame, duplicate character, extra limbs, cropped body, complex scenery, or photorealism.`;
     }
 
-    const panelPlan = emoticons.map((phrase, index) => `Panel ${index + 1}: "${phrase.trim()}"`).join('\n');
+    const panelPlan = emoticons.map((phrase, index) => `Cell ${index + 1}: "${phrase.trim()}"`).join('\n');
     const textPolicy = geminiTextMode === 'text'
-      ? 'Render each quoted phrase exactly once in its corresponding panel in clean hand-drawn lettering.'
+      ? 'Render each quoted phrase exactly once in its corresponding cell in clean hand-drawn lettering.'
       : 'Do not render any text, letters, or numbers. Use each phrase only as context for expression and pose.';
     const textExclusion = geminiTextMode === 'text'
-      ? 'No extra words, altered spelling, random letters, panel numbers, quotation marks, or text boxes.'
-      : 'No text, letters, numbers, typography, panel labels, or meaningless symbols.';
+      ? 'No extra words, altered spelling, random letters, cell numbers, quotation marks, or text boxes.'
+      : 'No text, letters, numbers, typography, cell labels, or meaningless symbols.';
 
-    return `[TASK: 15-PANEL MESSENGER STICKER DRAFT SHEET]
-Create a master draft sheet containing 15 distinct 2D messenger sticker variations of the attached reference character.
+    return `[GOAL]
+Create a master 15-panel 2D messenger sticker draft sheet (KakaoTalk / LINE style) featuring the same character across all cells.
 
-[REFERENCE MATCHING]
+[VISUAL REFERENCE & IDENTITY]
 ${referenceInstruction}
-${lockedReferenceInstruction}
-
-[CHARACTER IDENTITY]
-Subject: ${character.subject}
-Appearance: ${character.appearance}
-Outfit: ${character.outfit}
+- Subject: ${character.subject}
+- Appearance & Features: ${character.appearance}
+- Outfit: ${character.outfit}
 
 [ART DIRECTION]
-${character.artStyle}. Consistent 2D vector sticker illustration style, identical linework, texture, and colors across all 15 panels.
+${character.artStyle}. Consistent 2D vector sticker illustration style, identical linework, texture, and colors across all 15 cells.
 
-[15 PANEL EXPRESSIONS & POSES]
-Infer a unique, highly expressive facial emotion and dynamic pose for each panel:
+[15 CELL EMOTIONS & POSES]
+Infer a unique facial emotion and dynamic full-body pose for each cell:
 ${panelPlan}
 Supporting props & effects: ${character.props}, ${character.effects}.
 
-[GRID COMPOSITION]
-Landscape canvas with 5 columns and 3 rows (15 equal cells). Place exactly one complete character inside each cell with generous spacing. No element may cross cell borders. Solid uniform high-contrast background across the sheet.
+[CANVAS & GRID COMPOSITION]
+Landscape canvas with 5 columns and 3 rows (15 equal cells). Place exactly one complete character inside each cell with generous spacing. No element may cross cell borders. Solid uniform high-contrast background.
 
 [TEXT POLICY]
 ${textPolicy}
 
-[EXCLUDE]
+[DO NOT INCLUDE]
 ${textExclusion} No watermark, outer frame, duplicate character inside a single cell, extra limbs, cropped body, or photorealism.`;
   };
 
@@ -1253,7 +1218,7 @@ ${textExclusion} No watermark, outer frame, duplicate character inside a single 
 
   const copyToClipboard = (type, selectedPhraseOverride = null, copyKey = type) => {
     const phraseOverride = selectedPhraseOverride ?? (generationMode === 'batch' ? getSelectedPhrase() : null);
-    if (!(type === 'gemini' && geminiWorkflowStage === 'reference') && getPromptValidationError(phraseOverride)) return;
+    if (getPromptValidationError(phraseOverride)) return;
     const textToCopy = type === 'gpt'
       ? generateGptPrompt(phraseOverride)
       : generateGeminiPrompt(phraseOverride);
@@ -1265,8 +1230,7 @@ ${textExclusion} No watermark, outer frame, duplicate character inside a single 
   const promptValidationError = getPromptValidationError(
     generationMode === 'batch' ? getSelectedPhrase() : null
   );
-  const geminiPromptValidationError = geminiWorkflowStage === 'reference' ? '' : promptValidationError;
-  const visiblePromptValidationError = previewMode === 'gemini' ? geminiPromptValidationError : promptValidationError;
+  const visiblePromptValidationError = promptValidationError;
 
   return (
     <div className="font-body-md text-body-md antialiased pb-32">
@@ -1641,19 +1605,19 @@ ${textExclusion} No watermark, outer frame, duplicate character inside a single 
           {previewMode === 'gemini' && (
             <div className="rounded-[8px] border border-[#E8C66A] bg-[#FFF8E8] p-3 flex flex-col gap-3">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                <span className="text-[13px] font-bold text-[#795B16]">{t.geminiStageMode}</span>
-                <div className="grid grid-cols-1 min-[430px]:grid-cols-2 gap-2 sm:min-w-[360px]" role="group" aria-label={t.geminiStageMode}>
+                <span className="text-[13px] font-bold text-[#795B16]">{t.geminiTextMode}</span>
+                <div className="grid grid-cols-2 gap-2 sm:min-w-[280px]" role="group" aria-label={t.geminiTextMode}>
                   {[
-                    ['reference', t.geminiReferenceStage],
-                    ['final', t.geminiFinalStage],
+                    ['visual', t.geminiNoText],
+                    ['text', t.geminiIncludeText],
                   ].map(([mode, label]) => (
                     <button
                       key={mode}
                       type="button"
-                      aria-pressed={geminiWorkflowStage === mode}
-                      onClick={() => setGeminiWorkflowStage(mode)}
+                      aria-pressed={geminiTextMode === mode}
+                      onClick={() => setGeminiTextMode(mode)}
                       className={`interactive-control min-h-10 rounded-[8px] border px-3 py-2 text-[13px] font-bold focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E8C66A] ${
-                        geminiWorkflowStage === mode
+                        geminiTextMode === mode
                           ? 'bg-[#FFE8B5] text-[#5A461B] border-[#E8C66A] shadow-sm'
                           : 'bg-white text-[#795B16] border-[#E9DFC5] hover:bg-[#FFF3D8]'
                       }`}
@@ -1663,54 +1627,26 @@ ${textExclusion} No watermark, outer frame, duplicate character inside a single 
                   ))}
                 </div>
               </div>
-              {geminiWorkflowStage === 'final' && (
-                <>
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                    <span className="text-[13px] font-bold text-[#795B16]">{t.geminiTextMode}</span>
-                    <div className="grid grid-cols-2 gap-2 sm:min-w-[280px]" role="group" aria-label={t.geminiTextMode}>
-                      {[
-                        ['visual', t.geminiNoText],
-                        ['text', t.geminiIncludeText],
-                      ].map(([mode, label]) => (
-                        <button
-                          key={mode}
-                          type="button"
-                          aria-pressed={geminiTextMode === mode}
-                          onClick={() => setGeminiTextMode(mode)}
-                          className={`interactive-control min-h-10 rounded-[8px] border px-3 py-2 text-[13px] font-bold focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E8C66A] ${
-                            geminiTextMode === mode
-                              ? 'bg-[#FFE8B5] text-[#5A461B] border-[#E8C66A] shadow-sm'
-                              : 'bg-white text-[#795B16] border-[#E9DFC5] hover:bg-[#FFF3D8]'
-                          }`}
-                        >
-                          {label}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="flex flex-col gap-2 border-t border-[#E9DFC5] pt-3">
-                    <span className="text-[13px] font-bold text-[#795B16]">{t.geminiRepairTitle}</span>
-                    <div className="grid grid-cols-1 min-[430px]:grid-cols-3 gap-2">
-                      {[
-                        ['identity', t.geminiRepairIdentity],
-                        ['crop', t.geminiRepairCrop],
-                        ...(geminiTextMode === 'text' ? [['text', t.geminiRepairText]] : []),
-                      ].map(([repairType, label]) => (
-                        <button
-                          key={repairType}
-                          type="button"
-                          onClick={() => copyGeminiRepairPrompt(repairType)}
-                          className="interactive-control min-h-10 rounded-[8px] border border-[#E9DFC5] bg-white px-3 py-2 text-[13px] font-bold text-[#795B16] hover:bg-[#FFF3D8] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E8C66A]"
-                        >
-                          {copiedType === `gemini-repair-${repairType}` ? '✓ ' : ''}{label}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                </>
-              )}
-              <p className="text-[13px] leading-relaxed text-[#795B16]">💡 {geminiWorkflowStage === 'reference' ? t.geminiReferenceTip : t.geminiFinalTip}</p>
-              {geminiWorkflowStage === 'final' && <p className="text-[13px] leading-relaxed text-[#795B16]">{t.geminiWorkflowTip}</p>}
+              <div className="flex flex-col gap-2 border-t border-[#E9DFC5] pt-3">
+                <span className="text-[13px] font-bold text-[#795B16]">{t.geminiRepairTitle}</span>
+                <div className="grid grid-cols-1 min-[430px]:grid-cols-3 gap-2">
+                  {[
+                    ['identity', t.geminiRepairIdentity],
+                    ['crop', t.geminiRepairCrop],
+                    ...(geminiTextMode === 'text' ? [['text', t.geminiRepairText]] : []),
+                  ].map(([repairType, label]) => (
+                    <button
+                      key={repairType}
+                      type="button"
+                      onClick={() => copyGeminiRepairPrompt(repairType)}
+                      className="interactive-control min-h-10 rounded-[8px] border border-[#E9DFC5] bg-white px-3 py-2 text-[13px] font-bold text-[#795B16] hover:bg-[#FFF3D8] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E8C66A]"
+                    >
+                      {copiedType === `gemini-repair-${repairType}` ? '✓ ' : ''}{label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <p className="text-[13px] leading-relaxed text-[#795B16]">💡 {t.geminiFinalTip}</p>
             </div>
           )}
           {generationMode !== 'sheet' && (
