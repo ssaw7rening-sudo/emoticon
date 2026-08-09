@@ -1122,6 +1122,12 @@ ${textExclusion} No grid lines, no cell division lines, no border lines between 
       : (phraseOverride || '').trim();
     const referenceInstruction = `${characterSource === 'photo' ? `Photo reference style: ${getPhotoModeLabel('en')}. ` : ''}${getReferenceImageInstruction('en')}`;
 
+    const geminiProportions = characterSource === 'photo' ? {
+      exact: 'High-fidelity realistic 2D vector proportions matching the reference photo accurately, with natural facial structure and realistic feature detail.',
+      features: 'Stylish 2D graphic vector illustration with clean stylized proportions, extracting iconic signature features (hair, glasses, distinct traits).',
+      characterize: 'Adorable 2.5-head Chibi SD manga/anime mascot proportion with a big round head, huge sparkling expressive eyes, chubby cheeks, and soft glossy hair highlights.',
+    }[photoReferenceMode] : 'Adorable 2.5-head Chibi SD manga/anime mascot proportion with a big round head, huge sparkling expressive eyes, chubby cheeks, and soft glossy hair highlights.';
+
     if (generationMode === 'individual' || hasPhraseOverride) {
       const textPolicy = geminiTextMode === 'text'
         ? `Render the exact phrase "${targetPhrase}" once in playful, hand-drawn Korean calligraphy lettering beside the character. No parentheses (), brackets [], or rectangular text boxes.`
@@ -1131,7 +1137,7 @@ ${textExclusion} No grid lines, no cell division lines, no border lines between 
         : 'No text, letters, numbers, typography, or meaningless symbols.';
 
       return `[GOAL]
-Create a high-end 2D messenger sticker (KakaoTalk / LINE style) with an ultra-cute Chibi SD mascot character.
+Create a high-end 2D messenger sticker (KakaoTalk / LINE style) featuring a consistent character.
 
 [VISUAL REFERENCE & IDENTITY]
 ${referenceInstruction}
@@ -1140,13 +1146,13 @@ ${referenceInstruction}
 - Outfit: ${character.outfit}
 
 [ART DIRECTION & PROPORTIONS]
-${character.artStyle}. Adorable 2.5-head Chibi SD manga/anime mascot proportion with a big round head, huge sparkling expressive eyes, chubby cheeks, soft glossy hair highlights, clean crisp vector outlines, vibrant colors, and soft cell shading.
+${character.artStyle}. ${geminiProportions} Clean crisp vector outlines, vibrant colors, and soft cell shading.
 
 [SCENE, POSE & EXPRESSION]
 - Target Phrase / Mood: "${targetPhrase}"
-- Facial Expression: Highly expressive, cute, unmistakable emotion matching "${targetPhrase}".
+- Facial Expression: Highly expressive, unmistakable emotion matching "${targetPhrase}".
 - Body Pose: Dynamic, energetic full-body posture (e.g. sitting, crouching, jumping, holding props, or waving). Never use a static half-body bust pose.
-- Supporting Props & Sparkle Effects: ${character.props}, ${character.effects}, cute little heart/star accents.
+- Supporting Props & Sparkle Effects: ${character.props}, ${character.effects}, cute little accents.
 
 [CANVAS & COMPOSITION]
 Square 1:1 canvas. Exactly one complete centered full-body character visible from head to toe with 15% margin on all sides. Clean solid white background with a subtle crisp sticker die-cut white outline.
@@ -1167,7 +1173,7 @@ ${textExclusion} No watermark, outer frame, duplicate character, extra limbs, cr
       : 'No text, letters, numbers, typography, sticker labels, or meaningless symbols.';
 
     return `[GOAL]
-Create a master 15-sticker 2D messenger sheet (KakaoTalk / LINE style) featuring an ultra-cute Chibi SD mascot character across all stickers.
+Create a master 15-sticker 2D messenger sheet (KakaoTalk / LINE style) featuring a consistent character across all stickers.
 
 [VISUAL REFERENCE & IDENTITY]
 ${referenceInstruction}
@@ -1176,12 +1182,12 @@ ${referenceInstruction}
 - Outfit: ${character.outfit}
 
 [ART DIRECTION & PROPORTIONS]
-${character.artStyle}. Adorable 2.5-head Chibi SD manga/anime mascot proportion with a big round head, huge sparkling expressive eyes, chubby cheeks, soft glossy hair highlights, clean crisp vector outlines, vibrant colors, and soft cell shading. Maintain identical character proportions and style across all 15 stickers.
+${character.artStyle}. ${geminiProportions} Clean crisp vector outlines, vibrant colors, and soft cell shading. Maintain identical character proportions and style across all 15 stickers.
 
 [15 DYNAMIC POSES & EXPRESSIONS]
-For each sticker, infer a unique, highly expressive cute facial emotion and a DYNAMIC full-body pose (e.g. sitting, crouching, jumping, holding props, winking, eating, or cheering). Every sticker MUST show a complete full-body character visible head-to-toe:
+For each sticker, infer a unique, highly expressive facial emotion and a DYNAMIC full-body pose (e.g. sitting, crouching, jumping, holding props, winking, eating, or cheering). Every sticker MUST show a complete full-body character visible head-to-toe:
 ${panelPlan}
-Supporting props & sparkle effects: ${character.props}, ${character.effects}, cute heart/star accents.
+Supporting props & sparkle effects: ${character.props}, ${character.effects}, cute accents.
 
 [CANVAS & LAYOUT — SEAMLESS WHITE SHEET]
 Single continuous pure white background sheet. Arrange all 15 full-body stickers floating freely with generous spacing. Each character has a subtle crisp sticker die-cut white outline. Pure blank white background across the entire canvas. Absolutely NO guide lines, NO grid lines, NO cell borders, NO table lines, NO dividing lines, NO crop marks, NO bounding boxes, NO sticker numbers.
