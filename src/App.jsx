@@ -784,8 +784,8 @@ function App() {
   };
 
   const getSelectedPhrase = () => {
-    if (generationMode === 'individual') return individualPhrase.trim();
-    return emoticons.includes(batchPhrase) ? batchPhrase : (emoticons[0] || '');
+    if (generationMode === 'individual') return individualPhrase.trim() || (emoticons[0] || '안녕!');
+    return emoticons.includes(batchPhrase) ? batchPhrase : (emoticons[0] || '안녕!');
   };
 
   const getSelectedArtStyle = () => {
@@ -1211,6 +1211,8 @@ ${textExclusion} No watermark, outer frame, duplicate character inside a single 
 
   const getPreviewPrompt = () => {
     const phraseOverride = generationMode === 'batch' ? getSelectedPhrase() : null;
+    const error = getPromptValidationError(phraseOverride);
+    if (error) return error;
     return previewMode === 'gpt'
       ? generateGptPrompt(phraseOverride)
       : generateGeminiPrompt(phraseOverride);
