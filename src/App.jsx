@@ -768,8 +768,8 @@ function App() {
         en: '[HIGH-FIDELITY REALISTIC PHOTO CARICATURE] Create a photo-realistic caricature cutout sticker preserving 95%+ exact visual resemblance to the attached person photo. Do NOT render as a 2D vector cartoon. Preserve real photographic face texture, skin tone, hairstyle, and authentic outfit texture, stylized into a high-end photo cutout sticker.',
       },
       features: {
-        ko: '[핵심 특징만 포인트 반영 - Soft 3D Stylized Avatar] 사진의 시그니처 포인트(헤어, 안경, 의상)를 강렬하게 살린 소프트 3D 아바타 일러스트 캐릭터 짤 스티커로 제작해주세요. 평면 2D 선화가 아닌, 3D 입체 헤어 결, 매끄러운 3D 피부 질감, 소프트 조명이 느껴지는 고급스러운 반실사 3D 캐릭터 스타일을 적용하세요.',
-        en: '[SIGNATURE FEATURE EXTRACTION - SOFT 3D STYLIZED AVATAR] Create a soft 3D stylized digital avatar caricature sticker capturing key signature traits (hair, glasses, outfit). Do NOT use flat 2D line art. Render with smooth 3D skin texture, realistic volumetric hair flow, soft studio 3D lighting, and a high-end semi-realistic 3D artwork finish.',
+        ko: '[핵심 특징만 포인트 반영 - Soft 3D Stylized Avatar] 사진에서 실제 존재하는 시그니처 포인트(헤어스타일, 이목구비, 의상 등 사진에 실제로 있는 특징만)를 강렬하게 살린 소프트 3D 아바타 일러스트 캐릭터 짤 스티커로 제작해주세요. 원본 사진에 없는 안경이나 모자 등 가짜 악세사리를 절대 추가하지 마세요. 평면 2D 선화가 아닌, 3D 입체 헤어 결, 매끄러운 3D 피부 질감, 소프트 조명이 느껴지는 고급스러운 반실사 3D 캐릭터 스타일을 적용하세요.',
+        en: '[SIGNATURE FEATURE EXTRACTION - SOFT 3D STYLIZED AVATAR] Create a soft 3D stylized digital avatar caricature sticker capturing only authentic traits visible in the reference photo (hairstyle, facial features, outfit). Do NOT invent or add unrequested accessories like glasses or hats if not present in the photo. Render with smooth 3D skin texture, realistic volumetric hair flow, soft studio 3D lighting, and a high-end semi-realistic 3D artwork finish.',
       },
       characterize: {
         ko: '[극도로 귀여운 SD/Chibi 이모티콘 캐릭터화 - Cute Chibi Mascot] 2.5등신의 커다란 머리, 동글동글한 몸통, 초롱초롱한 눈망울, 과장되고 사랑스러운 이모티콘 마스코트로 파격 재해석해주세요. 원본 사진의 느낌만 살짝 남기고 극강의 귀여운 2D 마스코트 캐릭터로 변환해주세요.',
@@ -838,14 +838,14 @@ function App() {
     ];
 
     const photoAppearanceEn = {
-      exact: 'preserve exact high-fidelity resemblance (95%+ likeness) to the reference photo with realistic proportions',
-      features: 'extract signature iconic features (hair, glasses, distinct traits) and stylize into a clean 2D vector graphic',
+      exact: 'preserve exact high-fidelity resemblance (95%+ likeness) to the reference photo with realistic features; do not add unrequested glasses or hats',
+      features: 'extract authentic signature features (hair, facial traits, outfit) visible in photo; do not add unrequested glasses or accessories',
       characterize: 'reinterpret into an ultra-cute 2D Chibi/SD mascot with a big head, chubby body, and huge expressive eyes',
     }[photoReferenceMode];
 
     const photoAppearanceKo = {
-      exact: '참고 사진 속 대상과 95% 이상 극도로 닮게 이목구비와 비율을 사실적으로 재현',
-      features: '참고 사진의 핵심 시그니처 포인트(안경, 헤어, 특이점)만 강렬하게 추출하여 2D 벡터 아트 스타일로 정돈',
+      exact: '참고 사진 속 대상과 95% 이상 극도로 닮게 이목구비와 비율을 사실적으로 재현 (사진에 없는 안경/모자 등 임의 추가 금지)',
+      features: '참고 사진의 실제 시그니처 포인트(헤어, 이목구비, 의상)만 추출 (사진에 없는 안경/악세사리 임의 추가 금지)',
       characterize: '2.5등신 커다란 머리와 동통한 몸체의 극도로 귀여운 SD/Chibi 이모티콘 마스코트로 파격 변환',
     }[photoReferenceMode];
 
@@ -874,14 +874,14 @@ function App() {
     ];
 
     const photoAppearanceEn = {
-      exact: 'preserve exact high-fidelity resemblance (95%+ likeness) to the reference photo with realistic proportions',
-      features: 'extract signature iconic features (hair, glasses, distinct traits) and stylize into a clean 2D vector graphic',
+      exact: 'preserve exact high-fidelity resemblance (95%+ likeness) to the reference photo with realistic features; do not add unrequested glasses or hats',
+      features: 'extract authentic signature features (hair, facial traits, outfit) visible in photo; do not add unrequested glasses or accessories',
       characterize: 'reinterpret into an ultra-cute 2D Chibi/SD mascot with a big head, chubby body, and huge expressive eyes',
     }[photoReferenceMode];
 
     const photoAppearanceKo = {
-      exact: '참고 사진 속 대상과 95% 이상 극도로 닮게 이목구비와 비율을 사실적으로 재현',
-      features: '참고 사진의 핵심 시그니처 포인트(안경, 헤어, 특이점)만 강렬하게 추출하여 2D 벡터 아트 스타일로 정돈',
+      exact: '참고 사진 속 대상과 95% 이상 극도로 닮게 이목구비와 비율을 사실적으로 재현 (사진에 없는 안경/모자 등 임의 추가 금지)',
+      features: '참고 사진의 실제 시그니처 포인트(헤어, 이목구비, 의상)만 추출 (사진에 없는 안경/악세사리 임의 추가 금지)',
       characterize: '2.5등신 커다란 머리와 동통한 몸체의 극도로 귀여운 SD/Chibi 이모티콘 마스코트로 파격 변환',
     }[photoReferenceMode];
 
