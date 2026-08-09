@@ -1058,7 +1058,7 @@ ${artDirection}. 15개 셀 모두 같은 선, 질감, 색감과 캐릭터 비율
 ${panelPlan}
 
 [구도 및 배경]
-가로형 캔버스에 정확히 5열 3행으로 배치하세요. 동일한 크기의 셀 15개에 완전한 캐릭터 한 명씩 배치하고, 캐릭터·소품·효과·글자가 다른 셀을 침범하지 않게 하세요. 셀 번호와 경계선은 이미지에 그리지 마세요.
+가로형 캔버스에 정확히 5열 3행으로 배치하세요. 동일한 크기의 셀 15개에 완전한 캐릭터 한 명씩 배치하고, 캐릭터·소품·효과·글자가 다른 셀을 침범하지 않게 하세요. 셀 경계선, 구별선, 격자선(grid lines), 테두리선과 셀 번호는 이미지에 절대 그리지 마세요.
 ${getGptBackgroundInstruction()}
 
 [일관성]
@@ -1068,7 +1068,7 @@ ${getGptBackgroundInstruction()}
 ${textPolicy}
 
 [제외 조건]
-${textExclusion} 워터마크, 전체 프레임, 셀 안의 중복 캐릭터, 추가 팔다리, 잘린 신체, 복잡한 풍경과 실사 배경 금지.`;
+${textExclusion} 격자선, 셀 경계선, 구별선, 테두리선, 워터마크, 전체 프레임, 셀 안의 중복 캐릭터, 추가 팔다리, 잘린 신체, 복잡한 풍경과 실사 배경 금지.`;
     } else {
       const panelPlan = emoticons.map((phrase, index) => `Row ${Math.floor(index / 5) + 1}, Column ${index % 5 + 1}: "${phrase.trim()}"`).join('\n');
       const textPolicy = gptTextMode === 'text'
@@ -1100,7 +1100,7 @@ Preferred visual effects from the setup: ${character.effects}.
 ${panelPlan}
 
 [COMPOSITION AND BACKGROUND]
-Use one wide landscape canvas with exactly 5 columns and 3 rows. Create 15 equally sized cells and place exactly one complete character inside each cell. No character, prop, effect, or text may cross into another cell. Do not draw cell numbers or grid borders.
+Use one wide landscape canvas with exactly 5 columns and 3 rows. Create 15 equally sized cells and place exactly one complete character inside each cell. No character, prop, effect, or text may cross into another cell. Absolutely NO grid lines, NO cell division lines, NO border lines between cells, NO cell numbers.
 ${getGptBackgroundInstruction()}
 
 [CONSISTENCY]
@@ -1110,7 +1110,7 @@ All 15 cells must preserve the same face, body proportions, colors, outfit, and 
 ${textPolicy}
 
 [EXCLUDE]
-${textExclusion} No watermark, full-sheet frame, duplicate character inside a cell, extra limbs, cropped body, complex scenery, or photorealistic background.`;
+${textExclusion} No grid lines, no cell division lines, no border lines between cells, no cell frames, no watermark, no full-sheet frame, no duplicate character inside a cell, no extra limbs, no cropped body, no complex scenery, or photorealistic background.`;
     }
   };
 
@@ -1184,13 +1184,13 @@ ${panelPlan}
 Supporting props & sparkle effects: ${character.props}, ${character.effects}, cute heart/star accents.
 
 [CANVAS & GRID COMPOSITION]
-Landscape canvas with 5 columns and 3 rows (15 equal cells). Place exactly one complete full-body character inside each cell with generous spacing. Each character has a subtle crisp sticker die-cut white outline. Clean solid white background across the entire sheet. No grid lines or cell numbers.
+Landscape canvas with 5 columns and 3 rows (15 equal cells). Place exactly one complete full-body character inside each cell with generous spacing. Seamless solid white background sheet. Absolutely NO grid division lines, NO cell border lines, NO grid frames, NO lines separating cells, NO cell numbers. Each character has a subtle crisp sticker die-cut white outline.
 
 [TEXT POLICY]
 ${textPolicy}
 
 [DO NOT INCLUDE]
-${textExclusion} No watermark, outer frame, duplicate character inside a single cell, extra limbs, cropped body, half-body bust shot, dull background color, or photorealism.`;
+${textExclusion} No grid lines, no cell division lines, no border lines between cells, no cell frames, no watermark, no outer frame, no duplicate character inside a single cell, no extra limbs, no cropped body, no half-body bust shot, no dull background color, or photorealism.`;
   };
 
   const getGeminiRepairPrompt = (repairType) => {
