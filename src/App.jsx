@@ -214,7 +214,7 @@ const I18N = {
   }
 };
 
-const ADSENSE_CLIENT_ID = 'ca-pub-0000000000000000';
+const ADSENSE_CLIENT_ID = 'ca-pub-2418297087346563';
 const IS_AD_CONFIGURED = ADSENSE_CLIENT_ID !== 'ca-pub-0000000000000000';
 
 const AdBanner = () => {
