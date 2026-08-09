@@ -1124,115 +1124,108 @@ ${textExclusion} No watermark, full-sheet frame, duplicate character inside a ce
     const referenceInstruction = `${characterSource === 'photo' ? `Photo reference style: ${getPhotoModeLabel('en')}. ` : ''}${getReferenceImageInstruction('en')}`;
 
     if (geminiWorkflowStage === 'reference') {
-      return `[TASK]
-Create one definitive base character image for a consistent messenger sticker series. This image will be attached again as the immutable character reference for later variations.
+      return `[TASK: MASTER BASE CHARACTER REFERENCE]
+Create one definitive 2D master character reference sheet for a KakaoTalk / LINE sticker series. This image will serve as the exact visual model for all future variations.
 
-[SOURCE REFERENCE]
+[SOURCE PHOTO REFERENCE DIRECTION]
 ${referenceInstruction}
 
-[CHARACTER DESIGN]
-Subject: ${character.subject}
-Appearance: ${character.appearance}
-Personality: ${character.personality}
-Outfit: ${character.outfit}
-Art style: ${character.artStyle}
+[CHARACTER MODEL DESIGN]
+- Subject: ${character.subject}
+- Visual Details & Appearance: ${character.appearance}
+- Personality & Vibe: ${character.personality}
+- Signature Outfit: ${character.outfit}
 
-[OUTPUT]
-Square 1:1 canvas. Show exactly one complete character in a relaxed three-quarter standing pose with a friendly neutral expression. Keep the full body visible with at least 15% empty margin on every side. Use a simple solid background that clearly contrasts with the character.
+[ART STYLE & RENDERING]
+${character.artStyle}. High-end 2D vector sticker illustration, crisp clean linework, vibrant harmonious colors, soft cell shading, studio quality messenger sticker art.
 
-[LOCK FOR FUTURE IMAGES]
-Establish a distinctive and reproducible face, silhouette, body proportions, color palette, outfit, linework, and texture. Avoid details that would be difficult to reproduce consistently. This is the master design, not an action sticker.
+[COMPOSITION & POSE]
+Square 1:1 canvas. Show exactly one complete character standing in a friendly, relaxed 3/4 front pose with a clear neutral expression. Keep the full body visible with 15% margin on all sides. Use a clean, solid background with high contrast against the character.
+
+[LOCK IDENTITY]
+Establish a distinctive face shape, hair, eyes, body proportions, color palette, and outfit that can be perfectly replicated.
 
 [DO NOT INCLUDE]
-No text, letters, numbers, speech bubble, watermark, frame, duplicate character, extra limbs, cropped body, complex scenery, photorealistic background, or multiple design alternatives.`;
+No text, no letters, no words, no speech bubbles, no watermark, no frame, no duplicate characters, no extra limbs, no cropped limbs, no complex background, no photorealism.`;
     }
 
-    const lockedReferenceInstruction = `Attach the previously accepted base character image with this prompt. Treat that image as the immutable source of truth. This is a variation of the attached design, not a redesign. Preserve the exact face, silhouette, body proportions, colors, outfit, linework, and texture. If another source photo is also attached, use it only for identity details; the accepted base character image controls the illustration design.`;
+    const lockedReferenceInstruction = `Recreate the exact character from the attached base reference image. Preserve the identical facial features, body proportions, hair, outfit, color palette, and line weight. This is an action variation of the reference character.`;
 
     if (generationMode === 'individual' || hasPhraseOverride) {
       const textPolicy = geminiTextMode === 'text'
-        ? `Render the exact phrase "${targetPhrase}" once. Verify its spelling before rendering it, and integrate it as clear hand-drawn lettering without a text box. Do not add any other text.`
-        : `Do not render text, letters, numbers, or typography. Use "${targetPhrase}" only as visual context.`;
+        ? `Render the exact phrase "${targetPhrase}" once in clear hand-drawn lettering integrated into the sticker design. No text box.`
+        : `Do not render text, letters, or numbers. Use the mood of "${targetPhrase}" solely for expression and pose.`;
       const textExclusion = geminiTextMode === 'text'
-        ? 'No extra words, altered spelling, random letters, numbers, quotation marks, or text box.'
+        ? 'No extra words, altered spelling, random letters, numbers, or text box.'
         : 'No text, letters, numbers, typography, or meaningless symbols.';
 
-      return `[GOAL]
-Create one high-quality personal messenger sticker that communicates the situation immediately.
+      return `[TASK: EXPRESSIVE MESSENGER STICKER VARIATION]
+Generate one high-quality, expressive 2D messenger sticker based on the attached reference character.
 
-[REFERENCE IMAGE]
+[REFERENCE MATCHING]
 ${referenceInstruction}
 ${lockedReferenceInstruction}
 
-[CHARACTER IDENTITY — LOCKED]
+[CHARACTER IDENTITY]
 Subject: ${character.subject}
 Appearance: ${character.appearance}
-Personality: ${character.personality}
 Outfit: ${character.outfit}
 
-[ART DIRECTION — HIGHEST PRIORITY]
-${character.artStyle}. Keep the same linework, texture, color treatment, and proportions throughout.
+[ART DIRECTION]
+${character.artStyle}. Crisp 2D vector sticker art, clean outlines, vibrant colors.
 
-[SCENE]
-Phrase context: "${targetPhrase}"
-Infer one unmistakable facial expression and one clear full-body pose from this phrase. Use at most one supporting prop and one simple comic effect. Do not reuse a neutral standing pose.
-Preferred prop or action from the setup: ${character.props}.
-Preferred visual effect from the setup: ${character.effects}.
+[SCENE & EXPRESSION]
+- Target Phrase Context: "${targetPhrase}"
+- Facial Expression: Highly expressive, unmistakable facial emotion matching "${targetPhrase}".
+- Body Pose: Energetic, full-body action pose corresponding to "${targetPhrase}". Do not use a static pose.
+- Props & Effects: ${character.props}, ${character.effects}.
 
 [COMPOSITION]
-Square 1:1 canvas. Exactly one complete, centered character. Keep the full body visible with at least 12% empty margin on every side. Use one solid background color that strongly contrasts with the character. No background color may bleed into the outline.
-
-[CONSISTENCY]
-Preserve the attached base character exactly. Change only the expression, pose, supporting prop, and effect required for this scene. Before rendering, silently verify that the face, silhouette, colors, outfit, and art style still match the reference.
+Square 1:1 canvas. Exactly one complete centered character with 12% margin. Solid high-contrast background.
 
 [TEXT POLICY]
 ${textPolicy}
 
 [EXCLUDE]
-${textExclusion} No watermark, frame, duplicate character, extra limbs, cropped body, complex scenery, or photorealistic background.`;
+${textExclusion} No watermark, frame, duplicate character, extra limbs, cropped body, complex background, or photorealism.`;
     }
 
     const panelPlan = emoticons.map((phrase, index) => `Panel ${index + 1}: "${phrase.trim()}"`).join('\n');
     const textPolicy = geminiTextMode === 'text'
-      ? 'Render each quoted phrase exactly once in its corresponding panel. Verify every phrase before rendering it. Use consistent, legible hand-drawn lettering and do not add any other text.'
-      : 'Do not render any phrase or other text. Use each quoted phrase only as context for its panel\'s expression, pose, and action.';
+      ? 'Render each quoted phrase exactly once in its corresponding panel in clean hand-drawn lettering.'
+      : 'Do not render any text, letters, or numbers. Use each phrase only as context for expression and pose.';
     const textExclusion = geminiTextMode === 'text'
       ? 'No extra words, altered spelling, random letters, panel numbers, quotation marks, or text boxes.'
       : 'No text, letters, numbers, typography, panel labels, or meaningless symbols.';
 
-    return `[GOAL]
-Create one high-quality draft sheet containing 15 clearly separated messenger sticker variations of the same character.
+    return `[TASK: 15-PANEL MESSENGER STICKER DRAFT SHEET]
+Create a master draft sheet containing 15 distinct 2D messenger sticker variations of the attached reference character.
 
-[REFERENCE IMAGE]
+[REFERENCE MATCHING]
 ${referenceInstruction}
 ${lockedReferenceInstruction}
 
-[CHARACTER IDENTITY — LOCKED]
+[CHARACTER IDENTITY]
 Subject: ${character.subject}
 Appearance: ${character.appearance}
-Personality: ${character.personality}
 Outfit: ${character.outfit}
 
-[ART DIRECTION — HIGHEST PRIORITY]
-${character.artStyle}. Apply identical linework, texture, color treatment, and character proportions to every panel.
+[ART DIRECTION]
+${character.artStyle}. Consistent 2D vector sticker illustration style, identical linework, texture, and colors across all 15 panels.
 
-[PANEL PLAN]
-For every phrase, infer one unmistakable facial expression and one distinct full-body pose. Use at most one supporting prop and one simple comic effect per panel. Do not repeat a pose.
-Preferred props or actions from the setup: ${character.props}.
-Preferred visual effects from the setup: ${character.effects}.
+[15 PANEL EXPRESSIONS & POSES]
+Infer a unique, highly expressive facial emotion and dynamic pose for each panel:
 ${panelPlan}
+Supporting props & effects: ${character.props}, ${character.effects}.
 
-[COMPOSITION]
-Use one wide landscape canvas with exactly 5 columns and 3 rows. Create 15 equally sized cells with generous spacing. Place exactly one complete character inside each cell. No character, prop, effect, or text may cross into another cell. Keep every body fully visible and use one solid, high-contrast background across the entire canvas.
-
-[CONSISTENCY]
-All 15 panels must match the attached base character and each other. Preserve the exact face, silhouette, body proportions, colors, outfit, linework, and texture. Change only the expression, pose, supporting prop, and effect required by each phrase. Treat this sheet as a composition draft; create final assets one at a time from the same attached base image.
+[GRID COMPOSITION]
+Landscape canvas with 5 columns and 3 rows (15 equal cells). Place exactly one complete character inside each cell with generous spacing. No element may cross cell borders. Solid uniform high-contrast background across the sheet.
 
 [TEXT POLICY]
 ${textPolicy}
 
 [EXCLUDE]
-${textExclusion} No watermark, frame around the full sheet, duplicate character inside a cell, extra limbs, cropped body, complex scenery, or photorealistic background.`;
+${textExclusion} No watermark, outer frame, duplicate character inside a single cell, extra limbs, cropped body, or photorealism.`;
   };
 
   const getGeminiRepairPrompt = (repairType) => {
