@@ -45,7 +45,7 @@
   }
   
   .shadow-bubbly {
-    box-shadow: 0 8px 24px rgba(118, 205, 179, 0.18), 0 4px 8px rgba(118, 205, 179, 0.1);
+    box-shadow: 0 8px 24px rgba(166, 227, 208, 0.14), 0 4px 8px rgba(166, 227, 208, 0.08);
   }
 
   .interactive-control {
@@ -55,7 +55,7 @@
   @media (hover: hover) and (pointer: fine) {
     .interactive-control:hover {
       transform: translateY(-2px);
-      box-shadow: 0 8px 18px rgba(24, 79, 67, 0.16);
+      box-shadow: 0 6px 16px rgba(44, 97, 84, 0.12);
     }
   }
 
