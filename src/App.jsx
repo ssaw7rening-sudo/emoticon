@@ -764,8 +764,8 @@ function App() {
 
     const modeInstructions = {
       exact: {
-        ko: '[최대한 실물 닮게 - High Fidelity] 사진 속 대상의 실제 얼굴 비율, 눈·코·입 생김새, 헤어스타일, 털색/무늬, 실물 인상을 95% 이상 극도로 사실적이고 정교하게 그대로 유지해주세요. 과도한 만화적 변형(데포르메)을 피하고 실물과 거의 동일한 이목구비와 인상을 재현하세요.',
-        en: '[HIGH LIKENESS FIDELITY] Preserve the subject\'s exact facial structure, eye/nose/mouth shapes, hairstyle, skin/fur tone, and real-life features with 95%+ visual similarity. Avoid heavy cartoonization or chibi proportions. Maintain strong realistic resemblance.',
+        ko: '[최대한 실물 닮게 - High Fidelity Photo Caricature] 첨부한 인물 사진의 실물 얼굴, 헤어스타일, 이목구비 생김새, 피부 톤과 실제 옷 질감을 95% 이상 극도로 비슷하게 유지한 실사 사진 기반 캐리커처 짤 스티커로 제작해주세요. 2D 그림체로 그리지 말고, 실제 사진 속 인물의 얼굴과 피부 질감을 그대로 살린 사진 cutout 캐리커처 스티커 스타일을 적용하세요.',
+        en: '[HIGH-FIDELITY REALISTIC PHOTO CARICATURE] Create a photo-realistic caricature cutout sticker preserving 95%+ exact visual resemblance to the attached person photo. Do NOT render as a 2D vector cartoon. Preserve real photographic face texture, skin tone, hairstyle, and authentic outfit texture, stylized into a high-end photo cutout sticker.',
       },
       features: {
         ko: '[핵심 특징만 포인트 반영 - Signature Feature Extraction] 사진에서 가장 대표적인 아이코닉 요소(안경, 특이한 헤어스타일, 점, 고유 표정, 의상 포인트)만 뚜렷하게 추출하여 캐릭터에 합성해주세요. 전체 조형은 감각적이고 깔끔한 2D 벡터 일러스트 스타일로 정돈하되 핵심 포인트만 강렬하게 살려주세요.',
@@ -1123,7 +1123,7 @@ ${textExclusion} No grid lines, no cell division lines, no border lines between 
     const referenceInstruction = `${characterSource === 'photo' ? `Photo reference style: ${getPhotoModeLabel('en')}. ` : ''}${getReferenceImageInstruction('en')}`;
 
     const geminiProportions = characterSource === 'photo' ? {
-      exact: 'High-fidelity realistic 2D vector proportions matching the reference photo accurately, with natural facial structure and realistic feature detail.',
+      exact: 'High-fidelity photo-realistic caricature cutout sticker style matching the attached reference photo accurately, with real photographic face texture, hair, skin tone, and authentic outfit details. Do NOT render as 2D vector cartoon.',
       features: 'Stylish 2D graphic vector illustration with clean stylized proportions, extracting iconic signature features (hair, glasses, distinct traits).',
       characterize: 'Adorable 2.5-head Chibi SD manga/anime mascot proportion with a big round head, huge sparkling expressive eyes, chubby cheeks, and soft glossy hair highlights.',
     }[photoReferenceMode] : 'Adorable 2.5-head Chibi SD manga/anime mascot proportion with a big round head, huge sparkling expressive eyes, chubby cheeks, and soft glossy hair highlights.';
