@@ -1358,6 +1358,20 @@ ${textExclusion} No watermark, outer frame, duplicate character inside a single 
               value={charManual}
               onChange={(e) => setCharManual(e.target.value)}
             />
+
+            {!charManual.trim() && (
+              <div className="mt-3 bg-mint-soft border border-mint-border rounded-2xl p-3.5 flex items-start gap-2.5 text-[13px] text-mint-strong">
+                <span className="text-[16px] leading-none shrink-0 mt-0.5">💡</span>
+                <div className="leading-relaxed">
+                  <strong className="font-bold">{lang === 'ko' ? '캐릭터 미설정 시 기본 동작' : 'Default Character Setting'}</strong>
+                  <p className="mt-0.5 opacity-95">
+                    {lang === 'ko' 
+                      ? '설정을 비워두셔도 AI가 가장 귀엽고 표정이 풍부한 2D 오리지널 캐릭터(기본 의상/화풍)를 자동으로 완성해 드립니다.' 
+                      : 'Leaving this empty automatically generates a cute, highly expressive 2D original character by default.'}
+                  </p>
+                </div>
+              </div>
+            )}
             
             <div className="mt-md bg-surface-container-highest rounded-[24px] overflow-hidden">
               <div className="no-scrollbar flex flex-wrap bg-[#EAF8F3] px-2 border-b border-mint-border">
