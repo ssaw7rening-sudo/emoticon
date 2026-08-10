@@ -1558,8 +1558,8 @@ function App() {
 
     const modeInstructions = {
       exact: {
-        ko: '[최대한 실물 닮게 - High Fidelity Photo Caricature] 첨부한 인물 사진의 실물 얼굴, 헤어스타일, 이목구비 생김새, 피부 톤과 실제 옷 질감을 95% 이상 극도로 비슷하게 유지한 실사 사진 기반 캐리커처 짤 스티커로 제작해주세요. 2D 그림체로 그리지 말고, 실제 사진 속 인물의 얼굴과 피부 질감을 그대로 살린 사진 cutout 캐리커처 스티커 스타일을 적용하세요.',
-        en: '[HIGH-FIDELITY REALISTIC PHOTO CARICATURE] Create a photo-realistic caricature cutout sticker preserving 95%+ exact visual resemblance to the attached person photo. Do NOT render as a 2D vector cartoon. Preserve real photographic face texture, skin tone, hairstyle, and authentic outfit texture, stylized into a high-end photo cutout sticker.',
+        ko: '[최대한 실물 닮게 - High Fidelity Photo Caricature] 첨부한 인물 사진의 실물 이목구비(눈 모양, 무쌍/쌍꺼풀, 콧대, 입술, 턱선), 헤어스타일, 피부 톤과 의상을 100% 동일하게 유지한 실사 사진 기반 캐리커처 짤 스티커로 제작해주세요. 2D 캐릭터나 만화 그림체로 변형하지 말고, 실제 사진 속 인물의 실사 얼굴 이목구비와 피부 질감을 100% 그대로 보존하세요.',
+        en: '[HIGH-FIDELITY REALISTIC PHOTO CARICATURE - EXACT FACE RETENTION] Create a photo-realistic caricature cutout sticker preserving 100% exact facial features, eye shape, nose bridge, lip shape, facial structure, skin texture, hairstyle, and outfit from the attached reference photo. Do NOT render as a 2D vector cartoon. Preserve authentic photographic facial likeness on every sticker.',
       },
       features: {
         ko: '[핵심 특징만 포인트 반영 - Soft 3D Stylized Avatar] 사진에서 실제 존재하는 시그니처 포인트(헤어스타일, 이목구비, 의상 등 사진에 실제로 있는 특징만)를 강렬하게 살린 소프트 3D 아바타 일러스트 캐릭터 짤 스티커로 제작해주세요. 원본 사진에 없는 안경이나 모자 등 가짜 악세사리를 절대 추가하지 마세요. 평면 2D 선화가 아닌, 3D 입체 헤어 결, 매끄러운 3D 피부 질감, 소프트 조명이 느껴지는 고급스러운 반실사 3D 캐릭터 스타일을 적용하세요.',
@@ -1595,9 +1595,13 @@ function App() {
 
   const getGeminiStyleTags = () => {
     const selectedArtStyle = getSelectedArtStyle();
-    return selectedArtStyle
-      ? `${selectedArtStyle}; treat this selected art style as the highest-priority visual direction`
-      : 'cute, approachable, high-quality 2D messenger sticker illustration with clean outlines and harmonious colors';
+    if (selectedArtStyle) return `${selectedArtStyle}; treat this selected art style as the highest-priority visual direction`;
+    if (characterSource === 'photo') {
+      if (photoReferenceMode === 'exact') return 'High-fidelity realistic photo caricature sticker style preserving 100% exact facial identity, eye shape, nose structure, lip line, facial structure, skin texture, and hairstyle from the reference photo; do not alter facial features';
+      if (photoReferenceMode === 'features') return 'Semi-realistic 3D character avatar sticker style capturing authentic signature facial features, hair, and outfit from the reference photo';
+      return 'Cute 2.5-head Chibi SD mascot sticker style inspired by the reference photo';
+    }
+    return 'cute, approachable, high-quality 2D messenger sticker illustration with clean outlines and harmonious colors';
   };
 
   const getSelectedCharacterRoles = () => {
