@@ -2652,6 +2652,15 @@ ${textExclusion} No guide lines, no grid lines, no cell dividers, no border line
                     ? '注意: 请避免人物太小、模糊或过暗的照片。'
                     : 'Avoid: Blurry, dark, or zoomed-out photos'}
                 </li>
+                <li>
+                  {lang === 'ko' 
+                    ? '💡 실물 싱크로율 100% 꿀팁: 15종 시트는 포즈/구도 초안용으로 사용하고, 최종 완성품은 [📋 15종 개별 분할] 모드에서 1장씩 생성하기 (AI가 오직 1명의 이목구비에만 100% 집중하여 사진과 똑같이 생성됨)' 
+                    : lang === 'ja'
+                    ? '💡 再現度100%のコツ: 全体シートは構図案として使い、仕上げは[15種個別分割]で1枚ずつ生成（AIが1人の顔に100%集中して写真そっくりに生成）'
+                    : lang === 'zh'
+                    ? '💡 100%还原技巧: 整页作为姿态草稿，最终成品使用[15种单张拆分]模式逐张生成（AI将100%专注于单张面部，精准还原特征）'
+                    : '💡 100% Likeness Tip: Use Full Sheet as a pose draft, then generate final stickers one by one with [Batch Split] (AI focuses 100% on a single face for accurate likeness).'}
+                </li>
               </ul>
             </div>
           </div>
