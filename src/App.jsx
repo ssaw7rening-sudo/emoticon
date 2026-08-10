@@ -723,22 +723,22 @@ const InfoSection = ({ t, lang }) => {
         </h2>
         
         {/* 탭 헤더 */}
-        <div className="flex flex-wrap gap-2 bg-mint-soft p-1.5 rounded-2xl border border-mint-border shadow-sm w-full lg:w-auto">
+        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar bg-mint-soft p-1.5 rounded-xl sm:rounded-2xl border border-mint-border shadow-xs w-full lg:w-auto flex-nowrap shrink-0">
           <button 
             onClick={() => setActiveTab('model')}
-            className={`interactive-control whitespace-nowrap flex-shrink-0 px-4 py-1.5 text-[14px] font-bold rounded-full ${activeTab === 'model' ? 'bg-mint text-mint-strong shadow-sm border border-mint-border' : 'text-mint-strong hover:bg-mint-hover'}`}
+            className={`interactive-control whitespace-nowrap flex-none px-3.5 py-1.5 text-[13px] sm:text-[14px] font-bold rounded-lg sm:rounded-full ${activeTab === 'model' ? 'bg-mint text-mint-strong shadow-xs border border-mint-border' : 'text-mint-strong hover:bg-mint-hover'}`}
           >
             🤖 ChatGPT vs Gemini
           </button>
           <button 
             onClick={() => setActiveTab('bg')}
-            className={`interactive-control whitespace-nowrap flex-shrink-0 px-4 py-1.5 text-[14px] font-bold rounded-full ${activeTab === 'bg' ? 'bg-mint text-mint-strong shadow-sm border border-mint-border' : 'text-mint-strong hover:bg-mint-hover'}`}
+            className={`interactive-control whitespace-nowrap flex-none px-3.5 py-1.5 text-[13px] sm:text-[14px] font-bold rounded-lg sm:rounded-full ${activeTab === 'bg' ? 'bg-mint text-mint-strong shadow-xs border border-mint-border' : 'text-mint-strong hover:bg-mint-hover'}`}
           >
             {gt.tabBg}
           </button>
           <button 
             onClick={() => setActiveTab('usage')}
-            className={`interactive-control whitespace-nowrap flex-shrink-0 px-4 py-1.5 text-[14px] font-bold rounded-full ${activeTab === 'usage' ? 'bg-mint text-mint-strong shadow-sm border border-mint-border' : 'text-mint-strong hover:bg-mint-hover'}`}
+            className={`interactive-control whitespace-nowrap flex-none px-3.5 py-1.5 text-[13px] sm:text-[14px] font-bold rounded-lg sm:rounded-full ${activeTab === 'usage' ? 'bg-mint text-mint-strong shadow-xs border border-mint-border' : 'text-mint-strong hover:bg-mint-hover'}`}
           >
             {gt.tabUsage}
           </button>
@@ -746,7 +746,7 @@ const InfoSection = ({ t, lang }) => {
       </div>
 
       {/* 탭 콘텐츠 */}
-      <div className="bg-surface-container-lowest rounded-3xl p-md shadow-bubbly border border-outline-variant">
+      <div className="bg-surface-container-lowest rounded-2xl sm:rounded-3xl p-3.5 sm:p-md shadow-bubbly border border-outline-variant">
         <div className="min-h-[250px]">
         {activeTab === 'model' && (
           <div className="animate-in fade-in slide-in-from-bottom-2 duration-300 flex flex-col gap-4 mt-2">
@@ -1724,9 +1724,11 @@ ${textExclusion} No guide lines, no grid lines, no cell dividers, no border line
   return (
     <div className="font-body-md text-body-md antialiased pb-32 overflow-x-hidden max-w-full w-full">
       {/* TopAppBar */}
-      <header className="w-full top-0 bg-background flex items-center justify-between px-2.5 sm:px-gutter min-h-14 py-2 max-w-7xl mx-auto z-40 sticky shadow-sm md:shadow-none overflow-hidden">
+      <header className="w-full top-0 bg-background/95 backdrop-blur-md flex items-center justify-between px-3 sm:px-gutter min-h-14 py-2 max-w-7xl mx-auto z-50 sticky border-b border-outline-variant/30 shadow-xs overflow-hidden">
         <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
-          <h1 className="font-headline-md text-[16px] xs:text-[18px] sm:text-[22px] leading-none font-bold text-primary-strong tracking-tight whitespace-nowrap">{t.title}</h1>
+          <h1 className="font-headline-md text-[16px] xs:text-[18px] sm:text-[22px] leading-none font-bold text-primary-strong tracking-tight whitespace-nowrap">
+            Prompt Studio
+          </h1>
         </div>
         <div className="flex items-center gap-1 sm:gap-2 shrink-0">
           <button 
@@ -1772,7 +1774,7 @@ ${textExclusion} No guide lines, no grid lines, no cell dividers, no border line
 
       <main className="max-w-3xl mx-auto px-container-margin mt-md md:mt-xl flex flex-col gap-lg md:gap-xl">
         {/* App Intro Hero Section */}
-        <section className="relative overflow-hidden bg-gradient-to-br from-[#FFD3B6] via-[#FFE8B6] to-[#FFC2C2] text-[#5C3A21] p-4 sm:p-6 md:p-xl rounded-[28px] sm:rounded-[32px] md:rounded-[40px] shadow-bubbly text-center flex flex-col items-center justify-center gap-3 sm:gap-4 md:gap-6 border-4 border-white max-w-full w-full">
+        <section className="relative overflow-hidden bg-gradient-to-br from-[#FFD3B6] via-[#FFE8B6] to-[#FFC2C2] text-[#5C3A21] p-4 sm:p-6 md:p-xl rounded-2xl sm:rounded-3xl md:rounded-[36px] shadow-bubbly text-center flex flex-col items-center justify-center gap-3 sm:gap-4 md:gap-6 border-2 sm:border-4 border-white max-w-full w-full">
           {/* Decorative floating emojis */}
           <div className="absolute top-6 left-8 hidden sm:block text-[40px] transform -rotate-12 drop-shadow-md">✨</div>
           <div className="absolute bottom-8 left-12 hidden sm:block text-[48px] transform rotate-12 drop-shadow-md">🎨</div>
@@ -1864,7 +1866,7 @@ ${textExclusion} No guide lines, no grid lines, no cell dividers, no border line
             />
 
             {!charManual.trim() && (
-              <div className="mt-3 bg-mint-soft border border-mint-border rounded-2xl p-3.5 flex items-start gap-2.5 text-[13px] text-mint-strong">
+              <div className="mt-3 bg-mint-soft border border-mint-border rounded-xl sm:rounded-2xl p-3 sm:p-3.5 flex items-start gap-2.5 text-[13px] text-mint-strong">
                 <span className="text-[16px] leading-none shrink-0 mt-0.5">💡</span>
                 <div className="leading-relaxed">
                   <strong className="font-bold">
@@ -2216,26 +2218,67 @@ ${textExclusion} No guide lines, no grid lines, no cell dividers, no border line
         
         <AdBanner />
 
-        <div className="bg-[#FFF5E6] text-[#8C3D18] p-5 md:p-6 rounded-[24px] border border-[#FDE0B5] flex gap-3 md:gap-4 items-start shadow-sm mt-2 relative overflow-hidden">
-          <div className="absolute -right-4 -top-6 text-[#FCD3A1] opacity-40 text-[140px] transform -rotate-12 select-none pointer-events-none drop-shadow-sm">📸</div>
-          <span className="text-[22px] drop-shadow-sm leading-none mt-0.5 relative z-10">📸</span>
-          <div className="relative z-10 flex-1">
-            <strong className="font-black block mb-2 text-[16px] md:text-[17px] tracking-tight text-[#C2410C]">
-              {lang === 'ko' ? '✨ 초강력 꿀팁: 사진 첨부로 세상에 하나뿐인 이모티콘 만들기!' : '✨ Pro Tip: Make Emojis from Photos!'}
+        <div className="bg-[#FFF5E6] text-[#8C3D18] p-4 sm:p-5 md:p-6 rounded-2xl sm:rounded-[24px] border border-[#FDE0B5] flex gap-3 md:gap-4 items-start shadow-sm mt-2 relative overflow-hidden">
+          <div className="absolute -right-4 -top-6 text-[#FCD3A1] opacity-40 text-[120px] sm:text-[140px] transform -rotate-12 select-none pointer-events-none drop-shadow-sm">📸</div>
+          <span className="text-[20px] sm:text-[22px] drop-shadow-sm leading-none mt-0.5 relative z-10">📸</span>
+          <div className="relative z-10 flex-1 min-w-0">
+            <strong className="font-black block mb-1.5 sm:mb-2 text-[15px] sm:text-[17px] tracking-tight text-[#C2410C]">
+              {lang === 'ko' 
+                ? '✨ 초강력 꿀팁: 사진 첨부로 세상에 하나뿐인 이모티콘 만들기!' 
+                : lang === 'ja'
+                ? '✨ 超強力なコツ: 写真添付で世界にひとつだけのスタンプ作成！'
+                : lang === 'zh'
+                ? '✨ 超实用技巧: 附带照片制作独一无二的表情包！'
+                : '✨ Pro Tip: Make Emojis from Photos!'}
             </strong>
-            <span className="text-[14.5px] leading-relaxed opacity-90 break-keep block font-medium mb-4 pr-8 md:pr-16 text-[#8C3D18]">
+            <span className="text-[13px] sm:text-[14.5px] leading-relaxed opacity-90 [word-break:break-word] block font-medium mb-3 sm:mb-4 pr-4 sm:pr-16 text-[#8C3D18]">
               {lang === 'ko' 
                 ? '이 프롬프트를 복사해서 AI(ChatGPT, Gemini)에 붙여넣을 때, 본인이나 우리 아이, 반려동물의 사진을 함께 첨부해 보세요. 대상을 똑닮은 완벽한 커스텀 이모티콘 시트가 만들어집니다!' 
+                : lang === 'ja'
+                ? 'このプロンプトをコピーしてAI(ChatGPT, Gemini)に貼り付ける際、ご自身や子ども、ペットの写真も一緒に添付してみてください。そっくりなカスタムスタンプシートが作れます！'
+                : lang === 'zh'
+                ? '将此提示词复制粘贴给AI (ChatGPT, Gemini) 时，可以同时发送您自己、孩子或宠物的照片。AI将完美还原特征，生成独一无二的专属表情包！'
                 : 'When pasting this prompt into AI (ChatGPT, Gemini), attach a photo of yourself, your child, or your pet. It will generate a custom emoji sheet!'}
             </span>
-            <div className="bg-white/60 rounded-[18px] p-4 border border-[#FCD3A1]/60 shadow-sm flex flex-col gap-2 w-full">
-              <strong className="text-[#C2410C] text-[14.5px] flex items-center gap-1.5 font-bold">
-                <span className="text-[16px]">📌</span> {lang === 'ko' ? 'LLM 첨부 사진 권장 규칙' : 'Recommended Photo Specs'}
+            <div className="bg-white/60 rounded-xl sm:rounded-[18px] p-3 sm:p-4 border border-[#FCD3A1]/60 shadow-sm flex flex-col gap-1.5 sm:gap-2 w-full">
+              <strong className="text-[#C2410C] text-[13.5px] sm:text-[14.5px] flex items-center gap-1.5 font-bold">
+                <span className="text-[15px] sm:text-[16px]">📌</span> 
+                {lang === 'ko' 
+                  ? 'LLM 첨부 사진 권장 규칙' 
+                  : lang === 'ja'
+                  ? 'LLM添付写真の推奨ルール'
+                  : lang === 'zh'
+                  ? 'LLM照片上传建议'
+                  : 'Recommended Photo Specs'}
               </strong>
-              <ul className="list-disc pl-5 opacity-90 text-[#9A3412] font-medium flex flex-col gap-1.5 mt-1 text-[13.5px] marker:text-[#C2410C]">
-                <li>{lang === 'ko' ? '크기/비율: 제한 없음 (일반적인 스마트폰 사진 포맷 가능)' : 'Size/Ratio: Any standard photo format'}</li>
-                <li>{lang === 'ko' ? '권장: 이목구비, 헤어스타일, 모색 등 특징이 선명한 정면 사진 1장' : 'Recommended: Clear front-facing photo showing distinct features'}</li>
-                <li>{lang === 'ko' ? '주의: 인물이 너무 작거나 흔들리고 어두운 사진은 피해주세요.' : 'Avoid: Blurry, dark, or zoomed-out photos'}</li>
+              <ul className="list-disc pl-4 sm:pl-5 opacity-90 text-[#9A3412] font-medium flex flex-col gap-1 sm:gap-1.5 mt-0.5 sm:mt-1 text-[12.5px] sm:text-[13.5px] marker:text-[#C2410C] [word-break:break-word]">
+                <li>
+                  {lang === 'ko' 
+                    ? '크기/비율: 제한 없음 (일반적인 스마트폰 사진 포맷 가능)' 
+                    : lang === 'ja'
+                    ? 'サイズ/比率: 制限なし (標準的なスマホ写真フォーマット可能)'
+                    : lang === 'zh'
+                    ? '尺寸/比例: 不限（标准手机照片格式均可）'
+                    : 'Size/Ratio: Any standard photo format'}
+                </li>
+                <li>
+                  {lang === 'ko' 
+                    ? '권장: 이목구비, 헤어스타일, 모색 등 특징이 선명한 정면 사진 1장' 
+                    : lang === 'ja'
+                    ? '推奨: 目鼻立ち、ヘアスタイル、毛色などの特徴が鮮明な正面写真1枚'
+                    : lang === 'zh'
+                    ? '建议: 正面清晰照片1张（五官、发型、毛色等特征明显）'
+                    : 'Recommended: Clear front-facing photo showing distinct features'}
+                </li>
+                <li>
+                  {lang === 'ko' 
+                    ? '주의: 인물이 너무 작거나 흔들리고 어두운 사진은 피해주세요.' 
+                    : lang === 'ja'
+                    ? '注意: 人物が小さすぎる、ブレている、暗すぎる写真は避けてください。'
+                    : lang === 'zh'
+                    ? '注意: 请避免人物太小、模糊或过暗的照片。'
+                    : 'Avoid: Blurry, dark, or zoomed-out photos'}
+                </li>
               </ul>
             </div>
           </div>
