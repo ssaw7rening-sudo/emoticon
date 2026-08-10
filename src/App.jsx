@@ -1638,7 +1638,7 @@ ${textExclusion} No guide lines, no grid lines, no cell dividers, no border line
                 type="text" 
                 value={text}
                 onChange={(e) => handleEmoticonChange(idx, e.target.value)}
-                className={`interactive-control w-full h-[48px] bg-mint-soft rounded-full px-2 text-center text-mint-strong font-label-md placeholder:text-on-secondary-container focus:outline-none focus:ring-2 focus:ring-mint-strong border border-mint-border ${
+                className={`interactive-control w-full h-[48px] bg-mint-soft rounded-full px-1.5 sm:px-3 text-center text-mint-strong text-[12px] sm:text-[14px] font-bold tracking-tight placeholder:text-on-secondary-container focus:outline-none focus:ring-2 focus:ring-mint-strong border border-mint-border text-ellipsis overflow-hidden whitespace-nowrap ${
                   idx === emoticons.length - 1
                     ? 'col-span-2 max-w-[calc(50%_-_6px)] justify-self-center sm:col-span-1 sm:max-w-none'
                     : ''

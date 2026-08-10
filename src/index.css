@@ -36,6 +36,9 @@
     min-height: max(884px, 100dvh);
     background-color: theme('colors.background');
     color: theme('colors.on-surface');
+    font-family: 'Paperlogy', -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Meiryo", "PingFang SC", "Microsoft YaHei", "Noto Sans CJK JP", "Noto Sans CJK SC", sans-serif;
+    word-break: break-word;
+    overflow-wrap: break-word;
   }
 }
 
