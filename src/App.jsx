@@ -1445,6 +1445,7 @@ function App() {
   const [gptTextMode, setGptTextMode] = useState('text');
   const [gptBackgroundMode, setGptBackgroundMode] = useState('transparent');
   const [geminiTextMode, setGeminiTextMode] = useState('visual');
+  const [geminiBackgroundMode, setGeminiBackgroundMode] = useState('transparent');
 
   const changeLanguage = (newLang) => {
     if (newLang === lang) return;
@@ -1692,6 +1693,15 @@ function App() {
     return instructions[gptBackgroundMode][lang === 'ko' ? 'ko' : 'en'];
   };
 
+  const getGeminiBackgroundInstruction = () => {
+    const instructions = {
+      transparent: 'Clean solid white background with a subtle crisp sticker die-cut white outline.',
+      solid: 'One clean solid background color with strong contrast against the character. No gradient, texture, or background objects.',
+      chroma: 'Solid bright green #00FF00 chroma-key background for easy background removal. No green spill on the character outline.',
+    };
+    return instructions[geminiBackgroundMode] || instructions.transparent;
+  };
+
   const getPromptValidationError = (phraseOverride = null) => {
     if (generationMode === 'individual' || phraseOverride !== null) {
       const targetPhrase = generationMode === 'individual' ? individualPhrase.trim() : phraseOverride.trim();
@@ -1932,7 +1942,7 @@ ${character.artStyle}. ${geminiProportions} Clean crisp vector outlines, vibrant
 - Supporting Props & Sparkle Effects: ${character.props}, ${character.effects}, cute little accents.
 
 [CANVAS & COMPOSITION]
-Square 1:1 canvas. Exactly one complete centered full-body character visible from head to toe with 15% margin on all sides. Clean solid white background with a subtle crisp sticker die-cut white outline.
+Square 1:1 canvas. Exactly one complete centered full-body character visible from head to toe with 15% margin on all sides. ${getGeminiBackgroundInstruction()}
 
 [TEXT POLICY]
 ${textPolicy}
@@ -1966,8 +1976,8 @@ For each sticker, infer a unique, highly expressive facial emotion and a DYNAMIC
 ${panelPlan}
 Supporting props & sparkle effects: ${character.props}, ${character.effects}, cute accents.
 
-[CANVAS & LAYOUT — SEAMLESS WHITE SHEET]
-Single continuous pure white background sheet. Arrange all 15 full-body stickers floating freely with generous spacing. Each character has a subtle crisp sticker die-cut white outline. Pure blank white background across the entire canvas. Absolutely NO guide lines, NO grid lines, NO cell borders, NO table lines, NO dividing lines, NO crop marks, NO bounding boxes, NO sticker numbers.
+[CANVAS & LAYOUT]
+Arrange all 15 full-body stickers floating freely with generous spacing. Each character has a subtle crisp sticker die-cut white outline. ${getGeminiBackgroundInstruction()} Absolutely NO guide lines, NO grid lines, NO cell borders, NO table lines, NO dividing lines, NO crop marks, NO bounding boxes, NO sticker numbers.
 
 [TEXT POLICY]
 ${textPolicy}
@@ -2422,7 +2432,10 @@ ${textExclusion} No guide lines, no grid lines, no cell dividers, no border line
                 </div>
               </div>
               <div className="flex flex-col gap-2 border-t border-[#E9DFC5] pt-3">
-                <div className="flex flex-col gap-0.5"><div className="flex flex-col gap-0.5"><span className="text-[13px] font-bold text-[#795B16]">{t.geminiRepairTitle}</span><span className="text-[12px] font-medium text-[#8A661C] leading-snug">{t.repairHelp}</span></div><span className="text-[12px] font-medium text-[#8A661C] leading-snug">{t.repairHelp}</span></div>
+                <div className="flex flex-col gap-0.5">
+                  <span className="text-[13px] font-bold text-[#795B16]">{t.geminiRepairTitle}</span>
+                  <span className="text-[12px] font-medium text-[#8A661C] leading-snug">{t.repairHelp}</span>
+                </div>
                 <div className="grid grid-cols-1 min-[430px]:grid-cols-3 gap-2">
                   {[
                     ['identity', t.geminiRepairIdentity],
@@ -2468,8 +2481,35 @@ ${textExclusion} No guide lines, no grid lines, no cell dividers, no border line
                   ))}
                 </div>
               </div>
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                <span className="text-[13px] font-bold text-[#795B16]">{t.geminiBackgroundMode}</span>
+                <div className="grid grid-cols-3 gap-1 sm:gap-2 w-full sm:w-auto" role="group" aria-label={t.geminiBackgroundMode}>
+                  {[
+                    ['transparent', t.geminiTransparent],
+                    ['solid', t.geminiSolid],
+                    ['chroma', t.geminiChroma],
+                  ].map(([mode, label]) => (
+                    <button
+                      key={mode}
+                      type="button"
+                      aria-pressed={geminiBackgroundMode === mode}
+                      onClick={() => setGeminiBackgroundMode(mode)}
+                      className={`interactive-control min-h-10 rounded-[8px] border px-1 sm:px-2 py-2 text-[11px] xs:text-[12px] sm:text-[13px] font-bold text-center text-ellipsis overflow-hidden whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E8C66A] ${
+                        geminiBackgroundMode === mode
+                          ? 'bg-[#FFE8B5] text-[#5A461B] border-[#E8C66A] shadow-sm'
+                          : 'bg-white text-[#795B16] border-[#E9DFC5] hover:bg-[#FFF3D8]'
+                      }`}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              </div>
               <div className="flex flex-col gap-2 border-t border-[#E9DFC5] pt-3">
-                <span className="text-[13px] font-bold text-[#795B16]">{t.geminiRepairTitle}</span>
+                <div className="flex flex-col gap-0.5">
+                  <span className="text-[13px] font-bold text-[#795B16]">{t.geminiRepairTitle}</span>
+                  <span className="text-[12px] font-medium text-[#8A661C] leading-snug">{t.repairHelp}</span>
+                </div>
                 <div className="grid grid-cols-1 min-[430px]:grid-cols-3 gap-2">
                   {[
                     ['identity', t.geminiRepairIdentity],
