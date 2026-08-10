@@ -2050,48 +2050,50 @@ ${textExclusion} No guide lines, no grid lines, no cell dividers, no border line
   return (
     <div className={`font-body-md text-body-md antialiased pb-32 max-w-full w-full ${lang === 'ja' ? 'lang-ja' : lang === 'zh' ? 'lang-zh' : ''}`}>
       {/* TopAppBar */}
-      <header className="w-full top-0 bg-background/95 backdrop-blur-md flex items-center justify-between px-3 sm:px-gutter min-h-14 py-2 max-w-7xl mx-auto z-50 sticky border-b border-outline-variant/30 shadow-xs overflow-hidden">
-        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
-          <h1 className="brand-logo text-[18px] sm:text-[22px] leading-none font-bold text-primary-strong tracking-tight whitespace-nowrap">
-            Prompt Studio
-          </h1>
-        </div>
-        <div className="flex items-center gap-1 sm:gap-2 shrink-0">
-          <button 
-            onClick={() => {
-              const el = document.getElementById('guide-section');
-              if (el) {
-                const y = el.getBoundingClientRect().top + window.scrollY - 80;
-                window.scrollTo({ top: y, behavior: 'smooth' });
-              }
-            }}
-            className="interactive-control flex items-center gap-1 min-h-9 px-2 sm:px-3 py-1 rounded-full bg-[#FFF4E5] border border-[#FFE8CC] text-[#8A4B00] text-[12px] sm:text-[13px] font-bold hover:bg-[#FFE8CC] shadow-sm whitespace-nowrap shrink-0"
-          >
-            <span className="text-[13px] sm:text-[14px]">💡</span>
-            <span>{lang === 'ko' ? '활용 가이드' : lang === 'ja' ? 'ガイド' : lang === 'zh' ? '指南' : 'Guide'}</span>
-          </button>
-          <div className="flex items-center gap-0.5 sm:gap-1 bg-surface-container-lowest p-0.5 sm:p-1 rounded-full border border-outline-variant shadow-sm shrink-0" role="group" aria-label="Language Selector">
-            {[
-              ['ko', 'KO', '한국어'],
-              ['en', 'EN', 'English'],
-              ['ja', 'JA', '日本語'],
-              ['zh', 'ZH', '中文'],
-            ].map(([code, shortLabel, fullLabel]) => (
-              <button
-                key={code}
-                type="button"
-                aria-pressed={lang === code}
-                onClick={() => changeLanguage(code)}
-                className={`brand-logo interactive-control w-8 sm:w-9 h-7 sm:h-8 flex items-center justify-center text-[11px] sm:text-[12px] font-extrabold rounded-full transition-all ${
-                  lang === code
-                    ? 'bg-mint text-mint-strong shadow-xs border border-mint-border'
-                    : 'text-on-surface-variant hover:bg-mint-soft'
-                }`}
-                title={fullLabel}
-              >
-                <span>{shortLabel}</span>
-              </button>
-            ))}
+      <header className="w-full top-0 bg-background/95 backdrop-blur-md z-50 sticky border-b border-outline-variant/30 shadow-xs">
+        <div className="max-w-3xl mx-auto flex items-center justify-between px-container-margin min-h-14 py-2 w-full">
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+            <h1 className="brand-logo text-[18px] sm:text-[22px] leading-none font-bold text-primary-strong tracking-tight whitespace-nowrap">
+              Prompt Studio
+            </h1>
+          </div>
+          <div className="flex items-center gap-1 sm:gap-2 shrink-0">
+            <button 
+              onClick={() => {
+                const el = document.getElementById('guide-section');
+                if (el) {
+                  const y = el.getBoundingClientRect().top + window.scrollY - 80;
+                  window.scrollTo({ top: y, behavior: 'smooth' });
+                }
+              }}
+              className="interactive-control flex items-center gap-1 min-h-9 px-2 sm:px-3 py-1 rounded-full bg-[#FFF4E5] border border-[#FFE8CC] text-[#8A4B00] text-[12px] sm:text-[13px] font-bold hover:bg-[#FFE8CC] shadow-sm whitespace-nowrap shrink-0"
+            >
+              <span className="text-[13px] sm:text-[14px]">💡</span>
+              <span>{lang === 'ko' ? '활용 가이드' : lang === 'ja' ? 'ガイド' : lang === 'zh' ? '指南' : 'Guide'}</span>
+            </button>
+            <div className="flex items-center gap-0.5 sm:gap-1 bg-surface-container-lowest p-0.5 sm:p-1 rounded-full border border-outline-variant shadow-sm shrink-0" role="group" aria-label="Language Selector">
+              {[
+                ['ko', 'KO', '한국어'],
+                ['en', 'EN', 'English'],
+                ['ja', 'JA', '日本語'],
+                ['zh', 'ZH', '中文'],
+              ].map(([code, shortLabel, fullLabel]) => (
+                <button
+                  key={code}
+                  type="button"
+                  aria-pressed={lang === code}
+                  onClick={() => changeLanguage(code)}
+                  className={`brand-logo interactive-control w-8 sm:w-9 h-7 sm:h-8 flex items-center justify-center text-[11px] sm:text-[12px] font-extrabold rounded-full transition-all ${
+                    lang === code
+                      ? 'bg-mint text-mint-strong shadow-xs border border-mint-border'
+                      : 'text-on-surface-variant hover:bg-mint-soft'
+                  }`}
+                  title={fullLabel}
+                >
+                  <span>{shortLabel}</span>
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       </header>
