@@ -275,7 +275,7 @@ const I18N = {
     forGemini: 'Gemini用',
     guideTitle: '使い方ガイド',
     guide1Q: '🤔 AIスタンププロンプトメーカーとは？',
-    guide1A: 'スタンプのアイデアはあるけれど、AIへの指示出し가 難しいとお悩みですか？\n好きなキャラクターの特徴とフレーズを選ぶだけで、ChatGPTやGeminiで使えるスタンプ制作プロンプトを自動作成します。',
+    guide1A: 'スタンプのアイデアはあるけれど、AIへの指示出しが 難しいとお悩みですか？\n好きなキャラクターの特徴とフレーズを選ぶだけで、ChatGPTやGeminiで使えるスタンプ制作プロンプトを自動作成します。',
     guide2Q: '💡 ChatGPT vs Gemini どちらを使うべき？',
     guide2A: '文字入れ重視ならChatGPT、表情・ポーズ重視ならGeminiがおすすめです。シート全体で試作し、個別生成で1枚ずつ作成すると品質が安定します。',
     modeSheet: '📱 シート全体 (15種)',
@@ -2075,12 +2075,12 @@ ${textExclusion} No guide lines, no grid lines, no cell dividers, no border line
             <span className="inline-block bg-white/60 text-[#5C3A21] font-black text-[11px] sm:text-[13px] tracking-wider px-3 sm:px-4 py-1 sm:py-1.5 rounded-full backdrop-blur-sm border border-white/80 mx-auto shadow-sm max-w-full text-ellipsis overflow-hidden">
               AI STICKER PROMPT MAKER
             </span>
-            <h2 className="text-[18px] xs:text-[22px] sm:text-[28px] md:text-[38px] font-black tracking-tight leading-snug drop-shadow-sm [word-break:break-word] [overflow-wrap:anywhere] w-full max-w-full px-1">
+            <h2 className="text-[18px] xs:text-[22px] sm:text-[28px] md:text-[38px] font-black tracking-tight leading-snug drop-shadow-sm w-full max-w-full px-1 [word-break:keep-all]">
               {t.guide1Q.replace('🤔 ', '')}
             </h2>
           </div>
           
-          <p className="z-10 text-[13px] sm:text-[15px] md:text-[17px] leading-relaxed max-w-2xl mx-auto font-bold bg-white/40 p-3.5 sm:p-5 rounded-md backdrop-blur-md border border-white/60 shadow-sm whitespace-pre-wrap [word-break:break-word] [overflow-wrap:anywhere] w-full">
+          <p className="z-10 text-[13px] sm:text-[15px] md:text-[17px] leading-relaxed max-w-2xl mx-auto font-bold bg-white/40 p-3.5 sm:p-5 rounded-md backdrop-blur-md border border-white/60 shadow-sm whitespace-pre-wrap [word-break:keep-all] w-full">
             {t.guide1A}
           </p>
         </section>
