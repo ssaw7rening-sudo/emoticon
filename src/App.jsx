@@ -399,7 +399,7 @@ const AdBanner = () => {
   if (!IS_AD_CONFIGURED) return null;
 
   return (
-    <div className="text-center mt-lg md:mt-xl p-4 md:p-md bg-surface-container-lowest rounded-3xl border border-outline-variant shadow-bubbly overflow-hidden">
+    <div className="text-center mt-lg md:mt-xl p-4 md:p-md bg-surface-container-lowest rounded-xl sm:rounded-2xl md:rounded-3xl border border-outline-variant shadow-bubbly overflow-hidden">
       <p className="text-[12px] text-neutral-500 mb-2 text-left">Advertisement</p>
       <ins className="adsbygoogle"
            style={{display: 'block', minHeight: '90px'}}
@@ -746,7 +746,7 @@ const InfoSection = ({ t, lang }) => {
       </div>
 
       {/* 탭 콘텐츠 */}
-      <div className="bg-surface-container-lowest rounded-2xl sm:rounded-3xl p-3.5 sm:p-md shadow-bubbly border border-outline-variant">
+      <div className="bg-surface-container-lowest rounded-xl sm:rounded-2xl md:rounded-3xl p-3.5 sm:p-md shadow-bubbly border border-outline-variant">
         <div className="min-h-[250px]">
         {activeTab === 'model' && (
           <div className="animate-in fade-in slide-in-from-bottom-2 duration-300 flex flex-col gap-4 mt-2">
@@ -756,7 +756,7 @@ const InfoSection = ({ t, lang }) => {
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* ChatGPT Card */}
-              <div className="bg-surface-variant/30 p-5 rounded-3xl border border-outline-variant flex flex-col gap-4 hover:shadow-md transition-shadow group relative">
+              <div className="bg-surface-variant/30 p-4 sm:p-5 rounded-xl sm:rounded-2xl md:rounded-3xl border border-outline-variant flex flex-col gap-4 hover:shadow-md transition-shadow group relative">
                 <div className="font-bold text-[16px] text-on-surface group-hover:text-primary-strong transition-colors">🟢 {lang === 'ko' ? 'ChatGPT 이미지 생성 추천' : 'ChatGPT Image Generation'}</div>
                 <div className="font-black text-[18px] text-primary-strong -mt-3">{lang === 'ko' ? '"대사가 꼭 필요한 이모티콘"' : '"Emoticons with essential text"'}</div>
                 
@@ -785,7 +785,7 @@ const InfoSection = ({ t, lang }) => {
               </div>
 
               {/* Gemini Card */}
-              <div className="bg-surface-variant/30 p-5 rounded-3xl border border-outline-variant flex flex-col gap-4 hover:shadow-md transition-shadow group relative">
+              <div className="bg-surface-variant/30 p-4 sm:p-5 rounded-xl sm:rounded-2xl md:rounded-3xl border border-outline-variant flex flex-col gap-4 hover:shadow-md transition-shadow group relative">
                 <div className="font-bold text-[16px] text-on-surface group-hover:text-primary-strong transition-colors">🔵 {lang === 'ko' ? 'Gemini 이미지 생성 추천' : 'Gemini Image Generation'}</div>
                 <div className="font-black text-[18px] text-primary-strong -mt-3">{lang === 'ko' ? '"표정과 행동으로 말하는 이모티콘"' : '"Emoticons speaking through expressions"'}</div>
                 
@@ -815,7 +815,7 @@ const InfoSection = ({ t, lang }) => {
             </div>
 
             {/* Unified Tip Box */}
-            <div className="bg-primary/10 text-primary-strong p-4 rounded-3xl border border-primary/20 mt-2 flex gap-3 items-start shadow-sm">
+            <div className="bg-primary/10 text-primary-strong p-3.5 sm:p-4 rounded-xl sm:rounded-2xl border border-primary/20 mt-2 flex gap-3 items-start shadow-sm">
               <span className="text-[20px] drop-shadow-sm leading-none mt-0.5">📸</span>
               <div>
                 <strong className="font-bold block mb-1 text-[15px]">{lang === 'ko' ? '공용 활용 꿀팁!' : 'Pro Tip!'}</strong>
@@ -838,12 +838,12 @@ const InfoSection = ({ t, lang }) => {
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* PC Guide */}
-                <div className="bg-[#FAF9F6] p-5 rounded-[32px] border border-[#E5E0D8] flex flex-col gap-4">
+                <div className="bg-[#FAF9F6] p-4 sm:p-5 rounded-xl sm:rounded-2xl md:rounded-3xl border border-[#E5E0D8] flex flex-col gap-4">
                   <div className="flex items-center gap-2 font-bold text-[#5C3A21] text-[16px] ml-2">
                     <span className="text-[18px]">💻</span> {lang === 'ko' ? 'PC에서 작업할 때' : 'Working on PC'}
                   </div>
                   <div className="flex flex-col gap-3 h-full">
-                    <div className="bg-white p-5 rounded-[28px] border border-[#E5E0D8] shadow-sm flex-1 flex flex-col">
+                    <div className="bg-white p-4 sm:p-5 rounded-lg sm:rounded-xl md:rounded-2xl border border-[#E5E0D8] shadow-sm flex-1 flex flex-col">
                       <strong className="text-on-surface block mb-2 text-[15px]">{lang === 'ko' ? '방법 1: remove.bg 웹사이트' : 'Method 1: remove.bg website'}</strong>
                       <ul className="text-[14px] leading-relaxed text-secondary-strong flex flex-col gap-1.5 break-keep list-decimal pl-4 mb-3">
                         {lang === 'ko' ? (
@@ -868,7 +868,7 @@ const InfoSection = ({ t, lang }) => {
                         <span>👉</span> {lang === 'ko' ? 'remove.bg 바로가기' : 'Go to remove.bg'}
                       </a>
                     </div>
-                    <div className="bg-white p-5 rounded-[28px] border border-[#E5E0D8] shadow-sm flex-1 flex flex-col">
+                    <div className="bg-white p-4 sm:p-5 rounded-lg sm:rounded-xl md:rounded-2xl border border-[#E5E0D8] shadow-sm flex-1 flex flex-col">
                       <strong className="text-on-surface block mb-2 text-[15px]">{lang === 'ko' ? '방법 2: 알씨(ALSee) 프로그램' : 'Method 2: ALSee Program'}</strong>
                       <ul className="text-[14px] leading-relaxed text-secondary-strong flex flex-col gap-1.5 break-keep list-decimal pl-4 mb-3">
                         {lang === 'ko' ? (
@@ -897,12 +897,12 @@ const InfoSection = ({ t, lang }) => {
                 </div>
 
                 {/* Mobile Guide */}
-                <div className="bg-[#FAF9F6] p-5 rounded-[32px] border border-[#E5E0D8] flex flex-col gap-4">
+                <div className="bg-[#FAF9F6] p-4 sm:p-5 rounded-xl sm:rounded-2xl md:rounded-3xl border border-[#E5E0D8] flex flex-col gap-4">
                   <div className="flex items-center gap-2 font-bold text-[#5C3A21] text-[16px] ml-2">
                     <span className="text-[18px]">📱</span> {lang === 'ko' ? '스마트폰에서 작업할 때' : 'Working on Smartphone'}
                   </div>
                   <div className="flex flex-col gap-3 h-full">
-                    <div className="bg-white p-5 rounded-[28px] border border-[#E5E0D8] shadow-sm flex-1 flex flex-col">
+                    <div className="bg-white p-4 sm:p-5 rounded-lg sm:rounded-xl md:rounded-2xl border border-[#E5E0D8] shadow-sm flex-1 flex flex-col">
                       <strong className="text-on-surface block mb-2 text-[15px] flex items-center gap-1.5"><span className="text-[16px]">🤖</span> {lang === 'ko' ? '갤럭시 (Galaxy)' : 'Galaxy'}</strong>
                       <ul className="text-[14px] leading-relaxed text-secondary-strong flex flex-col gap-1.5 break-keep list-decimal pl-4">
                         {lang === 'ko' ? (
@@ -924,7 +924,7 @@ const InfoSection = ({ t, lang }) => {
                         )}
                       </ul>
                     </div>
-                    <div className="bg-white p-5 rounded-[28px] border border-[#E5E0D8] shadow-sm flex-1 flex flex-col">
+                    <div className="bg-white p-4 sm:p-5 rounded-lg sm:rounded-xl md:rounded-2xl border border-[#E5E0D8] shadow-sm flex-1 flex flex-col">
                       <strong className="text-on-surface block mb-2 text-[15px] flex items-center gap-1.5"><span className="text-[16px]">🍎</span> {lang === 'ko' ? '아이폰 (iPhone)' : 'iPhone'}</strong>
                       <ul className="text-[14px] leading-relaxed text-secondary-strong flex flex-col gap-1.5 break-keep list-decimal pl-4">
                         {lang === 'ko' ? (
@@ -1008,15 +1008,15 @@ const InfoSection = ({ t, lang }) => {
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Method 1: Official */}
-                <div className="bg-[#FAF9F6] p-5 rounded-[32px] border border-[#E5E0D8] flex flex-col gap-4">
+                <div className="bg-[#FAF9F6] p-4 sm:p-5 rounded-xl sm:rounded-2xl md:rounded-3xl border border-[#E5E0D8] flex flex-col gap-4">
                   <div className="flex items-center gap-2 font-bold text-[#5C3A21] text-[16px] ml-2">
                     <span className="text-[18px]">💰</span> {lang === 'ko' ? '1. 정식 출시 및 판매를 원할 때' : '1. Official Release and Sale'}
                   </div>
-                  <div className="bg-white p-5 rounded-[28px] border border-[#E5E0D8] shadow-sm flex-1 flex flex-col gap-3">
+                  <div className="bg-white p-4 sm:p-5 rounded-lg sm:rounded-xl md:rounded-2xl border border-[#E5E0D8] shadow-sm flex-1 flex flex-col gap-3">
                     <strong className="text-on-surface block text-[15px]">{lang === 'ko' ? '카카오 이모티콘 스튜디오 제안' : 'Kakao Emoticon Studio Submission'}</strong>
                     
                     {/* AI Policy Warning Box */}
-                    <div className="bg-[#FFF5F5] text-[#D32F2F] p-4 rounded-[20px] border border-[#FFCDD2] my-1">
+                    <div className="bg-[#FFF5F5] text-[#D32F2F] p-3.5 sm:p-4 rounded-lg sm:rounded-xl border border-[#FFCDD2] my-1">
                       <div className="mb-2">
                         <span className="inline-flex items-center gap-1 bg-[#D32F2F] text-white text-[12px] font-bold px-2 py-0.5 rounded-md mb-1.5">
                           <span className="text-[12px] leading-none">⚠️</span> {lang === 'ko' ? '주의' : 'Warning'}
@@ -1060,15 +1060,15 @@ const InfoSection = ({ t, lang }) => {
                 </div>
 
                 {/* Method 2: Personal */}
-                <div className="bg-[#FAF9F6] p-5 rounded-[32px] border border-[#E5E0D8] flex flex-col gap-4">
+                <div className="bg-[#FAF9F6] p-4 sm:p-5 rounded-xl sm:rounded-2xl md:rounded-3xl border border-[#E5E0D8] flex flex-col gap-4">
                   <div className="flex items-center gap-2 font-bold text-[#5C3A21] text-[16px] ml-2">
                     <span className="text-[18px]">✨</span> {lang === 'ko' ? '2. 지인들과 가볍게 무료로 쓸 때' : '2. Casual Free Use with Friends'}
                   </div>
-                  <div className="bg-white p-5 rounded-[28px] border border-[#E5E0D8] shadow-sm flex-1 flex flex-col gap-3">
+                  <div className="bg-white p-4 sm:p-5 rounded-lg sm:rounded-xl md:rounded-2xl border border-[#E5E0D8] shadow-sm flex-1 flex flex-col gap-3">
                     <strong className="text-on-surface block mb-1 text-[15px]">{lang === 'ko' ? '개인 소장용 (채팅방 꼼수)' : 'Personal Use (Chatroom Trick)'}</strong>
                     
                     {/* Visual Example Image */}
-                    <div className="w-full h-40 rounded-[20px] overflow-hidden border border-[#E5E0D8] my-1 shadow-sm relative group">
+                    <div className="w-full h-40 rounded-lg sm:rounded-xl overflow-hidden border border-[#E5E0D8] my-1 shadow-sm relative group">
                       <img src="/chat_trick.jpg" alt="채팅방 전송 예시" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"/>
                       <div className="absolute top-2 left-2 bg-white/90 backdrop-blur-sm text-[#5C3A21] text-[11px] font-bold px-2.5 py-1 rounded-full shadow-sm flex items-center gap-1">
                         <span>📸</span> {lang === 'ko' ? '전송 예시' : 'Example'}
@@ -1774,7 +1774,7 @@ ${textExclusion} No guide lines, no grid lines, no cell dividers, no border line
 
       <main className="max-w-3xl mx-auto px-container-margin mt-md md:mt-xl flex flex-col gap-lg md:gap-xl">
         {/* App Intro Hero Section */}
-        <section className="relative overflow-hidden bg-gradient-to-br from-[#FFD3B6] via-[#FFE8B6] to-[#FFC2C2] text-[#5C3A21] p-4 sm:p-6 md:p-xl rounded-2xl sm:rounded-3xl md:rounded-[36px] shadow-bubbly text-center flex flex-col items-center justify-center gap-3 sm:gap-4 md:gap-6 border-2 sm:border-4 border-white max-w-full w-full">
+        <section className="relative overflow-hidden bg-gradient-to-br from-[#FFD3B6] via-[#FFE8B6] to-[#FFC2C2] text-[#5C3A21] p-4 sm:p-6 md:p-xl rounded-xl sm:rounded-2xl md:rounded-3xl shadow-bubbly text-center flex flex-col items-center justify-center gap-3 sm:gap-4 md:gap-6 border-2 sm:border-4 border-white max-w-full w-full">
           {/* Decorative floating emojis */}
           <div className="absolute top-6 left-8 hidden sm:block text-[40px] transform -rotate-12 drop-shadow-md">✨</div>
           <div className="absolute bottom-8 left-12 hidden sm:block text-[48px] transform rotate-12 drop-shadow-md">🎨</div>
@@ -1790,7 +1790,7 @@ ${textExclusion} No guide lines, no grid lines, no cell dividers, no border line
             </h2>
           </div>
           
-          <p className="z-10 text-[13px] sm:text-[15px] md:text-[17px] leading-relaxed max-w-2xl mx-auto font-bold bg-white/40 p-3.5 sm:p-5 rounded-2xl sm:rounded-3xl backdrop-blur-md border border-white/60 shadow-sm whitespace-pre-wrap [word-break:break-word] [overflow-wrap:anywhere] w-full">
+          <p className="z-10 text-[13px] sm:text-[15px] md:text-[17px] leading-relaxed max-w-2xl mx-auto font-bold bg-white/40 p-3.5 sm:p-5 rounded-xl sm:rounded-2xl backdrop-blur-md border border-white/60 shadow-sm whitespace-pre-wrap [word-break:break-word] [overflow-wrap:anywhere] w-full">
             {t.guide1A}
           </p>
         </section>
@@ -1859,14 +1859,14 @@ ${textExclusion} No guide lines, no grid lines, no cell dividers, no border line
             </div>
 
             <textarea 
-              className="w-full bg-white border-2 border-mint-border rounded-3xl p-4 text-on-surface font-bold placeholder:text-on-surface-variant focus:outline-none focus:ring-4 focus:ring-mint focus:border-mint-strong resize-y min-h-[100px] shadow-sm" 
+              className="w-full bg-white border-2 border-mint-border rounded-xl sm:rounded-2xl p-3.5 sm:p-4 text-on-surface font-bold placeholder:text-on-surface-variant focus:outline-none focus:ring-4 focus:ring-mint focus:border-mint-border resize-y min-h-[100px] shadow-sm" 
               placeholder={t.placeholder}
               value={charManual}
               onChange={(e) => setCharManual(e.target.value)}
             />
 
             {!charManual.trim() && (
-              <div className="mt-3 bg-mint-soft border border-mint-border rounded-xl sm:rounded-2xl p-3 sm:p-3.5 flex items-start gap-2.5 text-[13px] text-mint-strong">
+              <div className="mt-3 bg-mint-soft border border-mint-border rounded-lg sm:rounded-xl p-3 sm:p-3.5 flex items-start gap-2.5 text-[13px] text-mint-strong">
                 <span className="text-[16px] leading-none shrink-0 mt-0.5">💡</span>
                 <div className="leading-relaxed">
                   <strong className="font-bold">
@@ -1885,7 +1885,7 @@ ${textExclusion} No guide lines, no grid lines, no cell dividers, no border line
               </div>
             )}
             
-            <div className="mt-md bg-surface-container-highest rounded-[24px] overflow-hidden">
+            <div className="mt-md bg-surface-container-highest rounded-xl sm:rounded-2xl overflow-hidden">
               <div className="no-scrollbar flex flex-wrap bg-[#EAF8F3] px-2 border-b border-mint-border">
                 {categoryKeys.map(category => (
                   <button
@@ -2218,7 +2218,7 @@ ${textExclusion} No guide lines, no grid lines, no cell dividers, no border line
         
         <AdBanner />
 
-        <div className="bg-[#FFF5E6] text-[#8C3D18] p-4 sm:p-5 md:p-6 rounded-2xl sm:rounded-[24px] border border-[#FDE0B5] flex gap-3 md:gap-4 items-start shadow-sm mt-2 relative overflow-hidden">
+        <div className="bg-[#FFF5E6] text-[#8C3D18] p-4 sm:p-5 md:p-6 rounded-xl sm:rounded-2xl border border-[#FDE0B5] flex gap-3 md:gap-4 items-start shadow-sm mt-2 relative overflow-hidden">
           <div className="absolute -right-4 -top-6 text-[#FCD3A1] opacity-40 text-[120px] sm:text-[140px] transform -rotate-12 select-none pointer-events-none drop-shadow-sm">📸</div>
           <span className="text-[20px] sm:text-[22px] drop-shadow-sm leading-none mt-0.5 relative z-10">📸</span>
           <div className="relative z-10 flex-1 min-w-0">
