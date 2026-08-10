@@ -2422,7 +2422,7 @@ ${textExclusion} No guide lines, no grid lines, no cell dividers, no border line
                 </div>
               </div>
               <div className="flex flex-col gap-2 border-t border-[#E9DFC5] pt-3">
-                <span className="text-[13px] font-bold text-[#795B16]">{t.geminiRepairTitle}</span>
+                <div className="flex flex-col gap-0.5"><div className="flex flex-col gap-0.5"><span className="text-[13px] font-bold text-[#795B16]">{t.geminiRepairTitle}</span><span className="text-[12px] font-medium text-[#8A661C] leading-snug">{t.repairHelp}</span></div><span className="text-[12px] font-medium text-[#8A661C] leading-snug">{t.repairHelp}</span></div>
                 <div className="grid grid-cols-1 min-[430px]:grid-cols-3 gap-2">
                   {[
                     ['identity', t.geminiRepairIdentity],
