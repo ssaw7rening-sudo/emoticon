@@ -1972,19 +1972,19 @@ ${textPolicy}
 ${textExclusion} No guide lines, no grid lines, no cell dividers, no border lines, no table lines, no crop marks, no panel boxes, no watermark, no outer frame, no duplicate character inside a single sticker, no extra limbs, no cropped body, no half-body bust shot, no dull background color, or photorealism.`;
   };
 
-  const getGeminiRepairPrompt = (repairType) => {
+  const getRepairPrompt = (repairType, textMode) => {
     const targetPhrase = getSelectedPhrase();
     const repairPrompts = {
-      identity: `Edit the most recent image only. Restore the character so it matches the attached accepted base character image exactly. Preserve the current scene, pose, expression, composition, and text. Correct only the face, silhouette, body proportions, colors, outfit, linework, and texture. Do not redesign or add details. Return one corrected image.`,
-      crop: `Edit the most recent image only. Keep the same character identity, expression, pose, colors, outfit, art style, and${geminiTextMode === 'text' ? ` exact phrase "${targetPhrase}"` : ' text-free design'}. Reframe the composition so the entire character and all effects are visible with at least 12% empty margin on every side. Do not change anything else. Return one corrected square image.`,
+      identity: `Edit the most recent image only. Restore the character identity and face so it stays strictly consistent with the original character design. Preserve the current scene, pose, expression, composition, and text. Correct only the face, silhouette, body proportions, colors, outfit, linework, and texture. Return one corrected image.`,
+      crop: `Edit the most recent image only. Keep the same character identity, expression, pose, colors, outfit, art style, and${textMode === 'text' ? ` exact phrase "${targetPhrase}"` : ' text-free design'}. Reframe the composition so the entire character and all effects are visible with at least 12% empty margin on every side. Do not change anything else. Return one corrected square image.`,
       text: `Edit the most recent image only. Keep the character, face, pose, expression, colors, outfit, art style, effects, composition, and background unchanged. Replace only the incorrect lettering with the exact phrase "${targetPhrase}" once. Verify every Korean character, spelling, and spacing before rendering. Add no other text. Return one corrected image.`,
     };
     return repairPrompts[repairType];
   };
 
-  const copyGeminiRepairPrompt = (repairType) => {
-    navigator.clipboard.writeText(getGeminiRepairPrompt(repairType));
-    setCopiedType(`gemini-repair-${repairType}`);
+  const copyRepairPrompt = (repairType, textMode, keyPrefix = 'repair') => {
+    navigator.clipboard.writeText(getRepairPrompt(repairType, textMode));
+    setCopiedType(`${keyPrefix}-${repairType}`);
     setTimeout(() => setCopiedType(null), 2500);
   };
 
@@ -2417,6 +2417,25 @@ ${textExclusion} No guide lines, no grid lines, no cell dividers, no border line
                   ))}
                 </div>
               </div>
+              <div className="flex flex-col gap-2 border-t border-[#E9DFC5] pt-3">
+                <span className="text-[13px] font-bold text-[#795B16]">{t.geminiRepairTitle}</span>
+                <div className="grid grid-cols-1 min-[430px]:grid-cols-3 gap-2">
+                  {[
+                    ['identity', t.geminiRepairIdentity],
+                    ['crop', t.geminiRepairCrop],
+                    ...(gptTextMode === 'text' ? [['text', t.geminiRepairText]] : []),
+                  ].map(([repairType, label]) => (
+                    <button
+                      key={repairType}
+                      type="button"
+                      onClick={() => copyRepairPrompt(repairType, gptTextMode, 'gpt-repair')}
+                      className="interactive-control min-h-10 rounded-[8px] border border-[#E9DFC5] bg-white px-3 py-2 text-[13px] font-bold text-[#795B16] hover:bg-[#FFF3D8] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E8C66A]"
+                    >
+                      {copiedType === `gpt-repair-${repairType}` ? '✓ ' : ''}{label}
+                    </button>
+                  ))}
+                </div>
+              </div>
               <p className="text-[13px] leading-relaxed text-[#795B16]">💡 {t.gptWorkflowTip}</p>
             </div>
           )}
@@ -2426,8 +2445,8 @@ ${textExclusion} No guide lines, no grid lines, no cell dividers, no border line
                 <span className="text-[13px] font-bold text-[#795B16]">{t.geminiTextMode}</span>
                 <div className="grid grid-cols-2 gap-1.5 sm:gap-2 w-full sm:w-auto" role="group" aria-label={t.geminiTextMode}>
                   {[
-                    ['visual', t.geminiNoText],
                     ['text', t.geminiIncludeText],
+                    ['visual', t.geminiNoText],
                   ].map(([mode, label]) => (
                     <button
                       key={mode}
@@ -2456,7 +2475,7 @@ ${textExclusion} No guide lines, no grid lines, no cell dividers, no border line
                     <button
                       key={repairType}
                       type="button"
-                      onClick={() => copyGeminiRepairPrompt(repairType)}
+                      onClick={() => copyRepairPrompt(repairType, geminiTextMode, 'gemini-repair')}
                       className="interactive-control min-h-10 rounded-[8px] border border-[#E9DFC5] bg-white px-3 py-2 text-[13px] font-bold text-[#795B16] hover:bg-[#FFF3D8] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E8C66A]"
                     >
                       {copiedType === `gemini-repair-${repairType}` ? '✓ ' : ''}{label}
