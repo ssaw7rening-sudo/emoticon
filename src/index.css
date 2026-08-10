@@ -46,6 +46,20 @@
   }
 }
 
+.lang-zh,
+.lang-zh input,
+.lang-zh button,
+.lang-zh textarea,
+.lang-zh select {
+  font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Micro Hei", "Noto Sans SC", sans-serif !important;
+}
+
+.lang-zh header,
+.lang-zh header *,
+.lang-zh .brand-logo {
+  font-family: 'Paperlogy', -apple-system, BlinkMacSystemFont, sans-serif !important;
+}
+
 @layer utilities {
   .shadow-diffused {
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
