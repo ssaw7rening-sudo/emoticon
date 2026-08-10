@@ -952,7 +952,7 @@ const InfoSection = ({ t, lang }) => {
             </div>
             
             {/* Visual Tutorial for Background Removal */}
-            <div className="flex flex-col md:flex-row items-center justify-center gap-6 bg-[#F4F4F4] p-8 rounded-[32px] border border-[#E5E5E5]">
+            <div className="flex flex-col md:flex-row items-center justify-center gap-6 bg-[#F4F4F4] p-8 rounded-2xl border border-[#E5E5E5]">
               
               {/* Step 1 */}
               <div className="flex flex-col items-center gap-3">
@@ -1829,7 +1829,7 @@ ${textExclusion} No guide lines, no grid lines, no cell dividers, no border line
               </div>
 
               {characterSource === 'photo' && (
-                <div className="rounded-[8px] border border-mint-border bg-mint-soft p-3 flex flex-col gap-3">
+                <div className="rounded-2xl border border-mint-border bg-mint-soft p-3 flex flex-col gap-3">
                   <span className="text-[13px] font-bold text-mint-strong">{t.photoMethod}</span>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-2" role="group" aria-label={t.photoMethod}>
                     {[
@@ -2079,7 +2079,7 @@ ${textExclusion} No guide lines, no grid lines, no cell dividers, no border line
             </div>
           </div>
           {previewMode === 'gpt' && (
-            <div className="rounded-[8px] border border-[#F6D77A] bg-[#FFF7DF] p-3 flex flex-col gap-3">
+            <div className="rounded-2xl border border-[#F6D77A] bg-[#FFF7DF] p-3 flex flex-col gap-3">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                 <span className="text-[13px] font-bold text-[#795B16]">{t.gptTextMode}</span>
                 <div className="grid grid-cols-2 gap-1.5 sm:gap-2 w-full sm:w-auto" role="group" aria-label={t.gptTextMode}>
