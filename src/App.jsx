@@ -1804,7 +1804,7 @@ ${textExclusion} No guide lines, no grid lines, no cell dividers, no border line
             </button>
           </div>
           
-          <div className="bg-surface-container-lowest rounded-3xl p-md shadow-bubbly border border-outline-variant">
+          <div className="bg-surface-container-lowest rounded-2xl p-3.5 sm:p-md shadow-bubbly border border-outline-variant">
             <div className="mb-md flex flex-col gap-3">
               <span className="px-1 text-[13px] font-bold text-on-surface-variant">{t.characterSource}</span>
               <div className="grid grid-cols-2 gap-2" role="group" aria-label={t.characterSource}>
@@ -1941,7 +1941,7 @@ ${textExclusion} No guide lines, no grid lines, no cell dividers, no border line
             </div>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-sm md:gap-md bg-surface-container-lowest rounded-3xl p-md shadow-bubbly border border-outline-variant">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-sm md:gap-md bg-surface-container-lowest rounded-2xl p-3.5 sm:p-md shadow-bubbly border border-outline-variant">
             {emoticons.map((text, idx) => (
               <input 
                 key={idx}
@@ -1962,7 +1962,7 @@ ${textExclusion} No guide lines, no grid lines, no cell dividers, no border line
 
         {/* Section 3: Prompt Preview */}
         <section className="flex flex-col gap-md">
-          <div className="bg-[#FFF7DF] rounded-3xl p-3 md:p-4 border border-[#F6D77A] shadow-sm flex flex-col gap-3">
+          <div className="bg-[#FFF7DF] rounded-2xl p-3 md:p-4 border border-[#F6D77A] shadow-sm flex flex-col gap-3">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2" role="group" aria-label={lang === 'ko' ? '프롬프트 생성 방식' : 'Prompt generation mode'}>
               {[
                 ['sheet', t.modeSheet],
@@ -2185,9 +2185,9 @@ ${textExclusion} No guide lines, no grid lines, no cell dividers, no border line
               </strong>
             </div>
           )}
-          <div className="bg-surface-container-lowest rounded-3xl p-md shadow-bubbly border border-outline-variant">
+          <div className="bg-surface-container-lowest rounded-2xl p-3.5 sm:p-md shadow-bubbly border border-outline-variant">
             <textarea 
-              className="w-full bg-white border-2 border-outline-variant rounded-3xl p-4 text-on-surface font-normal focus:outline-none resize-y min-h-[200px] shadow-sm" 
+              className="w-full bg-white border-2 border-outline-variant rounded-xl p-4 text-on-surface font-normal focus:outline-none resize-y min-h-[200px] shadow-sm" 
               readOnly
               value={getPreviewPrompt()}
             />
