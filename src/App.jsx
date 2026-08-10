@@ -1472,23 +1472,23 @@ ${textExclusion} No guide lines, no grid lines, no cell dividers, no border line
 
       <main className="max-w-3xl mx-auto px-container-margin mt-md md:mt-xl flex flex-col gap-lg md:gap-xl">
         {/* App Intro Hero Section */}
-        <section className="relative overflow-hidden bg-gradient-to-br from-[#FFD3B6] via-[#FFE8B6] to-[#FFC2C2] text-[#5C3A21] p-6 md:p-xl rounded-[32px] md:rounded-[40px] shadow-bubbly text-center flex flex-col items-center justify-center gap-4 md:gap-6 border-4 border-white">
+        <section className="relative overflow-hidden bg-gradient-to-br from-[#FFD3B6] via-[#FFE8B6] to-[#FFC2C2] text-[#5C3A21] p-4 sm:p-6 md:p-xl rounded-[28px] sm:rounded-[32px] md:rounded-[40px] shadow-bubbly text-center flex flex-col items-center justify-center gap-3 sm:gap-4 md:gap-6 border-4 border-white max-w-full w-full">
           {/* Decorative floating emojis */}
           <div className="absolute top-6 left-8 hidden sm:block text-[40px] transform -rotate-12 drop-shadow-md">✨</div>
           <div className="absolute bottom-8 left-12 hidden sm:block text-[48px] transform rotate-12 drop-shadow-md">🎨</div>
           <div className="absolute top-12 right-12 hidden sm:block text-[48px] transform rotate-12 drop-shadow-md">🚀</div>
           <div className="absolute bottom-10 right-10 hidden sm:block text-[40px] transform -rotate-12 drop-shadow-md">💖</div>
           
-          <div className="z-10 flex flex-col gap-3">
-            <span className="inline-block bg-white/60 text-[#5C3A21] font-black text-[13px] tracking-wider px-4 py-1.5 rounded-full backdrop-blur-sm border border-white/80 mx-auto shadow-sm">
+          <div className="z-10 flex flex-col gap-2 sm:gap-3 w-full max-w-full px-1">
+            <span className="inline-block bg-white/60 text-[#5C3A21] font-black text-[11px] sm:text-[13px] tracking-wider px-3 sm:px-4 py-1 sm:py-1.5 rounded-full backdrop-blur-sm border border-white/80 mx-auto shadow-sm max-w-full text-ellipsis overflow-hidden">
               AI STICKER PROMPT MAKER
             </span>
-            <h2 className="text-[28px] md:text-[42px] font-black tracking-tight leading-tight drop-shadow-sm break-keep">
+            <h2 className="text-[18px] xs:text-[22px] sm:text-[28px] md:text-[38px] font-black tracking-tight leading-snug drop-shadow-sm [word-break:break-word] [overflow-wrap:anywhere] w-full max-w-full px-1">
               {t.guide1Q.replace('🤔 ', '')}
             </h2>
           </div>
           
-          <p className="z-10 text-[14px] md:text-[17px] leading-relaxed max-w-2xl mx-auto font-bold bg-white/40 p-4 md:p-5 rounded-3xl backdrop-blur-md border border-white/60 shadow-sm whitespace-pre-wrap break-keep">
+          <p className="z-10 text-[13px] sm:text-[15px] md:text-[17px] leading-relaxed max-w-2xl mx-auto font-bold bg-white/40 p-3.5 sm:p-5 rounded-2xl sm:rounded-3xl backdrop-blur-md border border-white/60 shadow-sm whitespace-pre-wrap [word-break:break-word] [overflow-wrap:anywhere] w-full">
             {t.guide1A}
           </p>
         </section>
@@ -1746,7 +1746,7 @@ ${textExclusion} No guide lines, no grid lines, no cell dividers, no border line
           )}
 
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-3">
-            <h2 className="font-headline-sm text-headline-sm text-on-surface break-keep">{t.previewTitle}</h2>
+            <h2 className="font-headline-sm text-headline-sm text-on-surface [word-break:break-word]">{t.previewTitle}</h2>
             <div className="flex w-full sm:w-auto bg-mint-soft rounded-full p-1 border border-mint-border shadow-sm">
               <button 
                 onClick={() => setPreviewMode('gpt')}
