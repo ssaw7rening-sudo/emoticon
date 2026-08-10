@@ -45,10 +45,11 @@ export default {
                   "outline-variant": "#FFECA1"
           },
           "borderRadius": {
-                  "DEFAULT": "1.5rem",
-                  "lg": "2rem",
-                  "xl": "2.5rem",
-                  "2xl": "3rem",
+                  "DEFAULT": "1rem",
+                  "lg": "1.25rem",
+                  "xl": "1.5rem",
+                  "2xl": "2rem",
+                  "3xl": "2.5rem",
                   "full": "9999px"
           },
           "spacing": {

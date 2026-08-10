@@ -746,7 +746,7 @@ const InfoSection = ({ t, lang }) => {
       </div>
 
       {/* 탭 콘텐츠 */}
-      <div className="bg-surface-container-lowest rounded-xl p-3.5 sm:p-md shadow-bubbly border border-outline-variant">
+      <div className="bg-surface-container-lowest rounded-3xl p-3.5 sm:p-md shadow-bubbly border border-outline-variant">
         <div className="min-h-[250px]">
         {activeTab === 'model' && (
           <div className="animate-in fade-in slide-in-from-bottom-2 duration-300 flex flex-col gap-4 mt-2">
@@ -1774,7 +1774,7 @@ ${textExclusion} No guide lines, no grid lines, no cell dividers, no border line
 
       <main className="max-w-3xl mx-auto px-container-margin mt-md md:mt-xl flex flex-col gap-lg md:gap-xl">
         {/* App Intro Hero Section */}
-        <section className="relative overflow-hidden bg-gradient-to-br from-[#FFD3B6] via-[#FFE8B6] to-[#FFC2C2] text-[#5C3A21] p-4 sm:p-6 md:p-xl rounded-xl shadow-bubbly text-center flex flex-col items-center justify-center gap-3 sm:gap-4 md:gap-6 border-2 sm:border-4 border-white max-w-full w-full">
+        <section className="relative overflow-hidden bg-gradient-to-br from-[#FFD3B6] via-[#FFE8B6] to-[#FFC2C2] text-[#5C3A21] p-4 sm:p-6 md:p-xl rounded-3xl shadow-bubbly text-center flex flex-col items-center justify-center gap-3 sm:gap-4 md:gap-6 border-2 sm:border-4 border-white max-w-full w-full">
           {/* Decorative floating emojis */}
           <div className="absolute top-6 left-8 hidden sm:block text-[40px] transform -rotate-12 drop-shadow-md">✨</div>
           <div className="absolute bottom-8 left-12 hidden sm:block text-[48px] transform rotate-12 drop-shadow-md">🎨</div>
@@ -1790,7 +1790,7 @@ ${textExclusion} No guide lines, no grid lines, no cell dividers, no border line
             </h2>
           </div>
           
-          <p className="z-10 text-[13px] sm:text-[15px] md:text-[17px] leading-relaxed max-w-2xl mx-auto font-bold bg-white/40 p-3.5 sm:p-5 rounded-lg backdrop-blur-md border border-white/60 shadow-sm whitespace-pre-wrap [word-break:break-word] [overflow-wrap:anywhere] w-full">
+          <p className="z-10 text-[13px] sm:text-[15px] md:text-[17px] leading-relaxed max-w-2xl mx-auto font-bold bg-white/40 p-3.5 sm:p-5 rounded-2xl backdrop-blur-md border border-white/60 shadow-sm whitespace-pre-wrap [word-break:break-word] [overflow-wrap:anywhere] w-full">
             {t.guide1A}
           </p>
         </section>
@@ -1804,7 +1804,7 @@ ${textExclusion} No guide lines, no grid lines, no cell dividers, no border line
             </button>
           </div>
           
-          <div className="bg-surface-container-lowest rounded-xl p-3.5 sm:p-md shadow-bubbly border border-outline-variant">
+          <div className="bg-surface-container-lowest rounded-3xl p-3.5 sm:p-md shadow-bubbly border border-outline-variant">
             <div className="mb-md flex flex-col gap-3">
               <span className="px-1 text-[13px] font-bold text-on-surface-variant">{t.characterSource}</span>
               <div className="grid grid-cols-2 gap-2" role="group" aria-label={t.characterSource}>
@@ -1866,7 +1866,7 @@ ${textExclusion} No guide lines, no grid lines, no cell dividers, no border line
             />
 
             {!charManual.trim() && (
-              <div className="mt-3 bg-mint-soft border border-mint-border rounded-lg p-3 sm:p-3.5 flex items-start gap-2.5 text-[13px] text-mint-strong">
+              <div className="mt-3 bg-mint-soft border border-mint-border rounded-2xl p-3 sm:p-3.5 flex items-start gap-2.5 text-[13px] text-mint-strong">
                 <span className="text-[16px] leading-none shrink-0 mt-0.5">💡</span>
                 <div className="leading-relaxed">
                   <strong className="font-bold">
@@ -1941,7 +1941,7 @@ ${textExclusion} No guide lines, no grid lines, no cell dividers, no border line
             </div>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-sm md:gap-md bg-surface-container-lowest rounded-xl p-3.5 sm:p-md shadow-bubbly border border-outline-variant">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-sm md:gap-md bg-surface-container-lowest rounded-3xl p-3.5 sm:p-md shadow-bubbly border border-outline-variant">
             {emoticons.map((text, idx) => (
               <input 
                 key={idx}
@@ -1962,7 +1962,7 @@ ${textExclusion} No guide lines, no grid lines, no cell dividers, no border line
 
         {/* Section 3: Prompt Preview */}
         <section className="flex flex-col gap-md">
-          <div className="bg-[#FFF7DF] rounded-xl p-3 md:p-4 border border-[#F6D77A] shadow-sm flex flex-col gap-3">
+          <div className="bg-[#FFF7DF] rounded-3xl p-3 md:p-4 border border-[#F6D77A] shadow-sm flex flex-col gap-3">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2" role="group" aria-label={lang === 'ko' ? '프롬프트 생성 방식' : 'Prompt generation mode'}>
               {[
                 ['sheet', t.modeSheet],
@@ -2218,7 +2218,7 @@ ${textExclusion} No guide lines, no grid lines, no cell dividers, no border line
         
         <AdBanner />
 
-        <div className="bg-[#FFF5E6] text-[#8C3D18] p-4 sm:p-5 md:p-6 rounded-lg border border-[#FDE0B5] flex gap-3 md:gap-4 items-start shadow-sm mt-2 relative overflow-hidden">
+        <div className="bg-[#FFF5E6] text-[#8C3D18] p-4 sm:p-5 md:p-6 rounded-3xl border border-[#FDE0B5] flex gap-3 md:gap-4 items-start shadow-sm mt-2 relative overflow-hidden">
           <div className="absolute -right-4 -top-6 text-[#FCD3A1] opacity-40 text-[120px] sm:text-[140px] transform -rotate-12 select-none pointer-events-none drop-shadow-sm">📸</div>
           <span className="text-[20px] sm:text-[22px] drop-shadow-sm leading-none mt-0.5 relative z-10">📸</span>
           <div className="relative z-10 flex-1 min-w-0">
@@ -2240,7 +2240,7 @@ ${textExclusion} No guide lines, no grid lines, no cell dividers, no border line
                 ? '将此提示词复制粘贴给AI (ChatGPT, Gemini) 时，可以同时发送您自己、孩子或宠物的照片。AI将完美还原特征，生成独一无二的专属表情包！'
                 : 'When pasting this prompt into AI (ChatGPT, Gemini), attach a photo of yourself, your child, or your pet. It will generate a custom emoji sheet!'}
             </span>
-            <div className="bg-white/60 rounded-lg sm:rounded-xl p-3 sm:p-4 border border-[#FCD3A1]/60 shadow-sm flex flex-col gap-1.5 sm:gap-2 w-full">
+            <div className="bg-white/60 rounded-2xl p-3 sm:p-4 border border-[#FCD3A1]/60 shadow-sm flex flex-col gap-1.5 sm:gap-2 w-full">
               <strong className="text-[#C2410C] text-[13.5px] sm:text-[14.5px] flex items-center gap-1.5 font-bold">
                 <span className="text-[15px] sm:text-[16px]">📌</span> 
                 {lang === 'ko' 
