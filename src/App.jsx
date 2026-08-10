@@ -892,9 +892,9 @@ const InfoSection = ({ t, lang }) => {
             </div>
 
             {/* Unified Tip Box */}
-            <div className="bg-primary/10 text-primary-strong p-3.5 sm:p-4 rounded-md border border-primary/20 mt-2 flex gap-3 items-start shadow-sm">
-              <span className="text-[20px] drop-shadow-sm leading-none mt-0.5">📸</span>
-              <div>
+            <div className="bg-primary/10 text-primary-strong p-3.5 sm:p-4 rounded-md border border-primary/20 mt-2 flex gap-3 items-start shadow-sm overflow-hidden">
+              <span className="text-[20px] drop-shadow-sm leading-none mt-0.5 shrink-0">📸</span>
+              <div className="min-w-0 flex-1">
                 <strong className="font-bold block mb-1 text-[15px]">
                   {getText('tipTitle', {
                     ko: '공용 활용 꿀팁!',
@@ -903,7 +903,7 @@ const InfoSection = ({ t, lang }) => {
                     en: 'Pro Tip!',
                   })}
                 </strong>
-                <span className="text-[14px] leading-relaxed opacity-90 break-keep block">
+                <span className="text-[13px] sm:text-[14px] leading-relaxed opacity-90 break-words block">
                   {getText('tipContent', {
                     ko: '사진을 첨부하면 인물이나 반려동물의 특징을 반영한 캐릭터를 만들 수 있습니다. ChatGPT는 문구가 필요한 이미지에 활용하고, Gemini는 마음에 드는 기준 캐릭터를 만든 뒤 그 이미지를 다시 첨부해 한 장씩 변형해 보세요.',
                     ja: '写真を添付すると人物やペットの特徴を反映したキャラが作れます。文字が必要な場合はChatGPTを使い、Geminiでは気に入ったベースキャラを作成後、その画像を再添付して1枚ずつバリエーションを生成するのがおすすめです。',
