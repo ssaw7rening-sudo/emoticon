@@ -2106,7 +2106,7 @@ ${textExclusion} No guide lines, no grid lines, no cell dividers, no border line
           <div className="absolute bottom-10 right-10 hidden sm:block text-[40px] transform -rotate-12 drop-shadow-md">💖</div>
           
           <div className="z-10 flex flex-col gap-2 sm:gap-3 w-full max-w-full px-1">
-            <span className="inline-block bg-white/60 text-[#5C3A21] font-black text-[11px] sm:text-[13px] tracking-wider px-3 sm:px-4 py-1 sm:py-1.5 rounded-full backdrop-blur-sm border border-white/80 mx-auto shadow-sm max-w-full text-ellipsis overflow-hidden">
+            <span className="brand-logo inline-block bg-white/60 text-[#5C3A21] font-black text-[11px] sm:text-[13px] tracking-wider px-3 sm:px-4 py-1 sm:py-1.5 rounded-full backdrop-blur-sm border border-white/80 mx-auto shadow-sm max-w-full text-ellipsis overflow-hidden">
               AI STICKER PROMPT MAKER
             </span>
             <h2 className="text-[18px] xs:text-[22px] sm:text-[28px] md:text-[38px] font-black tracking-tight leading-snug drop-shadow-sm w-full max-w-full px-1 [word-break:keep-all] [text-wrap:balance]">
