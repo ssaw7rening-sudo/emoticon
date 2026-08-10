@@ -261,7 +261,7 @@ const I18N = {
     guide4A: 'For official sales, you must submit them to platforms like LINE Creators Market. For personal use, simply save the transparent PNG to your gallery and send it as a regular photo in the chat. It will display cleanly like a sticker.',
   },
   ja: {
-    title: 'プロンプトスタジオ',
+    title: 'Prompt Studio',
     step1: 'キャラクター設定',
     whatCharacter: 'キャラクター説明',
     clear: 'リセット',
@@ -332,7 +332,7 @@ const I18N = {
     guide4A: 'LINE Creators Marketで申請して販売することも、透過PNGをギャラリーに保存してトーク画面で画像として送信して楽しむこともできます！',
   },
   zh: {
-    title: '提示词工作室',
+    title: 'Prompt Studio',
     step1: '角色设置',
     whatCharacter: '角色描述',
     clear: '重置',
@@ -2052,7 +2052,7 @@ ${textExclusion} No guide lines, no grid lines, no cell dividers, no border line
       {/* TopAppBar */}
       <header className="w-full top-0 bg-background/95 backdrop-blur-md flex items-center justify-between px-3 sm:px-gutter min-h-14 py-2 max-w-7xl mx-auto z-50 sticky border-b border-outline-variant/30 shadow-xs overflow-hidden">
         <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
-          <h1 className="font-headline-md text-[16px] xs:text-[18px] sm:text-[22px] leading-none font-bold text-primary-strong tracking-tight whitespace-nowrap">
+          <h1 className="brand-logo text-[18px] sm:text-[22px] leading-none font-bold text-primary-strong tracking-tight whitespace-nowrap">
             Prompt Studio
           </h1>
         </div>

@@ -41,12 +41,16 @@
     overflow-wrap: break-word;
   }
 
-  .lang-ja, .lang-ja * {
+  .lang-ja *:not(.brand-logo) {
     font-family: 'M PLUS Rounded 1c', "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Meiryo", sans-serif !important;
   }
 
-  .lang-zh, .lang-zh * {
+  .lang-zh *:not(.brand-logo) {
     font-family: 'Noto Sans SC', "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif !important;
+  }
+
+  .brand-logo {
+    font-family: 'Paperlogy', -apple-system, BlinkMacSystemFont, sans-serif !important;
   }
 }
 
