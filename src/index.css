@@ -40,6 +40,14 @@
     word-break: break-word;
     overflow-wrap: break-word;
   }
+
+  .lang-ja {
+    font-family: 'M PLUS Rounded 1c', 'Paperlogy', "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Meiryo", sans-serif;
+  }
+
+  .lang-zh {
+    font-family: 'Noto Sans SC', 'Paperlogy', "PingFang SC", "Microsoft YaHei", sans-serif;
+  }
 }
 
 @layer utilities {

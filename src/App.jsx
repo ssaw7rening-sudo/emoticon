@@ -2014,7 +2014,7 @@ ${textExclusion} No guide lines, no grid lines, no cell dividers, no border line
   const visiblePromptValidationError = promptValidationError;
 
   return (
-    <div className="font-body-md text-body-md antialiased pb-32 max-w-full w-full">
+    <div className={`font-body-md text-body-md antialiased pb-32 max-w-full w-full ${lang === 'ja' ? 'lang-ja' : lang === 'zh' ? 'lang-zh' : ''}`}>
       {/* TopAppBar */}
       <header className="w-full top-0 bg-background/95 backdrop-blur-md flex items-center justify-between px-3 sm:px-gutter min-h-14 py-2 max-w-7xl mx-auto z-50 sticky border-b border-outline-variant/30 shadow-xs overflow-hidden">
         <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
