@@ -777,7 +777,7 @@ const InfoSection = ({ t, lang }) => {
                 <div className="font-black text-[18px] text-primary-strong -mt-3">
                   {getText('gptSub', {
                     ko: '"대사가 꼭 필요한 이모티콘"',
-                    ja: '"セリフ・文字入れが必須のスタンプ"',
+                    ja: '"セリフ・文字入れ가 必須のスタンプ"',
                     zh: '"包含文字台词的表情包"',
                     en: '"Emoticons with essential text"',
                   })}
@@ -1400,5 +1400,1204 @@ const InfoSection = ({ t, lang }) => {
     </div>
   );
 };
+
+function App() {
+  const [lang, setLang] = useState('ko');
+  const t = I18N[lang] || I18N.ko;
+  
+  const getThemesByLang = (l) => {
+    if (l === 'ja') return THEMES_JA;
+    if (l === 'zh') return THEMES_ZH;
+    if (l === 'en') return THEMES_EN;
+    return THEMES_KO;
+  };
+
+  const getTagsByLang = (l) => {
+    if (l === 'ja') return CHARACTER_TAGS_JA;
+    if (l === 'zh') return CHARACTER_TAGS_ZH;
+    if (l === 'en') return CHARACTER_TAGS_EN;
+    return CHARACTER_TAGS_KO;
+  };
+
+  const currentThemes = getThemesByLang(lang);
+  const currentTags = getTagsByLang(lang);
+  const themeKeys = Object.keys(currentThemes);
+  const categoryKeys = Object.keys(currentTags);
+  
+  const [charManual, setCharManual] = useState('');
+  const [characterSource, setCharacterSource] = useState('direct');
+  const [photoReferenceMode, setPhotoReferenceMode] = useState('characterize');
+  const [activeTagCategory, setActiveTagCategory] = useState(categoryKeys[0]);
+  
+  const [emoticons, setEmoticons] = useState(currentThemes[themeKeys[0]]);
+  const [activeTheme, setActiveTheme] = useState(themeKeys[0]);
+  
+  const [generationMode, setGenerationMode] = useState('sheet'); // 'sheet' | 'individual' | 'batch'
+  const [individualPhrase, setIndividualPhrase] = useState('');
+  const [batchPhrase, setBatchPhrase] = useState('');
+
+  const [copiedType, setCopiedType] = useState(null);
+  const [previewMode, setPreviewMode] = useState('gpt');
+  const [gptTextMode, setGptTextMode] = useState('text');
+  const [gptBackgroundMode, setGptBackgroundMode] = useState('transparent');
+  const [geminiTextMode, setGeminiTextMode] = useState('visual');
+
+  const changeLanguage = (newLang) => {
+    if (newLang === lang) return;
+    const oldThemes = getThemesByLang(lang);
+    const oldThemeKeys = Object.keys(oldThemes);
+    const newThemes = getThemesByLang(newLang);
+    const newThemeKeys = Object.keys(newThemes);
+    const oldTags = getTagsByLang(lang);
+    const newTags = getTagsByLang(newLang);
+    const oldCategoryKeys = Object.keys(oldTags);
+    const newCategoryKeys = Object.keys(newTags);
+    
+    setLang(newLang);
+
+    if (activeTheme !== 'custom') {
+      const themeIndex = oldThemeKeys.indexOf(activeTheme);
+      const nextThemeKey = newThemeKeys[themeIndex >= 0 ? themeIndex : 0] || newThemeKeys[0];
+      setActiveTheme(nextThemeKey);
+      setEmoticons(newThemes[nextThemeKey]);
+    }
+
+    const categoryIndex = oldCategoryKeys.indexOf(activeTagCategory);
+    setActiveTagCategory(newCategoryKeys[categoryIndex >= 0 ? categoryIndex : 0] || newCategoryKeys[0]);
+    
+    setCharManual('');
+  };
+
+  const handleEmoticonChange = (index, value) => {
+    const newEmoticons = [...emoticons];
+    newEmoticons[index] = value;
+    setEmoticons(newEmoticons);
+    setActiveTheme('custom');
+  };
+
+  const handleThemeSelect = (e) => {
+    const themeName = e.target.value;
+    if (currentThemes[themeName]) {
+      setEmoticons(currentThemes[themeName]);
+      setActiveTheme(themeName);
+    }
+  };
+
+  const shuffleEmoticons = () => {
+    const ALL_PHRASES = Array.from(new Set(Object.values(currentThemes).flat()));
+    const shuffled = [...ALL_PHRASES].sort(() => 0.5 - Math.random());
+    setEmoticons(shuffled.slice(0, 15));
+    setActiveTheme('custom');
+  };
+
+  const handleGenerationModeChange = (mode) => {
+    setGenerationMode(mode);
+    if (mode === 'individual' && !individualPhrase.trim()) {
+      setIndividualPhrase(emoticons[0] || '');
+    }
+    if (mode === 'batch' && !emoticons.includes(batchPhrase)) {
+      setBatchPhrase(emoticons[0] || '');
+    }
+  };
+
+  const clearTags = () => {
+    setCharacterSource('direct');
+    setPhotoReferenceMode('characterize');
+    setCharManual('');
+  };
+
+  const appendTag = (tag) => {
+    const isArtStyleCategory = activeTagCategory === '🖌️ 화풍' || activeTagCategory === '🖌️ Art Style';
+    if (isArtStyleCategory) {
+      const artStyles = new Set([
+        ...CHARACTER_TAGS_KO['🖌️ 화풍'],
+        ...CHARACTER_TAGS_EN['🖌️ Art Style'],
+      ]);
+      setCharManual(prev => {
+        const otherTags = prev.split(',').map(value => value.trim()).filter(value => value && !artStyles.has(value));
+        return [...otherTags, tag].join(', ');
+      });
+      return;
+    }
+    setCharManual(prev => prev ? `${prev}, ${tag}` : tag);
+  };
+
+  const getPhotoModeLabel = (labelLanguage = lang) => ({
+    exact: I18N[labelLanguage].photoExact,
+    features: I18N[labelLanguage].photoFeatures,
+    characterize: I18N[labelLanguage].photoCharacterize,
+  }[photoReferenceMode]);
+
+  const getReferenceImageInstruction = (promptLanguage = lang) => {
+    if (characterSource !== 'photo') {
+      return promptLanguage === 'ko'
+        ? '만약 이 프롬프트와 함께 이미지가 첨부되었다면, 첨부 이미지의 주요 특징을 캐릭터 디자인에 반영해주세요.'
+        : 'If an image is attached with this prompt, use its key visual features as reference for the character design.';
+    }
+
+    const modeInstructions = {
+      exact: {
+        ko: '[최대한 실물 닮게 - High Fidelity Photo Caricature] 첨부한 인물 사진의 실물 얼굴, 헤어스타일, 이목구비 생김새, 피부 톤과 실제 옷 질감을 95% 이상 극도로 비슷하게 유지한 실사 사진 기반 캐리커처 짤 스티커로 제작해주세요. 2D 그림체로 그리지 말고, 실제 사진 속 인물의 얼굴과 피부 질감을 그대로 살린 사진 cutout 캐리커처 스티커 스타일을 적용하세요.',
+        en: '[HIGH-FIDELITY REALISTIC PHOTO CARICATURE] Create a photo-realistic caricature cutout sticker preserving 95%+ exact visual resemblance to the attached person photo. Do NOT render as a 2D vector cartoon. Preserve real photographic face texture, skin tone, hairstyle, and authentic outfit texture, stylized into a high-end photo cutout sticker.',
+      },
+      features: {
+        ko: '[핵심 특징만 포인트 반영 - Soft 3D Stylized Avatar] 사진에서 실제 존재하는 시그니처 포인트(헤어스타일, 이목구비, 의상 등 사진에 실제로 있는 특징만)를 강렬하게 살린 소프트 3D 아바타 일러스트 캐릭터 짤 스티커로 제작해주세요. 원본 사진에 없는 안경이나 모자 등 가짜 악세사리를 절대 추가하지 마세요. 평면 2D 선화가 아닌, 3D 입체 헤어 결, 매끄러운 3D 피부 질감, 소프트 조명이 느껴지는 고급스러운 반실사 3D 캐릭터 스타일을 적용하세요.',
+        en: '[SIGNATURE FEATURE EXTRACTION - SOFT 3D STYLIZED AVATAR] Create a soft 3D stylized digital avatar caricature sticker capturing only authentic traits visible in the reference photo (hairstyle, facial features, outfit). Do NOT invent or add unrequested accessories like glasses or hats if not present in the photo. Render with smooth 3D skin texture, realistic volumetric hair flow, soft studio 3D lighting, and a high-end semi-realistic 3D artwork finish.',
+      },
+      characterize: {
+        ko: '[극도로 귀여운 SD/Chibi 이모티콘 캐릭터화 - Cute Chibi Mascot] 2.5등신의 커다란 머리, 동글동글한 몸통, 초롱초롱한 눈망울, 과장되고 사랑스러운 이모티콘 마스코트로 파격 재해석해주세요. 원본 사진의 느낌만 살짝 남기고 극강의 귀여운 2D 마스코트 캐릭터로 변환해주세요.',
+        en: '[ULTRA-CUTE CHIBI SD MASCOT] Reinterpret the subject into an extremely cute 2D Chibi SD mascot with a big head, small chubby body, huge sparkling expressive eyes, and exaggerated adorable emoji proportions. Maximize cuteness.',
+      },
+    };
+    const promptLang = promptLanguage === 'ko' ? 'ko' : 'en';
+    const intro = promptLang === 'ko'
+      ? '이 프롬프트를 사용할 때 AI 채팅에 함께 첨부한 사진을 최우선 참고 이미지로 사용해주세요.'
+      : 'Use the photo attached in the AI chat as the primary visual reference.';
+    return `${intro}\n${modeInstructions[photoReferenceMode][promptLang]}`;
+  };
+
+  const getSelectedPhrase = () => {
+    if (generationMode === 'individual') return individualPhrase.trim() || (emoticons[0] || '안녕!');
+    return emoticons.includes(batchPhrase) ? batchPhrase : (emoticons[0] || '안녕!');
+  };
+
+  const getSelectedArtStyle = () => {
+    const artStyles = [
+      ...CHARACTER_TAGS_KO['🖌️ 화풍'],
+      ...CHARACTER_TAGS_EN['🖌️ Art Style'],
+    ];
+    return artStyles
+      .filter(style => charManual.includes(style))
+      .sort((a, b) => charManual.lastIndexOf(a) - charManual.lastIndexOf(b))
+      .at(-1) || '';
+  };
+
+  const getGeminiStyleTags = () => {
+    const selectedArtStyle = getSelectedArtStyle();
+    return selectedArtStyle
+      ? `${selectedArtStyle}; treat this selected art style as the highest-priority visual direction`
+      : 'cute, approachable, high-quality 2D messenger sticker illustration with clean outlines and harmonious colors';
+  };
+
+  const getSelectedCharacterRoles = () => {
+    const koCategories = Object.values(CHARACTER_TAGS_KO);
+    const enCategories = Object.values(CHARACTER_TAGS_EN);
+    const roleTags = index => [...koCategories[index], ...enCategories[index]];
+    const findSelected = indexes => indexes
+      .flatMap(index => roleTags(index))
+      .filter(tag => charManual.includes(tag));
+    const recognizedTags = new Set([...koCategories.flat(), ...enCategories.flat()]);
+    const additionalDescription = charManual
+      .split(',')
+      .map(value => value.trim())
+      .filter(value => value && !recognizedTags.has(value))
+      .join(', ');
+    const subjects = findSelected([0, 1, 2]);
+    const appearances = findSelected([3]);
+    const personalities = findSelected([4]);
+    const outfits = findSelected([6]);
+    const props = findSelected([7]);
+    const effects = findSelected([8]);
+
+    return { subjects, appearances, personalities, outfits, props, effects, additionalDescription };
+  };
+
+  const getGeminiCharacterDetails = () => {
+    const { subjects, appearances, personalities, outfits, props, effects, additionalDescription } = getSelectedCharacterRoles();
+    const subjectParts = [
+      ...(characterSource === 'photo' ? ['the subject in the attached reference photo'] : []),
+      ...subjects,
+      ...(additionalDescription ? [additionalDescription] : []),
+    ];
+
+    const photoAppearanceEn = {
+      exact: 'preserve exact high-fidelity resemblance (95%+ likeness) to the reference photo with realistic features; do not add unrequested glasses or hats',
+      features: 'extract authentic signature features (hair, facial traits, outfit) visible in photo; do not add unrequested glasses or accessories',
+      characterize: 'reinterpret into an ultra-cute 2D Chibi/SD mascot with a big head, chubby body, and huge expressive eyes',
+    }[photoReferenceMode];
+
+    const photoAppearanceKo = {
+      exact: '참고 사진 속 대상과 95% 이상 극도로 닮게 이목구비와 비율을 사실적으로 재현 (사진에 없는 안경/모자 등 임의 추가 금지)',
+      features: '참고 사진의 실제 시그니처 포인트(헤어, 이목구비, 의상)만 추출 (사진에 없는 안경/악세사리 임의 추가 금지)',
+      characterize: '2.5등신 커다란 머리와 동통한 몸체의 극도로 귀여운 SD/Chibi 이모티콘 마스코트로 파격 변환',
+    }[photoReferenceMode];
+
+    return {
+      subject: subjectParts.join(', ') || 'a cute original character',
+      appearance: appearances.join(', ') || (characterSource === 'photo'
+        ? photoAppearanceEn
+        : 'use a simple, recognizable silhouette and keep it unchanged'),
+      personality: personalities.join(', ') || 'friendly and expressive',
+      outfit: outfits.join(', ') || 'no fixed outfit specified; once chosen, keep it unchanged',
+      props: props.join(', ') || 'none required',
+      effects: effects.join(', ') || 'use only a minimal effect when it clarifies the emotion',
+      artStyle: getGeminiStyleTags(),
+    };
+  };
+
+  const getGptCharacterDetails = () => {
+    const { subjects, appearances, personalities, outfits, props, effects, additionalDescription } = getSelectedCharacterRoles();
+    const isKo = lang === 'ko';
+    const subjectParts = [
+      ...(characterSource === 'photo'
+        ? [isKo ? 'AI 채팅에 첨부한 참고 사진 속 대상' : 'the subject in the reference photo attached in the AI chat']
+        : []),
+      ...subjects,
+      ...(additionalDescription ? [additionalDescription] : []),
+    ];
+
+    const photoAppearanceEn = {
+      exact: 'preserve exact high-fidelity resemblance (95%+ likeness) to the reference photo with realistic features; do not add unrequested glasses or hats',
+      features: 'extract authentic signature features (hair, facial traits, outfit) visible in photo; do not add unrequested glasses or accessories',
+      characterize: 'reinterpret into an ultra-cute 2D Chibi/SD mascot with a big head, chubby body, and huge expressive eyes',
+    }[photoReferenceMode];
+
+    const photoAppearanceKo = {
+      exact: '참고 사진 속 대상과 95% 이상 극도로 닮게 이목구비와 비율을 사실적으로 재현 (사진에 없는 안경/모자 등 임의 추가 금지)',
+      features: '참고 사진의 실제 시그니처 포인트(헤어, 이목구비, 의상)만 추출 (사진에 없는 안경/악세사리 임의 추가 금지)',
+      characterize: '2.5등신 커다란 머리와 동통한 몸체의 극도로 귀여운 SD/Chibi 이모티콘 마스코트로 파격 변환',
+    }[photoReferenceMode];
+
+    return {
+      subject: subjectParts.join(', ') || (isKo ? '귀여운 오리지널 캐릭터' : 'a cute original character'),
+      appearance: appearances.join(', ') || (characterSource === 'photo'
+        ? (isKo ? photoAppearanceKo : photoAppearanceEn)
+        : (isKo ? '단순하고 알아보기 쉬운 실루엣을 정한 뒤 그대로 유지' : 'use a simple recognizable silhouette and keep it unchanged')),
+      personality: personalities.join(', ') || (isKo ? '친근하고 표정이 풍부한' : 'friendly and expressive'),
+      outfit: outfits.join(', ') || (isKo ? '지정 없음. 처음 정한 의상은 모든 이미지에서 유지' : 'not specified; once chosen, keep it unchanged'),
+      props: props.join(', ') || (isKo ? '필수 소품 없음' : 'no prop required'),
+      effects: effects.join(', ') || (isKo ? '감정 전달에 필요한 최소한의 효과만 사용' : 'use only a minimal effect when it clarifies the emotion'),
+    };
+  };
+
+  const getGptBackgroundInstruction = () => {
+    const instructions = {
+      transparent: {
+        ko: '진짜 알파 투명도가 적용된 투명 배경으로 생성해주세요. 투명도를 흉내 낸 체크무늬나 흰색 바탕을 그리지 마세요.',
+        en: 'Generate a genuinely transparent background with alpha transparency. Do not draw a checkerboard pattern or fake transparency with a white background.',
+      },
+      solid: {
+        ko: '캐릭터와 충분히 대비되는 하나의 깨끗한 단색 배경을 사용해주세요. 그라데이션, 질감과 배경 사물은 넣지 마세요.',
+        en: 'Use one clean solid background color with strong contrast against the character. No gradient, texture, or background objects.',
+      },
+      chroma: {
+        ko: '배경 제거가 쉽도록 캐릭터 색상과 겹치지 않는 밝은 연두색 #00FF00 단색 크로마키 배경을 사용해주세요. 배경색이 캐릭터 테두리에 묻어나면 안 됩니다.',
+        en: 'Use a solid bright green #00FF00 chroma-key background that does not overlap the character colors. No green spill may appear on the character outline.',
+      },
+    };
+    return instructions[gptBackgroundMode][lang === 'ko' ? 'ko' : 'en'];
+  };
+
+  const getPromptValidationError = (phraseOverride = null) => {
+    if (generationMode === 'individual' || phraseOverride !== null) {
+      const targetPhrase = generationMode === 'individual' ? individualPhrase.trim() : phraseOverride.trim();
+      return targetPhrase ? '' : t.emptyPhraseError;
+    }
+
+    const normalizedPhrases = emoticons.map(phrase => phrase.trim());
+    if (normalizedPhrases.some(phrase => !phrase)) return t.emptyPhraseError;
+    if (new Set(normalizedPhrases).size !== normalizedPhrases.length) return t.duplicatePhraseError;
+    return '';
+  };
+
+  const generateGptPrompt = (phraseOverride = null) => {
+    const character = getGptCharacterDetails();
+    const hasPhraseOverride = phraseOverride !== null;
+    const targetPhrase = generationMode === 'individual'
+      ? getSelectedPhrase()
+      : (phraseOverride || '').trim();
+    const referenceInstruction = `${characterSource === 'photo'
+      ? `${lang === 'ko' ? `사진 반영 방식: ${getPhotoModeLabel('ko')}` : `Photo reference style: ${getPhotoModeLabel('en')}`}\n`
+      : ''}${getReferenceImageInstruction(lang)}`;
+    const selectedArtStyle = getSelectedArtStyle();
+    const artDirection = selectedArtStyle || (lang === 'ko'
+      ? '귀엽고 친근한 고품질 2D 메신저 이모티콘 스타일, 깔끔한 외곽선, 조화로운 색감'
+      : 'cute, approachable, high-quality 2D messenger sticker style with clean outlines and harmonious colors');
+
+    if (generationMode === 'individual' || hasPhraseOverride) {
+      if (lang === 'ko') {
+        const textPolicy = gptTextMode === 'text'
+          ? `정확한 문구 "${targetPhrase}"를 이미지에 한 번만 적어주세요. 생성 전에 철자와 띄어쓰기를 확인하고, 텍스트 박스 없이 읽기 쉬운 손글씨로 표현하세요. 다른 글자는 넣지 마세요.`
+          : `문구 "${targetPhrase}"는 장면을 정하는 참고 맥락으로만 사용하세요. 이미지에는 글자, 숫자, 타이포그래피를 그리지 마세요.`;
+        const textExclusion = gptTextMode === 'text'
+          ? '추가 문구, 틀린 철자, 임의의 글자, 숫자, 따옴표와 텍스트 박스 금지.'
+          : '글자, 숫자, 타이포그래피와 의미 없는 기호 금지.';
+
+        return `[목표]
+상황을 즉시 이해할 수 있는 완성도 높은 개인용 메신저 이모티콘 1개를 그려주세요.
+
+[참고 이미지]
+${referenceInstruction}
+
+[캐릭터 고정 정보 — 변경 금지]
+대상: ${character.subject}
+외형: ${character.appearance}
+성격: ${character.personality}
+의상: ${character.outfit}
+
+[최우선 화풍]
+${artDirection}. 선, 질감, 색감과 캐릭터 비율을 동일하게 유지해주세요.
+
+[장면]
+문구 맥락: "${targetPhrase}"
+이 문구에서 바로 이해할 수 있는 표정 하나와 명확한 전신 자세 하나를 구성하세요. 보조 소품과 만화 효과는 각각 최대 하나만 사용하세요.
+설정에서 선택한 소품 또는 행동: ${character.props}.
+설정에서 선택한 시각 효과: ${character.effects}.
+
+[구도 및 배경]
+1:1 정사각형 캔버스. 완전한 캐릭터 한 명만 중앙에 배치하고, 전신이 잘리지 않도록 사방에 최소 12% 여백을 남겨주세요.
+${getGptBackgroundInstruction()}
+
+[일관성]
+같은 채팅에 이전 시트나 캐릭터 이미지가 있다면 얼굴, 체형, 색상, 의상과 화풍을 그대로 유지하세요. 이번 장면에 필요한 표정, 자세, 보조 소품과 효과만 변경하세요.
+
+[글자 정책]
+${textPolicy}
+
+[제외 조건]
+${textExclusion} 워터마크, 프레임, 중복 캐릭터, 추가 팔다리, 잘린 신체, 복잡한 풍경과 실사 배경 금지.`;
+      } else {
+        const textPolicy = gptTextMode === 'text'
+          ? `Render the exact phrase "${targetPhrase}" once. Verify spelling and spacing before rendering it, and use legible hand-drawn lettering without a text box. Do not add any other text.`
+          : `Use "${targetPhrase}" only as visual context. Do not render text, letters, numbers, or typography.`;
+        const textExclusion = gptTextMode === 'text'
+          ? 'No extra words, altered spelling, random letters, numbers, quotation marks, or text box.'
+          : 'No text, letters, numbers, typography, or meaningless symbols.';
+
+        return `[GOAL]
+Create one high-quality personal messenger sticker that communicates the situation immediately.
+
+[REFERENCE IMAGE]
+${referenceInstruction}
+
+[CHARACTER IDENTITY — LOCKED]
+Subject: ${character.subject}
+Appearance: ${character.appearance}
+Personality: ${character.personality}
+Outfit: ${character.outfit}
+
+[ART DIRECTION — HIGHEST PRIORITY]
+${artDirection}. Keep the same linework, texture, color treatment, and character proportions.
+
+[SCENE]
+Phrase context: "${targetPhrase}"
+Create one unmistakable facial expression and one clear full-body pose. Use at most one supporting prop and one simple comic effect.
+Preferred prop or action from the setup: ${character.props}.
+Preferred visual effect from the setup: ${character.effects}.
+
+[COMPOSITION AND BACKGROUND]
+Square 1:1 canvas. Exactly one complete centered character with at least 12% empty margin on every side.
+${getGptBackgroundInstruction()}
+
+[CONSISTENCY]
+If a previous sheet or character image exists in this chat, preserve its face, body proportions, colors, outfit, and art style. Change only the expression, pose, supporting prop, and effect required for this scene.
+
+[TEXT POLICY]
+${textPolicy}
+
+[EXCLUDE]
+${textExclusion} No watermark, frame, duplicate character, extra limbs, cropped body, complex scenery, or photorealistic background.`;
+      }
+    }
+
+    if (lang === 'ko') {
+      const panelPlan = emoticons.map((phrase, index) => `${Math.floor(index / 5) + 1}행 ${index % 5 + 1}열: "${phrase.trim()}"`).join('\n');
+      const textPolicy = gptTextMode === 'text'
+        ? '각 셀에 지정된 문구를 정확히 한 번만 적으세요. 생성 전에 15개 문구의 철자와 띄어쓰기를 확인하고, 일관되고 읽기 쉬운 손글씨를 사용하세요. 다른 글자는 넣지 마세요.'
+        : '각 문구는 해당 셀의 표정, 자세와 행동을 정하는 맥락으로만 사용하세요. 이미지에는 문구나 다른 글자를 그리지 마세요.';
+      const textExclusion = gptTextMode === 'text'
+        ? '추가 문구, 틀린 철자, 임의의 글자, 셀 번호, 따옴표와 텍스트 박스 금지.'
+        : '글자, 숫자, 타이포그래피, 셀 번호와 의미 없는 기호 금지.';
+
+      return `[목표]
+동일한 캐릭터의 서로 다른 표현 15개가 담긴 완성도 높은 개인용 메신저 이모티콘 시트 한 장을 그려주세요.
+
+[참고 이미지]
+${referenceInstruction}
+
+[캐릭터 고정 정보 — 변경 금지]
+대상: ${character.subject}
+외형: ${character.appearance}
+성격: ${character.personality}
+의상: ${character.outfit}
+
+[최우선 화풍]
+${artDirection}. 15개 셀 모두 같은 선, 질감, 색감과 캐릭터 비율을 적용하세요.
+
+[패널 계획]
+각 문구에서 바로 이해할 수 있는 표정 하나와 서로 다른 전신 자세 하나를 구성하세요. 셀마다 보조 소품과 만화 효과는 각각 최대 하나만 사용하고 자세를 반복하지 마세요.
+설정에서 선택한 소품 또는 행동: ${character.props}.
+설정에서 선택한 시각 효과: ${character.effects}.
+${panelPlan}
+
+[구도 및 배경]
+가로형 캔버스에 정확히 5열 3행으로 배치하세요. 동일한 크기의 셀 15개에 완전한 캐릭터 한 명씩 배치하고, 캐릭터·소품·효과·글자가 다른 셀을 침범하지 않게 하세요. 셀 경계선, 구별선, 격자선(grid lines), 테두리선과 셀 번호는 이미지에 절대 그리지 마세요.
+${getGptBackgroundInstruction()}
+
+[일관성]
+15개 셀 모두 얼굴, 체형, 색상, 의상과 화풍을 동일하게 유지하세요. 문구에 필요한 표정, 자세, 보조 소품과 효과만 변경하세요.
+
+[글자 정책]
+${textPolicy}
+
+[제외 조건]
+${textExclusion} 격자선, 셀 경계선, 구별선, 테두리선, 워터마크, 전체 프레임, 셀 안의 중복 캐릭터, 추가 팔다리, 잘린 신체, 복잡한 풍경과 실사 배경 금지.`;
+    } else {
+      const panelPlan = emoticons.map((phrase, index) => `Row ${Math.floor(index / 5) + 1}, Column ${index % 5 + 1}: "${phrase.trim()}"`).join('\n');
+      const textPolicy = gptTextMode === 'text'
+        ? 'Render each assigned phrase exactly once in its corresponding cell. Verify spelling and spacing for all 15 phrases before rendering them. Use consistent, legible hand-drawn lettering and add no other text.'
+        : 'Use each phrase only as context for its cell\'s expression, pose, and action. Do not render any phrase or other text.';
+      const textExclusion = gptTextMode === 'text'
+        ? 'No extra words, altered spelling, random letters, cell numbers, quotation marks, or text boxes.'
+        : 'No text, letters, numbers, typography, cell labels, or meaningless symbols.';
+
+      return `[GOAL]
+Create one high-quality personal messenger sticker sheet containing 15 distinct variations of the same character.
+
+[REFERENCE IMAGE]
+${referenceInstruction}
+
+[CHARACTER IDENTITY — LOCKED]
+Subject: ${character.subject}
+Appearance: ${character.appearance}
+Personality: ${character.personality}
+Outfit: ${character.outfit}
+
+[ART DIRECTION — HIGHEST PRIORITY]
+${artDirection}. Apply identical linework, texture, color treatment, and character proportions to all 15 cells.
+
+[PANEL PLAN]
+For every phrase, create one unmistakable facial expression and one distinct full-body pose. Use at most one supporting prop and one simple comic effect per cell. Do not repeat a pose.
+Preferred props or actions from the setup: ${character.props}.
+Preferred visual effects from the setup: ${character.effects}.
+${panelPlan}
+
+[COMPOSITION AND BACKGROUND]
+Use one wide landscape canvas with exactly 5 columns and 3 rows. Create 15 equally sized cells and place exactly one complete character inside each cell. No character, prop, effect, or text may cross into another cell. Absolutely NO grid lines, NO cell division lines, NO border lines between cells, NO cell numbers.
+${getGptBackgroundInstruction()}
+
+[CONSISTENCY]
+All 15 cells must preserve the same face, body proportions, colors, outfit, and art style. Change only the expression, pose, supporting prop, and effect required by each phrase.
+
+[TEXT POLICY]
+${textPolicy}
+
+[EXCLUDE]
+${textExclusion} No grid lines, no cell division lines, no border lines between cells, no cell frames, no watermark, no full-sheet frame, no duplicate character inside a cell, no extra limbs, no cropped body, no complex scenery, or photorealistic background.`;
+    }
+  };
+
+  const generateGeminiPrompt = (phraseOverride = null) => {
+    const character = getGeminiCharacterDetails();
+    const hasPhraseOverride = phraseOverride !== null;
+    const targetPhrase = generationMode === 'individual'
+      ? getSelectedPhrase()
+      : (phraseOverride || '').trim();
+    const referenceInstruction = `${characterSource === 'photo' ? `Photo reference style: ${getPhotoModeLabel('en')}. ` : ''}${getReferenceImageInstruction('en')}`;
+
+    const geminiProportions = characterSource === 'photo' ? {
+      exact: 'High-fidelity photo-realistic caricature cutout sticker style matching the attached reference photo accurately, with real photographic face texture, hair, skin tone, and authentic outfit details. Do NOT render as 2D vector cartoon.',
+      features: 'Soft 3D stylized digital avatar caricature sticker capturing signature traits (hair, glasses, outfit) with smooth 3D skin texture, volumetric hair flow, soft studio 3D lighting, and high-end semi-realistic 3D artwork finish. Do NOT use flat 2D line art.',
+      characterize: 'Adorable 2.5-head Chibi SD manga/anime mascot proportion with a big round head, huge sparkling expressive eyes, chubby cheeks, and soft glossy hair highlights.',
+    }[photoReferenceMode] : 'Adorable 2.5-head Chibi SD manga/anime mascot proportion with a big round head, huge sparkling expressive eyes, chubby cheeks, and soft glossy hair highlights.';
+
+    if (generationMode === 'individual' || hasPhraseOverride) {
+      const textPolicy = geminiTextMode === 'text'
+        ? `Render the exact phrase "${targetPhrase}" once in playful, hand-drawn Korean calligraphy lettering beside the character. No parentheses (), brackets [], or rectangular text boxes.`
+        : `Do not render text, letters, or numbers. Use "${targetPhrase}" only as visual context for expression and pose.`;
+      const textExclusion = geminiTextMode === 'text'
+        ? 'No extra words, altered spelling, random letters, numbers, parentheses, or text boxes.'
+        : 'No text, letters, numbers, typography, or meaningless symbols.';
+
+      return `[GOAL]
+Create a high-end 2D messenger sticker (KakaoTalk / LINE style) featuring a consistent character.
+
+[VISUAL REFERENCE & IDENTITY]
+${referenceInstruction}
+- Subject: ${character.subject}
+- Appearance & Features: ${character.appearance}
+- Outfit: ${character.outfit}
+
+[ART DIRECTION & PROPORTIONS]
+${character.artStyle}. ${geminiProportions} Clean crisp vector outlines, vibrant colors, and soft cell shading.
+
+[SCENE, POSE & EXPRESSION]
+- Target Phrase / Mood: "${targetPhrase}"
+- Facial Expression: Highly expressive, unmistakable emotion matching "${targetPhrase}".
+- Body Pose: Dynamic, energetic full-body posture (e.g. sitting, crouching, jumping, holding props, or waving). Never use a static half-body bust pose.
+- Supporting Props & Sparkle Effects: ${character.props}, ${character.effects}, cute little accents.
+
+[CANVAS & COMPOSITION]
+Square 1:1 canvas. Exactly one complete centered full-body character visible from head to toe with 15% margin on all sides. Clean solid white background with a subtle crisp sticker die-cut white outline.
+
+[TEXT POLICY]
+${textPolicy}
+
+[DO NOT INCLUDE]
+${textExclusion} No watermark, outer frame, duplicate character, extra limbs, cropped body, half-body bust shot, dull background, or photorealism.`;
+    }
+
+    const panelPlan = emoticons.map((phrase, index) => `Sticker ${index + 1}: "${phrase.trim()}"`).join('\n');
+    const textPolicy = geminiTextMode === 'text'
+      ? 'Render each quoted Korean phrase naturally beside or above its corresponding character in playful hand-drawn calligraphy. Do NOT use parentheses (), brackets [], quotation marks, or rectangular text boxes.'
+      : 'Do not render any text, letters, or numbers. Use each phrase only as visual context for its sticker\'s emotion and posture.';
+    const textExclusion = geminiTextMode === 'text'
+      ? 'No extra words, altered spelling, random letters, sticker numbers, parentheses, quotation marks, or text boxes.'
+      : 'No text, letters, numbers, typography, sticker labels, or meaningless symbols.';
+
+    return `[GOAL]
+Create a master 15-sticker 2D messenger sheet (KakaoTalk / LINE style) featuring a consistent character across all stickers.
+
+[VISUAL REFERENCE & IDENTITY]
+${referenceInstruction}
+- Subject: ${character.subject}
+- Appearance & Features: ${character.appearance}
+- Outfit: ${character.outfit}
+
+[ART DIRECTION & PROPORTIONS]
+${character.artStyle}. ${geminiProportions} Clean crisp vector outlines, vibrant colors, and soft cell shading. Maintain identical character proportions and style across all 15 stickers.
+
+[15 DYNAMIC POSES & EXPRESSIONS]
+For each sticker, infer a unique, highly expressive facial emotion and a DYNAMIC full-body pose (e.g. sitting, crouching, jumping, holding props, winking, eating, or cheering). Every sticker MUST show a complete full-body character visible head-to-toe:
+${panelPlan}
+Supporting props & sparkle effects: ${character.props}, ${character.effects}, cute accents.
+
+[CANVAS & LAYOUT — SEAMLESS WHITE SHEET]
+Single continuous pure white background sheet. Arrange all 15 full-body stickers floating freely with generous spacing. Each character has a subtle crisp sticker die-cut white outline. Pure blank white background across the entire canvas. Absolutely NO guide lines, NO grid lines, NO cell borders, NO table lines, NO dividing lines, NO crop marks, NO bounding boxes, NO sticker numbers.
+
+[TEXT POLICY]
+${textPolicy}
+
+[DO NOT INCLUDE]
+${textExclusion} No guide lines, no grid lines, no cell dividers, no border lines, no table lines, no crop marks, no panel boxes, no watermark, no outer frame, no duplicate character inside a single sticker, no extra limbs, no cropped body, no half-body bust shot, no dull background color, or photorealism.`;
+  };
+
+  const getGeminiRepairPrompt = (repairType) => {
+    const targetPhrase = getSelectedPhrase();
+    const repairPrompts = {
+      identity: `Edit the most recent image only. Restore the character so it matches the attached accepted base character image exactly. Preserve the current scene, pose, expression, composition, and text. Correct only the face, silhouette, body proportions, colors, outfit, linework, and texture. Do not redesign or add details. Return one corrected image.`,
+      crop: `Edit the most recent image only. Keep the same character identity, expression, pose, colors, outfit, art style, and${geminiTextMode === 'text' ? ` exact phrase "${targetPhrase}"` : ' text-free design'}. Reframe the composition so the entire character and all effects are visible with at least 12% empty margin on every side. Do not change anything else. Return one corrected square image.`,
+      text: `Edit the most recent image only. Keep the character, face, pose, expression, colors, outfit, art style, effects, composition, and background unchanged. Replace only the incorrect lettering with the exact phrase "${targetPhrase}" once. Verify every Korean character, spelling, and spacing before rendering. Add no other text. Return one corrected image.`,
+    };
+    return repairPrompts[repairType];
+  };
+
+  const copyGeminiRepairPrompt = (repairType) => {
+    navigator.clipboard.writeText(getGeminiRepairPrompt(repairType));
+    setCopiedType(`gemini-repair-${repairType}`);
+    setTimeout(() => setCopiedType(null), 2500);
+  };
+
+  const getPreviewPrompt = () => {
+    const phraseOverride = generationMode === 'batch' ? getSelectedPhrase() : null;
+    const error = getPromptValidationError(phraseOverride);
+    if (error) return error;
+    return previewMode === 'gpt'
+      ? generateGptPrompt(phraseOverride)
+      : generateGeminiPrompt(phraseOverride);
+  };
+
+  const copyToClipboard = (type, selectedPhraseOverride = null, copyKey = type) => {
+    const phraseOverride = selectedPhraseOverride ?? (generationMode === 'batch' ? getSelectedPhrase() : null);
+    if (getPromptValidationError(phraseOverride)) return;
+    const textToCopy = type === 'gpt'
+      ? generateGptPrompt(phraseOverride)
+      : generateGeminiPrompt(phraseOverride);
+    navigator.clipboard.writeText(textToCopy);
+    setCopiedType(copyKey);
+    setTimeout(() => setCopiedType(null), 2500);
+  };
+
+  const promptValidationError = getPromptValidationError(
+    generationMode === 'batch' ? getSelectedPhrase() : null
+  );
+  const visiblePromptValidationError = promptValidationError;
+
+  return (
+    <div className="font-body-md text-body-md antialiased pb-32 max-w-full w-full">
+      {/* TopAppBar */}
+      <header className="w-full top-0 bg-background/95 backdrop-blur-md flex items-center justify-between px-3 sm:px-gutter min-h-14 py-2 max-w-7xl mx-auto z-50 sticky border-b border-outline-variant/30 shadow-xs overflow-hidden">
+        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+          <h1 className="font-headline-md text-[16px] xs:text-[18px] sm:text-[22px] leading-none font-bold text-primary-strong tracking-tight whitespace-nowrap">
+            Prompt Studio
+          </h1>
+        </div>
+        <div className="flex items-center gap-1 sm:gap-2 shrink-0">
+          <button 
+            onClick={() => {
+              const el = document.getElementById('guide-section');
+              if (el) {
+                const y = el.getBoundingClientRect().top + window.scrollY - 80;
+                window.scrollTo({ top: y, behavior: 'smooth' });
+              }
+            }}
+            className="interactive-control flex items-center gap-1 min-h-9 px-2 sm:px-3 py-1 rounded-full bg-[#FFF4E5] border border-[#FFE8CC] text-[#8A4B00] text-[12px] sm:text-[13px] font-bold hover:bg-[#FFE8CC] shadow-sm whitespace-nowrap shrink-0"
+          >
+            <span className="text-[13px] sm:text-[14px]">💡</span>
+            <span className="xs:hidden">{lang === 'ko' ? '가이드' : 'Guide'}</span>
+            <span className="hidden xs:inline sm:hidden">{lang === 'ko' ? '활용' : 'Guide'}</span>
+            <span className="hidden sm:inline">{lang === 'ko' ? '활용 가이드' : 'Guide'}</span>
+          </button>
+          <div className="flex items-center gap-0.5 sm:gap-1 bg-surface-container-lowest p-0.5 sm:p-1 rounded-full border border-outline-variant shadow-sm shrink-0" role="group" aria-label="Language Selector">
+            {[
+              ['ko', 'KO', '한국어'],
+              ['en', 'EN', 'English'],
+              ['ja', 'JA', '日本語'],
+              ['zh', 'ZH', '中文'],
+            ].map(([code, shortLabel, fullLabel]) => (
+              <button
+                key={code}
+                type="button"
+                aria-pressed={lang === code}
+                onClick={() => changeLanguage(code)}
+                className={`interactive-control px-2 sm:px-3 py-1 text-[11px] sm:text-[12px] font-bold rounded-full transition-colors flex items-center gap-1 ${
+                  lang === code
+                    ? 'bg-mint text-mint-strong shadow-xs border border-mint-border'
+                    : 'text-on-surface-variant hover:bg-mint-soft'
+                }`}
+                title={fullLabel}
+              >
+                <span>{shortLabel}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      </header>
+
+      <main className="max-w-3xl mx-auto px-container-margin mt-md md:mt-xl flex flex-col gap-lg md:gap-xl">
+        {/* App Intro Hero Section */}
+        <section className="relative overflow-hidden bg-gradient-to-br from-[#FFD3B6] via-[#FFE8B6] to-[#FFC2C2] text-[#5C3A21] p-4 sm:p-6 md:p-xl rounded-md shadow-bubbly text-center flex flex-col items-center justify-center gap-3 sm:gap-4 md:gap-6 border-2 sm:border-4 border-white max-w-full w-full">
+          {/* Decorative floating emojis */}
+          <div className="absolute top-6 left-8 hidden sm:block text-[40px] transform -rotate-12 drop-shadow-md">✨</div>
+          <div className="absolute bottom-8 left-12 hidden sm:block text-[48px] transform rotate-12 drop-shadow-md">🎨</div>
+          <div className="absolute top-12 right-12 hidden sm:block text-[48px] transform rotate-12 drop-shadow-md">🚀</div>
+          <div className="absolute bottom-10 right-10 hidden sm:block text-[40px] transform -rotate-12 drop-shadow-md">💖</div>
+          
+          <div className="z-10 flex flex-col gap-2 sm:gap-3 w-full max-w-full px-1">
+            <span className="inline-block bg-white/60 text-[#5C3A21] font-black text-[11px] sm:text-[13px] tracking-wider px-3 sm:px-4 py-1 sm:py-1.5 rounded-full backdrop-blur-sm border border-white/80 mx-auto shadow-sm max-w-full text-ellipsis overflow-hidden">
+              AI STICKER PROMPT MAKER
+            </span>
+            <h2 className="text-[18px] xs:text-[22px] sm:text-[28px] md:text-[38px] font-black tracking-tight leading-snug drop-shadow-sm [word-break:break-word] [overflow-wrap:anywhere] w-full max-w-full px-1">
+              {t.guide1Q.replace('🤔 ', '')}
+            </h2>
+          </div>
+          
+          <p className="z-10 text-[13px] sm:text-[15px] md:text-[17px] leading-relaxed max-w-2xl mx-auto font-bold bg-white/40 p-3.5 sm:p-5 rounded-md backdrop-blur-md border border-white/60 shadow-sm whitespace-pre-wrap [word-break:break-word] [overflow-wrap:anywhere] w-full">
+            {t.guide1A}
+          </p>
+        </section>
+
+        {/* Section 1: Character Setup */}
+        <section className="flex flex-col gap-md">
+          <div className="flex justify-between items-center">
+            <h2 className="font-headline-sm text-headline-sm text-on-surface">{t.step1}</h2>
+            <button onClick={clearTags} className="flex items-center gap-1 min-h-10 px-2 text-[13px] font-bold text-error">
+              <Trash2 size={14} /> {t.clear}
+            </button>
+          </div>
+          
+          <div className="bg-surface-container-lowest rounded-md p-3.5 sm:p-md shadow-bubbly border border-outline-variant">
+            <div className="mb-md flex flex-col gap-3">
+              <span className="px-1 text-[13px] font-bold text-on-surface-variant">{t.characterSource}</span>
+              <div className="grid grid-cols-2 gap-2" role="group" aria-label={t.characterSource}>
+                {[
+                  ['direct', t.directSource],
+                  ['photo', t.photoSource],
+                ].map(([source, label]) => (
+                  <button
+                    key={source}
+                    type="button"
+                    aria-pressed={characterSource === source}
+                    onClick={() => setCharacterSource(source)}
+                    className={`interactive-control min-h-11 rounded-[8px] border px-3 py-2 text-[14px] font-bold focus:outline-none focus-visible:ring-2 focus-visible:ring-mint-strong focus-visible:ring-offset-2 ${
+                      characterSource === source
+                        ? 'bg-mint text-mint-strong border-mint-border shadow-sm'
+                        : 'bg-white text-on-surface border-outline-variant hover:bg-mint-soft'
+                    }`}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+
+              {characterSource === 'photo' && (
+                <div className="rounded-lg border border-mint-border bg-mint-soft p-3 flex flex-col gap-3">
+                  <span className="text-[13px] font-bold text-mint-strong">{t.photoMethod}</span>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2" role="group" aria-label={t.photoMethod}>
+                    {[
+                      ['exact', t.photoExact],
+                      ['features', t.photoFeatures],
+                      ['characterize', t.photoCharacterize],
+                    ].map(([mode, label]) => (
+                      <button
+                        key={mode}
+                        type="button"
+                        aria-pressed={photoReferenceMode === mode}
+                        onClick={() => setPhotoReferenceMode(mode)}
+                        className={`interactive-control min-h-10 rounded-[8px] border px-2 py-2 text-[13px] font-bold flex items-center justify-center gap-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E8C66A] ${
+                          photoReferenceMode === mode
+                            ? 'bg-[#FFE8B5] text-[#5A461B] border-[#E8C66A] shadow-sm ring-1 ring-[#E8C66A]/30'
+                            : 'bg-white text-on-surface border-[#E9DFC5] hover:bg-[#FFF3D8]'
+                        }`}
+                      >
+                        {photoReferenceMode === mode && <CheckCircle2 size={16} aria-hidden="true" />}
+                        {label}
+                      </button>
+                    ))}
+                  </div>
+                  <p className="text-[13px] leading-relaxed text-mint-strong">📎 {t.photoAttachGuide}</p>
+                </div>
+              )}
+            </div>
+
+            <textarea 
+              className="w-full bg-white border-2 border-mint-border rounded-md p-3.5 sm:p-4 text-on-surface font-bold placeholder:text-on-surface-variant focus:outline-none focus:ring-4 focus:ring-mint focus:border-mint-border resize-y min-h-[100px] shadow-sm" 
+              placeholder={t.placeholder}
+              value={charManual}
+              onChange={(e) => setCharManual(e.target.value)}
+            />
+
+            {!charManual.trim() && (
+              <div className="mt-3 bg-mint-soft border border-mint-border rounded-md p-3 sm:p-3.5 flex items-start gap-2.5 text-[13px] text-mint-strong">
+                <span className="text-[16px] leading-none shrink-0 mt-0.5">💡</span>
+                <div className="leading-relaxed">
+                  <strong className="font-bold">
+                    {lang === 'ko' ? '캐릭터 미설정 시 기본 동작' : lang === 'ja' ? 'キャラクター未設定時のデフォルト動作' : lang === 'zh' ? '未设置角色时的默认选项' : 'Default Character Setting'}
+                  </strong>
+                  <p className="mt-0.5 opacity-95">
+                    {lang === 'ko' 
+                      ? '설정을 비워두셔도 AI가 가장 귀엽고 표정이 풍부한 2D 오리지널 캐릭터(기본 의상/화풍)를 자동으로 완성해 드립니다.' 
+                      : lang === 'ja'
+                      ? '入力欄を空欄のままにしておくと、AIが自動的に可愛く個性豊かな2Dオリジナルキャラクターを設定します。'
+                      : lang === 'zh'
+                      ? '若留空，AI将默认自动为您生成可爱且表情丰富的2D原创角色。'
+                      : 'Leaving this empty automatically generates a cute, highly expressive 2D original character by default.'}
+                  </p>
+                </div>
+              </div>
+            )}
+            
+            <div className="mt-md bg-surface-container-highest rounded-md overflow-hidden">
+              <div className="no-scrollbar flex flex-wrap bg-[#EAF8F3] px-2 border-b border-mint-border">
+                {categoryKeys.map(category => (
+                  <button
+                    key={category}
+                    onClick={() => setActiveTagCategory(category)}
+                    className={`whitespace-nowrap px-3 py-2 text-[13px] font-bold transition-colors ${
+                      activeTagCategory === category 
+                        ? 'text-mint-strong border-b-2 border-mint-strong' 
+                        : 'text-mint-strong hover:bg-mint-hover border-b-2 border-transparent'
+                    }`}
+                  >
+                    {category}
+                  </button>
+                ))}
+              </div>
+              <div className="p-3 flex flex-wrap gap-2 bg-surface-container-lowest min-h-[80px]">
+                {currentTags[activeTagCategory]?.map(tag => (
+                  <button
+                    key={tag}
+                    onClick={() => appendTag(tag)}
+                    className="interactive-control px-3 py-1.5 rounded-full bg-mint-soft text-[13px] text-mint-strong font-label-md hover:bg-mint-hover border border-mint-border"
+                  >
+                    + {tag}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Section 2: Emoji Phrases */}
+        <section className="flex flex-col gap-md">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <h2 className="font-headline-sm text-headline-sm text-on-surface">{t.phrases}</h2>
+            <div className="flex gap-2">
+              <select 
+                value={currentThemes[activeTheme] ? activeTheme : ''} 
+                onChange={handleThemeSelect}
+                className="px-3 py-1.5 text-[14px] font-bold rounded-full border border-mint-border bg-surface-container-lowest text-on-surface cursor-pointer focus:outline-none focus:ring-2 focus:ring-mint"
+              >
+                <option value="" disabled>{t.themeSelect}</option>
+                {themeKeys.map(theme => (
+                  <option key={theme} value={theme}>{theme}</option>
+                ))}
+              </select>
+              
+              <button 
+                onClick={shuffleEmoticons}
+                className="interactive-control flex items-center gap-1 min-h-10 px-3 py-1.5 text-[14px] font-bold rounded-full bg-mint text-mint-strong hover:bg-mint-hover border border-mint-border"
+              >
+                <Shuffle size={14} /> {t.randomMix}
+              </button>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-sm md:gap-md bg-surface-container-lowest rounded-md p-3.5 sm:p-md shadow-bubbly border border-outline-variant">
+            {emoticons.map((text, idx) => (
+              <input 
+                key={idx}
+                type="text" 
+                value={text}
+                onChange={(e) => handleEmoticonChange(idx, e.target.value)}
+                className={`interactive-control w-full h-[48px] bg-mint-soft rounded-full px-1.5 sm:px-3 text-center text-mint-strong text-[12px] sm:text-[14px] font-bold tracking-tight placeholder:text-on-secondary-container focus:outline-none focus:ring-2 focus:ring-mint-strong border border-mint-border text-ellipsis overflow-hidden whitespace-nowrap ${
+                  idx === emoticons.length - 1
+                    ? 'col-span-2 max-w-[calc(50%_-_6px)] justify-self-center sm:col-span-1 sm:max-w-none'
+                    : ''
+                }`}
+                placeholder={`Phrase ${idx+1}`}
+              />
+            ))}
+          </div>
+
+        </section>
+
+        {/* Section 3: Prompt Preview */}
+        <section className="flex flex-col gap-md">
+          <div className="bg-[#FFF7DF] rounded-md p-3 md:p-4 border border-[#F6D77A] shadow-sm flex flex-col gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2" role="group" aria-label={lang === 'ko' ? '프롬프트 생성 방식' : 'Prompt generation mode'}>
+              {[
+                ['sheet', t.modeSheet],
+                ['individual', t.modeIndividual],
+                ['batch', t.modeBatch],
+              ].map(([mode, label]) => (
+                <button
+                  key={mode}
+                  type="button"
+                  aria-pressed={generationMode === mode}
+                  onClick={() => handleGenerationModeChange(mode)}
+                  className={`interactive-control min-h-12 px-3 py-2 rounded-md text-[14px] font-bold border focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E8C66A] focus-visible:ring-offset-2 ${
+                    generationMode === mode
+                      ? 'bg-[#FFE8B5] text-[#5A461B] border-[#E8C66A] shadow-sm'
+                      : 'bg-white text-on-surface border-[#E9DFC5] hover:bg-[#FFF3D8]'
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+
+            {generationMode === 'individual' && (
+              <div className="flex flex-col gap-2">
+                <label htmlFor="individual-phrase" className="px-1 text-[13px] font-bold text-[#795B16]">
+                  {t.individualInput}
+                </label>
+                <input
+                  id="individual-phrase"
+                  type="text"
+                  value={individualPhrase}
+                  onChange={(e) => setIndividualPhrase(e.target.value)}
+                  className="w-full min-h-12 rounded-md bg-white px-4 text-on-surface font-bold border border-[#E8C66A] focus:outline-none focus:ring-2 focus:ring-[#E8C66A]"
+                  placeholder={t.individualPlaceholder}
+                />
+                <p className="px-1 text-[13px] leading-relaxed text-[#795B16]">{t.individualTip}</p>
+              </div>
+            )}
+
+            {generationMode === 'batch' && (
+              <div className="flex flex-col gap-2">
+                <span className="px-1 text-[13px] font-bold text-[#795B16]">{t.batchSelect}</span>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                  {emoticons.map((phrase, idx) => {
+                    const isSelected = getSelectedPhrase() === phrase;
+                    const copyKey = `batch-${previewMode}-${idx}`;
+                    return (
+                      <button
+                        key={`${idx}-${phrase}`}
+                        type="button"
+                        aria-pressed={isSelected}
+                        aria-label={`${idx + 1}. ${phrase} ${previewMode === 'gpt' ? t.gptCopy : t.geminiCopy}`}
+                        onClick={() => {
+                          setBatchPhrase(phrase);
+                          copyToClipboard(previewMode, phrase, copyKey);
+                        }}
+                        className={`interactive-control min-h-11 px-3 py-2 rounded-md border font-bold flex items-center justify-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E8C66A] focus-visible:ring-offset-2 ${
+                          isSelected
+                            ? 'bg-[#FFE8B5] text-[#5A461B] border-[#E8C66A] shadow-sm'
+                            : 'bg-white text-on-surface border-[#E9DFC5] hover:bg-[#FFF3D8]'
+                        }`}
+                      >
+                        {copiedType === copyKey
+                          ? <CheckCircle2 size={17} aria-label={t.copiedPrompt} />
+                          : <span className="text-[12px] font-black opacity-70">{idx + 1}</span>}
+                        <span className="truncate">{phrase}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+                <p className="px-1 text-[13px] leading-relaxed text-[#795B16]">{t.batchTip}</p>
+              </div>
+            )}
+          </div>
+
+          {visiblePromptValidationError && (
+            <p role="alert" className="rounded-md border border-error/30 bg-[#FFF0F0] px-4 py-3 text-[13px] font-bold text-error">
+              {visiblePromptValidationError}
+            </p>
+          )}
+
+          {characterSource === 'photo' && (
+            <div className="flex flex-wrap items-center gap-2 px-1" aria-live="polite">
+              <span className="inline-flex min-h-9 items-center rounded-full bg-mint-soft px-4 py-1.5 text-[13px] font-bold text-mint-strong border border-mint-border">
+                📷 {t.photoActive}
+              </span>
+              <strong className="text-[13px] text-on-surface-variant">{getPhotoModeLabel()}</strong>
+            </div>
+          )}
+
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-3">
+            <h2 className="font-headline-sm text-headline-sm text-on-surface [word-break:break-word]">{t.previewTitle}</h2>
+            <div className="flex w-full sm:w-auto bg-mint-soft rounded-full p-1 border border-mint-border shadow-sm">
+              <button 
+                onClick={() => setPreviewMode('gpt')}
+                className={`interactive-control flex-1 sm:flex-none min-h-11 px-4 py-1.5 text-[14px] font-bold rounded-full ${
+                  previewMode === 'gpt' 
+                  ? 'bg-mint text-mint-strong shadow-sm border border-mint-border' 
+                  : 'text-mint-strong hover:bg-mint-hover'
+                }`}
+              >
+                {t.forGpt}
+              </button>
+              <button 
+                onClick={() => setPreviewMode('gemini')}
+                className={`interactive-control flex-1 sm:flex-none min-h-11 px-4 py-1.5 text-[14px] font-bold rounded-full ${
+                  previewMode === 'gemini' 
+                  ? 'bg-mint text-mint-strong shadow-sm border border-mint-border' 
+                  : 'text-mint-strong hover:bg-mint-hover'
+                }`}
+              >
+                {t.forGemini}
+              </button>
+            </div>
+          </div>
+          {previewMode === 'gpt' && (
+            <div className="rounded-lg border border-[#F6D77A] bg-[#FFF7DF] p-3 flex flex-col gap-3">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                <span className="text-[13px] font-bold text-[#795B16]">{t.gptTextMode}</span>
+                <div className="grid grid-cols-2 gap-1.5 sm:gap-2 w-full sm:w-auto" role="group" aria-label={t.gptTextMode}>
+                  {[
+                    ['text', t.gptIncludeText],
+                    ['visual', t.gptNoText],
+                  ].map(([mode, label]) => (
+                    <button
+                      key={mode}
+                      type="button"
+                      aria-pressed={gptTextMode === mode}
+                      onClick={() => setGptTextMode(mode)}
+                      className={`interactive-control min-h-10 rounded-[8px] border px-2 sm:px-3 py-2 text-[12px] sm:text-[13px] font-bold text-center focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E8C66A] ${
+                        gptTextMode === mode
+                          ? 'bg-[#FFE8B5] text-[#5A461B] border-[#E8C66A] shadow-sm'
+                          : 'bg-white text-on-surface border-[#E9DFC5] hover:bg-[#FFF3D8]'
+                      }`}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                <span className="text-[13px] font-bold text-[#795B16]">{t.gptBackgroundMode}</span>
+                <div className="grid grid-cols-3 gap-1 sm:gap-2 w-full sm:w-auto" role="group" aria-label={t.gptBackgroundMode}>
+                  {[
+                    ['transparent', t.gptTransparent],
+                    ['solid', t.gptSolid],
+                    ['chroma', t.gptChroma],
+                  ].map(([mode, label]) => (
+                    <button
+                      key={mode}
+                      type="button"
+                      aria-pressed={gptBackgroundMode === mode}
+                      onClick={() => setGptBackgroundMode(mode)}
+                      className={`interactive-control min-h-10 rounded-[8px] border px-1 sm:px-2 py-2 text-[11px] xs:text-[12px] sm:text-[13px] font-bold text-center text-ellipsis overflow-hidden whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E8C66A] ${
+                        gptBackgroundMode === mode
+                          ? 'bg-[#FFE8B5] text-[#5A461B] border-[#E8C66A] shadow-sm'
+                          : 'bg-white text-on-surface border-[#E9DFC5] hover:bg-[#FFF3D8]'
+                      }`}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <p className="text-[13px] leading-relaxed text-[#795B16]">💡 {t.gptWorkflowTip}</p>
+            </div>
+          )}
+          {previewMode === 'gemini' && (
+            <div className="rounded-[8px] border border-[#E8C66A] bg-[#FFF8E8] p-3 flex flex-col gap-3">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                <span className="text-[13px] font-bold text-[#795B16]">{t.geminiTextMode}</span>
+                <div className="grid grid-cols-2 gap-1.5 sm:gap-2 w-full sm:w-auto" role="group" aria-label={t.geminiTextMode}>
+                  {[
+                    ['visual', t.geminiNoText],
+                    ['text', t.geminiIncludeText],
+                  ].map(([mode, label]) => (
+                    <button
+                      key={mode}
+                      type="button"
+                      aria-pressed={geminiTextMode === mode}
+                      onClick={() => setGeminiTextMode(mode)}
+                      className={`interactive-control min-h-10 rounded-[8px] border px-2 sm:px-3 py-2 text-[12px] sm:text-[13px] font-bold text-center focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E8C66A] ${
+                        geminiTextMode === mode
+                          ? 'bg-[#FFE8B5] text-[#5A461B] border-[#E8C66A] shadow-sm'
+                          : 'bg-white text-[#795B16] border-[#E9DFC5] hover:bg-[#FFF3D8]'
+                      }`}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="flex flex-col gap-2 border-t border-[#E9DFC5] pt-3">
+                <span className="text-[13px] font-bold text-[#795B16]">{t.geminiRepairTitle}</span>
+                <div className="grid grid-cols-1 min-[430px]:grid-cols-3 gap-2">
+                  {[
+                    ['identity', t.geminiRepairIdentity],
+                    ['crop', t.geminiRepairCrop],
+                    ...(geminiTextMode === 'text' ? [['text', t.geminiRepairText]] : []),
+                  ].map(([repairType, label]) => (
+                    <button
+                      key={repairType}
+                      type="button"
+                      onClick={() => copyGeminiRepairPrompt(repairType)}
+                      className="interactive-control min-h-10 rounded-[8px] border border-[#E9DFC5] bg-white px-3 py-2 text-[13px] font-bold text-[#795B16] hover:bg-[#FFF3D8] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E8C66A]"
+                    >
+                      {copiedType === `gemini-repair-${repairType}` ? '✓ ' : ''}{label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <p className="text-[13px] leading-relaxed text-[#795B16]">💡 {t.geminiFinalTip}</p>
+            </div>
+          )}
+          {generationMode !== 'sheet' && (
+            <div className="flex flex-wrap items-center gap-2 px-1" aria-live="polite">
+              <span className="text-[13px] font-bold text-on-surface-variant">{t.selectedPhrase}</span>
+              <strong className="inline-flex min-h-9 items-center rounded-full bg-[#FFE8B5] px-4 py-1.5 text-[14px] text-[#5A461B] border border-[#E8C66A] shadow-sm">
+                {getSelectedPhrase()}
+              </strong>
+            </div>
+          )}
+          <div className="bg-surface-container-lowest rounded-md p-3.5 sm:p-md shadow-bubbly border border-outline-variant">
+            <textarea 
+              className="w-full bg-white border-2 border-outline-variant rounded-md p-4 text-on-surface font-normal focus:outline-none resize-y min-h-[200px] shadow-sm" 
+              readOnly
+              value={getPreviewPrompt()}
+            />
+          </div>
+
+        </section>
+
+        {/* Actions */}
+        <section className="flex flex-col sm:flex-row gap-4 mt-sm pb-xl">
+          <button 
+            onClick={() => copyToClipboard('gpt')}
+            disabled={Boolean(promptValidationError)}
+            className="interactive-control w-full min-h-[64px] flex-none sm:flex-1 rounded-md bg-[#FFE8B5] text-[#5A461B] border border-[#E8C66A] font-headline-sm flex items-center justify-center gap-2 hover:bg-[#FFDB80] shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E8C66A] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-[#FFE8B5]"
+          >
+            {copiedType === 'gpt' ? <CheckCircle2 size={24} className="text-[#2D7D64]" /> : <Bot size={24} className="text-[#2D7D64]" />}
+            {t.gptCopy}
+          </button>
+          
+          <button 
+            onClick={() => copyToClipboard('gemini')}
+            disabled={Boolean(visiblePromptValidationError)}
+            className="interactive-control w-full min-h-[64px] flex-none sm:flex-1 rounded-md bg-[#FFE8B5] text-[#5A461B] border border-[#E8C66A] font-headline-sm flex items-center justify-center gap-2 hover:bg-[#FFDB80] shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E8C66A] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-[#FFE8B5]"
+          >
+            {copiedType === 'gemini' ? <CheckCircle2 size={24} className="text-[#D97706]" /> : <Sparkles size={24} className="text-[#D97706]" />}
+            {t.geminiCopy}
+          </button>
+        </section>
+        
+        <AdBanner />
+
+        <div className="bg-[#FFF5E6] text-[#8C3D18] p-4 sm:p-5 md:p-6 rounded-md border border-[#FDE0B5] flex gap-3 md:gap-4 items-start shadow-sm mt-2 relative overflow-hidden">
+          <div className="absolute -right-4 -top-6 text-[#FCD3A1] opacity-40 text-[120px] sm:text-[140px] transform -rotate-12 select-none pointer-events-none drop-shadow-sm">📸</div>
+          <span className="text-[20px] sm:text-[22px] drop-shadow-sm leading-none mt-0.5 relative z-10">📸</span>
+          <div className="relative z-10 flex-1 min-w-0">
+            <strong className="font-black block mb-1.5 sm:mb-2 text-[15px] sm:text-[17px] tracking-tight text-[#C2410C]">
+              {lang === 'ko' 
+                ? '✨ 초강력 꿀팁: 사진 첨부로 세상에 하나뿐인 이모티콘 만들기!' 
+                : lang === 'ja'
+                ? '✨ 超強力なコツ: 写真添付で世界にひとつだけのスタンプ作成！'
+                : lang === 'zh'
+                ? '✨ 超实用技巧: 附带照片制作独一无二的表情包！'
+                : '✨ Pro Tip: Make Emojis from Photos!'}
+            </strong>
+            <span className="text-[13px] sm:text-[14.5px] leading-relaxed opacity-90 [word-break:break-word] block font-medium mb-3 sm:mb-4 pr-4 sm:pr-16 text-[#8C3D18]">
+              {lang === 'ko' 
+                ? '이 프롬프트를 복사해서 AI(ChatGPT, Gemini)에 붙여넣을 때, 본인이나 우리 아이, 반려동물의 사진을 함께 첨부해 보세요. 대상을 똑닮은 완벽한 커스텀 이모티콘 시트가 만들어집니다!' 
+                : lang === 'ja'
+                ? 'このプロンプトをコピーしてAI(ChatGPT, Gemini)に貼り付ける際、ご自身や子ども、ペットの写真も一緒に添付してみてください。そっくりなカスタムスタンプシートが作れます！'
+                : lang === 'zh'
+                ? '将此提示词复制粘贴给AI (ChatGPT, Gemini) 时，可以同时发送您自己、孩子或宠物的照片。AI将完美还原特征，生成独一无二的专属表情包！'
+                : 'When pasting this prompt into AI (ChatGPT, Gemini), attach a photo of yourself, your child, or your pet. It will generate a custom emoji sheet!'}
+            </span>
+            <div className="bg-white/60 rounded-md p-3 sm:p-4 border border-[#FCD3A1]/60 shadow-sm flex flex-col gap-1.5 sm:gap-2 w-full">
+              <strong className="text-[#C2410C] text-[13.5px] sm:text-[14.5px] flex items-center gap-1.5 font-bold">
+                <span className="text-[15px] sm:text-[16px]">📌</span> 
+                {lang === 'ko' 
+                  ? 'LLM 첨부 사진 권장 규칙' 
+                  : lang === 'ja'
+                  ? 'LLM添付写真の推奨ルール'
+                  : lang === 'zh'
+                  ? 'LLM照片上传建议'
+                  : 'Recommended Photo Specs'}
+              </strong>
+              <ul className="list-disc pl-4 sm:pl-5 opacity-90 text-[#9A3412] font-medium flex flex-col gap-1 sm:gap-1.5 mt-0.5 sm:mt-1 text-[12.5px] sm:text-[13.5px] marker:text-[#C2410C] [word-break:break-word]">
+                <li>
+                  {lang === 'ko' 
+                    ? '크기/비율: 제한 없음 (일반적인 스마트폰 사진 포맷 가능)' 
+                    : lang === 'ja'
+                    ? 'サイズ/比率: 制限なし (標準的なスマホ写真フォーマット可能)'
+                    : lang === 'zh'
+                    ? '尺寸/比例: 不限（标准手机照片格式均可）'
+                    : 'Size/Ratio: Any standard photo format'}
+                </li>
+                <li>
+                  {lang === 'ko' 
+                    ? '권장: 이목구비, 헤어스타일, 모색 등 특징이 선명한 정면 사진 1장' 
+                    : lang === 'ja'
+                    ? '推奨: 目鼻立ち、ヘアスタイル、毛色などの特徴が鮮明な正面写真1枚'
+                    : lang === 'zh'
+                    ? '建议: 正面清晰照片1张（五官、发型、毛色等特征明显）'
+                    : 'Recommended: Clear front-facing photo showing distinct features'}
+                </li>
+                <li>
+                  {lang === 'ko' 
+                    ? '주의: 인물이 너무 작거나 흔들리고 어두운 사진은 피해주세요.' 
+                    : lang === 'ja'
+                    ? '注意: 人物が小さすぎる、ブレている、暗すぎる写真は避けてください。'
+                    : lang === 'zh'
+                    ? '注意: 请避免人物太小、模糊或过暗的照片。'
+                    : 'Avoid: Blurry, dark, or zoomed-out photos'}
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <InfoSection t={t} lang={lang} />
+      </main>
+
+      {/* Footer */}
+      <footer className="mt-12 py-10 bg-[#FAF9F6] border-t border-[#E5E0D8] text-center w-full">
+        <div className="max-w-3xl mx-auto px-6 flex flex-col gap-2">
+          <p className="text-[14px] text-[#8C7A6B] font-bold">
+            © {new Date().getFullYear()} Prompt Studio. All rights reserved.
+          </p>
+          <p className="text-[12px] text-[#A69B8F]">
+            {lang === 'ko' 
+              ? '* 본 서비스는 카카오(Kakao) 및 라인(LINE)과 공식적인 관련이 없습니다.' 
+              : lang === 'ja'
+              ? '* 本サービスはLINEまたはKakaoTalkと公式に提携しているものではありません。'
+              : lang === 'zh'
+              ? '* 本服务非微信、LINE或KakaoTalk官方合作服务。'
+              : '* This service is not officially affiliated with Kakao or LINE.'}
+          </p>
+        </div>
+      </footer>
+    </div>
+  );
+}
 
 export default App;
