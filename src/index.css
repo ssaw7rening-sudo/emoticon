@@ -41,14 +41,6 @@
     overflow-wrap: break-word;
   }
 
-  .lang-ja, .lang-ja * {
-    font-family: 'Paperlogy', 'M PLUS Rounded 1c', "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Meiryo", sans-serif !important;
-  }
-
-  .lang-zh, .lang-zh * {
-    font-family: 'Paperlogy', 'Noto Sans SC', "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif !important;
-  }
-
   .brand-logo {
     font-family: 'Paperlogy', -apple-system, BlinkMacSystemFont, sans-serif !important;
   }

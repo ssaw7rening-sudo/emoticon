@@ -2048,7 +2048,7 @@ ${textExclusion} No guide lines, no grid lines, no cell dividers, no border line
   const visiblePromptValidationError = promptValidationError;
 
   return (
-    <div className={`font-body-md text-body-md antialiased pb-32 max-w-full w-full ${lang === 'ja' ? 'lang-ja' : lang === 'zh' ? 'lang-zh' : ''}`}>
+    <div className="font-body-md text-body-md antialiased pb-32 max-w-full w-full">
       {/* TopAppBar */}
       <header className="w-full top-0 bg-background/95 backdrop-blur-md z-50 sticky border-b border-outline-variant/30 shadow-xs">
         <div className="max-w-3xl mx-auto flex items-center justify-between px-container-margin min-h-14 py-2 w-full">
