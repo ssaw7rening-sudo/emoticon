@@ -2110,7 +2110,19 @@ ${textExclusion} No guide lines, no grid lines, no cell dividers, no border line
               AI STICKER PROMPT MAKER
             </span>
             <h2 className="text-[18px] xs:text-[22px] sm:text-[28px] md:text-[38px] font-black tracking-tight leading-snug drop-shadow-sm w-full max-w-full px-1 [word-break:keep-all] [text-wrap:balance]">
-              {t.guide1Q.replace('🤔 ', '')}
+              {(() => {
+                const text = t.guide1Q.replace('🤔 ', '');
+                const match = text.match(/^(.*?)(\S{2,}[\?？!！]?)$/);
+                if (match) {
+                  return (
+                    <>
+                      {match[1]}
+                      <span className="inline-block whitespace-nowrap">{match[2]}</span>
+                    </>
+                  );
+                }
+                return text;
+              })()}
             </h2>
           </div>
           
