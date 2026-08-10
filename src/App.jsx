@@ -1748,24 +1748,24 @@ ${textExclusion} No guide lines, no grid lines, no cell dividers, no border line
           </button>
           <div className="flex items-center gap-0.5 sm:gap-1 bg-surface-container-lowest p-0.5 sm:p-1 rounded-full border border-outline-variant shadow-sm shrink-0" role="group" aria-label="Language Selector">
             {[
-              ['ko', '🇰🇷', 'KO'],
-              ['en', '🇺🇸', 'EN'],
-              ['ja', '🇯🇵', 'JA'],
-              ['zh', '🇨🇳', 'ZH'],
-            ].map(([code, flag, label]) => (
+              ['ko', 'KO', '한국어'],
+              ['en', 'EN', 'English'],
+              ['ja', 'JA', '日本語'],
+              ['zh', 'ZH', '中文'],
+            ].map(([code, shortLabel, fullLabel]) => (
               <button
                 key={code}
                 type="button"
                 aria-pressed={lang === code}
                 onClick={() => changeLanguage(code)}
-                className={`interactive-control px-1.5 sm:px-2.5 py-0.5 sm:py-1 text-[11px] sm:text-[12px] font-bold rounded-full transition-colors flex items-center gap-0.5 ${
+                className={`interactive-control px-2 sm:px-3 py-1 text-[11px] sm:text-[12px] font-bold rounded-full transition-colors flex items-center gap-1 ${
                   lang === code
                     ? 'bg-mint text-mint-strong shadow-xs border border-mint-border'
                     : 'text-on-surface-variant hover:bg-mint-soft'
                 }`}
+                title={fullLabel}
               >
-                <span>{flag}</span>
-                <span className="hidden sm:inline">{label}</span>
+                <span>{shortLabel}</span>
               </button>
             ))}
           </div>
