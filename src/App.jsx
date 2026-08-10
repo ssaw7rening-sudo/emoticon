@@ -1422,13 +1422,13 @@ ${textExclusion} No guide lines, no grid lines, no cell dividers, no border line
   const visiblePromptValidationError = promptValidationError;
 
   return (
-    <div className="font-body-md text-body-md antialiased pb-32">
+    <div className="font-body-md text-body-md antialiased pb-32 overflow-x-hidden max-w-full w-full">
       {/* TopAppBar */}
-      <header className="w-full top-0 bg-background flex items-center justify-between px-3 sm:px-gutter min-h-14 py-2 max-w-7xl mx-auto z-40 sticky shadow-sm md:shadow-none">
-        <div className="flex items-center gap-2 shrink-0">
-          <h1 className="font-headline-md text-[18px] sm:text-[22px] leading-none font-bold text-primary-strong tracking-tight whitespace-nowrap">{t.title}</h1>
+      <header className="w-full top-0 bg-background flex items-center justify-between px-2.5 sm:px-gutter min-h-14 py-2 max-w-7xl mx-auto z-40 sticky shadow-sm md:shadow-none overflow-hidden">
+        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+          <h1 className="font-headline-md text-[16px] xs:text-[18px] sm:text-[22px] leading-none font-bold text-primary-strong tracking-tight whitespace-nowrap">{t.title}</h1>
         </div>
-        <div className="flex items-center gap-1.5 sm:gap-2">
+        <div className="flex items-center gap-1 sm:gap-2 shrink-0">
           <button 
             onClick={() => {
               const el = document.getElementById('guide-section');
@@ -1437,31 +1437,33 @@ ${textExclusion} No guide lines, no grid lines, no cell dividers, no border line
                 window.scrollTo({ top: y, behavior: 'smooth' });
               }
             }}
-            className="interactive-control flex items-center gap-1.5 min-h-10 px-3 py-1.5 rounded-full bg-[#FFF4E5] border border-[#FFE8CC] text-[#8A4B00] text-[13px] font-bold hover:bg-[#FFE8CC] shadow-sm whitespace-nowrap"
+            className="interactive-control flex items-center gap-1 min-h-9 px-2 sm:px-3 py-1 rounded-full bg-[#FFF4E5] border border-[#FFE8CC] text-[#8A4B00] text-[12px] sm:text-[13px] font-bold hover:bg-[#FFE8CC] shadow-sm whitespace-nowrap shrink-0"
           >
-            <span className="text-[14px]">💡</span>
-            <span className="sm:hidden">{lang === 'ko' ? '활용' : 'Guide'}</span>
+            <span className="text-[13px] sm:text-[14px]">💡</span>
+            <span className="xs:hidden">{lang === 'ko' ? '가이드' : 'Guide'}</span>
+            <span className="hidden xs:inline sm:hidden">{lang === 'ko' ? '활용' : 'Guide'}</span>
             <span className="hidden sm:inline">{lang === 'ko' ? '활용 가이드' : 'Guide'}</span>
           </button>
-          <div className="flex items-center gap-1 bg-surface-container-lowest p-1 rounded-full border border-outline-variant shadow-sm" role="group" aria-label="Language Selector">
+          <div className="flex items-center gap-0.5 sm:gap-1 bg-surface-container-lowest p-0.5 sm:p-1 rounded-full border border-outline-variant shadow-sm shrink-0" role="group" aria-label="Language Selector">
             {[
-              ['ko', '🇰🇷 KO'],
-              ['en', '🇺🇸 EN'],
-              ['ja', '🇯🇵 JA'],
-              ['zh', '🇨🇳 ZH'],
-            ].map(([code, label]) => (
+              ['ko', '🇰🇷', 'KO'],
+              ['en', '🇺🇸', 'EN'],
+              ['ja', '🇯🇵', 'JA'],
+              ['zh', '🇨🇳', 'ZH'],
+            ].map(([code, flag, label]) => (
               <button
                 key={code}
                 type="button"
                 aria-pressed={lang === code}
                 onClick={() => changeLanguage(code)}
-                className={`interactive-control px-2.5 py-1 text-[12px] font-bold rounded-full transition-colors ${
+                className={`interactive-control px-1.5 sm:px-2.5 py-0.5 sm:py-1 text-[11px] sm:text-[12px] font-bold rounded-full transition-colors flex items-center gap-0.5 ${
                   lang === code
                     ? 'bg-mint text-mint-strong shadow-xs border border-mint-border'
                     : 'text-on-surface-variant hover:bg-mint-soft'
                 }`}
               >
-                {label}
+                <span>{flag}</span>
+                <span className="hidden sm:inline">{label}</span>
               </button>
             ))}
           </div>
@@ -1772,7 +1774,7 @@ ${textExclusion} No guide lines, no grid lines, no cell dividers, no border line
             <div className="rounded-[8px] border border-[#F6D77A] bg-[#FFF7DF] p-3 flex flex-col gap-3">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                 <span className="text-[13px] font-bold text-[#795B16]">{t.gptTextMode}</span>
-                <div className="grid grid-cols-2 gap-2 sm:min-w-[280px]" role="group" aria-label={t.gptTextMode}>
+                <div className="grid grid-cols-2 gap-1.5 sm:gap-2 w-full sm:w-auto" role="group" aria-label={t.gptTextMode}>
                   {[
                     ['text', t.gptIncludeText],
                     ['visual', t.gptNoText],
@@ -1782,7 +1784,7 @@ ${textExclusion} No guide lines, no grid lines, no cell dividers, no border line
                       type="button"
                       aria-pressed={gptTextMode === mode}
                       onClick={() => setGptTextMode(mode)}
-                      className={`interactive-control min-h-10 rounded-[8px] border px-3 py-2 text-[13px] font-bold focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E8C66A] ${
+                      className={`interactive-control min-h-10 rounded-[8px] border px-2 sm:px-3 py-2 text-[12px] sm:text-[13px] font-bold text-center focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E8C66A] ${
                         gptTextMode === mode
                           ? 'bg-[#FFE8B5] text-[#5A461B] border-[#E8C66A] shadow-sm'
                           : 'bg-white text-on-surface border-[#E9DFC5] hover:bg-[#FFF3D8]'
@@ -1795,7 +1797,7 @@ ${textExclusion} No guide lines, no grid lines, no cell dividers, no border line
               </div>
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                 <span className="text-[13px] font-bold text-[#795B16]">{t.gptBackgroundMode}</span>
-                <div className="grid grid-cols-3 gap-2 sm:min-w-[420px]" role="group" aria-label={t.gptBackgroundMode}>
+                <div className="grid grid-cols-3 gap-1 sm:gap-2 w-full sm:w-auto" role="group" aria-label={t.gptBackgroundMode}>
                   {[
                     ['transparent', t.gptTransparent],
                     ['solid', t.gptSolid],
@@ -1806,7 +1808,7 @@ ${textExclusion} No guide lines, no grid lines, no cell dividers, no border line
                       type="button"
                       aria-pressed={gptBackgroundMode === mode}
                       onClick={() => setGptBackgroundMode(mode)}
-                      className={`interactive-control min-h-10 rounded-[8px] border px-2 py-2 text-[13px] font-bold focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E8C66A] ${
+                      className={`interactive-control min-h-10 rounded-[8px] border px-1 sm:px-2 py-2 text-[11px] xs:text-[12px] sm:text-[13px] font-bold text-center text-ellipsis overflow-hidden whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E8C66A] ${
                         gptBackgroundMode === mode
                           ? 'bg-[#FFE8B5] text-[#5A461B] border-[#E8C66A] shadow-sm'
                           : 'bg-white text-on-surface border-[#E9DFC5] hover:bg-[#FFF3D8]'
@@ -1824,7 +1826,7 @@ ${textExclusion} No guide lines, no grid lines, no cell dividers, no border line
             <div className="rounded-[8px] border border-[#E8C66A] bg-[#FFF8E8] p-3 flex flex-col gap-3">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                 <span className="text-[13px] font-bold text-[#795B16]">{t.geminiTextMode}</span>
-                <div className="grid grid-cols-2 gap-2 sm:min-w-[280px]" role="group" aria-label={t.geminiTextMode}>
+                <div className="grid grid-cols-2 gap-1.5 sm:gap-2 w-full sm:w-auto" role="group" aria-label={t.geminiTextMode}>
                   {[
                     ['visual', t.geminiNoText],
                     ['text', t.geminiIncludeText],
@@ -1834,7 +1836,7 @@ ${textExclusion} No guide lines, no grid lines, no cell dividers, no border line
                       type="button"
                       aria-pressed={geminiTextMode === mode}
                       onClick={() => setGeminiTextMode(mode)}
-                      className={`interactive-control min-h-10 rounded-[8px] border px-3 py-2 text-[13px] font-bold focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E8C66A] ${
+                      className={`interactive-control min-h-10 rounded-[8px] border px-2 sm:px-3 py-2 text-[12px] sm:text-[13px] font-bold text-center focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E8C66A] ${
                         geminiTextMode === mode
                           ? 'bg-[#FFE8B5] text-[#5A461B] border-[#E8C66A] shadow-sm'
                           : 'bg-white text-[#795B16] border-[#E9DFC5] hover:bg-[#FFF3D8]'
