@@ -411,8 +411,308 @@ const AdBanner = () => {
   );
 };
 
+const GUIDE_TEXTS = {
+  ko: {
+    tabBg: '✂️ 배경(누끼) 제거',
+    tabUsage: '💬 메신저 스티커 등록',
+    modelDesc: '각 AI 모델의 강력한 장점이 다르므로 목적에 맞게 골라 쓰세요!',
+    chatgptTitle: 'ChatGPT 이미지 생성 추천',
+    chatgptSub: '"대사가 꼭 필요한 이모티콘"',
+    userCreation: '실제 유저 생성본 ✨',
+    chatgptBullets: [
+      '• 🎯 특징: 한글 및 다국어 타이포그래피(글씨 쓰기) 능력이 압도적으로 뛰어납니다.',
+      '• 💬 예시: 캐릭터가 "고마워!" 라고 외치는 말풍선 텍스트가 시트에 꼭 들어가야 할 때 필수입니다.',
+      '• 🎨 화풍: 부드럽고 몽글몽글한 3D 렌더링, 파스텔톤 수채화 느낌을 내는 데 아주 강합니다.'
+    ],
+    geminiTitle: 'Gemini 이미지 생성 추천',
+    geminiSub: '"표정과 행동으로 말하는 이모티콘"',
+    geminiBullets: [
+      '• 🎯 특징: 채택한 기준 이미지를 다시 첨부해 한 장씩 변형할 때 캐릭터 특징을 안정적으로 이어가기 좋습니다.',
+      '• 💬 예시: 기준 캐릭터를 먼저 만든 뒤, 글씨 없이 표정과 몸짓 중심의 개별 이미지를 만들 때 활용하기 좋습니다.',
+      '• 🎨 권장: 15컷 시트는 구도 초안으로 사용하고 최종 이미지는 15종 개별 분할에서 생성하세요.'
+    ],
+    proTipTitle: '공용 활용 꿀팁!',
+    proTipDesc: '사진을 첨부하면 인물이나 반려동물의 특징을 반영한 캐릭터를 만들 수 있습니다. ChatGPT는 문구가 필요한 이미지에 활용하고, Gemini는 마음에 드는 기준 캐릭터를 만든 뒤 그 이미지를 다시 첨부해 한 장씩 변형해 보세요.',
+    bgSub: '가장 쉽고 빠르게 이모티콘 배경을 투명하게(누끼) 만드는 방법을 소개합니다!',
+    pcTitle: '💻 PC에서 작업할 때',
+    pcMethod1: '방법 1: remove.bg 웹사이트',
+    pcMethod1Bullets: [
+      'remove.bg 사이트에 접속합니다.',
+      '생성된 이모티콘 이미지를 드래그 앤 드롭합니다.',
+      '1초 만에 자동으로 배경이 제거된 PNG를 다운로드합니다.'
+    ],
+    removeBgLink: '👉 remove.bg 바로가기',
+    pcMethod2: '방법 2: 알씨(ALSee) 프로그램',
+    pcMethod2Bullets: [
+      '알씨 실행 후 [도구] ➔ [AI 배경 제거(누끼)] 선택.',
+      '이미지 드래그 후 마우스 클릭으로 간편하게 누끼 작업.'
+    ],
+    alSeeLink: '👉 알씨 다운로드',
+    mobileTitle: '📱 스마트폰에서 작업할 때',
+    galaxyTitle: '🤖 갤럭시 (Galaxy)',
+    galaxyBullets: [
+      '[갤러리] 앱에서 이모티콘 이미지를 엽니다.',
+      '캐릭터 부분을 1초 동안 꾹 누릅니다.',
+      '[스티커로 저장] 또는 [이미지로 저장]을 누르면 배경 투명 PNG 완성!'
+    ],
+    iphoneTitle: '🍎 아이폰 (iPhone)',
+    iphoneBullets: [
+      '[사진] 앱에서 이모티콘 이미지를 엽니다.',
+      '캐릭터 인물을 꾹 누르면 반짝이는 누끼 효과가 나타납니다.',
+      '[복사] 후 메신저에 바로 붙여넣거나 [스티커 추가]를 누르세요!'
+    ],
+    chroma1: '1. 연두색 배경 AI 이미지',
+    chroma2: '2. 클릭 한 번으로 누끼!',
+    chroma3: '3. 완벽한 투명 PNG 완성',
+    usageSub: '만드신 이미지를 실제 메신저(카카오톡, 라인, 위챗)에서 사용하는 두 가지 방법을 소개합니다!',
+    usageOfficialTitle: '1. 정식 출시 및 판매를 원할 때',
+    usageOfficialCard: '이모티콘 스튜디오 제안',
+    warningTag: '⚠️ 주의',
+    warningHeading: 'AI 이미지는 그대로 등록 불가!',
+    warningBody: '현재 플랫폼 정책상 저작권 문제로 인해 AI가 생성한 이미지를 \'그대로\' 제출하는 것은 엄격히 금지되어 있습니다. AI는 기발한 대사와 포즈를 뽑는 최고의 \'참고용 시안\'으로 활용하시고, 정식 제출은 그 시안을 바탕으로 직접 선을 따서 다시 그려서(리디자인) 제출하셔야 합니다.',
+    usageOfficialBullets: [
+      '이미지 준비: 직접 리디자인한 투명 배경 PNG 이미지 준비',
+      '제안하기: 스튜디오 사이트에 접속하여 준비한 이미지를 업로드',
+      '심사 대기: 내부 심사 통과 시 정식 상품으로 출시되어 수익 창출 가능!'
+    ],
+    kakaoStudioLink: '👉 이모티콘 스튜디오 바로가기',
+    usageCasualTitle: '2. 지인들과 가볍게 무료로 쓸 때',
+    usageCasualCard: '개인 소장용 (채팅방 전송)',
+    exampleBadge: '📸 전송 예시',
+    usageCasualBullets: [
+      '위의 [배경(누끼) 제거] 가이드에 따라 투명 배경으로 만든 PNG 파일을 스마트폰 갤러리에 저장합니다.',
+      '채팅방에서 입력창 옆의 [+] 버튼 ➔ [앨범/사진]을 누릅니다.',
+      '갤러리에서 투명하게 만든 캐릭터 이미지를 선택하여 전송합니다.'
+    ],
+    usageCasualTip: '배경이 투명하기 때문에 하얀색 네모 테두리가 보이지 않아, 진짜로 구매한 스티커처럼 대화창에 아주 깔끔하게 올라갑니다!'
+  },
+  en: {
+    tabBg: '✂️ Remove Background',
+    tabUsage: '💬 Use in Messengers',
+    modelDesc: 'Choose the right AI model for your specific needs!',
+    chatgptTitle: 'ChatGPT Image Generation',
+    chatgptSub: '"Emoticons with essential text"',
+    userCreation: 'Actual user creation ✨',
+    chatgptBullets: [
+      '• 🎯 Feature: Unmatched typography and text rendering.',
+      '• 💬 Usage: Essential when speech bubbles or text like "Thanks!" must be included.',
+      '• 🎨 Style: Very strong at soft 3D rendering and pastel watercolor styles.'
+    ],
+    geminiTitle: 'Gemini Image Generation',
+    geminiSub: '"Emoticons speaking through expressions"',
+    geminiBullets: [
+      '• 🎯 Feature: Works best when an accepted base image is attached again for one-at-a-time variations.',
+      '• 💬 Usage: Create the base character first, then generate individual expression- and action-focused images.',
+      '• 🎨 Recommended: Use the 15-panel sheet as a draft and Batch Split for final assets.'
+    ],
+    proTipTitle: 'Pro Tip!',
+    proTipDesc: 'Attach a photo to reflect recognizable features. Use ChatGPT when text matters, and with Gemini create a base character first, then attach that accepted result again for one-at-a-time variations.',
+    bgSub: 'How to easily and quickly remove backgrounds from your emoticons!',
+    pcTitle: '💻 Working on PC',
+    pcMethod1: 'Method 1: remove.bg website',
+    pcMethod1Bullets: [
+      'Visit the remove.bg website.',
+      'Drag and drop your generated emoticon image.',
+      'Download the transparent PNG automatically extracted in 1 sec.'
+    ],
+    removeBgLink: '👉 Go to remove.bg',
+    pcMethod2: 'Method 2: ALSee Program',
+    pcMethod2Bullets: [
+      'Run ALSee and select [Tools] ➔ [AI Background Removal].',
+      'Drag the image and click to clean up background easily.'
+    ],
+    alSeeLink: '👉 Download ALSee',
+    mobileTitle: '📱 Working on Smartphone',
+    galaxyTitle: '🤖 Galaxy (Android)',
+    galaxyBullets: [
+      'Open the image in your [Gallery] app.',
+      'Press and hold the character subject for 1 second.',
+      'Tap [Save as sticker] or [Save as image] for a transparent PNG!'
+    ],
+    iphoneTitle: '🍎 iPhone (iOS)',
+    iphoneBullets: [
+      'Open the image in your [Photos] app.',
+      'Press and hold the character until a shiny outline appears.',
+      'Tap [Copy] to paste in chat or tap [Add Sticker]!'
+    ],
+    chroma1: '1. Green BG AI Image',
+    chroma2: '2. 1-Click Removal!',
+    chroma3: '3. Perfect Transparent PNG',
+    usageSub: 'Two ways to actually use your created images in KakaoTalk & LINE & WeChat!',
+    usageOfficialTitle: '1. Official Release and Sale',
+    usageOfficialCard: 'Studio Submission',
+    warningTag: '⚠️ Warning',
+    warningHeading: 'Cannot Submit AI Images As-Is!',
+    warningBody: 'Due to platform copyright policies, submitting AI-generated images "as-is" is strictly prohibited. Use AI as an excellent "reference draft", and for official submission, you must trace and redraw (redesign) them yourself based on the draft.',
+    usageOfficialBullets: [
+      'Prepare Images: Prepare transparent PNG images redrawn by yourself.',
+      'Submit: Upload your prepared images to the Studio website.',
+      'Wait for Review: If approved, it becomes an official product for monetization!'
+    ],
+    kakaoStudioLink: '👉 Emoticon Studio Submission',
+    usageCasualTitle: '2. Casual Free Use with Friends',
+    usageCasualCard: 'Personal Use (Chatroom Trick)',
+    exampleBadge: '📸 Example',
+    usageCasualBullets: [
+      'Save the transparent background PNG file to your smartphone gallery using the guide above.',
+      'In your chatroom, tap the [+] button ➔ [Album/Photo] next to the input field.',
+      'Select and send the transparent character image from your gallery.'
+    ],
+    usageCasualTip: 'Because the background is transparent, the white rectangular border is invisible, making it look exactly like a real purchased sticker in the chat window!'
+  },
+  ja: {
+    tabBg: '✂️ 背景（透過）の消し方',
+    tabUsage: '💬 スタンプの登録・使用方法',
+    modelDesc: '各AIモデルにはそれぞれ強みがあります。目的に合わせて使い分けましょう！',
+    chatgptTitle: 'ChatGPT画像生成おすすめ',
+    chatgptSub: '「文字入れが必須のスタンプ」',
+    userCreation: 'ユーザーの実際の生成例 ✨',
+    chatgptBullets: [
+      '• 🎯 特徴: 文字（タイポグラフィ）描画能力が非常に優れています。',
+      '• 💬 用途: 「ありがとう！」などの文字や吹き出しをスタンプ内に入れたい時に最適です。',
+      '• 🎨 画風: ふんわりとした3Dレンダリングやパステル調の水彩画風が得意です。'
+    ],
+    geminiTitle: 'Gemini画像生成おすすめ',
+    geminiSub: '「表情やポーズで魅せるスタンプ」',
+    geminiBullets: [
+      '• 🎯 特徴: 基準画像を再添付して1枚ずつ生成する際、キャラクターの一貫性を維持するのに長けています。',
+      '• 💬 用途: まず文字なしの基準キャラを作成し、ポーズや表情メインのスタンプを作るのに向いています。',
+      '• 🎨 推奨: 15コマシートは構図の試作として使い、最終画像は15種個別分割で1枚ずつ生成してください。'
+    ],
+    proTipTitle: '共通活用のコツ！',
+    proTipDesc: '写真を添付すると人物やペットの特徴を反映したキャラを作成できます。文字が必要なスタンプはChatGPTで、表情やポーズ重視ならGeminiで基準キャラを作ってから画像を再添付して1枚ずつ作成するのがコツです。',
+    bgSub: 'スタンプの背景を簡単に透明（透過）にする方法をご紹介します！',
+    pcTitle: '💻 PCで作業する場合',
+    pcMethod1: '方法 1: remove.bg Webサイト',
+    pcMethod1Bullets: [
+      'remove.bg サイトにアクセスします。',
+      '生成されたスタンプ画像をドラッグ＆ドロップします。',
+      '1秒で自動的に背景が透過されたPNGをダウンロードします。'
+    ],
+    removeBgLink: '👉 remove.bg へ移動',
+    pcMethod2: '方法 2: 画像編集ソフト',
+    pcMethod2Bullets: [
+      '画像編集ソフトで「背景透過/切り抜き」を選択。',
+      '画像を読み込んでワンクリックで透過保存。'
+    ],
+    alSeeLink: '👉 編集ソフトを開く',
+    mobileTitle: '📱 スマホで作業する場合',
+    galaxyTitle: '🤖 Galaxy (Android)',
+    galaxyBullets: [
+      '「ギャラリー」アプリでスタンプ画像を開きます。',
+      'キャラクター部分を1秒間長押しします。',
+      '「ステッカーとして保存」または「画像として保存」をタップ！'
+    ],
+    iphoneTitle: '🍎 iPhone (iOS)',
+    iphoneBullets: [
+      '「写真」アプリでスタンプ画像を開きます。',
+      'キャラを長押しすると光る輪郭が表示されます。',
+      '「コピー」してトークに貼り付けるか「ステッカーに追加」をタップ！'
+    ],
+    chroma1: '1. グリーン背景のAI画像',
+    chroma2: '2. ワンクリックで透過！',
+    chroma3: '3. 完璧な透明PNG完成',
+    usageSub: '作成した画像をLINEやメッセージアプリで使う2つの方法！',
+    usageOfficialTitle: '1. 公式スタンプとして販売したい場合',
+    usageOfficialCard: 'LINE Creators Market 申請',
+    warningTag: '⚠️ 注意',
+    warningHeading: 'AI画像のままでは申請不可！',
+    warningBody: '現在プラットフォームの規約上、AI生成画像を「そのまま」提出することは禁止されています。AI画像をアイデアやポーズの「参考案」として使い、申請時はそれを元に自分で描き直して（リデザイン）提出してください。',
+    usageOfficialBullets: [
+      '画像準備: 自分で描き直した 370x320px 透明背景PNG画像を用意',
+      '申請: LINE Creators Market サイトで画像をアップロード',
+      '審査待ち: 審査通過でスタンプとして販売・収益化が可能！'
+    ],
+    kakaoStudioLink: '👉 LINE Creators Market へ',
+    usageCasualTitle: '2. 友達と無料で気軽に使う場合',
+    usageCasualCard: '個人利用（トーク画面で画像送信）',
+    exampleBadge: '📸 送信例',
+    usageCasualBullets: [
+      '上記の透過ガイドに従い、透明背景PNG画像をスマホのギャラリーに保存します。',
+      'トーク画面の [+] ボタン ➔ 「写真」を選択します。',
+      '透明背景のキャラ画像を選んで送信すると、スタンプのように表示されます！'
+    ],
+    usageCasualTip: '背景が透明なため白い枠線が見えず、まるで購入した本物のスタンプ<ctrl42>のようにトーク画面に綺麗に表示されます！'
+  },
+  zh: {
+    tabBg: '✂️ 抠图（透明背景）',
+    tabUsage: '💬 表情包使用指南',
+    modelDesc: '各个AI模型各有强项，请根据具体需求选择最适合的模型！',
+    chatgptTitle: '推荐使用ChatGPT',
+    chatgptSub: '“必须带有文字的表情包”',
+    userCreation: '用户真实生成示例 ✨',
+    chatgptBullets: [
+      '• 🎯 特色: 文字与排版渲染能力极其优秀。',
+      '• 💬 用途: 当表情包中必须包含“谢谢！”等文字对话框时非常推荐。',
+      '• 🎨 画风: 非常擅长表现柔和的3D渲染和粉彩水彩风格。'
+    ],
+    geminiTitle: '推荐使用Gemini',
+    geminiSub: '“通过表情与动作传达的表情包”',
+    geminiBullets: [
+      '• 🎯 特色: 再次附上已选定的基准图片进行单张生成时，能非常稳定地保持角色特征一致。',
+      '• 💬 用途: 适合先生成基准角色，再制作以表情和肢体动作为主的单张无字表情包。',
+      '• 🎨 建议: 15宫格草图作为构图参考，最终高清图片建议通过15种单张拆分逐一生成。'
+    ],
+    proTipTitle: '通用实用技巧！',
+    proTipDesc: '上传照片可以生成融入人物或宠物特征的角色。需要文字说明时使用ChatGPT；想要多变表情和动作时，建议先用Gemini生成满意的基准角色，再重新上传该图片逐一衍生单张表情包。',
+    bgSub: '介绍几种最简单快速的表情包抠图（透明背景）方法！',
+    pcTitle: '💻 在电脑上操作',
+    pcMethod1: '方法 1: remove.bg 网页版',
+    pcMethod1Bullets: [
+      '访问 remove.bg 网站。',
+      '拖拽上传生成的表情包图片。',
+      '一秒内自动生成并下载透明背景PNG。'
+    ],
+    removeBgLink: '👉 前往 remove.bg',
+    pcMethod2: '方法 2: 图像编辑软件',
+    pcMethod2Bullets: [
+      '打开图像软件并选择“AI抠图/透明背景”。',
+      '拖入图片并一键删除背景色。'
+    ],
+    alSeeLink: '👉 打开图像软件',
+    mobileTitle: '📱 在手机上操作',
+    galaxyTitle: '🤖 三星/安卓手机',
+    galaxyBullets: [
+      '在“相册”App中打开表情包图片。',
+      '长按主体角色约1秒。',
+      '点击“保存为贴纸”或“保存为透明图片”即可！'
+    ],
+    iphoneTitle: '🍎 苹果 iPhone',
+    iphoneBullets: [
+      '在“照片”App中打开图片。',
+      '长按角色主体，直到出现轮廓光效。',
+      '点击“复制”直接发送，或点击“添加贴图”！'
+    ],
+    chroma1: '1. 绿色背景AI图片',
+    chroma2: '2. 一键快速抠图！',
+    chroma3: '3. 完美透明PNG完成',
+    usageSub: '在微信、QQ、LINE或KakaoTalk中使用图片的两种方法！',
+    usageOfficialTitle: '1. 上架为官方表情包出售',
+    usageOfficialCard: '微信表情开放平台 / 官方平台提交',
+    warningTag: '⚠️ 注意',
+    warningHeading: '不能直接提交AI原始图片！',
+    warningBody: '目前各平台政策规定，严禁直接上传AI生成的原始图片。请将AI图片作为获取表情动作与构图的“参考草图”，正式提交前需根据草图自行重新绘制（重构）后再上传。',
+    usageOfficialBullets: [
+      '准备图片: 准备由自己重新绘制的透明背景PNG图片',
+      '提交审核: 登录平台上传准备好的表情包图片',
+      '等待审核: 审核通过后即可正式上架并获得收益！'
+    ],
+    kakaoStudioLink: '👉 前往表情开放平台',
+    usageCasualTitle: '2. 与朋友免费聊天发送',
+    usageCasualCard: '个人收藏（聊天发送技巧）',
+    exampleBadge: '📸 发送示例',
+    usageCasualBullets: [
+      '按照上方抠图指南，将生成的透明背景PNG图片保存至手机相册。',
+      '在聊天界面中点击输入框旁边的 [+] ➔ 【相册/图片】。',
+      '选择保存的透明背景角色图片直接发送，即可像真正买的表情包一样展示！'
+    ],
+    usageCasualTip: '由于背景是透明的，因此不会显示白色方框外框，在聊天框中发送效果与购买的正式表情包完全一样干净漂亮！'
+  }
+};
+
 const InfoSection = ({ t, lang }) => {
   const [activeTab, setActiveTab] = useState('model'); // 'model' | 'bg' | 'usage'
+  const gt = GUIDE_TEXTS[lang] || GUIDE_TEXTS.en;
 
   return (
     <section id="guide-section" className="flex flex-col gap-sm mt-xl mb-xl">
@@ -434,13 +734,13 @@ const InfoSection = ({ t, lang }) => {
             onClick={() => setActiveTab('bg')}
             className={`interactive-control whitespace-nowrap flex-shrink-0 px-4 py-1.5 text-[14px] font-bold rounded-full ${activeTab === 'bg' ? 'bg-mint text-mint-strong shadow-sm border border-mint-border' : 'text-mint-strong hover:bg-mint-hover'}`}
           >
-            ✂️ {lang === 'ko' ? '배경(누끼) 제거' : 'Remove Background'}
+            {gt.tabBg}
           </button>
           <button 
             onClick={() => setActiveTab('usage')}
             className={`interactive-control whitespace-nowrap flex-shrink-0 px-4 py-1.5 text-[14px] font-bold rounded-full ${activeTab === 'usage' ? 'bg-mint text-mint-strong shadow-sm border border-mint-border' : 'text-mint-strong hover:bg-mint-hover'}`}
           >
-            💬 {lang === 'ko' ? '메신저 스티커 등록' : 'Use in Messengers'}
+            {gt.tabUsage}
           </button>
         </div>
       </div>
@@ -1567,10 +1867,16 @@ ${textExclusion} No guide lines, no grid lines, no cell dividers, no border line
               <div className="mt-3 bg-mint-soft border border-mint-border rounded-2xl p-3.5 flex items-start gap-2.5 text-[13px] text-mint-strong">
                 <span className="text-[16px] leading-none shrink-0 mt-0.5">💡</span>
                 <div className="leading-relaxed">
-                  <strong className="font-bold">{lang === 'ko' ? '캐릭터 미설정 시 기본 동작' : 'Default Character Setting'}</strong>
+                  <strong className="font-bold">
+                    {lang === 'ko' ? '캐릭터 미설정 시 기본 동작' : lang === 'ja' ? 'キャラクター未設定時のデフォルト動作' : lang === 'zh' ? '未设置角色时的默认选项' : 'Default Character Setting'}
+                  </strong>
                   <p className="mt-0.5 opacity-95">
                     {lang === 'ko' 
                       ? '설정을 비워두셔도 AI가 가장 귀엽고 표정이 풍부한 2D 오리지널 캐릭터(기본 의상/화풍)를 자동으로 완성해 드립니다.' 
+                      : lang === 'ja'
+                      ? '入力欄を空欄のままにしておくと、AIが自動的に可愛く個性豊かな2Dオリジナルキャラクターを設定します。'
+                      : lang === 'zh'
+                      ? '若留空，AI将默认自动为您生成可爱且表情丰富的2D原创角色。'
                       : 'Leaving this empty automatically generates a cute, highly expressive 2D original character by default.'}
                   </p>
                 </div>
@@ -1947,6 +2253,10 @@ ${textExclusion} No guide lines, no grid lines, no cell dividers, no border line
           <p className="text-[12px] text-[#A69B8F]">
             {lang === 'ko' 
               ? '* 본 서비스는 카카오(Kakao) 및 라인(LINE)과 공식적인 관련이 없습니다.' 
+              : lang === 'ja'
+              ? '* 本サービスはLINEまたはKakaoTalkと公式に提携しているものではありません。'
+              : lang === 'zh'
+              ? '* 本服务非微信、LINE或KakaoTalk官方合作服务。'
               : '* This service is not officially affiliated with Kakao or LINE.'}
           </p>
         </div>
