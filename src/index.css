@@ -41,12 +41,12 @@
     overflow-wrap: break-word;
   }
 
-  .lang-ja {
-    font-family: 'M PLUS Rounded 1c', "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Meiryo", sans-serif;
+  .lang-ja, .lang-ja * {
+    font-family: 'M PLUS Rounded 1c', "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Meiryo", sans-serif !important;
   }
 
-  .lang-zh {
-    font-family: 'Noto Sans SC', "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;
+  .lang-zh, .lang-zh * {
+    font-family: 'Noto Sans SC', "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif !important;
   }
 }
 
