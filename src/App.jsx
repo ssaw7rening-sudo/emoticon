@@ -1,6 +1,44 @@
 import React, { useState, useEffect } from 'react';
 import { Shuffle, CheckCircle2, Bot, Sparkles, HelpCircle, Globe, Trash2 } from 'lucide-react';
 
+const THEMES_JA = {
+  '日常/挨拶 ①': ['草www', 'ありがとう！', '今日も頑張ろう', 'いいね！', '感謝！', '大すき', '神！', 'やったー', 'ごめんね', 'お疲れ様', 'おめでとう', 'ヤバい', 'マジか', '感動！', 'おやすみ'],
+  '日常/挨拶 ②': ['よろしくね', 'どうしたの？', 'ご飯食べた？', '会いたい', 'おはよう', '暇だなー', 'どこにいる？', '遊ぼう！', 'ファイト', '応援してる', '最高', '完璧！', '楽しみ！', '今日もお疲れ', 'またね！'],
+  'オフィス/仕事 ①': ['承知いたしました', '了解です', '修正お願いします', 'ありがとうございます', '退勤します', '会議中です', 'ファイル添付しました', 'お昼行ってきます', 'ファイト！', '申し訳ありません', '予定確認します', 'お疲れ様です', 'お先に失礼します', '確認しました', 'レビューお願いします'],
+  'オフィス/仕事 ②': ['有給とります', '休暇中', 'メール確認お願いします', 'ご参考まで', '日程調整可能？', '承認お願いします', '告知確認してね', '通勤ラッシュ惨敗', '残業確定', 'カフェイン補給', 'チームランチ', '定時退社祈願', '今週も生き抜く', '進捗共有', '修正完了しました'],
+};
+
+const THEMES_ZH = {
+  '日常/问候 ①': ['哈哈哈', '你好！', '今天也要加油', '赞！', '谢谢你', '爱你', '太棒了！', '耶！', '对不起', '辛苦了', '恭喜', '哇', '我的天', '感动', '晚安'],
+  '日常/问候 ②': ['很高兴认识你', '在干嘛？', '吃饭了吗？', '想你了', '早上好', '好无聊', '你在哪？', '一起玩吧！', '加油', '支持你', '太酷了', '完美！', '超期待', '今天辛苦了', '下次见！'],
+  '职场/工作 ①': ['收到！', '好的', '请修改', '谢谢', '下班啦', '开会中', '已发送附件', '去吃午饭啦', '加油！', '非常抱歉', '确认日程', '辛苦了', '我先走啦', '明白了', '请查收'],
+  '职场/工作 ②': ['休假中', '度假去啦', '请查收邮件', '供参考', '能调整时间吗', '请审批', '请看公告', '早高峰渡劫', '加班确定', '急需咖啡', '部门聚餐', '祈祷准时下班', '这周渡劫中', '进度同步', '已修改完成'],
+};
+
+const CHARACTER_TAGS_JA = {
+  '🐱 動物': ['柴犬', '茶トラ猫', 'ポメラニアン', 'ペンギン', 'うさぎ', 'やんちゃな猿', 'ハムスター', 'リス', '小クマ', 'フェネック', 'クアッカワラビー', 'アヒル', 'パンダ', 'ハリネズミ', 'アルパカ', '子ブタ', 'ナマケモノ', '子ゾウ', 'カワウソ', 'アザラシ', 'コーギー', 'カピバラ', 'ひよこ', 'アライグマ', '子ライオン'],
+  '👦 人物': ['ボブヘアの少女', 'メガネの優等生', 'ツーブロックの少年', 'パーマ髪の女性', 'ヒゲの男性', 'ポニーテール女子', 'ツインテール少女', 'ニット帽のヒップスター', 'スーツの紳士', '着物の子供', 'スーツのキャリアウーマン', '優しそうなおばあちゃん', '杖をついたおじいちゃん', '黄色い帽子の園児', 'サングラスのラッパー', 'エプロンのバリスタ', '坊主頭の兵士', 'ヘッドホンのゲーマー', 'マッチョな筋トレ男子', 'カメラを持つ旅人', '白衣の医師', '制服の警察官', 'ギターを弾くロックスター', 'スケボー少年', '華やかなK-POPアイドル', '親しみやすい近所の人', 'ヨガインストラクター', 'ヘルメットの建築家', '画家', 'ライダー', '花屋の店主', 'リュックの就活生', '疲れた会社員', 'パン屋の職人', 'メカニック', '和服の学者', 'カウボーイ', '海賊の船長', '手品師', 'バレリーナ', 'ジャージの無職', '科学者', 'ジーンズの爽やか男子', 'ドレスの姫君', '甲冑の騎士', '空手師範', 'CA（客室乗務員）', 'カメラマン', '登山家', 'アナウンサー', '裁判官', '消防士', 'シェフ', 'バイト生', '麦わら帽子の農家', '花かんむりの少女', '制服の学生', 'サーファー', 'カーラーをつけた就活生'],
+  '🦄 ファンタジー/モノ': ['ユニコーン', '子ドラゴン', '魔法使い', '森の妖精', 'もちもちモッチ', 'マカロン', '苺ケーキ', '小籠包', '子バンパイア', '人魚姫', '騎士', '宇宙人', '九尾の狐', '小鬼', '天使', '小悪魔', 'しゃべる鯛焼き', '綿菓子雲', 'セイレーン', 'ペガサス', 'おしゃべりカボチャ', '宇宙飛行士', '魔法のほうき', 'ジェリーモンスター', '雪だるま'],
+  '👀 外見/特徴': ['丸顔', '大きくてキラキラした目', 'ぷっくりしたほっぺ', '短い手足', '小さな丸い鼻', '赤らんだ頬', 'モフモフの毛', 'プルプルした体', 'ピンと立った耳', '小さな八重歯', 'そばかす', '片目を隠す前髪', '丸メガネ', 'ふさふさの尻尾', '小さな羽', '星型の瞳', 'ハートの頬模様', 'ミニSD体型'],
+  '✨ 性格/感情': ['いたずら好き', 'ツンデレ', '素直で優しい', 'いつも疲れている', '甘えん坊', '怒りっぽい', 'のんびり', '泣き虫', '活発', '内気', '天然', '優しい', 'いつもお腹が空いている', '好奇心旺盛', '大真面目', '見栄っぱり', '恋に落ちた', '自信満々', 'ドジっ子', 'ゴロゴロ怠け者', '情熱的', '怖がり', 'すね屋', 'やる気ゼロ', 'お金大好き'],
+  '🖌️ 画風': ['可愛い2Dアニメ風', '韓国ウェブトゥーン風', '手書き落書き風', '柔らかい水彩画風', '色鉛筆絵本風', 'レトロアニメ風', 'クリーンなミニマルベクトル', 'ポップアート風', 'アメコミ風', 'ドット絵ピクセル風', 'ペーパーコラージュ風', 'ヴィンテージ印刷風'],
+  '👕 衣装': ['白衣', 'エプロン', 'スーツ', 'オーバーサイズパーカー', 'オーバーオール', '制服', 'ジャージ', 'レインコート', 'パジャマ', 'マント', 'ドレス', 'キャップ帽', 'ダウンジャケット', '革ジャン', 'シャツとネクタイ', '花柄ワンピース', 'ストリートファッション', '道着', 'ニットセーター', '着ぐるみパジャマ', '宇宙服', '探検家ベスト', '水着と浮き輪', 'トレンチコート', '妖精の羽', '王冠とマント', 'Tシャツとジーンズ', '探偵コート'],
+  '🎒 小道具/動作': ['スマホを持つ', 'コーヒーカップを持つ', 'サングラス를 かける', 'ヘッドホンをつける', 'ノートPCをする', '本を読む', '風船を持つ', '花束を抱える', 'マイクで歌う', 'ゲームパッドを握る', 'フライパンを持つ', '虫眼鏡を持つ', 'スケッチブックに描く', '魔法の杖を振る', '買い物かごを持つ', '傘をさす', 'ポップコーンを食べる', '掃除機をかける', '双眼鏡で覗く', 'ヨガマットでストレッチ', 'スマートウォッチを見る', '札束を握る'],
+  '🌈 エフェクト/背景': ['キラキラエフェクト', 'ハート飛ばし', '星空の輝き', 'ネオンサイン', '集中線', '桜吹雪', '炎のエフェクト', '飛び散る汗', 'どんより雨雲', '虹色のオーラ', 'ドカンと爆発', '暗い影', 'スポットライト', '吹雪', '雷電', 'ブクブク泡', '温かい日差し', '音符が浮かぶ', '風に舞う']
+};
+
+const CHARACTER_TAGS_ZH = {
+  '🐱 动物': ['柴犬', '橘猫', '博美犬', '小企鹅', '胖软兔', '淘气猴子', '仓鼠', '松鼠', '小熊', '耳廓狐', '短尾矮袋鼠', '小鸭子', '熊猫', '刺猬', '羊驼', '小猪', '树懒', '小象', '水獭', '小海豹', '柯基犬', '卡皮巴拉（水豚）', '小鸡', '浣熊', '小狮子'],
+  '👦 人物': ['波波头少女', '戴眼镜的学霸', '两侧铲短少年', '卷发阿姨', '大叔', '马尾运动少女', '双马尾少女', '戴毛线帽的潮人', '西装绅士', '汉服小孩', '职场干练女性', '慈祥的白发奶奶', '拄拐杖的爷爷', '小黄帽幼儿园生', '戴墨镜的说唱歌手', '围裙咖啡师', '寸头士兵', '戴耳机的职业选手', '肌肉健身男', '背相机的背包客', '白大褂医生', '制服警察', '弹吉他的摇滚明星', '滑板少年', '华丽K-POP偶像', '和蔼的邻居', '瑜伽教练', '戴安全帽的建筑师', '画家', '摩托车骑士', '花店老板', '背书包的求职者', '疲惫的社畜', '面包师', '机修工', '书生', '牛仔', '独眼海盗船长', '魔术师', '芭蕾舞者', '运动服游民', '科学家', '牛仔裤型男', '连衣裙公主', '铠甲骑士', '跆拳道教练', '空姐', '摄影师', '登山家', '主持人', '法官', '消防员', '大厨', '店员兼职生', '草帽农民', '花环少女', '吃辣条的学生', '冲浪手', '卷发筒求职者'],
+  '🦄 幻想/物品': ['独角兽', '小龙', '小法师', '森林妖精', '糯米软糬', '马卡龙', '草莓蛋糕', '小笼包', '小吸血鬼', '美人鱼', '勇敢小骑士', '外星人', '九尾狐', '小鬼怪', '天使', '小恶魔', '会说话的鲷鱼烧', '棉花糖云朵', '赛琳', '佩格萨斯（飞马）', '会说话的南瓜', '宇航员', '扫帚', '果冻怪', '雪人妖精'],
+  '👀 外貌/特征': ['圆脸', '大而闪亮的眼睛', '嘟嘟肉脸颊', '短粗四肢', '小圆鼻子', '红扑扑的脸蛋', '蓬松毛发', '果冻般软糯身体', '长尖耳朵', '小虎牙', '雀斑', '遮住一只眼的刘海', '圆框眼镜', '毛茸茸的尾巴', '小翅膀', '星形瞳孔', '心形脸颊纹路', '迷你SD体型'],
+  '✨ 性格/情感': ['淘气', '傲娇高冷', '温顺善良', '总是疲惫', '满满撒娇', '易怒脾气暴', '悠闲自得', '爱哭鬼', '活泼开朗', '胆小害羞', '古灵精怪', '温柔体贴', '总是很饿', '充满好奇心', '十分认真实在', '爱吹牛', '陷入爱河', '自信满满', '毛手毛脚', '懒散打滚', '充满激情', '胆小怕事', '娇嗔娇气', '毫无干劲', '超喜欢钱'],
+  '🖌️ 画风': ['可爱2D漫画风', '韩国条漫风', '手绘涂鸦风', '柔和水彩风', '色铅笔绘本风', '复古动画风', '极简矢量风', '波普艺术风', '美漫风', '像素风', '剪纸拼贴风', '复古印刷漫画风'],
+  '👕 服装': ['白大褂', '厨师围裙', '职场西服', '宽松连帽衫', '背带裤', '校服', '运动服', '雨衣', '舒适睡衣', '魔法斗篷', '华丽礼服', '运动棒球帽', '厚羽绒服', '皮衣', '整洁衬衫领带', '碎花连衣裙', '街头潮牌', '道袍', '针织毛衣', '可爱动物连体睡衣', '宇航服', '探险家背心帽', '泳衣泳圈', '风衣', '天使翅膀', '皇冠斗篷', '牛仔裤白T恤', '侦探风衣'],
+  '🎒 道具/动作': ['拿着手机', '拿着咖啡杯', '戴着墨镜', '戴着耳机', '使用笔记本电脑', '看书', '拿着气球', '抱着花束', '握着麦克风唱歌', '握着游戏手柄', '拿着平底锅', '拿着大放大镜', '在画板上画画', '挥舞魔法棒', '提着购物篮', '打着伞', '吃爆米花', '推着吸尘器', '用望远镜偷看', '在瑜伽垫上拉伸', '查看智能手表', '拿着一沓钞票'],
+  '🌈 特效/背景': ['闪烁发光特效', '发射爱心', '星光洒落', '霓虹灯闪烁', '漫画集中线', '樱花飘落', '火焰燃烧特效', '挥洒汗水', '阴暗乌云', '彩虹光晕', '砰砰爆炸', '暗黑阴影', '聚光灯', '暴风雪', '雷电交加', '咕嘟咕嘟泡泡', '温暖阳光', '飘浮音符', '随风飘扬']
+};
+
 const THEMES_KO = {
   '일상/인사 ①': ['ㅋㅋㅋㅋ', '안녕!', '오늘도 화이팅', '좋아요', '고마워요', '사랑해요', '최고!', '오예', '미안해요', '수고했어요', '축하해요', '대박', '헐', '감동', '잘자요'],
   '일상/인사 ②': ['반가워요', '뭐해?', '밥 먹었어?', '보고싶어', '굿모닝', '심심해', '어디야?', '놀자!', '화이팅', '응원할게', '멋져요', '완벽해', '기대돼', '수고했어 오늘도', '다음에 봐!'],
@@ -211,6 +249,138 @@ const I18N = {
     guide3A: 'On PC, you can use free tools like remove.bg or ALSee (AI Background Removal) to extract the character in 1 click. On smartphones, long-press the subject in your default Gallery/Photos app and select "Copy/Save" to extract it with a transparent background.',
     guide4Q: '💬 How do I use them in messenger apps?',
     guide4A: 'For official sales, you must submit them to platforms like LINE Creators Market. For personal use, simply save the transparent PNG to your gallery and send it as a regular photo in the chat. It will display cleanly like a sticker.',
+  },
+  ja: {
+    title: 'プロンプトスタジオ',
+    step1: 'キャラクター設定',
+    whatCharacter: 'キャラクター説明',
+    clear: 'リセット',
+    placeholder: '例：パンが大好きな丸い黄色い猫',
+    characterSource: 'キャラクター基準',
+    directSource: '✏️ 直接設定',
+    photoSource: '📷 写真から作成',
+    photoMethod: '写真参照スタイル',
+    photoExact: '写真そのまま再現',
+    photoFeatures: '特徴だけ抽出 (3D)',
+    photoCharacterize: '可愛くSDキャラ化',
+    photoAttachGuide: 'プロンプトコピー後、AIチャットにも写真を添付してください。',
+    photoActive: '参照画像有効中',
+    phrases: 'フレーズ選択 (15種)',
+    themeSelect: 'テーマ選択',
+    randomMix: 'ランダム',
+    gptCopy: 'Copy for ChatGPT',
+    geminiCopy: 'Copy for Gemini',
+    previewTitle: 'プロンプトプレビュー',
+    forGpt: 'ChatGPT用',
+    forGemini: 'Gemini用',
+    guideTitle: '使い方ガイド',
+    guide1Q: '🤔 AIスタンププロンプトメーカーとは？',
+    guide1A: 'スタンプのアイデアはあるけれど、AIへの指示出し가 難しいとお悩みですか？\n好きなキャラクターの特徴とフレーズを選ぶだけで、ChatGPTやGeminiで使えるスタンプ制作プロンプトを自動作成します。',
+    guide2Q: '💡 ChatGPT vs Gemini どちらを使うべき？',
+    guide2A: '文字入れ重視ならChatGPT、表情・ポーズ重視ならGeminiがおすすめです。シート全体で試作し、個別生成で1枚ずつ作成すると品質が安定します。',
+    modeSheet: '📱 シート全体 (15種)',
+    modeIndividual: '🖼️ 自由個別 (1種)',
+    modeBatch: '📋 15種個別分割',
+    individualTip: '💡 ヒント: 一貫性を保つため、まず全体シートを生成し、同じチャットで個別プロンプトを入力してください。',
+    batchTip: 'フレーズを押すと、現在選択されているAIの1枚用プロンプトがコピーされます。',
+    individualInput: '表現したいフレーズや状況を入力',
+    individualPlaceholder: '例：涙を流して悲しむ姿',
+    batchSelect: 'プレビューするフレーズを選択',
+    selectedPhrase: '選択中のフレーズ',
+    copiedPrompt: 'プロンプトをコピーしました',
+    gptTextMode: 'ChatGPT画像文字',
+    gptIncludeText: '文字あり',
+    gptNoText: '文字なし',
+    gptBackgroundMode: 'ChatGPT背景',
+    gptTransparent: '透過背景',
+    gptSolid: '単色背景',
+    gptChroma: 'クロマキー',
+    gptWorkflowTip: 'ChatGPTヒント: 文字の精度が重要な場合、シート全体で試作後、15種個別分割で1枚ずつ確認してください。',
+    geminiTextMode: 'Gemini画像文字',
+    geminiNoText: '文字なし',
+    geminiIncludeText: '文字あり',
+    geminiStageMode: 'Gemini作業段階',
+    geminiReferenceStage: '① 基準キャラクター作成',
+    geminiFinalStage: '② 基準画像から生成',
+    geminiReferenceTip: 'まず文字なしの基準キャラクターを作成し、お気に入りの結果を保存してください。',
+    geminiFinalTip: '保存した基準キャラクター画像をGeminiに再度添付し、15種個別分割で1枚ずつ生成してください。',
+    geminiRepairTitle: '結果補正プロンプト',
+    geminiRepairIdentity: 'キャラが変わった',
+    geminiRepairCrop: '体が切れた',
+    geminiRepairText: '文字が違う',
+    geminiWorkflowTip: 'Geminiヒント: シート全体は構図の試作として使い、最終画像は15종個別分割で1枚ずつ生成することをおすすめします。',
+    emptyPhraseError: '空のフレーズがあります。すべてのフレーズを入力してください。',
+    duplicatePhraseError: '重複したフレーズがあります。それぞれ異なるフレーズを入力してください。',
+    guide3Q: '✂️ 背景（透過）の簡単な消し方は？',
+    guide3A: 'remove.bgなどの無料Webツールを使うとワンクリックで背景を切り抜けます。スマホではギャラリーアプリで被写体を長押しして「コピー/保存」すると自動的に透過画像になります。',
+    guide4Q: '💬 作ったスタンプはLINEでどう使う？',
+    guide4A: 'LINE Creators Marketで申請して販売することも、透過PNGをギャラリーに保存してトーク画面で画像として送信して楽しむこともできます！',
+  },
+  zh: {
+    title: '提示词工作室',
+    step1: '角色设置',
+    whatCharacter: '角色描述',
+    clear: '重置',
+    placeholder: '例：一只喜欢吃面包的圆滚滚黄色小猫',
+    characterSource: '角色来源',
+    directSource: '✏️ 手动描述',
+    photoSource: '📷 上传照片',
+    photoMethod: '照片参考风格',
+    photoExact: '高还原度写真',
+    photoFeatures: '提取特征 (3D)',
+    photoCharacterize: 'Q版SD卡通化',
+    photoAttachGuide: '复制提示词后，请在AI聊天框中同时发送参考照片。',
+    photoActive: '参考图片已启用',
+    phrases: '表情短语网格 (15种)',
+    themeSelect: '主题选择',
+    randomMix: '随机混合',
+    gptCopy: 'Copy for ChatGPT',
+    geminiCopy: 'Copy for Gemini',
+    previewTitle: '提示词预览',
+    forGpt: 'ChatGPT专用',
+    forGemini: 'Gemini专用',
+    guideTitle: '使用指南',
+    guide1Q: '🤔 什么是AI表情包提示词生成器？',
+    guide1A: '想制作表情包却不知道如何给AI写提示词？选择你喜欢的角色特征和常用短语，本工具将自动为你生成适用于ChatGPT和Gemini的表情包提示词。',
+    guide2Q: '💡 ChatGPT vs Gemini 应该选哪一个？',
+    guide2A: '如果表情包中必须包含精准文字，推荐使用ChatGPT；如果更看重动作和神态，推荐使用Gemini。',
+    modeSheet: '📱 完整整页 (15种)',
+    modeIndividual: '🖼️ 自由单张 (1种)',
+    modeBatch: '📋 15种单张拆分',
+    individualTip: '💡 提示：为保持一致性，建议先生成整张表情包，再在同一个对话框中使用单张提示词。',
+    batchTip: '点击短语即可直接复制当前AI的单张表情包提示词。',
+    individualInput: '输入想表达的短语或情境',
+    individualPlaceholder: '例：流着眼泪非常难过的样子',
+    batchSelect: '选择预览短语',
+    selectedPhrase: '已选短语',
+    copiedPrompt: '提示词已复制',
+    gptTextMode: 'ChatGPT文字模式',
+    gptIncludeText: '包含文字',
+    gptNoText: '纯图无字',
+    gptBackgroundMode: 'ChatGPT背景',
+    gptTransparent: '透明背景',
+    gptSolid: '单色背景',
+    gptChroma: '抠图绿幕',
+    gptWorkflowTip: 'ChatGPT提示：如果文字精准度很重要，建议先生成整页草图，再用拆分模式逐张生成校验。',
+    geminiTextMode: 'Gemini文字模式',
+    geminiNoText: '纯图无字',
+    geminiIncludeText: '包含文字',
+    geminiStageMode: 'Gemini制作阶段',
+    geminiReferenceStage: '① 制作基准角色',
+    geminiFinalStage: '② 基于基准图生成',
+    geminiReferenceTip: '请先制作不带文字的基准角色，并保存满意的图片。',
+    geminiFinalTip: '将保存的基准角色图重新发送给Gemini，并使用单张拆分逐张生成。',
+    geminiRepairTitle: '结果修正提示词',
+    geminiRepairIdentity: '角色变形了',
+    geminiRepairCrop: '身体被裁剪了',
+    geminiRepairText: '文字出错了',
+    geminiWorkflowTip: 'Gemini提示：建议将整页作为构图草稿，最终成品使用单张拆分模式逐一生成。',
+    emptyPhraseError: '存在空白短语，请填写所有短语。',
+    duplicatePhraseError: '存在重复短语，请修改为不同的短语。',
+    guide3Q: '✂️ 如何轻松去除背景（抠图）？',
+    guide3A: '使用remove.bg等免费在线工具可一键抠图。手机端长按相册中的主体即可直接提取透明PNG。',
+    guide4Q: '💬 制作好的表情包如何在微信中使用？',
+    guide4A: '保存透明PNG到手机相册，在微信聊天框中以图片形式发送，或导入微信表情包自定义收藏即可！',
   }
 };
 
@@ -641,10 +811,24 @@ const InfoSection = ({ t, lang }) => {
 
 function App() {
   const [lang, setLang] = useState('ko');
-  const t = I18N[lang];
+  const t = I18N[lang] || I18N.ko;
   
-  const currentThemes = lang === 'ko' ? THEMES_KO : THEMES_EN;
-  const currentTags = lang === 'ko' ? CHARACTER_TAGS_KO : CHARACTER_TAGS_EN;
+  const getThemesByLang = (l) => {
+    if (l === 'ja') return THEMES_JA;
+    if (l === 'zh') return THEMES_ZH;
+    if (l === 'en') return THEMES_EN;
+    return THEMES_KO;
+  };
+
+  const getTagsByLang = (l) => {
+    if (l === 'ja') return CHARACTER_TAGS_JA;
+    if (l === 'zh') return CHARACTER_TAGS_ZH;
+    if (l === 'en') return CHARACTER_TAGS_EN;
+    return CHARACTER_TAGS_KO;
+  };
+
+  const currentThemes = getThemesByLang(lang);
+  const currentTags = getTagsByLang(lang);
   const themeKeys = Object.keys(currentThemes);
   const categoryKeys = Object.keys(currentTags);
   
@@ -666,31 +850,28 @@ function App() {
   const [gptBackgroundMode, setGptBackgroundMode] = useState('transparent');
   const [geminiTextMode, setGeminiTextMode] = useState('visual');
 
-  const toggleLanguage = () => {
-    const newLang = lang === 'ko' ? 'en' : 'ko';
-    setLang(newLang);
-    const oldThemes = lang === 'ko' ? THEMES_KO : THEMES_EN;
+  const changeLanguage = (newLang) => {
+    if (newLang === lang) return;
+    const oldThemes = getThemesByLang(lang);
     const oldThemeKeys = Object.keys(oldThemes);
-    const newThemes = newLang === 'ko' ? THEMES_KO : THEMES_EN;
+    const newThemes = getThemesByLang(newLang);
     const newThemeKeys = Object.keys(newThemes);
-    const oldTags = lang === 'ko' ? CHARACTER_TAGS_KO : CHARACTER_TAGS_EN;
-    const newTags = newLang === 'ko' ? CHARACTER_TAGS_KO : CHARACTER_TAGS_EN;
+    const oldTags = getTagsByLang(lang);
+    const newTags = getTagsByLang(newLang);
     const oldCategoryKeys = Object.keys(oldTags);
     const newCategoryKeys = Object.keys(newTags);
     
+    setLang(newLang);
+
     if (activeTheme !== 'custom') {
       const themeIndex = oldThemeKeys.indexOf(activeTheme);
-      if (themeIndex !== -1) {
-        setActiveTheme(newThemeKeys[themeIndex]);
-        setEmoticons(newThemes[newThemeKeys[themeIndex]]);
-      } else {
-        setActiveTheme(newThemeKeys[0]);
-        setEmoticons(newThemes[newThemeKeys[0]]);
-      }
+      const nextThemeKey = newThemeKeys[themeIndex >= 0 ? themeIndex : 0] || newThemeKeys[0];
+      setActiveTheme(nextThemeKey);
+      setEmoticons(newThemes[nextThemeKey]);
     }
 
     const categoryIndex = oldCategoryKeys.indexOf(activeTagCategory);
-    setActiveTagCategory(newCategoryKeys[categoryIndex] || newCategoryKeys[0]);
+    setActiveTagCategory(newCategoryKeys[categoryIndex >= 0 ? categoryIndex : 0] || newCategoryKeys[0]);
     
     setCharManual('');
   };
@@ -1262,13 +1443,28 @@ ${textExclusion} No guide lines, no grid lines, no cell dividers, no border line
             <span className="sm:hidden">{lang === 'ko' ? '활용' : 'Guide'}</span>
             <span className="hidden sm:inline">{lang === 'ko' ? '활용 가이드' : 'Guide'}</span>
           </button>
-          <button 
-            onClick={toggleLanguage}
-            className="interactive-control flex items-center gap-1.5 min-h-10 px-3 py-1.5 rounded-full bg-surface-container-lowest border border-outline-variant text-[13px] font-bold text-on-surface hover:bg-surface-variant shadow-sm"
-          >
-            <Globe size={16} />
-            {lang === 'ko' ? 'EN' : 'KO'}
-          </button>
+          <div className="flex items-center gap-1 bg-surface-container-lowest p-1 rounded-full border border-outline-variant shadow-sm" role="group" aria-label="Language Selector">
+            {[
+              ['ko', '🇰🇷 KO'],
+              ['en', '🇺🇸 EN'],
+              ['ja', '🇯🇵 JA'],
+              ['zh', '🇨🇳 ZH'],
+            ].map(([code, label]) => (
+              <button
+                key={code}
+                type="button"
+                aria-pressed={lang === code}
+                onClick={() => changeLanguage(code)}
+                className={`interactive-control px-2.5 py-1 text-[12px] font-bold rounded-full transition-colors ${
+                  lang === code
+                    ? 'bg-mint text-mint-strong shadow-xs border border-mint-border'
+                    : 'text-on-surface-variant hover:bg-mint-soft'
+                }`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
         </div>
       </header>
 
