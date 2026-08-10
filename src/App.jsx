@@ -2082,7 +2082,7 @@ ${textExclusion} No guide lines, no grid lines, no cell dividers, no border line
                 type="button"
                 aria-pressed={lang === code}
                 onClick={() => changeLanguage(code)}
-                className={`interactive-control px-2 sm:px-3 py-1 text-[11px] sm:text-[12px] font-bold rounded-full transition-colors flex items-center gap-1 ${
+                className={`brand-logo interactive-control w-8 sm:w-9 h-7 sm:h-8 flex items-center justify-center text-[11px] sm:text-[12px] font-extrabold rounded-full transition-all ${
                   lang === code
                     ? 'bg-mint text-mint-strong shadow-xs border border-mint-border'
                     : 'text-on-surface-variant hover:bg-mint-soft'
