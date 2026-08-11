@@ -1655,12 +1655,13 @@ function App() {
       .map(value => value.trim())
       .filter(value => value && !recognizedTags.has(value))
       .join(', ');
-    const subjects = findSelected([0, 1, 2]);
-    const appearances = findSelected([3]);
-    const personalities = findSelected([4]);
-    const outfits = findSelected([6]);
-    const props = findSelected([7]);
-    const effects = findSelected([8]);
+    const subjects = findSelected([0, 1, 2, 3, 4, 5]);
+    const appearances = findSelected([6]);
+    const personalities = findSelected([7]);
+    // index 8 = 화풍 → getSelectedArtStyle()에서 별도 처리
+    const outfits = findSelected([9]);
+    const props = findSelected([10]);
+    const effects = findSelected([11]);
 
     return { subjects, appearances, personalities, outfits, props, effects, additionalDescription };
   };
@@ -2002,6 +2003,9 @@ ${character.artStyle}. ${geminiProportions} Clean crisp vector outlines, vibrant
 [CANVAS & COMPOSITION]
 Square 1:1 canvas. Exactly one complete centered full-body character visible from head to toe with 15% margin on all sides. ${getGeminiBackgroundInstruction()}
 
+[CONSISTENCY]
+If a previous sticker sheet or character image exists in this chat, preserve its face, body proportions, colors, outfit, and art style. Change only the expression, pose, supporting prop, and effect required for this scene.
+
 [TEXT POLICY]
 ${textPolicy}
 
@@ -2036,6 +2040,9 @@ Supporting props & sparkle effects: ${character.props}, ${character.effects}, cu
 
 [CANVAS & LAYOUT]
 Arrange all 15 full-body stickers floating freely with generous spacing. Each character has a subtle crisp sticker die-cut white outline. ${getGeminiBackgroundInstruction()} Absolutely NO guide lines, NO grid lines, NO cell borders, NO table lines, NO dividing lines, NO crop marks, NO bounding boxes, NO sticker numbers.
+
+[CONSISTENCY]
+All 15 stickers must preserve the same face, body proportions, colors, outfit, and art style. Change only the expression, pose, supporting prop, and effect required by each phrase.
 
 [TEXT POLICY]
 ${textPolicy}
