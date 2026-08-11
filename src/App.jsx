@@ -1989,61 +1989,60 @@ ${textExclusion} No grid lines, no cell division lines, no border lines between 
       return `[GOAL]
 Create a high-end 2D messenger sticker (KakaoTalk / LINE style) featuring a consistent character.
 
-[VISUAL REFERENCE & IDENTITY]
+[CHARACTER LOCK — VISUAL REFERENCE & IDENTITY]
 ${referenceInstruction}
 - Subject: ${character.subject}
 - Appearance & Features: ${character.appearance}
-- Outfit: ${character.outfit}
-
-[ART DIRECTION & PROPORTIONS]
-${character.artStyle}. ${geminiProportions} Clean crisp vector outlines, vibrant colors, and soft cell shading.
+- Outfit (fixed): ${character.outfit}
+- Art Style & Proportions: ${character.artStyle}. ${geminiProportions} Clean crisp vector linework, soft cell shading, and vivid flat colors.
 
 [SCENE, POSE & EXPRESSION]
 - Target Phrase / Mood: "${targetPhrase}"
 - Facial Expression: Highly expressive, unmistakable emotion matching "${targetPhrase}".
-- Body Pose: Dynamic, energetic full-body posture (e.g. sitting, crouching, jumping, holding props, or waving). Never use a static half-body bust pose.
+- Body Pose: Dynamic, energetic full-body posture (e.g. sitting, crouching, jumping, holding props, or waving). Every character must be full-body, head-to-toe, uncropped.
 - Supporting Props & Sparkle Effects: ${character.props}, ${character.effects}, cute little accents.
 
 [CANVAS & COMPOSITION]
 Square 1:1 canvas. Exactly one complete centered full-body character visible from head to toe with 15% margin on all sides. ${getGeminiBackgroundInstruction()}
 
-[CONSISTENCY]
-If a previous sticker sheet or character image exists in this chat, preserve its face, body proportions, colors, outfit, and art style. Change only the expression, pose, supporting prop, and effect required for this scene.
+[CONSISTENCY RULE]
+If a previous sticker sheet or character image exists in this chat, preserve its face, body proportions, colors, outfit, and art style identically. Change only the expression, pose, supporting prop, and effect required for this scene.
 
 [TEXT POLICY]
 ${textPolicy}
 
-[DO NOT INCLUDE]
-${textExclusion} No watermark, outer frame, duplicate character, extra limbs, cropped body, half-body bust shot, dull background, or photorealism.`;
+[STRICT NEGATIVE]
+${textExclusion} No watermark, outer frame, duplicate character, extra limbs, cropped body, half-body bust shot, dull background, photorealism, or facial distortion.`;
     }
 
-    const panelPlan = emoticons.map((phrase, index) => `Sticker ${index + 1}: "${phrase.trim()}"`).join('\n');
+    const panelPlan = emoticons.map((phrase, index) => `${index + 1}. "${phrase.trim()}"`).join('\n');
     const textPolicy = geminiTextMode === 'text'
       ? 'Render each quoted Korean phrase naturally beside or above its corresponding character in playful hand-drawn calligraphy. Do NOT use parentheses (), brackets [], quotation marks, or rectangular text boxes.'
-      : 'Do not render any text, letters, or numbers. Use each phrase only as visual context for its sticker\'s emotion and posture.';
+      : 'Korean phrase is context for expression and pose only, NEVER render as text, letters, or numbers.';
     const textExclusion = geminiTextMode === 'text'
       ? 'No extra words, altered spelling, random letters, sticker numbers, parentheses, quotation marks, or text boxes.'
-      : 'No text, letters, numbers, typography, sticker labels, or meaningless symbols.';
+      : 'No text, no letters, no numbers, no speech bubbles, no sticker labels, or meaningless symbols.';
 
     return `[GOAL]
-Create a master 15-sticker 2D messenger sheet (KakaoTalk / LINE style) featuring a consistent character across all stickers.
+Create ONE single image: a 15-cell KakaoTalk/LINE sticker sheet featuring one consistent character, arranged in a 3-row × 5-column layout with generous white space between characters, no grid lines, no borders, no numbers.
 
-[VISUAL REFERENCE & IDENTITY]
+[CHARACTER LOCK — apply identically to all 15]
 ${referenceInstruction}
 - Subject: ${character.subject}
 - Appearance & Features: ${character.appearance}
-- Outfit: ${character.outfit}
+- Outfit (fixed for all 15): ${character.outfit}
+- Art Style & Proportions: ${character.artStyle}. ${geminiProportions} Clean 2D sticker illustration, crisp vector linework, soft cell shading, vivid flat colors. No added accessories unless specified.
 
-[ART DIRECTION & PROPORTIONS]
-${character.artStyle}. ${geminiProportions} Clean crisp vector outlines, vibrant colors, and soft cell shading. Maintain identical character proportions and style across all 15 stickers.
+[QUALITY CONSISTENCY RULE]
+Render every one of the 15 characters at the SAME level of facial detail, linework crispness, and lighting — do not let quality degrade toward the edges or bottom of the sheet. Every character must be full-body, head-to-toe, uncropped.
 
-[15 DYNAMIC POSES & EXPRESSIONS]
+[15 POSES]
 For each sticker, infer a unique, highly expressive facial emotion and a DYNAMIC full-body pose (e.g. sitting, crouching, jumping, holding props, winking, eating, or cheering). Every sticker MUST show a complete full-body character visible head-to-toe:
 ${panelPlan}
-Supporting props & sparkle effects: ${character.props}, ${character.effects}, cute accents.
+Supporting props & sparkle effects: ${character.props}, ${character.effects}, minimal cute accents.
 
 [CANVAS & LAYOUT]
-Arrange all 15 full-body stickers floating freely with generous spacing. Each character has a subtle crisp sticker die-cut white outline. ${getGeminiBackgroundInstruction()} Absolutely NO guide lines, NO grid lines, NO cell borders, NO table lines, NO dividing lines, NO crop marks, NO bounding boxes, NO sticker numbers.
+Arrange all 15 full-body stickers floating freely with generous spacing in a 3-row × 5-column grid. Each character has a subtle crisp sticker die-cut white outline. ${getGeminiBackgroundInstruction()} Absolutely NO guide lines, NO grid lines, NO cell borders, NO table lines, NO dividing lines, NO crop marks, NO bounding boxes, NO sticker numbers.
 
 [CONSISTENCY]
 All 15 stickers must preserve the same face, body proportions, colors, outfit, and art style. Change only the expression, pose, supporting prop, and effect required by each phrase.
@@ -2051,8 +2050,8 @@ All 15 stickers must preserve the same face, body proportions, colors, outfit, a
 [TEXT POLICY]
 ${textPolicy}
 
-[DO NOT INCLUDE]
-${textExclusion} No guide lines, no grid lines, no cell dividers, no border lines, no table lines, no crop marks, no panel boxes, no watermark, no outer frame, no duplicate character inside a single sticker, no extra limbs, no cropped body, no half-body bust shot, no dull background color, or photorealism.`;
+[STRICT NEGATIVE]
+${textExclusion} No text, no letters, no numbers, no speech bubbles, no grid lines, no cell borders, no dividers, no crop marks, no outer frame, no watermark, no duplicate character within one cell, no missing/extra limbs, no half-body/bust shots, no photorealism, no facial distortion, inconsistent face/body/outfit across the 15 cells is not allowed.`;
   };
 
   const getRepairPrompt = (repairType, textMode) => {
