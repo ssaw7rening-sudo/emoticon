@@ -2346,19 +2346,19 @@ ${textExclusion} No guide lines, no grid lines, no cell dividers, no border line
 [목표]
 동일한 캐릭터가 등장하는 고품질 2D 메신저 스티커 (카카오톡 / 라인 스타일) 한 장을 그려주세요. 정사각형 캔버스, 고해상도.
 
-[캐릭터 고정 — 시각적 정체성]
+[캐릭터 고정 — 단일 캐릭터 엄격 유지]
 ${referenceInstructionKo}
-- 대상: ${character.subject}
+- 대상: ${character.subject} (오직 이 캐릭터 1명만 등장해야 함)
 - 외형 및 특징: ${character.appearance}
 - 의상: ${character.outfit}
-- 화풍 및 비율: ${character.artStyle}. ${grokProportionsKo} 깔끔한 2D 벡터 스티커 일러스트, 선명한 외곽 선화(Linework), 부드러운 셀 셰이딩, 선명한 플랫 컬러.
+- 화풍 및 비율: ${character.artStyle}. ${grokProportionsKo} 깔끔한 2D 벡터 스티커 일러스트, 선명한 외곽 선화(Linework), 부드러운 셀 셰이딩, 선명한 플랫 컬러. 다른 캐릭터나 동물을 절대 추가하지 마세요.
 
 [품질 규칙]
 캐릭터의 얼굴 디테일, 선화 선명도, 색상 채도를 높은 수준으로 렌더링하세요. 머리부터 발끝까지 전신이 잘리지 않고 보여야 합니다.
 
-[장면, 표정 & 포즈]
+[장면, 표정 & 역동적 포즈]
 - 감정/상황 맥락: "${targetPhrase}"
-- 표정과 자세: "${targetPhrase}"에 맞춘 유일하고 표현력 풍부한 얼굴 감정과 역동적인 전신 자세 (앉기, 웅크리기, 점프, 소품 들기, 윙크 등).
+- 표정과 자세: "${targetPhrase}"에 맞춘 유일하고 표현력 풍부한 얼굴 감정과 고유한 전신 자세 (앉기, 웅크리기, 점프, 소품 들기, 윙크 등).
 - 최소한의 보조 소품 및 효과: ${character.props}, ${character.effects}.
 
 [배경 & 흰색 스티커 테두리]
@@ -2371,7 +2371,7 @@ ${referenceInstructionKo}
 ${textPolicyKo}
 
 [제외 조건]
-${textExclusionKo} 워터마크, 외곽 프레임, 바운딩 박스, 캐릭터 중복, 팔다리 누락/추가, 반신·흉상 컷, 실사 느낌, 얼굴 왜곡 절대 금지.`;
+${textExclusionKo} 워터마크, 외곽 프레임, 바운딩 박스, 캐릭터 중복, 보조 캐릭터 추가, 팔다리 누락/추가, 반신·흉상 컷, 실사 느낌, 얼굴 왜곡 절대 금지.`;
       }
 
       const panelPlanKo = emoticons.map((phrase, index) => `${index + 1}번 스티커: "${phrase.trim()}"`).join('\n');
@@ -2387,32 +2387,32 @@ ${textExclusionKo} 워터마크, 외곽 프레임, 바운딩 박스, 캐릭터 �
 [목표]
 동일한 캐릭터가 3행 × 5열 격자 구조로 배치된 완성도 높은 15셀 카카오톡/라인 스티커 시트 한 장을 생성해 주세요. 정사각형 캔버스, 고해상도. 격자선, 셀 테두리, 숫자 없음.
 
-[캐릭터 고정 — 15개 셀 전체 동일 적용]
+[캐릭터 고정 — 15개 셀 전체 오직 단 1명의 동일 캐릭터 고정]
 ${referenceInstructionKo}
-- 대상: ${character.subject}
+- 대상: ${character.subject} (15개 셀 모두 오직 이 단 1명의 동일 캐릭터만 등장해야 하며, 중간에 다른 사람, 동물, 보조 캐릭터를 절대 추가하지 마세요)
 - 외형 및 특징: ${character.appearance}
-- 의상: ${character.outfit}
-- 화풍 및 비율: ${character.artStyle}. ${grokProportionsKo} 깔끔한 2D 벡터 스티커 일러스트, 선명한 외곽 선화(Linework), 부드러운 셀 셰이딩, 선명한 플랫 컬러. 임의의 액세서리 추가 금지.
+- 의상: ${character.outfit} (15개 셀 전부 동일한 의상 유지)
+- 화풍 및 비율: ${character.artStyle}. ${grokProportionsKo} 깔끔한 2D 벡터 스티커 일러스트, 선명한 외곽 선화(Linework), 부드러운 셀 셰이딩, 선명한 플랫 컬러.
 
-[품질 & 일관성 규칙]
-15개 셀 캐릭터 모두 동일하게 높은 수준의 얼굴 디테일, 선명한 선화, 색상 채도를 유지하세요. 모든 캐릭터는 머리부터 발끝까지 전신이 잘리지 않고 보여야 합니다.
+[15개 셀 포즈 중복 절대 금지 규칙]
+15개 셀 각각은 서로 완전히 다른 고유한 역동적 전신 자세(예: 앉기, 웅크리기, 점프, 눕기, 소품 들기, 윙크, 먹기, 응원하기, 달리기는 등)를 가져야 합니다. 서 있는 단순 자세를 여러 셀에 반복해서 사용하거나 동일한 포즈를 복제하는 것을 엄격히 금지합니다. 모든 스티커는 머리부터 발끝까지 전신이 완벽하게 보여야 합니다.
 
-[15 스티커 포즈]
-각 문구의 감정 맥락에 맞춰 독창적이고 표정이 살아있는 얼굴 감정과 역동적인 전신 자세를 구성하세요:
+[15 스티커 포즈 & 감정]
+각 문구의 감정 맥락에 맞춰 15가지의 서로 다른 표정과 15가지의 서로 다른 포즈를 구성하세요:
 ${panelPlanKo}
 감정 전달에 최소한으로 필요한 보조 소품이나 반짝이 효과만 사용하세요 (${character.props}, ${character.effects}).
 
 [배경 & 흰색 스티커 테두리]
 각 캐릭터마다 실루엣 주변에 선명한 흰색 스티커 테두리(Die-cut outline)가 깔끔하게 감싸져 있어야 합니다. 15개 스티커는 3행 × 5열 배치 안에서 여백을 두고 자유롭게 떠 있습니다. ${bgInstructionKo} 격자선, 셀 테두리, 구분선, 크롭 마크, 바운딩 박스, 스티커 번호 절대 금지.
 
-[일관성]
-15개 스티커 모두 얼굴, 체형, 색상, 의상, 화풍을 엄격하게 동일하게 유지하세요. 각 감정에 필요한 표정, 자세, 최소 소품만 변경하세요.
+[캐릭터 일관성 규칙]
+15개 스티커 모두 얼굴, 이목구비, 체형, 색상, 의상, 화풍을 100% 동일하게 유지하세요. 각 문구에 필요한 표정, 자세, 최소 소품만 변경하세요.
 
 [글자 정책]
 ${textPolicyKo}
 
 [제외 조건]
-${textExclusionKo} 워터마크, 외곽 프레임, 바운딩 박스, 한 셀 안의 캐릭터 중복, 팔다리 누락/추가, 반신·흉상 컷, 실사 느낌, 얼굴 왜곡, 15개 셀 간 얼굴·체형·의상 불일치 절대 금지.`;
+${textExclusionKo} 포즈 중복, 동일 자세 반복, 서 있는 포즈 재사용, 2명 이상의 캐릭터 등장, 보조/서브 캐릭터 추가, 셀 간 캐릭터 얼굴·의상·체형 변경, 워터마크, 외곽 프레임, 바운딩 박스, 팔다리 누락/추가, 반신·흉상 컷, 실사 느낌, 얼굴 왜곡 절대 금지.`;
     }
 
     // English Version
@@ -2436,9 +2436,9 @@ ${textExclusionKo} 워터마크, 외곽 프레임, 바운딩 박스, 한 셀 안
 
 Create a high-end 2D messenger sticker (KakaoTalk / LINE style) featuring one consistent character. Square canvas, high resolution.
 
-[CHARACTER LOCK — VISUAL IDENTITY]
+[CHARACTER LOCK — STRICT SINGLE CHARACTER]
 ${referenceInstruction}
-Subject: ${character.subject}
+Subject: ${character.subject} (Strictly ONE single character. Do NOT add any extra characters or animals.)
 Appearance & Features: ${character.appearance}
 Outfit: ${character.outfit}
 Art Style & Proportions: ${character.artStyle}. ${grokProportions} Clean 2D vector sticker illustration, sharp linework, soft cell shading, vivid flat colors. No unrequested accessories.
@@ -2461,7 +2461,7 @@ If a previous sticker image exists in this chat, maintain identical face, body p
 ${textPolicy}
 
 [NEGATIVE PROMPT]
-${textExclusion} No watermark, no outer frame, no bounding boxes, no duplicate character, no missing or extra limbs, no half-body/bust-only shots, no photorealism, no facial distortion.`;
+${textExclusion} No extra characters, no secondary characters, no sidekicks, no watermark, no outer frame, no bounding boxes, no duplicate character, no missing or extra limbs, no half-body/bust-only shots, no photorealism, no facial distortion.`;
     }
 
     const panelPlan = emoticons.map((phrase, index) => `${index + 1}. "${phrase.trim()}"`).join('\n');
@@ -2476,18 +2476,18 @@ ${textExclusion} No watermark, no outer frame, no bounding boxes, no duplicate c
 
 Create a master 15-cell KakaoTalk/LINE sticker sheet featuring one consistent character arranged in a 3-row × 5-column grid layout with generous spacing between characters. Square canvas, high resolution. No grid lines, no cell borders, no numbers.
 
-[CHARACTER LOCK — IDENTICAL ACROSS ALL 15 CELLS]
+[CHARACTER LOCK — STRICT SINGLE CHARACTER IDENTICAL ACROSS ALL 15 CELLS]
 ${referenceInstruction}
-Subject: ${character.subject}
+Subject: ${character.subject} (Must be strictly ONE single character in all 15 cells. Do NOT introduce any secondary characters, sidekicks, or different human/animal species in any cell.)
 Appearance & Features: ${character.appearance}
-Outfit: ${character.outfit}
+Outfit: ${character.outfit} (Identical outfit in all 15 cells)
 Art Style & Proportions: ${character.artStyle}. ${grokProportions} Clean 2D vector sticker illustration, sharp linework, soft cell shading, vivid flat colors. No unrequested accessories.
 
-[QUALITY & UNIFORMITY RULE]
-Render all 15 characters at the exact same level of facial detail, linework sharpness, and color saturation across the entire sheet — no degradation toward edges or bottom rows. Every character is full-body, head-to-toe, uncropped.
+[STRICT UNIQUE NON-OVERLAPPING POSES RULE]
+Every single cell of the 15 cells MUST feature a completely unique, non-overlapping dynamic posture (e.g. sitting, crouching, jumping, lying down, holding a prop, winking, eating, cheering). DO NOT repeat poses across cells. DO NOT reuse generic standing postures. Every sticker MUST show a complete full-body character visible head-to-toe.
 
-[15 STICKER POSES]
-Infer a unique, highly expressive facial emotion and dynamic full-body posture for each cell, based on the following emotional context:
+[15 STICKER POSES & EXPRESSIONS]
+Infer a unique facial emotion and a unique dynamic posture for each cell based on:
 ${panelPlan}
 Minimal supporting props or sparkle effects only when they clarify the emotion — keep accents small and simple (${character.props}, ${character.effects}).
 
@@ -2501,7 +2501,7 @@ All 15 stickers must strictly share the same face, body proportions, color palet
 ${textPolicy}
 
 [NEGATIVE PROMPT]
-${textExclusion} No watermark, no grid lines, no cell borders, no table dividers, no crop marks, no outer frame, no bounding boxes, no duplicate character within a single cell, no missing or extra limbs, no half-body/bust-only shots, no photorealism, no facial distortion, no inconsistent face/body/outfit across the 15 cells.`;
+${textExclusion} No repeated poses, no identical posture across cells, no generic standing pose repeated, no secondary character, no sidekick, no background character contamination, no changing character face/identity across cells, no watermark, no grid lines, no cell borders, no table dividers, no crop marks, no outer frame, no bounding boxes, no duplicate character within a single cell, no missing or extra limbs, no half-body/bust-only shots, no photorealism, no facial distortion.`;
   };
 
   const getRepairPrompt = (repairType, textMode) => {
