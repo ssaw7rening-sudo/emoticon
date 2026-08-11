@@ -2504,18 +2504,47 @@ ${textPolicy}
 ${textExclusion} No watermark, no grid lines, no cell borders, no table dividers, no crop marks, no outer frame, no bounding boxes, no duplicate character within a single cell, no missing or extra limbs, no half-body/bust-only shots, no photorealism, no facial distortion, no inconsistent face/body/outfit across the 15 cells.`;
   };
 
-  const getRepairPrompt = (repairType, textMode) => {
+  const getRepairPrompt = (repairType, textMode, model = 'gpt') => {
     const targetPhrase = getSelectedPhrase();
-    const repairPrompts = {
-      identity: `Edit the most recent image only. Restore the character identity and face so it stays strictly consistent with the original character design. Preserve the current scene, pose, expression, composition, and text. Correct only the face, silhouette, body proportions, colors, outfit, linework, and texture. Return one corrected image.`,
-      crop: `Edit the most recent image only. Keep the same character identity, expression, pose, colors, outfit, art style, and${textMode === 'text' ? ` exact phrase "${targetPhrase}"` : ' text-free design'}. Reframe the composition so the entire character and all effects are visible with at least 12% empty margin on every side. Do not change anything else. Return one corrected square image.`,
-      text: `Edit the most recent image only. Keep the character, face, pose, expression, colors, outfit, art style, effects, composition, and background unchanged. Replace only the incorrect lettering with the exact phrase "${targetPhrase}" once. Verify every Korean character, spelling, and spacing before rendering. Add no other text. Return one corrected image.`,
+    const isKorean = lang === 'ko';
+
+    const modelTag = {
+      gpt: isKorean ? '[ChatGPT / DALL-E 3 전용 보정]' : '[ChatGPT / DALL-E 3 Repair]',
+      gemini: isKorean ? '[Gemini / Imagen 3 전용 보정]' : '[Gemini / Imagen 3 Repair]',
+      grok: isKorean ? '[Grok / Flux.1 전용 보정]' : '[Grok / Flux.1 Repair]',
+    }[model] || '';
+
+    if (isKorean) {
+      const repairPromptsKo = {
+        identity: `${modelTag}
+[결과 보정 요청 — 캐릭터 일관성 복원]
+직전에 생성된 이미지를 바탕으로 수정해 주세요. 캐릭터의 표정, 포즈, 배경, 구성은 그대로 유지하면서, 캐릭터의 얼굴과 체형, 의상, 색상, 화풍을 처음 지정한 캐릭터 디자인(또는 첨부한 참고 사진의 이목구비 특징)과 100% 동일하게 맞춰서 보정해 주세요. 얼굴 왜곡이나 이질감을 바로잡아 하나의 완성된 이미지로 다시 그려주세요.`,
+        crop: `${modelTag}
+[결과 보정 요청 — 전신 및 여백 보정]
+직전에 생성된 이미지를 바탕으로 수정해 주세요. 캐릭터의 얼굴, 이목구비, 표정, 의상, 색상, 화풍${textMode === 'text' ? `, 한글 문구 "${targetPhrase}"` : ''}는 전혀 바꾸지 말고 그대로 유지하세요. 캐릭터의 머리부터 발끝까지 전신과 모든 이펙트가 잘리지 않고 화면 중앙에 완전히 보이도록 사방에 최소 15% 이상 넉넉한 여백을 주고 프레임을 재조정해서 다시 그려주세요.`,
+        text: `${modelTag}
+[결과 보정 요청 — 한글 문구 정확성 보정]
+직전에 생성된 이미지를 바탕으로 수정해 주세요. 캐릭터의 외형, 얼굴, 표정, 포즈, 의상, 화풍, 배경은 절대로 수정하지 마세요. 잘못 인쇄되거나 뭉개진 글자만 지우고, 캐릭터 옆에 오탈자 없이 정확하게 한글 문구 "${targetPhrase}"만 손글씨 타이포그래피 스타일로 깔끔하게 다시 써주세요.`,
+      };
+      return repairPromptsKo[repairType];
+    }
+
+    const repairPromptsEn = {
+      identity: `${modelTag}
+[IMAGE REPAIR REQUEST — RESTORE CHARACTER IDENTITY]
+Please edit the most recent image. Keep the current pose, facial expression, composition, background, and text intact. Restore and correct only the character's face, silhouette, facial features, body proportions, outfit, and art style so they stay 100% consistent with the original character design. Return one corrected image.`,
+      crop: `${modelTag}
+[IMAGE REPAIR REQUEST — FULL BODY & MARGIN FIX]
+Please edit the most recent image. Keep the character identity, face, expression, pose, outfit, colors, art style, and${textMode === 'text' ? ` exact phrase "${targetPhrase}"` : ' text-free design'} unchanged. Reframe the composition so that the character's entire full body from head to toe is fully visible in the center with at least 15% margin on all sides. Return one corrected image.`,
+      text: `${modelTag}
+[IMAGE REPAIR REQUEST — KOREAN TEXT CORRECTION]
+Please edit the most recent image. Keep the character design, face, expression, pose, outfit, colors, art style, and background completely unchanged. Replace only the incorrect or blurry lettering with the exact phrase "${targetPhrase}" written once in clean, highly legible hand-drawn calligraphy typography with 100% correct spelling. Return one corrected image.`,
     };
-    return repairPrompts[repairType];
+    return repairPromptsEn[repairType];
   };
 
-  const copyRepairPrompt = (repairType, textMode, keyPrefix = 'repair') => {
-    navigator.clipboard.writeText(getRepairPrompt(repairType, textMode));
+  const copyRepairPrompt = (repairType, textMode, keyPrefix = 'repair', model = 'gpt') => {
+    navigator.clipboard.writeText(getRepairPrompt(repairType, textMode, model));
     setCopiedType(`${keyPrefix}-${repairType}`);
     setTimeout(() => setCopiedType(null), 2500);
   };
@@ -2989,7 +3018,7 @@ ${textExclusion} No watermark, no grid lines, no cell borders, no table dividers
                     <button
                       key={repairType}
                       type="button"
-                      onClick={() => copyRepairPrompt(repairType, gptTextMode, 'gpt-repair')}
+                      onClick={() => copyRepairPrompt(repairType, gptTextMode, 'gpt-repair', 'gpt')}
                       className="interactive-control min-h-10 rounded-[8px] border border-[#E9DFC5] bg-white px-3 py-2 text-[13px] font-bold text-[#795B16] hover:bg-[#FFF3D8] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E8C66A]"
                     >
                       {copiedType === `gpt-repair-${repairType}` ? '✓ ' : ''}{label}
@@ -3063,7 +3092,7 @@ ${textExclusion} No watermark, no grid lines, no cell borders, no table dividers
                     <button
                       key={repairType}
                       type="button"
-                      onClick={() => copyRepairPrompt(repairType, geminiTextMode, 'gemini-repair')}
+                      onClick={() => copyRepairPrompt(repairType, geminiTextMode, 'gemini-repair', 'gemini')}
                       className="interactive-control min-h-10 rounded-[8px] border border-[#E9DFC5] bg-white px-3 py-2 text-[13px] font-bold text-[#795B16] hover:bg-[#FFF3D8] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E8C66A]"
                     >
                       {copiedType === `gemini-repair-${repairType}` ? '✓ ' : ''}{label}
@@ -3137,7 +3166,7 @@ ${textExclusion} No watermark, no grid lines, no cell borders, no table dividers
                     <button
                       key={repairType}
                       type="button"
-                      onClick={() => copyRepairPrompt(repairType, grokTextMode, 'grok-repair')}
+                      onClick={() => copyRepairPrompt(repairType, grokTextMode, 'grok-repair', 'grok')}
                       className="interactive-control min-h-10 rounded-[8px] border border-[#E9DFC5] bg-white px-3 py-2 text-[13px] font-bold text-[#795B16] hover:bg-[#FFF3D8] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E8C66A]"
                     >
                       {copiedType === `grok-repair-${repairType}` ? '✓ ' : ''}{label}
