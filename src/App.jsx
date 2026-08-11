@@ -1596,16 +1596,16 @@ function App() {
 
     const modeInstructions = {
       exact: {
-        ko: '[최대한 실물 닮게 - High Fidelity Photo Caricature] 첨부한 인물 사진의 실물 이목구비(눈 모양, 무쌍/쌍꺼풀, 콧대, 입술, 턱선), 헤어스타일, 피부 톤과 의상을 100% 동일하게 유지한 실사 사진 기반 캐리커처 짤 스티커로 제작해주세요. 2D 캐릭터나 만화 그림체로 변형하지 말고, 실제 사진 속 인물의 실사 얼굴 이목구비와 피부 질감을 100% 그대로 보존하세요.',
-        en: '[HIGH-FIDELITY REALISTIC PHOTO CARICATURE - EXACT FACE RETENTION] Create a photo-realistic caricature cutout sticker preserving 100% exact facial features, eye shape, nose bridge, lip shape, facial structure, skin texture, hairstyle, and outfit from the attached reference photo. Do NOT render as a 2D vector cartoon. Preserve authentic photographic facial likeness on every sticker.',
+        ko: '얼굴형, 눈·코·입, 헤어스타일, 털색이나 무늬 등 식별 가능한 특징을 최대한 닮게 유지하여 귀여운 2D 메신저 이모티콘 캐릭터로 표현해주세요.',
+        en: 'Keep recognizable visual features (face shape, facial features, hairstyle, fur color, or markings) closely matching the subject while rendering in a cute 2D messenger sticker style.',
       },
       features: {
-        ko: '[핵심 특징만 포인트 반영 - Soft 3D Stylized Avatar] 사진에서 실제 존재하는 시그니처 포인트(헤어스타일, 이목구비, 의상 등 사진에 실제로 있는 특징만)를 강렬하게 살린 소프트 3D 아바타 일러스트 캐릭터 짤 스티커로 제작해주세요. 원본 사진에 없는 안경이나 모자 등 가짜 악세사리를 절대 추가하지 마세요. 평면 2D 선화가 아닌, 3D 입체 헤어 결, 매끄러운 3D 피부 질감, 소프트 조명이 느껴지는 고급스러운 반실사 3D 캐릭터 스타일을 적용하세요.',
-        en: '[SIGNATURE FEATURE EXTRACTION - SOFT 3D STYLIZED AVATAR] Create a soft 3D stylized digital avatar caricature sticker capturing only authentic traits visible in the reference photo (hairstyle, facial features, outfit). Do NOT invent or add unrequested accessories like glasses or hats if not present in the photo. Render with smooth 3D skin texture, realistic volumetric hair flow, soft studio 3D lighting, and a high-end semi-realistic 3D artwork finish.',
+        ko: '참고 사진의 핵심적인 얼굴 특징, 헤어스타일, 의상과 고유 분위기만 살리고, 나머지는 감각적이고 깔끔한 2D 벡터 이모티콘 캐릭터로 자연스럽게 표현해주세요.',
+        en: 'Extract authentic signature features (hairstyle, facial traits, outfit) visible in the photo and stylize into a clean 2D vector graphic.',
       },
       characterize: {
-        ko: '[극도로 귀여운 SD/Chibi 이모티콘 캐릭터화 - Cute Chibi Mascot] 2.5등신의 커다란 머리, 동글동글한 몸통, 초롱초롱한 눈망울, 과장되고 사랑스러운 이모티콘 마스코트로 파격 재해석해주세요. 원본 사진의 느낌만 살짝 남기고 극강의 귀여운 2D 마스코트 캐릭터로 변환해주세요.',
-        en: '[ULTRA-CUTE CHIBI SD MASCOT] Reinterpret the subject into an extremely cute 2D Chibi SD mascot with a big head, small chubby body, huge sparkling expressive eyes, and exaggerated adorable emoji proportions. Maximize cuteness.',
+        ko: '사진 속 대상의 핵심 인상만 참고하여, 커다란 머리와 동그란 체형의 극도로 귀여운 SD/Chibi 이모티콘 마스코트 캐릭터로 재해석해주세요.',
+        en: 'Reinterpret the subject into an ultra-cute 2D Chibi/SD mascot with a big head, chubby body, and cute expressive eyes.',
       },
     };
     const promptLang = promptLanguage === 'ko' ? 'ko' : 'en';
@@ -1635,8 +1635,8 @@ function App() {
     const selectedArtStyle = getSelectedArtStyle();
     if (selectedArtStyle) return `${selectedArtStyle}; treat this selected art style as the highest-priority visual direction`;
     if (characterSource === 'photo') {
-      if (photoReferenceMode === 'exact') return 'High-fidelity realistic photo caricature sticker style preserving 100% exact facial identity, eye shape, nose structure, lip line, facial structure, skin texture, and hairstyle from the reference photo; do not alter facial features';
-      if (photoReferenceMode === 'features') return 'Semi-realistic 3D character avatar sticker style capturing authentic signature facial features, hair, and outfit from the reference photo';
+      if (photoReferenceMode === 'exact') return 'High-fidelity 2D messenger sticker style preserving recognizable facial identity, hairstyle, and key features from the reference photo';
+      if (photoReferenceMode === 'features') return 'Stylized 2D vector character avatar sticker style capturing authentic signature facial features, hair, and outfit from the reference photo';
       return 'Cute 2.5-head Chibi SD mascot sticker style inspired by the reference photo';
     }
     return 'cute, approachable, high-quality 2D messenger sticker illustration with clean outlines and harmonious colors';
@@ -1674,15 +1674,15 @@ function App() {
     ];
 
     const photoAppearanceEn = {
-      exact: 'preserve exact high-fidelity resemblance (95%+ likeness) to the reference photo with realistic features; do not add unrequested glasses or hats',
-      features: 'extract authentic signature features (hair, facial traits, outfit) visible in photo; do not add unrequested glasses or accessories',
-      characterize: 'reinterpret into an ultra-cute 2D Chibi/SD mascot with a big head, chubby body, and huge expressive eyes',
+      exact: 'preserve recognizable facial identity, hairstyle, and key features matching the reference photo; do not add unrequested accessories',
+      features: 'extract signature features (hair, facial traits, outfit) visible in photo; do not add unrequested accessories',
+      characterize: 'reinterpret into a cute 2D Chibi/SD mascot with a big head, chubby body, and huge expressive eyes',
     }[photoReferenceMode];
 
     const photoAppearanceKo = {
-      exact: '참고 사진 속 대상과 95% 이상 극도로 닮게 이목구비와 비율을 사실적으로 재현 (사진에 없는 안경/모자 등 임의 추가 금지)',
-      features: '참고 사진의 실제 시그니처 포인트(헤어, 이목구비, 의상)만 추출 (사진에 없는 안경/악세사리 임의 추가 금지)',
-      characterize: '2.5등신 커다란 머리와 동통한 몸체의 극도로 귀여운 SD/Chibi 이모티콘 마스코트로 파격 변환',
+      exact: '참고 사진 속 대상의 이목구비와 헤어스타일 특징을 최대한 닮게 유지 (사진에 없는 안경/모자 등 임의 추가 금지)',
+      features: '참고 사진의 시그니처 포인트(헤어, 이목구비, 의상)만 추출하여 깔끔한 2D 벡터 스타일로 정돈 (사진에 없는 악세사리 임의 추가 금지)',
+      characterize: '2.5등신 커다란 머리와 동글동글한 몸체의 귀여운 SD/Chibi 이모티콘 마스코트로 재해석',
     }[photoReferenceMode];
 
     return {
@@ -1710,15 +1710,15 @@ function App() {
     ];
 
     const photoAppearanceEn = {
-      exact: 'preserve exact high-fidelity resemblance (95%+ likeness) to the reference photo with realistic features; do not add unrequested glasses or hats',
-      features: 'extract authentic signature features (hair, facial traits, outfit) visible in photo; do not add unrequested glasses or accessories',
-      characterize: 'reinterpret into an ultra-cute 2D Chibi/SD mascot with a big head, chubby body, and huge expressive eyes',
+      exact: 'preserve recognizable facial identity, hairstyle, and key features matching the reference photo; do not add unrequested accessories',
+      features: 'extract signature features (hair, facial traits, outfit) visible in photo; do not add unrequested accessories',
+      characterize: 'reinterpret into a cute 2D Chibi/SD mascot with a big head, chubby body, and huge expressive eyes',
     }[photoReferenceMode];
 
     const photoAppearanceKo = {
-      exact: '참고 사진 속 대상과 95% 이상 극도로 닮게 이목구비와 비율을 사실적으로 재현 (사진에 없는 안경/모자 등 임의 추가 금지)',
-      features: '참고 사진의 실제 시그니처 포인트(헤어, 이목구비, 의상)만 추출 (사진에 없는 안경/악세사리 임의 추가 금지)',
-      characterize: '2.5등신 커다란 머리와 동통한 몸체의 극도로 귀여운 SD/Chibi 이모티콘 마스코트로 파격 변환',
+      exact: '참고 사진 속 대상의 이목구비와 헤어스타일 특징을 최대한 닮게 유지 (사진에 없는 안경/모자 등 임의 추가 금지)',
+      features: '참고 사진의 시그니처 포인트(헤어, 이목구비, 의상)만 추출하여 깔끔한 2D 벡터 스타일로 정돈 (사진에 없는 악세사리 임의 추가 금지)',
+      characterize: '2.5등신 커다란 머리와 동글동글한 몸체의 귀여운 SD/Chibi 이모티콘 마스코트로 재해석',
     }[photoReferenceMode];
 
     return {
@@ -1968,10 +1968,10 @@ ${textExclusion} No grid lines, no cell division lines, no border lines between 
     const referenceInstruction = `${characterSource === 'photo' ? `Photo reference style: ${getPhotoModeLabel('en')}. ` : ''}${getReferenceImageInstruction('en')}`;
 
     const geminiProportions = characterSource === 'photo' ? {
-      exact: 'High-fidelity photo-realistic caricature cutout sticker style matching the attached reference photo accurately, with real photographic face texture, hair, skin tone, and authentic outfit details. Do NOT render as 2D vector cartoon.',
-      features: 'Soft 3D stylized digital avatar caricature sticker capturing signature traits (hair, glasses, outfit) with smooth 3D skin texture, volumetric hair flow, soft studio 3D lighting, and high-end semi-realistic 3D artwork finish. Do NOT use flat 2D line art.',
-      characterize: 'Adorable 2.5-head Chibi SD manga/anime mascot proportion with a big round head, huge sparkling expressive eyes, chubby cheeks, and soft glossy hair highlights.',
-    }[photoReferenceMode] : 'Adorable 2.5-head Chibi SD manga/anime mascot proportion with a big round head, huge sparkling expressive eyes, chubby cheeks, and soft glossy hair highlights.';
+      exact: 'High-fidelity 2D messenger sticker style accurately preserving recognizable facial identity, hairstyle, and features from the attached reference photo.',
+      features: 'Stylized 2D vector character avatar sticker style capturing signature traits (hair, facial features, outfit) from the reference photo with clean vector outlines.',
+      characterize: 'Adorable 2.5-head Chibi SD manga/anime mascot proportion with a big round head, huge sparkling expressive eyes, chubby cheeks, and cute sticker styling.',
+    }[photoReferenceMode] : 'Adorable 2.5-head Chibi SD manga/anime mascot proportion with a big round head, huge sparkling expressive eyes, chubby cheeks, and cute sticker styling.';
 
     if (generationMode === 'individual' || hasPhraseOverride) {
       const textPolicy = geminiTextMode === 'text'
