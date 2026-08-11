@@ -834,7 +834,7 @@ const InfoSection = ({ t, lang }) => {
             onClick={() => setActiveTab('model')}
             className={`interactive-control whitespace-nowrap flex-none px-3.5 py-1.5 text-[13px] sm:text-[14px] font-bold rounded-md ${activeTab === 'model' ? 'bg-mint text-mint-strong shadow-xs border border-mint-border' : 'text-mint-strong hover:bg-mint-hover'}`}
           >
-            🤖 AI 모델 비교 (ChatGPT / Gemini / Grok)
+            🤖 {lang === 'ko' ? 'AI 모델' : lang === 'ja' ? 'AIモデル' : lang === 'zh' ? 'AI模型' : 'AI Models'}
           </button>
           <button
             onClick={() => setActiveTab('bg')}
@@ -1092,7 +1092,7 @@ const InfoSection = ({ t, lang }) => {
                 })}
               </p>
               
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* PC Guide */}
                 <div className="bg-[#FAF9F6] p-4 sm:p-5 rounded-md border border-[#E5E0D8] flex flex-col gap-4">
                   <div className="flex items-center gap-2 font-bold text-[#5C3A21] text-[16px] ml-2">
@@ -1387,7 +1387,7 @@ const InfoSection = ({ t, lang }) => {
                 })}
               </p>
               
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Method 1: Official */}
                 <div className="bg-[#FAF9F6] p-4 sm:p-5 rounded-md border border-[#E5E0D8] flex flex-col gap-4">
                   <div className="flex items-center gap-2 font-bold text-[#5C3A21] text-[16px] ml-2">
