@@ -2314,23 +2314,123 @@ ${textExclusion} No guide lines, no grid lines, no cell dividers, no border line
     const targetPhrase = generationMode === 'individual'
       ? getSelectedPhrase()
       : (phraseOverride || '').trim();
-    const referenceInstruction = characterSource === 'photo'
-      ? `If an image is attached with this prompt, use its key visual features as reference for the character design (${getPhotoModeLabel('en')}). `
-      : 'If an image is attached with this prompt, use its key visual features as reference for the character design. ';
+    const isKorean = lang === 'ko';
+
+    if (isKorean) {
+      const referenceInstructionKo = characterSource === 'photo'
+        ? `첨부한 사진을 참고하여 대상의 대표적인 시그니처 특징(눈 모양, 헤어스타일, 안경, 주요 이목구비)을 추출하여 선명한 2D 벡터 일러스트로 표현하세요.`
+        : '동일한 캐릭터의 정체성과 외형 특징을 엄격하게 유지하세요.';
+
+      const grokProportionsKo = characterSource === 'photo' ? {
+        exact: '실제 얼굴 비율과 이목구비, 헤어스타일, 피부톤을 정교하게 반영한 2D 벡터 스티커 마감.',
+        features: '시그니처 특징(헤어, 안경, 의상, 체형)만 추출한 세련된 2D 그래픽 벡터 일러스트 마감.',
+        characterize: '큰 동그란 얼굴, 반짝이는 눈, 통통한 볼을 가진 귀여운 2.5등신 SD/Chibi 캐릭터 마감.',
+      }[photoReferenceMode] : '귀엽고 친근한 2.5등신 SD/Chibi 마스코트 비율.';
+
+      const bgInstructionKo = {
+        transparent: '단일 순백색 배경 바탕 위에 선명한 흰색 스티커 테두리(Die-cut white outline)가 감싸진 형태. 회색·흰색 체크무늬(체커보드 격자, 모자이크 패턴, PNG 투명 그리드 타일)는 절대로 그리지 마세요.',
+        solid: '캐릭터와 대비되는 단색 배경으로 생성하세요.',
+        chroma: '배경 분리(누끼)용 선명한 연두색 #00FF00 크로마키 배경으로 생성하세요.',
+      }[grokBackgroundMode] || '단일 순백색 배경 바탕 위에 선명한 흰색 스티커 테두리가 감싸진 형태.';
+
+      if (generationMode === 'individual' || hasPhraseOverride) {
+        const textPolicyKo = grokTextMode === 'text'
+          ? `캐릭터 옆이나 위에 한글 문구 "${targetPhrase}"를 손글씨 스타일로 정갈하게 배치하세요. 괄호, 상자는 그리지 마세요.`
+          : `한국어 문구 "${targetPhrase}"는 표정과 자세를 정하기 위한 맥락으로만 사용하고, 이미지 안에 절대로 텍스트, 글자, 숫자로 그리지 마세요.`;
+        const textExclusionKo = grokTextMode === 'text'
+          ? '불필요한 글자, 괄호, 텍스트 상자 금지.'
+          : '텍스트, 글자, 숫자, 말풍선, 스티커 라벨, 의미 없는 기호 절대 금지.';
+
+        return `[대상 AI: Grok (xAI / Flux.1 엔진)]
+
+[목표]
+동일한 캐릭터가 등장하는 고품질 2D 메신저 스티커 (카카오톡 / 라인 스타일) 한 장을 그려주세요. 정사각형 캔버스, 고해상도.
+
+[캐릭터 고정 — 시각적 정체성]
+${referenceInstructionKo}
+- 대상: ${character.subject}
+- 외형 및 특징: ${character.appearance}
+- 의상: ${character.outfit}
+- 화풍 및 비율: ${character.artStyle}. ${grokProportionsKo} 깔끔한 2D 벡터 스티커 일러스트, 선명한 외곽 선화(Linework), 부드러운 셀 셰이딩, 선명한 플랫 컬러.
+
+[품질 규칙]
+캐릭터의 얼굴 디테일, 선화 선명도, 색상 채도를 높은 수준으로 렌더링하세요. 머리부터 발끝까지 전신이 잘리지 않고 보여야 합니다.
+
+[장면, 표정 & 포즈]
+- 감정/상황 맥락: "${targetPhrase}"
+- 표정과 자세: "${targetPhrase}"에 맞춘 유일하고 표현력 풍부한 얼굴 감정과 역동적인 전신 자세 (앉기, 웅크리기, 점프, 소품 들기, 윙크 등).
+- 최소한의 보조 소품 및 효과: ${character.props}, ${character.effects}.
+
+[배경 & 흰색 스티커 테두리]
+캐릭터 실루엣 주변에 선명한 흰색 스티커 테두리(Die-cut white outline)가 감싸진 형태. ${bgInstructionKo}
+
+[일관성]
+기존 캐릭터의 얼굴, 체형, 색상, 의상, 화풍을 동일하게 유지하세요.
+
+[글자 정책]
+${textPolicyKo}
+
+[제외 조건]
+${textExclusionKo} 워터마크, 외곽 프레임, 바운딩 박스, 캐릭터 중복, 팔다리 누락/추가, 반신·흉상 컷, 실사 느낌, 얼굴 왜곡 절대 금지.`;
+      }
+
+      const panelPlanKo = emoticons.map((phrase, index) => `${index + 1}번 스티커: "${phrase.trim()}"`).join('\n');
+      const textPolicyKo = grokTextMode === 'text'
+        ? '각 한글 문구를 해당 캐릭터 옆이나 위에 손글씨 스타일로 자연스럽게 배치하세요. 괄호 (), 상자는 그리지 마세요.'
+        : '한국어 문구는 표정과 자세를 정하기 위한 맥락으로만 사용하고, 이미지 안에 절대로 텍스트, 글자, 숫자로 그리지 마세요.';
+      const textExclusionKo = grokTextMode === 'text'
+        ? '불필요한 글자, 괄호, 스티커 번호, 텍스트 상자 금지.'
+        : '텍스트, 글자, 숫자, 말풍선, 스티커 라벨, 의미 없는 기호 절대 금지.';
+
+      return `[대상 AI: Grok (xAI / Flux.1 엔진)]
+
+[목표]
+동일한 캐릭터가 3행 × 5열 격자 구조로 배치된 완성도 높은 15셀 카카오톡/라인 스티커 시트 한 장을 생성해 주세요. 정사각형 캔버스, 고해상도. 격자선, 셀 테두리, 숫자 없음.
+
+[캐릭터 고정 — 15개 셀 전체 동일 적용]
+${referenceInstructionKo}
+- 대상: ${character.subject}
+- 외형 및 특징: ${character.appearance}
+- 의상: ${character.outfit}
+- 화풍 및 비율: ${character.artStyle}. ${grokProportionsKo} 깔끔한 2D 벡터 스티커 일러스트, 선명한 외곽 선화(Linework), 부드러운 셀 셰이딩, 선명한 플랫 컬러. 임의의 액세서리 추가 금지.
+
+[품질 & 일관성 규칙]
+15개 셀 캐릭터 모두 동일하게 높은 수준의 얼굴 디테일, 선명한 선화, 색상 채도를 유지하세요. 모든 캐릭터는 머리부터 발끝까지 전신이 잘리지 않고 보여야 합니다.
+
+[15 스티커 포즈]
+각 문구의 감정 맥락에 맞춰 독창적이고 표정이 살아있는 얼굴 감정과 역동적인 전신 자세를 구성하세요:
+${panelPlanKo}
+감정 전달에 최소한으로 필요한 보조 소품이나 반짝이 효과만 사용하세요 (${character.props}, ${character.effects}).
+
+[배경 & 흰색 스티커 테두리]
+각 캐릭터마다 실루엣 주변에 선명한 흰색 스티커 테두리(Die-cut outline)가 깔끔하게 감싸져 있어야 합니다. 15개 스티커는 3행 × 5열 배치 안에서 여백을 두고 자유롭게 떠 있습니다. ${bgInstructionKo} 격자선, 셀 테두리, 구분선, 크롭 마크, 바운딩 박스, 스티커 번호 절대 금지.
+
+[일관성]
+15개 스티커 모두 얼굴, 체형, 색상, 의상, 화풍을 엄격하게 동일하게 유지하세요. 각 감정에 필요한 표정, 자세, 최소 소품만 변경하세요.
+
+[글자 정책]
+${textPolicyKo}
+
+[제외 조건]
+${textExclusionKo} 워터마크, 외곽 프레임, 바운딩 박스, 한 셀 안의 캐릭터 중복, 팔다리 누락/추가, 반신·흉상 컷, 실사 느낌, 얼굴 왜곡, 15개 셀 간 얼굴·체형·의상 불일치 절대 금지.`;
+    }
+
+    // English Version
+    const referenceInstruction = `${characterSource === 'photo' ? `Photo reference style: ${getPhotoModeLabel('en')}. ` : ''}${getReferenceImageInstruction('en')}`;
 
     const grokProportions = characterSource === 'photo' ? {
-      exact: 'Caricature-style 2D sticker that realistically reproduces the subject\'s actual face proportions, facial structure, eye shape, nose, lips, jawline, hairstyle, and skin tone matching photo.',
-      features: 'Stylish 2D character avatar sticker designed around signature points (hairstyle, glasses if any, outfit, body type, overall vibe). Fresh cute generic face.',
-      characterize: 'Adorable 2.5-head chibi SD manga/anime mascot proportion with a big round head, sparkling expressive eyes, chubby cheeks, and cute sticker styling.',
-    }[photoReferenceMode] : 'Adorable 2.5-head chibi SD manga/anime mascot proportion with a big round head, sparkling expressive eyes, chubby cheeks, and cute sticker styling.';
+      exact: "Caricature-style 2D sticker that realistically reproduces the subject's actual face proportions and features as a clean 2D vector graphic.",
+      features: "Stylish 2D character avatar sticker designed around signature points only (hairstyle, glasses if any, outfit, body type, overall vibe).",
+      characterize: "Adorable 2.5-head Chibi SD manga/anime mascot proportion with a big round head, huge sparkling expressive eyes, chubby cheeks, and cute sticker styling.",
+    }[photoReferenceMode] : 'Adorable 2.5-head Chibi SD manga/anime mascot proportion with a big round head, huge sparkling expressive eyes, chubby cheeks, and cute sticker styling.';
 
     if (generationMode === 'individual' || hasPhraseOverride) {
       const textPolicy = grokTextMode === 'text'
-        ? `Render the exact Korean lettering "${targetPhrase}" once naturally beside the character in playful, hand-drawn typography. No parentheses (), brackets [], or rectangular text boxes.`
-        : `Korean phrase "${targetPhrase}" is emotional context only — do not render any text, letters, or numbers in the image.`;
+        ? `Render the exact phrase "${targetPhrase}" once in playful, hand-drawn Korean typography beside the character. No parentheses (), brackets [], or rectangular text boxes.`
+        : `Do not render text, letters, or numbers. Use "${targetPhrase}" only as visual context for expression and pose.`;
       const textExclusion = grokTextMode === 'text'
         ? 'No extra words, altered spelling, random letters, numbers, parentheses, or text boxes.'
-        : 'No text, no letters, no numbers, no speech bubbles, no sticker labels, no meaningless symbols.';
+        : 'No text, letters, numbers, typography, or meaningless symbols.';
 
       return `[TARGET AI: Grok (xAI / Flux.1 Engine)]
 
