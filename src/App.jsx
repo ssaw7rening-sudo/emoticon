@@ -2079,8 +2079,111 @@ ${textExclusion} No grid lines, no cell division lines, no border lines between 
     const targetPhrase = generationMode === 'individual'
       ? getSelectedPhrase()
       : (phraseOverride || '').trim();
-    const referenceInstruction = `${characterSource === 'photo' ? `Photo reference style: ${getPhotoModeLabel('en')}. ` : ''}${getReferenceImageInstruction('en')}`;
+    const isKorean = lang === 'ko';
 
+    if (isKorean) {
+      const referenceInstructionKo = characterSource === 'photo'
+        ? `첨부한 사진을 최우선 참고 이미지로 사용하세요. 사진 속 대상의 실제 얼굴 비율, 이목구비(눈 크기·모양, 코, 입술, 턱선), 헤어스타일, 피부톤을 사실적으로 재현해 한눈에 "이 사람이다"라고 알아볼 수 있을 정도로 얼굴 유사도를 높게 유지하되, 외곽선과 채색은 깔끔한 2D 스티커 마감으로 처리하세요.`
+        : '동일한 캐릭터의 정체성과 외형 특징을 엄격하게 유지하세요.';
+
+      const geminiProportionsKo = characterSource === 'photo' ? {
+        exact: '실제 얼굴 비율과 이목구비, 헤어스타일, 피부톤을 사실적으로 재현한 캐리커처 2D 스티커 마감.',
+        features: '시그니처 포인트(헤어스타일, 안경, 의상, 체형, 분위기)만 반영한 2D 캐릭터 아바타 마감.',
+        characterize: '큰 동그란 얼굴, 반짝이는 눈, 통통한 볼을 가진 귀여운 2.5등신 SD/Chibi 캐릭터 마감.',
+      }[photoReferenceMode] : '귀엽고 친근한 2.5등신 SD/Chibi 마스코트 비율.';
+
+      const bgInstructionKo = {
+        transparent: '진짜 알파 투명도가 적용된 투명 배경으로 생성해주세요. 투명도를 흉내 낸 체크무늬나 흰색 바탕을 그리지 마세요.',
+        solid: '캐릭터와 대비되는 단색 배경으로 생성하세요.',
+        chroma: '배경 분리(누끼)용 선명한 연두색 #00FF00 크로마키 배경으로 생성하세요.',
+      }[geminiBackgroundMode] || '진짜 알파 투명도가 적용된 투명 배경으로 생성해주세요.';
+
+      if (generationMode === 'individual' || hasPhraseOverride) {
+        const textPolicyKo = geminiTextMode === 'text'
+          ? `캐릭터 옆에 한글 문구 "${targetPhrase}"를 손글씨 타이포그래피 스타일로 정갈하게 배치하세요.`
+          : `한국어 문구 "${targetPhrase}"는 표정과 자세를 정하기 위한 맥락으로만 사용하고, 이미지 안에 절대로 텍스트, 글자, 숫자로 그리지 마세요.`;
+        const textExclusionKo = geminiTextMode === 'text'
+          ? '불필요한 글자, 괄호, 텍스트 상자 금지.'
+          : '텍스트, 글자, 숫자, 말풍선, 스티커 라벨, 의미 없는 기호 절대 금지.';
+
+        return `[목표]
+동일한 캐릭터의 고품질 캐리커처 2D 스티커 한 장을 그려주세요.
+
+[참고 이미지 반영]
+${referenceInstructionKo}
+
+[캐릭터 고정 정보 — 변경 금지]
+- 대상: ${character.subject}
+- 외형: ${character.appearance}
+- 의상: ${character.outfit}
+- 화풍 및 비율: ${character.artStyle}. ${geminiProportionsKo} 깔끔한 2D 스티커 마감, 벡터 외곽선, 부드러운 셀 셰이딩, 조화로운 색감. 머리부터 발끝까지 전신이 잘리지 않고 보여야 합니다.
+
+[포즈 및 표정]
+- 감정/상황 맥락: "${targetPhrase}"
+- 고유한 표정과 역동적인 전신 자세 구성 (앉기, 웅크리기, 점프, 소품 들기, 윙크 등).
+- 보조 소품 및 효과: ${character.props}, ${character.effects}, 최소한의 포인트 효과만 사용.
+
+[캔버스 및 배경]
+1:1 정사각형 캔버스. 전신 캐릭터 한 명을 중앙에 배치하고 여백을 넉넉히 주세요. ${bgInstructionKo}
+
+[일관성]
+기존 캐릭터의 얼굴, 체형, 색상, 의상, 화풍을 동일하게 유지하고 표정과 자세만 변경하세요.
+
+[글자 정책]
+${textPolicyKo}
+
+[제외 조건]
+${textExclusionKo} 워터마크, 전체 프레임, 크롭 마크, 바운딩 박스, 캐릭터 중복, 팔다리 누락/추가, 반신·흉상 컷, 실사 느낌, 얼굴 왜곡 절대 금지.`;
+      }
+
+      const panelPlanKo = emoticons.map((phrase, index) => {
+        const row = Math.floor(index / 5) + 1;
+        const col = (index % 5) + 1;
+        return `${row}행 ${col}열: "${phrase.trim()}"`;
+      }).join('\n');
+
+      const textPolicyKo = geminiTextMode === 'text'
+        ? '각 한글 문구를 해당 캐릭터 옆이나 위에 손글씨 스타일로 자연스럽게 배치하세요. 괄호, 상자는 그리지 마세요.'
+        : '한국어 문구는 표정과 자세를 정하기 위한 맥락으로만 사용하고, 이미지 안에 절대로 텍스트, 글자, 숫자로 그리지 마세요.';
+      const textExclusionKo = geminiTextMode === 'text'
+        ? '불필요한 글자, 괄호, 스티커 번호, 텍스트 상자 금지.'
+        : '텍스트, 글자, 숫자, 말풍선, 스티커 라벨, 의미 없는 기호 절대 금지.';
+
+      return `[목표]
+동일한 캐릭터의 서로 다른 표현 15개가 담긴 완성도 높은 캐리커처 스티커 시트 한 장을 그려주세요.
+
+[참고 이미지 반영]
+${referenceInstructionKo}
+
+[캐릭터 고정 정보 — 변경 금지]
+- 대상: ${character.subject}
+- 외형: ${character.appearance}
+- 의상: ${character.outfit}
+- 화풍: ${character.artStyle}. ${geminiProportionsKo} 귀엽고 친근한 고품질 2D 스티커 스타일, 깔끔한 벡터 외곽선, 부드러운 셀 셰이딩, 조화로운 색감. 15개 셀 모두 동일한 선명도, 질감, 색감, 캐릭터 비율을 유지하세요. 가장자리나 하단 칸으로 갈수록 퀄리티가 떨어지지 않도록 하세요. 모든 캐릭터는 머리부터 발끝까지 전신이 잘리지 않고 보여야 합니다.
+
+[15 포즈]
+각 문구에서 바로 이해할 수 있는 고유한 표정 하나와 역동적인 전신 자세 하나를 구성하세요 (앉기, 웅크리기, 점프, 소품 들기, 윙크, 먹기, 응원하기 등). 자세를 반복하지 마세요. 필수 소품 없음 — 감정 전달에 필요한 최소한의 효과와 소품만 사용하세요.
+
+${panelPlanKo}
+
+[캔버스 및 배치]
+가로형 캔버스에 정확히 5열 × 3행으로 배치하세요. 동일한 크기의 셀 15개에 완전한 전신 캐릭터 한 명씩 배치하고, 칸 사이 여백은 넉넉하게 주세요. 캐릭터·소품·효과가 다른 셀을 침범하지 않게 하세요. 격자선, 셀 경계선, 구별선, 테두리선, 셀 번호는 이미지에 절대 그리지 마세요.
+
+[배경]
+${bgInstructionKo}
+
+[일관성]
+15개 셀 모두 얼굴, 체형, 색상, 의상, 화풍을 동일하게 유지하세요. 문구에 필요한 표정, 자세, 보조 소품과 효과만 변경하세요.
+
+[글자 정책]
+${textPolicyKo}
+
+[제외 조건]
+${textExclusionKo} 워터마크, 격자선, 셀 경계선, 구별선, 테두리선, 전체 프레임, 크롭 마크, 바운딩 박스, 한 셀 안의 캐릭터 중복, 팔다리 누락/추가, 반신·흉상 컷, 실사 느낌, 얼굴 왜곡, 15개 셀 간 얼굴·체형·의상 불일치 절대 금지.`;
+    }
+
+    // English Fallback Version
+    const referenceInstruction = `${characterSource === 'photo' ? `Photo reference style: ${getPhotoModeLabel('en')}. ` : ''}${getReferenceImageInstruction('en')}`;
     const geminiProportions = characterSource === 'photo' ? {
       exact: 'Caricature-style 2D sticker that realistically reproduces the subject\'s actual face proportions, facial structure, eye shape, nose, lips, jawline, hairstyle, and skin tone so the person is immediately recognizable. Clean 2D sticker outlines and coloring.',
       features: 'Stylish 2D character avatar sticker designed around signature points only (hairstyle, glasses if any, outfit, body type, overall vibe). Do NOT attempt to reproduce the subject\'s actual face — use a fresh generic cute face instead.',
@@ -2124,43 +2227,49 @@ ${textPolicy}
 ${textExclusion} No watermark, outer frame, duplicate character, extra limbs, cropped body, half-body bust shot, dull background, photorealism, or facial distortion.`;
     }
 
-    const panelPlan = emoticons.map((phrase, index) => `${index + 1}. "${phrase.trim()}"`).join('\n');
+    const panelPlan = emoticons.map((phrase, index) => {
+      const row = Math.floor(index / 5) + 1;
+      const col = (index % 5) + 1;
+      return `Row ${row}, Col ${col}: "${phrase.trim()}"`;
+    }).join('\n');
     const textPolicy = geminiTextMode === 'text'
       ? 'Render each quoted Korean phrase naturally beside or above its corresponding character in playful hand-drawn calligraphy. Do NOT use parentheses (), brackets [], quotation marks, or rectangular text boxes.'
-      : 'Korean phrase is context for expression and pose only, NEVER render as text, letters, or numbers.';
+      : 'The Korean phrases are context for determining expression and pose only — never render them as text, letters, or numbers in the image.';
     const textExclusion = geminiTextMode === 'text'
       ? 'No extra words, altered spelling, random letters, sticker numbers, parentheses, quotation marks, or text boxes.'
-      : 'No text, no letters, no numbers, no speech bubbles, no sticker labels, or meaningless symbols.';
+      : 'No text, no letters, no numbers, no speech bubbles, no sticker labels, no meaningless symbols.';
 
     return `[GOAL]
-Create ONE single image: a 15-cell KakaoTalk/LINE sticker sheet featuring one consistent character, arranged in a 3-row × 5-column layout with generous white space between characters, no grid lines, no borders, no numbers.
+Create one single high-quality caricature-style sticker sheet featuring 15 unique expressions of the same character.
+
+[REFERENCE IMAGE USAGE]
+${referenceInstruction}
 
 [CHARACTER LOCK — apply identically to all 15]
-${referenceInstruction}
 - Subject: ${character.subject}
-- Appearance & Features: ${character.appearance}
-- Outfit (fixed for all 15): ${character.outfit}
-- Art Style & Proportions: ${character.artStyle}. ${geminiProportions} Clean 2D sticker illustration, crisp vector linework, soft cell shading, vivid flat colors. No added accessories unless specified.
-
-[QUALITY CONSISTENCY RULE]
-Render every one of the 15 characters at the SAME level of facial detail, linework crispness, and lighting — do not let quality degrade toward the edges or bottom of the sheet. Every character must be full-body, head-to-toe, uncropped.
+- Appearance: ${character.appearance}
+- Outfit: ${character.outfit}
+- Art Style: ${character.artStyle}. ${geminiProportions} Cute, approachable, high-quality 2D sticker style, clean vector outlines, soft cell shading, harmonious colors. Maintain the exact same linework crispness, texture, color saturation, and character proportions across all 15 cells — no quality degradation toward the edges or bottom rows. Every character must be full-body, head-to-toe, uncropped.
 
 [15 POSES]
-For each sticker, infer a unique, highly expressive facial emotion and a DYNAMIC full-body pose (e.g. sitting, crouching, jumping, holding props, winking, eating, or cheering). Every sticker MUST show a complete full-body character visible head-to-toe:
+For each phrase, create one unique, instantly readable facial expression and one dynamic full-body pose (e.g. sitting, crouching, jumping, holding a prop, winking, eating, cheering). Do not repeat poses. No required props — use only the minimal prop or effect needed to convey the emotion.
+
 ${panelPlan}
-Supporting props & sparkle effects: ${character.props}, ${character.effects}, minimal cute accents.
 
 [CANVAS & LAYOUT]
-Arrange all 15 full-body stickers floating freely with generous spacing in a 3-row × 5-column grid. Each character has a subtle crisp sticker die-cut white outline. ${getGeminiBackgroundInstruction()} Absolutely NO guide lines, NO grid lines, NO cell borders, NO table lines, NO dividing lines, NO crop marks, NO bounding boxes, NO sticker numbers.
+Landscape canvas, arranged in exactly 5 columns × 3 rows. Each of the 15 equal-sized cells contains one complete full-body character with generous spacing between cells. Characters, props, and effects must not overlap into neighboring cells. Absolutely do NOT draw grid lines, cell borders, dividing lines, outer frame, or cell numbers.
+
+[BACKGROUND]
+${getGeminiBackgroundInstruction()}
 
 [CONSISTENCY]
-All 15 stickers must preserve the same face, body proportions, colors, outfit, and art style. Change only the expression, pose, supporting prop, and effect required by each phrase.
+All 15 cells must preserve the same face, body proportions, colors, outfit, and art style. Only the expression, pose, supporting prop, and effect required by each phrase should change.
 
 [TEXT POLICY]
 ${textPolicy}
 
-[STRICT NEGATIVE]
-${textExclusion} No text, no letters, no numbers, no speech bubbles, no grid lines, no cell borders, no dividers, no crop marks, no outer frame, no watermark, no duplicate character within one cell, no missing/extra limbs, no half-body/bust shots, no photorealism, no facial distortion, inconsistent face/body/outfit across the 15 cells is not allowed.`;
+[NEGATIVE PROMPT]
+${textExclusion} No watermark, no grid lines, no cell borders, no dividing lines, no outer frame, no crop marks, no bounding boxes, no duplicate character within a single cell, no missing or extra limbs, no half-body/bust-only shots, no photorealism, no facial distortion, no inconsistent face/body/outfit across the 15 cells.`;
   };
 
   const getGrokBackgroundInstruction = () => {
