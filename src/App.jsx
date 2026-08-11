@@ -2102,7 +2102,7 @@ ${textExclusion} No grid lines, no cell division lines, no border lines between 
 
       if (generationMode === 'individual' || hasPhraseOverride) {
         const textPolicyKo = geminiTextMode === 'text'
-          ? `캐릭터 옆에 한글 문구 "${targetPhrase}"를 손글씨 타이포그래피 스타일로 정갈하게 배치하세요. 괄호 (), 상자는 그리지 마세요.`
+          ? `[고품질 한글 타이포그래피 정밀 지침] 정확한 한글 철자 "${targetPhrase}"를 오탈자 없이 명확하게 그리세요. 캐릭터 옆이나 위에 읽기 편하고 깔끔한 귀여운 손글씨 캘리그라피 타이포그래피 스타일로 자연스럽게 배치하세요. 글자 외곽선이 또렷하고 배경과 대비되는 높은 가독성의 색상을 사용하세요. 텍스트 상자(박스), 괄호 (), 따옴표 "", 말풍선은 절대 그리지 마세요.`
           : `한국어 문구 "${targetPhrase}"는 표정과 자세를 정하기 위한 맥락으로만 사용하고, 이미지 안에 절대로 텍스트, 글자, 숫자로 그리지 마세요.`;
         const textExclusionKo = geminiTextMode === 'text'
           ? '불필요한 단어, 철자 변경, 임의의 글자, 스티커 번호, 괄호, 따옴표, 텍스트 상자 금지.'
@@ -2143,7 +2143,7 @@ ${textExclusionKo} 격자선, 셀 경계선, 구별선, 테두리선, 표 선, �
       const panelPlanKo = emoticons.map((phrase, index) => `스티커 ${index + 1}: "${phrase.trim()}"`).join('\n');
 
       const textPolicyKo = geminiTextMode === 'text'
-        ? '각 한글 문구를 해당 캐릭터 옆이나 위에 손글씨 스타일로 자연스럽게 배치하세요. 괄호 (), 대괄호 [], 따옴표, 직사각형 텍스트 상자는 절대로 그리지 마세요.'
+        ? '[고품질 한글 타이포그래피 정밀 지침] 각 캐릭터 옆이나 위에 해당 한글 문구를 오탈자 없이 정확한 철자로 그리세요. 읽기 편하고 깔끔한 귀여운 손글씨 캘리그라피 타이포그래피 스타일로 자연스럽게 배치하고, 선명한 글자 외곽선과 높은 가독성의 색상을 사용하세요. 텍스트 상자(박스), 괄호 (), 대괄호 [], 따옴표 "", 말풍선, 스티커 번호는 절대로 그리지 마세요.'
         : '한국어 문구는 표정과 자세를 정하기 위한 맥락으로만 사용하고, 이미지 안에 절대로 텍스트, 글자, 숫자로 그리지 마세요.';
       const textExclusionKo = geminiTextMode === 'text'
         ? '불필요한 단어, 철자 변경, 임의의 글자, 스티커 번호, 괄호, 따옴표, 텍스트 상자 금지.'
@@ -2198,7 +2198,7 @@ ${textExclusionKo} 가이드선, 격자선, 셀 구별선, 테두리선, 표 선
 
     if (generationMode === 'individual' || hasPhraseOverride) {
       const textPolicy = geminiTextMode === 'text'
-        ? `Render the exact phrase "${targetPhrase}" once in playful, hand-drawn Korean calligraphy lettering beside the character. No parentheses (), brackets [], or rectangular text boxes.`
+        ? `[HIGH-PRECISION KOREAN TYPOGRAPHY DIRECTIVE] Render the exact Korean phrase "${targetPhrase}" with 100% correct Hangul spelling and zero typos. Position the text naturally beside or floating near the character in playful, highly legible hand-drawn calligraphy typography. Ensure sharp vector text outlines and strong color contrast against the background. Do NOT draw rectangular text boxes, background boxes, speech bubbles, parentheses (), or quotation marks "".`
         : `Do not render text, letters, or numbers. Use "${targetPhrase}" only as visual context for expression and pose.`;
       const textExclusion = geminiTextMode === 'text'
         ? 'No extra words, altered spelling, random letters, numbers, parentheses, or text boxes.'
@@ -2238,7 +2238,7 @@ ${textExclusion} No guide lines, no grid lines, no cell dividers, no border line
 
     const panelPlan = emoticons.map((phrase, index) => `Sticker ${index + 1}: "${phrase.trim()}"`).join('\n');
     const textPolicy = geminiTextMode === 'text'
-      ? 'Render each quoted Korean phrase naturally beside or above its corresponding character in playful hand-drawn calligraphy. Do NOT use parentheses (), brackets [], quotation marks, or rectangular text boxes.'
+      ? '[HIGH-PRECISION KOREAN TYPOGRAPHY DIRECTIVE] Render each quoted Korean phrase naturally beside or above its corresponding character with 100% correct Hangul spelling and zero typos. Use playful, highly legible hand-drawn calligraphy typography with crisp vector text contours and strong color contrast. Do NOT draw text boxes, background boxes, speech bubbles, parentheses (), brackets [], quotation marks "", or sticker numbers.'
       : 'The Korean phrases are context for determining expression and pose only — never render them as text, letters, or numbers in the image.';
     const textExclusion = geminiTextMode === 'text'
       ? 'No extra words, altered spelling, random letters, sticker numbers, parentheses, quotation marks, or text boxes.'
@@ -2335,7 +2335,7 @@ ${textExclusion} No guide lines, no grid lines, no cell dividers, no border line
 
       if (generationMode === 'individual' || hasPhraseOverride) {
         const textPolicyKo = grokTextMode === 'text'
-          ? `캐릭터 옆이나 위에 한글 문구 "${targetPhrase}"를 손글씨 스타일로 정갈하게 배치하세요. 괄호, 상자는 그리지 마세요.`
+          ? `[고품질 한글 타이포그래피 정밀 지침] 정확한 한글 철자 "${targetPhrase}"를 오탈자 없이 명확하게 그리세요. 캐릭터 옆이나 위에 읽기 편하고 깔끔한 귀여운 손글씨 캘리그라피 타이포그래피 스타일로 자연스럽게 배치하세요. 글자 외곽선이 또렷하고 배경과 대비되는 높은 가독성의 색상을 사용하세요. 텍스트 상자(박스), 괄호 (), 따옴표 "", 말풍선은 절대 그리지 마세요.`
           : `한국어 문구 "${targetPhrase}"는 표정과 자세를 정하기 위한 맥락으로만 사용하고, 이미지 안에 절대로 텍스트, 글자, 숫자로 그리지 마세요.`;
         const textExclusionKo = grokTextMode === 'text'
           ? '불필요한 글자, 괄호, 텍스트 상자 금지.'
@@ -2376,7 +2376,7 @@ ${textExclusionKo} 워터마크, 외곽 프레임, 바운딩 박스, 캐릭터 �
 
       const panelPlanKo = emoticons.map((phrase, index) => `${index + 1}번 스티커: "${phrase.trim()}"`).join('\n');
       const textPolicyKo = grokTextMode === 'text'
-        ? '각 한글 문구를 해당 캐릭터 옆이나 위에 손글씨 스타일로 자연스럽게 배치하세요. 괄호 (), 상자는 그리지 마세요.'
+        ? '[고품질 한글 타이포그래피 정밀 지침] 각 캐릭터 옆이나 위에 해당 한글 문구를 오탈자 없이 정확한 철자로 그리세요. 읽기 편하고 깔끔한 귀여운 손글씨 캘리그라피 타이포그래피 스타일로 자연스럽게 배치하고, 선명한 글자 외곽선과 높은 가독성의 색상을 사용하세요. 텍스트 상자(박스), 괄호 (), 대괄호 [], 따옴표 "", 말풍선, 스티커 번호는 절대로 그리지 마세요.'
         : '한국어 문구는 표정과 자세를 정하기 위한 맥락으로만 사용하고, 이미지 안에 절대로 텍스트, 글자, 숫자로 그리지 마세요.';
       const textExclusionKo = grokTextMode === 'text'
         ? '불필요한 글자, 괄호, 스티커 번호, 텍스트 상자 금지.'
@@ -2426,7 +2426,7 @@ ${textExclusionKo} 워터마크, 외곽 프레임, 바운딩 박스, 한 셀 안
 
     if (generationMode === 'individual' || hasPhraseOverride) {
       const textPolicy = grokTextMode === 'text'
-        ? `Render the exact phrase "${targetPhrase}" once in playful, hand-drawn Korean typography beside the character. No parentheses (), brackets [], or rectangular text boxes.`
+        ? `[HIGH-PRECISION KOREAN TYPOGRAPHY DIRECTIVE] Render the exact Korean phrase "${targetPhrase}" with 100% correct Hangul spelling and zero typos. Position the text naturally beside or floating near the character in playful, highly legible hand-drawn calligraphy typography. Ensure sharp vector text outlines and strong color contrast against the background. Do NOT draw rectangular text boxes, background boxes, speech bubbles, parentheses (), or quotation marks "".`
         : `Do not render text, letters, or numbers. Use "${targetPhrase}" only as visual context for expression and pose.`;
       const textExclusion = grokTextMode === 'text'
         ? 'No extra words, altered spelling, random letters, numbers, parentheses, or text boxes.'
@@ -2466,7 +2466,7 @@ ${textExclusion} No watermark, no outer frame, no bounding boxes, no duplicate c
 
     const panelPlan = emoticons.map((phrase, index) => `${index + 1}. "${phrase.trim()}"`).join('\n');
     const textPolicy = grokTextMode === 'text'
-      ? 'Render each quoted Korean phrase beside or above its corresponding character in playful hand-drawn typography. No parentheses (), brackets [], or rectangular text boxes.'
+      ? '[HIGH-PRECISION KOREAN TYPOGRAPHY DIRECTIVE] Render each quoted Korean phrase naturally beside or above its corresponding character with 100% correct Hangul spelling and zero typos. Use playful, highly legible hand-drawn calligraphy typography with crisp vector text contours and strong color contrast. Do NOT draw text boxes, background boxes, speech bubbles, parentheses (), brackets [], quotation marks "", or sticker numbers.'
       : 'Korean phrases above are emotional context only — do not render any text, letters, or numbers in the image.';
     const textExclusion = grokTextMode === 'text'
       ? 'No extra words, altered spelling, random letters, sticker numbers, parentheses, quotation marks, or text boxes.'
