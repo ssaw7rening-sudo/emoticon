@@ -834,7 +834,7 @@ const InfoSection = ({ t, lang }) => {
             onClick={() => setActiveTab('model')}
             className={`interactive-control whitespace-nowrap flex-none px-3.5 py-1.5 text-[13px] sm:text-[14px] font-bold rounded-md ${activeTab === 'model' ? 'bg-mint text-mint-strong shadow-xs border border-mint-border' : 'text-mint-strong hover:bg-mint-hover'}`}
           >
-            🤖 ChatGPT vs Gemini
+            🤖 AI 모델 비교 (ChatGPT / Gemini / Grok)
           </button>
           <button
             onClick={() => setActiveTab('bg')}
@@ -865,7 +865,7 @@ const InfoSection = ({ t, lang }) => {
               })}
             </p>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {/* ChatGPT Card */}
               <div className="bg-surface-variant/30 p-4 sm:p-5 rounded-md border border-outline-variant flex flex-col gap-4 hover:shadow-md transition-shadow group relative">
                 <div className="font-bold text-[16px] text-on-surface group-hover:text-primary-strong transition-colors">
@@ -991,6 +991,69 @@ const InfoSection = ({ t, lang }) => {
                   )}
                 </ul>
               </div>
+
+              {/* Grok Card */}
+              <div className="bg-surface-variant/30 p-4 sm:p-5 rounded-md border border-outline-variant flex flex-col gap-4 hover:shadow-md transition-shadow group relative">
+                <div className="font-bold text-[16px] text-on-surface group-hover:text-primary-strong transition-colors">
+                  🟣 {getText('grokTitle', {
+                    ko: 'Grok (xAI) 이미지 생성 추천',
+                    ja: 'Grok (xAI) 画像生成のおすすめ',
+                    zh: 'Grok (xAI) 图像生成推荐',
+                    en: 'Grok (xAI) Image Generation',
+                  })}
+                </div>
+                <div className="font-black text-[17px] sm:text-[18px] text-primary-strong -mt-3">
+                  {getText('grokSub', {
+                    ko: '"선명한 2D 벡터와 스티커 질감"',
+                    ja: '"鮮明な2Dベクターとステッカー質感"',
+                    zh: '"清晰的2D矢量与贴纸质感"',
+                    en: '"Crisp 2D vector & sticker texture"',
+                  })}
+                </div>
+                
+                <div className="w-full h-48 sm:h-52 rounded-md bg-white border border-outline-variant shadow-sm relative overflow-hidden group">
+                  <img src="/chatgpt_real.jpg" alt="Grok Actual Result" className="w-full h-full object-cover object-top transform group-hover:scale-105 transition-transform duration-500" />
+                  <div className="absolute bottom-2 right-2 bg-black/70 backdrop-blur-sm text-white text-[11px] font-bold px-2 py-1 rounded-md">
+                    {getText('actualBadge', {
+                      ko: '실제 유저 생성본 ✨',
+                      ja: '実際のユーザー作成例 ✨',
+                      zh: '真实用户生成范例 ✨',
+                      en: 'Actual user creation ✨',
+                    })}
+                  </div>
+                </div>
+
+                <ul className="text-[13px] sm:text-[14px] leading-relaxed text-secondary-strong flex flex-col gap-2 mt-1 break-keep">
+                  {lang === 'ko' && (
+                    <>
+                      <li>• 🎯 <strong className="text-on-surface">특징:</strong> Flux.1 엔진 기반으로 자연어 지시 이해 및 2D 선화(Linework) 표현력이 우수합니다.</li>
+                      <li>• 💬 <strong className="text-on-surface">예시:</strong> 흰색 스티커 테두리(Die-cut)와 깔끔한 메신저 스티커 느낌을 연출하고 싶을 때 적합합니다.</li>
+                      <li>• 🎨 <strong className="text-on-surface">장점:</strong> 이미지 글자 표현 및 3x5 그리드 레이아웃 배치를 유연하게 반영합니다.</li>
+                    </>
+                  )}
+                  {lang === 'ja' && (
+                    <>
+                      <li>• 🎯 <strong className="text-on-surface">特徴:</strong> Flux.1エンジン搭載で、自然言語理解と鮮明な2D線画表現が優れています。</li>
+                      <li>• 💬 <strong className="text-on-surface">例:</strong> 白フチのステッカー加工やメッセンジャースタンプ風の仕上げに最適です。</li>
+                      <li>• 🎨 <strong className="text-on-surface">長所:</strong> テキスト描画と3x5グリッドレイアウトの配置に柔軟に対応します。</li>
+                    </>
+                  )}
+                  {lang === 'zh' && (
+                    <>
+                      <li>• 🎯 <strong className="text-on-surface">特点:</strong> 基于Flux.1引擎，自然语言理解与2D线条表现极其出色。</li>
+                      <li>• 💬 <strong className="text-on-surface">示例:</strong> 强烈推荐制作带白色剪裁边框的高清矢量贴纸。</li>
+                      <li>• 🎨 <strong className="text-on-surface">优势:</strong> 灵活支持文字渲染与3x5网格布局排布。</li>
+                    </>
+                  )}
+                  {lang !== 'ko' && lang !== 'ja' && lang !== 'zh' && (
+                    <>
+                      <li>• 🎯 <strong className="text-on-surface">Feature:</strong> Powered by Flux.1 for crisp 2D linework and strong prompt fidelity.</li>
+                      <li>• 💬 <strong className="text-on-surface">Usage:</strong> Perfect for clean stickers with die-cut white outlines.</li>
+                      <li>• 🎨 <strong className="text-on-surface">Strength:</strong> Excellent control over text rendering and 3x5 layout structure.</li>
+                    </>
+                  )}
+                </ul>
+              </div>
             </div>
 
             {/* Unified Tip Box */}
@@ -1007,7 +1070,7 @@ const InfoSection = ({ t, lang }) => {
                 </strong>
                 <span className="text-[13px] sm:text-[14px] leading-relaxed opacity-90 break-words block">
                   {getText('tipContent', {
-                    ko: '사진을 첨부하면 인물이나 반려동물의 특징을 반영한 캐릭터를 만들 수 있습니다. ChatGPT는 문구가 필요한 이미지에 활용하고, Gemini는 마음에 드는 기준 캐릭터를 만든 뒤 그 이미지를 다시 첨부해 한 장씩 변형해 보세요.',
+                    ko: '사진을 첨부하면 인물이나 반려동물의 특징을 반영한 캐릭터를 만들 수 있습니다. ChatGPT는 문구가 필요한 이미지에, Gemini는 기준 캐릭터 기반 변형에, Grok은 선명한 2D 스티커 질감 연출에 활용해 보세요.',
                     ja: '写真を添付すると人物やペットの特徴を反映したキャラが作れます。文字が必要な場合はChatGPTを使い、Geminiでは気に入ったベースキャラを作成後、その画像を再添付して1枚ずつバリエーションを生成するのがおすすめです。',
                     zh: '附带照片可为您、孩子或宠物量身定制角色。包含台词时建议使用ChatGPT；使用Gemini时可先生成满意的基准角色，再重新附带该图片逐张生成表情变体。',
                     en: 'Attach a photo to reflect recognizable features. Use ChatGPT when text matters, and with Gemini create a base character first, then attach that accepted result again for one-at-a-time variations.',
@@ -1029,7 +1092,7 @@ const InfoSection = ({ t, lang }) => {
                 })}
               </p>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {/* PC Guide */}
                 <div className="bg-[#FAF9F6] p-4 sm:p-5 rounded-md border border-[#E5E0D8] flex flex-col gap-4">
                   <div className="flex items-center gap-2 font-bold text-[#5C3A21] text-[16px] ml-2">
@@ -1324,7 +1387,7 @@ const InfoSection = ({ t, lang }) => {
                 })}
               </p>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {/* Method 1: Official */}
                 <div className="bg-[#FAF9F6] p-4 sm:p-5 rounded-md border border-[#E5E0D8] flex flex-col gap-4">
                   <div className="flex items-center gap-2 font-bold text-[#5C3A21] text-[16px] ml-2">
