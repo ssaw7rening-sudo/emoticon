@@ -2142,88 +2142,94 @@ ${textExclusion} No text, no letters, no numbers, no speech bubbles, no grid lin
     const targetPhrase = generationMode === 'individual'
       ? getSelectedPhrase()
       : (phraseOverride || '').trim();
-    const referenceInstruction = `${characterSource === 'photo' ? `Photo reference style: ${getPhotoModeLabel('en')}. ` : ''}${getReferenceImageInstruction('en')}`;
+    const referenceInstruction = characterSource === 'photo'
+      ? `If an image is attached with this prompt, use its key visual features as reference for the character design (${getPhotoModeLabel('en')}). `
+      : 'If an image is attached with this prompt, use its key visual features as reference for the character design. ';
 
     const grokProportions = characterSource === 'photo' ? {
-      exact: 'High-fidelity 2D caricature sticker with accurate facial proportions, facial structure, eye shape, nose, lips, jawline, hairstyle, and skin tone matching photo.',
-      features: 'Stylized 2D vector character avatar sticker designed around signature traits (hairstyle, glasses, outfit, body type, vibe) with clean vector linework.',
-      characterize: 'Ultra-cute 2.5-head Chibi SD manga/anime mascot proportion with a big round head, sparkling expressive eyes, chubby cheeks, and cute sticker styling.',
-    }[photoReferenceMode] : 'Adorable 2.5-head Chibi SD manga/anime mascot proportion with a big round head, sparkling expressive eyes, chubby cheeks, and cute sticker styling.';
+      exact: 'Caricature-style 2D sticker that realistically reproduces the subject\'s actual face proportions, facial structure, eye shape, nose, lips, jawline, hairstyle, and skin tone matching photo.',
+      features: 'Stylish 2D character avatar sticker designed around signature points (hairstyle, glasses if any, outfit, body type, overall vibe). Fresh cute generic face.',
+      characterize: 'Adorable 2.5-head chibi SD manga/anime mascot proportion with a big round head, sparkling expressive eyes, chubby cheeks, and cute sticker styling.',
+    }[photoReferenceMode] : 'Adorable 2.5-head chibi SD manga/anime mascot proportion with a big round head, sparkling expressive eyes, chubby cheeks, and cute sticker styling.';
 
     if (generationMode === 'individual' || hasPhraseOverride) {
       const textPolicy = grokTextMode === 'text'
-        ? `Render the exact Korean lettering "${targetPhrase}" naturally beside or above the character in playful, hand-drawn typography. No parentheses (), brackets [], or rectangular text boxes.`
-        : `Do not render text, letters, or numbers. Use "${targetPhrase}" only as visual context for facial expression and body posture.`;
+        ? `Render the exact Korean lettering "${targetPhrase}" once naturally beside the character in playful, hand-drawn typography. No parentheses (), brackets [], or rectangular text boxes.`
+        : `Korean phrase "${targetPhrase}" is emotional context only — do not render any text, letters, or numbers in the image.`;
       const textExclusion = grokTextMode === 'text'
         ? 'No extra words, altered spelling, random letters, numbers, parentheses, or text boxes.'
-        : 'No text, letters, numbers, typography, or meaningless symbols.';
+        : 'No text, no letters, no numbers, no speech bubbles, no sticker labels, no meaningless symbols.';
 
       return `[TARGET AI: Grok (xAI / Flux.1 Engine)]
-Create a premium 2D messenger sticker (KakaoTalk / LINE style) with a consistent character.
+
+Create a high-end 2D messenger sticker (KakaoTalk / LINE style) featuring one consistent character. Square canvas, high resolution.
 
 [CHARACTER LOCK — VISUAL IDENTITY]
 ${referenceInstruction}
-- Subject: ${character.subject}
-- Appearance & Features: ${character.appearance}
-- Outfit (fixed): ${character.outfit}
-- Art Style & Proportions: ${character.artStyle}. ${grokProportions} Sharp vector linework, vibrant flat colors, and soft cell shading.
+Subject: ${character.subject}
+Appearance & Features: ${character.appearance}
+Outfit: ${character.outfit}
+Art Style & Proportions: ${character.artStyle}. ${grokProportions} Clean 2D vector sticker illustration, sharp linework, soft cell shading, vivid flat colors. No unrequested accessories.
+
+[QUALITY & UNIFORMITY RULE]
+Render the character at a high level of facial detail, linework sharpness, and color saturation. Every character is full-body, head-to-toe, uncropped.
 
 [SCENE, EXPRESSION & POSE]
-- Emotion / Mood: "${targetPhrase}"
-- Facial Expression: Highly expressive, unmistakable emotion matching "${targetPhrase}".
-- Body Pose: Energetic, dynamic full-body posture (e.g. sitting, crouching, jumping, holding props, or waving). Entire character visible head-to-toe.
-- Accessories & Effects: ${character.props}, ${character.effects}, cute little accents.
+Emotional Context / Mood: "${targetPhrase}"
+Infer a unique, highly expressive facial emotion and dynamic full-body posture matching "${targetPhrase}".
+Minimal supporting props or sparkle effects only when they clarify the emotion — keep accents small and simple (${character.props}, ${character.effects}).
 
-[CANVAS & STICKER FINISH]
-Square 1:1 ratio. Exactly one centered full-body character visible head to toe with generous outer margin. ${getGrokBackgroundInstruction()}
+[BACKGROUND & DIE-CUT LAYOUT]
+Each character has a crisp white sticker die-cut outline clearly visible around its silhouette. ${getGrokBackgroundInstruction()}
 
-[CONSISTENCY RULE]
-If a previous sticker image exists in this chat, maintain identical face, body proportions, color palette, outfit, and linework style. Change only the expression, pose, and prop.
+[CHARACTER CONSISTENCY]
+If a previous sticker image exists in this chat, maintain identical face, body proportions, color palette, outfit, and art style. Vary only pose, facial expression, and the minimal prop/effect needed for this emotion.
 
-[TEXT & TYPOGRAPHY POLICY]
+[TEXT POLICY]
 ${textPolicy}
 
-[FLUX NEGATIVE PROMPT]
-${textExclusion} No watermark, outer frame, duplicate character, extra limbs, cropped body, half-body bust shot, dull background, photorealism, or facial distortion.`;
+[NEGATIVE PROMPT]
+${textExclusion} No watermark, no outer frame, no bounding boxes, no duplicate character, no missing or extra limbs, no half-body/bust-only shots, no photorealism, no facial distortion.`;
     }
 
-    const panelPlan = emoticons.map((phrase, index) => `Sticker ${index + 1}: "${phrase.trim()}"`).join('\n');
+    const panelPlan = emoticons.map((phrase, index) => `${index + 1}. "${phrase.trim()}"`).join('\n');
     const textPolicy = grokTextMode === 'text'
       ? 'Render each quoted Korean phrase beside or above its corresponding character in playful hand-drawn typography. No parentheses (), brackets [], or rectangular text boxes.'
-      : 'Korean phrases serve ONLY as emotional context for poses; do NOT render any text, letters, or numbers in the image.';
+      : 'Korean phrases above are emotional context only — do not render any text, letters, or numbers in the image.';
     const textExclusion = grokTextMode === 'text'
       ? 'No extra words, altered spelling, random letters, sticker numbers, parentheses, quotation marks, or text boxes.'
-      : 'No text, no letters, no numbers, no speech bubbles, no sticker labels, or meaningless symbols.';
+      : 'No text, no letters, no numbers, no speech bubbles, no sticker labels, no meaningless symbols.';
 
     return `[TARGET AI: Grok (xAI / Flux.1 Engine)]
-Create a master 15-cell KakaoTalk/LINE sticker sheet featuring one consistent character arranged in a 3-row × 5-column grid layout with generous spacing between characters, no grid lines, no cell borders, no numbers.
+
+Create a master 15-cell KakaoTalk/LINE sticker sheet featuring one consistent character arranged in a 3-row × 5-column grid layout with generous spacing between characters. Square canvas, high resolution. No grid lines, no cell borders, no numbers.
 
 [CHARACTER LOCK — IDENTICAL ACROSS ALL 15 CELLS]
 ${referenceInstruction}
-- Subject: ${character.subject}
-- Appearance & Features: ${character.appearance}
-- Outfit (fixed for all 15): ${character.outfit}
-- Art Style & Proportions: ${character.artStyle}. ${grokProportions} Clean 2D vector sticker illustration, sharp linework, soft cell shading, vivid flat colors. No unrequested accessories.
+Subject: ${character.subject}
+Appearance & Features: ${character.appearance}
+Outfit: ${character.outfit}
+Art Style & Proportions: ${character.artStyle}. ${grokProportions} Clean 2D vector sticker illustration, sharp linework, soft cell shading, vivid flat colors. No unrequested accessories.
 
-[FLUX QUALITY & UNIFORMITY RULE]
-Render all 15 characters at the exact SAME high level of facial detail, linework sharpness, and color saturation across the entire sheet. Do not degrade quality towards edges or bottom. Every character must be full-body, head-to-toe, uncropped.
+[QUALITY & UNIFORMITY RULE]
+Render all 15 characters at the exact same level of facial detail, linework sharpness, and color saturation across the entire sheet — no degradation toward edges or bottom rows. Every character is full-body, head-to-toe, uncropped.
 
 [15 STICKER POSES]
-Infer a unique, highly expressive facial emotion and dynamic full-body posture for each sticker cell:
+Infer a unique, highly expressive facial emotion and dynamic full-body posture for each cell, based on the following emotional context:
 ${panelPlan}
-Supporting props & sparkle effects: ${character.props}, ${character.effects}, minimal cute accents.
+Minimal supporting props or sparkle effects only when they clarify the emotion — keep accents small and simple (${character.props}, ${character.effects}).
 
-[CANVAS & STICKER DIE-CUT LAYOUT]
-Arrange all 15 stickers floating freely in a 3-row × 5-column layout on a pure background. Each character has a subtle crisp die-cut white sticker outline. ${getGrokBackgroundInstruction()} Absolutely NO grid lines, NO cell borders, NO table dividers, NO crop marks, NO bounding boxes, NO sticker numbers.
+[BACKGROUND & DIE-CUT LAYOUT]
+Each character has a crisp white sticker die-cut outline clearly visible around its silhouette. All 15 stickers float freely in the 3-row × 5-column arrangement. ${getGrokBackgroundInstruction()} Absolutely no grid lines, no cell borders, no table dividers, no crop marks, no bounding boxes, no sticker numbers.
 
 [CHARACTER CONSISTENCY]
-All 15 stickers must strictly share the same face, body proportions, color palette, outfit, and art style. Vary only the pose, facial expression, prop, and effect required for each phrase.
+All 15 stickers must strictly share the same face, body proportions, color palette, outfit, and art style. Vary only pose, facial expression, and the minimal prop/effect needed for each emotion.
 
-[TEXT & TYPOGRAPHY POLICY]
+[TEXT POLICY]
 ${textPolicy}
 
-[FLUX NEGATIVE PROMPT]
-${textExclusion} No text, no letters, no numbers, no speech bubbles, no grid lines, no cell borders, no dividers, no crop marks, no outer frame, no watermark, no duplicate character within one cell, no missing/extra limbs, no half-body/bust shots, no photorealism, no facial distortion, inconsistent face/body/outfit across the 15 cells is strictly forbidden.`;
+[NEGATIVE PROMPT]
+${textExclusion} No watermark, no grid lines, no cell borders, no table dividers, no crop marks, no outer frame, no bounding boxes, no duplicate character within a single cell, no missing or extra limbs, no half-body/bust-only shots, no photorealism, no facial distortion, no inconsistent face/body/outfit across the 15 cells.`;
   };
 
   const getRepairPrompt = (repairType, textMode) => {
