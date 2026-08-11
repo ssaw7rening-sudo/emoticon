@@ -2083,18 +2083,18 @@ ${textExclusion} No grid lines, no cell division lines, no border lines between 
 
     if (isKorean) {
       const referenceInstructionKo = characterSource === 'photo'
-        ? `첨부한 사진을 최우선 참고 이미지로 사용하세요. 사진 속 대상의 실제 얼굴 비율, 이목구비(눈 크기·모양, 코, 입술, 턱선), 헤어스타일, 피부톤을 사실적으로 재현해 한눈에 "이 사람이다"라고 알아볼 수 있을 정도로 얼굴 유사도를 높게 유지하되, 외곽선과 채색은 깔끔한 2D 스티커 마감으로 처리하세요.`
+        ? `첨부한 사진을 참고하여 대상의 실제 얼굴 비율, 이목구비(눈 크기·모양, 코, 입술, 턱선), 헤어스타일, 피부톤의 "특징"만 참고하세요. 사진 속 인물이라는 것을 한눈에 알아볼 수 있도록 닮게 그리되, 얼굴을 포함한 신체 전체를 처음부터 완전히 새로 그린 일러스트로 재해석해야 합니다. 사진의 실제 픽셀, 질감, 조명, 반사광을 그대로 가져오거나 합성하지 마세요. 원본 사진과 캐릭터 몸통 스타일 사이에 이질감이 없도록, 얼굴도 몸통과 동일한 벡터 라인·플랫 컬러·셀 셰이딩으로 통일해서 그리세요.`
         : '동일한 캐릭터의 정체성과 외형 특징을 엄격하게 유지하세요.';
 
       const geminiProportionsKo = characterSource === 'photo' ? {
-        exact: '실제 얼굴 비율과 이목구비, 헤어스타일, 피부톤을 사실적으로 재현한 캐리커처 2D 스티커 마감.',
-        features: '시그니처 포인트(헤어스타일, 안경, 의상, 체형, 분위기)만 반영한 2D 캐릭터 아바타 마감.',
-        characterize: '큰 동그란 얼굴, 반짝이는 눈, 통통한 볼을 가진 귀여운 2.5등신 SD/Chibi 캐릭터 마감.',
+        exact: '실제 얼굴 비율과 이목구비, 헤어스타일, 피부톤의 특징을 명확히 재현하되 얼굴과 신체 전체를 동일한 일러스트 화풍으로 새로 그린 2D 스티커 마감.',
+        features: '시그니처 포인트(헤어스타일, 안경, 의상, 체형, 분위기)만 반영한 2D 캐릭터 아바타 일러스트 마감.',
+        characterize: '큰 동그란 얼굴, 반짝이는 눈, 통통한 볼을 가진 귀여운 2.5등신 SD/Chibi 캐릭터 일러스트 마감.',
       }[photoReferenceMode] : '귀엽고 친근한 2.5등신 SD/Chibi 마스코트 비율.';
 
       const bgInstructionKo = {
-        transparent: '진짜 알파 투명도가 적용된 투명 배경으로 생성해주세요. 투명도를 흉내 낸 체크무늬나 흰색 바탕을 그리지 마세요.',
-        solid: '캐릭터와 대비되는 단색 배경으로 생성하세요.',
+        transparent: '진짜 알파 투명도가 적용된 투명 배경으로 생성해주세요. 투명도를 흉내 낸 체크무늬나 흰색 바탕을 그리지 마세요. 캐릭터 영역(특히 얼굴)에 원본 사진 조각이나 사각형 형태로 사진이 그대로 얹히는 것을 절대 금지합니다. 모든 영역이 빠짐없이 동일한 일러스트 화풍이어야 합니다.',
+        solid: '캐릭터와 대비되는 단색 배경으로 생성하세요. 캐릭터 영역에 원본 사진 조각이 합성되지 않게 하세요.',
         chroma: '배경 분리(누끼)용 선명한 연두색 #00FF00 크로마키 배경으로 생성하세요.',
       }[geminiBackgroundMode] || '진짜 알파 투명도가 적용된 투명 배경으로 생성해주세요.';
 
@@ -2116,7 +2116,7 @@ ${referenceInstructionKo}
 - 대상: ${character.subject}
 - 외형: ${character.appearance}
 - 의상: ${character.outfit}
-- 화풍 및 비율: ${character.artStyle}. ${geminiProportionsKo} 깔끔한 2D 스티커 마감, 벡터 외곽선, 부드러운 셀 셰이딩, 조화로운 색감. 머리부터 발끝까지 전신이 잘리지 않고 보여야 합니다.
+- 화풍 및 비율: ${character.artStyle}. ${geminiProportionsKo} 깔끔한 2D 스티커 마감, 벡터 외곽선, 부드러운 셀 셰이딩, 조화로운 색감. 사진 같은 사실적 질감, 피부 텍스처, 사진 반사광은 절대 남기지 마세요 — 얼굴도 몸과 동일한 일러스트 렌더링 방식이어야 합니다. 모든 캐릭터는 머리부터 발끝까지 전신이 잘리지 않고 보여야 합니다.
 
 [포즈 및 표정]
 - 감정/상황 맥락: "${targetPhrase}"
@@ -2133,7 +2133,7 @@ ${referenceInstructionKo}
 ${textPolicyKo}
 
 [제외 조건]
-${textExclusionKo} 워터마크, 전체 프레임, 크롭 마크, 바운딩 박스, 캐릭터 중복, 팔다리 누락/추가, 반신·흉상 컷, 실사 느낌, 얼굴 왜곡 절대 금지.`;
+${textExclusionKo} 워터마크, 전체 프레임, 크롭 마크, 바운딩 박스, 캐릭터 중복, 팔다리 누락/추가, 반신·흉상 컷, 사진 텍스처/실사 조각 잔존, 얼굴과 몸통 간 화풍 불일치, 실사 느낌, 얼굴 왜곡 절대 금지.`;
       }
 
       const panelPlanKo = emoticons.map((phrase, index) => {
@@ -2159,7 +2159,7 @@ ${referenceInstructionKo}
 - 대상: ${character.subject}
 - 외형: ${character.appearance}
 - 의상: ${character.outfit}
-- 화풍: ${character.artStyle}. ${geminiProportionsKo} 귀엽고 친근한 고품질 2D 스티커 스타일, 깔끔한 벡터 외곽선, 부드러운 셀 셰이딩, 조화로운 색감. 15개 셀 모두 동일한 선명도, 질감, 색감, 캐릭터 비율을 유지하세요. 가장자리나 하단 칸으로 갈수록 퀄리티가 떨어지지 않도록 하세요. 모든 캐릭터는 머리부터 발끝까지 전신이 잘리지 않고 보여야 합니다.
+- 화풍: ${character.artStyle}. ${geminiProportionsKo} 귀엽고 친근한 고품질 2D 스티커 스타일, 깔끔한 벡터 외곽선, 부드러운 셀 셰이딩, 조화로운 색감. 사진 같은 사실적 질감, 피부 텍스처, 사진 반사광은 절대 남기지 마세요 — 얼굴도 몸과 동일한 일러스트 렌더링 방식이어야 합니다. 15개 셀 모두 동일한 선명도, 질감, 색감, 캐릭터 비율을 유지하세요. 가장자리나 하단 칸으로 갈수록 퀄리티가 떨어지지 않도록 하세요. 모든 캐릭터는 머리부터 발끝까지 전신이 잘리지 않고 보여야 합니다.
 
 [15 포즈]
 각 문구에서 바로 이해할 수 있는 고유한 표정 하나와 역동적인 전신 자세 하나를 구성하세요 (앉기, 웅크리기, 점프, 소품 들기, 윙크, 먹기, 응원하기 등). 자세를 반복하지 마세요. 필수 소품 없음 — 감정 전달에 필요한 최소한의 효과와 소품만 사용하세요.
@@ -2179,16 +2179,25 @@ ${bgInstructionKo}
 ${textPolicyKo}
 
 [제외 조건]
-${textExclusionKo} 워터마크, 격자선, 셀 경계선, 구별선, 테두리선, 전체 프레임, 크롭 마크, 바운딩 박스, 한 셀 안의 캐릭터 중복, 팔다리 누락/추가, 반신·흉상 컷, 실사 느낌, 얼굴 왜곡, 15개 셀 간 얼굴·체형·의상 불일치 절대 금지.`;
+${textExclusionKo} 워터마크, 격자선, 셀 경계선, 구별선, 테두리선, 전체 프레임, 크롭 마크, 바운딩 박스, 한 셀 안의 캐릭터 중복, 팔다리 누락/추가, 반신·흉상 컷, 사진 텍스처/실사 조각 잔존, 얼굴과 몸통 간 화풍 불일치, 실사 느낌, 얼굴 왜곡, 15개 셀 간 얼굴·체형·의상 불일치 절대 금지.`;
     }
 
     // English Fallback Version
-    const referenceInstruction = `${characterSource === 'photo' ? `Photo reference style: ${getPhotoModeLabel('en')}. ` : ''}${getReferenceImageInstruction('en')}`;
+    const referenceInstruction = characterSource === 'photo'
+      ? `Use the attached photo only to reference the subject's facial proportions, features (eye size and shape, nose, lips, jawline), hairstyle, and skin tone. The character should be recognizable as based on this person, but the entire character — including the face — must be fully re-illustrated from scratch as original artwork. Do not retain, copy, or composite any actual pixels, photographic texture, lighting, or reflections from the source photo. The face must render in the exact same flat-vector, cel-shaded illustration style as the body — no seam or stylistic mismatch between face and body.`
+      : `Preserve the same character identity and key visual features strictly across all cells.`;
+
     const geminiProportions = characterSource === 'photo' ? {
-      exact: 'Caricature-style 2D sticker that realistically reproduces the subject\'s actual face proportions, facial structure, eye shape, nose, lips, jawline, hairstyle, and skin tone so the person is immediately recognizable. Clean 2D sticker outlines and coloring.',
-      features: 'Stylish 2D character avatar sticker designed around signature points only (hairstyle, glasses if any, outfit, body type, overall vibe). Do NOT attempt to reproduce the subject\'s actual face — use a fresh generic cute face instead.',
-      characterize: 'Adorable 2.5-head Chibi SD manga/anime mascot proportion with a big round head, huge sparkling expressive eyes, chubby cheeks, and cute sticker styling. Only loosely inspired by the reference photo\'s general impression.',
+      exact: "Caricature-style 2D sticker that realistically reproduces the subject's actual face proportions and features as a fully re-illustrated 2D artwork matching the body style.",
+      features: "Stylish 2D character avatar sticker designed around signature points only (hairstyle, glasses if any, outfit, body type, overall vibe). Do NOT attempt to reproduce the subject's actual face — use a fresh generic cute face instead.",
+      characterize: "Adorable 2.5-head Chibi SD manga/anime mascot proportion with a big round head, huge sparkling expressive eyes, chubby cheeks, and cute sticker styling. Only loosely inspired by the reference photo's general impression.",
     }[photoReferenceMode] : 'Adorable 2.5-head Chibi SD manga/anime mascot proportion with a big round head, huge sparkling expressive eyes, chubby cheeks, and cute sticker styling.';
+
+    const bgInstructionEn = {
+      transparent: 'Generate with a true alpha-transparent background. Do not draw a checkerboard pattern or white background to simulate transparency. Do not leave any square or rectangular fragment of the original photo pasted onto the character, especially the face — every region of every character must be uniformly illustrated.',
+      solid: 'Generate with a clean solid background color with strong contrast against the character.',
+      chroma: 'Generate with a bright green #00FF00 chroma-key background for easy background removal.',
+    }[geminiBackgroundMode] || 'Generate with a true alpha-transparent background.';
 
     if (generationMode === 'individual' || hasPhraseOverride) {
       const textPolicy = geminiTextMode === 'text'
@@ -2201,12 +2210,14 @@ ${textExclusionKo} 워터마크, 격자선, 셀 경계선, 구별선, 테두리�
       return `[GOAL]
 Create a high-end 2D messenger sticker (KakaoTalk / LINE style) featuring a consistent character.
 
-[CHARACTER LOCK — VISUAL REFERENCE & IDENTITY]
+[REFERENCE IMAGE USAGE]
 ${referenceInstruction}
+
+[CHARACTER LOCK — apply identically to all 15]
 - Subject: ${character.subject}
-- Appearance & Features: ${character.appearance}
-- Outfit (fixed): ${character.outfit}
-- Art Style & Proportions: ${character.artStyle}. ${geminiProportions} Clean crisp vector linework, soft cell shading, and vivid flat colors.
+- Appearance: ${character.appearance}
+- Outfit: ${character.outfit}
+- Art Style & Proportions: ${character.artStyle}. ${geminiProportions} Cute, approachable, high-quality 2D sticker style, clean vector outlines, soft cell shading, harmonious colors. Absolutely no photographic texture, real skin texture, or photo-realistic lighting/reflections anywhere — the face must be rendered with the exact same illustration technique as the rest of the body. Every character must be full-body, head-to-toe, uncropped.
 
 [SCENE, POSE & EXPRESSION]
 - Target Phrase / Mood: "${targetPhrase}"
@@ -2215,7 +2226,7 @@ ${referenceInstruction}
 - Supporting Props & Sparkle Effects: ${character.props}, ${character.effects}, cute little accents.
 
 [CANVAS & COMPOSITION]
-Square 1:1 canvas. Exactly one complete centered full-body character visible from head to toe with 15% margin on all sides. ${getGeminiBackgroundInstruction()}
+Square 1:1 canvas. Exactly one complete centered full-body character visible from head to toe with 15% margin on all sides. ${bgInstructionEn}
 
 [CONSISTENCY RULE]
 If a previous sticker sheet or character image exists in this chat, preserve its face, body proportions, colors, outfit, and art style identically. Change only the expression, pose, supporting prop, and effect required for this scene.
@@ -2223,8 +2234,8 @@ If a previous sticker sheet or character image exists in this chat, preserve its
 [TEXT POLICY]
 ${textPolicy}
 
-[STRICT NEGATIVE]
-${textExclusion} No watermark, outer frame, duplicate character, extra limbs, cropped body, half-body bust shot, dull background, photorealism, or facial distortion.`;
+[NEGATIVE PROMPT]
+${textExclusion} No watermark, outer frame, duplicate character, extra limbs, cropped body, half-body bust shot, dull background, photorealism, facial distortion, no leftover photographic texture or photo fragments, no stylistic mismatch between face and body.`;
     }
 
     const panelPlan = emoticons.map((phrase, index) => {
@@ -2249,7 +2260,7 @@ ${referenceInstruction}
 - Subject: ${character.subject}
 - Appearance: ${character.appearance}
 - Outfit: ${character.outfit}
-- Art Style: ${character.artStyle}. ${geminiProportions} Cute, approachable, high-quality 2D sticker style, clean vector outlines, soft cell shading, harmonious colors. Maintain the exact same linework crispness, texture, color saturation, and character proportions across all 15 cells — no quality degradation toward the edges or bottom rows. Every character must be full-body, head-to-toe, uncropped.
+- Art Style: ${character.artStyle}. ${geminiProportions} Cute, approachable, high-quality 2D sticker style, clean vector outlines, soft cell shading, harmonious colors. Absolutely no photographic texture, real skin texture, or photo-realistic lighting/reflections anywhere — the face must be rendered with the exact same illustration technique as the rest of the body. Maintain the exact same linework crispness, texture, color saturation, and character proportions across all 15 cells — no quality degradation toward the edges or bottom rows. Every character must be full-body, head-to-toe, uncropped.
 
 [15 POSES]
 For each phrase, create one unique, instantly readable facial expression and one dynamic full-body pose (e.g. sitting, crouching, jumping, holding a prop, winking, eating, cheering). Do not repeat poses. No required props — use only the minimal prop or effect needed to convey the emotion.
@@ -2260,7 +2271,7 @@ ${panelPlan}
 Landscape canvas, arranged in exactly 5 columns × 3 rows. Each of the 15 equal-sized cells contains one complete full-body character with generous spacing between cells. Characters, props, and effects must not overlap into neighboring cells. Absolutely do NOT draw grid lines, cell borders, dividing lines, outer frame, or cell numbers.
 
 [BACKGROUND]
-${getGeminiBackgroundInstruction()}
+${bgInstructionEn}
 
 [CONSISTENCY]
 All 15 cells must preserve the same face, body proportions, colors, outfit, and art style. Only the expression, pose, supporting prop, and effect required by each phrase should change.
@@ -2269,7 +2280,7 @@ All 15 cells must preserve the same face, body proportions, colors, outfit, and 
 ${textPolicy}
 
 [NEGATIVE PROMPT]
-${textExclusion} No watermark, no grid lines, no cell borders, no dividing lines, no outer frame, no crop marks, no bounding boxes, no duplicate character within a single cell, no missing or extra limbs, no half-body/bust-only shots, no photorealism, no facial distortion, no inconsistent face/body/outfit across the 15 cells.`;
+${textExclusion} No watermark, no grid lines, no cell borders, no dividing lines, no outer frame, no crop marks, no bounding boxes, no duplicate character within a single cell, no missing or extra limbs, no half-body/bust-only shots, no photorealism, no facial distortion, no leftover photographic texture or photo fragments, no stylistic mismatch between face and body, no inconsistent face/body/outfit across the 15 cells.`;
   };
 
   const getGrokBackgroundInstruction = () => {
