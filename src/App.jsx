@@ -2509,9 +2509,9 @@ ${textExclusion} No watermark, no grid lines, no cell borders, no table dividers
     const isKorean = lang === 'ko';
 
     const modelTag = {
-      gpt: isKorean ? '[ChatGPT / DALL-E 3 전용 보정]' : '[ChatGPT / DALL-E 3 Repair]',
-      gemini: isKorean ? '[Gemini / Imagen 3 전용 보정]' : '[Gemini / Imagen 3 Repair]',
-      grok: isKorean ? '[Grok / Flux.1 전용 보정]' : '[Grok / Flux.1 Repair]',
+      gpt: isKorean ? '[대상 AI: ChatGPT (OpenAI / DALL-E 3 엔진)]' : '[TARGET AI: ChatGPT (OpenAI / DALL-E 3 Engine)]',
+      gemini: isKorean ? '[대상 AI: Gemini (Google / Imagen 3 엔진)]' : '[TARGET AI: Gemini (Google / Imagen 3 Engine)]',
+      grok: isKorean ? '[대상 AI: Grok (xAI / Flux.1 엔진)]' : '[TARGET AI: Grok (xAI / Flux.1 Engine)]',
     }[model] || '';
 
     if (isKorean) {
