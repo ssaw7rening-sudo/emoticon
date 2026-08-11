@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Shuffle, CheckCircle2, Bot, Sparkles, HelpCircle, Globe, Trash2 } from 'lucide-react';
+import { Shuffle, CheckCircle2, Bot, Sparkles, Zap } from 'lucide-react';
 
 const THEMES_JA = {
   '日常/挨拶 ①': ['草www', 'ありがとう！', '今日も頑張ろう', 'いいね！', '感謝！', '大すき', '神！', 'やったー', 'ごめんね', 'お疲れ様', 'おめでとう', 'ヤバい', 'マジか', '感動！', 'おやすみ'],
@@ -176,9 +176,11 @@ const I18N = {
     randomMix: '랜덤',
     gptCopy: 'Copy for ChatGPT',
     geminiCopy: 'Copy for Gemini',
+    grokCopy: 'Copy for Grok',
     previewTitle: '프롬프트 미리보기',
     forGpt: 'ChatGPT용',
     forGemini: 'Gemini용',
+    forGrok: 'Grok용',
     guideTitle: '활용 가이드',
     guide1Q: '🤔 AI 이모티콘 프롬프트 메이커란?',
     guide1A: '캐릭터와 문구는 떠오르는데 AI에게 어떻게 요청해야 할지 막막하셨나요?\n원하는 캐릭터 특징과 상황을 고르면\nChatGPT와 Gemini에서 바로 활용할 수 있는 이모티콘 제작 프롬프트를\n자동으로 조합해 주는 웹 유틸리티입니다.',
@@ -220,6 +222,15 @@ const I18N = {
     geminiRepairCrop: '몸이 잘렸어요',
     geminiRepairText: '문구가 틀렸어요',
     geminiWorkflowTip: 'Gemini 팁: 시트 전체는 캐릭터와 구도 초안용으로 사용하고, 최종 이미지는 15종 개별 분할로 한 장씩 만드는 것을 권장합니다.',
+    grokTextMode: 'Grok 이미지 글자',
+    grokNoText: '글자 없이',
+    grokIncludeText: '문구 포함',
+    grokBackgroundMode: 'Grok 배경',
+    grokTransparent: '투명 배경',
+    grokSolid: '단색 배경',
+    grokChroma: '크로마키',
+    grokWorkflowTip: 'Grok 팁: Grok은 Flux.1 엔진 기반으로 자연어 지시 및 스티커 질감 표현에 매우 우수합니다.',
+    grokRepairTitle: 'Grok 이미지 결과 보정',
     emptyPhraseError: '비어 있는 문구가 있습니다. 모든 문구를 입력해 주세요.',
     duplicatePhraseError: '중복된 문구가 있습니다. 서로 다른 문구로 수정해 주세요.',
     guide3Q: '✂️ 배경(누끼)은 어떻게 쉽게 지우나요?',
@@ -247,9 +258,11 @@ const I18N = {
     randomMix: 'Random Mix',
     gptCopy: 'Copy for ChatGPT',
     geminiCopy: 'Copy for Gemini',
+    grokCopy: 'Copy for Grok',
     previewTitle: 'Prompt Preview',
     forGpt: 'For ChatGPT',
     forGemini: 'For Gemini',
+    forGrok: 'For Grok',
     guideTitle: 'User Guide',
     guide1Q: '🤔 What is AI Emoji Prompt Maker?',
     guide1A: 'Have a sticker idea but are not sure how to describe it to AI?\nChoose a character concept and phrases, and this utility will automatically build ready-to-use sticker prompts for ChatGPT and Gemini.',
@@ -291,6 +304,15 @@ const I18N = {
     geminiRepairCrop: 'Body was cropped',
     geminiRepairText: 'Phrase is wrong',
     geminiWorkflowTip: 'Gemini tip: Use the full sheet as a character and layout draft, then generate final images one at a time with Batch Split.',
+    grokTextMode: 'Grok image text',
+    grokNoText: 'No text',
+    grokIncludeText: 'Include text',
+    grokBackgroundMode: 'Grok background',
+    grokTransparent: 'Transparent',
+    grokSolid: 'Solid color',
+    grokChroma: 'Chroma key',
+    grokWorkflowTip: 'Grok tip: Grok powered by Flux.1 excels at dense natural language and crisp sticker textures.',
+    grokRepairTitle: 'Grok image repair prompts',
     emptyPhraseError: 'One or more phrases are empty. Please fill in every phrase.',
     duplicatePhraseError: 'Duplicate phrases found. Please use a different phrase for each sticker.',
     guide3Q: '✂️ How do I remove the background?',
@@ -318,9 +340,11 @@ const I18N = {
     randomMix: 'ランダム',
     gptCopy: 'Copy for ChatGPT',
     geminiCopy: 'Copy for Gemini',
+    grokCopy: 'Copy for Grok',
     previewTitle: 'プロンプトプレビュー',
     forGpt: 'ChatGPT用',
     forGemini: 'Gemini用',
+    forGrok: 'Grok用',
     guideTitle: '使い方ガイド',
     guide1Q: '🤔 AIスタンププロンプトメーカーとは？',
     guide1A: 'スタンプのアイデアはあるけれど、AIへの指示出しが 難しいとお悩みですか？\n好きなキャラクターの特徴とフレーズを選ぶだけで、ChatGPTやGeminiで使えるスタンプ制作プロンプトを自動作成します。',
@@ -362,6 +386,15 @@ const I18N = {
     geminiRepairCrop: '体が切れた',
     geminiRepairText: '文字が違う',
     geminiWorkflowTip: 'Geminiヒント: シート全体は構図の試作として使い、最終画像は15종個別分割で1枚ずつ生成することをおすすめします。',
+    grokTextMode: 'Grok画像文字',
+    grokNoText: '文字なし',
+    grokIncludeText: '文字あり',
+    grokBackgroundMode: 'Grok背景',
+    grokTransparent: '透過背景',
+    grokSolid: '単色背景',
+    grokChroma: 'クロマキー',
+    grokWorkflowTip: 'Grokヒント: GrokはFlux.1エンジンを搭載し、自然なテキストとステッカーの質感を正確に表現します。',
+    grokRepairTitle: 'Grok画像補正',
     emptyPhraseError: '空のフレーズがあります。すべてのフレーズを入力してください。',
     duplicatePhraseError: '重複したフレーズがあります。それぞれ異なるフレーズを入力してください。',
     guide3Q: '✂️ 背景（透過）の簡単な消し方は？',
@@ -389,9 +422,11 @@ const I18N = {
     randomMix: '随机混合',
     gptCopy: 'Copy for ChatGPT',
     geminiCopy: 'Copy for Gemini',
+    grokCopy: 'Copy for Grok',
     previewTitle: '提示词预览',
     forGpt: 'ChatGPT专用',
     forGemini: 'Gemini专用',
+    forGrok: 'Grok专用',
     guideTitle: '使用指南',
     guide1Q: '🤔 什么是AI表情包提示词生成器？',
     guide1A: '想制作表情包却不知道如何给AI写提示词？选择你喜欢的角色特征和常用短语，本工具将自动为你生成适用于ChatGPT和Gemini的表情包提示词。',
@@ -433,6 +468,15 @@ const I18N = {
     geminiRepairCrop: '身体被裁剪了',
     geminiRepairText: '文字出错了',
     geminiWorkflowTip: 'Gemini提示：建议将整页作为构图草稿，最终成品使用单张拆分模式逐一生成。',
+    grokTextMode: 'Grok文字模式',
+    grokNoText: '纯图无字',
+    grokIncludeText: '包含文字',
+    grokBackgroundMode: 'Grok背景',
+    grokTransparent: '透明背景',
+    grokSolid: '单色背景',
+    grokChroma: '抠图绿幕',
+    grokWorkflowTip: 'Grok提示：Grok基于Flux.1引擎，擅长精准的自然语言指令与矢量贴纸质感。',
+    grokRepairTitle: 'Grok结果修正提示词',
     emptyPhraseError: '存在空白短语，请填写所有短语。',
     duplicatePhraseError: '存在重复短语，请修改为不同的短语。',
     guide3Q: '✂️ 如何轻松去除背景（抠图）？',
@@ -1500,6 +1544,8 @@ function App() {
   const [gptBackgroundMode, setGptBackgroundMode] = useState('transparent');
   const [geminiTextMode, setGeminiTextMode] = useState('visual');
   const [geminiBackgroundMode, setGeminiBackgroundMode] = useState('transparent');
+  const [grokTextMode, setGrokTextMode] = useState('visual');
+  const [grokBackgroundMode, setGrokBackgroundMode] = useState('transparent');
 
   const changeLanguage = (newLang) => {
     if (newLang === lang) return;
@@ -2054,6 +2100,132 @@ ${textPolicy}
 ${textExclusion} No text, no letters, no numbers, no speech bubbles, no grid lines, no cell borders, no dividers, no crop marks, no outer frame, no watermark, no duplicate character within one cell, no missing/extra limbs, no half-body/bust shots, no photorealism, no facial distortion, inconsistent face/body/outfit across the 15 cells is not allowed.`;
   };
 
+  const getGrokBackgroundInstruction = () => {
+    const instructions = {
+      transparent: 'Clean solid white background with a subtle crisp sticker die-cut white outline.',
+      solid: 'One clean solid background color with strong contrast against the character. No gradient, texture, or background objects.',
+      chroma: 'Solid bright green #00FF00 chroma-key background for easy background removal. No green spill on the character outline.',
+    };
+    return instructions[grokBackgroundMode] || instructions.transparent;
+  };
+
+  const getGrokCharacterDetails = () => {
+    const { subjects, appearances, personalities, outfits, props, effects, additionalDescription } = getSelectedCharacterRoles();
+    const subjectParts = [
+      ...(characterSource === 'photo' ? ['the subject in the attached reference photo'] : []),
+      ...subjects,
+      ...(additionalDescription ? [additionalDescription] : []),
+    ];
+
+    const photoAppearanceEn = {
+      exact: 'realistically reproduce actual face proportions, facial structure, eye shape, nose, lips, jawline, hairstyle, and skin tone matching reference photo so the person is immediately recognizable; do not add unrequested accessories',
+      features: 'do NOT match actual face; instead extract signature points (hairstyle, glasses if any, outfit, body type, vibe) and design a stylish new 2D character avatar; do not add unrequested accessories',
+      characterize: 'use general impression as loose reference and transform into an ultra-cute 2.5-head SD/Chibi mascot with big round head, chubby body, and huge sparkling eyes',
+    }[photoReferenceMode];
+
+    return {
+      subject: subjectParts.join(', ') || 'a cute original character',
+      appearance: appearances.join(', ') || (characterSource === 'photo'
+        ? photoAppearanceEn
+        : 'simple, recognizable silhouette kept unchanged'),
+      personality: personalities.join(', ') || 'friendly and expressive',
+      outfit: outfits.join(', ') || 'no fixed outfit specified; once chosen, keep it unchanged',
+      props: props.join(', ') || 'none required',
+      effects: effects.join(', ') || 'use only a minimal effect when it clarifies the emotion',
+      artStyle: getGeminiStyleTags(),
+    };
+  };
+
+  const generateGrokPrompt = (phraseOverride = null) => {
+    const character = getGrokCharacterDetails();
+    const hasPhraseOverride = phraseOverride !== null;
+    const targetPhrase = generationMode === 'individual'
+      ? getSelectedPhrase()
+      : (phraseOverride || '').trim();
+    const referenceInstruction = `${characterSource === 'photo' ? `Photo reference style: ${getPhotoModeLabel('en')}. ` : ''}${getReferenceImageInstruction('en')}`;
+
+    const grokProportions = characterSource === 'photo' ? {
+      exact: 'Caricature-style 2D sticker that realistically reproduces the subject\'s actual face proportions, facial structure, eye shape, nose, lips, jawline, hairstyle, and skin tone so the person is immediately recognizable. Clean 2D sticker outlines and coloring.',
+      features: 'Stylish 2D character avatar sticker designed around signature points only (hairstyle, glasses if any, outfit, body type, overall vibe). Do NOT attempt to reproduce the subject\'s actual face — use a fresh generic cute face instead.',
+      characterize: 'Adorable 2.5-head Chibi SD manga/anime mascot proportion with a big round head, huge sparkling expressive eyes, chubby cheeks, and cute sticker styling. Only loosely inspired by the reference photo\'s general impression.',
+    }[photoReferenceMode] : 'Adorable 2.5-head Chibi SD manga/anime mascot proportion with a big round head, huge sparkling expressive eyes, chubby cheeks, and cute sticker styling.';
+
+    if (generationMode === 'individual' || hasPhraseOverride) {
+      const textPolicy = grokTextMode === 'text'
+        ? `Render the exact Korean text "${targetPhrase}" once in playful, hand-drawn calligraphy lettering beside the character. No parentheses (), brackets [], or rectangular text boxes.`
+        : `Do not render text, letters, or numbers. Use "${targetPhrase}" only as visual context for expression and pose.`;
+      const textExclusion = grokTextMode === 'text'
+        ? 'No extra words, altered spelling, random letters, numbers, parentheses, or text boxes.'
+        : 'No text, letters, numbers, typography, or meaningless symbols.';
+
+      return `[GOAL]
+Create a high-end 2D messenger sticker (KakaoTalk / LINE style) for Grok (Flux.1 engine) featuring a consistent character.
+
+[CHARACTER LOCK — VISUAL REFERENCE & IDENTITY]
+${referenceInstruction}
+- Subject: ${character.subject}
+- Appearance & Features: ${character.appearance}
+- Outfit (fixed): ${character.outfit}
+- Art Style & Proportions: ${character.artStyle}. ${grokProportions} Clean crisp vector linework, soft cell shading, and vivid flat colors.
+
+[SCENE, POSE & EXPRESSION]
+- Target Phrase / Mood: "${targetPhrase}"
+- Facial Expression: Highly expressive, unmistakable emotion matching "${targetPhrase}".
+- Body Pose: Dynamic, energetic full-body posture (e.g. sitting, crouching, jumping, holding props, or waving). Every character must be full-body, head-to-toe, uncropped.
+- Supporting Props & Sparkle Effects: ${character.props}, ${character.effects}, cute little accents.
+
+[CANVAS & COMPOSITION]
+Square 1:1 canvas. Exactly one complete centered full-body character visible from head to toe with 15% margin on all sides. ${getGrokBackgroundInstruction()}
+
+[CONSISTENCY RULE]
+If a previous sticker sheet or character image exists in this chat, preserve its face, body proportions, colors, outfit, and art style identically. Change only the expression, pose, supporting prop, and effect required for this scene.
+
+[TEXT POLICY]
+${textPolicy}
+
+[STRICT NEGATIVE]
+${textExclusion} No watermark, outer frame, duplicate character, extra limbs, cropped body, half-body bust shot, dull background, photorealism, or facial distortion.`;
+    }
+
+    const panelPlan = emoticons.map((phrase, index) => `${index + 1}. "${phrase.trim()}"`).join('\n');
+    const textPolicy = grokTextMode === 'text'
+      ? 'Render each quoted Korean phrase naturally beside or above its corresponding character in playful hand-drawn calligraphy. Do NOT use parentheses (), brackets [], quotation marks, or rectangular text boxes.'
+      : 'Korean phrase is context for expression and pose only, NEVER render as text, letters, or numbers.';
+    const textExclusion = grokTextMode === 'text'
+      ? 'No extra words, altered spelling, random letters, sticker numbers, parentheses, quotation marks, or text boxes.'
+      : 'No text, no letters, no numbers, no speech bubbles, no sticker labels, or meaningless symbols.';
+
+    return `[GOAL]
+Create ONE single image: a 15-cell KakaoTalk/LINE sticker sheet featuring one consistent character, arranged in a 3-row × 5-column layout with generous white space between characters, no grid lines, no borders, no numbers.
+
+[CHARACTER LOCK — apply identically to all 15]
+${referenceInstruction}
+- Subject: ${character.subject}
+- Appearance & Features: ${character.appearance}
+- Outfit (fixed for all 15): ${character.outfit}
+- Art Style & Proportions: ${character.artStyle}. ${grokProportions} Clean 2D sticker illustration, crisp vector linework, soft cell shading, vivid flat colors. No added accessories unless specified.
+
+[QUALITY CONSISTENCY RULE]
+Render every one of the 15 characters at the SAME level of facial detail, linework crispness, and lighting — do not let quality degrade toward the edges or bottom of the sheet. Every character must be full-body, head-to-toe, uncropped.
+
+[15 POSES]
+For each sticker, infer a unique, highly expressive facial emotion and a DYNAMIC full-body pose (e.g. sitting, crouching, jumping, holding props, winking, eating, or cheering). Every sticker MUST show a complete full-body character visible head-to-toe:
+${panelPlan}
+Supporting props & sparkle effects: ${character.props}, ${character.effects}, minimal cute accents.
+
+[CANVAS & LAYOUT]
+Arrange all 15 full-body stickers floating freely with generous spacing in a 3-row × 5-column grid. Each character has a subtle crisp sticker die-cut white outline. ${getGrokBackgroundInstruction()} Absolutely NO guide lines, NO grid lines, NO cell borders, NO table lines, NO dividing lines, NO crop marks, NO bounding boxes, NO sticker numbers.
+
+[CONSISTENCY]
+All 15 stickers must preserve the same face, body proportions, colors, outfit, and art style. Change only the expression, pose, supporting prop, and effect required by each phrase.
+
+[TEXT POLICY]
+${textPolicy}
+
+[STRICT NEGATIVE]
+${textExclusion} No text, no letters, no numbers, no speech bubbles, no grid lines, no cell borders, no dividers, no crop marks, no outer frame, no watermark, no duplicate character within one cell, no missing/extra limbs, no half-body/bust shots, no photorealism, no facial distortion, inconsistent face/body/outfit across the 15 cells is not allowed.`;
+  };
+
   const getRepairPrompt = (repairType, textMode) => {
     const targetPhrase = getSelectedPhrase();
     const repairPrompts = {
@@ -2074,9 +2246,9 @@ ${textExclusion} No text, no letters, no numbers, no speech bubbles, no grid lin
     const phraseOverride = generationMode === 'batch' ? getSelectedPhrase() : null;
     const error = getPromptValidationError(phraseOverride);
     if (error) return error;
-    return previewMode === 'gpt'
-      ? generateGptPrompt(phraseOverride)
-      : generateGeminiPrompt(phraseOverride);
+    if (previewMode === 'gpt') return generateGptPrompt(phraseOverride);
+    if (previewMode === 'gemini') return generateGeminiPrompt(phraseOverride);
+    return generateGrokPrompt(phraseOverride);
   };
 
   const copyToClipboard = (type, selectedPhraseOverride = null, copyKey = type) => {
@@ -2084,7 +2256,9 @@ ${textExclusion} No text, no letters, no numbers, no speech bubbles, no grid lin
     if (getPromptValidationError(phraseOverride)) return;
     const textToCopy = type === 'gpt'
       ? generateGptPrompt(phraseOverride)
-      : generateGeminiPrompt(phraseOverride);
+      : type === 'gemini'
+        ? generateGeminiPrompt(phraseOverride)
+        : generateGrokPrompt(phraseOverride);
     navigator.clipboard.writeText(textToCopy);
     setCopiedType(copyKey);
     setTimeout(() => setCopiedType(null), 2500);
@@ -2444,7 +2618,7 @@ ${textExclusion} No text, no letters, no numbers, no speech bubbles, no grid lin
             <div className="flex w-full sm:w-auto bg-mint-soft rounded-full p-1 border border-mint-border shadow-sm">
               <button 
                 onClick={() => setPreviewMode('gpt')}
-                className={`interactive-control flex-1 sm:flex-none min-h-11 px-4 py-1.5 text-[14px] font-bold rounded-full ${
+                className={`interactive-control flex-1 sm:flex-none min-h-11 px-3 sm:px-4 py-1.5 text-[13px] sm:text-[14px] font-bold rounded-full ${
                   previewMode === 'gpt' 
                   ? 'bg-mint text-mint-strong shadow-sm border border-mint-border' 
                   : 'text-mint-strong hover:bg-mint-hover'
@@ -2454,13 +2628,23 @@ ${textExclusion} No text, no letters, no numbers, no speech bubbles, no grid lin
               </button>
               <button 
                 onClick={() => setPreviewMode('gemini')}
-                className={`interactive-control flex-1 sm:flex-none min-h-11 px-4 py-1.5 text-[14px] font-bold rounded-full ${
+                className={`interactive-control flex-1 sm:flex-none min-h-11 px-3 sm:px-4 py-1.5 text-[13px] sm:text-[14px] font-bold rounded-full ${
                   previewMode === 'gemini' 
                   ? 'bg-mint text-mint-strong shadow-sm border border-mint-border' 
                   : 'text-mint-strong hover:bg-mint-hover'
                 }`}
               >
                 {t.forGemini}
+              </button>
+              <button 
+                onClick={() => setPreviewMode('grok')}
+                className={`interactive-control flex-1 sm:flex-none min-h-11 px-3 sm:px-4 py-1.5 text-[13px] sm:text-[14px] font-bold rounded-full ${
+                  previewMode === 'grok' 
+                  ? 'bg-mint text-mint-strong shadow-sm border border-mint-border' 
+                  : 'text-mint-strong hover:bg-mint-hover'
+                }`}
+              >
+                {t.forGrok}
               </button>
             </div>
           </div>
@@ -2612,6 +2796,80 @@ ${textExclusion} No text, no letters, no numbers, no speech bubbles, no grid lin
               <p className="text-[13px] leading-relaxed text-[#795B16]">💡 {t.geminiFinalTip}</p>
             </div>
           )}
+          {previewMode === 'grok' && (
+            <div className="rounded-[8px] border border-[#E8C66A] bg-[#FFF8E8] p-3 flex flex-col gap-3">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                <span className="text-[13px] font-bold text-[#795B16]">{t.grokTextMode}</span>
+                <div className="grid grid-cols-2 gap-1.5 sm:gap-2 w-full sm:w-auto" role="group" aria-label={t.grokTextMode}>
+                  {[
+                    ['text', t.grokIncludeText],
+                    ['visual', t.grokNoText],
+                  ].map(([mode, label]) => (
+                    <button
+                      key={mode}
+                      type="button"
+                      aria-pressed={grokTextMode === mode}
+                      onClick={() => setGrokTextMode(mode)}
+                      className={`interactive-control min-h-10 rounded-[8px] border px-2 sm:px-3 py-2 text-[12px] sm:text-[13px] font-bold text-center focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E8C66A] ${
+                        grokTextMode === mode
+                          ? 'bg-[#FFE8B5] text-[#5A461B] border-[#E8C66A] shadow-sm'
+                          : 'bg-white text-[#795B16] border-[#E9DFC5] hover:bg-[#FFF3D8]'
+                      }`}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                <span className="text-[13px] font-bold text-[#795B16]">{t.grokBackgroundMode}</span>
+                <div className="grid grid-cols-3 gap-1 sm:gap-2 w-full sm:w-auto" role="group" aria-label={t.grokBackgroundMode}>
+                  {[
+                    ['transparent', t.grokTransparent],
+                    ['solid', t.grokSolid],
+                    ['chroma', t.grokChroma],
+                  ].map(([mode, label]) => (
+                    <button
+                      key={mode}
+                      type="button"
+                      aria-pressed={grokBackgroundMode === mode}
+                      onClick={() => setGrokBackgroundMode(mode)}
+                      className={`interactive-control min-h-10 rounded-[8px] border px-1 sm:px-2 py-2 text-[11px] xs:text-[12px] sm:text-[13px] font-bold text-center text-ellipsis overflow-hidden whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E8C66A] ${
+                        grokBackgroundMode === mode
+                          ? 'bg-[#FFE8B5] text-[#5A461B] border-[#E8C66A] shadow-sm'
+                          : 'bg-white text-[#795B16] border-[#E9DFC5] hover:bg-[#FFF3D8]'
+                      }`}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="flex flex-col gap-2 border-t border-[#E9DFC5] pt-3">
+                <div className="flex flex-col gap-0.5">
+                  <span className="text-[13px] font-bold text-[#795B16]">{t.grokRepairTitle}</span>
+                  <span className="text-[12px] font-medium text-[#8A661C] leading-snug">{t.repairHelp}</span>
+                </div>
+                <div className="grid grid-cols-1 min-[430px]:grid-cols-3 gap-2">
+                  {[
+                    ['identity', t.geminiRepairIdentity],
+                    ['crop', t.geminiRepairCrop],
+                    ...(grokTextMode === 'text' ? [['text', t.geminiRepairText]] : []),
+                  ].map(([repairType, label]) => (
+                    <button
+                      key={repairType}
+                      type="button"
+                      onClick={() => copyRepairPrompt(repairType, grokTextMode, 'grok-repair')}
+                      className="interactive-control min-h-10 rounded-[8px] border border-[#E9DFC5] bg-white px-3 py-2 text-[13px] font-bold text-[#795B16] hover:bg-[#FFF3D8] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E8C66A]"
+                    >
+                      {copiedType === `grok-repair-${repairType}` ? '✓ ' : ''}{label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <p className="text-[13px] leading-relaxed text-[#795B16]">💡 {t.grokWorkflowTip}</p>
+            </div>
+          )}
           {generationMode !== 'sheet' && (
             <div className="flex flex-wrap items-center gap-2 px-1" aria-live="polite">
               <span className="text-[13px] font-bold text-on-surface-variant">{t.selectedPhrase}</span>
@@ -2631,13 +2889,13 @@ ${textExclusion} No text, no letters, no numbers, no speech bubbles, no grid lin
         </section>
 
         {/* Actions */}
-        <section className="flex flex-col sm:flex-row gap-4 mt-sm pb-xl">
+        <section className="flex flex-col sm:flex-row gap-3 sm:gap-4 mt-sm pb-xl">
           <button 
             onClick={() => copyToClipboard('gpt')}
             disabled={Boolean(promptValidationError)}
             className="interactive-control w-full min-h-[64px] flex-none sm:flex-1 rounded-md bg-[#FFE8B5] text-[#5A461B] border border-[#E8C66A] font-headline-sm flex items-center justify-center gap-2 hover:bg-[#FFDB80] shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E8C66A] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-[#FFE8B5]"
           >
-            {copiedType === 'gpt' ? <CheckCircle2 size={24} className="text-[#2D7D64]" /> : <Bot size={24} className="text-[#2D7D64]" />}
+            {copiedType === 'gpt' ? <CheckCircle2 size={22} className="text-[#2D7D64]" /> : <Bot size={22} className="text-[#2D7D64]" />}
             {t.gptCopy}
           </button>
           
@@ -2646,8 +2904,17 @@ ${textExclusion} No text, no letters, no numbers, no speech bubbles, no grid lin
             disabled={Boolean(visiblePromptValidationError)}
             className="interactive-control w-full min-h-[64px] flex-none sm:flex-1 rounded-md bg-[#FFE8B5] text-[#5A461B] border border-[#E8C66A] font-headline-sm flex items-center justify-center gap-2 hover:bg-[#FFDB80] shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E8C66A] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-[#FFE8B5]"
           >
-            {copiedType === 'gemini' ? <CheckCircle2 size={24} className="text-[#D97706]" /> : <Sparkles size={24} className="text-[#D97706]" />}
+            {copiedType === 'gemini' ? <CheckCircle2 size={22} className="text-[#D97706]" /> : <Sparkles size={22} className="text-[#D97706]" />}
             {t.geminiCopy}
+          </button>
+
+          <button 
+            onClick={() => copyToClipboard('grok')}
+            disabled={Boolean(visiblePromptValidationError)}
+            className="interactive-control w-full min-h-[64px] flex-none sm:flex-1 rounded-md bg-[#FFE8B5] text-[#5A461B] border border-[#E8C66A] font-headline-sm flex items-center justify-center gap-2 hover:bg-[#FFDB80] shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E8C66A] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-[#FFE8B5]"
+          >
+            {copiedType === 'grok' ? <CheckCircle2 size={22} className="text-[#9333EA]" /> : <Zap size={22} className="text-[#9333EA]" />}
+            {t.grokCopy}
           </button>
         </section>
         
