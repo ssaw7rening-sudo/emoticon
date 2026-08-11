@@ -1625,8 +1625,11 @@ function App() {
       ...CHARACTER_TAGS_KO['🖌️ 화풍'],
       ...CHARACTER_TAGS_EN['🖌️ Art Style'],
     ];
+    const selectedTagSet = new Set(
+      charManual.split(',').map(value => value.trim()).filter(Boolean)
+    );
     return artStyles
-      .filter(style => charManual.includes(style))
+      .filter(style => selectedTagSet.has(style))
       .sort((a, b) => charManual.lastIndexOf(a) - charManual.lastIndexOf(b))
       .at(-1) || '';
   };
@@ -1645,15 +1648,16 @@ function App() {
   const getSelectedCharacterRoles = () => {
     const koCategories = Object.values(CHARACTER_TAGS_KO);
     const enCategories = Object.values(CHARACTER_TAGS_EN);
+    const selectedTagSet = new Set(
+      charManual.split(',').map(value => value.trim()).filter(Boolean)
+    );
     const roleTags = index => [...koCategories[index], ...enCategories[index]];
     const findSelected = indexes => indexes
       .flatMap(index => roleTags(index))
-      .filter(tag => charManual.includes(tag));
+      .filter(tag => selectedTagSet.has(tag));
     const recognizedTags = new Set([...koCategories.flat(), ...enCategories.flat()]);
-    const additionalDescription = charManual
-      .split(',')
-      .map(value => value.trim())
-      .filter(value => value && !recognizedTags.has(value))
+    const additionalDescription = Array.from(selectedTagSet)
+      .filter(value => !recognizedTags.has(value))
       .join(', ');
     const subjects = findSelected([0, 1, 2, 3, 4, 5]);
     const appearances = findSelected([6]);
