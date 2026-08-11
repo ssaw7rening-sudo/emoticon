@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Shuffle, CheckCircle2, Bot, Sparkles, Zap } from 'lucide-react';
+import { Shuffle, CheckCircle2, Bot, Sparkles, Zap, Trash2 } from 'lucide-react';
 
 const THEMES_JA = {
   '日常/挨拶 ①': ['草www', 'ありがとう！', '今日も頑張ろう', 'いいね！', '感謝！', '大すき', '神！', 'やったー', 'ごめんね', 'お疲れ様', 'おめでとう', 'ヤバい', 'マジか', '感動！', 'おやすみ'],
