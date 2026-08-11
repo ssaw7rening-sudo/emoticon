@@ -1867,8 +1867,8 @@ function App() {
 
   const getGeminiBackgroundInstruction = () => {
     const instructions = {
-      transparent: 'Clean solid white background with a subtle crisp sticker die-cut white outline.',
-      solid: 'One clean solid background color with strong contrast against the character. No gradient, texture, or background objects.',
+      transparent: 'Clean solid pure white background with a crisp white sticker die-cut outline around each character. Absolutely DO NOT draw any gray-and-white checkerboard pattern, transparency grid tiles, or fake PNG checkerboard texture.',
+      solid: 'One clean solid background color with strong contrast against the character. No gradient, texture, or background objects. No checkerboard tiles.',
       chroma: 'Solid bright green #00FF00 chroma-key background for easy background removal. No green spill on the character outline.',
     };
     return instructions[geminiBackgroundMode] || instructions.transparent;
@@ -2093,7 +2093,7 @@ ${textExclusion} No grid lines, no cell division lines, no border lines between 
       }[photoReferenceMode] : '귀엽고 친근한 2.5등신 SD/Chibi 마스코트 비율.';
 
       const bgInstructionKo = {
-        transparent: '진짜 알파 투명도가 적용된 투명 배경으로 생성해주세요. 투명도를 흉내 낸 체크무늬나 흰색 바탕을 그리지 마세요. 캐릭터 영역(특히 얼굴)에 원본 사진 조각이나 사각형 형태로 사진이 그대로 얹히는 것을 절대 금지합니다. 모든 영역이 빠짐없이 동일한 일러스트 화풍이어야 합니다.',
+        transparent: '깨끗하고 순수한 단색 바탕 위에 각 캐릭터마다 선명한 흰색 스티커 외곽선(Die-cut outline)이 감싸진 스타일로 생성하세요. 투명도를 흉내 낸 회색·흰색 체크무늬(체커보드 격자, 모자이크 패턴, PNG 투명 그리드 타일)를 절대로 이미지에 그리지 마세요. 누끼(배경 제거)하기 가장 쉬운 매끄러운 단색 바탕이어야 합니다.',
         solid: '캐릭터와 대비되는 단색 배경으로 생성하세요. 캐릭터 영역에 원본 사진 조각이 합성되지 않게 하세요.',
         chroma: '배경 분리(누끼)용 선명한 연두색 #00FF00 크로마키 배경으로 생성하세요.',
       }[geminiBackgroundMode] || '진짜 알파 투명도가 적용된 투명 배경으로 생성해주세요.';
@@ -2194,7 +2194,7 @@ ${textExclusionKo} 워터마크, 격자선, 셀 경계선, 구별선, 테두리�
     }[photoReferenceMode] : 'Adorable 2.5-head Chibi SD manga/anime mascot proportion with a big round head, huge sparkling expressive eyes, chubby cheeks, and cute sticker styling.';
 
     const bgInstructionEn = {
-      transparent: 'Generate with a true alpha-transparent background. Do not draw a checkerboard pattern or white background to simulate transparency. Do not leave any square or rectangular fragment of the original photo pasted onto the character, especially the face — every region of every character must be uniformly illustrated.',
+      transparent: 'Clean, pure solid white background with a crisp white sticker die-cut outline around each character. Absolutely DO NOT draw any gray-and-white checkerboard pattern, transparency tiles, or fake PNG checkerboard background.',
       solid: 'Generate with a clean solid background color with strong contrast against the character.',
       chroma: 'Generate with a bright green #00FF00 chroma-key background for easy background removal.',
     }[geminiBackgroundMode] || 'Generate with a true alpha-transparent background.';
@@ -2235,7 +2235,7 @@ If a previous sticker sheet or character image exists in this chat, preserve its
 ${textPolicy}
 
 [NEGATIVE PROMPT]
-${textExclusion} No watermark, outer frame, duplicate character, extra limbs, cropped body, half-body bust shot, dull background, photorealism, facial distortion, no leftover photographic texture or photo fragments, no stylistic mismatch between face and body.`;
+${textExclusion} No watermark, outer frame, duplicate character, extra limbs, cropped body, half-body bust shot, dull background, photorealism, facial distortion, no leftover photographic texture or photo fragments, no gray-and-white checkerboard pattern, no transparency grid tiles, no fake PNG checkerboard background, no stylistic mismatch between face and body.`;
     }
 
     const panelPlan = emoticons.map((phrase, index) => {
@@ -2280,7 +2280,7 @@ All 15 cells must preserve the same face, body proportions, colors, outfit, and 
 ${textPolicy}
 
 [NEGATIVE PROMPT]
-${textExclusion} No watermark, no grid lines, no cell borders, no dividing lines, no outer frame, no crop marks, no bounding boxes, no duplicate character within a single cell, no missing or extra limbs, no half-body/bust-only shots, no photorealism, no facial distortion, no leftover photographic texture or photo fragments, no stylistic mismatch between face and body, no inconsistent face/body/outfit across the 15 cells.`;
+${textExclusion} No watermark, no grid lines, no cell borders, no dividing lines, no outer frame, no crop marks, no bounding boxes, no duplicate character within a single cell, no missing or extra limbs, no half-body/bust-only shots, no photorealism, no facial distortion, no leftover photographic texture or photo fragments, no gray-and-white checkerboard pattern, no transparency grid tiles, no fake PNG checkerboard background, no stylistic mismatch between face and body, no inconsistent face/body/outfit across the 15 cells.`;
   };
 
   const getGrokBackgroundInstruction = () => {
