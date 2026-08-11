@@ -251,7 +251,7 @@ const I18N = {
     photoExact: 'Match closely',
     photoFeatures: 'Keep key features',
     photoCharacterize: 'Cute character version',
-    photoAttachGuide: 'After copying the prompt, attach the reference photo in ChatGPT or Gemini as well.',
+    photoAttachGuide: 'After copying the prompt, attach the reference photo in the AI chat (ChatGPT, Gemini, or Grok) as well.',
     photoActive: 'Reference image enabled',
     phrases: 'Phrase Grid',
     themeSelect: 'Select Theme',
@@ -3213,12 +3213,12 @@ ${textExclusion} No watermark, no grid lines, no cell borders, no table dividers
             </strong>
             <span className="text-[13px] sm:text-[14.5px] leading-relaxed opacity-90 [word-break:break-word] block font-medium mb-3 sm:mb-4 pr-4 sm:pr-16 text-[#8C3D18]">
               {lang === 'ko' 
-                ? '이 프롬프트를 복사해서 AI(ChatGPT, Gemini)에 붙여넣을 때, 본인이나 우리 아이, 반려동물의 사진을 함께 첨부해 보세요. 대상을 똑닮은 완벽한 커스텀 이모티콘 시트가 만들어집니다!' 
+                ? '이 프롬프트를 복사해서 AI(ChatGPT, Gemini, Grok)에 붙여넣을 때, 본인이나 우리 아이, 반려동물의 사진을 함께 첨부해 보세요. 대상을 똑닮은 완벽한 커스텀 이모티콘 시트가 만들어집니다!' 
                 : lang === 'ja'
-                ? 'このプロンプトをコピーしてAI(ChatGPT, Gemini)に貼り付ける際、ご自身や子ども、ペットの写真も一緒に添付してみてください。そっくりなカスタムスタンプシートが作れます！'
+                ? 'このプロンプトをコピーしてAI(ChatGPT, Gemini, Grok)に貼り付ける際、ご自身や子ども、ペットの写真も一緒に添付してみてください。そっくりなカスタムスタンプシートが作れます！'
                 : lang === 'zh'
-                ? '将此提示词复制粘贴给AI (ChatGPT, Gemini) 时，可以同时发送您自己、孩子或宠物的照片。AI将完美还原特征，生成独一无二的专属表情包！'
-                : 'When pasting this prompt into AI (ChatGPT, Gemini), attach a photo of yourself, your child, or your pet. It will generate a custom emoji sheet!'}
+                ? '将此提示词复制粘贴给AI (ChatGPT, Gemini, Grok) 时，可以同时发送您自己、孩子或宠物的照片。AI将完美还原特征，生成独一无二的专属表情包！'
+                : 'When pasting this prompt into AI (ChatGPT, Gemini, or Grok), attach a photo of yourself, your child, or your pet. It will generate a custom emoji sheet!'}
             </span>
             <div className="bg-white/60 rounded-md p-3 sm:p-4 border border-[#FCD3A1]/60 shadow-sm flex flex-col gap-1.5 sm:gap-2 w-full">
               <strong className="text-[#C2410C] text-[13.5px] sm:text-[14.5px] flex items-center gap-1.5 font-bold">
