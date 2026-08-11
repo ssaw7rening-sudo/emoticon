@@ -216,7 +216,8 @@ const I18N = {
     geminiFinalStage: '② 기준 이미지로 생성',
     geminiReferenceTip: '먼저 문구 없는 기준 캐릭터를 만든 뒤, 마음에 드는 결과 이미지를 저장하세요.',
     geminiFinalTip: 'Gemini는 표정과 행동 중심 생성에 강합니다. 시트 초안을 만든 뒤 15종 개별 분할에서 한 장씩 생성해 보세요.',
-    geminiRepairTitle: '결과 보정 프롬프트',
+    gptRepairTitle: 'ChatGPT 이미지 결과 보정',
+    geminiRepairTitle: 'Gemini 이미지 결과 보정',
     repairHelp: '💡 사용법: AI가 만든 이미지에 결함이 생겼을 때 버튼을 눌러 복사한 뒤, AI 대화창에 그대로 붙여넣어(Ctrl+V) 전송하세요.',
     geminiRepairIdentity: '캐릭터가 달라졌어요',
     geminiRepairCrop: '몸이 잘렸어요',
@@ -298,7 +299,8 @@ const I18N = {
     geminiFinalStage: '② Generate from reference',
     geminiReferenceTip: 'First create a text-free base character, then save the result you like.',
     geminiFinalTip: 'Gemini excels at expression and action generation. Use the sheet as a draft, then generate each sticker with Batch Split.',
-    geminiRepairTitle: 'Result correction prompts',
+    gptRepairTitle: 'ChatGPT Image Repair Prompts',
+    geminiRepairTitle: 'Gemini Image Repair Prompts',
     repairHelp: '💡 How to use: Click a button to copy the prompt, then paste (Ctrl+V) into the active AI chat to fix defects.',
     geminiRepairIdentity: 'Character changed',
     geminiRepairCrop: 'Body was cropped',
@@ -380,7 +382,8 @@ const I18N = {
     geminiFinalStage: '② 基準画像から生成',
     geminiReferenceTip: 'まず文字なしの基準キャラクターを作成し、お気に入りの結果を保存してください。',
     geminiFinalTip: 'Geminiは表情やポーズの表現が得意です。シート全体で試作後、15種個別分割で1枚ずつ生成するのがおすすめです。',
-    geminiRepairTitle: '結果補正プロンプト',
+    gptRepairTitle: 'ChatGPT 画像結果補正',
+    geminiRepairTitle: 'Gemini 画像結果補正',
     repairHelp: '💡 使い方: AIが生成した画像に問題がある場合、ボタンを押してコピーし、AIチャットに貼り付けて(Ctrl+V)送信してください。',
     geminiRepairIdentity: 'キャラが変わった',
     geminiRepairCrop: '体が切れた',
@@ -394,7 +397,7 @@ const I18N = {
     grokSolid: '単色背景',
     grokChroma: 'クロマキー',
     grokWorkflowTip: 'Grokヒント: GrokはFlux.1エンジンを搭載し、自然なテキストとステッカーの質感を正確に表現します。',
-    grokRepairTitle: 'Grok画像補正',
+    grokRepairTitle: 'Grok 画像結果補正',
     emptyPhraseError: '空のフレーズがあります。すべてのフレーズを入力してください。',
     duplicatePhraseError: '重複したフレーズがあります。それぞれ異なるフレーズを入力してください。',
     guide3Q: '✂️ 背景（透過）の簡単な消し方は？',
@@ -462,7 +465,8 @@ const I18N = {
     geminiFinalStage: '② 基于基准图生成',
     geminiReferenceTip: '请先制作不带文字的基准角色，并保存满意的图片。',
     geminiFinalTip: 'Gemini擅长生成丰富的表情与动作。建议将整页作为草稿，再使用单张拆分逐张生成。',
-    geminiRepairTitle: '结果修正提示词',
+    gptRepairTitle: 'ChatGPT 图像结果修正',
+    geminiRepairTitle: 'Gemini 图像结果修正',
     repairHelp: '💡 使用方法：若AI生成图出现瑕疵，点击复制修正提示词并粘贴发送至同一AI对话框(Ctrl+V)即可修复。',
     geminiRepairIdentity: '角色变形了',
     geminiRepairCrop: '身体被裁剪了',
@@ -476,7 +480,7 @@ const I18N = {
     grokSolid: '单色背景',
     grokChroma: '抠图绿幕',
     grokWorkflowTip: 'Grok提示：Grok基于Flux.1引擎，擅长精准的自然语言指令与矢量贴纸质感。',
-    grokRepairTitle: 'Grok结果修正提示词',
+    grokRepairTitle: 'Grok 图像结果修正',
     emptyPhraseError: '存在空白短语，请填写所有短语。',
     duplicatePhraseError: '存在重复短语，请修改为不同的短语。',
     guide3Q: '✂️ 如何轻松去除背景（抠图）？',
@@ -3006,7 +3010,7 @@ Please edit the most recent image. Keep the character design, face, expression, 
               </div>
               <div className="flex flex-col gap-2 border-t border-[#E9DFC5] pt-3">
                 <div className="flex flex-col gap-0.5">
-                  <span className="text-[13px] font-bold text-[#795B16]">{t.geminiRepairTitle}</span>
+                  <span className="text-[13px] font-bold text-[#795B16]">{t.gptRepairTitle}</span>
                   <span className="text-[12px] font-medium text-[#8A661C] leading-snug">{t.repairHelp}</span>
                 </div>
                 <div className="grid grid-cols-1 min-[430px]:grid-cols-3 gap-2">
