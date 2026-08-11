@@ -1596,16 +1596,16 @@ function App() {
 
     const modeInstructions = {
       exact: {
-        ko: '얼굴형, 눈·코·입, 헤어스타일, 털색이나 무늬 등 식별 가능한 특징을 최대한 닮게 유지하여 귀여운 2D 메신저 이모티콘 캐릭터로 표현해주세요.',
-        en: 'Keep recognizable visual features (face shape, facial features, hairstyle, fur color, or markings) closely matching the subject while rendering in a cute 2D messenger sticker style.',
+        ko: '사진 속 대상의 실제 얼굴 비율, 이목구비(눈 크기·모양, 코, 입술, 턱선), 헤어스타일, 피부톤을 사실적으로 재현한 캐리커처 스타일 2D 스티커로 그려주세요. 한눈에 "이 사람이다"라고 알아볼 수 있을 정도로 얼굴 유사도를 높게 유지하되, 외곽선과 채색은 깔끔한 2D 스티커로 마무리하세요.',
+        en: 'Draw a caricature-style 2D sticker that realistically reproduces the subject\'s actual face proportions, facial features (eye size and shape, nose, lips, jawline), hairstyle, and skin tone. The face must be recognizable enough that viewers can immediately identify the person, while the linework and coloring should have a clean 2D sticker finish.',
       },
       features: {
-        ko: '참고 사진의 핵심적인 얼굴 특징, 헤어스타일, 의상과 고유 분위기만 살리고, 나머지는 감각적이고 깔끔한 2D 벡터 이모티콘 캐릭터로 자연스럽게 표현해주세요.',
-        en: 'Extract authentic signature features (hairstyle, facial traits, outfit) visible in the photo and stylize into a clean 2D vector graphic.',
+        ko: '사진 속 대상의 얼굴 자체를 닮게 그릴 필요는 없습니다. 대신 헤어스타일, 안경 유무, 의상, 체형, 전체적인 분위기 등 시그니처 포인트만 추출하여 스타일리시한 2D 캐릭터 아바타로 새롭게 디자인해주세요.',
+        en: 'You do NOT need to match the subject\'s actual face. Instead, extract only their signature points — hairstyle, glasses (if any), outfit, body type, and overall vibe — and design a stylish 2D character avatar around those key traits.',
       },
       characterize: {
-        ko: '사진 속 대상의 핵심 인상만 참고하여, 커다란 머리와 동그란 체형의 극도로 귀여운 SD/Chibi 이모티콘 마스코트 캐릭터로 재해석해주세요.',
-        en: 'Reinterpret the subject into an ultra-cute 2D Chibi/SD mascot with a big head, chubby body, and cute expressive eyes.',
+        ko: '사진 속 대상의 전체적인 인상(헤어 색상, 분위기)만 살짝 참고하고, 나머지는 2.5등신의 커다란 머리, 동글동글한 몸, 반짝이는 큰 눈을 가진 극도로 귀여운 SD/Chibi 마스코트 캐릭터로 완전히 새롭게 변환해주세요.',
+        en: 'Use only the subject\'s general impression (hair color, overall vibe) as a loose reference. Transform everything else into an ultra-cute SD/Chibi mascot with a 2.5-head ratio, big round head, chubby body, and huge sparkling eyes.',
       },
     };
     const promptLang = promptLanguage === 'ko' ? 'ko' : 'en';
@@ -1635,9 +1635,9 @@ function App() {
     const selectedArtStyle = getSelectedArtStyle();
     if (selectedArtStyle) return `${selectedArtStyle}; treat this selected art style as the highest-priority visual direction`;
     if (characterSource === 'photo') {
-      if (photoReferenceMode === 'exact') return 'High-fidelity 2D messenger sticker style preserving recognizable facial identity, hairstyle, and key features from the reference photo';
-      if (photoReferenceMode === 'features') return 'Stylized 2D vector character avatar sticker style capturing authentic signature facial features, hair, and outfit from the reference photo';
-      return 'Cute 2.5-head Chibi SD mascot sticker style inspired by the reference photo';
+      if (photoReferenceMode === 'exact') return 'Caricature-style 2D sticker with realistic facial proportions and features closely matching the reference photo, finished with clean 2D sticker outlines and coloring';
+      if (photoReferenceMode === 'features') return 'Stylish 2D character avatar sticker built around the signature points (hairstyle, glasses, outfit, vibe) from the reference photo; the face itself is a new generic cute design';
+      return 'Ultra-cute 2.5-head SD/Chibi mascot sticker only loosely inspired by the reference photo\'s general impression';
     }
     return 'cute, approachable, high-quality 2D messenger sticker illustration with clean outlines and harmonious colors';
   };
@@ -1675,15 +1675,15 @@ function App() {
     ];
 
     const photoAppearanceEn = {
-      exact: 'preserve recognizable facial identity, hairstyle, and key features matching the reference photo; do not add unrequested accessories',
-      features: 'extract signature features (hair, facial traits, outfit) visible in photo; do not add unrequested accessories',
-      characterize: 'reinterpret into a cute 2D Chibi/SD mascot with a big head, chubby body, and huge expressive eyes',
+      exact: 'realistically reproduce the subject\'s actual face proportions, eye shape, nose, lips, jawline, hairstyle, and skin tone so the person is immediately recognizable; do not add unrequested accessories',
+      features: 'do NOT try to match the subject\'s actual face; instead extract only signature points (hairstyle, glasses if any, outfit, body type, overall vibe) and build a stylish new character around those traits; do not add unrequested accessories',
+      characterize: 'use only the general impression (hair color, vibe) as a loose reference and transform into an ultra-cute 2.5-head SD/Chibi mascot with a big round head, chubby body, and huge sparkling eyes',
     }[photoReferenceMode];
 
     const photoAppearanceKo = {
-      exact: '참고 사진 속 대상의 이목구비와 헤어스타일 특징을 최대한 닮게 유지 (사진에 없는 안경/모자 등 임의 추가 금지)',
-      features: '참고 사진의 시그니처 포인트(헤어, 이목구비, 의상)만 추출하여 깔끔한 2D 벡터 스타일로 정돈 (사진에 없는 악세사리 임의 추가 금지)',
-      characterize: '2.5등신 커다란 머리와 동글동글한 몸체의 귀여운 SD/Chibi 이모티콘 마스코트로 재해석',
+      exact: '사진 속 대상의 실제 얼굴 비율, 눈 모양, 코, 입술, 턱선, 헤어스타일, 피부톤을 사실적으로 재현하여 바로 알아볼 수 있도록 (사진에 없는 안경/모자 등 임의 추가 금지)',
+      features: '얼굴 자체를 닮게 그릴 필요 없음; 헤어스타일, 안경 유무, 의상, 체형, 전체 분위기 등 시그니처 포인트만 추출하여 스타일리시한 새 캐릭터로 디자인 (사진에 없는 악세사리 임의 추가 금지)',
+      characterize: '전체적인 인상(헤어 색상, 분위기)만 살짝 참고하고 2.5등신 커다란 머리와 동글동글한 몸체의 극도로 귀여운 SD/Chibi 마스코트로 완전 변환',
     }[photoReferenceMode];
 
     return {
@@ -1711,15 +1711,15 @@ function App() {
     ];
 
     const photoAppearanceEn = {
-      exact: 'preserve recognizable facial identity, hairstyle, and key features matching the reference photo; do not add unrequested accessories',
-      features: 'extract signature features (hair, facial traits, outfit) visible in photo; do not add unrequested accessories',
-      characterize: 'reinterpret into a cute 2D Chibi/SD mascot with a big head, chubby body, and huge expressive eyes',
+      exact: 'realistically reproduce the subject\'s actual face proportions, eye shape, nose, lips, jawline, hairstyle, and skin tone so the person is immediately recognizable; do not add unrequested accessories',
+      features: 'do NOT try to match the subject\'s actual face; instead extract only signature points (hairstyle, glasses if any, outfit, body type, overall vibe) and build a stylish new character around those traits; do not add unrequested accessories',
+      characterize: 'use only the general impression (hair color, vibe) as a loose reference and transform into an ultra-cute 2.5-head SD/Chibi mascot with a big round head, chubby body, and huge sparkling eyes',
     }[photoReferenceMode];
 
     const photoAppearanceKo = {
-      exact: '참고 사진 속 대상의 이목구비와 헤어스타일 특징을 최대한 닮게 유지 (사진에 없는 안경/모자 등 임의 추가 금지)',
-      features: '참고 사진의 시그니처 포인트(헤어, 이목구비, 의상)만 추출하여 깔끔한 2D 벡터 스타일로 정돈 (사진에 없는 악세사리 임의 추가 금지)',
-      characterize: '2.5등신 커다란 머리와 동글동글한 몸체의 귀여운 SD/Chibi 이모티콘 마스코트로 재해석',
+      exact: '사진 속 대상의 실제 얼굴 비율, 눈 모양, 코, 입술, 턱선, 헤어스타일, 피부톤을 사실적으로 재현하여 바로 알아볼 수 있도록 (사진에 없는 안경/모자 등 임의 추가 금지)',
+      features: '얼굴 자체를 닮게 그릴 필요 없음; 헤어스타일, 안경 유무, 의상, 체형, 전체 분위기 등 시그니처 포인트만 추출하여 스타일리시한 새 캐릭터로 디자인 (사진에 없는 악세사리 임의 추가 금지)',
+      characterize: '전체적인 인상(헤어 색상, 분위기)만 살짝 참고하고 2.5등신 커다란 머리와 동글동글한 몸체의 극도로 귀여운 SD/Chibi 마스코트로 완전 변환',
     }[photoReferenceMode];
 
     return {
@@ -1969,9 +1969,9 @@ ${textExclusion} No grid lines, no cell division lines, no border lines between 
     const referenceInstruction = `${characterSource === 'photo' ? `Photo reference style: ${getPhotoModeLabel('en')}. ` : ''}${getReferenceImageInstruction('en')}`;
 
     const geminiProportions = characterSource === 'photo' ? {
-      exact: 'High-fidelity 2D messenger sticker style accurately preserving recognizable facial identity, hairstyle, and features from the attached reference photo.',
-      features: 'Stylized 2D vector character avatar sticker style capturing signature traits (hair, facial features, outfit) from the reference photo with clean vector outlines.',
-      characterize: 'Adorable 2.5-head Chibi SD manga/anime mascot proportion with a big round head, huge sparkling expressive eyes, chubby cheeks, and cute sticker styling.',
+      exact: 'Caricature-style 2D sticker that realistically reproduces the subject\'s actual face proportions, facial structure, eye shape, nose, lips, jawline, hairstyle, and skin tone so the person is immediately recognizable. Clean 2D sticker outlines and coloring.',
+      features: 'Stylish 2D character avatar sticker designed around signature points only (hairstyle, glasses if any, outfit, body type, overall vibe). Do NOT attempt to reproduce the subject\'s actual face — use a fresh generic cute face instead.',
+      characterize: 'Adorable 2.5-head Chibi SD manga/anime mascot proportion with a big round head, huge sparkling expressive eyes, chubby cheeks, and cute sticker styling. Only loosely inspired by the reference photo\'s general impression.',
     }[photoReferenceMode] : 'Adorable 2.5-head Chibi SD manga/anime mascot proportion with a big round head, huge sparkling expressive eyes, chubby cheeks, and cute sticker styling.';
 
     if (generationMode === 'individual' || hasPhraseOverride) {
