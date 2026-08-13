@@ -47,11 +47,12 @@
 }
 
 .lang-zh,
+.lang-zh *,
 .lang-zh input,
 .lang-zh button,
 .lang-zh textarea,
 .lang-zh select {
-  font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Micro Hei", "Noto Sans SC", sans-serif !important;
+  font-family: 'Noto Sans SC', "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif !important;
 }
 
 .lang-zh header,

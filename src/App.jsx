@@ -1792,6 +1792,15 @@ const getPhraseActionEn = (phrase) => {
 
 function App() {
   const [lang, setLang] = useState('ko');
+
+  useEffect(() => {
+    document.documentElement.lang = lang === 'zh' ? 'zh-CN' : lang === 'ja' ? 'ja' : lang === 'ko' ? 'ko' : 'en';
+    if (lang === 'zh') {
+      document.body.classList.add('lang-zh');
+    } else {
+      document.body.classList.remove('lang-zh');
+    }
+  }, [lang]);
   const t = I18N[lang] || I18N.ko;
   
   const getThemesByLang = (l) => {
