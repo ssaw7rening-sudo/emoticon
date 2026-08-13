@@ -2348,7 +2348,7 @@ ${textExclusion} No grid lines, no cell division lines, no border lines between 
           ? `[고품질 한글 타이포그래피 정밀 지침] 정확한 한글 철자 "${targetPhrase}"를 오탈자 없이 명확하게 그리세요. 캐릭터 옆이나 위에 읽기 편하고 깔끔한 귀여운 손글씨 캘리그라피 타이포그래피 스타일로 자연스럽게 배치하세요. 글자 외곽선이 또렷하고 배경과 대비되는 높은 가독성의 색상을 사용하세요. 텍스트 상자(박스), 괄호 (), 따옴표 "", 말풍선은 절대 그리지 마세요.`
           : `한국어 문구 "${targetPhrase}"는 표정과 자세를 정하기 위한 맥락으로만 사용하고, 이미지 안에 절대로 텍스트, 글자, 숫자로 그리지 마세요.`;
         const textExclusionKo = geminiTextMode === 'text'
-          ? '불필요한 단어, 철자 변경, 임의의 글자, 스티커 번호, 괄호, 따옴표, 텍스트 상자 금지.'
+          ? '글자/단어/음절 중복 반복(예: 화이팅 화이팅, 미안해요 미안해요, 최 최고), 불필요한 일본어/가타카나/한자/외국어, 철자 변형, 폰트 뭉개짐, 스티커 번호, 괄호, 따옴표, 텍스트 상자 절대 금지.'
           : '텍스트, 글자, 숫자, 말풍선, 스티커 라벨, 의미 없는 기호 절대 금지.';
 
         return `[목표]
@@ -2386,7 +2386,10 @@ ${textExclusionKo} 격자선, 셀 경계선, 구별선, 테두리선, 표 선, �
       const panelPlanKo = emoticons.map((phrase, index) => `스티커 ${index + 1}: "${phrase.trim()}"`).join('\n');
 
       const textPolicyKo = geminiTextMode === 'text'
-        ? `[고품질 한글 타이포그래피 — GPT 스타일 입체 스티커 글자 지침] ${getEmotionTextColorGuideKo(emoticons)} 모든 한글 문구는 검은색 또는 원색 글자 채움에 두꺼운 흰색 외곽선(Heavy White Outer Stroke)을 두른 선명하고 귀여운 팝아트 스티커 캘리그라피 스타일로 크게 그리세요. 얇고 밋밋한 본문 폰트나 연한 글자는 절대로 금지합니다. 텍스트 상자(박스), 괄호 (), 대괄호 [], 따옴표 "", 말풍선, 스티커 번호는 절대로 그리지 마세요.`
+        ? `[고품질 한글 타이포그래피 — 단일 정밀 출력 & 중복 엄격 금지] ${getEmotionTextColorGuideKo(emoticons)}
+1. 각 셀당 해당 한글 문구를 오직 단 한 번(EXACTLY ONCE)만 정확한 철자로 그리세요. 같은 단어나 음절을 두 번 이상 중복 반복하여 그리는 행위(예: "오늘도 화이팅 화이팅", "미안해요 미안해요", "최 최고!" 등 단어/글자 중복)는 절대로 금지합니다.
+2. 오직 완벽한 한글 자모만 그리세요. 일본어(히라가나/가타카나), 한자, 폰트 뭉개짐, 기괴한 자음 변형은 엄격히 금지합니다.
+3. 글자는 검은색 또는 원색 채움에 두꺼운 흰색 외곽선(Heavy White Stroke)을 두른 선명한 팝아트 스티커 타이포그래피 스타일로 크게 표현하세요.`
         : '한국어 문구는 표정과 자세를 정하기 위한 맥락으로만 사용하고, 이미지 안에 절대로 텍스트, 글자, 숫자로 그리지 마세요.';
       const textExclusionKo = geminiTextMode === 'text'
         ? '불필요한 단어, 철자 변경, 임의의 글자, 스티커 번호, 괄호, 따옴표, 텍스트 상자 금지.'
@@ -2482,7 +2485,10 @@ ${textExclusion} No guide lines, no grid lines, no cell dividers, no border line
 
     const panelPlan = emoticons.map((phrase, index) => `Sticker ${index + 1}: "${phrase.trim()}"`).join('\n');
     const textPolicy = geminiTextMode === 'text'
-      ? `[HIGH-CONTRAST KOREAN STICKER TYPOGRAPHY — GPT STYLE] ${getEmotionTextColorGuideEn(emoticons)} Render each quoted Korean phrase in bold filled calligraphy text with a thick heavy white outer stroke around every letter. Do NOT use thin, flat, or faint body fonts. Ensure the text pops vividly like commercial KakaoTalk/LINE stickers. Do NOT draw text boxes, background boxes, speech bubbles, parentheses (), or sticker numbers.`
+      ? `[PRECISION KOREAN TYPOGRAPHY — SINGLE RENDERING & ANTI-DUPLICATION] ${getEmotionTextColorGuideEn(emoticons)}
+1. Render each quoted Korean phrase EXACTLY ONCE per cell. Strictly prohibit word or letter duplications (e.g. repeating "화이팅 화이팅", "미안해요 미안해요", "최 최고!").
+2. Render only 100% correct Hangul characters. Absolutely NO Japanese (Hiragana/Katakana), Chinese characters, gibberish symbols, or warped font shapes.
+3. Use bold filled calligraphy text with a heavy white outer stroke around every letter.`
       : 'The Korean phrases are context for determining expression and pose only — never render them as text, letters, or numbers in the image.';
     const textExclusion = geminiTextMode === 'text'
       ? 'No extra words, altered spelling, random letters, sticker numbers, parentheses, quotation marks, or text boxes.'
