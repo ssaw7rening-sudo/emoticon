@@ -2198,7 +2198,7 @@ ${textExclusionKo} 격자선, 셀 경계선, 구별선, 테두리선, 표 선, �
       const panelPlanKo = emoticons.map((phrase, index) => `스티커 ${index + 1}: "${phrase.trim()}"`).join('\n');
 
       const textPolicyKo = geminiTextMode === 'text'
-        ? '[고품질 한글 타이포그래피 정밀 지침] 각 캐릭터 옆이나 위에 해당 한글 문구를 오탈자 없이 정확한 철자로 그리세요. 읽기 편하고 깔끔한 귀여운 손글씨 캘리그라피 타이포그래피 스타일로 자연스럽게 배치하고, 선명한 글자 외곽선과 높은 가독성의 색상을 사용하세요. 텍스트 상자(박스), 괄호 (), 대괄호 [], 따옴표 "", 말풍선, 스티커 번호는 절대로 그리지 마세요.'
+        ? '[고품질 한글 타이포그래피 정밀 지침] 각 캐릭터 옆이나 위에 해당 한글 문구를 오탈자 없이 정확한 철자로 그리세요. 딱딱하고 두꺼운 고딕체나 본문용 폰트는 절대로 사용하지 말고, 오직 동글동글하고 귀여운 한글 손글씨 캘리그라피 스타일로만 그리세요. 선명한 글자 외곽선과 높은 가독성의 색상을 사용하고, 텍스트 상자(박스), 괄호 (), 대괄호 [], 따옴표 "", 말풍선, 스티커 번호는 절대로 그리지 마세요.'
         : '한국어 문구는 표정과 자세를 정하기 위한 맥락으로만 사용하고, 이미지 안에 절대로 텍스트, 글자, 숫자로 그리지 마세요.';
       const textExclusionKo = geminiTextMode === 'text'
         ? '불필요한 단어, 철자 변경, 임의의 글자, 스티커 번호, 괄호, 따옴표, 텍스트 상자 금지.'
@@ -2213,9 +2213,10 @@ ${referenceInstructionKo}
 - 대상: ${character.subject}
 - 외형 및 특징: ${character.appearance}
 - 의상: ${character.outfit}
+- 경고: 모든 15개 셀에서 예외 없이 머리부터 발끝까지 전신이 보여야 합니다. 얼굴이나 상반신만 보이는 클로즈업 컷은 엄격히 금지합니다.
 
 [화풍 및 비율]
-귀엽고 친근한 고품질 2D 메신저 스티커 일러스트. ${geminiProportionsKo} 깔끔하고 선명한 벡터 외곽선, 부드러운 셀 셰이딩, 조화로운 색감. 15개 스티커 전체에서 지정된 최우선 화풍의 선, 채색, 질감 및 캐릭터 비율을 100% 엄격히 유지하세요. 모든 캐릭터는 머리부터 발끝까지 전신이 잘리지 않고 보여야 합니다.
+귀엽고 친근한 고품질 2D 메신저 스티커 일러스트. ${geminiProportionsKo} 깔끔하고 선명한 벡터 외곽선, 부드러운 셀 셰이딩, 조화로운 색감. 15개 스티커 전체에서 지정된 최우선 화풍의 선, 채색, 질감 및 캐릭터 비율을 100% 엄격히 유지하세요. 15개 셀의 얼굴은 마치 같은 사진에서 포즈만 바꾼 것처럼 눈 크기, 눈매, 얼굴 폭, 턱선이 픽셀 단위로 동일해야 합니다. 셀마다 다른 사람처럼 보이지 않도록 각별히 주의하세요.
 
 [15종 역동적인 포즈 & 표정]
 각 스티커마다 독창적이고 표정이 살아있는 얼굴 감정과 역동적인 전신 자세를 구성하세요 (앉기, 웅크리기, 점프, 소품 들기, 윙크, 먹기, 응원하기 등). 모든 스티커는 머리부터 발끝까지 완전한 전신을 보여주어야 합니다:
@@ -2223,7 +2224,7 @@ ${panelPlanKo}
 보조 소품 & 반짝이 효과: ${character.props}, ${character.effects}, 최소한의 포인트 효과.
 
 [캔버스 & 배치 — 단일 순백색 시트]
-${bgInstructionKo} 절대로 가이드선, 격자선, 셀 경계선, 표 선, 구별선, 크롭 마크, 바운딩 박스, 스티커 번호를 그리지 마세요.
+반드시 가로로 긴 캔버스에 5열 3행 그리드로 배치하세요. 세로형 배치나 3열 5행 배치는 절대 사용하지 마세요. 이 레이아웃 규칙은 다른 모든 지시보다 우선합니다. ${bgInstructionKo} 절대로 가이드선, 격자선, 셀 경계선, 표 선, 구별선, 크롭 마크, 바운딩 박스, 스티커 번호를 그리지 마세요.
 
 [글자 정책]
 ${textPolicyKo}
@@ -2308,9 +2309,10 @@ ${photoModeBlockEn}
 - Subject: ${character.subject}
 - Appearance & Features: ${character.appearance}
 - Outfit: ${character.outfit}
+- WARNING: Every single one of the 15 cells MUST show a complete full-body character head-to-toe without exception. Close-up shots showing only the face or upper body are strictly forbidden.
 
 [ART DIRECTION & PROPORTIONS]
-cute, approachable, high-quality 2D messenger sticker illustration with clean outlines and harmonious colors. ${proportionStyleEn} Clean crisp vector outlines, vibrant colors, and soft cell shading. Maintain identical character proportions and style across all 15 stickers.
+cute, approachable, high-quality 2D messenger sticker illustration with clean outlines and harmonious colors. ${proportionStyleEn} Clean crisp vector outlines, vibrant colors, and soft cell shading. Maintain identical character proportions, facial details, eye shape, and jawline identically across all 15 stickers as if from the same photo session.
 
 [15 DYNAMIC POSES & EXPRESSIONS]
 For each sticker, infer a unique, highly expressive facial emotion and a DYNAMIC full-body pose (e.g. sitting, crouching, jumping, holding props, winking, eating, or cheering). Every sticker MUST show a complete full-body character visible head-to-toe:
@@ -2318,7 +2320,7 @@ ${panelPlan}
 Supporting props & sparkle effects: ${character.props}, ${character.effects}, cute accents.
 
 [CANVAS & LAYOUT — SEAMLESS WHITE SHEET]
-${bgInstructionEn} Absolutely NO guide lines, NO grid lines, NO cell borders, NO table lines, NO dividing lines, NO crop marks, NO bounding boxes, NO sticker numbers.
+MUST arrange in a wide horizontal canvas with a 5-column x 3-row grid layout. DO NOT use vertical orientation or 3-column x 5-row layout under any circumstances. This layout rule takes highest precedence over all other directives. ${bgInstructionEn} Absolutely NO guide lines, NO grid lines, NO cell borders, NO table lines, NO dividing lines, NO crop marks, NO bounding boxes, NO sticker numbers.
 
 [TEXT POLICY]
 ${textPolicy}
@@ -2451,7 +2453,7 @@ Art Style & Proportions: ${character.artStyle}. ${grokProportionsKo} 깔끔한 2
 15개 셀 캐릭터 모두 동일하게 높은 수준의 얼굴 디테일, 선명한 선화, 색상 채도를 유지하세요. 모든 캐릭터는 머리부터 발끝까지 전신이 잘리지 않고 보여야 합니다.
 
 [15 스티커 포즈]
-각 문구의 감정 맥락에 맞춰 독창적이고 표정이 살아있는 얼굴 감정과 역동적인 전신 자세를 구성하세요:
+각 셀은 서 있는 자세를 반복하지 말고, 앉기·점프·웅크리기·눕기·엎드리기 등 최소 6가지 이상 서로 다른 신체 자세를 사용하세요. 단순히 팔 위치만 바꾸는 것을 엄격히 금지합니다. 각 문구의 감정 맥락에 맞춰 독창적이고 표정이 살아있는 얼굴 감정과 역동적인 전신 자세를 구성하세요:
 ${panelPlanKo}
 감정 전달에 최소한으로 필요한 보조 소품이나 반짝이 효과만 사용하세요 (${character.props}, ${character.effects}).
 
@@ -2465,7 +2467,7 @@ ${panelPlanKo}
 ${textPolicyKo}
 
 [제외 조건]
-${textExclusionKo} 워터마크, 격자선, 셀 테두리, 구분선, 크롭 마크, 외곽 프레임, 바운딩 박스, 한 셀 안의 캐릭터 중복, 팔다리 누락/추가, 반신·흉상 컷, 실사 느낌, 얼굴 왜곡, 15개 셀 간 얼굴·체형·의상 불일치 절대 금지.`;
+${textExclusionKo} 문구 뒤에 쉼표(,), 마침표(.), 느낌표 중복 등 원래 문구에 없는 불필요한 문장부호를 절대 추가하지 마세요. 워터마크, 격자선, 셀 테두리, 구분선, 크롭 마크, 외곽 프레임, 바운딩 박스, 한 셀 안의 캐릭터 중복, 팔다리 누락/추가, 반신·흉상 컷, 실사 느낌, 얼굴 왜곡, 15개 셀 간 얼굴·체형·의상 불일치 절대 금지.`;
     }
 
     // English Version (Matches User Preferred Exact Template)
@@ -2542,7 +2544,7 @@ Art Style & Proportions: ${character.artStyle}. ${grokProportions} Clean 2D vect
 Render all 15 characters at the exact same level of facial detail, linework sharpness, and color saturation across the entire sheet — no degradation toward edges or bottom rows. Every character is full-body, head-to-toe, uncropped.
 
 [15 STICKER POSES]
-Infer a unique, highly expressive facial emotion and dynamic full-body posture for each cell, based on the following emotional context:
+Do NOT repeat standing postures across cells. Incorporate at least 6 or more distinctly different body postures (such as sitting, jumping, crouching, lying down, kneeling, leaning). Simply tweaking arm positions while standing is strictly forbidden. Infer a unique, highly expressive facial emotion and dynamic full-body posture for each cell, based on the following emotional context:
 ${panelPlan}
 Minimal supporting props or sparkle effects only when they clarify the emotion — keep accents small and simple (${character.props}, ${character.effects}).
 
@@ -2556,7 +2558,7 @@ All 15 stickers must strictly share the same face, body proportions, color palet
 ${textPolicy}
 
 [NEGATIVE PROMPT]
-${textExclusion} No watermark, no grid lines, no cell borders, no table dividers, no crop marks, no outer frame, no bounding boxes, no duplicate character within a single cell, no missing or extra limbs, no half-body/bust-only shots, no photorealism, no facial distortion, no inconsistent face/body/outfit across the 15 cells.`;
+${textExclusion} Do NOT add any unrequested trailing punctuation marks at the end of phrases such as trailing commas (,), periods (.), or duplicate exclamation marks. No watermark, no grid lines, no cell borders, no table dividers, no crop marks, no outer frame, no bounding boxes, no duplicate character within a single cell, no missing or extra limbs, no half-body/bust-only shots, no photorealism, no facial distortion, no inconsistent face/body/outfit across the 15 cells.`;
   };
 
   const getRepairPrompt = (repairType, textMode, model = 'gpt') => {
