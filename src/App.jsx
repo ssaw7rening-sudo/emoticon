@@ -2586,9 +2586,7 @@ ${textExclusion} No guide lines, no grid lines, no cell dividers, no border line
           ? '불필요한 글자, 괄호, 텍스트 상자 금지.'
           : '텍스트, 글자, 숫자, 말풍선, 스티커 라벨, 의미 없는 기호 절대 금지.';
 
-        return `[대상 AI: Grok (xAI / Flux.1 엔진)]
-
-동일한 캐릭터가 등장하는 고품질 2D 메신저 스티커 (카카오톡 / 라인 스타일) 한 장을 그려주세요. 정사각형 캔버스, 고해상도.
+        return `동일한 캐릭터가 등장하는 고품질 2D 메신저 스티커 (카카오톡 / 라인 스타일) 한 장을 그려주세요. 정사각형 캔버스, 고해상도.
 
 [CRITICAL IDENTITY LOCK — 자연스러운 얼굴 닮은꼴 보존 (왜곡 방지)]
 참고 사진 인물의 눈매 각도, 콧대, 입술 모양, 턱선, 헤어스타일의 특징을 90% 이상 자연스럽게 반영하세요.
@@ -2635,9 +2633,7 @@ ${textExclusionKo} 워터마크, 외곽 프레임, 바운딩 박스, 캐릭터 �
         ? '불필요한 글자, 괄호, 스티커 번호, 텍스트 상자 금지.'
         : '텍스트, 글자, 숫자, 말풍선, 스티커 라벨, 의미 없는 기호 절대 금지.';
 
-      return `[대상 AI: Grok (xAI / Flux.1 엔진)]
-
-동일한 캐릭터가 3행 × 5열 격자 구조로 배치된 완성도 높은 15셀 카카오톡/라인 스티커 시트 한 장을 생성해 주세요. 정사각형 캔버스, 고해상도. 격자선, 셀 테두리, 숫자 없음.
+      return `동일한 캐릭터가 3행 × 5열 격자 구조로 배치된 완성도 높은 15셀 카카오톡/라인 스티커 시트 한 장을 생성해 주세요. 정사각형 캔버스, 고해상도. 격자선, 셀 테두리, 숫자 없음.
 
 [캐릭터 고정 — 15개 셀 전체 동일 적용]
 ${referenceInstructionKo}
@@ -2693,9 +2689,7 @@ ${textExclusionKo} 문구 뒤에 쉼표(,), 마침표(.), 느낌표 중복 등 �
         ? 'No extra words, altered spelling, random letters, numbers, parentheses, or text boxes.'
         : 'No text, letters, numbers, typography, or meaningless symbols.';
 
-      return `[TARGET AI: Grok (xAI / Flux.1 Engine)]
-
-Create a high-end 2D messenger sticker (KakaoTalk / LINE style) featuring one consistent character. Square canvas, high resolution.
+      return `Create a high-end 2D messenger sticker (KakaoTalk / LINE style) featuring one consistent character. Square canvas, high resolution.
 
 [CRITICAL IDENTITY LOCK — NATURAL FACIAL RESEMBLANCE (NO DISTORTION)]
 Replicate the key facial identity from reference photo (eye angle, nose bridge, lips, jawline, hairstyle) preserving 90%+ natural likeness.
@@ -2742,9 +2736,7 @@ ${textExclusion} No watermark, no outer frame, no bounding boxes, no duplicate c
       ? 'No extra words, altered spelling, random letters, sticker numbers, parentheses, quotation marks, or text boxes.'
       : 'No text, no letters, no numbers, no speech bubbles, no sticker labels, no meaningless symbols.';
 
-    return `[TARGET AI: Grok (xAI / Flux.1 Engine)]
-
-Create a master 15-cell KakaoTalk/LINE sticker sheet featuring one consistent character arranged in a 3-row × 5-column grid layout with generous spacing between characters. Square canvas, high resolution. No grid lines, no cell borders, no numbers.
+    return `Create a master 15-cell KakaoTalk/LINE sticker sheet featuring one consistent character arranged in a 3-row × 5-column grid layout with generous spacing between characters. Square canvas, high resolution. No grid lines, no cell borders, no numbers.
 
 [CHARACTER LOCK — IDENTICAL ACROSS ALL 15 CELLS]
 ${referenceInstruction}
