@@ -123,6 +123,26 @@ const THEMES_EN = {
   'Season/Weather ②': ['Catch a cold', 'Pollen warning', 'Hate rainy season', 'Sunshine spot', 'Let\'s make a snowman', 'Season for Taiyaki', 'Freezing hands and feet', 'Sweltering heat', 'In front of a fan', 'Pajeon on a rainy day', 'Slippery warning', 'Feeling autumn vibes', 'Let\'s go see autumn leaves', 'Soft spring breeze', 'Staying home is best']
 };
 
+const getEmotionTextColorGuideKo = (phrases) => {
+  const palette = [
+    '노란색', '분홍색', '빨간색', '핑크색', '민트색',
+    '빨간색', '주황색', '보라색', '하늘색', '노란색',
+    '분홍색', '빨간색', '보라색', '분홍색', '남색'
+  ];
+  const items = phrases.map((p, i) => `${p.trim()}→${palette[i % palette.length]}`).join(', ');
+  return `각 문구의 글자 색상을 감정에 맞춰 다르게 지정하세요: ${items}. 모든 글자에 흰색 외곽선(stroke)을 두껍게 넣어 스티커 텍스트처럼 입체감 있게 표현하세요.`;
+};
+
+const getEmotionTextColorGuideEn = (phrases) => {
+  const palette = [
+    'Bright Yellow', 'Soft Pink', 'Vibrant Red', 'Cute Pink', 'Fresh Mint',
+    'Passion Red', 'Energetic Orange', 'Vivid Purple', 'Sky Blue', 'Bright Yellow',
+    'Warm Pink', 'Crimson Red', 'Deep Purple', 'Soft Pink', 'Deep Navy'
+  ];
+  const items = phrases.map((p, i) => `"${p.trim()}" -> ${palette[i % palette.length]}`).join(', ');
+  return `Vary text color per phrase according to emotion: ${items}. Add a thick white outline stroke around every text to create a bold, 3D sticker lettering appearance.`;
+};
+
 const ART_STYLE_PROMPT_MAP_KO = {
   '귀여운 2D 만화풍': '얇고 균일한 검정 외곽선, 플랫 컬러 채색에 부드러운 그라데이션 하이라이트, 둥글둥글한 형태 단순화',
   '한국 웹툰 스타일': '깔끔한 벡터 라인, 인물 위주의 셀셰이딩, 파스텔 계열 배색과 부드러운 그림자 처리',
@@ -2198,7 +2218,7 @@ ${textExclusionKo} 격자선, 셀 경계선, 구별선, 테두리선, 표 선, �
       const panelPlanKo = emoticons.map((phrase, index) => `스티커 ${index + 1}: "${phrase.trim()}"`).join('\n');
 
       const textPolicyKo = geminiTextMode === 'text'
-        ? '[고품질 한글 타이포그래피 정밀 지침] 각 캐릭터 옆이나 위에 해당 한글 문구를 오탈자 없이 정확한 철자로 그리세요. 딱딱하고 두꺼운 고딕체나 본문용 폰트는 절대로 사용하지 말고, 오직 동글동글하고 귀여운 한글 손글씨 캘리그라피 스타일로만 그리세요. 선명한 글자 외곽선과 높은 가독성의 색상을 사용하고, 텍스트 상자(박스), 괄호 (), 대괄호 [], 따옴표 "", 말풍선, 스티커 번호는 절대로 그리지 마세요.'
+        ? `[고품질 한글 타이포그래피 정밀 지침] ${getEmotionTextColorGuideKo(emoticons)} 각 캐릭터 옆이나 위에 해당 한글 문구를 오탈자 없이 정확한 철자로 그리세요. 딱딱하고 두꺼운 고딕체나 본문용 폰트는 절대로 사용하지 말고, 오직 동글동글하고 귀여운 한글 손글씨 캘리그라피 스타일로만 그리세요. 텍스트 상자(박스), 괄호 (), 대괄호 [], 따옴표 "", 말풍선, 스티커 번호는 절대로 그리지 마세요.`
         : '한국어 문구는 표정과 자세를 정하기 위한 맥락으로만 사용하고, 이미지 안에 절대로 텍스트, 글자, 숫자로 그리지 마세요.';
       const textExclusionKo = geminiTextMode === 'text'
         ? '불필요한 단어, 철자 변경, 임의의 글자, 스티커 번호, 괄호, 따옴표, 텍스트 상자 금지.'
@@ -2294,7 +2314,7 @@ ${textExclusion} No guide lines, no grid lines, no cell dividers, no border line
 
     const panelPlan = emoticons.map((phrase, index) => `Sticker ${index + 1}: "${phrase.trim()}"`).join('\n');
     const textPolicy = geminiTextMode === 'text'
-      ? '[HIGH-PRECISION KOREAN TYPOGRAPHY DIRECTIVE] Render each quoted Korean phrase naturally beside or above its corresponding character with 100% correct Hangul spelling and zero typos. Use playful, highly legible hand-drawn calligraphy typography with crisp vector text contours and strong color contrast. Do NOT draw text boxes, background boxes, speech bubbles, parentheses (), brackets [], quotation marks "", or sticker numbers.'
+      ? `[HIGH-PRECISION KOREAN TYPOGRAPHY DIRECTIVE] ${getEmotionTextColorGuideEn(emoticons)} Render each quoted Korean phrase naturally beside or above its corresponding character with 100% correct Hangul spelling and zero typos. Use playful, highly legible hand-drawn calligraphy typography with crisp vector text contours. Do NOT draw text boxes, background boxes, speech bubbles, parentheses (), brackets [], quotation marks "", or sticker numbers.`
       : 'The Korean phrases are context for determining expression and pose only — never render them as text, letters, or numbers in the image.';
     const textExclusion = geminiTextMode === 'text'
       ? 'No extra words, altered spelling, random letters, sticker numbers, parentheses, quotation marks, or text boxes.'
@@ -2432,7 +2452,7 @@ ${textExclusionKo} 워터마크, 외곽 프레임, 바운딩 박스, 캐릭터 �
 
       const panelPlanKo = emoticons.map((phrase, index) => `${index + 1}. "${phrase.trim()}"`).join('\n');
       const textPolicyKo = grokTextMode === 'text'
-        ? '각 한글 문구를 해당 캐릭터 옆이나 위에 손글씨 타이포그래피 스타일로 자연스럽게 배치하세요. 괄호 (), 상자는 그리지 마세요.'
+        ? `[고품질 한글 타이포그래피 정밀 지침] ${getEmotionTextColorGuideKo(emoticons)} 각 한글 문구를 해당 캐릭터 옆이나 위에 오탈자 없이 손글씨 캘리그라피 스타일로 자연스럽게 배치하세요. 딱딱한 고딕체 금지. 괄호 (), 텍스트 상자는 절대로 그리지 마세요.`
         : '한국어 문구는 표정과 자세를 정하기 위한 맥락으로만 사용하고, 이미지 안에 절대로 텍스트, 글자, 숫자로 그리지 마세요.';
       const textExclusionKo = grokTextMode === 'text'
         ? '불필요한 글자, 괄호, 스티커 번호, 텍스트 상자 금지.'
@@ -2523,7 +2543,7 @@ ${textExclusion} No watermark, no outer frame, no bounding boxes, no duplicate c
 
     const panelPlan = emoticons.map((phrase, index) => `${index + 1}. "${phrase.trim()}"`).join('\n');
     const textPolicy = grokTextMode === 'text'
-      ? 'Render each quoted Korean phrase beside or above its corresponding character in playful hand-drawn typography. No parentheses (), brackets [], or rectangular text boxes.'
+      ? `[HIGH-PRECISION KOREAN TYPOGRAPHY DIRECTIVE] ${getEmotionTextColorGuideEn(emoticons)} Render each quoted Korean phrase beside or above its corresponding character in playful hand-drawn calligraphy typography. No parentheses (), brackets [], or rectangular text boxes.`
       : 'Korean phrases above are emotional context only — do not render any text, letters, or numbers in the image.';
     const textExclusion = grokTextMode === 'text'
       ? 'No extra words, altered spelling, random letters, sticker numbers, parentheses, quotation marks, or text boxes.'
