@@ -3120,15 +3120,20 @@ Please edit the most recent image. Keep the character design, face, expression, 
                       </button>
                     ))}
                   </div>
-                  <div className="text-[13px] leading-relaxed text-amber-900 bg-white/80 p-2.5 rounded-md border border-amber-200">
+                  <div className="text-[13px] leading-relaxed text-amber-900 bg-white/80 p-3 rounded-md border border-amber-200 flex flex-col gap-2">
                     <p className="font-bold flex items-center gap-1">
                       💡 {lang === 'ko' ? '사진 참고 모드 (인물 / 동물 / 사물 자유 결합)' : 'Photo Reference Mode (Person / Animal / Object)'}
                     </p>
-                    <p className="mt-1 text-[12px] text-amber-800">
+                    <p className="text-[12px] text-amber-800">
                       {lang === 'ko'
-                        ? '사람 사진뿐만 아니라 반려견/반려묘(동물), 캐릭터/인형/사물 사진도 모두 가능합니다. 사진 속 대상의 정체성과 아래에서 선택하신 [의상], [소품], [성격], [화풍], [배경효과] 태그가 100% 프롬프트에 자동 융합됩니다.'
-                        : 'Supports photos of people, pets/animals, or objects/characters. Your photo identity and all selected tags (outfit, props, style, effects) will be 100% combined into the prompt.'}
+                        ? '사람 사진뿐만 아니라 반려견/반려묘(동물), 캐릭터/인형/사물 사진도 모두 가능하며 선택하신 태그와 100% 융합됩니다.'
+                        : 'Supports photos of people, pets/animals, or objects/characters. All selected tags combine 100% into the prompt.'}
                     </p>
+                    <div className="bg-amber-100/70 p-2 rounded text-[11px] text-amber-950 font-bold border border-amber-300/60">
+                      ✨ {lang === 'ko' 
+                        ? '예시: 사람 사진을 올리고 [시바견] 태그 선택 시 → [최대한 닮게]: 사진 속 인물이 시바견 인형옷/귀를 쓴 캐릭터 | [귀여운 SD 캐릭터화]: 인상의 분위기를 닮은 2.5등신 시바견 마스코트로 멋지게 융합됩니다!' 
+                        : 'Example: Person photo + [Shiba Inu] tag → [Exact]: Person wearing Shiba Inu costume | [Chibi]: Cute 2.5-head Shiba Inu mascot matching the person\'s vibe!'}
+                    </div>
                   </div>
                 </div>
               )}
