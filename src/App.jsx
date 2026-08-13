@@ -1640,6 +1640,52 @@ const InfoSection = ({ t, lang }) => {
   );
 };
 
+const PHRASE_ACTION_MAP_KO = {
+  'ㅋㅋㅋㅋ': '몸을 구부리며 자지러지게 웃는 모습 (bent over laughing hard)',
+  '안녕!': '한 손을 높이 들고 반갑게 흔드는 모습 (waving one arm high)',
+  '오늘도 화이팅': '양 주먹을 불끈 쥐고 의지를 다지는 포즈 (fists clenched, determined)',
+  '좋아요': '밝게 웃으며 엄지척을 하는 포즈 (thumbs up)',
+  '고마워요': '두 손을 가슴 앞에 모으고 감사의 인사를 건네는 포즈 (hands together bowing)',
+  '사랑해요': '양손으로 가슴/머리 위에 하트를 만들고 미소짓는 모습 (heart hands + small heart)',
+  '최고!': '양 팔을 들고 신나게 점프하는 포즈 (jumping both arms up)',
+  '오예': '한쪽 주먹을 위로 들어 올리며 환호하는 점프 포즈 (jumping one fist up)',
+  '미안해요': '손을 모으고 미안한 표정으로 사과하는 모습 (apologetic bow)',
+  '수고했어요': '지쳐서 앉아 땀을 닦는 모습과 별 효과 (sitting tired + star bubble)',
+  '축하해요': '박수를 치며 꽃가루가 날리는 환호 포즈 (clapping + confetti)',
+  '대박': '양 손으로 뺨을 감싸며 경악/감탄하는 포즈 (hands on cheeks shocked)',
+  '헐': '입을 손으로 막고 충격받아 멍해진 표정 (hand over mouth surprised)',
+  '감동': '가슴에 손을 얹고 눈물이 글썽글썽한 표정과 하트 (hands on chest teary + hearts)',
+  '잘자요': '베개에 누워 편안하게 잠든 모습과 Zzz 효과 (lying on pillow sleeping + Zzz)',
+};
+
+const PHRASE_ACTION_MAP_EN = {
+  'ㅋㅋㅋㅋ': 'bent over laughing hard',
+  '안녕!': 'waving one arm high',
+  '오늘도 화이팅': 'fists clenched, determined',
+  '좋아요': 'thumbs up',
+  '고마워요': 'hands together bowing',
+  '사랑해요': 'heart hands + small heart',
+  '최고!': 'jumping both arms up',
+  '오예': 'jumping one fist up',
+  '미안해요': 'apologetic bow',
+  '수고했어요': 'sitting tired + star bubble',
+  '축하해요': 'clapping + confetti',
+  '대박': 'hands on cheeks shocked',
+  '헐': 'hand over mouth surprised',
+  '감동': 'hands on chest teary + hearts',
+  '잘자요': 'lying on pillow sleeping + Zzz',
+};
+
+const getPhraseActionKo = (phrase) => {
+  const p = phrase.trim();
+  return PHRASE_ACTION_MAP_KO[p] || `${p} 맥락에 맞는 독창적인 전신 동작`;
+};
+
+const getPhraseActionEn = (phrase) => {
+  const p = phrase.trim();
+  return PHRASE_ACTION_MAP_EN[p] || `unique expressive full-body posture matching ${p}`;
+};
+
 function App() {
   const [lang, setLang] = useState('ko');
   const t = I18N[lang] || I18N.ko;
@@ -2440,7 +2486,9 @@ ${textExclusion} No guide lines, no grid lines, no cell dividers, no border line
 
 동일한 캐릭터가 등장하는 고품질 2D 메신저 스티커 (카카오톡 / 라인 스타일) 한 장을 그려주세요. 정사각형 캔버스, 고해상도.
 
-[캐릭터 고정 — 시각적 정체성]
+[CRITICAL IDENTITY LOCK — 캐릭터 정체성 95% 고정]
+참고 사진 인물의 실제 얼굴 구조와 턱선, 눈매 각도, 눈 크기 비율, 콧대, 입술 두께, 헤어스타일을 그대로 고정하세요.
+"귀여운 캐릭터화"를 이유로 흔한 표준 캐릭터 얼굴이나 흔한 애니메이션 얼굴 템플릿으로 절대로 대체하지 마세요.
 ${referenceInstructionKo}
 - 대상: ${character.subject}
 - 외형 및 특징: ${character.appearance}
@@ -2475,7 +2523,7 @@ ${textPolicyKo}
 ${textExclusionKo} 워터마크, 외곽 프레임, 바운딩 박스, 캐릭터 중복, 팔다리 누락/추가, 반신·흉상 컷, 실사 느낌, 반실사 렌더링, 3D 텍스처, 그라데이션 음영, 애니메이션풍 광택 하이라이트, 과도하게 큰 눈, 얼굴 왜곡 절대 금지.`;
       }
 
-      const panelPlanKo = emoticons.map((phrase, index) => `${index + 1}. "${phrase.trim()}"`).join('\n');
+      const panelPlanKo = emoticons.map((phrase, index) => `${index + 1}. "${phrase.trim()}" – ${getPhraseActionKo(phrase)}`).join('\n');
       const textPolicyKo = grokTextMode === 'text'
         ? `[고품질 한글 타이포그래피 정밀 지침] ${getEmotionTextColorGuideKo(emoticons)} 각 한글 문구를 해당 캐릭터 옆이나 위에 오탈자 없이 손글씨 캘리그라피 스타일로 자연스럽게 배치하세요. 딱딱한 고딕체 금지. 괄호 (), 텍스트 상자는 절대로 그리지 마세요.`
         : '한국어 문구는 표정과 자세를 정하기 위한 맥락으로만 사용하고, 이미지 안에 절대로 텍스트, 글자, 숫자로 그리지 마세요.';
@@ -2545,7 +2593,10 @@ ${textExclusionKo} 문구 뒤에 쉼표(,), 마침표(.), 느낌표 중복 등 �
 
 Create a high-end 2D messenger sticker (KakaoTalk / LINE style) featuring one consistent character. Square canvas, high resolution.
 
-[CHARACTER LOCK — VISUAL IDENTITY]
+[CRITICAL IDENTITY LOCK — STRICT 95%+ RESEMBLANCE]
+The character must be an immediately recognizable realistic caricature of the exact subject in the reference photo.
+Do NOT create a generic cute anime face or standardized cartoon template.
+Strictly preserve real facial identity: exact face shape, eye shape and angle, nose structure, lip thickness, jawline, skin tone, and hairstyle.
 ${referenceInstruction}
 Subject: ${character.subject}
 Appearance & Features: ${character.appearance}
@@ -2580,7 +2631,7 @@ ${textPolicy}
 ${textExclusion} No watermark, no outer frame, no bounding boxes, no duplicate character, no missing or extra limbs, no half-body/bust-only shots, no photorealism, no facial distortion.`;
     }
 
-    const panelPlan = emoticons.map((phrase, index) => `${index + 1}. "${phrase.trim()}"`).join('\n');
+    const panelPlan = emoticons.map((phrase, index) => `${index + 1}. "${phrase.trim()}" – ${getPhraseActionEn(phrase)}`).join('\n');
     const textPolicy = grokTextMode === 'text'
       ? `[HIGH-PRECISION KOREAN TYPOGRAPHY DIRECTIVE] ${getEmotionTextColorGuideEn(emoticons)} Render each quoted Korean phrase beside or above its corresponding character in playful hand-drawn calligraphy typography. No parentheses (), brackets [], or rectangular text boxes.`
       : 'Korean phrases above are emotional context only — do not render any text, letters, or numbers in the image.';
