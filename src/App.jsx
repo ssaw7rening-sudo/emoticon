@@ -2075,7 +2075,7 @@ If a previous sheet or character image exists in this chat, preserve its face, b
 ${textPolicy}
 
 [EXCLUDE]
-${textExclusion} No watermark, frame, duplicate character, extra limbs, cropped body, complex scenery, or photorealistic background.`;
+${textExclusion} No watermark, frame, duplicate character, extra limbs, cropped body, 3D textures, realistic shading, glossy gradients, complex scenery, or photorealistic background.`;
       }
     }
 
@@ -2445,7 +2445,14 @@ ${referenceInstructionKo}
 - 대상: ${character.subject}
 - 외형 및 특징: ${character.appearance}
 - 의상: ${character.outfit}
-- 화풍 및 비율: ${character.artStyle}. ${grokProportionsKo} 깔끔한 2D 벡터 스티커 일러스트, 선명한 외곽 선화(Linework), 부드러운 셀 셰이딩, 선명한 플랫 컬러. 임의의 액세서리 추가 금지.
+- 화풍 상세 스펙 (반드시 엄격히 준수):
+  * 주요 화풍: ${character.artStyle} (${grokProportionsKo})
+  * 외곽선: 두께 3~4px 균일한 검정 벡터 라인, 끊김 없이 선명하게 연결
+  * 채색: 각 색상 영역을 2단계 명암(기본색 + 그림자색 1단)으로만 구분하는 정교한 셀 셰이딩, 부드러운 그라데이션 사용 엄격 금지
+  * 색상: 채도 높은 플랫 컬러 5~6가지 깔끔한 팔레트로 제한 (피부색, 머리색, 상의색, 하의색, 포인트색)
+  * 형태 비율: 얼굴과 손을 제외한 신체 비율은 2.5등신~3등신 SD(Super Deformed) 캐릭터 비율
+  * 렌더링 스타일 키워드: 카카오톡 이모티콘 스튜디오 승인작 스타일, 라인프렌즈 캐릭터 렌더링 방식과 동일한 수준의 선/채색 마감
+  * 금지 사항: 이 화풍 스펙과 다른 방식(3D 렌더링, 반실사 렌더링, 사실적 음영, 과도한 그라데이션, 수채화 느낌)으로 그리지 마세요. 임의의 액세서리 추가 금지.
 
 [품질 규칙]
 캐릭터의 얼굴 디테일, 선화 선명도, 색상 채도를 높은 수준으로 렌더링하세요. 머리부터 발끝까지 전신이 잘리지 않고 보여야 합니다.
@@ -2465,7 +2472,7 @@ ${referenceInstructionKo}
 ${textPolicyKo}
 
 [제외 조건]
-${textExclusionKo} 워터마크, 외곽 프레임, 바운딩 박스, 캐릭터 중복, 팔다리 누락/추가, 반신·흉상 컷, 실사 느낌, 얼굴 왜곡 절대 금지.`;
+${textExclusionKo} 워터마크, 외곽 프레임, 바운딩 박스, 캐릭터 중복, 팔다리 누락/추가, 반신·흉상 컷, 실사 느낌, 반실사 렌더링, 3D 텍스처, 그라데이션 음영, 애니메이션풍 광택 하이라이트, 과도하게 큰 눈, 얼굴 왜곡 절대 금지.`;
       }
 
       const panelPlanKo = emoticons.map((phrase, index) => `${index + 1}. "${phrase.trim()}"`).join('\n');
@@ -2485,7 +2492,14 @@ ${referenceInstructionKo}
 Subject: ${character.subject}
 Appearance & Features: ${character.appearance}
 Outfit: ${character.outfit}
-Art Style & Proportions: ${character.artStyle}. ${grokProportionsKo} 깔끔한 2D 벡터 스티커 일러스트, 선명한 외곽 선화(Linework), 부드러운 셀 셰이딩, 선명한 플랫 컬러. 임의의 액세서리 추가 금지.
+Art Style Mechanical Spec (Strict Compliance):
+  * Main Style: ${character.artStyle} (${grokProportionsKo})
+  * Linework: Uniform 3-4px crisp black vector line art with continuous edges
+  * Coloring: 2-tone cell shading only (flat base color + 1 shade layer), no soft gradients
+  * Palette: Vivid flat colors limited to 5-6 palette colors (skin, hair, top, bottom, accent)
+  * Proportions: 2.5 to 3-head SD (Super Deformed) character ratio
+  * Benchmark: KakaoTalk Emoticon Studio approved quality, LINE Friends character rendering finish
+  * Prohibitions: No 3D rendering, realistic shading, glossy highlights, or soft watercolor gradients.
 
 [품질 & 일관성 규칙]
 15개 셀 캐릭터 모두 동일하게 높은 수준의 얼굴 디테일, 선명한 선화, 색상 채도를 유지하세요. 모든 캐릭터는 머리부터 발끝까지 전신이 잘리지 않고 보여야 합니다.
@@ -2536,7 +2550,14 @@ ${referenceInstruction}
 Subject: ${character.subject}
 Appearance & Features: ${character.appearance}
 Outfit: ${character.outfit}
-Art Style & Proportions: ${character.artStyle}. ${grokProportions} Clean 2D vector sticker illustration, sharp linework, soft cell shading, vivid flat colors. No unrequested accessories.
+Art Style Mechanical Specifications (Strict Compliance Required):
+  * Main Style: ${character.artStyle} (${grokProportions})
+  * Linework: Uniform 3-4px crisp black vector line art with continuous unbroken edges.
+  * Coloring: Precision 2-tone cell shading only (base color + 1 shade level), absolutely NO soft gradients or airbrush washes.
+  * Palette: High-saturation flat color palette limited to 5-6 clean colors (skin, hair, top, bottom, accent color).
+  * Proportions: 2.5 to 3-head SD (Super Deformed) character body ratio.
+  * Benchmark Quality: KakaoTalk Emoticon Studio approved quality, LINE Friends character rendering style.
+  * Strict Prohibitions: Do NOT use 3D rendering, semi-realistic shading, realistic texture, or glossy gradient highlights.
 
 [QUALITY & UNIFORMITY RULE]
 Render the character at a high level of facial detail, linework sharpness, and color saturation. Every character is full-body, head-to-toe, uncropped.
@@ -2576,7 +2597,14 @@ ${referenceInstruction}
 Subject: ${character.subject}
 Appearance & Features: ${character.appearance}
 Outfit: ${character.outfit}
-Art Style & Proportions: ${character.artStyle}. ${grokProportions} Clean 2D vector sticker illustration, sharp linework, soft cell shading, vivid flat colors. No unrequested accessories.
+Art Style Mechanical Specifications (Strict Compliance Required):
+  * Main Style: ${character.artStyle} (${grokProportions})
+  * Linework: Uniform 3-4px crisp black vector line art with continuous unbroken edges.
+  * Coloring: Precision 2-tone cell shading only (base color + 1 shade level), absolutely NO soft gradients or airbrush washes.
+  * Palette: High-saturation flat color palette limited to 5-6 clean colors (skin, hair, top, bottom, accent color).
+  * Proportions: 2.5 to 3-head SD (Super Deformed) character body ratio.
+  * Benchmark Quality: KakaoTalk Emoticon Studio approved quality, LINE Friends character rendering style.
+  * Strict Prohibitions: Do NOT use 3D rendering, semi-realistic shading, realistic texture, or glossy gradient highlights.
 
 [QUALITY & UNIFORMITY RULE]
 Render all 15 characters at the exact same level of facial detail, linework sharpness, and color saturation across the entire sheet — no degradation toward edges or bottom rows. Every character is full-body, head-to-toe, uncropped.
