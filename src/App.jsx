@@ -2401,13 +2401,13 @@ ${referenceInstructionKo}
 - 대상: ${character.subject}
 - 외형 및 특징: ${character.appearance}
 - 의상: ${character.outfit}
-- 경고: 모든 15개 셀에서 예외 없이 머리부터 발끝까지 전신이 보여야 합니다. 얼굴이나 상반신만 보이는 클로즈업 컷은 엄격히 금지합니다.
+- 구도 조화: 전신 컷을 기본(70% 이상)으로 하되, 감정 표현이 강조되는 문구는 상반신/바스트 컷을 자연스럽게 섞어 GPT 스타일의 생동감 넘치는 이모티콘 시트로 구성하세요.
 
 [화풍 및 비율]
 지정 화풍: ${character.artStyle}. ${geminiProportionsKo} 깔끔하고 선명한 벡터 외곽선, 부드러운 셀 셰이딩, 조화로운 색감. 15개 스티커 전체에서 지정된 최우선 화풍의 선, 채색, 질감 및 캐릭터 비율을 100% 엄격히 유지하세요. 15개 셀의 얼굴은 마치 같은 사진에서 포즈만 바꾼 것처럼 눈 크기, 눈매, 얼굴 폭, 턱선이 픽셀 단위로 동일해야 합니다. 셀마다 다른 사람처럼 보이지 않도록 각별히 주의하세요.
 
 [15종 역동적인 포즈 & 표정]
-각 스티커마다 독창적이고 표정이 살아있는 얼굴 감정과 역동적인 전신 자세를 구성하세요 (앉기, 웅크리기, 점프, 소품 들기, 윙크, 먹기, 응원하기 등). 모든 스티커는 머리부터 발끝까지 완전한 전신을 보여주어야 합니다:
+각 스티커마다 독창적이고 표정이 살아있는 얼굴 감정과 역동적인 전신 자세를 구성하세요 (앉기, 웅크리기, 점프, 소품 들기, 윙크, 먹기, 응원하기 등). 각 문구의 감정에 맞춰 전신 포즈, 상반신 컷, 상체 컷을 다채롭게 배정하세요:
 ${panelPlanKo}
 보조 소품 & 반짝이 효과: ${character.props}, ${character.effects}, 최소한의 포인트 효과.
 
@@ -2497,7 +2497,7 @@ ${photoModeBlockEn}
 - Subject: ${character.subject}
 - Appearance & Features: ${character.appearance}
 - Outfit: ${character.outfit}
-- WARNING: Every single one of the 15 cells MUST show a complete full-body character head-to-toe without exception. Close-up shots showing only the face or upper body are strictly forbidden.
+- COMPOSITION HARMONY: Use full-body poses as the primary baseline (70%+), but naturally incorporate 3/4 upper-body shots and expressive close-ups where the emotion calls for it, creating a lively KakaoTalk/LINE sticker sheet like GPT.
 
 [ART DIRECTION & PROPORTIONS]
 cute, approachable, high-quality 2D messenger sticker illustration with clean outlines and harmonious colors. ${proportionStyleEn} Clean crisp vector outlines, vibrant colors, and soft cell shading. Maintain identical character proportions, facial details, eye shape, and jawline identically across all 15 stickers as if from the same photo session.
@@ -2650,7 +2650,7 @@ Art Style Mechanical Spec (Strict Compliance):
   * Prohibitions: No 3D rendering, realistic shading, glossy highlights, or soft watercolor gradients.
 
 [품질 & 일관성 규칙]
-15개 셀 캐릭터 모두 동일하게 높은 수준의 얼굴 디테일, 선명한 선화, 색상 채도를 유지하세요. 모든 캐릭터는 머리부터 발끝까지 전신이 잘리지 않고 보여야 합니다.
+15개 셀 캐릭터 모두 동일하게 높은 수준의 얼굴 디테일, 선명한 선화, 색상 채도를 유지하세요. 전신 컷과 상반신 컷을 감정에 맞춰 다채롭게 구성하고, 피사체가 답답하게 눌리지 않도록 자연스럽게 표현하세요.
 
 [15 스티커 포즈]
 각 셀은 서 있는 자세를 반복하지 말고, 앉기·점프·웅크리기·눕기·엎드리기 등 최소 6가지 이상 서로 다른 신체 자세를 사용하세요. 단순히 팔 위치만 바꾸는 것을 엄격히 금지합니다. 각 문구의 감정 맥락에 맞춰 독창적이고 표정이 살아있는 얼굴 감정과 역동적인 전신 자세를 구성하세요:
@@ -2708,7 +2708,7 @@ Art Style Mechanical Specifications (Strict Compliance Required):
   * Strict Prohibitions: Do NOT use 3D rendering, semi-realistic shading, realistic texture, or glossy gradient highlights.
 
 [QUALITY & UNIFORMITY RULE]
-Render the character at a high level of facial detail, linework sharpness, and color saturation. Every character is full-body, head-to-toe, uncropped.
+Render the character at a high level of facial detail, linework sharpness, and color saturation. Primarily full-body with a natural mix of expressive upper-body shots matching the emotion.
 
 [SCENE, EXPRESSION & POSE]
 Emotional Context / Mood: "${targetPhrase}"
@@ -2753,7 +2753,7 @@ Art Style Mechanical Specifications (Strict Compliance Required):
   * Strict Prohibitions: Do NOT use 3D rendering, semi-realistic shading, realistic texture, or glossy gradient highlights.
 
 [QUALITY & UNIFORMITY RULE]
-Render all 15 characters at the exact same level of facial detail, linework sharpness, and color saturation across the entire sheet — no degradation toward edges or bottom rows. Every character is full-body, head-to-toe, uncropped.
+Render all 15 characters at the exact same level of facial detail, linework sharpness, and color saturation across the entire sheet — no degradation toward edges or bottom rows. Primarily full-body with a natural mix of expressive upper-body shots matching the emotion.
 
 [15 STICKER POSES]
 Do NOT repeat standing postures across cells. Incorporate at least 6 or more distinctly different body postures (such as sitting, jumping, crouching, lying down, kneeling, leaning). Simply tweaking arm positions while standing is strictly forbidden. Infer a unique, highly expressive facial emotion and dynamic full-body posture for each cell, based on the following emotional context:
