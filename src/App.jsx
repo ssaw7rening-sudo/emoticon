@@ -3048,19 +3048,19 @@ Please edit the most recent image. Keep the character design, face, expression, 
               </button>
             </div>
             
-            {/* High-Visibility Live Active Settings Status Banner */}
-            <div className="bg-emerald-900 text-white rounded-lg p-3 shadow-md flex flex-col sm:flex-row sm:items-center justify-between gap-2 border border-emerald-700">
+            {/* Live Active Settings Status Banner (Original Brand Palette) */}
+            <div className="bg-[#EAF8F3] text-mint-strong rounded-lg p-3 shadow-bubbly flex flex-col sm:flex-row sm:items-center justify-between gap-2 border border-mint-border">
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="bg-emerald-500 text-slate-900 text-[11px] font-black px-2 py-0.5 rounded-md uppercase tracking-wide">
+                <span className="bg-mint-strong text-white text-[11px] font-black px-2 py-0.5 rounded-md uppercase tracking-wide">
                   ⚡ {lang === 'ko' ? '실시간 프롬프트 적용 중' : 'Live Prompt Active'}
                 </span>
-                <span className="text-[13px] font-bold text-emerald-100">
+                <span className="text-[13px] font-bold text-mint-strong">
                   {characterSource === 'photo' 
                     ? `📸 ${lang === 'ko' ? '참고 사진' : 'Photo Reference'} (${getPhotoModeLabel('ko')})`
                     : `✏️ ${lang === 'ko' ? '직접 캐릭터 설정' : 'Direct Character Setup'}`}
                 </span>
               </div>
-              <div className="text-[12px] font-bold text-emerald-200 truncate max-w-md">
+              <div className="text-[12px] font-bold text-mint-strong/90 truncate max-w-md">
                 {charManual.trim() 
                   ? `${lang === 'ko' ? '적용된 태그:' : 'Active Tags:'} ${charManual}` 
                   : (lang === 'ko' ? '태그 미선택 (기본 2D 캐릭터 자동 적용)' : 'No tags (Default 2D character active)')}
@@ -3226,15 +3226,15 @@ Please edit the most recent image. Keep the character design, face, expression, 
                       key={tag}
                       onClick={() => appendTag(tag)}
                       aria-pressed={selected}
-                      className={`interactive-control px-3.5 py-1.5 rounded-full text-[13px] font-bold transition-all flex items-center gap-1.5 ${
+                      className={`interactive-control px-3 py-1.5 rounded-full text-[13px] font-bold transition-all flex items-center gap-1 ${
                         selected
-                          ? 'bg-emerald-700 text-white border-2 border-emerald-900 shadow-lg scale-105 ring-2 ring-emerald-500/50 font-black'
-                          : 'bg-slate-100 text-slate-700 hover:bg-emerald-50 hover:text-emerald-800 border border-slate-300'
+                          ? 'bg-mint-strong text-white border-2 border-mint-strong shadow-md scale-105 ring-2 ring-mint-strong/30'
+                          : 'bg-mint-soft text-mint-strong hover:bg-mint-hover border border-mint-border'
                       }`}
                     >
                       {selected ? (
                         <>
-                          <span className="bg-emerald-900 text-white text-[10px] px-1.5 py-0.5 rounded-full font-extrabold">✓ 적용됨</span>
+                          <span className="bg-white text-mint-strong text-[10px] px-1.5 py-0.5 rounded-full font-extrabold">✓ 적용됨</span>
                           <span>{tag}</span>
                         </>
                       ) : (
