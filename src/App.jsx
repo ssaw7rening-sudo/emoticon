@@ -1834,6 +1834,19 @@ function App() {
   const [grokTextMode, setGrokTextMode] = useState('visual');
   const [toastMessage, setToastMessage] = useState('');
 
+  const isTagSelected = (tag) => {
+    const selectedList = charManual.split(',').map(v => v.trim()).filter(Boolean);
+    return selectedList.includes(tag);
+  };
+
+  const removeSelectedTag = (tagToRemove) => {
+    setCharManual(prev => {
+      const currentTags = prev.split(',').map(v => v.trim()).filter(Boolean);
+      return currentTags.filter(t => t !== tagToRemove).join(', ');
+    });
+    showToast(lang === 'ko' ? `태그 삭제됨: [${tagToRemove}]` : `Tag removed: [${tagToRemove}]`);
+  };
+
   const showToast = (msg) => {
     setToastMessage(msg);
     setTimeout(() => {
@@ -3104,6 +3117,43 @@ Please edit the most recent image. Keep the character design, face, expression, 
               )}
             </div>
 
+                        {/* Selected Tags Summary Bar */}
+            {charManual.trim() && (
+              <div className="mb-3 bg-[#EAF8F3] border border-mint-border rounded-lg p-3 flex flex-col gap-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-[13px] font-bold text-mint-strong flex items-center gap-1.5">
+                    🏷️ {lang === 'ko' ? '현재 선택·적용된 캐릭터 태그' : 'Currently Active Character Tags'}
+                    <span className="bg-mint-strong text-white text-[11px] px-2 py-0.5 rounded-full font-bold">
+                      {charManual.split(',').map(v => v.trim()).filter(Boolean).length}개
+                    </span>
+                  </span>
+                  <button 
+                    onClick={clearTags} 
+                    className="text-[12px] font-bold text-error hover:underline flex items-center gap-0.5"
+                  >
+                    <Trash2 size={12} /> {lang === 'ko' ? '전체 삭제' : 'Clear All'}
+                  </button>
+                </div>
+                <div className="flex flex-wrap gap-1.5">
+                  {charManual.split(',').map(v => v.trim()).filter(Boolean).map(tag => (
+                    <span 
+                      key={tag} 
+                      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white text-mint-strong border border-mint-border text-[12px] font-bold shadow-sm"
+                    >
+                      ✓ {tag}
+                      <button 
+                        onClick={() => removeSelectedTag(tag)} 
+                        className="hover:text-error text-slate-400 font-bold text-[14px] leading-none"
+                        title={lang === 'ko' ? '삭제' : 'Remove'}
+                      >
+                        ×
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
             <textarea 
               className="w-full bg-white border-2 border-mint-border rounded-md p-3.5 sm:p-4 text-on-surface font-bold placeholder:text-on-surface-variant focus:outline-none focus:ring-4 focus:ring-mint focus:border-mint-border resize-y min-h-[100px] shadow-sm" 
               placeholder={t.placeholder}
@@ -3148,15 +3198,23 @@ Please edit the most recent image. Keep the character design, face, expression, 
                 ))}
               </div>
               <div className="p-3 flex flex-wrap gap-2 bg-surface-container-lowest min-h-[80px]">
-                {currentTags[activeTagCategory]?.map(tag => (
-                  <button
-                    key={tag}
-                    onClick={() => appendTag(tag)}
-                    className="interactive-control px-3 py-1.5 rounded-full bg-mint-soft text-[13px] text-mint-strong font-label-md hover:bg-mint-hover border border-mint-border"
-                  >
-                    + {tag}
-                  </button>
-                ))}
+                {currentTags[activeTagCategory]?.map(tag => {
+                  const selected = isTagSelected(tag);
+                  return (
+                    <button
+                      key={tag}
+                      onClick={() => appendTag(tag)}
+                      aria-pressed={selected}
+                      className={`interactive-control px-3 py-1.5 rounded-full text-[13px] font-bold transition-all flex items-center gap-1 ${
+                        selected
+                          ? 'bg-mint-strong text-white border-2 border-mint-strong shadow-md scale-105 ring-2 ring-mint-strong/30'
+                          : 'bg-mint-soft text-mint-strong hover:bg-mint-hover border border-mint-border'
+                      }`}
+                    >
+                      {selected ? `✓ ${tag}` : `+ ${tag}`}
+                    </button>
+                  );
+                })}
               </div>
             </div>
           </div>
@@ -3165,7 +3223,17 @@ Please edit the most recent image. Keep the character design, face, expression, 
         {/* Section 2: Emoji Phrases */}
         <section className="flex flex-col gap-md">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <h2 className="font-headline-sm text-headline-sm text-on-surface">{t.phrases}</h2>
+            <div className="flex flex-col gap-1">
+              <h2 className="font-headline-sm text-headline-sm text-on-surface">{t.phrases}</h2>
+              <span className="text-[12px] font-bold text-mint-strong flex items-center gap-1">
+                📌 {lang === 'ko' ? '현재 활성화된 테마:' : 'Active Theme:'} 
+                <span className="bg-mint-soft text-mint-strong border border-mint-border px-2 py-0.5 rounded-full">
+                  {activeTheme === 'custom' 
+                    ? (lang === 'ko' ? '✏️ 사용자 지정 (커스텀 문구)' : '✏️ Custom Theme')
+                    : activeTheme}
+                </span>
+              </span>
+            </div>
             <div className="flex gap-2">
               <select 
                 value={currentThemes[activeTheme] ? activeTheme : ''} 
@@ -3564,7 +3632,7 @@ Please edit the most recent image. Keep the character design, face, expression, 
               </strong>
             </div>
           )}
-          <div className="bg-surface-container-lowest rounded-md p-3.5 sm:p-md shadow-bubbly border border-outline-variant">
+          <div className="bg-surface-container-lowest rounded-md p-3.5 sm:p-md shadow-[#B8E3D2] border border-outline-variant">
             <textarea 
               className="w-full bg-white border-2 border-outline-variant rounded-md p-4 text-on-surface font-normal focus:outline-none resize-y min-h-[200px] shadow-sm" 
               readOnly
