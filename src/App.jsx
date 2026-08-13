@@ -1987,13 +1987,7 @@ function App() {
       return [...currentTags, tag].join(', ');
     });
 
-    // Rule 3: Auto-switch Photo Mode if selecting a mascot/animal subject while in 'exact' photo mode
-    if (characterSource === 'photo' && photoReferenceMode === 'exact' && isSubjectCategory) {
-      setPhotoReferenceMode('characterize');
-      showToast(lang === 'ko' 
-        ? `📸 캐릭터 태그 선택에 따라 [귀여운 SD 캐릭터화] 모드로 자동 전환되었습니다.` 
-        : `📸 Auto-switched to [Chibi Mascot] mode for character tag.`);
-    }
+
   };
 
   const getPhotoModeLabel = (labelLanguage = lang) => ({
@@ -3128,12 +3122,12 @@ Please edit the most recent image. Keep the character design, face, expression, 
                   </div>
                   <div className="text-[13px] leading-relaxed text-amber-900 bg-white/80 p-2.5 rounded-md border border-amber-200">
                     <p className="font-bold flex items-center gap-1">
-                      💡 {lang === 'ko' ? '사진 참고 모드 태그 연동 안내' : 'Photo Mode Tag Synergy Guide'}
+                      💡 {lang === 'ko' ? '사진 참고 모드 (인물 / 동물 / 사물 자유 결합)' : 'Photo Reference Mode (Person / Animal / Object)'}
                     </p>
                     <p className="mt-1 text-[12px] text-amber-800">
                       {lang === 'ko'
-                        ? '첨부하신 사진 속 인물의 얼굴 특징을 기본으로 삼고, 아래에서 선택하시는 [의상], [소품], [성격], [화풍], [배경효과] 태그가 100% 프롬프트에 자동 결합됩니다.'
-                        : 'The reference photo provides facial identity, while your chosen [Outfit], [Props], [Art Style], and [Effects] tags below are automatically combined into the prompt.'}
+                        ? '사람 사진뿐만 아니라 반려견/반려묘(동물), 캐릭터/인형/사물 사진도 모두 가능합니다. 사진 속 대상의 정체성과 아래에서 선택하신 [의상], [소품], [성격], [화풍], [배경효과] 태그가 100% 프롬프트에 자동 융합됩니다.'
+                        : 'Supports photos of people, pets/animals, or objects/characters. Your photo identity and all selected tags (outfit, props, style, effects) will be 100% combined into the prompt.'}
                     </p>
                   </div>
                 </div>
