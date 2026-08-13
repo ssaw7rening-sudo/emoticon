@@ -2386,10 +2386,12 @@ ${textExclusionKo} 격자선, 셀 경계선, 구별선, 테두리선, 표 선, �
       const panelPlanKo = emoticons.map((phrase, index) => `스티커 ${index + 1}: "${phrase.trim()}"`).join('\n');
 
       const textPolicyKo = geminiTextMode === 'text'
-        ? `[고품질 한글 타이포그래피 — 단일 정밀 출력 & 중복 엄격 금지] ${getEmotionTextColorGuideKo(emoticons)}
-1. 각 셀당 해당 한글 문구를 오직 단 한 번(EXACTLY ONCE)만 정확한 철자로 그리세요. 같은 단어나 음절을 두 번 이상 중복 반복하여 그리는 행위(예: "오늘도 화이팅 화이팅", "미안해요 미안해요", "최 최고!" 등 단어/글자 중복)는 절대로 금지합니다.
-2. 오직 완벽한 한글 자모만 그리세요. 일본어(히라가나/가타카나), 한자, 폰트 뭉개짐, 기괴한 자음 변형은 엄격히 금지합니다.
-3. 글자는 검은색 또는 원색 채움에 두꺼운 흰색 외곽선(Heavy White Stroke)을 두른 선명한 팝아트 스티커 타이포그래피 스타일로 크게 표현하세요.`
+        ? `[고품질 한글 타이포그래피 — GPT 스타일 3D 그래픽 스티커 배지 디자인 지침] ${getEmotionTextColorGuideKo(emoticons)}
+1. 글자를 단순 텍스트가 아닌 '상업용 카카오톡 이모티콘 팝아트 스티커 그래픽 요소(Sticker Graphic Badge)'로 구현하세요.
+2. 글자 채움: 검은색 또는 고채도 원색의 두껍고 귀여운 둥근 손글씨 볼드 폰트로 그리세요.
+3. 이중 외곽선: 글자 자체에 선명한 2~3px 검은색 윤곽선을 두르고, 그 겉면에 매우 두껍고 깔끔한 순백색 외곽선(Heavy White Die-cut Outline)을 감싸 스티커처럼 입체감을 부여하세요.
+4. 위치 및 연출: 캐릭터 옆이나 위에 살짝 비스듬히 틸트(tilt)하여 역동적이고 톡톡 튀는 2D/3D 스티커 타이포그래피로 렌더링하세요. 밋밋하고 연한 폰트는 절대 금지합니다.
+5. 단일 렌더링 & 정밀 출력: 각 셀당 지정된 문구를 오직 단 한 번(EXACTLY ONCE)만 그리세요. 단어/글자 반복 중복(예: 화이팅 화이팅, 미안해요 미안해요, 최 최고!) 및 일본어/외국어 섞임은 엄격히 금지합니다.`
         : '한국어 문구는 표정과 자세를 정하기 위한 맥락으로만 사용하고, 이미지 안에 절대로 텍스트, 글자, 숫자로 그리지 마세요.';
       const textExclusionKo = geminiTextMode === 'text'
         ? '불필요한 단어, 철자 변경, 임의의 글자, 스티커 번호, 괄호, 따옴표, 텍스트 상자 금지.'
@@ -2485,10 +2487,12 @@ ${textExclusion} No guide lines, no grid lines, no cell dividers, no border line
 
     const panelPlan = emoticons.map((phrase, index) => `Sticker ${index + 1}: "${phrase.trim()}"`).join('\n');
     const textPolicy = geminiTextMode === 'text'
-      ? `[PRECISION KOREAN TYPOGRAPHY — SINGLE RENDERING & ANTI-DUPLICATION] ${getEmotionTextColorGuideEn(emoticons)}
-1. Render each quoted Korean phrase EXACTLY ONCE per cell. Strictly prohibit word or letter duplications (e.g. repeating "화이팅 화이팅", "미안해요 미안해요", "최 최고!").
-2. Render only 100% correct Hangul characters. Absolutely NO Japanese (Hiragana/Katakana), Chinese characters, gibberish symbols, or warped font shapes.
-3. Use bold filled calligraphy text with a heavy white outer stroke around every letter.`
+      ? `[HIGH-IMPACT KOREAN STICKER TYPOGRAPHY — GPT STYLE 3D BADGE DIRECTIVE] ${getEmotionTextColorGuideEn(emoticons)}
+1. Treat text not as flat overlay, but as a commercial KakaoTalk/LINE 3D Sticker Graphic Badge element.
+2. Letter Fill & Line: Bold solid black or high-saturation vivid color fill with a crisp black inner outline.
+3. Double Die-Cut Stroke: Enclose the entire lettering in a thick, heavy continuous white die-cut border to create 3D pop depth.
+4. Arrangement: Tilt lettering slightly for a dynamic, energetic 2D messenger sticker graphic aesthetic. Never use thin, faint body fonts.
+5. Single Precision Rendering: Render each phrase EXACTLY ONCE per cell. Strictly prohibit repeating words/letters twice or including foreign/Japanese symbols.`
       : 'The Korean phrases are context for determining expression and pose only — never render them as text, letters, or numbers in the image.';
     const textExclusion = geminiTextMode === 'text'
       ? 'No extra words, altered spelling, random letters, sticker numbers, parentheses, quotation marks, or text boxes.'
