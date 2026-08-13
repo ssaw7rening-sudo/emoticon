@@ -1834,6 +1834,18 @@ function App() {
   const [grokTextMode, setGrokTextMode] = useState('visual');
   const [toastMessage, setToastMessage] = useState('');
 
+  const getCategoryRuleBadge = (category) => {
+    const isArtStyle = category === '🖌️ 화풍' || category === '🖌️ Art Style';
+    const isSubject = [
+      '🐱 동물', '👦 인물', '🦄 판타지/사물', '🤖 로봇/SF', '🍞 디저트/음식', '🌿 식물/자연',
+      '🐱 Animal', '👦 Person', '🦄 Fantasy/Object', '🤖 Robot/Sci-Fi', '🍞 Dessert/Food', '🌿 Plant/Nature'
+    ].includes(category);
+
+    if (isArtStyle) return lang === 'ko' ? '🎨 1개 선택' : '🎨 Single Select';
+    if (isSubject) return lang === 'ko' ? '👤 1종류 선택' : '👤 1 Subject';
+    return lang === 'ko' ? '✨ 다중 선택 가능' : '✨ Multi-Select';
+  };
+
   const isTagSelected = (tag) => {
     if (!charManual || !tag) return false;
     const target = tag.trim().toLowerCase();
@@ -3216,19 +3228,36 @@ Please edit the most recent image. Keep the character design, face, expression, 
               </div>
             )}
             
+            {/* Tag Category Selection Rules Info Card */}
             <div className="mt-md bg-surface-container-highest rounded-md overflow-hidden">
+              <div className="bg-[#E2F5EE] px-3.5 py-2.5 border-b border-mint-border flex items-center justify-between text-[12px] font-bold text-mint-strong">
+                <span className="flex items-center gap-1.5">
+                  📌 {lang === 'ko' ? '태그 선택 규칙:' : 'Tag Rules:'}
+                  <span className="bg-white/90 px-2 py-0.5 rounded text-[11px] border border-mint-border">
+                    {lang === 'ko' ? '화풍/피사체: 대표 1개 선택' : 'Art/Subject: 1 Main Select'}
+                  </span>
+                  <span className="bg-white/90 px-2 py-0.5 rounded text-[11px] border border-mint-border">
+                    {lang === 'ko' ? '의상/소품/성격/효과: 여러 개 다중 선택 조합 가능' : 'Outfit/Props/Effects: Multi-Select'}
+                  </span>
+                </span>
+                <span className="bg-mint-strong text-white px-2 py-0.5 rounded-full text-[11px] font-extrabold">
+                  {getCategoryRuleBadge(activeTagCategory)}
+                </span>
+              </div>
+
               <div className="no-scrollbar flex flex-wrap bg-[#EAF8F3] px-2 border-b border-mint-border">
                 {categoryKeys.map(category => (
                   <button
                     key={category}
+                    type="button"
                     onClick={() => setActiveTagCategory(category)}
-                    className={`whitespace-nowrap px-3 py-2 text-[13px] font-bold transition-colors ${
+                    className={`whitespace-nowrap px-3 py-2 text-[13px] font-bold transition-colors flex items-center gap-1 ${
                       activeTagCategory === category 
-                        ? 'text-mint-strong border-b-2 border-mint-strong' 
+                        ? 'text-mint-strong border-b-2 border-mint-strong bg-white/50' 
                         : 'text-mint-strong hover:bg-mint-hover border-b-2 border-transparent'
                     }`}
                   >
-                    {category}
+                    <span>{category}</span>
                   </button>
                 ))}
               </div>
