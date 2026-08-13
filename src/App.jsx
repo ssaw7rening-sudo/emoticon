@@ -2383,15 +2383,18 @@ ${textPolicyKo}
 ${textExclusionKo} 격자선, 셀 경계선, 구별선, 테두리선, 표 선, 크롭 마크, 바운딩 박스, 워터마크, 전체 프레임, 캐릭터 중복, 팔다리 누락/추가, 반신·흉상 컷, 회색·흰색 체크무늬 패턴, 실사 느낌.`;
       }
 
-      const panelPlanKo = emoticons.map((phrase, index) => `스티커 ${index + 1}: "${phrase.trim()}"`).join('\n');
+      const panelPlanKo = [
+        `1행 (스티커 1~5): 1. "${(emoticons[0]||'ㅋㅋㅋㅋ').trim()}" | 2. "${(emoticons[1]||'안녕!').trim()}" | 3. "${(emoticons[2]||'오늘도 화이팅').trim()}" | 4. "${(emoticons[3]||'좋아요').trim()}" | 5. "${(emoticons[4]||'고마워요').trim()}"`,
+        `2행 (스티커 6~10): 6. "${(emoticons[5]||'사랑해요').trim()}" | 7. "${(emoticons[6]||'최고!').trim()}" | 8. "${(emoticons[7]||'오예').trim()}" | 9. "${(emoticons[8]||'미안해요').trim()}" | 10. "${(emoticons[9]||'수고했어요').trim()}"`,
+        `3행 (스티커 11~15): 11. "${(emoticons[10]||'축하해요').trim()}" | 12. "${(emoticons[11]||'대박').trim()}" | 13. "${(emoticons[12]||'헐').trim()}" | 14. "${(emoticons[13]||'감동').trim()}" | 15. "${(emoticons[14]||'잘자요').trim()}"`
+      ].join('\n');
 
       const textPolicyKo = geminiTextMode === 'text'
-        ? `[고품질 한글 타이포그래피 — GPT 스타일 3D 그래픽 스티커 배지 디자인 지침] ${getEmotionTextColorGuideKo(emoticons)}
-1. 글자를 단순 텍스트가 아닌 '상업용 카카오톡 이모티콘 팝아트 스티커 그래픽 요소(Sticker Graphic Badge)'로 구현하세요.
-2. 글자 채움: 검은색 또는 고채도 원색의 두껍고 귀여운 둥근 손글씨 볼드 폰트로 그리세요.
-3. 이중 외곽선: 글자 자체에 선명한 2~3px 검은색 윤곽선을 두르고, 그 겉면에 매우 두껍고 깔끔한 순백색 외곽선(Heavy White Die-cut Outline)을 감싸 스티커처럼 입체감을 부여하세요.
-4. 위치 및 연출: 캐릭터 옆이나 위에 살짝 비스듬히 틸트(tilt)하여 역동적이고 톡톡 튀는 2D/3D 스티커 타이포그래피로 렌더링하세요. 밋밋하고 연한 폰트는 절대 금지합니다.
-5. 단일 렌더링 & 정밀 출력: 각 셀당 지정된 문구를 오직 단 한 번(EXACTLY ONCE)만 그리세요. 단어/글자 반복 중복(예: 화이팅 화이팅, 미안해요 미안해요, 최 최고!) 및 일본어/외국어 섞임은 엄격히 금지합니다.`
+        ? `[한글 타이포그래피 — 3D 입체 팝아트 스티커 글자 최고도화 지침] ${getEmotionTextColorGuideKo(emoticons)}
+1. 글자를 단순 텍스트가 아닌 '상업용 카카오톡 이모티콘 3D 입체 스티커 배지(Sticker Graphic Badge)'로 렌더링하세요.
+2. 글자 스타일: 검은색 또는 고채도 원색의 두꺼운 볼드 손글씨 폰트 채움 + 글자 자모 자체에 선명한 2~3px 검은색 윤곽선 + 겉면에 매우 두꺼운 순백색 스티커 테두리(Heavy White Die-Cut Outline).
+3. 절대적 단일 출력 규칙: 각 스티커 셀당 지정된 한글 문구를 '오직 단 한 번(EXACTLY ONCE)'만 완벽한 한글로 그리세요.
+4. 중복 및 표기 오류 엄격 금지: 단어나 글자를 두 번 반복하여 그리는 행위(예: "오늘도 화이팅 화이팅", "미안해요 미안해요", "최 최고!" 등 중복 표기) 및 일본어/가타카나/한자/외국어 기호 섞임은 100% 엄격히 금지합니다.`
         : '한국어 문구는 표정과 자세를 정하기 위한 맥락으로만 사용하고, 이미지 안에 절대로 텍스트, 글자, 숫자로 그리지 마세요.';
       const textExclusionKo = geminiTextMode === 'text'
         ? '불필요한 단어, 철자 변경, 임의의 글자, 스티커 번호, 괄호, 따옴표, 텍스트 상자 금지.'
@@ -2416,8 +2419,9 @@ ${referenceInstructionKo}
 ${panelPlanKo}
 보조 소품 & 반짝이 효과: ${character.props}, ${character.effects}, 최소한의 포인트 효과.
 
-[캔버스 & 그리드 정렬 — 엄격한 5열 × 3행 레이아웃]
-반드시 가로로 긴 캔버스에 정확히 5열(가로 5개) × 3행(세로 3개)의 정돈된 그리드 구조로 총 15개 스티커를 일렬로 균일하게 정렬하세요. 4행이나 불규칙한 정렬은 절대로 불허하며, 반드시 가로 5개씩 3줄로 배치되는 5열 3행 15셀 규칙을 100% 엄격하게 준수해야 합니다. ${bgInstructionKo} 절대로 가이드선, 격자선, 셀 경계선, 표 선, 구별선, 크롭 마크, 바운딩 박스, 스티커 번호를 그리지 마세요.
+[캔버스 레이아웃 — 절대적 5열 × 3행 15셀 그리드 고정]
+반드시 정확히 가로 5개 × 세로 3행 구조로만 총 15개 스티커를 일정 간격으로 깨끗하게 배치하세요. 4행 구조, 세로 배치, 비대칭 삐뚤어진 배열은 엄격히 금지됩니다.
+1행에 스티커 5개, 2행에 스티커 5개, 3행에 스티커 5개가 완벽한 수평 수직 열에 맞춰 배치되어야 합니다. ${bgInstructionKo} 격자선, 구별선, 크롭 마크, 바운딩 박스, 스티커 번호 절대 금지.
 
 [글자 정책]
 ${textPolicyKo}
@@ -2485,7 +2489,11 @@ ${textPolicy}
 ${textExclusion} No guide lines, no grid lines, no cell dividers, no border lines, no table lines, no crop marks, no panel boxes, no watermark, no outer frame, no duplicate character inside a single sticker, no extra limbs, no cropped body, no half-body bust shot, no dull background color, or photorealism.`;
     }
 
-    const panelPlan = emoticons.map((phrase, index) => `Sticker ${index + 1}: "${phrase.trim()}"`).join('\n');
+    const panelPlan = [
+      `Row 1 (Stickers 1-5): 1. "${(emoticons[0]||'ㅋㅋㅋㅋ').trim()}" | 2. "${(emoticons[1]||'안녕!').trim()}" | 3. "${(emoticons[2]||'오늘도 화이팅').trim()}" | 4. "${(emoticons[3]||'좋아요').trim()}" | 5. "${(emoticons[4]||'고마워요').trim()}"`,
+      `Row 2 (Stickers 6-10): 6. "${(emoticons[5]||'사랑해요').trim()}" | 7. "${(emoticons[6]||'최고!').trim()}" | 8. "${(emoticons[7]||'오예').trim()}" | 9. "${(emoticons[8]||'미안해요').trim()}" | 10. "${(emoticons[9]||'수고했어요').trim()}"`,
+      `Row 3 (Stickers 11-15): 11. "${(emoticons[10]||'축하해요').trim()}" | 12. "${(emoticons[11]||'대박').trim()}" | 13. "${(emoticons[12]||'헐').trim()}" | 14. "${(emoticons[13]||'감동').trim()}" | 15. "${(emoticons[14]||'잘자요').trim()}"`
+    ].join('\n');
     const textPolicy = geminiTextMode === 'text'
       ? `[HIGH-IMPACT KOREAN STICKER TYPOGRAPHY — GPT STYLE 3D BADGE DIRECTIVE] ${getEmotionTextColorGuideEn(emoticons)}
 1. Treat text not as flat overlay, but as a commercial KakaoTalk/LINE 3D Sticker Graphic Badge element.
