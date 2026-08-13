@@ -2611,10 +2611,13 @@ ${textExclusion} No guide lines, no grid lines, no cell dividers, no border line
     return instructions[grokBackgroundMode] || instructions.transparent;
   };
 
-  const getGrokCharacterDetails = () => {
+  const getGrokCharacterDetails = (langMode = lang) => {
     const { subjects, appearances, personalities, outfits, props, effects, additionalDescription } = getSelectedCharacterRoles();
+    const isKo = langMode === 'ko';
     const subjectParts = [
-      ...(characterSource === 'photo' ? ['the subject in the attached reference photo'] : []),
+      ...(characterSource === 'photo' 
+        ? [isKo ? 'AI 채팅에 첨부한 참고 사진 속 대상' : 'the subject in the reference photo attached in the AI chat'] 
+        : []),
       ...subjects,
       ...(additionalDescription ? [additionalDescription] : []),
     ];
@@ -2625,16 +2628,22 @@ ${textExclusion} No guide lines, no grid lines, no cell dividers, no border line
       characterize: 'use general impression as loose reference and transform into an ultra-cute 2.5-head SD/Chibi mascot with big round head, chubby body, and huge sparkling eyes',
     }[photoReferenceMode];
 
+    const photoAppearanceKo = {
+      exact: '참고 사진 인물의 실제 얼굴 비율, 이목구비 구조, 눈매, 코, 입술, 턱선, 헤어스타일, 피부톤을 95% 이상 리얼하게 재현하여 본인임을 즉시 알아볼 수 있게 함 (사진에 없는 악세사리 임의 추가 금지)',
+      features: '얼굴 자체를 닮게 그릴 필요 없음; 헤어스타일, 안경 유무, 의상, 체형, 전체 분위기 등 시그니처 포인트만 추출하여 스타일리시한 새 캐릭터로 디자인 (사진에 없는 악세사리 임의 추가 금지)',
+      characterize: '전체적인 인상(헤어 색상, 분위기)만 살짝 참고하고 2.5등신 커다란 머리와 동글동글한 몸체의 극도로 귀여운 SD/Chibi 마스코트로 완전 변환',
+    }[photoReferenceMode];
+
     return {
-      subject: subjectParts.join(', ') || 'a cute original character',
+      subject: subjectParts.join(', ') || (isKo ? '귀여운 오리지널 캐릭터' : 'a cute original character'),
       appearance: appearances.join(', ') || (characterSource === 'photo'
-        ? photoAppearanceEn
-        : 'simple, recognizable silhouette kept unchanged'),
-      personality: personalities.join(', ') || 'friendly and expressive',
-      outfit: outfits.join(', ') || 'no fixed outfit specified; once chosen, keep it unchanged',
-      props: props.join(', ') || 'none required',
-      effects: effects.join(', ') || 'use only a minimal effect when it clarifies the emotion',
-      artStyle: getGeminiStyleTags(),
+        ? (isKo ? photoAppearanceKo : photoAppearanceEn)
+        : (isKo ? '단순하고 알아보기 쉬운 실루엣을 정한 뒤 그대로 유지' : 'simple, recognizable silhouette kept unchanged')),
+      personality: personalities.join(', ') || (isKo ? '친근하고 표정이 풍부한' : 'friendly and expressive'),
+      outfit: outfits.join(', ') || (isKo ? '지정 없음. 처음 정한 의상은 모든 이미지에서 유지' : 'no fixed outfit specified; once chosen, keep it unchanged'),
+      props: props.join(', ') || (isKo ? '필수 소품 없음' : 'none required'),
+      effects: effects.join(', ') || (isKo ? '감정 전달에 필요한 최소한의 효과만 사용' : 'use only a minimal effect when it clarifies the emotion'),
+      artStyle: getGeminiStyleTags(langMode),
     };
   };
 
@@ -3050,8 +3059,15 @@ Please edit the most recent image. Keep the character design, face, expression, 
               </div>
 
               {characterSource === 'photo' && (
-                <div className="rounded-lg border border-mint-border bg-mint-soft p-3 flex flex-col gap-3">
-                  <span className="text-[13px] font-bold text-mint-strong">{t.photoMethod}</span>
+                <div className="rounded-lg border-2 border-amber-300 bg-amber-50/90 p-4 flex flex-col gap-3 shadow-sm">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[14px] font-bold text-amber-900 flex items-center gap-1.5">
+                      📸 {lang === 'ko' ? '참고 사진 + 캐릭터 태그 융합 중' : 'Photo Reference + Character Tags Active'}
+                    </span>
+                    <span className="text-[12px] font-bold text-amber-700 bg-amber-200/80 px-2 py-0.5 rounded-full">
+                      {lang === 'ko' ? '사진 정체성 기반 적용' : 'Photo Identity Applied'}
+                    </span>
+                  </div>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-2" role="group" aria-label={t.photoMethod}>
                     {[
                       ['exact', t.photoExact],
@@ -3074,7 +3090,16 @@ Please edit the most recent image. Keep the character design, face, expression, 
                       </button>
                     ))}
                   </div>
-                  <p className="text-[13px] leading-relaxed text-mint-strong">📎 {t.photoAttachGuide}</p>
+                  <div className="text-[13px] leading-relaxed text-amber-900 bg-white/80 p-2.5 rounded-md border border-amber-200">
+                    <p className="font-bold flex items-center gap-1">
+                      💡 {lang === 'ko' ? '사진 참고 모드 태그 연동 안내' : 'Photo Mode Tag Synergy Guide'}
+                    </p>
+                    <p className="mt-1 text-[12px] text-amber-800">
+                      {lang === 'ko'
+                        ? '첨부하신 사진 속 인물의 얼굴 특징을 기본으로 삼고, 아래에서 선택하시는 [의상], [소품], [성격], [화풍], [배경효과] 태그가 100% 프롬프트에 자동 결합됩니다.'
+                        : 'The reference photo provides facial identity, while your chosen [Outfit], [Props], [Art Style], and [Effects] tags below are automatically combined into the prompt.'}
+                    </p>
+                  </div>
                 </div>
               )}
             </div>
