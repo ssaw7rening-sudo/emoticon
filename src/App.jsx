@@ -1645,7 +1645,7 @@ function App() {
   
   const [charManual, setCharManual] = useState('');
   const [characterSource, setCharacterSource] = useState('direct');
-  const [photoReferenceMode, setPhotoReferenceMode] = useState('characterize');
+  const [photoReferenceMode, setPhotoReferenceMode] = useState('exact');
   const [activeTagCategory, setActiveTagCategory] = useState(categoryKeys[0]);
   
   const [emoticons, setEmoticons] = useState(currentThemes[themeKeys[0]]);
