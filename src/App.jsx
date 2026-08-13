@@ -123,6 +123,56 @@ const THEMES_EN = {
   'Season/Weather ②': ['Catch a cold', 'Pollen warning', 'Hate rainy season', 'Sunshine spot', 'Let\'s make a snowman', 'Season for Taiyaki', 'Freezing hands and feet', 'Sweltering heat', 'In front of a fan', 'Pajeon on a rainy day', 'Slippery warning', 'Feeling autumn vibes', 'Let\'s go see autumn leaves', 'Soft spring breeze', 'Staying home is best']
 };
 
+const ART_STYLE_PROMPT_MAP_KO = {
+  '귀여운 2D 만화풍': '얇고 균일한 검정 외곽선, 플랫 컬러 채색에 부드러운 그라데이션 하이라이트, 둥글둥글한 형태 단순화',
+  '한국 웹툰 스타일': '깔끔한 벡터 라인, 인물 위주의 셀셰이딩, 파스텔 계열 배색과 부드러운 그림자 처리',
+  '손그림 낙서풍': '볼펜/색연필로 슥슥 그린 듯한 불규칙한 손떨림 선, 삐뚤빼뚤한 외곽선, 낙서장 여백에 그린 듯한 러프한 채색',
+  '부드러운 수채화풍': '외곽선 최소화, 물감이 번진 듯한 그라데이션 채색, 종이 질감이 살짝 비치는 파스텔 톤',
+  '색연필 동화책풍': '색연필 특유의 결이 보이는 채색, 부드러운 외곽선, 동화책 삽화 느낌의 따뜻한 색감',
+  '레트로 애니메이션풍': '90년대 셀 애니메이션 느낌의 두꺼운 외곽선, 채도 높은 플랫 컬러, 살짝 거친 셀 텍스처',
+  '깔끔한 미니멀 벡터': '극도로 단순화된 형태, 균일한 두께의 벡터 라인, 그림자 없는 플랫 컬러 2~3톤 배색',
+  '통통 튀는 팝아트풍': '굵고 대담한 외곽선, 원색 위주의 고채도 배색, 망점(halftone) 패턴 강조',
+  '굵은 선의 코믹북풍': '두꺼운 검정 잉크 외곽선, 강한 명암 대비, 망점 패턴 채색, 액션감 있는 선 표현',
+  '도트 픽셀 아트풍': '정사각형 픽셀 단위 각진 형태, 안티에일리어싱 없는 계단 현상 윤곽선, 제한된 색상 팔레트(8~16색)',
+  '종이 콜라주풍': '오려 붙인 종이 질감의 레이어드 형태, 살짝 어긋난 그림자, 손으로 자른 듯한 불규칙한 가장자리',
+  '빈티지 인쇄 만화풍': '살짝 바랜 색감, 인쇄 도트 패턴, 종이 질감의 미세한 노이즈, 얇고 거친 외곽선',
+  '📖 흑백 만화 톤': '순수 흑백 잉크 드로잉, 스크린톤(회색 망점) 음영 처리, 외곽선 강조',
+  '💥 열혈 배틀 만화풍': '두껍고 역동적인 외곽선, 강한 속도선/집중선 배경 효과, 고대비 명암과 진한 그림자',
+  '🌸 샤방샤방 순정만화풍': '가늘고 화려한 외곽선, 큰 눈과 반짝이는 하이라이트, 꽃/반짝임 배경 요소, 파스텔 그라데이션 채색',
+  '👾 8090 레트로 애니풍': '80~90년대 일본 애니 셀화 느낌, 채도 높은 플랫 컬러, 두꺼운 외곽선과 단순한 그림자 블록',
+  '🎨 3D 반실사 애니 렌더링': '부드러운 3D 클레이/픽사풍 라이팅, 은은한 그림자와 하이라이트, 통통한 입체감 있는 형태',
+};
+
+const ART_STYLE_PROMPT_MAP_EN = {
+  'Cute 2D cartoon': 'Thin uniform black outline, flat color with soft gradient highlights, rounded form simplification',
+  'Korean webtoon style': 'Clean vector lines, character-focused cel shading, pastel color scheme with soft shadows',
+  'Hand-drawn doodle': 'Irregular hand-drawn lines like ballpoint or colored pencil, shaky outlines, rough color fill like margin doodles',
+  'Soft watercolor': 'Minimal outlines, water-bleed gradient coloring, pastel tones showing subtle paper texture',
+  'Colored-pencil storybook': 'Visible colored-pencil stroke texture, soft outlines, warm tones like a storybook illustration',
+  'Retro animation': 'Thick outlines like 90s cel animation, high-saturation flat colors, slightly grainy cel texture',
+  'Clean minimal vector': 'Extremely simplified shapes, uniform vector lines, shadowless flat colors with 2-3 tone palette',
+  'Vibrant pop art': 'Bold thick outlines, high-saturation primary colors, halftone dot pattern accents',
+  'Bold comic-book style': 'Thick black ink outlines, strong contrast shading, halftone dot coloring, energetic action linework',
+  'Pixel art': 'Blocky square pixel grid shapes, non-antialiased stepped outlines, limited 8-16 color palette',
+  'Paper collage': 'Layered cut-paper texture, slightly offset drop shadows, irregular hand-cut edges',
+  'Vintage print cartoon': 'Faded vintage colors, print dot matrix pattern, subtle paper noise texture, thin rough outlines',
+  '📖 Monochrome Manga Screentone': 'Pure monochrome black ink drawing, screentone halftone shading, emphasized outlines',
+  '💥 Shonen Battle Manga': 'Thick dynamic outlines, intense speed line & focus line background effects, high contrast with deep shadows',
+  '🌸 Shojo Romance Manga': 'Delicate decorative outlines, big sparkling eyes with highlights, flower & sparkle background accents, pastel gradient coloring',
+  '👾 Classic 80s Anime': '80s-90s Japanese anime cel aesthetic, high-saturation flat colors, thick outlines with simple shadow blocks',
+  '🎨 3D Semi-realistic Animated Film': 'Soft 3D clay/Pixar-style studio lighting, subtle soft shadows and highlights, plump 3D volumetric forms',
+};
+
+const getExpandedArtStyleText = (selectedArtStyle, isKo = false) => {
+  if (!selectedArtStyle) return '';
+  const map = isKo ? ART_STYLE_PROMPT_MAP_KO : ART_STYLE_PROMPT_MAP_EN;
+  const detail = map[selectedArtStyle];
+  if (detail) {
+    return `${selectedArtStyle} (${detail})`;
+  }
+  return selectedArtStyle;
+};
+
 const CHARACTER_TAGS_KO = {
   '🐱 동물': ['시바견', '치즈냥', '포메라니안', '아기 펭귄', '똥실똥실 토끼', '장난꾸러기 원숭이', '햄스터', '다람쥐', '아기 곰', '사막여우', '쿼카', '아기 오리', '판다', '고슴도치', '알파카', '아기 돼지', '느릿느릿 나무늘보', '아기 코끼리', '귀여운 수달', '아기 물개', '웰시코기', '카피바라', '삐약삐약 병아리', '너구리', '아기 사자'],
   '👦 인물': ['단발머리 소녀', '안경 쓴 모범생', '투블럭 남학생', '뽀글머리 아줌마', '수염 난 아저씨', '포니테일 체육생', '양갈래 소녀', '비니 쓴 힙스터', '정장 입은 신사', '한복 입은 꼬마', '정장 입은 커리어우먼', '온화한 백발 할머니', '지팡이 짚은 할아버지', '노란 모자 유치원생', '선글라스 낀 래퍼', '앞치마 두른 바리스타', '까까머리 군인', '헤드폰 낀 프로게이머', '근육질 헬스보이', '카메라 든 배낭여행객', '가운 입은 의사선생님', '제복 입은 경찰관', '기타 치는 록스타', '스케이트보드 타는 소년', '화려한 K팝 아이돌', '푸근한 동네 아저씨', '요가복 입은 강사', '안전모 쓴 건축가', '파리지앵 화가', '오토바이 타는 라이더', '화사한 꽃집 사장님', '가방 멘 취준생', '피곤한 직장인', '에이프런을 두른 제빵사', '정비복 입은 메카닉', '한복 입은 선비', '카우보이 모자 쓴 목동', '해적 안대 쓴 선장', '화려한 마술사', '발레복 입은 무용수', '트레이닝복 입은 백수', '연구원 가운 입은 과학자', '청바지에 흰티 입은 훈남', '드레스 입은 공주님', '갑옷 입은 기사', '도복 입은 태권도 사범', '승무원 유니폼 입은 스튜어디스', '카메라맨', '등산복 입은 산악인', '마이크 든 아나운서', '법복 입은 판사', '소방복 입은 소방관', '요리사 모자 쓴 셰프', '캡모자 쓴 알바생', '밀짚모자 쓴 농부', '화관 쓴 숲속 소녀', '교복 입고 떡볶이 먹는 학생', '서핑보드 든 서퍼', '헤어롤 만 취업준비생'],
@@ -215,7 +265,7 @@ const I18N = {
     geminiReferenceStage: '① 기준 캐릭터 만들기',
     geminiFinalStage: '② 기준 이미지로 생성',
     geminiReferenceTip: '먼저 문구 없는 기준 캐릭터를 만든 뒤, 마음에 드는 결과 이미지를 저장하세요.',
-    geminiFinalTip: 'Gemini는 표정과 행동 중심 생성에 강합니다. 시트 초안을 만든 뒤 15종 개별 분할에서 한 장씩 생성해 보세요.',
+    geminiFinalTip: 'Gemini는 표정과 행동 중심 생성에 강합니다. 텍스트가 깨질 경우 [글자 미포함] 모드로 생성 후 편집 앱에서 글자를 추가하시면 더욱 깔끔합니다.',
     gptRepairTitle: 'ChatGPT 이미지 결과 보정',
     geminiRepairTitle: 'Gemini 이미지 결과 보정',
     repairHelp: '💡 사용법: AI가 만든 이미지에 결함이 생겼을 때 버튼을 눌러 복사한 뒤, AI 대화창에 그대로 붙여넣어(Ctrl+V) 전송하세요.',
@@ -230,7 +280,7 @@ const I18N = {
     grokTransparent: '투명 배경',
     grokSolid: '단색 배경',
     grokChroma: '크로마키',
-    grokWorkflowTip: 'Grok 팁: Grok은 Flux.1 엔진 기반으로 자연어 지시 및 스티커 질감 표현에 매우 우수합니다.',
+    grokWorkflowTip: 'Grok 팁: Grok은 Flux.1 엔진 기반으로 고화질 스티커 렌더링에 우수합니다. 글자 수정이 필요할 경우 [글자 미포함] 모드로 생성해 보세요.',
     grokRepairTitle: 'Grok 이미지 결과 보정',
     emptyPhraseError: '비어 있는 문구가 있습니다. 모든 문구를 입력해 주세요.',
     duplicatePhraseError: '중복된 문구가 있습니다. 서로 다른 문구로 수정해 주세요.',
@@ -298,7 +348,7 @@ const I18N = {
     geminiReferenceStage: '① Create base character',
     geminiFinalStage: '② Generate from reference',
     geminiReferenceTip: 'First create a text-free base character, then save the result you like.',
-    geminiFinalTip: 'Gemini excels at expression and action generation. Use the sheet as a draft, then generate each sticker with Batch Split.',
+    geminiFinalTip: 'Gemini excels at expression and pose generation. If text breaks, try generating in [Text-Free] mode and add lettering with an editing tool for cleaner results.',
     gptRepairTitle: 'ChatGPT Image Repair Prompts',
     geminiRepairTitle: 'Gemini Image Repair Prompts',
     repairHelp: '💡 How to use: Click a button to copy the prompt, then paste (Ctrl+V) into the active AI chat to fix defects.',
@@ -313,7 +363,7 @@ const I18N = {
     grokTransparent: 'Transparent',
     grokSolid: 'Solid color',
     grokChroma: 'Chroma key',
-    grokWorkflowTip: 'Grok tip: Grok powered by Flux.1 excels at dense natural language and crisp sticker textures.',
+    grokWorkflowTip: 'Grok tip: Grok powered by Flux.1 excels at sticker renders. If text stutters, switch to [Text-Free] mode and overlay text later.',
     grokRepairTitle: 'Grok image repair prompts',
     emptyPhraseError: 'One or more phrases are empty. Please fill in every phrase.',
     duplicatePhraseError: 'Duplicate phrases found. Please use a different phrase for each sticker.',
@@ -1900,7 +1950,8 @@ function App() {
       ? `${lang === 'ko' ? `사진 반영 방식: ${getPhotoModeLabel('ko')}` : `Photo reference style: ${getPhotoModeLabel('en')}`}\n`
       : ''}${getReferenceImageInstruction(lang)}`;
     const selectedArtStyle = getSelectedArtStyle();
-    const artDirection = selectedArtStyle || (lang === 'ko'
+    const expandedArtStyle = getExpandedArtStyleText(selectedArtStyle, lang === 'ko');
+    const artDirection = expandedArtStyle || (lang === 'ko'
       ? '귀엽고 친근한 고품질 2D 메신저 이모티콘 스타일, 깔끔한 외곽선, 조화로운 색감'
       : 'cute, approachable, high-quality 2D messenger sticker style with clean outlines and harmonious colors');
 
@@ -2164,7 +2215,7 @@ ${referenceInstructionKo}
 - 의상: ${character.outfit}
 
 [화풍 및 비율]
-귀엽고 친근한 고품질 2D 메신저 스티커 일러스트. ${geminiProportionsKo} 깔끔하고 선명한 벡터 외곽선, 부드러운 셀 셰이딩, 조화로운 색감. 15개 스티커 전체에서 동일한 캐릭터 비율과 화풍을 엄격히 유지하세요. 모든 캐릭터는 머리부터 발끝까지 전신이 잘리지 않고 보여야 합니다.
+귀엽고 친근한 고품질 2D 메신저 스티커 일러스트. ${geminiProportionsKo} 깔끔하고 선명한 벡터 외곽선, 부드러운 셀 셰이딩, 조화로운 색감. 15개 스티커 전체에서 지정된 최우선 화풍의 선, 채색, 질감 및 캐릭터 비율을 100% 엄격히 유지하세요. 모든 캐릭터는 머리부터 발끝까지 전신이 잘리지 않고 보여야 합니다.
 
 [15종 역동적인 포즈 & 표정]
 각 스티커마다 독창적이고 표정이 살아있는 얼굴 감정과 역동적인 전신 자세를 구성하세요 (앉기, 웅크리기, 점프, 소품 들기, 윙크, 먹기, 응원하기 등). 모든 스티커는 머리부터 발끝까지 완전한 전신을 보여주어야 합니다:
