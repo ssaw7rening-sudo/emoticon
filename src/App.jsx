@@ -3064,7 +3064,7 @@ Please edit the most recent image. Keep the character design, face, expression, 
                 </span>
                 <span className="text-[13px] font-bold text-mint-strong">
                   {characterSource === 'photo' 
-                    ? `📸 ${lang === 'ko' ? '참고 사진' : 'Photo Reference'} (${getPhotoModeLabel('ko')})`
+                    ? `📸 ${lang === 'ko' ? '참고 사진' : 'Photo Reference'} (${getPhotoModeLabel(lang)})`
                     : `✏️ ${lang === 'ko' ? '직접 캐릭터 설정' : 'Direct Character Setup'}`}
                 </span>
               </div>
