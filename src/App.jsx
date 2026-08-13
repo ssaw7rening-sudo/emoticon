@@ -1929,15 +1929,15 @@ function App() {
       '🐱 Animal', '👦 Human', '🦄 Fantasy/Object', '🤖 Robot/SF', '🍞 Dessert/Food', '🌿 Plant/Nature'
     ].includes(activeTagCategory);
 
-    // All subject tags for replacement logic
-    const allSubjectTags = new Set([
-      ...CHARACTER_TAGS_KO['🐱 동물'], ...CHARACTER_TAGS_KO['👦 인물'],
-      ...CHARACTER_TAGS_KO['🦄 판타지/사물'], ...CHARACTER_TAGS_KO['🤖 로봇/SF'],
-      ...CHARACTER_TAGS_KO['🍞 디저트/음식'], ...CHARACTER_TAGS_KO['🌿 식물/자연'],
-      ...CHARACTER_TAGS_EN['🐱 Animal'], ...CHARACTER_TAGS_EN['👦 Human'],
-      ...CHARACTER_TAGS_EN['🦄 Fantasy/Object'], ...CHARACTER_TAGS_EN['🤖 Robot/SF'],
-      ...CHARACTER_TAGS_EN['🍞 Dessert/Food'], ...CHARACTER_TAGS_EN['🌿 Plant/Nature'],
-    ]);
+    // All subject tags for replacement logic (Safely handled)
+    const koSubjectKeys = ['🐱 동물', '👦 인물', '🦄 판타지/사물', '🤖 로봇/SF', '🍞 디저트/음식', '🌿 식물/자연'];
+    const enSubjectKeys = ['🐱 Animal', '👦 Person', '🦄 Fantasy/Object', '🤖 Robot/Sci-Fi', '🍞 Dessert/Food', '🌿 Plant/Nature'];
+
+    const subjectTagList = [];
+    koSubjectKeys.forEach(k => { if (CHARACTER_TAGS_KO[k]) subjectTagList.push(...CHARACTER_TAGS_KO[k]); });
+    enSubjectKeys.forEach(k => { if (CHARACTER_TAGS_EN[k]) subjectTagList.push(...CHARACTER_TAGS_EN[k]); });
+
+    const allSubjectTags = new Set(subjectTagList);
 
     const allArtStyles = new Set([
       ...CHARACTER_TAGS_KO['🖌️ 화풍'],
