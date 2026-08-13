@@ -3040,11 +3040,32 @@ Please edit the most recent image. Keep the character design, face, expression, 
 
         {/* Section 1: Character Setup */}
         <section className="flex flex-col gap-md">
-          <div className="flex justify-between items-center">
-            <h2 className="font-headline-sm text-headline-sm text-on-surface">{t.step1}</h2>
-            <button onClick={clearTags} className="flex items-center gap-1 min-h-10 px-2 text-[13px] font-bold text-error">
-              <Trash2 size={14} /> {t.clear}
-            </button>
+          <div className="flex flex-col gap-2">
+            <div className="flex justify-between items-center">
+              <h2 className="font-headline-sm text-headline-sm text-on-surface">{t.step1}</h2>
+              <button onClick={clearTags} className="flex items-center gap-1 min-h-10 px-2 text-[13px] font-bold text-error hover:bg-red-50 rounded-lg">
+                <Trash2 size={14} /> {t.clear}
+              </button>
+            </div>
+            
+            {/* High-Visibility Live Active Settings Status Banner */}
+            <div className="bg-emerald-900 text-white rounded-lg p-3 shadow-md flex flex-col sm:flex-row sm:items-center justify-between gap-2 border border-emerald-700">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="bg-emerald-500 text-slate-900 text-[11px] font-black px-2 py-0.5 rounded-md uppercase tracking-wide">
+                  ⚡ {lang === 'ko' ? '실시간 프롬프트 적용 중' : 'Live Prompt Active'}
+                </span>
+                <span className="text-[13px] font-bold text-emerald-100">
+                  {characterSource === 'photo' 
+                    ? `📸 ${lang === 'ko' ? '참고 사진' : 'Photo Reference'} (${getPhotoModeLabel('ko')})`
+                    : `✏️ ${lang === 'ko' ? '직접 캐릭터 설정' : 'Direct Character Setup'}`}
+                </span>
+              </div>
+              <div className="text-[12px] font-bold text-emerald-200 truncate max-w-md">
+                {charManual.trim() 
+                  ? `${lang === 'ko' ? '적용된 태그:' : 'Active Tags:'} ${charManual}` 
+                  : (lang === 'ko' ? '태그 미선택 (기본 2D 캐릭터 자동 적용)' : 'No tags (Default 2D character active)')}
+              </div>
+            </div>
           </div>
           
           <div className="bg-surface-container-lowest rounded-md p-3.5 sm:p-md shadow-bubbly border border-outline-variant">
@@ -3205,13 +3226,20 @@ Please edit the most recent image. Keep the character design, face, expression, 
                       key={tag}
                       onClick={() => appendTag(tag)}
                       aria-pressed={selected}
-                      className={`interactive-control px-3 py-1.5 rounded-full text-[13px] font-bold transition-all flex items-center gap-1 ${
+                      className={`interactive-control px-3.5 py-1.5 rounded-full text-[13px] font-bold transition-all flex items-center gap-1.5 ${
                         selected
-                          ? 'bg-mint-strong text-white border-2 border-mint-strong shadow-md scale-105 ring-2 ring-mint-strong/30'
-                          : 'bg-mint-soft text-mint-strong hover:bg-mint-hover border border-mint-border'
+                          ? 'bg-emerald-700 text-white border-2 border-emerald-900 shadow-lg scale-105 ring-2 ring-emerald-500/50 font-black'
+                          : 'bg-slate-100 text-slate-700 hover:bg-emerald-50 hover:text-emerald-800 border border-slate-300'
                       }`}
                     >
-                      {selected ? `✓ ${tag}` : `+ ${tag}`}
+                      {selected ? (
+                        <>
+                          <span className="bg-emerald-900 text-white text-[10px] px-1.5 py-0.5 rounded-full font-extrabold">✓ 적용됨</span>
+                          <span>{tag}</span>
+                        </>
+                      ) : (
+                        <span>+ {tag}</span>
+                      )}
                     </button>
                   );
                 })}
