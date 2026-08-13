@@ -1817,15 +1817,33 @@ function App() {
       .at(-1) || '';
   };
 
-  const getGeminiStyleTags = () => {
+  const getGeminiStyleTags = (promptLang = lang) => {
     const selectedArtStyle = getSelectedArtStyle();
-    if (selectedArtStyle) return `${selectedArtStyle}; treat this selected art style as the highest-priority visual direction`;
-    if (characterSource === 'photo') {
-      if (photoReferenceMode === 'exact') return 'Caricature-style 2D sticker with realistic facial proportions and features closely matching the reference photo, finished with clean 2D sticker outlines and coloring';
-      if (photoReferenceMode === 'features') return 'Stylish 2D character avatar sticker built around the signature points (hairstyle, glasses, outfit, vibe) from the reference photo; the face itself is a new generic cute design';
-      return 'Ultra-cute 2.5-head SD/Chibi mascot sticker only loosely inspired by the reference photo\'s general impression';
+    const isKo = promptLang === 'ko';
+    if (selectedArtStyle) {
+      const expanded = getExpandedArtStyleText(selectedArtStyle, isKo);
+      return isKo
+        ? `${expanded} (최우선 화풍 지침: 선 굵기, 채색 기법, 질감을 이 화풍 지시문대로 100% 엄격하게 적용하세요)`
+        : `${expanded}; treat this selected art style as the highest-priority visual direction for linework, coloring, and texture`;
     }
-    return 'cute, approachable, high-quality 2D messenger sticker illustration with clean outlines and harmonious colors';
+    if (characterSource === 'photo') {
+      if (photoReferenceMode === 'exact') {
+        return isKo
+          ? '참고 사진의 실제 이목구비와 비율을 정밀하게 반영한 사실적 캐리커처 2D 스티커 화풍'
+          : 'Caricature-style 2D sticker with realistic facial proportions and features closely matching the reference photo, finished with clean 2D sticker outlines and coloring';
+      }
+      if (photoReferenceMode === 'features') {
+        return isKo
+          ? '참고 사진의 대표 시그니처 특징(헤어, 안경, 의상)만 추출한 세련된 2D 벡터 캐릭터 화풍'
+          : 'Stylish 2D character avatar sticker built around the signature points (hairstyle, glasses, outfit, vibe) from the reference photo; the face itself is a new generic cute design';
+      }
+      return isKo
+        ? '2.5등신 커다란 머리와 동글동글한 몸체를 가진 극도로 귀여운 SD/Chibi 마스코트 스티커 화풍'
+        : 'Ultra-cute 2.5-head SD/Chibi mascot sticker only loosely inspired by the reference photo\'s general impression';
+    }
+    return isKo
+      ? '귀엽고 친근한 고품질 2D 메신저 이모티콘 일러스트 화풍 (깔끔한 윤곽선과 조화로운 셀 셰이딩 채색)'
+      : 'cute, approachable, high-quality 2D messenger sticker illustration with clean outlines and harmonious colors';
   };
 
   const getSelectedCharacterRoles = () => {
@@ -2149,12 +2167,12 @@ ${textExclusion} No grid lines, no cell division lines, no border lines between 
   };
 
   const generateGeminiPrompt = (phraseOverride = null) => {
-    const character = getGeminiCharacterDetails();
+    const isKorean = lang === 'ko';
+    const character = getGeminiCharacterDetails(isKorean ? 'ko' : 'en');
     const hasPhraseOverride = phraseOverride !== null;
     const targetPhrase = generationMode === 'individual'
       ? getSelectedPhrase()
       : (phraseOverride || '').trim();
-    const isKorean = lang === 'ko';
 
     if (isKorean) {
       const referenceInstructionKo = characterSource === 'photo' ? {
@@ -2194,7 +2212,7 @@ ${referenceInstructionKo}
 - 의상: ${character.outfit}
 
 [화풍 및 비율]
-귀엽고 친근한 고품질 2D 메신저 스티커 일러스트. ${geminiProportionsKo} 깔끔하고 선명한 벡터 외곽선, 부드러운 셀 셰이딩, 조화로운 색감. 머리부터 발끝까지 전신이 잘리지 않게 표현하세요.
+지정 화풍: ${character.artStyle}. ${geminiProportionsKo} 깔끔하고 선명한 벡터 외곽선, 부드러운 셀 셰이딩, 조화로운 색감. 머리부터 발끝까지 전신이 잘리지 않게 표현하세요.
 
 [포즈 및 표정]
 - 감정/상황 맥락: "${targetPhrase}"
@@ -2236,7 +2254,7 @@ ${referenceInstructionKo}
 - 경고: 모든 15개 셀에서 예외 없이 머리부터 발끝까지 전신이 보여야 합니다. 얼굴이나 상반신만 보이는 클로즈업 컷은 엄격히 금지합니다.
 
 [화풍 및 비율]
-귀엽고 친근한 고품질 2D 메신저 스티커 일러스트. ${geminiProportionsKo} 깔끔하고 선명한 벡터 외곽선, 부드러운 셀 셰이딩, 조화로운 색감. 15개 스티커 전체에서 지정된 최우선 화풍의 선, 채색, 질감 및 캐릭터 비율을 100% 엄격히 유지하세요. 15개 셀의 얼굴은 마치 같은 사진에서 포즈만 바꾼 것처럼 눈 크기, 눈매, 얼굴 폭, 턱선이 픽셀 단위로 동일해야 합니다. 셀마다 다른 사람처럼 보이지 않도록 각별히 주의하세요.
+지정 화풍: ${character.artStyle}. ${geminiProportionsKo} 깔끔하고 선명한 벡터 외곽선, 부드러운 셀 셰이딩, 조화로운 색감. 15개 스티커 전체에서 지정된 최우선 화풍의 선, 채색, 질감 및 캐릭터 비율을 100% 엄격히 유지하세요. 15개 셀의 얼굴은 마치 같은 사진에서 포즈만 바꾼 것처럼 눈 크기, 눈매, 얼굴 폭, 턱선이 픽셀 단위로 동일해야 합니다. 셀마다 다른 사람처럼 보이지 않도록 각별히 주의하세요.
 
 [15종 역동적인 포즈 & 표정]
 각 스티커마다 독창적이고 표정이 살아있는 얼굴 감정과 역동적인 전신 자세를 구성하세요 (앉기, 웅크리기, 점프, 소품 들기, 윙크, 먹기, 응원하기 등). 모든 스티커는 머리부터 발끝까지 완전한 전신을 보여주어야 합니다:
@@ -2386,12 +2404,12 @@ ${textExclusion} No guide lines, no grid lines, no cell dividers, no border line
   };
 
   const generateGrokPrompt = (phraseOverride = null) => {
-    const character = getGrokCharacterDetails();
+    const isKorean = lang === 'ko';
+    const character = getGrokCharacterDetails(isKorean ? 'ko' : 'en');
     const hasPhraseOverride = phraseOverride !== null;
     const targetPhrase = generationMode === 'individual'
       ? getSelectedPhrase()
       : (phraseOverride || '').trim();
-    const isKorean = lang === 'ko';
 
     if (isKorean) {
       const referenceInstructionKo = characterSource === 'photo'
