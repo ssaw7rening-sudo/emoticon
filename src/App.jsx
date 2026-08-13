@@ -1835,8 +1835,10 @@ function App() {
   const [toastMessage, setToastMessage] = useState('');
 
   const isTagSelected = (tag) => {
-    const selectedList = charManual.split(',').map(v => v.trim()).filter(Boolean);
-    return selectedList.includes(tag);
+    if (!charManual || !tag) return false;
+    const target = tag.trim().toLowerCase();
+    const currentList = charManual.split(',').map(v => v.trim().toLowerCase()).filter(Boolean);
+    return currentList.includes(target);
   };
 
   const removeSelectedTag = (tagToRemove) => {
@@ -3226,19 +3228,22 @@ Please edit the most recent image. Keep the character design, face, expression, 
                       key={tag}
                       onClick={() => appendTag(tag)}
                       aria-pressed={selected}
-                      className={`interactive-control px-3 py-1.5 rounded-full text-[13px] font-bold transition-all flex items-center gap-1 ${
+                      className={`interactive-control min-h-[38px] px-3.5 py-1.5 rounded-full text-[13px] font-bold transition-all flex items-center gap-1.5 cursor-pointer select-none ${
                         selected
-                          ? 'bg-mint-strong text-white border-2 border-mint-strong shadow-md scale-105 ring-2 ring-mint-strong/30'
-                          : 'bg-mint-soft text-mint-strong hover:bg-mint-hover border border-mint-border'
+                          ? 'bg-mint-strong text-white border-2 border-[#1E453B] shadow-md scale-105 ring-2 ring-mint-strong/40'
+                          : 'bg-white text-on-surface hover:bg-mint-soft hover:text-mint-strong border border-outline-variant hover:border-mint-border shadow-xs'
                       }`}
                     >
                       {selected ? (
                         <>
-                          <span className="bg-white text-mint-strong text-[10px] px-1.5 py-0.5 rounded-full font-extrabold">✓ 적용됨</span>
-                          <span>{tag}</span>
+                          <span className="bg-white text-mint-strong text-[10px] px-1.5 py-0.5 rounded-full font-extrabold shrink-0 shadow-xs">✓ ON</span>
+                          <span className="font-extrabold">{tag}</span>
                         </>
                       ) : (
-                        <span>+ {tag}</span>
+                        <>
+                          <span className="text-on-surface-variant text-[11px] font-bold shrink-0">+</span>
+                          <span>{tag}</span>
+                        </>
                       )}
                     </button>
                   );
