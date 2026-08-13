@@ -2386,7 +2386,7 @@ ${textExclusionKo} 격자선, 셀 경계선, 구별선, 테두리선, 표 선, �
       const panelPlanKo = emoticons.map((phrase, index) => `스티커 ${index + 1}: "${phrase.trim()}"`).join('\n');
 
       const textPolicyKo = geminiTextMode === 'text'
-        ? `[고품질 한글 타이포그래피 정밀 지침] ${getEmotionTextColorGuideKo(emoticons)} 각 캐릭터 옆이나 위에 해당 한글 문구를 오탈자 없이 정확한 철자로 그리세요. 딱딱하고 두꺼운 고딕체나 본문용 폰트는 절대로 사용하지 말고, 오직 동글동글하고 귀여운 한글 손글씨 캘리그라피 스타일로만 그리세요. 텍스트 상자(박스), 괄호 (), 대괄호 [], 따옴표 "", 말풍선, 스티커 번호는 절대로 그리지 마세요.`
+        ? `[고품질 한글 타이포그래피 — GPT 스타일 입체 스티커 글자 지침] ${getEmotionTextColorGuideKo(emoticons)} 모든 한글 문구는 검은색 또는 원색 글자 채움에 두꺼운 흰색 외곽선(Heavy White Outer Stroke)을 두른 선명하고 귀여운 팝아트 스티커 캘리그라피 스타일로 크게 그리세요. 얇고 밋밋한 본문 폰트나 연한 글자는 절대로 금지합니다. 텍스트 상자(박스), 괄호 (), 대괄호 [], 따옴표 "", 말풍선, 스티커 번호는 절대로 그리지 마세요.`
         : '한국어 문구는 표정과 자세를 정하기 위한 맥락으로만 사용하고, 이미지 안에 절대로 텍스트, 글자, 숫자로 그리지 마세요.';
       const textExclusionKo = geminiTextMode === 'text'
         ? '불필요한 단어, 철자 변경, 임의의 글자, 스티커 번호, 괄호, 따옴표, 텍스트 상자 금지.'
@@ -2411,8 +2411,8 @@ ${referenceInstructionKo}
 ${panelPlanKo}
 보조 소품 & 반짝이 효과: ${character.props}, ${character.effects}, 최소한의 포인트 효과.
 
-[캔버스 & 배치 — 단일 순백색 시트]
-반드시 가로로 긴 캔버스에 5열 3행 그리드로 배치하세요. 세로형 배치나 3열 5행 배치는 절대 사용하지 마세요. 이 레이아웃 규칙은 다른 모든 지시보다 우선합니다. ${bgInstructionKo} 절대로 가이드선, 격자선, 셀 경계선, 표 선, 구별선, 크롭 마크, 바운딩 박스, 스티커 번호를 그리지 마세요.
+[캔버스 & 그리드 정렬 — 엄격한 5열 × 3행 레이아웃]
+반드시 가로로 긴 캔버스에 정확히 5열(가로 5개) × 3행(세로 3개)의 정돈된 그리드 구조로 총 15개 스티커를 일렬로 균일하게 정렬하세요. 4행이나 불규칙한 정렬은 절대로 불허하며, 반드시 가로 5개씩 3줄로 배치되는 5열 3행 15셀 규칙을 100% 엄격하게 준수해야 합니다. ${bgInstructionKo} 절대로 가이드선, 격자선, 셀 경계선, 표 선, 구별선, 크롭 마크, 바운딩 박스, 스티커 번호를 그리지 마세요.
 
 [글자 정책]
 ${textPolicyKo}
@@ -2482,7 +2482,7 @@ ${textExclusion} No guide lines, no grid lines, no cell dividers, no border line
 
     const panelPlan = emoticons.map((phrase, index) => `Sticker ${index + 1}: "${phrase.trim()}"`).join('\n');
     const textPolicy = geminiTextMode === 'text'
-      ? `[HIGH-PRECISION KOREAN TYPOGRAPHY DIRECTIVE] ${getEmotionTextColorGuideEn(emoticons)} Render each quoted Korean phrase naturally beside or above its corresponding character with 100% correct Hangul spelling and zero typos. Use playful, highly legible hand-drawn calligraphy typography with crisp vector text contours. Do NOT draw text boxes, background boxes, speech bubbles, parentheses (), brackets [], quotation marks "", or sticker numbers.`
+      ? `[HIGH-CONTRAST KOREAN STICKER TYPOGRAPHY — GPT STYLE] ${getEmotionTextColorGuideEn(emoticons)} Render each quoted Korean phrase in bold filled calligraphy text with a thick heavy white outer stroke around every letter. Do NOT use thin, flat, or faint body fonts. Ensure the text pops vividly like commercial KakaoTalk/LINE stickers. Do NOT draw text boxes, background boxes, speech bubbles, parentheses (), or sticker numbers.`
       : 'The Korean phrases are context for determining expression and pose only — never render them as text, letters, or numbers in the image.';
     const textExclusion = geminiTextMode === 'text'
       ? 'No extra words, altered spelling, random letters, sticker numbers, parentheses, quotation marks, or text boxes.'
@@ -2507,8 +2507,8 @@ For each sticker, infer a unique, highly expressive facial emotion and a DYNAMIC
 ${panelPlan}
 Supporting props & sparkle effects: ${character.props}, ${character.effects}, cute accents.
 
-[CANVAS & LAYOUT — SEAMLESS WHITE SHEET]
-MUST arrange in a wide horizontal canvas with a 5-column x 3-row grid layout. DO NOT use vertical orientation or 3-column x 5-row layout under any circumstances. This layout rule takes highest precedence over all other directives. ${bgInstructionEn} Absolutely NO guide lines, NO grid lines, NO cell borders, NO table lines, NO dividing lines, NO crop marks, NO bounding boxes, NO sticker numbers.
+[CANVAS & GRID ALIGNMENT — STRICT 5 COLUMNS x 3 ROWS]
+MUST arrange all 15 stickers in a wide horizontal canvas with an exact 5-column by 3-row uniform grid layout (5 stickers per row across 3 rows). 4-row or irregular arrangements are strictly forbidden. This 5x3 grid rule takes highest precedence over all other directives. ${bgInstructionEn} Absolutely NO guide lines, NO grid lines, NO cell borders, NO table lines, NO dividing lines, NO crop marks, NO bounding boxes, NO sticker numbers.
 
 [TEXT POLICY]
 ${textPolicy}
