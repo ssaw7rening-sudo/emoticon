@@ -3140,42 +3140,55 @@ Please edit the most recent image. Keep the character design, face, expression, 
               )}
             </div>
 
-                        {/* Selected Tags Summary Bar */}
-            {charManual.trim() && (
-              <div className="mb-3 bg-[#EAF8F3] border border-mint-border rounded-lg p-3 flex flex-col gap-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-[13px] font-bold text-mint-strong flex items-center gap-1.5">
-                    🏷️ {lang === 'ko' ? '현재 선택·적용된 캐릭터 태그' : 'Currently Active Character Tags'}
-                    <span className="bg-mint-strong text-white text-[11px] px-2 py-0.5 rounded-full font-bold">
-                      {charManual.split(',').map(v => v.trim()).filter(Boolean).length}개
-                    </span>
-                  </span>
-                  <button 
-                    onClick={clearTags} 
-                    className="text-[12px] font-bold text-error hover:underline flex items-center gap-0.5"
-                  >
-                    <Trash2 size={12} /> {lang === 'ko' ? '전체 삭제' : 'Clear All'}
-                  </button>
-                </div>
-                <div className="flex flex-wrap gap-1.5">
-                  {charManual.split(',').map(v => v.trim()).filter(Boolean).map(tag => (
-                    <span 
-                      key={tag} 
-                      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white text-mint-strong border border-mint-border text-[12px] font-bold shadow-sm"
-                    >
-                      ✓ {tag}
-                      <button 
-                        onClick={() => removeSelectedTag(tag)} 
-                        className="hover:text-error text-slate-400 font-bold text-[14px] leading-none"
-                        title={lang === 'ko' ? '삭제' : 'Remove'}
-                      >
-                        ×
-                      </button>
-                    </span>
-                  ))}
-                </div>
+                        {/* Selected Tags Summary Bar & Real-time Sync Indicator */}
+            <div className="mb-3 flex flex-col gap-2">
+              <div className="flex items-center justify-between bg-mint-soft/80 border border-mint-border rounded-lg px-3 py-2 text-[12px] font-bold text-mint-strong">
+                <span className="flex items-center gap-1.5">
+                  ⚡ {lang === 'ko' ? '버튼 클릭 시 입력 상자 & AI 프롬프트 100% 실시간 자동 동기화' : 'Real-time auto-sync to Textbox & Prompts'}
+                </span>
+                <span className="text-[11px] text-mint-strong/80">
+                  {lang === 'ko' ? '태그 재클릭 시 ON/OFF 토글' : 'Click again to toggle ON/OFF'}
+                </span>
               </div>
-            )}
+
+              {charManual.trim() && (
+                <div className="bg-[#EAF8F3] border border-mint-border rounded-lg p-3 flex flex-col gap-2 shadow-xs">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[13px] font-bold text-mint-strong flex items-center gap-1.5">
+                      🏷️ {lang === 'ko' ? '현재 적용된 캐릭터 태그' : 'Active Character Tags'}
+                      <span className="bg-mint-strong text-white text-[11px] px-2 py-0.5 rounded-full font-bold">
+                        {charManual.split(',').map(v => v.trim()).filter(Boolean).length}개
+                      </span>
+                    </span>
+                    <button 
+                      type="button"
+                      onClick={clearTags} 
+                      className="text-[12px] font-bold text-error hover:underline flex items-center gap-0.5"
+                    >
+                      <Trash2 size={12} /> {lang === 'ko' ? '전체 초기화' : 'Clear All'}
+                    </button>
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {charManual.split(',').map(v => v.trim()).filter(Boolean).map(tag => (
+                      <span 
+                        key={tag} 
+                        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white text-mint-strong border border-mint-border text-[12px] font-bold shadow-xs"
+                      >
+                        ✓ {tag}
+                        <button 
+                          type="button"
+                          onClick={() => removeSelectedTag(tag)} 
+                          className="hover:text-error text-slate-400 font-bold text-[14px] leading-none"
+                          title={lang === 'ko' ? '삭제' : 'Remove'}
+                        >
+                          ×
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
 
             <textarea 
               className="w-full bg-white border-2 border-mint-border rounded-md p-3.5 sm:p-4 text-on-surface font-bold placeholder:text-on-surface-variant focus:outline-none focus:ring-4 focus:ring-mint focus:border-mint-border resize-y min-h-[100px] shadow-sm" 
@@ -3226,11 +3239,15 @@ Please edit the most recent image. Keep the character design, face, expression, 
                   return (
                     <button
                       key={tag}
-                      onClick={() => appendTag(tag)}
+                      type="button"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        appendTag(tag);
+                      }}
                       aria-pressed={selected}
                       className={`interactive-control min-h-[38px] px-3.5 py-1.5 rounded-full text-[13px] font-bold transition-all flex items-center gap-1.5 cursor-pointer select-none ${
                         selected
-                          ? 'bg-mint-strong text-white border-2 border-[#1E453B] shadow-md scale-105 ring-2 ring-mint-strong/40'
+                          ? 'bg-mint-strong text-white border-2 border-[#1E453B] shadow-md scale-105 ring-2 ring-mint-strong/40 font-black'
                           : 'bg-white text-on-surface hover:bg-mint-soft hover:text-mint-strong border border-outline-variant hover:border-mint-border shadow-xs'
                       }`}
                     >
