@@ -1832,6 +1832,14 @@ function App() {
   const [geminiTextMode, setGeminiTextMode] = useState('visual');
   const [geminiBackgroundMode, setGeminiBackgroundMode] = useState('transparent');
   const [grokTextMode, setGrokTextMode] = useState('visual');
+  const [toastMessage, setToastMessage] = useState('');
+
+  const showToast = (msg) => {
+    setToastMessage(msg);
+    setTimeout(() => {
+      setToastMessage(prev => prev === msg ? '' : prev);
+    }, 3000);
+  };
   const [grokBackgroundMode, setGrokBackgroundMode] = useState('transparent');
 
   const changeLanguage = (newLang) => {
@@ -1927,28 +1935,49 @@ function App() {
 
       // Toggle off if already selected
       if (hasTag) {
+        showToast(lang === 'ko' ? `선택 해제됨: [${tag}]` : `Unselected: [${tag}]`);
         return currentTags.filter(t => t !== tag).join(', ');
       }
 
       // Rule 1: Single Art Style replacement
       if (isArtStyleCategory) {
+        const prevStyle = currentTags.find(t => allArtStyles.has(t));
         const withoutStyles = currentTags.filter(t => !allArtStyles.has(t));
+        if (prevStyle && prevStyle !== tag) {
+          showToast(lang === 'ko' 
+            ? `🎨 화풍은 1개만 적용됩니다: [${prevStyle}] → [${tag}](으)로 변경` 
+            : `🎨 Only 1 Art Style applied: [${prevStyle}] → [${tag}]`);
+        } else {
+          showToast(lang === 'ko' ? `🎨 화풍 적용: [${tag}]` : `🎨 Art Style applied: [${tag}]`);
+        }
         return [...withoutStyles, tag].join(', ');
       }
 
       // Rule 2: Single Subject replacement (Prevents Cat + Rabbit + Robot collision)
       if (isSubjectCategory) {
+        const prevSubject = currentTags.find(t => allSubjectTags.has(t));
         const withoutSubjects = currentTags.filter(t => !allSubjectTags.has(t));
+        if (prevSubject && prevSubject !== tag) {
+          showToast(lang === 'ko' 
+            ? `👤 캐릭터 종류는 1개만 선택 가능합니다: [${prevSubject}] → [${tag}](으)로 변경` 
+            : `👤 Single character type allowed: [${prevSubject}] → [${tag}]`);
+        } else {
+          showToast(lang === 'ko' ? `👤 캐릭터 종류 적용: [${tag}]` : `👤 Character type applied: [${tag}]`);
+        }
         return [...withoutSubjects, tag].join(', ');
       }
 
       // Default: Append new tag
+      showToast(lang === 'ko' ? `✨ 태그 추가됨: [${tag}]` : `✨ Tag added: [${tag}]`);
       return [...currentTags, tag].join(', ');
     });
 
     // Rule 3: Auto-switch Photo Mode if selecting a mascot/animal subject while in 'exact' photo mode
     if (characterSource === 'photo' && photoReferenceMode === 'exact' && isSubjectCategory) {
       setPhotoReferenceMode('characterize');
+      showToast(lang === 'ko' 
+        ? `📸 캐릭터 태그 선택에 따라 [귀여운 SD 캐릭터화] 모드로 자동 전환되었습니다.` 
+        : `📸 Auto-switched to [Chibi Mascot] mode for character tag.`);
     }
   };
 
