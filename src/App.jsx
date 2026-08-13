@@ -3132,19 +3132,17 @@ Please edit the most recent image. Keep the character design, face, expression, 
                       </button>
                     ))}
                   </div>
-                  <div className="text-[14px] sm:text-[15px] leading-relaxed text-amber-950 bg-white/90 p-3.5 sm:p-4 rounded-lg border border-amber-300 flex flex-col gap-2.5 shadow-xs">
-                    <p className="font-extrabold flex items-center gap-1.5 text-[15px] sm:text-[16px] text-amber-900">
+                  <div className="text-[14px] leading-relaxed text-amber-900 bg-white/90 p-3.5 rounded-lg border border-amber-200 flex flex-col gap-2 shadow-2xs font-normal">
+                    <p className="font-bold flex items-center gap-1.5 text-[14px] text-amber-900">
                       💡 {lang === 'ko' ? '사진 참고 모드 (인물 / 동물 / 사물 자유 결합)' : 'Photo Reference Mode (Person / Animal / Object)'}
                     </p>
-                    <p className="text-[13px] sm:text-[14px] text-amber-900 leading-relaxed font-bold">
+                    <p className="text-[13px] text-amber-800 leading-normal font-normal">
                       {lang === 'ko'
                         ? '사람 사진뿐만 아니라 반려견/반려묘(동물), 캐릭터/인형/사물 사진도 모두 가능하며 선택하신 태그와 100% 융합됩니다.'
                         : 'Supports photos of people, pets/animals, or objects/characters. All selected tags combine 100% into the prompt.'}
                     </p>
-                    <div className="bg-amber-100/70 p-3 rounded-md text-[13px] text-amber-900 font-medium border border-amber-300/60 leading-relaxed shadow-2xs">
-                      <span className="font-bold text-amber-950">✨ {lang === 'ko' ? '예시:' : 'Example:'}</span> {lang === 'ko' 
-                        ? <>사람 사진을 올리고 <strong className="font-bold text-amber-950">[시바견]</strong> 태그 선택 시 → <strong className="font-bold text-amber-950">[최대한 닮게]</strong>: 사진 속 인물이 시바견 인형옷/귀를 쓴 캐릭터 | <strong className="font-bold text-amber-950">[귀여운 SD 캐릭터화]</strong>: 인상의 분위기를 닮은 2.5등신 시바견 마스코트로 멋지게 융합됩니다!</>
-                        : <>Person photo + <strong className="font-bold text-amber-950">[Shiba Inu]</strong> tag → <strong className="font-bold text-amber-950">[Exact]</strong>: Person wearing Shiba Inu costume | <strong className="font-bold text-amber-950">[Chibi]</strong>: Cute 2.5-head Shiba Inu mascot matching the person's vibe!</>}
+                    <div className="bg-amber-50/80 p-2.5 rounded-md text-[12.5px] text-amber-850 font-normal border border-amber-200/70 leading-normal">
+                      <span>✨ {lang === 'ko' ? '예시: 사람 사진을 올리고 [시바견] 태그 선택 시 → [최대한 닮게]: 사진 속 인물이 시바견 인형옷/귀를 쓴 캐릭터 | [귀여운 SD 캐릭터화]: 인상의 분위기를 닮은 2.5등신 시바견 마스코트로 멋지게 융합됩니다!' : 'Example: Person photo + [Shiba Inu] tag → [Exact]: Person wearing Shiba Inu costume | [Chibi]: Cute 2.5-head Shiba Inu mascot matching the person\'s vibe!'}</span>
                     </div>
                   </div>
                 </div>
