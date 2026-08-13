@@ -1899,19 +1899,57 @@ function App() {
   };
 
   const appendTag = (tag) => {
+    // 1. Identify categories
     const isArtStyleCategory = activeTagCategory === '🖌️ 화풍' || activeTagCategory === '🖌️ Art Style';
-    if (isArtStyleCategory) {
-      const artStyles = new Set([
-        ...CHARACTER_TAGS_KO['🖌️ 화풍'],
-        ...CHARACTER_TAGS_EN['🖌️ Art Style'],
-      ]);
-      setCharManual(prev => {
-        const otherTags = prev.split(',').map(value => value.trim()).filter(value => value && !artStyles.has(value));
-        return [...otherTags, tag].join(', ');
-      });
-      return;
+    const isSubjectCategory = [
+      '🐱 동물', '👦 인물', '🦄 판타지/사물', '🤖 로봇/SF', '🍞 디저트/음식', '🌿 식물/자연',
+      '🐱 Animal', '👦 Human', '🦄 Fantasy/Object', '🤖 Robot/SF', '🍞 Dessert/Food', '🌿 Plant/Nature'
+    ].includes(activeTagCategory);
+
+    // All subject tags for replacement logic
+    const allSubjectTags = new Set([
+      ...CHARACTER_TAGS_KO['🐱 동물'], ...CHARACTER_TAGS_KO['👦 인물'],
+      ...CHARACTER_TAGS_KO['🦄 판타지/사물'], ...CHARACTER_TAGS_KO['🤖 로봇/SF'],
+      ...CHARACTER_TAGS_KO['🍞 디저트/음식'], ...CHARACTER_TAGS_KO['🌿 식물/자연'],
+      ...CHARACTER_TAGS_EN['🐱 Animal'], ...CHARACTER_TAGS_EN['👦 Human'],
+      ...CHARACTER_TAGS_EN['🦄 Fantasy/Object'], ...CHARACTER_TAGS_EN['🤖 Robot/SF'],
+      ...CHARACTER_TAGS_EN['🍞 Dessert/Food'], ...CHARACTER_TAGS_EN['🌿 Plant/Nature'],
+    ]);
+
+    const allArtStyles = new Set([
+      ...CHARACTER_TAGS_KO['🖌️ 화풍'],
+      ...CHARACTER_TAGS_EN['🖌️ Art Style'],
+    ]);
+
+    setCharManual(prev => {
+      const currentTags = prev.split(',').map(v => v.trim()).filter(Boolean);
+      const hasTag = currentTags.includes(tag);
+
+      // Toggle off if already selected
+      if (hasTag) {
+        return currentTags.filter(t => t !== tag).join(', ');
+      }
+
+      // Rule 1: Single Art Style replacement
+      if (isArtStyleCategory) {
+        const withoutStyles = currentTags.filter(t => !allArtStyles.has(t));
+        return [...withoutStyles, tag].join(', ');
+      }
+
+      // Rule 2: Single Subject replacement (Prevents Cat + Rabbit + Robot collision)
+      if (isSubjectCategory) {
+        const withoutSubjects = currentTags.filter(t => !allSubjectTags.has(t));
+        return [...withoutSubjects, tag].join(', ');
+      }
+
+      // Default: Append new tag
+      return [...currentTags, tag].join(', ');
+    });
+
+    // Rule 3: Auto-switch Photo Mode if selecting a mascot/animal subject while in 'exact' photo mode
+    if (characterSource === 'photo' && photoReferenceMode === 'exact' && isSubjectCategory) {
+      setPhotoReferenceMode('characterize');
     }
-    setCharManual(prev => prev ? `${prev}, ${tag}` : tag);
   };
 
   const getPhotoModeLabel = (labelLanguage = lang) => ({
