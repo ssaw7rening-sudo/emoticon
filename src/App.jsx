@@ -3132,16 +3132,16 @@ Please edit the most recent image. Keep the character design, face, expression, 
                       </button>
                     ))}
                   </div>
-                  <div className="text-[13px] leading-relaxed text-amber-900 bg-white/80 p-3 rounded-md border border-amber-200 flex flex-col gap-2">
-                    <p className="font-bold flex items-center gap-1">
+                  <div className="text-[14px] sm:text-[15px] leading-relaxed text-amber-950 bg-white/90 p-3.5 sm:p-4 rounded-lg border border-amber-300 flex flex-col gap-2.5 shadow-xs">
+                    <p className="font-extrabold flex items-center gap-1.5 text-[15px] sm:text-[16px] text-amber-900">
                       💡 {lang === 'ko' ? '사진 참고 모드 (인물 / 동물 / 사물 자유 결합)' : 'Photo Reference Mode (Person / Animal / Object)'}
                     </p>
-                    <p className="text-[12px] text-amber-800">
+                    <p className="text-[13px] sm:text-[14px] text-amber-900 leading-relaxed font-bold">
                       {lang === 'ko'
                         ? '사람 사진뿐만 아니라 반려견/반려묘(동물), 캐릭터/인형/사물 사진도 모두 가능하며 선택하신 태그와 100% 융합됩니다.'
                         : 'Supports photos of people, pets/animals, or objects/characters. All selected tags combine 100% into the prompt.'}
                     </p>
-                    <div className="bg-amber-100/70 p-2 rounded text-[11px] text-amber-950 font-bold border border-amber-300/60">
+                    <div className="bg-amber-100/90 p-3 rounded-md text-[13px] sm:text-[14px] text-amber-950 font-bold border border-amber-300/80 leading-relaxed shadow-2xs">
                       ✨ {lang === 'ko' 
                         ? '예시: 사람 사진을 올리고 [시바견] 태그 선택 시 → [최대한 닮게]: 사진 속 인물이 시바견 인형옷/귀를 쓴 캐릭터 | [귀여운 SD 캐릭터화]: 인상의 분위기를 닮은 2.5등신 시바견 마스코트로 멋지게 융합됩니다!' 
                         : 'Example: Person photo + [Shiba Inu] tag → [Exact]: Person wearing Shiba Inu costume | [Chibi]: Cute 2.5-head Shiba Inu mascot matching the person\'s vibe!'}
@@ -3230,17 +3230,17 @@ Please edit the most recent image. Keep the character design, face, expression, 
             
             {/* Tag Category Selection Rules Info Card */}
             <div className="mt-md bg-surface-container-highest rounded-md overflow-hidden">
-              <div className="bg-[#E2F5EE] px-3.5 py-2.5 border-b border-mint-border flex items-center justify-between text-[12px] font-bold text-mint-strong">
-                <span className="flex items-center gap-1.5">
+              <div className="bg-[#E2F5EE] px-3.5 py-2.5 border-b border-mint-border flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-[13px] font-bold text-mint-strong">
+                <span className="flex items-center gap-1.5 flex-wrap">
                   📌 {lang === 'ko' ? '태그 선택 규칙:' : 'Tag Rules:'}
-                  <span className="bg-white/90 px-2 py-0.5 rounded text-[11px] border border-mint-border">
+                  <span className="bg-white/90 px-2.5 py-0.5 rounded text-[12px] border border-mint-border">
                     {lang === 'ko' ? '화풍/피사체: 대표 1개 선택' : 'Art/Subject: 1 Main Select'}
                   </span>
-                  <span className="bg-white/90 px-2 py-0.5 rounded text-[11px] border border-mint-border">
-                    {lang === 'ko' ? '의상/소품/성격/효과: 여러 개 다중 선택 조합 가능' : 'Outfit/Props/Effects: Multi-Select'}
+                  <span className="bg-white/90 px-2.5 py-0.5 rounded text-[12px] border border-mint-border">
+                    {lang === 'ko' ? '의상/소품/성격/효과: 여러 개 다중 선택 가능' : 'Outfit/Props/Effects: Multi-Select'}
                   </span>
                 </span>
-                <span className="bg-[#C5F2E3] text-[#184F43] border border-[#A6E3D0] px-2.5 py-0.5 rounded-full text-[11px] font-extrabold shadow-xs">
+                <span className="bg-[#C5F2E3] text-[#184F43] border border-[#A6E3D0] px-3 py-0.5 rounded-full text-[12px] font-extrabold shadow-xs shrink-0 self-start sm:self-auto">
                   {getCategoryRuleBadge(activeTagCategory)}
                 </span>
               </div>
