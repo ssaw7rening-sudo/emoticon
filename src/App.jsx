@@ -2590,9 +2590,9 @@ ${textExclusion} No guide lines, no grid lines, no cell dividers, no border line
 
 동일한 캐릭터가 등장하는 고품질 2D 메신저 스티커 (카카오톡 / 라인 스타일) 한 장을 그려주세요. 정사각형 캔버스, 고해상도.
 
-[CRITICAL IDENTITY LOCK — 캐릭터 정체성 95% 고정]
-참고 사진 인물의 실제 얼굴 구조와 턱선, 눈매 각도, 눈 크기 비율, 콧대, 입술 두께, 헤어스타일을 그대로 고정하세요.
-"귀여운 캐릭터화"를 이유로 흔한 표준 캐릭터 얼굴이나 흔한 애니메이션 얼굴 템플릿으로 절대로 대체하지 마세요.
+[CRITICAL IDENTITY LOCK — 자연스러운 얼굴 닮은꼴 보존 (왜곡 방지)]
+참고 사진 인물의 눈매 각도, 콧대, 입술 모양, 턱선, 헤어스타일의 특징을 90% 이상 자연스럽게 반영하세요.
+[얼굴 찌그러짐 엄격 방지]: 이목구비를 억지로 구겨 넣거나 기괴하게 왜곡시키지 말고, 깔끔하고 균형 잡힌 2D 이목구비 윤곽선으로 자연스럽게 그리세요.
 ${referenceInstructionKo}
 - 대상: ${character.subject}
 - 외형 및 특징: ${character.appearance}
@@ -2697,10 +2697,9 @@ ${textExclusionKo} 문구 뒤에 쉼표(,), 마침표(.), 느낌표 중복 등 �
 
 Create a high-end 2D messenger sticker (KakaoTalk / LINE style) featuring one consistent character. Square canvas, high resolution.
 
-[CRITICAL IDENTITY LOCK — STRICT 95%+ RESEMBLANCE]
-The character must be an immediately recognizable realistic caricature of the exact subject in the reference photo.
-Do NOT create a generic cute anime face or standardized cartoon template.
-Strictly preserve real facial identity: exact face shape, eye shape and angle, nose structure, lip thickness, jawline, skin tone, and hairstyle.
+[CRITICAL IDENTITY LOCK — NATURAL FACIAL RESEMBLANCE (NO DISTORTION)]
+Replicate the key facial identity from reference photo (eye angle, nose bridge, lips, jawline, hairstyle) preserving 90%+ natural likeness.
+[STRICT DISTORTION PREVENTION]: Do NOT warp, distort, or contort facial features. Maintain balanced, clean 2D facial anatomy with harmonious proportions.
 ${referenceInstruction}
 Subject: ${character.subject}
 Appearance & Features: ${character.appearance}
