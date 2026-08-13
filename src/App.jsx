@@ -3059,7 +3059,7 @@ Please edit the most recent image. Keep the character design, face, expression, 
             {/* Live Active Settings Status Banner (Original Brand Palette) */}
             <div className="bg-[#EAF8F3] text-mint-strong rounded-lg p-3 shadow-bubbly flex flex-col sm:flex-row sm:items-center justify-between gap-2 border border-mint-border">
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="bg-mint-strong text-white text-[11px] font-black px-2 py-0.5 rounded-md uppercase tracking-wide">
+                <span className="bg-[#C5F2E3] text-[#184F43] border border-[#A6E3D0] text-[11px] font-black px-2.5 py-0.5 rounded-md uppercase tracking-wide shadow-xs">
                   ⚡ {lang === 'ko' ? '실시간 프롬프트 적용 중' : 'Live Prompt Active'}
                 </span>
                 <span className="text-[13px] font-bold text-mint-strong">
@@ -3240,7 +3240,7 @@ Please edit the most recent image. Keep the character design, face, expression, 
                     {lang === 'ko' ? '의상/소품/성격/효과: 여러 개 다중 선택 조합 가능' : 'Outfit/Props/Effects: Multi-Select'}
                   </span>
                 </span>
-                <span className="bg-mint-strong text-white px-2 py-0.5 rounded-full text-[11px] font-extrabold">
+                <span className="bg-[#C5F2E3] text-[#184F43] border border-[#A6E3D0] px-2.5 py-0.5 rounded-full text-[11px] font-extrabold shadow-xs">
                   {getCategoryRuleBadge(activeTagCategory)}
                 </span>
               </div>
