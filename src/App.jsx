@@ -3015,6 +3015,57 @@ Please edit the most recent image. Keep the character design, face, expression, 
     return generateGrokPrompt(phraseOverride);
   };
 
+  const launchAiCompanion = (type, selectedPhraseOverride = null) => {
+    const phraseOverride = selectedPhraseOverride ?? (generationMode === 'batch' ? getSelectedPhrase() : null);
+    if (getPromptValidationError(phraseOverride)) return;
+    
+    const textToCopy = type === 'gpt'
+      ? generateGptPrompt(phraseOverride)
+      : type === 'gemini'
+        ? generateGeminiPrompt(phraseOverride)
+        : generateGrokPrompt(phraseOverride);
+
+    // 1. Copy to clipboard
+    navigator.clipboard.writeText(textToCopy);
+    setCopiedType(type);
+    setTimeout(() => setCopiedType(null), 3000);
+
+    // 2. Determine target URL
+    let targetUrl = 'https://chatgpt.com/';
+    let toastName = 'ChatGPT';
+
+    if (type === 'gpt') {
+      targetUrl = `https://chatgpt.com/?q=${encodeURIComponent(textToCopy)}`;
+      toastName = 'ChatGPT';
+    } else if (type === 'gemini') {
+      targetUrl = 'https://gemini.google.com/app';
+      toastName = 'Google Gemini';
+    } else if (type === 'grok') {
+      targetUrl = 'https://grok.com/';
+      toastName = 'xAI Grok';
+    }
+
+    // 3. Open side-by-side companion split window on desktop
+    const width = Math.min(880, Math.floor(window.screen.availWidth * 0.52));
+    const height = window.screen.availHeight || 900;
+    const left = Math.max(0, window.screen.availWidth - width);
+    const top = 0;
+
+    const popupFeatures = `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes,status=yes`;
+    
+    const popup = window.open(targetUrl, `AI_Companion_${type}`, popupFeatures);
+    if (popup) {
+      showToast(lang === 'ko' 
+        ? `🚀 ${toastName} 분할 실행 완료! 우측 창에서 Ctrl+V를 누르세요.` 
+        : `🚀 ${toastName} opened! Press Ctrl+V in the side window.`);
+    } else {
+      window.open(targetUrl, '_blank');
+      showToast(lang === 'ko' 
+        ? `📋 프롬프트 복사 완료! 새 탭에서 Ctrl+V를 누르세요.` 
+        : `📋 Prompt copied! Press Ctrl+V in the new tab.`);
+    }
+  };
+
   const copyToClipboard = (type, selectedPhraseOverride = null, copyKey = type) => {
     const phraseOverride = selectedPhraseOverride ?? (generationMode === 'batch' ? getSelectedPhrase() : null);
     if (getPromptValidationError(phraseOverride)) return;
@@ -3791,34 +3842,81 @@ Please edit the most recent image. Keep the character design, face, expression, 
 
         </section>
 
-        {/* Actions */}
-        <section className="flex flex-col sm:flex-row gap-3 sm:gap-4 mt-sm pb-xl">
-          <button 
-            onClick={() => copyToClipboard('gpt')}
-            disabled={Boolean(promptValidationError)}
-            className="interactive-control w-full min-h-[64px] flex-none sm:flex-1 rounded-md bg-[#FFE8B5] text-[#5A461B] border border-[#E8C66A] font-headline-sm flex items-center justify-center gap-2 hover:bg-[#FFDB80] shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E8C66A] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-[#FFE8B5]"
-          >
-            {copiedType === 'gpt' ? <CheckCircle2 size={22} className="text-[#2D7D64]" /> : <Bot size={22} className="text-[#2D7D64]" />}
-            {t.gptCopy}
-          </button>
-          
-          <button 
-            onClick={() => copyToClipboard('gemini')}
-            disabled={Boolean(visiblePromptValidationError)}
-            className="interactive-control w-full min-h-[64px] flex-none sm:flex-1 rounded-md bg-[#FFE8B5] text-[#5A461B] border border-[#E8C66A] font-headline-sm flex items-center justify-center gap-2 hover:bg-[#FFDB80] shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E8C66A] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-[#FFE8B5]"
-          >
-            {copiedType === 'gemini' ? <CheckCircle2 size={22} className="text-[#D97706]" /> : <Sparkles size={22} className="text-[#D97706]" />}
-            {t.geminiCopy}
-          </button>
+        {/* Actions: One-Click Split Screen Launch & Copy Dual Hub */}
+        <section className="flex flex-col gap-3 mt-sm pb-xl">
+          <div className="bg-[#EAF8F3] p-3 rounded-lg border border-mint-border flex items-center justify-between text-[12.5px] font-bold text-mint-strong">
+            <span className="flex items-center gap-1.5">
+              🚀 {lang === 'ko' ? '원클릭 1초 분할 실행: 버튼 클릭 시 클립보드 자동 복사 + 우측 분할 창으로 AI 사이트가 즉시 열립니다!' : 'One-Click Split Launch: Auto-copies prompt & opens AI site in side split window!'}
+            </span>
+          </div>
 
-          <button 
-            onClick={() => copyToClipboard('grok')}
-            disabled={Boolean(visiblePromptValidationError)}
-            className="interactive-control w-full min-h-[64px] flex-none sm:flex-1 rounded-md bg-[#FFE8B5] text-[#5A461B] border border-[#E8C66A] font-headline-sm flex items-center justify-center gap-2 hover:bg-[#FFDB80] shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E8C66A] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-[#FFE8B5]"
-          >
-            {copiedType === 'grok' ? <CheckCircle2 size={22} className="text-[#9333EA]" /> : <Zap size={22} className="text-[#9333EA]" />}
-            {t.grokCopy}
-          </button>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
+            {/* ChatGPT Action Card */}
+            <div className="bg-white p-3.5 rounded-lg border-2 border-[#E8C66A]/60 flex flex-col gap-2 shadow-xs hover:border-[#E8C66A] transition-all">
+              <button
+                type="button"
+                onClick={() => launchAiCompanion('gpt')}
+                disabled={Boolean(promptValidationError)}
+                className="interactive-control w-full min-h-[52px] rounded-md bg-gradient-to-r from-[#2D7D64] to-[#1E5C49] text-white font-bold text-[15px] flex items-center justify-center gap-2 shadow-sm hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+              >
+                <Bot size={20} className="text-[#A6E3D0]" />
+                <span>{lang === 'ko' ? '🚀 ChatGPT 분할 실행' : '🚀 Launch ChatGPT'}</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => copyToClipboard('gpt')}
+                disabled={Boolean(promptValidationError)}
+                className="interactive-control w-full min-h-[38px] rounded-md bg-[#FFF9EE] text-[#7A4F00] border border-[#FFECA1] font-bold text-[13px] flex items-center justify-center gap-1.5 hover:bg-[#FFECA1] cursor-pointer"
+              >
+                {copiedType === 'gpt' ? <CheckCircle2 size={16} className="text-[#2D7D64]" /> : <CheckCircle2 size={16} className="text-[#7A4F00]" />}
+                <span>{copiedType === 'gpt' ? (lang === 'ko' ? '✓ 복사 완료!' : '✓ Copied!') : (lang === 'ko' ? '📋 프롬프트만 복사' : '📋 Copy Prompt')}</span>
+              </button>
+            </div>
+
+            {/* Gemini Action Card */}
+            <div className="bg-white p-3.5 rounded-lg border-2 border-[#E8C66A]/60 flex flex-col gap-2 shadow-xs hover:border-[#E8C66A] transition-all">
+              <button
+                type="button"
+                onClick={() => launchAiCompanion('gemini')}
+                disabled={Boolean(visiblePromptValidationError)}
+                className="interactive-control w-full min-h-[52px] rounded-md bg-gradient-to-r from-[#D97706] to-[#B45309] text-white font-bold text-[15px] flex items-center justify-center gap-2 shadow-sm hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+              >
+                <Sparkles size={20} className="text-[#FFECA1]" />
+                <span>{lang === 'ko' ? '🚀 Gemini 분할 실행' : '🚀 Launch Gemini'}</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => copyToClipboard('gemini')}
+                disabled={Boolean(visiblePromptValidationError)}
+                className="interactive-control w-full min-h-[38px] rounded-md bg-[#FFF9EE] text-[#7A4F00] border border-[#FFECA1] font-bold text-[13px] flex items-center justify-center gap-1.5 hover:bg-[#FFECA1] cursor-pointer"
+              >
+                {copiedType === 'gemini' ? <CheckCircle2 size={16} className="text-[#D97706]" /> : <CheckCircle2 size={16} className="text-[#7A4F00]" />}
+                <span>{copiedType === 'gemini' ? (lang === 'ko' ? '✓ 복사 완료!' : '✓ Copied!') : (lang === 'ko' ? '📋 프롬프트만 복사' : '📋 Copy Prompt')}</span>
+              </button>
+            </div>
+
+            {/* Grok Action Card */}
+            <div className="bg-white p-3.5 rounded-lg border-2 border-[#E8C66A]/60 flex flex-col gap-2 shadow-xs hover:border-[#E8C66A] transition-all">
+              <button
+                type="button"
+                onClick={() => launchAiCompanion('grok')}
+                disabled={Boolean(visiblePromptValidationError)}
+                className="interactive-control w-full min-h-[52px] rounded-md bg-gradient-to-r from-[#7C3AED] to-[#5B21B6] text-white font-bold text-[15px] flex items-center justify-center gap-2 shadow-sm hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+              >
+                <Zap size={20} className="text-[#DDD6FE]" />
+                <span>{lang === 'ko' ? '🚀 Grok 분할 실행' : '🚀 Launch Grok'}</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => copyToClipboard('grok')}
+                disabled={Boolean(visiblePromptValidationError)}
+                className="interactive-control w-full min-h-[38px] rounded-md bg-[#FFF9EE] text-[#7A4F00] border border-[#FFECA1] font-bold text-[13px] flex items-center justify-center gap-1.5 hover:bg-[#FFECA1] cursor-pointer"
+              >
+                {copiedType === 'grok' ? <CheckCircle2 size={16} className="text-[#7C3AED]" /> : <CheckCircle2 size={16} className="text-[#7A4F00]" />}
+                <span>{copiedType === 'grok' ? (lang === 'ko' ? '✓ 복사 완료!' : '✓ Copied!') : (lang === 'ko' ? '📋 프롬프트만 복사' : '📋 Copy Prompt')}</span>
+              </button>
+            </div>
+          </div>
         </section>
         
         <AdBanner />
