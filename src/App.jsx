@@ -3975,8 +3975,8 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                 className="px-3 py-1.5 text-[14px] font-bold rounded-full border border-mint-border bg-surface-container-lowest text-on-surface cursor-pointer focus:outline-none focus:ring-2 focus:ring-mint"
               >
                 <option value="" disabled>{t.themeSelect}</option>
-                {themeKeys.map(theme => (
-                  <option key={theme} value={theme}>{theme}</option>
+                {themeKeys.map((theme, idx) => (
+                  <option key={theme} value={theme}>{`${idx + 1}. ${theme}`}</option>
                 ))}
               </select>
               
@@ -3991,25 +3991,18 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
 
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-sm md:gap-md bg-surface-container-lowest rounded-md p-3.5 sm:p-md shadow-bubbly border border-outline-variant">
             {emoticons.map((text, idx) => (
-              <div 
+              <input 
                 key={idx}
-                className={`relative flex items-center w-full ${
+                type="text" 
+                value={text}
+                onChange={(e) => handleEmoticonChange(idx, e.target.value)}
+                className={`interactive-control w-full h-[48px] bg-mint-soft rounded-full px-1.5 sm:px-3 text-center text-mint-strong text-[12px] sm:text-[14px] font-bold tracking-tight placeholder:text-on-secondary-container focus:outline-none focus:ring-2 focus:ring-mint-strong border border-mint-border text-ellipsis overflow-hidden whitespace-nowrap ${
                   idx === emoticons.length - 1
                     ? 'col-span-2 max-w-[calc(50%_-_6px)] justify-self-center sm:col-span-1 sm:max-w-none'
                     : ''
                 }`}
-              >
-                <span className="absolute left-2 sm:left-2.5 w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-white/90 border border-mint-border/80 text-mint-strong font-black text-[10px] sm:text-[11px] flex items-center justify-center shadow-2xs pointer-events-none z-10 select-none">
-                  {idx + 1}
-                </span>
-                <input 
-                  type="text" 
-                  value={text}
-                  onChange={(e) => handleEmoticonChange(idx, e.target.value)}
-                  className="interactive-control w-full h-[48px] bg-mint-soft rounded-full pl-8 sm:pl-10 pr-2 sm:pr-3 text-center text-mint-strong text-[12px] sm:text-[13.5px] font-bold tracking-tight placeholder:text-on-secondary-container focus:outline-none focus:ring-2 focus:ring-mint-strong border border-mint-border text-ellipsis overflow-hidden whitespace-nowrap shadow-2xs"
-                  placeholder={`Phrase ${idx+1}`}
-                />
-              </div>
+                placeholder={`Phrase ${idx+1}`}
+              />
             ))}
           </div>
 
