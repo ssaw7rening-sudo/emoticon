@@ -4198,7 +4198,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
           <div className="bg-[#EAF8F3] p-3 rounded-lg border border-mint-border flex items-center justify-between text-[12.5px] font-bold text-mint-strong">
             <span className="flex items-center gap-1.5">
               🚀 {lang === 'ko' 
-                ? '원클릭 1초 바로 실행: 버튼 클릭 시 클립보드 자동 복사 + 새 창으로 AI 사이트가 즉시 열립니다!' 
+                ? '원클릭 1초 실행: 버튼 클릭 시 클립보드 자동 복사 + AI 사이트가 즉시 열립니다!' 
                 : lang === 'ja'
                 ? 'ワンクリック分割起動: プロンプトが自動コピーされ、右側にAI画面が開きます！'
                 : lang === 'zh'
@@ -4217,7 +4217,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                 className="interactive-control w-full min-h-[52px] rounded-md bg-gradient-to-r from-[#2D7D64] to-[#1E5C49] text-white font-bold text-[15px] flex items-center justify-center gap-2 shadow-sm hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
               >
                 <Bot size={20} className="text-[#A6E3D0]" />
-                <span>{lang === 'ko' ? '🚀 ChatGPT 바로 실행' : lang === 'ja' ? '🚀 ChatGPT 起動' : lang === 'zh' ? '🚀 ChatGPT 立即启动' : '🚀 Launch ChatGPT'}</span>
+                <span>{lang === 'ko' ? '🚀 ChatGPT 실행' : lang === 'ja' ? '🚀 ChatGPT 起動' : lang === 'zh' ? '🚀 ChatGPT 启动' : '🚀 Launch ChatGPT'}</span>
               </button>
               <button
                 type="button"
@@ -4242,7 +4242,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                 className="interactive-control w-full min-h-[52px] rounded-md bg-gradient-to-r from-[#D97706] to-[#B45309] text-white font-bold text-[15px] flex items-center justify-center gap-2 shadow-sm hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
               >
                 <Sparkles size={20} className="text-[#FFECA1]" />
-                <span>{lang === 'ko' ? '🚀 Gemini 바로 실행' : lang === 'ja' ? '🚀 Gemini 起動' : lang === 'zh' ? '🚀 Gemini 立即启动' : '🚀 Launch Gemini'}</span>
+                <span>{lang === 'ko' ? '🚀 Gemini 실행' : lang === 'ja' ? '🚀 Gemini 起動' : lang === 'zh' ? '🚀 Gemini 启动' : '🚀 Launch Gemini'}</span>
               </button>
               <button
                 type="button"
@@ -4267,7 +4267,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                 className="interactive-control w-full min-h-[52px] rounded-md bg-gradient-to-r from-[#7C3AED] to-[#5B21B6] text-white font-bold text-[15px] flex items-center justify-center gap-2 shadow-sm hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
               >
                 <Zap size={20} className="text-[#DDD6FE]" />
-                <span>{lang === 'ko' ? '🚀 Grok 바로 실행' : lang === 'ja' ? '🚀 Grok 起動' : lang === 'zh' ? '🚀 Grok 立即启动' : '🚀 Launch Grok'}</span>
+                <span>{lang === 'ko' ? '🚀 Grok 실행' : lang === 'ja' ? '🚀 Grok 起動' : lang === 'zh' ? '🚀 Grok 启动' : '🚀 Launch Grok'}</span>
               </button>
               <button
                 type="button"
