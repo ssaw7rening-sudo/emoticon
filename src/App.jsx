@@ -4193,8 +4193,9 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
 
         </section>
 
-        {/* Actions: One-Click Split Screen Launch & Copy Dual Hub */}
-        <section className="flex flex-col gap-3 mt-sm pb-xl">
+        {/* Actions: One-Click Launch & Copy Dual Hub */}
+        <section className="flex flex-col gap-3 mt-2 pb-4">
+          <AdBanner />
           <div className="bg-[#EAF8F3] p-3 rounded-lg border border-mint-border flex items-center justify-between text-[12.5px] font-bold text-mint-strong">
             <span className="flex items-center gap-1.5">
               🚀 {lang === 'ko' 
@@ -4284,8 +4285,6 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
             </div>
           </div>
         </section>
-        
-        <AdBanner />
 
         <div className="bg-[#FFF5E6] text-[#8C3D18] p-4 sm:p-5 md:p-6 rounded-md border border-[#FDE0B5] flex gap-3 md:gap-4 items-start shadow-sm mt-2 relative overflow-hidden">
           <div className="absolute -right-4 -top-6 text-[#FCD3A1] opacity-40 text-[120px] sm:text-[140px] transform -rotate-12 select-none pointer-events-none drop-shadow-sm">📸</div>
