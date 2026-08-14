@@ -2743,13 +2743,9 @@ function App() {
       : ''}${getReferenceImageInstruction(lang)}`;
     const selectedArtStyle = getSelectedArtStyle();
     const expandedArtStyle = getExpandedArtStyleText(selectedArtStyle, lang === 'ko');
-    const artDirection = characterSource === 'photo' && photoReferenceMode === 'exact'
-      ? (lang === 'ko'
-          ? '첨부된 인물 사진의 실물 얼굴(눈매, 콧대, 입술, 피부 질감, 헤어스타일)을 100% 그대로 살린 고품질 실사 기반 캐리커처 스티커 스타일 (얼굴을 만화체로 단순화하지 마세요)'
-          : 'High-quality photorealistic caricature sticker style faithfully preserving 100% of the subject\'s real facial features, skin texture, and hairstyle from the photo (do NOT simplify face into generic cartoon)')
-      : (expandedArtStyle || (lang === 'ko'
-          ? '귀엽고 친근한 고품질 2D 메신저 이모티콘 스타일, 깔끔한 외곽선, 조화로운 색감'
-          : 'cute, approachable, high-quality 2D messenger sticker style with clean outlines and harmonious colors'));
+    const artDirection = expandedArtStyle || (lang === 'ko'
+      ? '귀엽고 친근한 고품질 2D 메신저 이모티콘 스타일, 깔끔한 외곽선, 조화로운 색감'
+      : 'cute, approachable, high-quality 2D messenger sticker style with clean outlines and harmonious colors');
 
     if (generationMode === 'individual' || hasPhraseOverride) {
       if (lang === 'ko') {
@@ -2860,7 +2856,7 @@ ${referenceInstruction}
 의상: ${character.outfit}
 
 [최우선 화풍]
-${artDirection}. 15개 셀 모두 일관된 얼굴 묘사와 캐릭터 비율을 적용하세요.
+${artDirection}. 15개 셀 모두 같은 선, 질감, 색감과 캐릭터 비율을 적용하세요.
 
 [패널 계획]
 각 문구에서 바로 이해할 수 있는 표정 하나와 서로 다른 전신 자세 하나를 구성하세요. 셀마다 보조 소품과 만화 효과는 각각 최대 하나만 사용하고 자세를 반복하지 마세요.
