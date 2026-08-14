@@ -2525,8 +2525,8 @@ function App() {
 
     const modeInstructions = {
       exact: {
-        ko: '사진 속 인물의 실제 눈매, 콧대, 입술, 헤어스타일, 분위기를 한눈에 알아볼 수 있게 찰떡같이 반영하되, 딱딱하고 굳은 실사가 아닌 동글동글하고 귀염성이 가득 담긴 사랑스러운 2D 스티커 캐리커처로 그려주세요. 본인 고유의 개성과 매력은 확실히 살리고, 전체적인 느낌은 친근하고 귀엽게 표현하세요.',
-        en: 'Draw a charming 2D caricature sticker that faithfully captures the subject\'s recognizable eye shape, nose, lips, hairstyle, and facial vibe from the photo, while rendering them with adorable, friendly, and cute cartoon appeal (no stiff realistic portraits). Keep the person\'s unique identity clearly recognizable while making the character lovable.',
+        ko: '이 프롬프트를 사용할 때 AI 채팅에 함께 첨부한 사진을 최우선 참고 이미지로 사용해주세요.\n사진 속 대상의 실제 얼굴 비율, 이목구비(눈 크기·모양, 코, 입술, 턱선), 헤어스타일, 피부톤을 사실적으로 재현한 캐리커처 스타일 2D 스티커로 그려주세요. 한눈에 "이 사람이다"라고 알아볼 수 있을 정도로 얼굴 유사도를 높게 유지하되, 외곽선과 채색은 깔끔한 2D 스티커로 마무리하세요.',
+        en: 'When using this prompt, treat the attached photo in the AI chat as the highest priority reference image.\nDraw a caricature-style 2D sticker that realistically reproduces the subject\'s actual face proportions, facial features (eye size and shape, nose, lips, jawline), hairstyle, and skin tone. The face must be recognizable enough that viewers can immediately identify the person, while the linework and coloring should have a clean 2D sticker finish.',
       },
       features: {
         ko: '사진 속 대상의 얼굴 자체를 닮게 그릴 필요는 없습니다. 대신 헤어스타일, 안경 유무, 의상, 체형, 전체적인 분위기 등 시그니처 포인트만 추출하여 스타일리시한 2D 캐릭터 아바타로 새롭게 디자인해주세요.',
