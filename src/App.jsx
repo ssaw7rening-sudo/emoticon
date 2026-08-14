@@ -66,7 +66,15 @@ const THEMES_KO = {
   '대청소/정리 ①': ['대청소 시작!', '당근마켓 나눔', '먼지 털기', '물청소 뽀송', '비우는 삶', '환기 중', '이불 빨래 完', '정리 끝 깔끔', '쓰레기 배출', '새집 같아', '청소 지옥', '뿌듯한 하루', '침대 커버 교체', '방이 반짝반짝', '이제 쉰다'],
   '대청소/정리 ②': ['옷장 정리 완료', '먼지 제로 도전', '재활용 분리수거', '쓰레기통 비움', '욕실 청소 반짝', '향기 가득 방', '버릴 옷 한가득', '신발장 정리', '먼지 털이 슉슉', '주방 기름때 싹', '정리의 기쁨', '미니멀 라이프', '청소기 윙윙', '공기청정기 가동', '깨끗해서 상쾌해'],
   '페스티벌/노래방 ①': ['티켓팅 성공!', '1열 잡았다', '노래방 가자', '마이크 내 꺼', '흥 폭발!', '떼창 준비', '목 쉬었음', '앵콜 외치는 중', '응원봉 흔들', '페스티벌 출발', '성대 결절 각', '고음 폭발', '여운 남음', '체력 방전', '귀가 완료'],
-  '페스티벌/노래방 ②': ['점수 100점!', '발라드 타임', '랩 찢었다!', '서비스 시간 추가', '떼창으로 하나됨', '목 관리 필수', '엔딩곡 부르는 중', '생수 벌컥벌컥', '음악에 취한다', '콘서트 막차 탑승', '귀 호강 중', '헤드뱅잉 쾅쾅', '앵콜곡 대기', '최고의 무대!', '평생 기억할 밤']
+  '페스티벌/노래방 ②': ['점수 100점!', '발라드 타임', '랩 찢었다!', '서비스 시간 추가', '떼창으로 하나됨', '목 관리 필수', '엔딩곡 부르는 중', '생수 벌컥벌컥', '음악에 취한다', '콘서트 막차 탑승', '귀 호강 중', '헤드뱅잉 쾅쾅', '앵콜곡 대기', '최고의 무대!', '평생 기억할 밤'],
+  '드라이브/로드트립 ①': ['드라이브 출발!', '창문 열고 힐링', '드라이브 송 ON', '바닷길 달리는 중', '노을 뷰 끝내준다', '휴게소 소떡소떡', '야간 드라이브', '바람 솔솔~', '달려보자 고고!', '숲길 코스 만끽', '감성 충전 완료', '오픈카 갬성', 'DT 픽업 완료', '힐링 만끽 중', '안전하게 복귀'],
+  '드라이브/로드트립 ②': ['탁 트인 뷰 예술', '해안도로 질주', '플레이리스트 짱', '음악에 취한다', '휴게소 통감자', '스트레스 순삭', '커피 한잔의 여유', '자유를 찾아서', '전망대 도착!', '주말 드라이브', '예쁜 하늘 찰칵', '도로가 내 세상', '기분 전환 완료', '낭만 가득한 밤', '오늘도 행복했다'],
+  '낚시/피싱 ①': ['입질 왔다!', '월척이다!', '손맛 짜릿', '포인트 도착', '미끼 끼우는 중', '챔질 나이스!', '출조 출발', '물고기 방생', '대어 낚았다', '낚싯대 드리우고', '세월을 낚는 중', '물멍 타임', '만선이오!', '꽝 쳤음 (눈물)', '오늘 낚시 끝'],
+  '낚시/피싱 ②': ['새벽 출조', '루어 체인지', '찌만 뚫어져라', '드랙 풀린다!', '선상 라면 꿀맛', '도시어부 출격', '바다 낚시', '민물 낚시', '회 떠 먹자!', '잡어만 잔뜩', '바늘 빼는 중', '장비 욕심 뿜뿜', '힐링 낚시', '손맛 예술', '내일 또 출조'],
+  '싸이클/라이딩 ①': ['라이딩 출발!', '케이던스 유지', '업힐 정복!', '다운힐 조심', '평속 30 찍음', '보급소 도착', '안라(안전라이딩)', '클릿슈즈 체결', '펑크 났다 (멘붕)', '야간 라이딩', '한강 자도 질주', '엔진 업그레이드', '100km 완주!', '허벅지 터짐', '오늘 라이딩 끝'],
+  '싸이클/라이딩 ②': ['자덕 모임', '장비 경량화', '기어 변속 착착', '바람을 가르며', '자전거 세차 完', '스프린트 돌진', '져지 뽐뿌', '안라즐라!', '물통 원샷', '라이딩 인증샷', '장거리 투어', '역풍 지옥', '국토종주 도전', '안장통 (눈물)', '내일 또 타자!'],
+  '골프/라운딩 ①': ['나이스 샷!', '버디 잡았다!', '홀인원 가자', '굿 샷!', '티샷 준비', '오비(OB) 났다…', '해저드 퐁당', '벙커 탈출!', '컨시드 땡큐', '퍼팅 라인 보기', '나이스 파!', '드라이버 200m', '라베(인생최고타)', '그늘집 타임', '오늘 라운딩 끝'],
+  '골프/라운딩 ②': ['새벽 티오프', '명랑 골프', '백돌이 탈출!', '골린이 성장 중', '어프로치 완벽', '골프웨어 뽐뿌', '내기 승리!', '멘탈 게임', '스크린 골프 가자', '스윙 교정 중', '홀컵 땡그랑', '그린 라이 읽기', '비거리 폭발', '라운딩 인증샷', '다음 라운딩 예약']
 };
 
 const THEMES_EN = {
@@ -133,7 +141,15 @@ const THEMES_EN = {
   'Deep Clean/Organize ①': ['Deep clean starts!', 'Giving away items', 'Dusting off', 'Mopping fresh', 'Minimalist life', 'Airing out', 'Bedding washed', 'All neat & clean', 'Trash taken out', 'Looks brand new', 'Cleaning grind', 'Proud productive day', 'Fresh bed sheets', 'Sparkling clean', 'Rest time now'],
   'Deep Clean/Organize ②': ['Closet organized', 'Zero dust goal', 'Recycling sorting', 'Trash bins emptied', 'Bathroom sparkling', 'Fragrant room', 'Clothes to donate', 'Shoe rack tidy', 'Duster working', 'Kitchen grease gone', 'Joy of tidying', 'Minimalist living', 'Vacuum humming', 'Air purifier on', 'Fresh and clean'],
   'Festival/Karaoke ①': ['Got the ticket!', 'Front row seat', 'Karaoke time!', 'Mic is mine', 'Hype overload!', 'Ready to sing along', 'Voice is gone', 'Chanting encore', 'Wave lightsticks', 'Festival bound!', 'Vocal cords fried', 'High note burst', 'Post-concert high', 'Total burnout', 'Safe at home'],
-  'Festival/Karaoke ②': ['Scored 100 points!', 'Ballad mood', 'Rap flow killed it', 'Bonus time added', 'United in singing', 'Save my throat', 'Ending theme song', 'Chugging water', 'Lost in music', 'Caught the last train', 'Ear candy heaven', 'Headbanging hard', 'Waiting for encore', 'Unreal performance!', 'Night to remember']
+  'Festival/Karaoke ②': ['Scored 100 points!', 'Ballad mood', 'Rap flow killed it', 'Bonus time added', 'United in singing', 'Save my throat', 'Ending theme song', 'Chugging water', 'Lost in music', 'Caught the last train', 'Ear candy heaven', 'Headbanging hard', 'Waiting for encore', 'Unreal performance!', 'Night to remember'],
+  'Drive/Road Trip ①': ['Road trip begins!', 'Windows down fresh', 'Drive playlist ON', 'Ocean road cruising', 'Sunset view gold', 'Rest stop snacks', 'Night drive vibes', 'Gentle cool breeze', 'Let\'s ride!', 'Scenic forest trail', 'Recharged & happy', 'Convertible mood', 'Drive-thru pickup', 'Pure road healing', 'Safe return home'],
+  'Drive/Road Trip ②': ['Breathtaking view', 'Coastal highway', 'Top playlist track', 'Lost in melodies', 'Rest stop potato', 'Stress evaporated', 'Sip coffee relax', 'Chasing freedom', 'Lookout point hit', 'Weekend cruise', 'Sky photo snap', 'Highway is mine', 'Mood refreshed', 'Romantic night sky', 'Pure bliss today'],
+  'Fishing/Angling ①': ['Got a bite!', 'Huge catch!', 'Thrilling fight', 'Hit the sweet spot', 'Baiting the hook', 'Hookset success!', 'Boat setting out', 'Catch & release', 'Trophy fish caught', 'Casting the line', 'Patience & time', 'Water watching chill', 'Bountiful catch!', 'Zero catch (tears)', 'Fishing done today'],
+  'Fishing/Angling ②': ['Early dawn fishing', 'Lure switched', 'Eyes on the float', 'Drag is screaming!', 'Boat ramen delicious', 'Urban fisherman', 'Deep sea angling', 'Freshwater river', 'Sashimi feast time!', 'Small baitfish only', 'Unlocking the hook', 'Gear collection itch', 'Peaceful angling', 'Pure hand feel', 'Next trip tomorrow'],
+  'Cycling/Riding ①': ['Riding starts!', 'Keep cadence steady', 'Uphill conquered!', 'Watch the downhill', 'Avg speed 30km/h', 'Pitstop refueling', 'Ride safe!', 'Clipping shoes in', 'Flat tire crisis', 'Night ride blast', 'Riverside trail ride', 'Upgraded legs', '100km done!', 'Thighs on fire', 'Ride finished!'],
+  'Cycling/Riding ②': ['Bike club meetup', 'Lightweight gear', 'Shifting gears smooth', 'Slicing wind', 'Bike wash complete', 'Sprint finish!', 'New jersey hype', 'Safe & fun ride!', 'Water bottle chug', 'Ride proof photo', 'Long distance tour', 'Headwind torture', 'Cross-country trail', 'Saddle sore tears', 'Ride again tomorrow!'],
+  'Golf/Round ①': ['Nice shot!', 'Birdie bagged!', 'Hole in one go!', 'Good shot!', 'Tee shot ready', 'Out of bounds (OB)', 'Water hazard splash', 'Bunker escape!', 'Gimme thank you', 'Reading putt line', 'Nice par!', 'Driver 200m bomb', 'Personal best score', 'Clubhouse snack', 'Round finished!'],
+  'Golf/Round ②': ['Dawn tee time', 'Fun friendly golf', 'Breaking 100!', 'Golf beginner growth', 'Approach on point', 'Golf outfit drip', 'Bet won clean!', 'Mind game focus', 'Screen golf next', 'Swing fix in motion', 'Cup rattle sound', 'Reading the green', 'Distance exploded', 'Course photo snapshot', 'Booking next round']
 };
 
 const THEMES_JA = {
@@ -201,7 +217,15 @@ const THEMES_JA = {
   '大掃除・断捨離 ①': ['大掃除スタート！', 'フリマ断捨離', 'ホコリ払い', '水拭きピカピカ', 'ミニマリスト', '換気中', '布団丸洗い完了', '片付け完了綺麗', 'ゴミ捨て完了', '新築みたい', '掃除地獄', '充実した一日', 'シーツ交換', '部屋ピカピカ', 'やっとひと息'],
   '大掃除・断捨離 ②': ['クローゼット整理完', 'ホコリゼロ生活', '分別リサイクル', 'ゴミ箱スッキリ', 'お風呂掃除ピカピカ', 'いい匂いの部屋', '手放す服たくさん', '靴箱スッキリ', 'ハタキでパタパタ', 'キッチンの油汚れ撃退', '片付けの快感', '持たない暮らし', '掃除機ガーガー', '空気清浄機フル稼働', 'スッキリ爽快！'],
   'フェス・カラオケ ①': ['チケ発大勝利！', '最前列ゲット', 'カラオケ行こう', 'マイク独占', 'テンション爆発！', '大合唱の準備', '喉ガラガラ', 'アンコール叫ぶ', 'ペンライト振る', 'フェス出発！', '声帯崩壊寸前', '高音シャウト', '余韻ひたひた', '体力ゼロ', '無事帰宅'],
-  'フェス・カラオケ ②': ['採点100点出た！', 'バラード熱唱', 'ラップ完璧にキメた', 'サービス延長キタ！', '合唱で一体感', '喉のケア必須', 'ラストソング熱唱中', 'ミネラルウォーター補給', '音楽に酔いしれる', '終電ギリギリ滑り込み', '耳が幸せすぎる', '全力ヘドバン', 'アンコール待ちわび', '最高のステージ！', '一生忘れられない夜']
+  'フェス・カラオケ ②': ['採点100点出た！', 'バラード熱唱', 'ラップ完璧にキメた', 'サービス延長キタ！', '合唱で一体感', '喉のケア必須', 'ラストソング熱唱中', 'ミネラルウォーター補給', '音楽に酔いしれる', '終電ギリギリ滑り込み', '耳が幸せすぎる', '全力ヘドバン', 'アンコール待ちわび', '最高のステージ！', '一生忘れられない夜'],
+  'ドライブ・旅行 ①': ['ドライブ出発！', '窓全開で爽快', 'ドライブソングON', '海岸線を疾走中', '絶景の夕焼け', 'PAソトクソトク', 'ナイトドライブ', '風が心地いい', 'ぶっ飛ばそう！', '森林浴コース満喫', 'エナジーチャージ完了', 'オープンカー気分', 'ドライブスルー寄る', '癒しのドライブ旅', '無事に帰宅完了'],
+  'ドライブ・旅行 ②': ['絶景パノラマビュー', '海沿いドライブ', '最強プレイリスト', '音楽に浸る時間', 'PAじゃがバター', 'ストレス解消！', 'コーヒーでひと息', '自由を求めて', '展望台到着！', '週末ドライブ日和', '青空パシャリ', '道路を独り占め', '気分転換完了', 'ロマンチックな夜', '最高の一日だった'],
+  '釣り・フィッシング ①': ['アタリが来た！', '大物ヒット！', '引きがたまらん', '絶好ポイント到着', 'エサ付け中', 'ナイスアワセ！', 'いざ出航！', 'キャッチ＆リリース', '大魚釣り上げた！', '竿を垂らして', 'のんびり待つ時間', '水面チルタイム', '大漁だ！', 'ボウズだった（涙）', '今日の釣り終了'],
+  '釣り・フィッシング ②': ['早朝出港', 'ルアーチェンジ', 'ウキを凝視中', 'ドラグが鳴る！', '船上ラーメン絶品', '釣り人モード突入', '海釣り最高', '渓流釣り', '刺身で乾杯！', '外道ばっかり…', '針外し中', '釣り具沼にハマる', '癒しの釣り旅', '最高の引き味', '明日も釣り行くぞ'],
+  'サイクリング・ライド ①': ['ライド出発！', 'ケイデンス維持', 'ヒルクライム制覇！', '下り坂気をつけて', 'アベレージ30km', '補給ポイント到着', 'ご安全にライド！', 'ビンディング装着', 'パンクした…（涙）', 'ナイトライド', 'サイクリングロード快走', '脚力強化完了', '100km完走！', '太ももパンパン', 'ライド終了！'],
+  'サイクリング・ライド ②': ['自転車オフ会', '軽量化カスタム', '小気味よい変速', '風を切って走る', '洗車ピカピカ', 'スプリント勝負', 'サイクルジャージ新調', '楽しく安全に！', 'ボトル一気飲み', 'ライド記念写真', 'ロングライド旅', '向かい風地獄', 'ロングツーリング挑戦', 'お尻が痛い…', '明日も走るぞ！'],
+  'ゴルフ・ラウンド ①': ['ナイスショット！', 'バーディー奪取！', 'ホールインワン狙い', 'グッドショット！', 'ティーショット準備', 'OB出ちゃった…', '池ポチャ（涙）', 'バンカー脱出！', 'OKパットありがとう', 'ライン読み中', 'ナイスパー！', 'ドライバー200m超', 'ベストスコア更新！', '茶屋でひと息', 'ラウンド終了！'],
+  'ゴルフ・ラウンド ②': ['早朝ティオフ', 'エンジョイゴルフ', '100切り達成！', 'ゴルフ女子/男子成長中', 'アプローチ完璧', 'ウェア自慢', '握り勝ち！', 'メンタル勝負', 'シミュレーションゴルフ', 'スイング改造中', 'カップインの快音', 'グリーン傾斜読む', '飛距離アップ！', 'コース記念写真', '次回予約完了']
 };
 
 const THEMES_ZH = {
@@ -269,7 +293,15 @@ const THEMES_ZH = {
   '大扫除/极简收纳 ①': ['大扫除开始！', '断舍离送闲置', '掸灰除尘', '拖地干干净净', '极简生活', '开窗通风', '洗晒被褥完毕', '收纳整整齐齐', '垃圾分类清运', '焕然一新', '保洁地狱', '充实的一天', '换新床单', '屋子亮闪闪', '终于能歇了'],
   '大扫除/极简收纳 ②': ['衣柜全面整理完', '向无尘目标冲刺', '分类回收处理', '垃圾桶清空啦', '浴室瓷砖亮晶晶', '满屋子都是清香', '打包闲置旧衣物', '鞋柜整齐划一', '鸡毛掸子扫扫灰', '厨房重油污去无踪', '整理带来的快乐', '不持有物品生活', '吸尘器轰鸣中', '空气净化器全力开启', '一尘不染真痛快'],
   '音乐节/K歌嗨唱 ①': ['抢票成功！', '抢到前排C位', '去KTV飙歌', '话筒是我的', '嗨翻全场！', '全场大合唱', '嗓子喊哑了', '大喊安可中', '挥舞荧光棒', '音乐节出发！', '声带升华', '高音轰炸', '余音绕梁', '电量耗尽', '安全到家'],
-  '音乐节/K歌嗨唱 ②': ['K歌评分100分！', '深情抒情慢歌', 'Rap说唱杀疯了', '老板送了加钟！', '万人合唱起鸡皮疙瘩', '得好好保护嗓子', '唱响最后一首歌', '大口咕咚灌水', '完全沉浸在音乐里', '踩着末班车回家', '耳朵怀上了双胞胎', '疯狂甩头Pogo', '静候压轴安可曲', '神仙现场绝了！', '值得铭记一生的夜晚']
+  '音乐节/K歌嗨唱 ②': ['K歌评分100分！', '深情抒情慢歌', 'Rap说唱杀疯了', '老板送了加钟！', '万人合唱起鸡皮疙瘩', '得好好保护嗓子', '唱响最后一首歌', '大口咕咚灌水', '完全沉浸在音乐里', '踩着末班车回家', '耳朵怀上了双胞胎', '疯狂甩头Pogo', '静候压轴安可曲', '神仙现场绝了！', '值得铭记一生的夜晚'],
+  '自驾兜风/公路旅行 ①': ['自驾兜风出发！', '摇下车窗吹风', '车载音乐开大', '沿着海边飞驰', '夕阳落日美炸了', '服务区烤肠走起', '夜间兜风模式', '微风徐徐吹来', '向前冲冲冲！', '沉浸式穿梭林道', '电量瞬间充满', '敞篷车既视感', '顺路买个麦当劳', '治愈兜风时刻', '平安顺利归家'],
+  '自驾兜风/公路旅行 ②': ['开阔绝美全景', '滨海公路狂飙', '神仙歌单循环', '沉浸在旋律里', '服务区大土豆', '烦恼一扫而空', '悠闲喝杯咖啡', '奔向自由旅途', '到达观景台！', '周末自驾游', '拍下绝美天空', '公路尽在脚下', '心情彻底转晴', '浪漫公路之夜', '今天无比幸福'],
+  '钓鱼/户外垂钓 ①': ['咬钩了咬钩了！', '中大鱼啦！', '手感绝了过瘾', '到达黄金钓点', '挂鱼饵中', '漂亮扬竿刺鱼！', '整装出海钓鱼', '放生积德归水', '钓到巨型大物', '静静抛竿入水', '愿者上钩发呆', '水边治愈时光', '满载而归大丰收！', '今天空军了（泪）', '今日钓鱼收竿'],
+  '钓鱼/户外垂钓 ②': ['清晨开拔出发', '换个亮片拟饵', '死死盯住浮漂', '泄力疯狂作响！', '船上海鲜面巨香', '都市捕鱼达人', '海钓吹海风', '淡水溪流野钓', '今晚吃刺身！', '全都是小杂鱼', '小心摘鱼钩', '买渔具停不下', '悠闲垂钓治愈', '溜鱼手感无敌', '明天继续出钓'],
+  '骑行/公路自行车 ①': ['破风骑行出发！', '保持稳定踏频', '成功征服爬坡！', '下坡注意安全', '巡航均速30+', '补给点便利店到', '安全骑行平安到', '上锁鞋就绪', '扎胎爆胎（崩溃）', '夜骑吹吹晚风', '绿道畅快骑行', '腿部引擎升级', '百公里骑行圆满！', '大腿酸爽炸裂', '今日骑行结束！'],
+  '骑行/公路自行车 ②': ['骑友周末约车', '碳纤维轻量化', '换挡顺滑如丝', '御风前行穿梭', '洗车保养亮晶晶', '终点冲刺破风', '新骑行服帅气', '安全快乐骑车！', '水壶大口畅饮', '骑行打卡合影', '长途自驾骑行', '逆风骑行地狱', '挑战骑行路线', '铁屁股修炼中', '明天继续开踩！'],
+  '高尔夫/下场挥杆 ①': ['好球漂亮！', '抓下一只小鸟！', '直奔一杆进洞', '完美击球！', '开球台准备', '出界OB了…', '不幸下水罚杆', '完美救出沙坑！', '感谢OK免推', '蹲下看推杆线', '保帕成功！', '一号木轰出200米', '刷新个人最好杆数', '会所中场休息', '今日下场结束！'],
+  '高尔夫/下场挥杆 ②': ['清晨首组开球', '快乐高尔夫', '成功突破100杆！', '萌新球技进阶', '切杆精准上果岭', '晒晒高球新装备', '球叙小赌胜出！', '心态至上比赛', '约场室内模拟器', '调整挥杆动作', '清脆入洞落杯声', '阅读果岭坡度', '击球距离暴涨', '球场大片留念', '预约下次下场']
 };
 
 const ART_STYLE_PROMPT_MAP_KO = {
@@ -3959,18 +3991,25 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
 
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-sm md:gap-md bg-surface-container-lowest rounded-md p-3.5 sm:p-md shadow-bubbly border border-outline-variant">
             {emoticons.map((text, idx) => (
-              <input 
+              <div 
                 key={idx}
-                type="text" 
-                value={text}
-                onChange={(e) => handleEmoticonChange(idx, e.target.value)}
-                className={`interactive-control w-full h-[48px] bg-mint-soft rounded-full px-1.5 sm:px-3 text-center text-mint-strong text-[12px] sm:text-[14px] font-bold tracking-tight placeholder:text-on-secondary-container focus:outline-none focus:ring-2 focus:ring-mint-strong border border-mint-border text-ellipsis overflow-hidden whitespace-nowrap ${
+                className={`relative flex items-center w-full ${
                   idx === emoticons.length - 1
                     ? 'col-span-2 max-w-[calc(50%_-_6px)] justify-self-center sm:col-span-1 sm:max-w-none'
                     : ''
                 }`}
-                placeholder={`Phrase ${idx+1}`}
-              />
+              >
+                <span className="absolute left-2 sm:left-2.5 w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-white/90 border border-mint-border/80 text-mint-strong font-black text-[10px] sm:text-[11px] flex items-center justify-center shadow-2xs pointer-events-none z-10 select-none">
+                  {idx + 1}
+                </span>
+                <input 
+                  type="text" 
+                  value={text}
+                  onChange={(e) => handleEmoticonChange(idx, e.target.value)}
+                  className="interactive-control w-full h-[48px] bg-mint-soft rounded-full pl-8 sm:pl-10 pr-2 sm:pr-3 text-center text-mint-strong text-[12px] sm:text-[13.5px] font-bold tracking-tight placeholder:text-on-secondary-container focus:outline-none focus:ring-2 focus:ring-mint-strong border border-mint-border text-ellipsis overflow-hidden whitespace-nowrap shadow-2xs"
+                  placeholder={`Phrase ${idx+1}`}
+                />
+              </div>
             ))}
           </div>
 
