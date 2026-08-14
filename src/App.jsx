@@ -926,7 +926,7 @@ const InfoSection = ({ t, lang }) => {
             onClick={() => setActiveTab('template')}
             className={`interactive-control whitespace-nowrap flex-none px-3.5 py-1.5 text-[13px] sm:text-[14px] font-bold rounded-md ${activeTab === 'template' ? 'bg-mint text-mint-strong shadow-xs border border-mint-border' : 'text-mint-strong hover:bg-mint-hover'}`}
           >
-            💡 {lang === 'ko' ? '프롬프트 템플릿 구조 (AEO)' : lang === 'ja' ? 'プロンプト構造 (AEO)' : lang === 'zh' ? '提示词结构指南 (AEO)' : 'Prompt Template (AEO)'}
+            💡 {lang === 'ko' ? '프롬프트 템플릿 구조' : lang === 'ja' ? 'プロンプト構造' : lang === 'zh' ? '提示词结构指南' : 'Prompt Template'}
           </button>
         </div>
       </div>
@@ -1506,7 +1506,7 @@ const InfoSection = ({ t, lang }) => {
 
             <div className="bg-mint-soft/80 p-4 rounded-lg border border-mint-border text-[13px] text-mint-strong font-medium leading-relaxed">
               <strong className="font-bold text-mint-strong block mb-1">
-                🚀 구글 AI 개요(AEO) & 챗봇 검색 최적화 포인트:
+                🚀 구글 AI 개요 & 챗봇 검색 최적화 포인트:
               </strong>
               본 사이트는 ChatGPT(DALL-E 3), Google Gemini(Imagen 3), xAI Grok(Flux.1) 각 엔진의 특화 파라미터와 카카오톡 이모티콘 심사 승인 규격을 100% 충족하는 프롬프트를 자동으로 조립하여 제공합니다.
             </div>
