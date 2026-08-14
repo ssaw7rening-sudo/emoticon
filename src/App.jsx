@@ -425,7 +425,7 @@ const I18N = {
     guide3Q: '✂️ 배경(누끼)은 어떻게 쉽게 지우나요?',
     guide3A: 'PC에서는 무료 웹사이트(remove.bg)나 국민 뷰어 알씨(ALSee)의 "이미지 편집 - AI 배경 제거" 기능을 이용하면 클릭 한 번에 누끼를 딸 수 있습니다. 스마트폰은 갤러리/사진 앱에서 피사체를 꾹 눌러 "복사/저장"하면 배경이 자동으로 투명해집니다.',
     guide4Q: '💬 만든 이모티콘을 카톡에 어떻게 쓰나요?',
-    guide4A: '두 가지 방법이 있습니다. 목적에 따라 선택해 보세요!\n\n💰 1. 정식 출시 및 판매를 원할 때\n• "카카오 이모티콘 스튜디오" 사이트에서 제안을 신청해야 합니다.\n• 360x360px 규격의 투명 PNG 이미지 32종을 준비해 제출합니다.\n• 카카오의 내부 심사를 통과하면 공식 스토어에 출시됩니다.\n\n✨ 2. 지인들과 가볍게 무료로 쓸 때 (개인 소장용)\n• 배경을 투명하게 지운 PNG 파일을 스마트폰 갤러리에 저장합니다.\n• 카톡 채팅방에서 [+] 버튼 > [앨범]을 눌러 이미지를 전송합니다.\n• 배경이 투명해서 네모난 사진 테두리가 보이지 않고, 진짜 판매용 스티커처럼 대화창에 아주 깔끔하게 올라갑니다!',
+    guide4A: '두 가지 방법이 있습니다. 목적에 따라 선택해 보세요!\n\n💰 1. 정식 출시 및 판매를 원할 때\n• "카카오 이모티콘 스튜디오" 사이트에서 제안을 신청해야 합니다.\n• 360x360px 규격의 투명 PNG 이미지 32종을 준비해 제출합니다.\n• 카카오의 공식 스토어 등록 규정(AI 생성물 제한 등)을 확인 후 제출하거나, 개인 소장 및 톡방 전송용 짤로 활용합니다.\n\n✨ 2. 지인들과 가볍게 무료로 쓸 때 (개인 소장용)\n• 배경을 투명하게 지운 PNG 파일을 스마트폰 갤러리에 저장합니다.\n• 카톡 채팅방에서 [+] 버튼 > [앨범]을 눌러 이미지를 전송합니다.\n• 배경이 투명해서 네모난 사진 테두리가 보이지 않고, 진짜 판매용 스티커처럼 대화창에 아주 깔끔하게 올라갑니다!',
   },
   en: {
     title: 'Prompt Maker',
@@ -1709,17 +1709,17 @@ const InfoSection = ({ t, lang }) => {
             <div className="bg-mint-soft/80 p-4 rounded-lg border border-mint-border text-[13px] text-mint-strong font-medium leading-relaxed">
               <strong className="font-bold text-mint-strong block mb-1">
                 {getText('optStandardTitle', {
-                  ko: '🚀 AI 엔진별 특화 & 이모티콘 승인 규격 최적화:',
-                  ja: '🚀 AIエンジン特性＆スタンプ審査規格の最適化:',
-                  zh: '🚀 AI引擎特性与表情包审核规范深度优化:',
-                  en: '🚀 AI Engines & Emoticon Approval Standard Optimization:'
+                  ko: '🚀 AI 엔진별 특화 & 메신저 스티커 최적화:',
+                  ja: '🚀 AIエンジン特性＆メッセンジャースタンプ最適化:',
+                  zh: '🚀 AI引擎特性与聊天表情贴纸深度优化:',
+                  en: '🚀 AI Engines & Messenger Sticker Optimization:'
                 })}
               </strong>
               {getText('optStandardDesc', {
-                ko: '본 사이트는 ChatGPT(DALL-E 3), Google Gemini(Imagen 3), xAI Grok(Flux.1) 각 엔진의 특화 파라미터와 카카오톡·라인 이모티콘 심사 승인 규격을 100% 충족하는 프롬프트를 자동으로 조립하여 제공합니다.',
-                ja: '当サイトは ChatGPT (DALL-E 3)、Google Gemini (Imagen 3)、xAI Grok (Flux.1) の各エンジン特性と、LINE・KakaoTalkスタンプの審査基準を100%満たす最適化プロンプトを自動生成して提供します。',
-                zh: '本网站自动生成完全适配 ChatGPT (DALL-E 3)、Google Gemini (Imagen 3) 和 xAI Grok (Flux.1) 各引擎特性，并100%满足微信、LINE 及 KakaoTalk 表情包审核标准的专业提示词。',
-                en: 'This service automatically generates prompts fully optimized for the specialized parameters of ChatGPT (DALL-E 3), Google Gemini (Imagen 3), and xAI Grok (Flux.1), adhering 100% to LINE and KakaoTalk sticker submission standards.'
+                ko: '본 사이트는 ChatGPT(DALL-E 3), Google Gemini(Imagen 3), xAI Grok(Flux.1) 각 엔진의 특화 파라미터와 메신저 대화 및 개인용 커스텀 스티커, 캐릭터 창작 시트에 최적화된 고품질 프롬프트를 자동으로 조립하여 제공합니다.',
+                ja: '当サイトは ChatGPT (DALL-E 3)、Google Gemini (Imagen 3)、xAI Grok (Flux.1) の各エンジン特性と、メッセンジャー会話や個人用カスタムスタンプ、キャラクター創作シートに最適なプロンプトを自動生成して提供します。',
+                zh: '本网站自动生成完全适配 ChatGPT (DALL-E 3)、Google Gemini (Imagen 3) 和 xAI Grok (Flux.1) 各引擎特性，适用于日常聊天、专属个人贴纸以及角色创意设计的专业提示词。',
+                en: 'This service automatically generates high-quality prompts optimized for the specialized parameters of ChatGPT (DALL-E 3), Google Gemini (Imagen 3), and xAI Grok (Flux.1), perfect for messenger chats, personal custom stickers, and creative character design.'
               })}
             </div>
           </div>
@@ -3070,7 +3070,7 @@ ${referenceInstructionKo}
   * 채색: 각 색상 영역을 2단계 명암(기본색 + 그림자색 1단)으로만 구분하는 정교한 셀 셰이딩, 부드러운 그라데이션 사용 엄격 금지
   * 색상: 채도 높은 플랫 컬러 5~6가지 깔끔한 팔레트로 제한 (피부색, 머리색, 상의색, 하의색, 포인트색)
   * 형태 비율: 얼굴과 손을 제외한 신체 비율은 2.5등신~3등신 SD(Super Deformed) 캐릭터 비율
-  * 렌더링 스타일 키워드: 카카오톡 이모티콘 스튜디오 승인작 스타일, 라인프렌즈 캐릭터 렌더링 방식과 동일한 수준의 선/채색 마감
+  * 렌더링 스타일 키워드: 인기 카카오톡 이모티콘 및 라인 스티커 스타일, 프로 일러스트레이터 수준의 선/채색 마감
   * 금지 사항: 이 화풍 스펙과 다른 방식(3D 렌더링, 반실사 렌더링, 사실적 음영, 과도한 그라데이션, 수채화 느낌)으로 그리지 마세요. 임의의 액세서리 추가 금지.
 
 [품질 규칙]
