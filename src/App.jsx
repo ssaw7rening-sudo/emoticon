@@ -2606,15 +2606,15 @@ function App() {
     ];
 
     const photoAppearanceEn = {
-      exact: 'strictly preserve exact eye angle, eye size ratio, nose bridge/tip, lip thickness, jawline, hairstyle, and skin tone from reference photo without blurring features into generic cartoon templates; do not add unrequested accessories',
-      features: 'do NOT try to match the subject\'s actual face; instead extract only signature points (hairstyle, glasses if any, outfit, body type, overall vibe) and build a stylish new character around those traits; do not add unrequested accessories',
-      characterize: 'use only the general impression (hair color, vibe) as a loose reference and transform into an ultra-cute 2.5-head SD/Chibi mascot with a big round head, chubby body, and huge sparkling eyes',
+      exact: 'Capture the subject\'s actual facial features, eye shape, hairstyle, and skin tone from the reference photo, but stylize them into an adorable 2.5-head SD/Chibi caricature character with a big round expressive head, chubby compact body, and dynamic comic expressions (no stiff realistic proportions, no unrequested accessories)',
+      features: 'Extract only signature points (hairstyle, glasses, outfit, overall vibe) from the reference photo and design a stylish, cute 2.5-head SD character around those traits (no unrequested accessories)',
+      characterize: 'Transform the reference photo into an ultra-cute 2.5-head SD/Chibi mascot with a big round head, chubby body, huge sparkling expressive eyes, and lovable cartoon proportions',
     }[photoReferenceMode];
 
     const photoAppearanceKo = {
-      exact: '스타일화하더라도 참고 사진 인물의 실제 눈매 각도, 눈 크기 비율, 콧대, 입술 두께, 턱선, 헤어스타일, 피부톤을 절대 변형하지 말고 95% 이상 동일하게 유지 (사진에 없는 악세사리 임의 추가 금지)',
-      features: '얼굴 자체를 닮게 그릴 필요 없음; 헤어스타일, 안경 유무, 의상, 체형, 전체 분위기 등 시그니처 포인트만 추출하여 스타일리시한 새 캐릭터로 디자인 (사진에 없는 악세사리 임의 추가 금지)',
-      characterize: '전체적인 인상(헤어 색상, 분위기)만 살짝 참고하고 2.5등신 커다란 머리와 동글동글한 몸체의 극도로 귀여운 SD/Chibi 마스코트로 완전 변환',
+      exact: '참고 사진 속 인물의 헤어스타일, 눈매, 얼굴 특징 및 분위기를 찰떡같이 반영하되, 딱딱한 실사 비율이 아닌 머리가 크고 동글동글하며 앙증맞은 2.5등신 SD/Chibi 대두 캐릭터로 귀엽게 캐리커처화 (사진에 없는 악세사리 임의 추가 금지)',
+      features: '참고 사진에서 헤어스타일, 안경 유무, 의상, 전체 분위기 등 핵심 시그니처 특징만 추출하여 감각적이고 귀여운 2.5등신 SD 캐릭터로 디자인 (사진에 없는 악세사리 임의 추가 금지)',
+      characterize: '참고 사진의 인상을 바탕으로 큰 동그란 머리와 통통하고 앙증맞은 몸체, 반짝이는 눈을 가진 극도로 사랑스러운 2.5등신 SD/Chibi 마스코트로 변환',
     }[photoReferenceMode];
 
     return {
@@ -2642,15 +2642,15 @@ function App() {
     ];
 
     const photoAppearanceEn = {
-      exact: 'strictly preserve exact eye angle, eye size ratio, nose bridge/tip, lip thickness, jawline, hairstyle, and skin tone from reference photo without blurring features into generic cartoon templates; do not add unrequested accessories',
-      features: 'do NOT try to match the subject\'s actual face; instead extract only signature points (hairstyle, glasses if any, outfit, body type, overall vibe) and build a stylish new character around those traits; do not add unrequested accessories',
-      characterize: 'use only the general impression (hair color, vibe) as a loose reference and transform into an ultra-cute 2.5-head SD/Chibi mascot with a big round head, chubby body, and huge sparkling eyes',
+      exact: 'Capture the subject\'s actual facial features, eye shape, hairstyle, and skin tone from the reference photo, but stylize them into an adorable 2.5-head SD/Chibi caricature character with a big round expressive head, chubby compact body, and dynamic comic expressions (no stiff realistic proportions, no unrequested accessories)',
+      features: 'Extract only signature points (hairstyle, glasses, outfit, overall vibe) from the reference photo and design a stylish, cute 2.5-head SD character around those traits (no unrequested accessories)',
+      characterize: 'Transform the reference photo into an ultra-cute 2.5-head SD/Chibi mascot with a big round head, chubby body, huge sparkling expressive eyes, and lovable cartoon proportions',
     }[photoReferenceMode];
 
     const photoAppearanceKo = {
-      exact: '스타일화하더라도 참고 사진 인물의 실제 눈매 각도, 눈 크기 비율, 콧대, 입술 두께, 턱선, 헤어스타일, 피부톤을 절대 변형하지 말고 95% 이상 동일하게 유지 (사진에 없는 악세사리 임의 추가 금지)',
-      features: '얼굴 자체를 닮게 그릴 필요 없음; 헤어스타일, 안경 유무, 의상, 체형, 전체 분위기 등 시그니처 포인트만 추출하여 스타일리시한 새 캐릭터로 디자인 (사진에 없는 악세사리 임의 추가 금지)',
-      characterize: '전체적인 인상(헤어 색상, 분위기)만 살짝 참고하고 2.5등신 커다란 머리와 동글동글한 몸체의 극도로 귀여운 SD/Chibi 마스코트로 완전 변환',
+      exact: '참고 사진 속 인물의 헤어스타일, 눈매, 얼굴 특징 및 분위기를 찰떡같이 반영하되, 딱딱한 실사 비율이 아닌 머리가 크고 동글동글하며 앙증맞은 2.5등신 SD/Chibi 대두 캐릭터로 귀엽게 캐리커처화 (사진에 없는 악세사리 임의 추가 금지)',
+      features: '참고 사진에서 헤어스타일, 안경 유무, 의상, 전체 분위기 등 핵심 시그니처 특징만 추출하여 감각적이고 귀여운 2.5등신 SD 캐릭터로 디자인 (사진에 없는 악세사리 임의 추가 금지)',
+      characterize: '참고 사진의 인상을 바탕으로 큰 동그란 머리와 통통하고 앙증맞은 몸체, 반짝이는 눈을 가진 극도로 사랑스러운 2.5등신 SD/Chibi 마스코트로 변환',
     }[photoReferenceMode];
 
     return {
@@ -2716,8 +2716,8 @@ function App() {
     const selectedArtStyle = getSelectedArtStyle();
     const expandedArtStyle = getExpandedArtStyleText(selectedArtStyle, lang === 'ko');
     const artDirection = expandedArtStyle || (lang === 'ko'
-      ? '귀엽고 친근한 고품질 2D 메신저 이모티콘 스타일, 깔끔한 외곽선, 조화로운 색감'
-      : 'cute, approachable, high-quality 2D messenger sticker style with clean outlines and harmonious colors');
+      ? '귀엽고 사랑스러운 2.5등신 대두 SD/Chibi 메신저 이모티콘 스타일 (큰 동그란 머리, 앙증맞은 2.5등신 비율, 감정에 따라 눈과 입이 크고 시원시원하게 변하는 풍부한 만화적 표정 연출, 또렷한 2D 셀 셰이딩 라인아트, 캐릭터 외곽의 흰색 스티커 테두리)'
+      : 'adorable 2.5-head Chibi SD messenger sticker style (big expressive round head, compact cute body proportions, highly dynamic & exaggerated comic facial expressions matching each emotion, crisp 2D vector line art with 2-tone cell shading, white die-cut sticker outline)');
 
     if (generationMode === 'individual' || hasPhraseOverride) {
       if (lang === 'ko') {
@@ -2834,8 +2834,9 @@ ${referenceInstruction}
 [최우선 화풍]
 ${artDirection}. 15개 셀 모두 같은 선, 질감, 색감과 캐릭터 비율을 적용하세요.
 
-[패널 계획]
-각 문구에서 바로 이해할 수 있는 표정 하나와 서로 다른 전신 자세 하나를 구성하세요. 셀마다 보조 소품과 만화 효과는 각각 최대 하나만 사용하고 자세를 반복하지 마세요.
+[패널 계획 — 역동적인 2.5등신 만화 표정과 포즈]
+각 문구에 맞춰 캐릭터의 표정이 살아 숨쉬듯 '극적이고 풍부한 만화적 표정 변화(포복절도 활짝 웃음, 펑펑 우는 눈물, 입이 떡 벌어지는 경악, 초롱초롱한 눈빛 등 눈·눈썹·입 모양을 과감하게 연출)'를 적용하세요.
+서로 다른 생동감 넘치는 전신 자세(서기, 앉기, 점프, 엎드리기, 무릎꿇기 등)를 다양하게 배치하고, 셀마다 감정을 살려주는 보조 소품과 효과를 아기자기하게 결합하세요.
 설정에서 선택한 소품 또는 행동: ${character.props}.
 설정에서 선택한 시각 효과: ${character.effects}.
 ${panelPlan}
@@ -2880,8 +2881,9 @@ Outfit: ${character.outfit}
 [ART DIRECTION — HIGHEST PRIORITY]
 ${artDirection}. Apply identical linework, texture, color treatment, and character proportions to all 15 cells.
 
-[PANEL PLAN]
-For every phrase, create one unmistakable facial expression and one distinct full-body pose. Use at most one supporting prop and one simple comic effect per cell. Do not repeat a pose.
+[PANEL PLAN — DYNAMIC 2.5-HEAD CHIBI COMIC EXPRESSIONS & POSES]
+For every phrase, render an exaggerated, highly expressive comic facial expression (wide joyous open-mouth laugh, dramatic anime tear streams, jaw-dropped shock, sparkling cute eyes, determined fist pump) with dynamic changes in eyes, eyebrows, and mouth.
+Incorporate varied full-body poses (standing, sitting, jumping, kneeling, leaning, crouching) across all 15 cells without repeating posture, paired with cute minimal supporting props and comic effects.
 Preferred props or actions from the setup: ${character.props}.
 Preferred visual effects from the setup: ${character.effects}.
 ${panelPlan}
@@ -2911,9 +2913,9 @@ ${textExclusion} No grid lines, no cell division lines, no border lines between 
 
     if (isKorean) {
       const referenceInstructionKo = characterSource === 'photo' ? {
-        exact: '[고품질 사실적 인물 캐리커처 스티커] 첨부된 인물 사진과 95% 이상 높은 얼굴 유사도를 유지하는 캐리커처 컷아웃 스티커로 제작하세요. 참고 사진의 실제 얼굴 텍스처, 피부톤, 헤어스타일, 의상 특징을 정교하게 반영하세요.',
-        features: '[시그니처 포인트 추출] 참고 사진에서 인물의 상징적인 특징(안경, 헤어스타일, 점, 분위기, 의상)만 추출하세요. 세련된 2D 벡터 일러스트 스타일로 나타내되 주요 특징을 강조하세요.',
-        characterize: '[귀여운 SD 캐릭터화] 참고 사진의 인상을 바탕으로 큰 머리와 동그란 눈, 귀여운 비율을 가진 2.5등신 SD Chibi 캐릭터로 만드세요.',
+        exact: '[귀엽고 사랑스러운 2.5등신 SD 캐리커처 스티커] 참고 사진 속 인물의 헤어스타일, 눈매, 얼굴 특징 및 분위기를 찰떡같이 반영하되, 머리가 크고 앙증맞은 2.5등신 SD/Chibi 대두 캐릭터 비율로 사랑스럽게 캐리커처화하세요.',
+        features: '[시그니처 포인트 추출 2.5등신 SD] 참고 사진에서 인물의 상징적인 특징(헤어스타일, 안경, 분위기, 의상)을 추출하여 감각적이고 귀여운 2.5등신 SD 캐릭터로 제작하세요.',
+        characterize: '[극도로 귀여운 2.5등신 SD 캐릭터화] 큰 동그란 머리, 반짝이는 눈, 통통하고 앙증맞은 몸체를 가진 사랑스러운 2.5등신 SD Chibi 마스코트로 만드세요.',
       }[photoReferenceMode] : '동일한 캐릭터의 정체성과 외형 특징을 엄격하게 유지하세요.';
 
       const geminiProportionsKo = characterSource === 'photo' ? {
