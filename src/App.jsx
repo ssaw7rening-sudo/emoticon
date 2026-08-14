@@ -2626,15 +2626,15 @@ function App() {
     ];
 
     const photoAppearanceEn = {
-      exact: 'faithfully replicate the subject\'s actual eye shape, nose bridge, lips, hairstyle, and skin tone from the reference photo with 95%+ high resemblance so they are instantly recognized, stylized into a cute SD/Chibi caricature mascot character with a big head and compact body (no unrequested accessories)',
-      features: 'do NOT try to match the subject\'s actual face; extract only signature points (hairstyle, glasses if any, outfit, signature vibe) and design a stylish, cute SD/Chibi mascot character around those traits (no unrequested accessories)',
-      characterize: 'use only the general impression (hair color, vibe) as a loose reference and transform into an ultra-cute 2.5-head SD/Chibi mascot with a big round head, chubby body, and huge sparkling eyes',
+      exact: 'precisely preserve the subject\'s actual eye angle, eye size, nose bridge, lip thickness, jawline, hairstyle parting, and skin tone with 95%+ high facial resemblance so they are instantly recognized, stylized in a cute 2.5-head SD/Chibi caricature mascot body without generic face blurring (no unrequested accessories)',
+      features: 'do NOT match the actual face; extract signature traits (hairstyle, glasses if any, outfit, body type, signature vibe) and build a stylish 2D SD/Chibi mascot character (no unrequested accessories)',
+      characterize: 'use only the general impression (hair color, vibe) as a loose reference and transform into an ultra-cute 2.5-head SD/Chibi mascot with a big round head, chubby body, and sparkling eyes',
     }[photoReferenceMode];
 
     const photoAppearanceKo = {
-      exact: '참고 사진 인물의 실제 눈매 각도, 콧대, 입술 두께, 턱선, 헤어스타일, 피부톤을 95% 이상 정밀하게 반영하여 본인임을 단번에 알아볼 수 있게 하되, 체형은 머리가 크고 앙증맞은 귀여운 SD/Chibi 마스코트 캐리커처로 제작 (사진에 없는 악세사리 임의 추가 금지)',
-      features: '얼굴 자체를 닮게 그릴 필요 없음; 헤어스타일, 안경 유무, 의상, 시그니처 포인트만 추출하여 머리가 크고 앙증맞은 매력적인 SD/Chibi 마스코트 캐릭터로 디자인 (사진에 없는 악세사리 임의 추가 금지)',
-      characterize: '전체적인 인상(헤어 색상, 분위기)만 살짝 참고하고 2.5등신 커다란 머리와 동글동글한 몸체의 극도로 귀여운 SD/Chibi 마스코트로 완전 변환',
+      exact: '사진 속 인물의 실제 눈매 각도, 눈 크기, 콧대, 입술 두께, 턱선, 헤어스타일 가르마, 피부톤을 95% 이상 변형 없이 정밀 반영하여 본인임을 단번에 알아볼 수 있게 하되, 머리가 크고 앙증맞은 2.5등신 SD/Chibi 마스코트 캐리커처 체형 적용 (사진에 없는 악세사리 임의 추가 금지)',
+      features: '얼굴 자체를 닮게 그릴 필요 없이, 사진에서 상징적인 특징(헤어스타일, 안경, 의상, 분위기)만 추출하여 머리가 크고 앙증맞은 2D SD/Chibi 마스코트 캐릭터로 디자인 (사진에 없는 악세사리 임의 추가 금지)',
+      characterize: '전체적인 인상(헤어 색상, 분위기)만 가볍게 참고하고, 큰 동그란 머리와 앙증맞고 통통한 몸체, 반짝이는 눈을 가진 극도로 귀여운 2.5등신 SD/Chibi 마스코트 캐릭터로 완전 변환',
     }[photoReferenceMode];
 
     return {
@@ -2663,15 +2663,15 @@ function App() {
     ];
 
     const photoAppearanceEn = {
-      exact: 'faithfully replicate the subject\'s actual eye shape, nose bridge, lips, hairstyle, and skin tone from the reference photo with 95%+ high resemblance so they are instantly recognized, stylized into a cute SD/Chibi caricature mascot character with a big head and compact body (no unrequested accessories)',
-      features: 'do NOT try to match the subject\'s actual face; extract only signature points (hairstyle, glasses if any, outfit, signature vibe) and design a stylish, cute SD/Chibi mascot character around those traits (no unrequested accessories)',
-      characterize: 'use only the general impression (hair color, vibe) as a loose reference and transform into an ultra-cute 2.5-head SD/Chibi mascot with a big round head, chubby body, and huge sparkling eyes',
+      exact: 'precisely preserve the subject\'s actual eye angle, eye size, nose bridge, lip thickness, jawline, hairstyle parting, and skin tone with 95%+ high facial resemblance so they are instantly recognized, stylized in a cute 2.5-head SD/Chibi caricature mascot body without generic face blurring (no unrequested accessories)',
+      features: 'do NOT match the actual face; extract signature traits (hairstyle, glasses if any, outfit, body type, signature vibe) and build a stylish 2D SD/Chibi mascot character (no unrequested accessories)',
+      characterize: 'use only the general impression (hair color, vibe) as a loose reference and transform into an ultra-cute 2.5-head SD/Chibi mascot with a big round head, chubby body, and sparkling eyes',
     }[photoReferenceMode];
 
     const photoAppearanceKo = {
-      exact: '참고 사진 인물의 실제 눈매 각도, 콧대, 입술 두께, 턱선, 헤어스타일, 피부톤을 95% 이상 정밀하게 반영하여 본인임을 단번에 알아볼 수 있게 하되, 체형은 머리가 크고 앙증맞은 귀여운 SD/Chibi 마스코트 캐리커처로 제작 (사진에 없는 악세사리 임의 추가 금지)',
-      features: '얼굴 자체를 닮게 그릴 필요 없음; 헤어스타일, 안경 유무, 의상, 시그니처 포인트만 추출하여 머리가 크고 앙증맞은 매력적인 SD/Chibi 마스코트 캐릭터로 디자인 (사진에 없는 악세사리 임의 추가 금지)',
-      characterize: '전체적인 인상(헤어 색상, 분위기)만 살짝 참고하고 2.5등신 커다란 머리와 동글동글한 몸체의 극도로 귀여운 SD/Chibi 마스코트로 완전 변환',
+      exact: '사진 속 인물의 실제 눈매 각도, 눈 크기, 콧대, 입술 두께, 턱선, 헤어스타일 가르마, 피부톤을 95% 이상 변형 없이 정밀 반영하여 본인임을 단번에 알아볼 수 있게 하되, 머리가 크고 앙증맞은 2.5등신 SD/Chibi 마스코트 캐리커처 체형 적용 (사진에 없는 악세사리 임의 추가 금지)',
+      features: '얼굴 자체를 닮게 그릴 필요 없이, 사진에서 상징적인 특징(헤어스타일, 안경, 의상, 분위기)만 추출하여 머리가 크고 앙증맞은 2D SD/Chibi 마스코트 캐릭터로 디자인 (사진에 없는 악세사리 임의 추가 금지)',
+      characterize: '전체적인 인상(헤어 색상, 분위기)만 가볍게 참고하고, 큰 동그란 머리와 앙증맞고 통통한 몸체, 반짝이는 눈을 가진 극도로 귀여운 2.5등신 SD/Chibi 마스코트 캐릭터로 완전 변환',
     }[photoReferenceMode];
 
     return {
