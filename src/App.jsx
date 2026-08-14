@@ -2525,8 +2525,8 @@ function App() {
 
     const modeInstructions = {
       exact: {
-        ko: '사진 속 대상의 실제 얼굴 비율, 이목구비(눈 크기·모양, 코, 입술, 턱선), 헤어스타일, 피부톤을 사실적으로 재현한 캐리커처 스타일 2D 스티커로 그려주세요. 한눈에 "이 사람이다"라고 알아볼 수 있을 정도로 얼굴 유사도를 높게 유지하되, 외곽선과 채색은 깔끔한 2D 스티커로 마무리하세요.',
-        en: 'Draw a caricature-style 2D sticker that realistically reproduces the subject\'s actual face proportions, facial features (eye size and shape, nose, lips, jawline), hairstyle, and skin tone. The face must be recognizable enough that viewers can immediately identify the person, while the linework and coloring should have a clean 2D sticker finish.',
+        ko: '사진 속 인물의 실제 눈매, 콧대, 입술, 헤어스타일, 분위기를 한눈에 알아볼 수 있게 찰떡같이 반영하되, 딱딱하고 굳은 실사가 아닌 동글동글하고 귀염성이 가득 담긴 사랑스러운 2D 스티커 캐리커처로 그려주세요. 본인 고유의 개성과 매력은 확실히 살리고, 전체적인 느낌은 친근하고 귀엽게 표현하세요.',
+        en: 'Draw a charming 2D caricature sticker that faithfully captures the subject\'s recognizable eye shape, nose, lips, hairstyle, and facial vibe from the photo, while rendering them with adorable, friendly, and cute cartoon appeal (no stiff realistic portraits). Keep the person\'s unique identity clearly recognizable while making the character lovable.',
       },
       features: {
         ko: '사진 속 대상의 얼굴 자체를 닮게 그릴 필요는 없습니다. 대신 헤어스타일, 안경 유무, 의상, 체형, 전체적인 분위기 등 시그니처 포인트만 추출하여 스타일리시한 2D 캐릭터 아바타로 새롭게 디자인해주세요.',
@@ -2632,7 +2632,7 @@ function App() {
     }[photoReferenceMode];
 
     const photoAppearanceKo = {
-      exact: '스타일화하더라도 참고 사진 인물의 실제 눈매 각도, 눈 크기 비율, 콧대, 입술 두께, 턱선, 헤어스타일, 피부톤을 절대 변형하지 말고 95% 이상 동일하게 유지 (사진에 없는 악세사리 임의 추가 금지)',
+      exact: '참고 사진 인물의 고유한 눈매, 헤어스타일, 이목구비 특징과 인상을 확실히 살려 본인임을 알아볼 수 있게 하되, 딱딱하지 않고 동글동글하며 귀염성이 가득한 사랑스러운 2D 캐릭터로 캐리커처화 (사진에 없는 악세사리 임의 추가 금지)',
       features: '얼굴 자체를 닮게 그릴 필요 없음; 헤어스타일, 안경 유무, 의상, 체형, 전체 분위기 등 시그니처 포인트만 추출하여 스타일리시한 새 캐릭터로 디자인 (사진에 없는 악세사리 임의 추가 금지)',
       characterize: '전체적인 인상(헤어 색상, 분위기)만 살짝 참고하고 2.5등신 커다란 머리와 동글동글한 몸체의 극도로 귀여운 SD/Chibi 마스코트로 완전 변환',
     }[photoReferenceMode];
@@ -2669,7 +2669,7 @@ function App() {
     }[photoReferenceMode];
 
     const photoAppearanceKo = {
-      exact: '스타일화하더라도 참고 사진 인물의 실제 눈매 각도, 눈 크기 비율, 콧대, 입술 두께, 턱선, 헤어스타일, 피부톤을 절대 변형하지 말고 95% 이상 동일하게 유지 (사진에 없는 악세사리 임의 추가 금지)',
+      exact: '참고 사진 인물의 고유한 눈매, 헤어스타일, 이목구비 특징과 인상을 확실히 살려 본인임을 알아볼 수 있게 하되, 딱딱하지 않고 동글동글하며 귀염성이 가득한 사랑스러운 2D 캐릭터로 캐리커처화 (사진에 없는 악세사리 임의 추가 금지)',
       features: '얼굴 자체를 닮게 그릴 필요 없음; 헤어스타일, 안경 유무, 의상, 체형, 전체 분위기 등 시그니처 포인트만 추출하여 스타일리시한 새 캐릭터로 디자인 (사진에 없는 악세사리 임의 추가 금지)',
       characterize: '전체적인 인상(헤어 색상, 분위기)만 살짝 참고하고 2.5등신 커다란 머리와 동글동글한 몸체의 극도로 귀여운 SD/Chibi 마스코트로 완전 변환',
     }[photoReferenceMode];
@@ -2689,8 +2689,8 @@ function App() {
   const getGptBackgroundInstruction = () => {
     const instructions = {
       transparent: {
-        ko: '진짜 알파 투명도가 적용된 투명 배경으로 생성해주세요. 투명도를 흉내 낸 체크무늬나 흰색 바탕을 그리지 마세요.',
-        en: 'Generate a genuinely transparent background with alpha transparency. Do not draw a checkerboard pattern or fake transparency with a white background.',
+        ko: '투명 배경(transparent background). 투명도를 흉내 낸 체크무늬(checkerboard)는 절대 그리지 마세요. 각 캐릭터와 글자 외곽에 깔끔하고 또렷한 흰색 스티커 다이컷 외곽선(white die-cut outline)을 둘러 돋보이게 렌더링하세요.',
+        en: 'Transparent background. Absolutely do NOT draw fake checkerboard patterns. Render each character and text with a crisp, bold white die-cut sticker outline.',
       },
       solid: {
         ko: '캐릭터와 충분히 대비되는 하나의 깨끗한 단색 배경을 사용해주세요. 그라데이션, 질감과 배경 사물은 넣지 마세요.',
