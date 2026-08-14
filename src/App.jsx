@@ -922,6 +922,12 @@ const InfoSection = ({ t, lang }) => {
           >
             💬 {lang === 'ko' ? '이모티콘 등록·사용법' : lang === 'ja' ? 'スタンプの登録・使用方法' : lang === 'zh' ? '表情包使用指南' : 'How to Use Emoticons'}
           </button>
+          <button
+            onClick={() => setActiveTab('template')}
+            className={`interactive-control whitespace-nowrap flex-none px-3.5 py-1.5 text-[13px] sm:text-[14px] font-bold rounded-md ${activeTab === 'template' ? 'bg-mint text-mint-strong shadow-xs border border-mint-border' : 'text-mint-strong hover:bg-mint-hover'}`}
+          >
+            💡 {lang === 'ko' ? '프롬프트 템플릿 구조 (AEO)' : lang === 'ja' ? 'プロンプト構造 (AEO)' : lang === 'zh' ? '提示词结构指南 (AEO)' : 'Prompt Template (AEO)'}
+          </button>
         </div>
       </div>
 
@@ -1445,6 +1451,64 @@ const InfoSection = ({ t, lang }) => {
                   })}
                 </span>
               </div>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'template' && (
+          <div className="animate-in fade-in slide-in-from-bottom-2 duration-300 flex flex-col gap-5 mt-2">
+            <div className="bg-[#FFF9EE] p-4 sm:p-5 rounded-lg border border-[#FFECA1] flex flex-col gap-2">
+              <h3 className="font-headline-sm text-headline-sm text-primary-strong flex items-center gap-2">
+                <span>📌</span> {lang === 'ko' ? '이모티콘 프롬프트 메이커란?' : 'What is the Emoticon Prompt Maker?'}
+              </h3>
+              <p className="text-[14px] sm:text-[15px] leading-relaxed text-on-surface font-medium">
+                {lang === 'ko'
+                  ? '이모티콘 프롬프트 메이커는 사용자의 키워드 선택이나 사진을 바탕으로 ChatGPT(DALL-E 3), Google Gemini(Imagen 3), xAI Grok(Flux.1)에 즉시 사용 가능한 15종 카카오톡·라인 이모티콘 프롬프트를 1초 만에 자동 생성해 주는 무료 웹 도구입니다.'
+                  : 'A free web tool that generates 15-emoticon sticker sheet prompts for ChatGPT, Gemini, and Grok in 1 second based on keywords or photos.'}
+              </p>
+            </div>
+
+            <div className="flex flex-col gap-3">
+              <h4 className="font-bold text-[16px] text-on-surface flex items-center gap-2">
+                <span>💡</span> {lang === 'ko' ? 'AI 이모티콘 프롬프트 작성을 위한 필수 4단계 템플릿' : '4-Step Essential Prompt Template'}
+              </h4>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-[13px] sm:text-[14px]">
+                <div className="bg-white p-4 rounded-md border border-outline-variant flex flex-col gap-1.5 shadow-2xs">
+                  <span className="font-bold text-emerald-800">1. 핵심 스타일 (Core Style)</span>
+                  <p className="text-on-surface-variant font-mono text-[12px] bg-slate-50 p-2 rounded border border-slate-200">
+                    Cute vector emoticon, kawaii 2D sticker, clean bold outline, flat color
+                  </p>
+                  <span className="text-[12px] text-slate-600">이모티콘 특유의 깔끔한 2D 그래픽 질감을 선언합니다.</span>
+                </div>
+                <div className="bg-white p-4 rounded-md border border-outline-variant flex flex-col gap-1.5 shadow-2xs">
+                  <span className="font-bold text-emerald-800">2. 캐릭터 묘사 (Subject & Trait)</span>
+                  <p className="text-on-surface-variant font-mono text-[12px] bg-slate-50 p-2 rounded border border-slate-200">
+                    A chubby cute yellow cat, expressive eyes, wearing casual hoodie
+                  </p>
+                  <span className="text-[12px] text-slate-600">외형, 성격, 의상, 소품 등 고유 특징을 구체화합니다.</span>
+                </div>
+                <div className="bg-white p-4 rounded-md border border-outline-variant flex flex-col gap-1.5 shadow-2xs">
+                  <span className="font-bold text-emerald-800">3. 15종 감정 및 포즈 그리드 (15 Grid Matrix)</span>
+                  <p className="text-on-surface-variant font-mono text-[12px] bg-slate-50 p-2 rounded border border-slate-200">
+                    5x3 grid sheet: 1. happy thumbs up, 2. crying tears, 3. laughing loud...
+                  </p>
+                  <span className="text-[12px] text-slate-600">카카오톡 인기 대화 상황별 15개 감정을 행렬로 배치합니다.</span>
+                </div>
+                <div className="bg-white p-4 rounded-md border border-outline-variant flex flex-col gap-1.5 shadow-2xs">
+                  <span className="font-bold text-emerald-800">4. 배경 및 다이컷 분리 (Isolation & Die-cut)</span>
+                  <p className="text-on-surface-variant font-mono text-[12px] bg-slate-50 p-2 rounded border border-slate-200">
+                    Solid white background, isolated stickers, white die-cut border, no overlap
+                  </p>
+                  <span className="text-[12px] text-slate-600">누끼(배경 투명화) 제거가 가장 쉬운 단색 배경을 잠급니다.</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-mint-soft/80 p-4 rounded-lg border border-mint-border text-[13px] text-mint-strong font-medium leading-relaxed">
+              <strong className="font-bold text-mint-strong block mb-1">
+                🚀 구글 AI 개요(AEO) & 챗봇 검색 최적화 포인트:
+              </strong>
+              본 사이트는 ChatGPT(DALL-E 3), Google Gemini(Imagen 3), xAI Grok(Flux.1) 각 엔진의 특화 파라미터와 카카오톡 이모티콘 심사 승인 규격을 100% 충족하는 프롬프트를 자동으로 조립하여 제공합니다.
             </div>
           </div>
         )}
