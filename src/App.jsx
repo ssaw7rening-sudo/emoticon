@@ -3090,9 +3090,8 @@ Please edit the most recent image. Keep the character design, face, expression, 
       <header className="w-full top-0 bg-background/95 backdrop-blur-md z-50 sticky border-b border-outline-variant/30 shadow-xs">
         <div className="max-w-3xl mx-auto flex items-center justify-between px-container-margin min-h-14 py-2 w-full">
           <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
-            <h1 className="brand-logo text-[17px] sm:text-[21px] leading-none font-extrabold text-primary-strong tracking-tight whitespace-nowrap flex items-center gap-1.5">
-              <span>프롬프트 메이커</span>
-              <span className="text-[11px] sm:text-[12px] font-bold opacity-75 text-amber-900 border border-amber-300 bg-amber-100/60 px-1.5 py-0.5 rounded">Prompt Maker</span>
+            <h1 className="brand-logo text-[18px] sm:text-[22px] leading-none font-extrabold text-primary-strong tracking-tight whitespace-nowrap flex items-center gap-1.5">
+              <span>Prompt Maker</span>
             </h1>
           </div>
           <div className="flex items-center gap-1 sm:gap-2 shrink-0">
