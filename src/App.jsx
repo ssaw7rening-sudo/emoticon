@@ -3454,16 +3454,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
             <div className="flex justify-between items-center">
               <h2 className="font-headline-sm text-headline-sm text-on-surface">{t.step1}</h2>
               <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={generateRandomCharacter}
-                  className="interactive-control flex items-center gap-1.5 min-h-10 px-3 py-1 text-[13px] font-bold text-[#7A4F00] bg-[#FFF5DC] hover:bg-[#FFECA1] border border-[#E8C66A] rounded-lg shadow-2xs transition-all cursor-pointer"
-                  title={lang === 'ko' ? '랜덤 캐릭터 조합' : 'Random Character'}
-                >
-                  <span className="text-[15px]">🎲</span>
-                  <span>{lang === 'ko' ? '랜덤 캐릭터 추천' : lang === 'ja' ? 'ランダムキャラ生成' : lang === 'zh' ? '随机角色生成' : 'Random Character'}</span>
-                </button>
-                <button onClick={clearTags} className="flex items-center gap-1 min-h-10 px-2 text-[13px] font-bold text-error hover:bg-red-50 rounded-lg cursor-pointer">
+                <button onClick={clearTags} className="flex items-center gap-1.5 min-h-10 px-3 py-1.5 text-[13px] font-bold text-error hover:bg-red-50 border border-error/20 hover:border-error/40 rounded-lg transition-all cursor-pointer">
                   <Trash2 size={14} /> {t.clear}
                 </button>
               </div>
@@ -3492,19 +3483,25 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
           <div className="bg-surface-container-lowest rounded-md p-3.5 sm:p-md shadow-bubbly border border-outline-variant">
             <div className="mb-md flex flex-col gap-3">
               <span className="px-1 text-[13px] font-bold text-on-surface-variant">{t.characterSource}</span>
-              <div className="grid grid-cols-2 gap-2" role="group" aria-label={t.characterSource}>
+              <div className="grid grid-cols-3 gap-2" role="group" aria-label={t.characterSource}>
                 {[
                   ['direct', t.directSource],
+                  ['random', t.randomSource],
                   ['photo', t.photoSource],
                 ].map(([source, label]) => (
                   <button
                     key={source}
                     type="button"
                     aria-pressed={characterSource === source}
-                    onClick={() => setCharacterSource(source)}
-                    className={`interactive-control min-h-11 rounded-[8px] border px-3 py-2 text-[14px] font-bold focus:outline-none focus-visible:ring-2 focus-visible:ring-mint-strong focus-visible:ring-offset-2 ${
+                    onClick={() => {
+                      setCharacterSource(source);
+                      if (source === 'random') {
+                        generateRandomCharacter();
+                      }
+                    }}
+                    className={`interactive-control min-h-11 rounded-[8px] border px-2 sm:px-3 py-2 text-[13px] sm:text-[14px] font-bold text-center transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-mint-strong focus-visible:ring-offset-2 cursor-pointer ${
                       characterSource === source
-                        ? 'bg-mint text-mint-strong border-mint-border shadow-sm'
+                        ? 'bg-mint text-mint-strong border-mint-border shadow-sm ring-1 ring-mint-border'
                         : 'bg-white text-on-surface border-outline-variant hover:bg-mint-soft'
                     }`}
                   >
@@ -3512,6 +3509,32 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                   </button>
                 ))}
               </div>
+
+              {characterSource === 'random' && (
+                <div className="rounded-xl border-2 border-amber-300 bg-linear-to-r from-amber-50 via-[#FFF8E7] to-orange-50/80 p-4 flex flex-col gap-3 shadow-xs">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                    <div className="flex items-center gap-2.5">
+                      <span className="text-[26px]">🎲</span>
+                      <div>
+                        <div className="text-[14px] font-extrabold text-amber-950">
+                          {lang === 'ko' ? 'AI 추천 황금 조합 캐릭터' : lang === 'ja' ? 'AIおすすめ黄金組み合わせ' : lang === 'zh' ? 'AI推荐黄金组合角色' : 'AI-Curated Golden Combination'}
+                        </div>
+                        <div className="text-[12px] text-amber-800 font-medium">
+                          {lang === 'ko' ? '버튼을 누를 때마다 개성 넘치는 완성형 캐릭터 조합이 즉시 자동 세팅됩니다.' : lang === 'ja' ? 'ボタンを押すたびにユニークな組み合わせが即座に自動生成されます。' : lang === 'zh' ? '每次点击都会立即自动生成充满个性的完整角色组合。' : 'A complete unique character combo is generated instantly with each roll.'}
+                        </div>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={generateRandomCharacter}
+                      className="interactive-control flex items-center justify-center gap-2 min-h-11 px-5 py-2 text-[14px] font-extrabold text-[#5C3B00] bg-linear-to-r from-[#FFE58F] to-[#FFD666] hover:from-[#FFD666] hover:to-[#FFC069] border border-[#E8B339] rounded-xl shadow-xs hover:shadow-md transition-all cursor-pointer w-full sm:w-auto shrink-0 active:scale-95"
+                    >
+                      <span className="text-[17px]">🎲</span>
+                      <span>{t.rerollRandom || (lang === 'ko' ? '다른 캐릭터 다시 뽑기' : 'Re-roll Character')}</span>
+                    </button>
+                  </div>
+                </div>
+              )}
 
               {characterSource === 'photo' && (
                 <div className="rounded-lg border-2 border-amber-300 bg-amber-50/90 p-4 flex flex-col gap-3 shadow-sm">
