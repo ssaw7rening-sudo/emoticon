@@ -2028,21 +2028,21 @@ const InfoSection = ({ t, lang }) => {
 
 const PHRASE_ACTION_MAP_KO = {
   // 일상 / 인사
-  'ㅋㅋㅋㅋ': '몸을 구부리며 자지러지게 웃는 모습 (bent over laughing hard)',
-  '안녕!': '한 손을 높이 들고 반갑게 흔드는 모습 (waving one arm high)',
-  '오늘도 화이팅': '양 주먹을 불끈 쥐고 의지를 다지는 포즈 (fists clenched, determined)',
-  '좋아요': '밝게 웃으며 엄지척을 하는 포즈 (thumbs up)',
-  '고마워요': '두 손을 가슴 앞에 모으고 감사의 인사를 건네는 포즈 (hands together bowing)',
-  '사랑해요': '양손으로 가슴/머리 위에 하트를 만들고 미소짓는 모습 (heart hands + small heart)',
-  '최고!': '양 팔을 들고 신나게 점프하는 포즈 (jumping both arms up)',
-  '오예': '한쪽 주먹을 위로 들어 올리며 환호하는 점프 포즈 (jumping one fist up)',
-  '미안해요': '손을 모으고 미안한 표정으로 사과하는 모습 (apologetic bow)',
-  '수고했어요': '지쳐서 앉아 땀을 닦는 모습과 별 효과 (sitting tired + star bubble)',
-  '축하해요': '박수를 치며 꽃가루가 날리는 환호 포즈 (clapping + confetti)',
-  '대박': '양 손으로 뺨을 감싸며 경악/감탄하는 포즈 (hands on cheeks shocked)',
-  '헐': '입을 손으로 막고 충격받아 멍해진 표정 (hand over mouth surprised)',
-  '감동': '가슴에 손을 얹고 눈물이 글썽글썽한 표정과 하트 (hands on chest teary + hearts)',
-  '잘자요': '베개에 누워 편안하게 잠든 모습과 Zzz 효과 (lying on pillow sleeping + Zzz)',
+  'ㅋㅋㅋㅋ': '바닥에 비스듬히 누워 배를 잡고 빵 터져 웃는 모습 (bent over laughing hard on floor)',
+  '안녕!': '한 손은 주머니에 넣고 다른 한 손을 들어 인사하는 모습 (one hand in pocket waving other hand)',
+  '오늘도 화이팅': '한쪽 주먹을 위로 쥐며 윙크하고 파이팅을 외치는 포즈 (one fist up winking determined)',
+  '좋아요': '밝게 미소지으며 엄지척을 하는 포즈와 따봉 아이콘 (thumbs up with smile)',
+  '고마워요': '정중하게 90도로 고개 숙여 깊이 감사 인사하는 모습 (polite 90-degree bow of gratitude)',
+  '사랑해요': '바닥에 앉아 분홍색 하트 쿠션을 품에 꼭 끌어안고 미소짓는 모습 (sitting hugging pink heart pillow)',
+  '최고!': '팔짱을 끼고 당당하고 멋지게 미소짓는 포즈와 황금 왕관 (arms crossed confident with golden crown)',
+  '오예': '한쪽 주먹을 번쩍 들고 신나게 점프하며 환호하는 포즈 (jumping celebrating with raised fist)',
+  '미안해요': '두 손을 모으고 고개 숙여 진심으로 사과하는 모습과 땀방울 (bowing apologetic with sweat drops)',
+  '수고했어요': '풍성한 노란 꽃다발을 들고 따뜻하게 건네는 모습 (holding flower bouquet)',
+  '축하해요': '파티 폭죽을 쏘며 꽃가루와 리본이 화려하게 날리는 환호 포즈 (shooting party popper with confetti ribbons)',
+  '대박': '양손으로 볼을 감싸며 크게 입을 벌리고 감탄하는 포즈와 반짝이 (hands on cheeks amazed with sparkles)',
+  '헐': '양손으로 머리를 감싸쥐고 눈과 입이 떡 벌어져 충격받은 표정과 식은땀 (holding head shocked with sweat drops)',
+  '감동': '무릎을 꿇고 두 손 모아 기도하듯 감격하여 눈물 한 줄기를 흘리는 표정 (kneeling hands together touched with tear stream)',
+  '잘자요': '하얀 베개를 품에 껴안고 웅크려 곤히 잠든 모습과 zZ 기호 (sleeping hugging white pillow with zZ)',
 
   // 직장인
   '네!': '차렷 자세로 또렷하게 대답하는 직장인 포즈 (standing straight acknowledging)',
@@ -2632,7 +2632,7 @@ function App() {
     }[photoReferenceMode];
 
     const photoAppearanceKo = {
-      exact: '사진 속 대상(인물 또는 반려동물)의 실제 눈매 각도, 눈 크기, 콧대/주둥이, 입술, 턱선, 헤어스타일/털 색상 및 고유 무늬(얼룩, 반점), 피부톤/털 배색을 95% 이상 변형 없이 정밀 반영하여 주인공임을 단번에 알아볼 수 있게 하되, 머리가 크고 앙증맞은 2.5등신 SD/Chibi 마스코트 캐리커처 체형 적용 (사진에 없는 악세사리 임의 추가 금지)',
+      exact: '스타일화하더라도 참고 사진 인물의 실제 눈매 각도, 눈 크기 비율, 콧대, 입술 두께, 턱선, 헤어스타일, 피부톤을 절대 변형하지 말고 95% 이상 동일하게 유지 (사진에 없는 악세사리 임의 추가 금지)',
       features: '이목구비 자체를 닮게 그릴 필요 없이, 사진에서 상징적인 특징(헤어스타일/품종 실루엣, 안경/목줄/스카프, 의상/털 배색, 분위기)만 추출하여 머리가 크고 앙증맞은 2D SD/Chibi 마스코트 캐릭터로 디자인 (사진에 없는 악세사리 임의 추가 금지)',
       characterize: '전체적인 인상(헤어/털 색상, 분위기)만 가볍게 참고하고, 큰 동그란 머리와 앙증맞고 통통한 몸체, 반짝이는 눈을 가진 극도로 귀여운 2.5등신 SD/Chibi 마스코트 캐릭터로 완전 변환',
     }[photoReferenceMode];
@@ -2669,7 +2669,7 @@ function App() {
     }[photoReferenceMode];
 
     const photoAppearanceKo = {
-      exact: '사진 속 대상(인물 또는 반려동물)의 실제 눈매 각도, 눈 크기, 콧대/주둥이, 입술, 턱선, 헤어스타일/털 색상 및 고유 무늬(얼룩, 반점), 피부톤/털 배색을 95% 이상 변형 없이 정밀 반영하여 주인공임을 단번에 알아볼 수 있게 하되, 머리가 크고 앙증맞은 2.5등신 SD/Chibi 마스코트 캐리커처 체형 적용 (사진에 없는 악세사리 임의 추가 금지)',
+      exact: '스타일화하더라도 참고 사진 인물의 실제 눈매 각도, 눈 크기 비율, 콧대, 입술 두께, 턱선, 헤어스타일, 피부톤을 절대 변형하지 말고 95% 이상 동일하게 유지 (사진에 없는 악세사리 임의 추가 금지)',
       features: '이목구비 자체를 닮게 그릴 필요 없이, 사진에서 상징적인 특징(헤어스타일/품종 실루엣, 안경/목줄/스카프, 의상/털 배색, 분위기)만 추출하여 머리가 크고 앙증맞은 2D SD/Chibi 마스코트 캐릭터로 디자인 (사진에 없는 악세사리 임의 추가 금지)',
       characterize: '전체적인 인상(헤어/털 색상, 분위기)만 가볍게 참고하고, 큰 동그란 머리와 앙증맞고 통통한 몸체, 반짝이는 눈을 가진 극도로 귀여운 2.5등신 SD/Chibi 마스코트 캐릭터로 완전 변환',
     }[photoReferenceMode];
@@ -2837,7 +2837,11 @@ ${textExclusion} No watermark, frame, duplicate character, extra limbs, cropped 
     if (lang === 'ko') {
       const panelPlan = emoticons.map((phrase, index) => `스티커 ${index + 1}: "${phrase.trim()}" – ${getPhraseActionKo(phrase)}`).join('\n');
       const textPolicy = gptTextMode === 'text'
-        ? `[고품질 한글 타이포그래피 정밀 지침] ${getEmotionTextColorGuideKo(emoticons)} 각 캐릭터 옆이나 머리 위에 해당 한글 문구를 동글동글하고 귀여운 손글씨 캘리그라피 팝아트 스티커 폰트로 정확히 한 번만 그리세요. 텍스트 상자(박스), 괄호 (), 대괄호 [], 따옴표 "", 말풍선, 스티커 번호는 절대로 그리지 마세요.`
+        ? `[고품질 한글 타이포그래피 정밀 지침]
+1. 각 캐릭터 옆이나 머리 위에 지정된 한글 문구를 읽기 쉽고 산뜻한 2D 볼드 손글씨 스티커 폰트로 정확히 한 번만 그리세요.
+2. 모든 글자에 또렷하고 두꺼운 순백색 스티커 테두리(White Die-Cut Outline Stroke)를 둘러 검은 배경 위에서 선명하게 돋보이게 렌더링하세요.
+3. 각 문구의 감정에 맞춰 아기자기한 포인트 효과(하트💕, 황금왕관👑, 따봉👍, 폭죽🎉, 꽃다발💐, 땀방울💦, 반짝이✨, zZ 등)를 글자 주변에 자연스럽게 결합하세요.
+4. 텍스트 상자(박스), 말풍선, 괄호 (), 대괄호 [], 따옴표 "", 스티커 번호는 절대로 그리지 마세요.`
         : '각 문구는 해당 셀의 표정, 자세와 행동을 정하는 맥락으로만 사용하세요. 이미지에는 문구나 다른 글자를 그리지 마세요.';
       const textExclusion = gptTextMode === 'text'
         ? '추가 문구, 틀린 철자, 임의의 글자, 셀 번호, 따옴표와 텍스트 박스 금지.'
@@ -2866,7 +2870,7 @@ ${panelPlan}
 
 [구도 및 배경]
 가로형 캔버스에 정확히 5열 3행으로 배치하세요. 동일한 크기의 셀 15개에 완전한 캐릭터 한 명씩 배치하고, 캐릭터·소품·효과·글자가 다른 셀을 침범하지 않게 하세요. 셀 경계선, 구별선, 격자선(grid lines), 테두리선과 셀 번호는 이미지에 절대 그리지 마세요.
-${getGptBackgroundInstruction()}
+완전한 검은색 단색(#000000) 배경. 각 캐릭터와 글자 요소 바깥쪽에 깔끔하고 또렷한 흰색 스티커 다이컷 외곽선(white die-cut border)을 둘러 검은 배경과 명확히 대비되게 렌더링하세요.
 
 [일관성]
 15개 셀 모두 얼굴, 체형, 색상, 의상과 화풍을 동일하게 유지하세요. 문구에 필요한 표정, 자세, 보조 소품과 효과만 변경하세요.
