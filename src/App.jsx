@@ -2696,8 +2696,8 @@ function App() {
   const getGptBackgroundInstruction = () => {
     const instructions = {
       transparent: {
-        ko: '투명 배경(transparent background). 투명도를 흉내 낸 체크무늬(checkerboard)는 절대 그리지 마세요. 각 캐릭터와 글자 외곽에 깔끔하고 또렷한 흰색 스티커 다이컷 외곽선(white die-cut outline)을 둘러 돋보이게 렌더링하세요.',
-        en: 'Transparent background. Absolutely do NOT draw fake checkerboard patterns. Render each character and text with a crisp, bold white die-cut sticker outline.',
+        ko: '진짜 알파 투명도가 적용된 투명 배경으로 생성해주세요. 투명도를 흉내 낸 체크무늬나 흰색 바탕을 그리지 마세요.',
+        en: 'Generate a genuinely transparent background with alpha transparency. Do not draw a checkerboard pattern or fake transparency with a white background.',
       },
       solid: {
         ko: '캐릭터와 충분히 대비되는 하나의 깨끗한 단색 배경을 사용해주세요. 그라데이션, 질감과 배경 사물은 넣지 마세요.',
