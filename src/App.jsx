@@ -2167,12 +2167,12 @@ const PHRASE_ACTION_MAP_EN = {
 };
 
 const getPhraseActionKo = (phrase) => {
-  const p = phrase.trim();
+  const p = (phrase || '').trim();
   return PHRASE_ACTION_MAP_KO[p] || `${p} 맥락에 맞는 독창적인 전신 동작`;
 };
 
 const getPhraseActionEn = (phrase) => {
-  const p = phrase.trim();
+  const p = (phrase || '').trim();
   return PHRASE_ACTION_MAP_EN[p] || `unique expressive full-body posture matching ${p}`;
 };
 
