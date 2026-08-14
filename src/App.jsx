@@ -2012,6 +2012,39 @@ function App() {
     }
   };
 
+  const generateRandomCharacter = () => {
+    const animals = [
+      '뱁새 (오목눈이)', '참지않는 말티즈', '치즈냥', '똥실똥실 토끼', '동글동글 비숑', 
+      '골든리트리버', '쿼카', '시바견', '아기 펭귄', '햄스터', '카피바라', '레서판다',
+      '삼색 고양이', '하프물범', '우주 비행 댕댕이', '탕후루 요정', '모락모락 삼각김밥'
+    ];
+    const outfits = [
+      '오버핏 후드티', '포근한 잠옷', '회사원 정장', '트레이닝복', '멜빵바지', 
+      '단정한 셔츠와 넥타이', '귀여운 동물 잠옷', '스포티한 캡모자', '두꺼운 패딩'
+    ];
+    const props = [
+      '아이스 아메리카노 텀블러를 든', '스마트폰을 든', '노트북을 두드리는', 
+      '치킨 닭다리를 뜯는', '돈다발을 쥐고 있는', '헤드폰을 낀', '커피잔을 든'
+    ];
+    const styles = [
+      '귀여운 2D 만화풍', '✒️ 일본 출판 만화풍', '🧸 3D 펠트/클레이 점토 인형풍', 
+      '한국 웹툰 스타일', '🖍️ 크레파스 낙서풍', '📖 흑백 만화 톤', '깔끔한 미니멀 벡터'
+    ];
+    const effects = [
+      '반짝반짝 빛나는 효과', '하트 뿅뿅 날리는', '만화적인 집중선', 
+      '물음표 둥둥 (?)', '불타오르는 이펙트', '느낌표 번쩍 (!)'
+    ];
+
+    const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
+    const combo = `${pick(animals)}, ${pick(outfits)}, ${pick(props)}, ${pick(styles)}, ${pick(effects)}`;
+    
+    setCharManual(combo);
+    setCharacterSource('direct');
+    showToast(lang === 'ko' 
+      ? `🎲 [${combo.split(',')[0].trim()}] 랜덤 캐릭터 조합 완료!` 
+      : `🎲 Random character generated: ${combo.split(',')[0].trim()}`);
+  };
+
   const clearTags = () => {
     setCharacterSource('direct');
     setPhotoReferenceMode('characterize');
@@ -3263,9 +3296,20 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
           <div className="flex flex-col gap-2">
             <div className="flex justify-between items-center">
               <h2 className="font-headline-sm text-headline-sm text-on-surface">{t.step1}</h2>
-              <button onClick={clearTags} className="flex items-center gap-1 min-h-10 px-2 text-[13px] font-bold text-error hover:bg-red-50 rounded-lg">
-                <Trash2 size={14} /> {t.clear}
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={generateRandomCharacter}
+                  className="interactive-control flex items-center gap-1.5 min-h-10 px-3 py-1 text-[13px] font-bold text-[#7A4F00] bg-[#FFF5DC] hover:bg-[#FFECA1] border border-[#E8C66A] rounded-lg shadow-2xs transition-all cursor-pointer"
+                  title={lang === 'ko' ? '랜덤 캐릭터 조합' : 'Random Character'}
+                >
+                  <span className="text-[15px]">🎲</span>
+                  <span>{lang === 'ko' ? '랜덤 캐릭터 추천' : lang === 'ja' ? 'ランダムキャラ生成' : lang === 'zh' ? '随机角色生成' : 'Random Character'}</span>
+                </button>
+                <button onClick={clearTags} className="flex items-center gap-1 min-h-10 px-2 text-[13px] font-bold text-error hover:bg-red-50 rounded-lg cursor-pointer">
+                  <Trash2 size={14} /> {t.clear}
+                </button>
+              </div>
             </div>
             
             {/* Live Active Settings Status Banner (Original Brand Palette) */}
