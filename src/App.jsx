@@ -2971,31 +2971,47 @@ ${textExclusion} Do NOT add any unrequested trailing punctuation marks at the en
       grok: isKorean ? '[대상 AI: Grok (xAI / Flux.1 엔진)]' : '[TARGET AI: Grok (xAI / Flux.1 Engine)]',
     }[model] || '';
 
+    const currentCharTrait = charManual.trim() || (isKorean ? '동글동글 귀여운 마스코트' : 'Cute mascot');
+
     if (isKorean) {
       const repairPromptsKo = {
         identity: `${modelTag}
-[결과 보정 요청 — 캐릭터 일관성 복원]
-직전에 생성된 이미지를 바탕으로 수정해 주세요. 캐릭터의 표정, 포즈, 배경, 구성은 그대로 유지하면서, 캐릭터의 얼굴과 체형, 의상, 색상, 화풍을 처음 지정한 캐릭터 디자인(또는 첨부한 참고 사진의 이목구비 특징)과 100% 동일하게 맞춰서 보정해 주세요. 얼굴 왜곡이나 이질감을 바로잡아 하나의 완성된 이미지로 다시 그려주세요.`,
+[긴급 시각 수정: 캐릭터 얼굴 및 외형 재작업]
+직전 생성된 이미지에서 캐릭터의 얼굴과 이목구비가 변형되었습니다. 기존의 포즈와 배경은 유지하되, 캐릭터의 얼굴, 헤어/귀, 눈매, 체형을 다음 정의에 맞춰 눈에 띄게 다시 그려주세요:
+👉 캐릭터 원본 정의: "${currentCharTrait}"
+얼굴 왜곡을 완벽히 바로잡고, 해당 캐릭터의 고유 외형이 100% 확실하게 반영된 새로운 보정본 1장을 즉시 생성하세요.`,
+
         crop: `${modelTag}
-[결과 보정 요청 — 전신 및 여백 보정]
-직전에 생성된 이미지를 바탕으로 수정해 주세요. 캐릭터의 얼굴, 이목구비, 표정, 의상, 색상, 화풍${textMode === 'text' ? `, 한글 문구 "${targetPhrase}"` : ''}는 전혀 바꾸지 말고 그대로 유지하세요. 캐릭터의 머리부터 발끝까지 전신과 모든 이펙트가 잘리지 않고 화면 중앙에 완전히 보이도록 사방에 최소 15% 이상 넉넉한 여백을 주고 프레임을 재조정해서 다시 그려주세요.`,
+[긴급 구도 수정: 카메라 줌아웃 및 전신 여백 확보]
+직전 이미지에서 캐릭터의 머리나 발끝이 프레임에 잘렸습니다!
+카메라 시점을 뒤로 30% 줌아웃(Zoom Out)하여 캐릭터 크기를 줄여주세요.
+머리끝(귀/모자 포함)부터 발끝까지 전신이 화면 한가운데에 완벽하게 쏙 들어오고, 상하좌우에 최소 20%의 여백이 남도록 구도를 완전히 재배치해서 다시 그려주세요.`,
+
         text: `${modelTag}
-[결과 보정 요청 — 한글 문구 정확성 보정]
-직전에 생성된 이미지를 바탕으로 수정해 주세요. 캐릭터의 외형, 얼굴, 표정, 포즈, 의상, 화풍, 배경은 절대로 수정하지 마세요. 잘못 인쇄되거나 뭉개진 글자만 지우고, 캐릭터 옆에 오탈자 없이 정확하게 한글 문구 "${targetPhrase}"만 손글씨 타이포그래피 스타일로 깔끔하게 다시 써주세요.`,
+[긴급 텍스트 수정: 기존 오타 지우고 한글 재인쇄]
+직전 이미지의 글자가 뭉개졌거나 오탈자가 있습니다.
+기존에 적힌 이상한 글자를 완전히 지우고, 캐릭터 옆에 오직 한글 "${targetPhrase}"라는 단어만 크고 선명한 스티커 폰트로 정확하게 인쇄해 주세요. (추가 오타 절대 금지)`,
       };
       return repairPromptsKo[repairType];
     }
 
     const repairPromptsEn = {
       identity: `${modelTag}
-[IMAGE REPAIR REQUEST — RESTORE CHARACTER IDENTITY]
-Please edit the most recent image. Keep the current pose, facial expression, composition, background, and text intact. Restore and correct only the character's face, silhouette, facial features, body proportions, outfit, and art style so they stay 100% consistent with the original character design. Return one corrected image.`,
+[URGENT VISUAL CORRECTION — REDRAW CHARACTER FACE & IDENTITY]
+In the previous image, the character's facial features and silhouette were distorted. Keep the current pose and background, but visibly REDRAW the face, ears/hair, eyes, and body proportions to strictly match:
+👉 Target Character Blueprint: "${currentCharTrait}"
+Fix any facial distortion and return one crisp, corrected image with distinct character fidelity.`,
+
       crop: `${modelTag}
-[IMAGE REPAIR REQUEST — FULL BODY & MARGIN FIX]
-Please edit the most recent image. Keep the character identity, face, expression, pose, outfit, colors, art style, and${textMode === 'text' ? ` exact phrase "${targetPhrase}"` : ' text-free design'} unchanged. Reframe the composition so that the character's entire full body from head to toe is fully visible in the center with at least 15% margin on all sides. Return one corrected image.`,
+[URGENT COMPOSITION FIX — ZOOM OUT & FULL BODY MARGINS]
+In the previous image, parts of the character (head/feet) were cropped or touching the edges!
+ZOOM OUT the camera by 30% to shrink the character inside the frame.
+Ensure the ENTIRE full body from head to toe is 100% visible inside the canvas with at least 20% clear margin on all four sides. No clipping allowed!`,
+
       text: `${modelTag}
-[IMAGE REPAIR REQUEST — KOREAN TEXT CORRECTION]
-Please edit the most recent image. Keep the character design, face, expression, pose, outfit, colors, art style, and background completely unchanged. Replace only the incorrect or blurry lettering with the exact phrase "${targetPhrase}" written once in clean, highly legible hand-drawn calligraphy typography with 100% correct spelling. Return one corrected image.`,
+[URGENT TEXT FIX — ERASE & REPRINT EXACT TEXT]
+The text in the previous image was blurry or misspelled.
+Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "${targetPhrase}" in a bold, highly legible sticker typography without any spelling errors.`,
     };
     return repairPromptsEn[repairType];
   };
