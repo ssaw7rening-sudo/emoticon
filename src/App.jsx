@@ -2808,13 +2808,13 @@ ${textExclusion} No watermark, frame, duplicate character, extra limbs, cropped 
     }
 
     if (lang === 'ko') {
-      const panelPlan = emoticons.map((phrase, index) => `${Math.floor(index / 5) + 1}행 ${index % 5 + 1}열: "${phrase.trim()}"`).join('\n');
+      const panelPlan = emoticons.map((phrase, index) => `스티커 ${index + 1}: "${phrase.trim()}" – ${getPhraseActionKo(phrase)}`).join('\n');
       const textPolicy = gptTextMode === 'text'
-        ? `[상업용 이모티콘 팝아트 스티커 타이포그래피 규칙 — 최우선 준수]
-1. 각 셀의 지정된 문구를 캐릭터 옆이나 머리 위에 '생동감 넘치는 만화 스티커 폰트(Bold Bubbly Comic Sticker Lettering)'로 정확히 한 번만 그리세요.
-2. 글자 비주얼 스타일: 고채도 원색(노랑, 주황, 핑크, 하늘, 민트 등)의 통통하고 두꺼운 폰트 + 글자 바깥쪽에 매우 또렷하고 두꺼운 순백색 스티커 외곽선 테두리(Thick White Die-Cut Outline)를 둘러 밋밋하지 않고 돋보이게 렌더링하세요.
-3. 감정 소품/미니 아이콘 결합: 각 문구의 감정에 어울리는 아기자기한 만화 포인트 효과(예: ㅋㅋㅋㅋ는 노란 글자+웃음선, 고마워요/사랑해요는 핑크 하트💕, 축하해요는 폭죽🎉, 대박/최고는 반짝이✨/왕관👑, 미안해요/헐은 땀방울💦, 잘자요는 zZ/달빛🌙)를 글자 주변에 귀엽게 결합하세요.
-4. 절대 단일 출력 & 오타 방지: 각 셀당 문구는 오직 1회만 출력하며, 텍스트 박스/사각 프레임/단어 중복 반복은 절대 금지합니다.`
+        ? `[고품질 한글 타이포그래피 정밀 지침] ${getEmotionTextColorGuideKo(emoticons)}
+1. 글자를 단순 텍스트가 아닌 '상업용 카카오톡 이모티콘 3D 입체 스티커 배지(Sticker Graphic Badge)'로 렌더링하세요.
+2. 글자 스타일: 고채도 원색(노랑, 분홍, 빨강, 핑크, 민트, 주황, 보라, 하늘, 남색 등)의 두꺼운 볼드 손글씨 폰트 + 글자 자모 자체에 선명한 윤곽선 + 겉면에 매우 두꺼운 순백색 스티커 테두리(Heavy White Die-Cut Outline).
+3. 감정 소품/미니 아이콘 결합: 각 문구의 감정에 어울리는 아기자기한 만화 포인트 효과(하트💕, 반짝이✨, 왕관👑, 땀방울💦, 엄지👍, 폭죽🎉, 꽃다발💐, zZ 등)를 글자 주변에 귀엽게 결합하세요.
+4. 절대적 단일 출력 규칙: 각 스티커 셀당 지정된 한글 문구를 '오직 단 한 번(EXACTLY ONCE)'만 완벽한 한글로 그리세요. 텍스트 상자(박스), 괄호 (), 대괄호 [], 따옴표 "", 말풍선, 스티커 번호는 절대로 그리지 마세요.`
         : '각 문구는 해당 셀의 표정, 자세와 행동을 정하는 맥락으로만 사용하세요. 이미지에는 문구나 다른 글자를 그리지 마세요.';
       const textExclusion = gptTextMode === 'text'
         ? '추가 문구, 틀린 철자, 임의의 글자, 셀 번호, 따옴표와 텍스트 박스 금지.'
@@ -2835,7 +2835,7 @@ ${referenceInstruction}
 [최우선 화풍]
 ${artDirection}. 15개 셀 모두 같은 선, 질감, 색감과 캐릭터 비율을 적용하세요.
 
-[패널 계획 — 역동적인 2.5등신 만화 표정과 포즈]
+[15개 스티커 패널 계획 — 역동적인 2.5등신 만화 표정과 포즈]
 각 문구에 맞춰 캐릭터의 표정이 살아 숨쉬듯 '극적이고 풍부한 만화적 표정 변화(포복절도 활짝 웃음, 펑펑 우는 눈물, 입이 떡 벌어지는 경악, 초롱초롱한 눈빛 등 눈·눈썹·입 모양을 과감하게 연출)'를 적용하세요.
 서로 다른 생동감 넘치는 전신 자세(서기, 앉기, 점프, 엎드리기, 무릎꿇기 등)를 다양하게 배치하고, 셀마다 감정을 살려주는 보조 소품과 효과를 아기자기하게 결합하세요.
 설정에서 선택한 소품 또는 행동: ${character.props}.
@@ -2855,13 +2855,13 @@ ${textPolicy}
 [제외 조건]
 ${textExclusion} 격자선, 셀 경계선, 구별선, 테두리선, 워터마크, 전체 프레임, 셀 안의 중복 캐릭터, 추가 팔다리, 잘린 신체, 복잡한 풍경과 실사 배경 금지.`;
     } else {
-      const panelPlan = emoticons.map((phrase, index) => `Row ${Math.floor(index / 5) + 1}, Column ${index % 5 + 1}: "${phrase.trim()}"`).join('\n');
+      const panelPlan = emoticons.map((phrase, index) => `Sticker ${index + 1}: "${phrase.trim()}" – ${getPhraseActionEn(phrase)}`).join('\n');
       const textPolicy = gptTextMode === 'text'
-        ? `[VIBRANT POP-ART STICKER TYPOGRAPHY DIRECTIVE — STRICT COMPLIANCE]
-1. Render each assigned phrase exactly once in its corresponding cell using bold, bubbly comic sticker typography beside or above each character.
-2. Visual Styling: High-saturation vibrant colors (yellow, coral, pink, cyan, mint) with a thick, crisp white die-cut sticker outline and subtle drop shadow to pop against the background.
-3. Cute Accent Icons: Decoratively integrate matching cute mini comic icons/effects (e.g. mini hearts ❤️, sparkles ✨, crown 👑, sweat drops 💦, thumbs up 👍, confetti 🎉, zZ) around the lettering matching each emotion.
-4. No text boxes, no rectangular frames, no duplicate words.`
+        ? `[HIGH-PRECISION KOREAN TYPOGRAPHY DIRECTIVE] ${getEmotionTextColorGuideEn(emoticons)}
+1. Render each text as a commercial messenger 3D pop sticker badge.
+2. Text Style: Bold handwritten font filled with vibrant color (yellow, pink, red, mint, orange, purple, sky blue) + crisp inner stroke + heavy white die-cut sticker outline around the entire text.
+3. Cute Accent Icons: Decoratively integrate matching cute mini comic icons/effects (e.g. mini hearts ❤️, sparkles ✨, crown 👑, sweat drops 💦, thumbs up 👍, confetti 🎉, flower bouquet 💐, zZ) around the lettering matching each emotion.
+4. No text boxes, no speech bubbles, no parentheses, no quotes, no sticker numbers.`
         : 'Use each phrase only as context for its cell\'s expression, pose, and action. Do not render any phrase or other text.';
       const textExclusion = gptTextMode === 'text'
         ? 'No extra words, altered spelling, random letters, cell numbers, quotation marks, or text boxes.'
