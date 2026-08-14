@@ -2763,7 +2763,8 @@ ${textPolicy}
 ${textExclusion} 워터마크, 프레임, 중복 캐릭터, 추가 팔다리, 잘린 신체, 복잡한 풍경과 실사 배경 금지.`;
       } else {
         const textPolicy = gptTextMode === 'text'
-          ? `Render the exact phrase "${targetPhrase}" once. Verify spelling and spacing before rendering it, and use legible hand-drawn lettering without a text box. Do not add any other text.`
+          ? `[VIBRANT POP-ART STICKER TYPOGRAPHY DIRECTIVE]
+Render the exact phrase "${targetPhrase}" once in bold, bubbly comic sticker typography with a thick crisp white die-cut sticker outline, subtle drop shadow, and vibrant pop colors (yellow, pink, cyan, orange). Decoratively integrate matching cute mini comic icons/effects (e.g. mini hearts ❤️, sparkles ✨, crown 👑, sweat drops 💦, thumbs up 👍, confetti 🎉, zZ) beside the text. No rectangular text boxes.`
           : `Use "${targetPhrase}" only as visual context. Do not render text, letters, numbers, or typography.`;
         const textExclusion = gptTextMode === 'text'
           ? 'No extra words, altered spelling, random letters, numbers, quotation marks, or text box.'
@@ -2808,7 +2809,11 @@ ${textExclusion} No watermark, frame, duplicate character, extra limbs, cropped 
     if (lang === 'ko') {
       const panelPlan = emoticons.map((phrase, index) => `${Math.floor(index / 5) + 1}행 ${index % 5 + 1}열: "${phrase.trim()}"`).join('\n');
       const textPolicy = gptTextMode === 'text'
-        ? '각 셀에 지정된 문구를 정확히 한 번만 적으세요. 생성 전에 15개 문구의 철자와 띄어쓰기를 확인하고, 일관되고 읽기 쉬운 손글씨를 사용하세요. 다른 글자는 넣지 마세요.'
+        ? `[상업용 이모티콘 팝아트 스티커 타이포그래피 규칙 — 최우선 준수]
+1. 각 셀의 지정된 문구를 캐릭터 옆이나 머리 위에 '생동감 넘치는 만화 스티커 폰트(Bold Bubbly Comic Sticker Lettering)'로 정확히 한 번만 그리세요.
+2. 글자 비주얼 스타일: 고채도 원색(노랑, 주황, 핑크, 하늘, 민트 등)의 통통하고 두꺼운 폰트 + 글자 바깥쪽에 매우 또렷하고 두꺼운 순백색 스티커 외곽선 테두리(Thick White Die-Cut Outline)를 둘러 밋밋하지 않고 돋보이게 렌더링하세요.
+3. 감정 소품/미니 아이콘 결합: 각 문구의 감정에 어울리는 아기자기한 만화 포인트 효과(예: ㅋㅋㅋㅋ는 노란 글자+웃음선, 고마워요/사랑해요는 핑크 하트💕, 축하해요는 폭죽🎉, 대박/최고는 반짝이✨/왕관👑, 미안해요/헐은 땀방울💦, 잘자요는 zZ/달빛🌙)를 글자 주변에 귀엽게 결합하세요.
+4. 절대 단일 출력 & 오타 방지: 각 셀당 문구는 오직 1회만 출력하며, 텍스트 박스/사각 프레임/단어 중복 반복은 절대 금지합니다.`
         : '각 문구는 해당 셀의 표정, 자세와 행동을 정하는 맥락으로만 사용하세요. 이미지에는 문구나 다른 글자를 그리지 마세요.';
       const textExclusion = gptTextMode === 'text'
         ? '추가 문구, 틀린 철자, 임의의 글자, 셀 번호, 따옴표와 텍스트 박스 금지.'
@@ -2850,7 +2855,11 @@ ${textExclusion} 격자선, 셀 경계선, 구별선, 테두리선, 워터마크
     } else {
       const panelPlan = emoticons.map((phrase, index) => `Row ${Math.floor(index / 5) + 1}, Column ${index % 5 + 1}: "${phrase.trim()}"`).join('\n');
       const textPolicy = gptTextMode === 'text'
-        ? 'Render each assigned phrase exactly once in its corresponding cell. Verify spelling and spacing for all 15 phrases before rendering them. Use consistent, legible hand-drawn lettering and add no other text.'
+        ? `[VIBRANT POP-ART STICKER TYPOGRAPHY DIRECTIVE — STRICT COMPLIANCE]
+1. Render each assigned phrase exactly once in its corresponding cell using bold, bubbly comic sticker typography beside or above each character.
+2. Visual Styling: High-saturation vibrant colors (yellow, coral, pink, cyan, mint) with a thick, crisp white die-cut sticker outline and subtle drop shadow to pop against the background.
+3. Cute Accent Icons: Decoratively integrate matching cute mini comic icons/effects (e.g. mini hearts ❤️, sparkles ✨, crown 👑, sweat drops 💦, thumbs up 👍, confetti 🎉, zZ) around the lettering matching each emotion.
+4. No text boxes, no rectangular frames, no duplicate words.`
         : 'Use each phrase only as context for its cell\'s expression, pose, and action. Do not render any phrase or other text.';
       const textExclusion = gptTextMode === 'text'
         ? 'No extra words, altered spelling, random letters, cell numbers, quotation marks, or text boxes.'
