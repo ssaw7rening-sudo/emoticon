@@ -2196,7 +2196,7 @@ function App() {
     const combo = `${pick(allSubjects)}, ${pick(outfits)}, ${pick(props)}, ${pick(styles)}, ${pick(effects)}`;
     
     setCharManual(combo);
-    setCharacterSource('direct');
+    setCharacterSource('random');
     showToast(lang === 'ko' 
       ? `🎲 [${combo.split(',')[0].trim()}] 전 카테고리 랜덤 조합 완료!` 
       : `🎲 Random character generated: ${combo.split(',')[0].trim()}`);
