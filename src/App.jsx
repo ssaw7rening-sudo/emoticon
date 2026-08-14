@@ -213,15 +213,15 @@ const ART_STYLE_PROMPT_MAP_KO = {
   '도트 픽셀 아트풍': '정사각형 픽셀 단위 각진 형태, 안티에일리어싱 없는 계단 현상 윤곽선, 제한된 색상 팔레트(8~16색)',
   '종이 콜라주풍': '오려 붙인 종이 질감의 레이어드 형태, 살짝 어긋난 그림자, 손으로 자른 듯한 불규칙한 가장자리',
   '빈티지 인쇄 만화풍': '살짝 바랜 색감, 인쇄 도트 패턴, 종이 질감의 미세한 노이즈, 얇고 거친 외곽선',
-  '📖 흑백 만화 톤': '순수 흑백 잉크 드로잉, 스크린톤(회색 망점) 음영 처리, 외곽선 강조',
-  '✒️ 일본 출판 만화풍': '정교한 G펜 흑백 잉크선, 만화 컷 스크린톤 음영, 섬세한 해칭 음영, 흑백 출판 만화책 펜화 질감 (exquisite G-pen black ink manga lineart, screentone shading, monochrome comic panel style)',
-  '🧸 3D 펠트/클레이 점토 인형풍': '부드러운 양모 펠트와 클레이 점토 질감, 스톱모션 애니메이션 입체 조형 (3D felt clay doll texture, stop-motion claymation aesthetic)',
-  '🖍️ 크레파스 낙서풍': '따뜻하고 거친 크레용/크레파스 손그림 텍스처, 아기자기한 동화책 낙서 감성 (crayon wax pastel doodle texture, playful storybook sketch)',
-  '✨ Y2K 픽셀 스티커풍': '90년대 레트로 다이어리 꾸미기 스티커, 반짝이 글리터와 선명한 픽셀 그래픽 (Y2K retro glitter pixel art sticker)',
-  '💥 열혈 배틀 만화풍': '두껍고 역동적인 외곽선, 강한 속도선/집중선 배경 효과, 고대비 명암과 진한 그림자',
-  '🌸 샤방샤방 순정만화풍': '가늘고 화려한 외곽선, 큰 눈과 반짝이는 하이라이트, 꽃/반짝임 배경 요소, 파스텔 그라데이션 채색',
-  '👾 8090 레트로 애니풍': '80~90년대 일본 애니 셀화 느낌, 채도 높은 플랫 컬러, 두꺼운 외곽선과 단순한 그림자 블록',
-  '🎨 3D 반실사 애니 렌더링': '부드러운 3D 클레이/픽사풍 라이팅, 은은한 그림자와 하이라이트, 통통한 입체감 있는 형태',
+  '흑백 만화 톤': '순수 흑백 잉크 드로잉, 스크린톤(회색 망점) 음영 처리, 외곽선 강조',
+  '일본 출판 만화풍': '정교한 G펜 흑백 잉크선, 만화 컷 스크린톤 음영, 섬세한 해칭 음영, 흑백 출판 만화책 펜화 질감 (exquisite G-pen black ink manga lineart, screentone shading, monochrome comic panel style)',
+  '3D 펠트/클레이 점토 인형풍': '부드러운 양모 펠트와 클레이 점토 질감, 스톱모션 애니메이션 입체 조형 (3D felt clay doll texture, stop-motion claymation aesthetic)',
+  '크레파스 낙서풍': '따뜻하고 거친 크레용/크레파스 손그림 텍스처, 아기자기한 동화책 낙서 감성 (crayon wax pastel doodle texture, playful storybook sketch)',
+  'Y2K 픽셀 스티커풍': '90년대 레트로 다이어리 꾸미기 스티커, 반짝이 글리터와 선명한 픽셀 그래픽 (Y2K retro glitter pixel art sticker)',
+  '열혈 배틀 만화풍': '두껍고 역동적인 외곽선, 강한 속도선/집중선 배경 효과, 고대비 명암과 진한 그림자',
+  '샤방샤방 순정만화풍': '가늘고 화려한 외곽선, 큰 눈과 반짝이는 하이라이트, 꽃/반짝임 배경 요소, 파스텔 그라데이션 채색',
+  '8090 레트로 애니풍': '80~90년대 일본 애니 셀화 느낌, 채도 높은 플랫 컬러, 두꺼운 외곽선과 단순한 그림자 블록',
+  '3D 반실사 애니 렌더링': '부드러운 3D 클레이/픽사풍 라이팅, 은은한 그림자와 하이라이트, 통통한 입체감 있는 형태',
 };
 
 const ART_STYLE_PROMPT_MAP_EN = {
@@ -263,7 +263,7 @@ const CHARACTER_TAGS_KO = {
   '🌿 식물/자연': ['아기 선인장', '네잎클로버 요정', '동글이 버섯', '화분 아기', '해바라기 꼬마', '새싹 요정', '아기 단풍잎', '방울 토마토', '말랑 아보카도', '달콤 복숭아 요정', '매운맛 아기 고추', '민들레 홀씨', '뽀송 목화솜', '상큼 레몬 꼬마', '눈물 흘리는 양파', '동글동글 도토리', '빨간 사과 요정', '가을 꿀밤송이'],
   '👀 외형/특징': ['둥근 얼굴형', '크고 반짝이는 눈', '통통한 볼살', '짧고 통통한 팔다리', '작고 동그란 코', '발그레한 볼', '복슬복슬한 털', '말랑한 젤리 몸', '길고 쫑긋한 귀', '작은 송곳니', '주근깨', '한쪽 눈을 덮는 앞머리', '동그란 안경', '풍성한 꼬리', '작은 날개', '별 모양 눈동자', '하트 모양 볼무늬', '미니 SD 체형'],
   '✨ 성격/감정': ['장난기 많은', '시크하고 도도한', '순둥순둥 착한', '늘 피곤에 찌든', '애교가 넘치는', '화가 많은', '느긋한', '눈물 많은', '활발한', '소심한', '엉뚱한', '다정한', '항상 배고픈', '호기심 가득한', '매사에 진지한', '허세 가득한', '사랑에 빠진', '자신감 넘치는', '덜렁거리는', '게으른 뒹굴뒹굴', '열정 만수르', '겁이 많은', '새침떼기', '의욕 상실한', '돈을 좋아하는'],
-  '🖌️ 화풍': ['귀여운 2D 만화풍', '한국 웹툰 스타일', '손그림 낙서풍', '부드러운 수채화풍', '색연필 동화책풍', '레트로 애니메이션풍', '깔끔한 미니멀 벡터', '통통 튀는 팝아트풍', '굵은 선의 코믹북풍', '도트 픽셀 아트풍', '종이 콜라주풍', '빈티지 인쇄 만화풍', '📖 흑백 만화 톤', '💥 열혈 배틀 만화풍', '🌸 샤방샤방 순정만화풍', '👾 8090 레트로 애니풍', '🎨 3D 반실사 애니 렌더링', '✒️ 일본 출판 만화풍', '🧸 3D 펠트/클레이 점토 인형풍', '🖍️ 크레파스 낙서풍', '✨ Y2K 픽셀 스티커풍'],
+  '🖌️ 화풍': ['귀여운 2D 만화풍', '한국 웹툰 스타일', '손그림 낙서풍', '부드러운 수채화풍', '색연필 동화책풍', '레트로 애니메이션풍', '깔끔한 미니멀 벡터', '통통 튀는 팝아트풍', '굵은 선의 코믹북풍', '도트 픽셀 아트풍', '종이 콜라주풍', '빈티지 인쇄 만화풍', '흑백 만화 톤', '열혈 배틀 만화풍', '샤방샤방 순정만화풍', '8090 레트로 애니풍', '3D 반실사 애니 렌더링', '일본 출판 만화풍', '3D 펠트/클레이 점토 인형풍', '크레파스 낙서풍', 'Y2K 픽셀 스티커풍'],
   '👕 의상': ['의사 가운', '요리사 앞치마', '회사원 정장', '오버핏 후드티', '멜빵바지', '교복', '트레이닝복', '우비', '포근한 잠옷', '마법사 망토', '화려한 드레스', '스포티한 캡모자', '두꺼운 패딩', '가죽 자켓', '단정한 셔츠와 넥타이', '화사한 꽃무늬 원피스', '힙한 스트릿 패션', '전통 무술 도복', '따뜻한 니트 스웨터', '귀여운 동물 잠옷', '우주복', '탐험가 조끼와 모자', '수영복과 튜브', '클래식한 트렌치코트', '반짝이는 요정 날개', '왕관과 망토', '청바지와 흰 티', '명탐정 코트와 모자'],
   '🎒 소품/동작': ['스마트폰을 든', '커피잔을 든', '선글라스를 낀', '헤드폰을 낀', '노트북을 하는', '책을 읽는', '풍선을 든', '꽃다발을 안고 있는', '마이크를 잡고 노래하는', '게임패드를 쥐고 있는', '프라이팬을 들고 있는', '커다란 돋보기를 든', '스케치북에 그림 그리는', '마법 지팡이를 휘두르는', '장바구니를 들고 있는', '우산을 쓰고 있는', '팝콘을 먹고 있는', '청소기를 돌리는', '망원경으로 엿보는', '요가 매트에서 스트레칭하는', '스마트워치를 확인하는', '돈다발을 쥐고 있는', '아이스 아메리카노 텀블러를 든', '노트북을 두드리는', '치킨 닭다리를 뜯는', '소주/맥주잔을 부딪치는', '수액 링거 맞고 있는'],
   '🌏 글로벌/전통 문화': ['우아한 전통 궁중 한복 룩', '갓과 두루마기 모던 한복 룩', '화려한 K-POP 아이돌 의상', '태권도 검은띠 무도복', '전통 기모노 / 유카타', '아키하바라 메이드 코스프레', '사무라이 하카마 & 닌자 의상', '일본 청춘 세일러복 교복', '신사 무녀(미코) 의상', '신비로운 무협/선협 검객 도포', '화려한 전통 치파오 / 한푸', '이소룡풍 노란 트레이닝 무술복', '경극 가면 배우', '와일드 웨스트 카우보이', '런던 신사 트렌치코트 & 중절모', '사이버펑크 네온 스트릿웨어', '중세 유럽 기사 갑옷', '베레모와 바게트 든 파리지앵', '영국 왕실 근위병 (베어스킨 모자)', '스페인 플라멩코 무용수', '독일 옥토버페스트 레더호젠', '베네치아 가면무도회 귀족', '멕시코 마리아치 & 솜브레로', '망자의 날 슈가 스컬 분장', '브라질 삼바 카니발 댄서', '베트남 아오자이 & 논라 삿갓', '태국 전통 사바이 의상', '인도 전통 사리와 보석 (볼리우드)', '아라비안 나이트 터번 & 요술램프', '하와이안 알로하 셔츠 & 우쿨렐레'],
@@ -284,7 +284,7 @@ const CHARACTER_TAGS_EN = {
   '🌿 Plant/Nature': ['Baby cactus', 'Four-leaf clover fairy', 'Round mushroom', 'Plant pot baby', 'Sunflower buddy', 'Sprout fairy', 'Maple leaf', 'Cherry tomato', 'Cute avocado', 'Sweet peach fairy', 'Spicy chili baby', 'Dandelion fluff', 'Fluffy cotton fairy', 'Fresh lemon buddy', 'Crying onion', 'Cute acorn', 'Red apple fairy', 'Autumn chestnut'],
   '👀 Appearance': ['Round face shape', 'Large sparkling eyes', 'Chubby cheeks', 'Short chubby limbs', 'Small round nose', 'Rosy blushed cheeks', 'Fluffy soft fur', 'Soft squishy jelly body', 'Long perky ears', 'Tiny fangs', 'Cute freckles', 'Bangs covering one eye', 'Round glasses', 'Fluffy voluminous tail', 'Tiny fairy wings', 'Star-shaped pupils', 'Heart cheek pattern', 'Mini chibi SD body'],
   '✨ Trait/Emotion': ['Playful and cheeky', 'Chic and aloof', 'Gentle and kind', 'Perpetually exhausted', 'Full of cute charm', 'Hot-tempered', 'Laid-back and easygoing', 'Crybaby', 'Energetic and lively', 'Timid and shy', 'Goofy and quirky', 'Warm and sweet', 'Always hungry', 'Curious and inquisitive', 'Deadly serious', 'Pompous and showy', 'Deeply in love', 'Full of confidence', 'Clumsy butterfingers', 'Lazy couch potato', 'Overflowing with passion', 'Timid scaredy-cat', 'Prudish and sassy', 'Completely unmotivated', 'Money lover'],
-  '🖌️ Art Style': ['Cute 2D cartoon', 'Korean webtoon style', 'Hand-drawn doodle', 'Soft watercolor', 'Colored pencil storybook', 'Retro animation', 'Clean minimal vector', 'Vibrant pop art', 'Bold line comic book', 'Pixel art retro dot', 'Paper collage style', 'Vintage print comic', '📖 Monochrome manga tone', '💥 Hot-blooded battle manga', '🌸 Sparkling shojo manga', '👾 80s-90s retro anime', '🎨 3D Semi-realistic anime rendering', '✒️ Japanese Manga Ink & Tone Style', '🧸 3D Felt & Claymation Doll Style', '🖍️ Crayon Wax Pastel Doodle Style', '✨ Y2K Retro Glitter Pixel Sticker Style'],
+  '🖌️ Art Style': ['Cute 2D cartoon', 'Korean webtoon style', 'Hand-drawn doodle', 'Soft watercolor', 'Colored pencil storybook', 'Retro animation', 'Clean minimal vector', 'Vibrant pop art', 'Bold line comic book', 'Pixel art retro dot', 'Paper collage style', 'Vintage print comic', 'Monochrome manga tone', 'Hot-blooded battle manga', 'Sparkling shojo manga', '80s-90s retro anime', '3D Semi-realistic anime rendering', 'Japanese Manga Ink & Tone Style', '3D Felt & Claymation Doll Style', 'Crayon Wax Pastel Doodle Style', 'Y2K Retro Glitter Pixel Sticker Style'],
   '👕 Outfit': ['Doctor coat', 'Chef apron', 'Business suit', 'Oversized hoodie', 'Overalls', 'School uniform', 'Tracksuit', 'Raincoat', 'Cozy pajamas', 'Wizard cape', 'Glamorous ballgown', 'Sporty baseball cap', 'Puffer jacket', 'Leather jacket', 'Shirt and tie', 'Floral dress', 'Hip streetwear', 'Martial arts uniform', 'Warm knit sweater', 'Animal onesie', 'Spacesuit', 'Explorer vest and hat', 'Swimwear and tube', 'Classic trench coat', 'Glittering fairy wings', 'Crown and royal cape', 'T-shirt and jeans', 'Detective coat and hat'],
   '🎒 Prop/Action': ['Holding smartphone', 'Holding coffee cup', 'Wearing sunglasses', 'Wearing headphones', 'Working on laptop', 'Reading a book', 'Holding a balloon', 'Holding flower bouquet', 'Singing into microphone', 'Holding game controller', 'Holding frying pan', 'Holding large magnifying glass', 'Drawing in sketchbook', 'Waving magic wand', 'Holding grocery basket', 'Holding an umbrella', 'Eating popcorn', 'Vacuuming floor', 'Peeking through binoculars', 'Stretching on yoga mat', 'Checking smartwatch', 'Holding stacks of cash', 'Holding iced Americano tumbler', 'Typing on laptop', 'Eating fried chicken drumstick', 'Clinking beer/soju glasses', 'Getting IV drip while exhausted'],
   '🌏 World Cultures': ['Traditional Hanbok Korean robe', 'Modern hip Hanbok with Gat hat', 'K-Pop idol stage outfit', 'Taekwondo Dobok martial uniform', 'Traditional Japanese Kimono / Yukata', 'Akihabara Maid cafe cosplay', 'Samurai swordsman / Ninja gear', 'Japanese sailor school uniform', 'Shrine maiden Miko robe', 'Wuxia martial arts silk robe', 'Traditional Cheongsam / Hanfu dress', 'Kung Fu martial artist yellow suit', 'Beijing opera mask performer', 'Wild West cowboy sheriff', 'London gentleman trench coat & fedora', 'Cyberpunk neon streetwear', 'Medieval knight armor & cape', 'Parisian with beret and baguette', 'British royal guard with bearskin cap', 'Spanish Flamenco dancer with rose', 'German Oktoberfest Lederhosen', 'Venetian masquerade noble outfit', 'Mexican Mariachi with Sombrero', 'Day of the Dead sugar skull', 'Brazilian Samba carnival dancer', 'Vietnamese Ao Dai & Non La hat', 'Traditional Thai Sabai silk dress', 'Indian Bollywood silk Saree', 'Arabian Nights turban & magic lamp', 'Hawaiian Aloha shirt & Ukulele'],
@@ -305,7 +305,7 @@ const CHARACTER_TAGS_JA = {
   '🌿 植物/自然': ['赤ちゃんサボテン', '四つ葉のクローバー妖精', 'ころころキノコ', '植木鉢の赤ちゃん', 'ひまわりちゃん', '新芽の妖精', 'もみじちゃん', 'プチトマト', 'アボカドちゃん', 'もも妖精', '激辛とうがらしちゃん', 'たんぽぽの綿毛', 'ふわふわコットン', 'レモン坊や', '泣き虫たまねぎ', 'ころころどんぐり', '赤りんご妖精', '秋のくり坊'],
   '👀 外見/特徴': ['丸顔', '大きくてキラキラした目', 'ぷっくりした頬', '短くて太い手足', '小さくて丸い鼻', 'ほんのり赤らんだ頬', 'もふもふの毛並み', 'ぷにぷにゼリー体型', '長くてぴんと立った耳', '小さな八重歯', 'そばかす', '片目を隠す前髪', '丸メガネ', 'ふさふさのしっぽ', '小さな羽', '星形の瞳', 'ハート型の頬模様', 'ミニSD体型'],
   '✨ 性格/感情': ['いたずら好き', 'ツンデレ・クール', 'おっとり優しい', 'いつもお疲れモード', '愛嬌たっぷり', '怒りっぽい', 'のんびり屋', '泣き虫', '活発・元気', '人見知り・内気', '天然・マイペース', '思いやりがある', 'いつも腹ペコ', '好奇心旺盛', '何事にも真面目', '見栄っ張り', '恋してる', '自信満々', 'おっちょこちょい', 'ぐうたら・ゴロゴロ', '情熱的・やる気満々', '怖がり・ビビリ', 'おすまし・気取り屋', 'やる気ゼロ', 'お金大好き'],
-  '🖌️ 画風': ['かわいい2Dアニメ風', '韓国ウェブトゥーン風', '手描き落書き風', 'やわらか水彩画風', '色鉛筆絵本風', 'レトロアニメ風', 'すっきりミニマルベクター', 'ポップアート風', '太線のコミック風', 'ドット絵ピクセルアート', 'ペーパーコラージュ風', 'ヴィンテージ印刷風', '📖 モノクロ漫画トーン', '💥 熱血バトル漫画風', '🌸 きらきら少女漫画風', '👾 80-90年代レトロアニメ風', '🎨 3Dセミリアルアニメレンダリング', '✒️ 日本の出版マンガ風（Gペン・スクリーントーン）', '🧸 3Dフェルト・粘土クレイ人形風', '🖍️ クレヨン落書きパステル風', '✨ Y2Kレトロキラキラピクセル風'],
+  '🖌️ 画風': ['かわいい2Dアニメ風', '韓国ウェブトゥーン風', '手描き落書き風', 'やわらか水彩画風', '色鉛筆絵本風', 'レトロアニメ風', 'すっきりミニマルベクター', 'ポップアート風', '太線のコミック風', 'ドット絵ピクセルアート', 'ペーパーコラージュ風', 'ヴィンテージ印刷風', 'モノクロ漫画トーン', '熱血バトル漫画風', 'きらきら少女漫画風', '80-90年代レトロアニメ風', '3Dセミリアルアニメレンダリング', '日本の出版マンガ風（Gペン・スクリーントーン）', '3Dフェルト・粘土クレイ人形風', 'クレヨン落書きパステル風', 'Y2Kレトロキラキラピクセル風'],
   '👕 衣装': ['白衣', 'コックエプロン', 'ビジネススーツ', 'オーバーサイズパーカー', 'オーバーオール', '制服', 'ジャージ', 'レインコート', 'もこもこパジャマ', '魔法使いのマント', '華やかなドレス', 'スポーティなキャップ', 'ダウンジャケット', 'レザージャケット', 'シャツとネクタイ', '花柄ワンピース', 'ストリート系ファッション', '伝統武術の道着', 'あったかニットセーター', '動物の着ぐるみパジャマ', '宇宙服', '探検家のベストと帽子', '水着と浮き輪', 'トレンチコート', '妖精の羽', '王冠とマント', 'デニムと白T', '名探偵のコートと帽子'],
   '🎒 小道具/動作': ['スマホを持つ', 'コーヒーカップを持つ', 'サングラスをかける', 'ヘッドホンをつける', 'ノートパソコンを操作する', '本を読む', '風船を持つ', '花束を抱える', 'マイクで歌う', 'ゲームコントローラーを握る', 'フライパンを持つ', '大きな虫眼鏡を持つ', 'スケッチブックに絵を描く', '魔法の杖を振る', '買い物かごを持つ', '傘を差す', 'ポップコーンを食べる', '掃除機をかける', '望遠鏡を覗く', 'ヨガマットでストレッチする', 'スマートウォッチを見る', '札束を握っている', 'アイスコーヒーのタンブラーを持つ', 'ノートパソコンをカタカタ打つ', 'フライドチキンをかじる', 'ビール・お酒のグラスで乾杯', '点滴を打ってぐったり'],
   '🌏 世界の文化・伝統': ['伝統的な韓服（ハンボク）', 'モダンなヒップホップ韓服', 'K-POPアイドルステージ衣装', 'テコンドー黒帯道着', '伝統的な着物・浴衣', '秋葉原メイドコスプレ', '侍（サムライ）・忍者装束', '日本のセーラー服・学生服', '神社巫女（みこ）装束', '武侠・仙侠のシルク道袍', '華やかなチャイナドレス・漢服', 'カンフー武術家（黄色の道着）', '京劇の仮面役者', '西部劇カウボーイ・保安官', 'ロンドン紳士トレンチコート', 'サイバーパンクネオンストリート', '中世ヨーロッパ騎士の甲冑', 'パリジャンのベレー帽とバゲット', 'イギリス王室近衛兵（毛皮帽子）', 'スペイン情熱のフラメンコダンサー', 'ドイツのオクトーバーフェスト衣装', 'ベネチア仮面舞踏会衣装', 'メキシカンマリアッチ＆ソンブレロ', '死者の日シュガースカル仮装', 'ブラジルサンバカーニバルダンサー', 'ベトナムアオザイ＆ノンラー笠', 'タイ伝統サバイ衣装', 'インド伝統サリー＆ボリウッド', 'アラビアンナイトのターバン＆魔法のランプ', 'ハワイアンアロハシャツ＆ウクレレ'],
@@ -326,7 +326,7 @@ const CHARACTER_TAGS_ZH = {
   '🌿 植物/自然': ['仙人掌宝宝', '四叶草精灵', '圆滚滚小蘑菇', '花盆小宝贝', '向日葵娃娃', '嫩芽小仙子', '红枫叶', '圣女果', '牛油果宝贝', '蜜桃小仙子', '爆辣小辣椒', '蒲公英绒毛', '蓬松棉花糖精灵', '柠檬小可爱', '流泪洋葱', '圆溜溜橡果', '红苹果小精灵', '秋日小栗子'],
   '👀 外貌/特征': ['圆圆脸型', '大而闪亮的大眼睛', '肉嘟嘟脸颊', '短短胖胖的四肢', '小巧圆鼻子', '泛红的脸颊', '毛茸茸的毛发', 'Q弹果冻身材', '长长竖起的耳朵', '小虎牙', '雀斑', '遮住单眼的刘海', '圆圆眼镜', '蓬松大尾巴', '小翅膀', '星形瞳孔', '心形脸颊花纹', '迷你Q版SD体型'],
   '✨ 性格/情感': ['爱恶作剧', '高冷傲娇', '温顺善良', '日常疲惫不堪', '撒娇精', '容易暴躁', '慢吞吞从容', '爱哭鬼', '活泼好动', '害羞胆小', '天然呆脱线', '温柔体贴', '总是很饿', '好奇心爆棚', '凡事极度认真', '爱面子装酷', '陷入热恋', '自信满满', '毛手毛脚', '懒散躺平', '热情爆棚', '胆小怕生', '小傲娇', '毫无干劲', '财迷爱钱'],
-  '🖌️ 画风': ['可爱2D动漫风', '韩国条漫Webtoon风', '手绘涂鸦风', '温柔水彩风', '彩铅童话绘本风', '复古动画风', '简约极简矢量风', '波普艺术风', '粗线条美漫风', '像素艺术风', '纸张拼贴风', '复古印刷风', '📖 黑白漫画网点风', '💥 热血战斗漫画风', '🌸 少女漫画闪亮风', '👾 8090年代复古动画风', '🎨 3D半写实动漫渲染', '✒️ 日系出版黑白漫画风（G笔网点纸）', '🧸 3D羊毛毡与黏土定格动画风', '🖍️ 蜡笔涂鸦童话绘本风', '✨ Y2K复古闪光像素贴纸风'],
+  '🖌️ 画风': ['可爱2D动漫风', '韩国条漫Webtoon风', '手绘涂鸦风', '温柔水彩风', '彩铅童话绘本风', '复古动画风', '简约极简矢量风', '波普艺术风', '粗线条美漫风', '像素艺术风', '纸张拼贴风', '复古印刷风', '黑白漫画网点风', '热血战斗漫画风', '少女漫画闪亮风', '8090年代复古动画风', '3D半写实动漫渲染', '日系出版黑白漫画风（G笔网点纸）', '3D羊毛毡与黏土定格动画风', '蜡笔涂鸦童话绘本风', 'Y2K复古闪光像素贴纸风'],
   '👕 服装': ['医生白大褂', '厨师围裙', '职场正装', '宽松连帽衫卫衣', '背带裤', '校服制服', '运动服', '雨衣', '毛茸茸睡衣', '魔法师斗篷', '华丽礼服裙', '运动鸭舌帽', '厚羽绒服', '皮夹克外套', '衬衫配领带', '碎花连衣裙', '街头潮牌穿搭', '传统武术道服', '温暖针织毛衣', '动物连体睡衣', '宇航服', '探险家马甲与帽子', '泳装与救生圈', '经典风衣', '闪亮精灵翅膀', '皇冠与披风', '白T配牛仔裤', '名侦探大衣与帽子'],
   '🎒 道具/动作': ['拿着智能手机', '端着咖啡杯', '戴着墨镜', '戴着耳机', '敲笔记本电脑', '看书', '拿着气球', '抱着花束', '握着麦克风唱歌', '握着游戏手柄', '拿着平底锅', '拿着大放大镜', '在画板上画画', '挥动魔法棒', '提着购物篮', '打着雨伞', '吃爆米花', '吸尘器打扫', '用望远镜偷看', '瑜伽垫上拉伸', '看智能手表', '手握大把钞票', '手拿冰美式随行杯', '噼里啪啦敲笔记本电脑', '大口啃炸鸡腿', '举着啤酒杯干杯', '挂着吊瓶输液续命'],
   '🌏 世界文化与传统': ['传统韩服与礼帽', '新潮改良韩服', 'K-POP偶像舞台华服', '跆拳道道服', '传统日式和服/浴衣', '秋叶原女仆Cosplay', '日本武士/忍者装束', '日系水手服校服', '神社巫女装束', '飘逸武侠/仙侠道袍', '华丽传统旗袍/汉服', '李小龙经典黄色功夫服', '京剧脸谱戏剧演员', '美国西部牛仔与警长', '伦敦绅士风衣与礼帽', '赛博朋克霓虹街头潮服', '中世纪欧洲骑士铠甲', '法式贝雷帽与法棍', '英国皇家卫队红制服与熊皮帽', '西班牙弗拉门戈红裙舞者', '德国慕尼黑啤酒节背带裤', '威尼斯面具舞会贵族服', '墨西哥大草帽流浪乐手', '亡灵节糖骷髅装扮', '巴西狂欢节羽毛桑巴舞者', '越南奥黛与斗笠', '泰国传统金丝纱笼', '印度宝莱坞华丽莎丽', '天方夜谭一千零一夜阿拉伯神灯', '夏威夷阿罗哈花衬衫与尤克里里'],
@@ -2259,9 +2259,9 @@ function App() {
 
     // 4. 화풍
     const styles = [
-      '귀여운 2D 만화풍', '✒️ 일본 출판 만화풍', '🧸 3D 펠트/클레이 점토 인형풍', 
-      '한국 웹툰 스타일', '🖍️ 크레파스 낙서풍', '📖 흑백 만화 톤', '깔끔한 미니멀 벡터',
-      '통통 튀는 팝아트풍', '🌸 샤방샤방 순정만화풍', '✨ Y2K 픽셀 스티커풍'
+      '귀여운 2D 만화풍', '일본 출판 만화풍', '3D 펠트/클레이 점토 인형풍', 
+      '한국 웹툰 스타일', '크레파스 낙서풍', '흑백 만화 톤', '깔끔한 미니멀 벡터',
+      '통통 튀는 팝아트풍', '샤방샤방 순정만화풍', 'Y2K 픽셀 스티커풍'
     ];
 
     // 5. 배경 / 효과
