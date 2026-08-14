@@ -2173,7 +2173,7 @@ const getEmotionTextColorGuideKo = (phrases) => {
     '분홍색', '빨간색', '보라색', '분홍색', '남색'
   ];
   const items = (phrases || []).map((p, i) => `${(p || '').trim()}→${palette[i % palette.length]}`).join(', ');
-  return `각 문구의 글자 색상을 감정에 맞춰 다르게 지정하세요: ${items}. 모든 글자에 흰색 외곽선(stroke)을 두껍게 넣어 스티커 텍스트처럼 입체감 있게 표현하세요.`;
+  return `각 문구의 글자 색상을 감정에 맞춰 다르게 지정하세요: ${items}. 모든 글자에 흰색 외곽선(stroke)을 두껍게 넣어 깔끔한 2D 스티커 텍스트로 또렷하게 표현하세요.`;
 };
 
 const getEmotionTextColorGuideEn = (phrases) => {
@@ -2183,7 +2183,7 @@ const getEmotionTextColorGuideEn = (phrases) => {
     'Warm Pink', 'Crimson Red', 'Deep Purple', 'Soft Pink', 'Deep Navy'
   ];
   const items = (phrases || []).map((p, i) => `"${(p || '').trim()}" -> ${palette[i % palette.length]}`).join(', ');
-  return `Vary text color per phrase according to emotion: ${items}. Add a thick white outline stroke around every text to create a bold, 3D sticker lettering appearance.`;
+  return `Vary text color per phrase according to emotion: ${items}. Add a thick white outline stroke around every text to create a clean, bold 2D sticker lettering appearance.`;
 };
 
 const getPhraseActionKo = (phrase) => {
@@ -2880,7 +2880,7 @@ ${textExclusion} 격자선, 셀 경계선, 구별선, 테두리선, 워터마크
       const panelPlan = emoticons.map((phrase, index) => `Sticker ${index + 1}: "${phrase.trim()}" – ${getPhraseActionEn(phrase)}`).join('\n');
       const textPolicy = gptTextMode === 'text'
         ? `[HIGH-PRECISION KOREAN TYPOGRAPHY DIRECTIVE] ${getEmotionTextColorGuideEn(emoticons)}
-1. Render each text as a commercial messenger 3D pop sticker badge.
+1. Render each text in a clean 2D commercial messenger pop sticker font.
 2. Text Style: Bold handwritten font filled with vibrant color (yellow, pink, red, mint, orange, purple, sky blue) + crisp inner stroke + heavy white die-cut sticker outline around the entire text.
 3. Cute Accent Icons: Decoratively integrate matching cute mini comic icons/effects (e.g. mini hearts ❤️, sparkles ✨, crown 👑, sweat drops 💦, thumbs up 👍, confetti 🎉, flower bouquet 💐, zZ) around the lettering matching each emotion.
 4. No text boxes, no speech bubbles, no parentheses, no quotes, no sticker numbers.`
