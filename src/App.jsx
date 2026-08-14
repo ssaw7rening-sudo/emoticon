@@ -2166,6 +2166,26 @@ const PHRASE_ACTION_MAP_EN = {
   'Cheer up': 'shaking cheer pom-poms dancing',
 };
 
+const getEmotionTextColorGuideKo = (phrases) => {
+  const palette = [
+    '노란색', '분홍색', '빨간색', '핑크색', '민트색',
+    '빨간색', '주황색', '보라색', '하늘색', '노란색',
+    '분홍색', '빨간색', '보라색', '분홍색', '남색'
+  ];
+  const items = (phrases || []).map((p, i) => `${(p || '').trim()}→${palette[i % palette.length]}`).join(', ');
+  return `각 문구의 글자 색상을 감정에 맞춰 다르게 지정하세요: ${items}. 모든 글자에 흰색 외곽선(stroke)을 두껍게 넣어 스티커 텍스트처럼 입체감 있게 표현하세요.`;
+};
+
+const getEmotionTextColorGuideEn = (phrases) => {
+  const palette = [
+    'Bright Yellow', 'Soft Pink', 'Vibrant Red', 'Cute Pink', 'Fresh Mint',
+    'Passion Red', 'Energetic Orange', 'Vivid Purple', 'Sky Blue', 'Bright Yellow',
+    'Warm Pink', 'Crimson Red', 'Deep Purple', 'Soft Pink', 'Deep Navy'
+  ];
+  const items = (phrases || []).map((p, i) => `"${(p || '').trim()}" -> ${palette[i % palette.length]}`).join(', ');
+  return `Vary text color per phrase according to emotion: ${items}. Add a thick white outline stroke around every text to create a bold, 3D sticker lettering appearance.`;
+};
+
 const getPhraseActionKo = (phrase) => {
   const p = (phrase || '').trim();
   return PHRASE_ACTION_MAP_KO[p] || `${p} 맥락에 맞는 독창적인 전신 동작`;
