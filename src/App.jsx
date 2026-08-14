@@ -3090,8 +3090,9 @@ Please edit the most recent image. Keep the character design, face, expression, 
       <header className="w-full top-0 bg-background/95 backdrop-blur-md z-50 sticky border-b border-outline-variant/30 shadow-xs">
         <div className="max-w-3xl mx-auto flex items-center justify-between px-container-margin min-h-14 py-2 w-full">
           <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
-            <h1 className="brand-logo text-[18px] sm:text-[22px] leading-none font-bold text-primary-strong tracking-tight whitespace-nowrap">
-              Prompt Studio
+            <h1 className="brand-logo text-[17px] sm:text-[21px] leading-none font-extrabold text-primary-strong tracking-tight whitespace-nowrap flex items-center gap-1.5">
+              <span>프롬프트 메이커</span>
+              <span className="text-[11px] sm:text-[12px] font-bold opacity-75 text-amber-900 border border-amber-300 bg-amber-100/60 px-1.5 py-0.5 rounded">Prompt Maker</span>
             </h1>
           </div>
           <div className="flex items-center gap-1 sm:gap-2 shrink-0">
@@ -3145,8 +3146,8 @@ Please edit the most recent image. Keep the character design, face, expression, 
           <div className="absolute bottom-10 right-10 hidden sm:block text-[40px] transform -rotate-12 drop-shadow-md">💖</div>
           
           <div className="z-10 flex flex-col gap-2 sm:gap-3 w-full max-w-full px-1">
-            <span className="brand-logo inline-block bg-white/60 text-[#5C3A21] font-black text-[11px] sm:text-[13px] tracking-wider px-3 sm:px-4 py-1 sm:py-1.5 rounded-full backdrop-blur-sm border border-white/80 mx-auto shadow-sm max-w-full text-ellipsis overflow-hidden">
-              AI STICKER PROMPT MAKER
+            <span className="brand-logo inline-block bg-white/70 text-[#5C3A21] font-black text-[12px] sm:text-[14px] tracking-wider px-3.5 sm:px-4.5 py-1.5 rounded-full backdrop-blur-sm border border-white/90 mx-auto shadow-sm max-w-full text-ellipsis overflow-hidden">
+              ✨ AI 프롬프트 메이커 (Prompt Maker)
             </span>
             <h2 className="text-[18px] xs:text-[22px] sm:text-[28px] md:text-[38px] font-black tracking-tight leading-snug drop-shadow-sm w-full max-w-full px-1 [word-break:keep-all] [text-wrap:balance]">
               {(() => {
