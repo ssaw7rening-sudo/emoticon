@@ -227,7 +227,7 @@ const CHARACTER_TAGS_EN = {
 
 const I18N = {
   ko: {
-    title: 'Prompt Studio',
+    title: 'Prompt Maker',
     step1: '캐릭터 설정',
     whatCharacter: '캐릭터 묘사',
     clear: '초기화',
@@ -310,7 +310,7 @@ const I18N = {
     guide4A: '두 가지 방법이 있습니다. 목적에 따라 선택해 보세요!\n\n💰 1. 정식 출시 및 판매를 원할 때\n• "카카오 이모티콘 스튜디오" 사이트에서 제안을 신청해야 합니다.\n• 360x360px 규격의 투명 PNG 이미지 32종을 준비해 제출합니다.\n• 카카오의 내부 심사를 통과하면 공식 스토어에 출시됩니다.\n\n✨ 2. 지인들과 가볍게 무료로 쓸 때 (개인 소장용)\n• 배경을 투명하게 지운 PNG 파일을 스마트폰 갤러리에 저장합니다.\n• 카톡 채팅방에서 [+] 버튼 > [앨범]을 눌러 이미지를 전송합니다.\n• 배경이 투명해서 네모난 사진 테두리가 보이지 않고, 진짜 판매용 스티커처럼 대화창에 아주 깔끔하게 올라갑니다!',
   },
   en: {
-    title: 'Prompt Studio',
+    title: 'Prompt Maker',
     step1: 'Character Description',
     whatCharacter: 'Description',
     clear: 'Clear',
@@ -393,7 +393,7 @@ const I18N = {
     guide4A: 'For official sales, you must submit them to platforms like LINE Creators Market. For personal use, simply save the transparent PNG to your gallery and send it as a regular photo in the chat. It will display cleanly like a sticker.',
   },
   ja: {
-    title: 'Prompt Studio',
+    title: 'Prompt Maker',
     step1: 'キャラクター設定',
     whatCharacter: 'キャラクター説明',
     clear: 'リセット',
@@ -476,7 +476,7 @@ const I18N = {
     guide4A: 'LINE Creators Marketで申請して販売することも、透過PNGをギャラリーに保存してトーク画面で画像として送信して楽しむこともできます！',
   },
   zh: {
-    title: 'Prompt Studio',
+    title: 'Prompt Maker',
     step1: '角色设置',
     whatCharacter: '角色描述',
     clear: '重置',
@@ -3147,12 +3147,12 @@ Please edit the most recent image. Keep the character design, face, expression, 
           <div className="z-10 flex flex-col gap-2 sm:gap-3 w-full max-w-full px-1">
             <span className="brand-logo inline-block bg-white/70 text-[#5C3A21] font-black text-[12px] sm:text-[14px] tracking-wider px-3.5 sm:px-4.5 py-1.5 rounded-full backdrop-blur-sm border border-white/90 mx-auto shadow-sm max-w-full text-ellipsis overflow-hidden">
               {lang === 'ko' 
-                ? '✨ AI 프롬프트 메이커' 
+                ? '✨ AI 이모티콘 프롬프트 메이커' 
                 : lang === 'ja' 
                 ? '✨ AIスタンププロンプトメーカー' 
                 : lang === 'zh' 
                 ? '✨ AI表情包提示词生成器' 
-                : '✨ AI Prompt Maker'}
+                : '✨ AI Emoticon Prompt Maker'}
             </span>
             <h2 className="text-[18px] xs:text-[22px] sm:text-[28px] md:text-[38px] font-black tracking-tight leading-snug drop-shadow-sm w-full max-w-full px-1 [word-break:keep-all] [text-wrap:balance]">
               {(() => {
@@ -4024,7 +4024,7 @@ Please edit the most recent image. Keep the character design, face, expression, 
       <footer className="mt-12 py-10 bg-[#FAF9F6] border-t border-[#E5E0D8] text-center w-full">
         <div className="max-w-3xl mx-auto px-6 flex flex-col gap-2">
           <p className="text-[14px] text-[#8C7A6B] font-bold">
-            © {new Date().getFullYear()} Prompt Studio. All rights reserved.
+            © {new Date().getFullYear()} Prompt Maker. All rights reserved.
           </p>
           <p className="text-[12px] text-[#A69B8F]">
             {lang === 'ko' 
