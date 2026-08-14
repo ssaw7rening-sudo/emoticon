@@ -465,7 +465,9 @@ const I18N = {
     photoActive: '참고 이미지 사용',
     phrases: '이모티콘 문구 그리드',
     themeSelect: '테마 선택',
-    randomMix: '랜덤',
+    randomMix: '랜덤', 
+    activeThemeLabel: '현재 활성화된 테마',
+    customTheme: '✏️ 사용자 지정 (커스텀 문구)',
     gptCopy: 'Copy for ChatGPT',
     geminiCopy: 'Copy for Gemini',
     grokCopy: 'Copy for Grok',
@@ -642,6 +644,8 @@ const I18N = {
     phrases: 'フレーズ選択 (15種)',
     themeSelect: 'テーマ選択',
     randomMix: 'ランダム',
+    activeThemeLabel: '現在のテーマ',
+    customTheme: '✏️ カスタム（自由入力/ランダム）',
     gptCopy: 'Copy for ChatGPT',
     geminiCopy: 'Copy for Gemini',
     grokCopy: 'Copy for Grok',
@@ -730,6 +734,8 @@ const I18N = {
     phrases: '表情短语网格 (15种)',
     themeSelect: '主题选择',
     randomMix: '随机混合',
+    activeThemeLabel: '当前主题',
+    customTheme: '✏️ 自定义短语（手动/随机）',
     gptCopy: 'Copy for ChatGPT',
     geminiCopy: 'Copy for Gemini',
     grokCopy: 'Copy for Grok',
@@ -2276,6 +2282,30 @@ function App() {
       const nextThemeKey = newThemeKeys[themeIndex >= 0 ? themeIndex : 0] || newThemeKeys[0];
       setActiveTheme(nextThemeKey);
       setEmoticons(newThemes[nextThemeKey]);
+    } else {
+      // Map custom phrases to target language if they match old themes, otherwise pick 15 fresh from target language
+      const oldAllEntries = Object.entries(oldThemes);
+      const translated = emoticons.map(phrase => {
+        for (let tIdx = 0; tIdx < oldAllEntries.length; tIdx++) {
+          const [oldThemeK, oldList] = oldAllEntries[tIdx];
+          const pIdx = oldList.indexOf(phrase);
+          if (pIdx !== -1) {
+            const newThemeK = newThemeKeys[tIdx];
+            if (newThemes[newThemeK] && newThemes[newThemeK][pIdx]) {
+              return newThemes[newThemeK][pIdx];
+            }
+          }
+        }
+        return null;
+      });
+
+      if (translated.every(p => p !== null)) {
+        setEmoticons(translated);
+      } else {
+        const allNew = Array.from(new Set(Object.values(newThemes).flat()));
+        const shuffled = [...allNew].sort(() => 0.5 - Math.random());
+        setEmoticons(shuffled.slice(0, 15));
+      }
     }
 
     const categoryIndex = oldCategoryKeys.indexOf(activeTagCategory);
@@ -3960,10 +3990,10 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
             <div className="flex flex-col gap-1">
               <h2 className="font-headline-sm text-headline-sm text-on-surface">{t.phrases}</h2>
               <span className="text-[12px] font-bold text-mint-strong flex items-center gap-1">
-                📌 {lang === 'ko' ? '현재 활성화된 테마:' : 'Active Theme:'} 
+                📌 {t.activeThemeLabel || 'Active Theme'}: 
                 <span className="bg-mint-soft text-mint-strong border border-mint-border px-2 py-0.5 rounded-full">
                   {activeTheme === 'custom' 
-                    ? (lang === 'ko' ? '✏️ 사용자 지정 (커스텀 문구)' : '✏️ Custom Theme')
+                    ? (t.customTheme || '✏️ Custom Theme')
                     : activeTheme}
                 </span>
               </span>
