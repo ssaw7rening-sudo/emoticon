@@ -3056,13 +3056,13 @@ Please edit the most recent image. Keep the character design, face, expression, 
     const popup = window.open(targetUrl, `AI_Companion_${type}`, popupFeatures);
     if (popup) {
       showToast(lang === 'ko' 
-        ? `🚀 ${toastName} 분할 실행 완료! 우측 창에서 Ctrl+V를 누르세요.` 
-        : `🚀 ${toastName} opened! Press Ctrl+V in the side window.`);
+        ? `📋 프롬프트 자동 복사 완료! 우측 ${toastName} 창에서 [Ctrl + V]로 붙여넣으세요.` 
+        : `📋 Prompt auto-copied! Press [Ctrl + V] in the ${toastName} side window.`);
     } else {
       window.open(targetUrl, '_blank');
       showToast(lang === 'ko' 
-        ? `📋 프롬프트 복사 완료! 새 탭에서 Ctrl+V를 누르세요.` 
-        : `📋 Prompt copied! Press Ctrl+V in the new tab.`);
+        ? `📋 프롬프트 자동 복사 완료! 새 창에서 [Ctrl + V]로 붙여넣으세요.` 
+        : `📋 Prompt auto-copied! Press [Ctrl + V] in the new tab.`);
     }
   };
 
@@ -3871,6 +3871,9 @@ Please edit the most recent image. Keep the character design, face, expression, 
                 {copiedType === 'gpt' ? <CheckCircle2 size={16} className="text-[#2D7D64]" /> : <CheckCircle2 size={16} className="text-[#7A4F00]" />}
                 <span>{copiedType === 'gpt' ? (lang === 'ko' ? '✓ 복사 완료!' : '✓ Copied!') : (lang === 'ko' ? '📋 프롬프트만 복사' : '📋 Copy Prompt')}</span>
               </button>
+              <p className="text-[11px] text-slate-500 text-center">
+                {lang === 'ko' ? '✨ 자동 텍스트 전달 + 클립보드 복사' : '✨ Auto text passing + clipboard copy'}
+              </p>
             </div>
 
             {/* Gemini Action Card */}
@@ -3893,6 +3896,9 @@ Please edit the most recent image. Keep the character design, face, expression, 
                 {copiedType === 'gemini' ? <CheckCircle2 size={16} className="text-[#D97706]" /> : <CheckCircle2 size={16} className="text-[#7A4F00]" />}
                 <span>{copiedType === 'gemini' ? (lang === 'ko' ? '✓ 복사 완료!' : '✓ Copied!') : (lang === 'ko' ? '📋 프롬프트만 복사' : '📋 Copy Prompt')}</span>
               </button>
+              <p className="text-[11px] text-amber-700 font-medium text-center">
+                {lang === 'ko' ? '📋 복사 완료! 창 열리면 [Ctrl+V] 누르세요' : '📋 Copied! Press [Ctrl+V] in Gemini'}
+              </p>
             </div>
 
             {/* Grok Action Card */}
@@ -3915,6 +3921,9 @@ Please edit the most recent image. Keep the character design, face, expression, 
                 {copiedType === 'grok' ? <CheckCircle2 size={16} className="text-[#7C3AED]" /> : <CheckCircle2 size={16} className="text-[#7A4F00]" />}
                 <span>{copiedType === 'grok' ? (lang === 'ko' ? '✓ 복사 완료!' : '✓ Copied!') : (lang === 'ko' ? '📋 프롬프트만 복사' : '📋 Copy Prompt')}</span>
               </button>
+              <p className="text-[11px] text-purple-700 font-medium text-center">
+                {lang === 'ko' ? '📋 복사 완료! 창 열리면 [Ctrl+V] 누르세요' : '📋 Copied! Press [Ctrl+V] in Grok'}
+              </p>
             </div>
           </div>
         </section>
