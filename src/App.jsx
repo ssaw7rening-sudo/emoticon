@@ -349,7 +349,7 @@ const I18N = {
     directSource: '✏️ 직접 설정',
     randomSource: '🎲 랜덤 캐릭터',
     photoSource: '📷 사진 참고',
-    rerollRandom: '🎲 다른 캐릭터 다시 뽑기',
+    rerollRandom: '다른 캐릭터 다시 뽑기',
     randomBadge: '🎲 랜덤 캐릭터 모드',
     directBadge: '✏️ 직접 캐릭터 설정',
     photoBadge: '📷 사진 참고 모드',
@@ -437,7 +437,7 @@ const I18N = {
     directSource: '✏️ Build manually',
     randomSource: '🎲 Random Character',
     photoSource: '📷 Use a photo',
-    rerollRandom: '🎲 Re-roll Character',
+    rerollRandom: 'Re-roll Character',
     randomBadge: '🎲 Random Character Mode',
     directBadge: '✏️ Manual Character Setup',
     photoBadge: '📷 Photo Reference Mode',
@@ -525,7 +525,7 @@ const I18N = {
     directSource: '✏️ 直接設定',
     randomSource: '🎲 ランダムキャラ',
     photoSource: '📷 写真から作成',
-    rerollRandom: '🎲 別のキャラを再抽選',
+    rerollRandom: '別のキャラを再抽選',
     randomBadge: '🎲 ランダムキャラモード',
     directBadge: '✏️ 直接キャラクター設定',
     photoBadge: '📷 写真参照モード',
@@ -613,7 +613,7 @@ const I18N = {
     directSource: '✏️ 手动描述',
     randomSource: '🎲 随机角色',
     photoSource: '📷 上传照片',
-    rerollRandom: '🎲 重新随机抽取角色',
+    rerollRandom: '重新随机抽取角色',
     randomBadge: '🎲 随机角色模式',
     directBadge: '✏️ 手动角色描述',
     photoBadge: '📷 照片参考模式',
@@ -3499,9 +3499,11 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                     type="button"
                     aria-pressed={characterSource === source}
                     onClick={() => {
-                      setCharacterSource(source);
-                      if (source === 'random') {
-                        generateRandomCharacter();
+                      if (source !== characterSource) {
+                        setCharacterSource(source);
+                        if (source === 'random') {
+                          generateRandomCharacter();
+                        }
                       }
                     }}
                     className={`interactive-control min-h-11 rounded-[8px] border px-2 sm:px-3 py-2 text-[13px] sm:text-[14px] font-bold text-center transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-mint-strong focus-visible:ring-offset-2 cursor-pointer ${
