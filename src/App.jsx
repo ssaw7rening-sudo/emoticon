@@ -1031,35 +1031,35 @@ const InfoSection = ({ t, lang }) => {
   return (
     <div id="guide-section" className="scroll-mt-24 flex flex-col gap-4">
       {/* 탭 헤더 */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-surface-container-lowest p-3 sm:p-4 rounded-md border border-outline-variant shadow-bubbly">
+      <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-3 bg-surface-container-lowest p-3 sm:p-4 rounded-md border border-outline-variant shadow-bubbly overflow-hidden">
         <h2 className="font-headline-sm text-headline-sm text-on-surface flex items-center gap-2 shrink-0">
           <span>❓</span> {t.guideHeader}
         </h2>
 
-        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar bg-mint-soft p-1.5 rounded-md border border-mint-border shadow-xs w-full lg:w-auto flex-nowrap shrink-0">
+        <div className="grid grid-cols-2 sm:grid-cols-4 lg:flex lg:items-center gap-1 sm:gap-1.5 bg-mint-soft p-1.5 rounded-lg border border-mint-border shadow-xs w-full lg:w-auto max-w-full">
           <button
             onClick={() => setActiveTab('model')}
-            className={`interactive-control whitespace-nowrap flex-none px-3.5 py-1.5 text-[13px] sm:text-[14px] font-bold rounded-md ${activeTab === 'model' ? 'bg-mint text-mint-strong shadow-xs border border-mint-border' : 'text-mint-strong hover:bg-mint-hover'}`}
+            className={`interactive-control px-2 sm:px-3 py-1.5 text-[12px] sm:text-[13px] font-bold rounded-md text-center transition-all cursor-pointer ${activeTab === 'model' ? 'bg-mint text-mint-strong shadow-xs border border-mint-border' : 'text-mint-strong hover:bg-mint-hover'}`}
           >
             🤖 {lang === 'ko' ? 'AI 모델' : lang === 'ja' ? 'AIモデル' : lang === 'zh' ? 'AI模型' : 'AI Models'}
           </button>
           <button
             onClick={() => setActiveTab('bg')}
-            className={`interactive-control whitespace-nowrap flex-none px-3.5 py-1.5 text-[13px] sm:text-[14px] font-bold rounded-md ${activeTab === 'bg' ? 'bg-mint text-mint-strong shadow-xs border border-mint-border' : 'text-mint-strong hover:bg-mint-hover'}`}
+            className={`interactive-control px-2 sm:px-3 py-1.5 text-[12px] sm:text-[13px] font-bold rounded-md text-center transition-all cursor-pointer ${activeTab === 'bg' ? 'bg-mint text-mint-strong shadow-xs border border-mint-border' : 'text-mint-strong hover:bg-mint-hover'}`}
           >
-            ✂️ {lang === 'ko' ? '배경 (누끼) 지우는 법' : lang === 'ja' ? '背景（透過）の消し方' : lang === 'zh' ? '抠图 (透明背景)' : 'Remove Background'}
+            ✂️ {lang === 'ko' ? '배경(누끼) 제거' : lang === 'ja' ? '背景(透過)の消し方' : lang === 'zh' ? '一键去除背景' : 'Remove BG'}
           </button>
           <button
             onClick={() => setActiveTab('usage')}
-            className={`interactive-control whitespace-nowrap flex-none px-3.5 py-1.5 text-[13px] sm:text-[14px] font-bold rounded-md ${activeTab === 'usage' ? 'bg-mint text-mint-strong shadow-xs border border-mint-border' : 'text-mint-strong hover:bg-mint-hover'}`}
+            className={`interactive-control px-2 sm:px-3 py-1.5 text-[12px] sm:text-[13px] font-bold rounded-md text-center transition-all cursor-pointer ${activeTab === 'usage' ? 'bg-mint text-mint-strong shadow-xs border border-mint-border' : 'text-mint-strong hover:bg-mint-hover'}`}
           >
-            💬 {lang === 'ko' ? '이모티콘 등록·사용법' : lang === 'ja' ? 'スタンプの登録・使用方法' : lang === 'zh' ? '表情包使用指南' : 'How to Use Emoticons'}
+            💬 {lang === 'ko' ? '이모티콘 등록·사용법' : lang === 'ja' ? 'スタンプ登録・使い方' : lang === 'zh' ? '表情包使用指南' : 'How to Use'}
           </button>
           <button
             onClick={() => setActiveTab('template')}
-            className={`interactive-control whitespace-nowrap flex-none px-3.5 py-1.5 text-[13px] sm:text-[14px] font-bold rounded-md ${activeTab === 'template' ? 'bg-mint text-mint-strong shadow-xs border border-mint-border' : 'text-mint-strong hover:bg-mint-hover'}`}
+            className={`interactive-control px-2 sm:px-3 py-1.5 text-[12px] sm:text-[13px] font-bold rounded-md text-center transition-all cursor-pointer ${activeTab === 'template' ? 'bg-mint text-mint-strong shadow-xs border border-mint-border' : 'text-mint-strong hover:bg-mint-hover'}`}
           >
-            💡 {lang === 'ko' ? '프롬프트 템플릿 구조' : lang === 'ja' ? 'プロンプト構造' : lang === 'zh' ? '提示词结构指南' : 'Prompt Template'}
+            💡 {lang === 'ko' ? '프롬프트 템플릿' : lang === 'ja' ? 'プロンプト構造' : lang === 'zh' ? '提示词结构' : 'Prompt Template'}
           </button>
         </div>
       </div>
