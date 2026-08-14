@@ -2676,11 +2676,18 @@ function App() {
 
     return {
       subject: subjectParts.join(', ') || (isKo ? '귀여운 오리지널 캐릭터' : 'a cute original character'),
-      appearance: appearances.join(', ') || (characterSource === 'photo'
-        ? (isKo ? photoAppearanceKo : photoAppearanceEn)
-        : (isKo ? '단순하고 알아보기 쉬운 실루엣을 정한 뒤 그대로 유지' : 'use a simple recognizable silhouette and keep it unchanged')),
+      appearance: [
+        ...(characterSource === 'photo'
+          ? [isKo ? photoAppearanceKo : photoAppearanceEn]
+          : [isKo
+              ? '큰 동그란 머리와 앙증맞고 통통한 몸체를 가진 사랑스러운 2.5등신 대두 SD/Chibi 마스코트 캐릭터 비율, 크고 생생한 눈동자와 또렷한 캐릭터 실루엣'
+              : 'adorable 2.5-head SD/Chibi mascot proportions with a big round head, chubby compact body, sparkling expressive eyes, and crisp character silhouette']),
+        ...appearances,
+      ].join(', ') || (isKo ? '깔끔하고 명확한 2.5등신 SD 캐릭터 실루엣 유지' : 'use a clean recognizable 2.5-head SD character silhouette and keep it unchanged'),
       personality: personalities.join(', ') || (isKo ? '친근하고 표정이 풍부한' : 'friendly and expressive'),
-      outfit: outfits.join(', ') || (isKo ? '지정 없음. 처음 정한 의상은 모든 이미지에서 유지' : 'not specified; once chosen, keep it unchanged'),
+      outfit: outfits.join(', ') || (characterSource === 'photo'
+        ? (isKo ? '참고 사진의 의상 스타일 유지' : 'preserve outfit from reference photo')
+        : (isKo ? '지정 없음. 처음 정한 의상은 모든 이미지에서 유지' : 'not specified; once chosen, keep it unchanged')),
       props: props.join(', ') || (isKo ? '필수 소품 없음' : 'no prop required'),
       effects: effects.join(', ') || (isKo ? '감정 전달에 필요한 최소한의 효과만 사용' : 'use only a minimal effect when it clarifies the emotion'),
     };
