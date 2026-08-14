@@ -1592,56 +1592,135 @@ const InfoSection = ({ t, lang }) => {
           <div className="animate-in fade-in slide-in-from-bottom-2 duration-300 flex flex-col gap-5 mt-2">
             <div className="bg-[#FFF9EE] p-4 sm:p-5 rounded-lg border border-[#FFECA1] flex flex-col gap-2">
               <h3 className="font-headline-sm text-headline-sm text-primary-strong flex items-center gap-2">
-                <span>📌</span> {lang === 'ko' ? '이모티콘 프롬프트 메이커란?' : 'What is the Emoticon Prompt Maker?'}
+                <span>📌</span> {getText('whatIsTitle', {
+                  ko: '이모티콘 프롬프트 메이커란?',
+                  ja: 'スタンププロンプトメーカーとは？',
+                  zh: '什么是表情包提示词生成器？',
+                  en: 'What is the Emoticon Prompt Maker?'
+                })}
               </h3>
               <p className="text-[14px] sm:text-[15px] leading-relaxed text-on-surface font-medium">
-                {lang === 'ko'
-                  ? '이모티콘 프롬프트 메이커는 사용자의 키워드 선택이나 사진을 바탕으로 ChatGPT(DALL-E 3), Google Gemini(Imagen 3), xAI Grok(Flux.1)에 즉시 사용 가능한 15종 카카오톡·라인 이모티콘 프롬프트를 1초 만에 자동 생성해 주는 무료 웹 도구입니다.'
-                  : 'A free web tool that generates 15-emoticon sticker sheet prompts for ChatGPT, Gemini, and Grok in 1 second based on keywords or photos.'}
+                {getText('whatIsDesc', {
+                  ko: '이모티콘 프롬프트 메이커는 사용자의 키워드 선택이나 사진을 바탕으로 ChatGPT(DALL-E 3), Google Gemini(Imagen 3), xAI Grok(Flux.1)에 즉시 사용 가능한 15종 카카오톡·라인 이모티콘 프롬프트를 1초 만에 자동 생성해 주는 무료 웹 도구입니다.',
+                  ja: 'スタンププロンプトメーカーは、キーワード選択や写真をもとに、ChatGPT (DALL-E 3)、Google Gemini (Imagen 3)、xAI Grok (Flux.1) で使える15種LINE・KakaoTalkスタンププロンプトを1秒で自動生成する無料Webツールです。',
+                  zh: '表情包提示词生成器是一款免费在线工具，根据您选择的关键词或上传的照片，1秒内自动生成适用于 ChatGPT (DALL-E 3)、Google Gemini (Imagen 3) 和 xAI Grok (Flux.1) 的15格全套表情包提示词。',
+                  en: 'Emoticon Prompt Maker is a free web tool that instantly generates 15-sticker emoticon prompts for ChatGPT (DALL-E 3), Google Gemini (Imagen 3), and xAI Grok (Flux.1) in 1 second based on your keywords or photos.'
+                })}
               </p>
             </div>
 
             <div className="flex flex-col gap-3">
               <h4 className="font-bold text-[16px] text-on-surface flex items-center gap-2">
-                <span>💡</span> {lang === 'ko' ? 'AI 이모티콘 프롬프트 작성을 위한 필수 4단계 템플릿' : '4-Step Essential Prompt Template'}
+                <span>💡</span> {getText('templateHeader', {
+                  ko: 'AI 이모티콘 프롬프트 작성을 위한 필수 4단계 템플릿',
+                  ja: 'AIスタンププロンプト作成のための必須4ステップテンプレート',
+                  zh: 'AI表情包提示词编写必备的4步黄金模板',
+                  en: '4-Step Essential Prompt Template for AI Emoticons'
+                })}
               </h4>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-[13px] sm:text-[14px]">
                 <div className="bg-white p-4 rounded-md border border-outline-variant flex flex-col gap-1.5 shadow-2xs">
-                  <span className="font-bold text-emerald-800">1. 핵심 스타일 (Core Style)</span>
+                  <span className="font-bold text-emerald-800">
+                    {getText('tplStep1Title', {
+                      ko: '1. 핵심 스타일 (Core Style)',
+                      ja: '1. コアスタイル (Core Style)',
+                      zh: '1. 核心画风 (Core Style)',
+                      en: '1. Core Style'
+                    })}
+                  </span>
                   <p className="text-on-surface-variant font-mono text-[12px] bg-slate-50 p-2 rounded border border-slate-200">
                     Cute vector emoticon, kawaii 2D sticker, clean bold outline, flat color
                   </p>
-                  <span className="text-[12px] text-slate-600">이모티콘 특유의 깔끔한 2D 그래픽 질감을 선언합니다.</span>
+                  <span className="text-[12px] text-slate-600">
+                    {getText('tplStep1Desc', {
+                      ko: '이모티콘 특유의 깔끔한 2D 그래픽 질감을 선언합니다.',
+                      ja: 'スタンプ特有のクッキリとした2Dグラフィックスタイルを宣言します。',
+                      zh: '确立表情包特有的清晰2D矢量贴纸图形质感。',
+                      en: 'Declares the clean, vibrant 2D graphic sticker texture.'
+                    })}
+                  </span>
                 </div>
                 <div className="bg-white p-4 rounded-md border border-outline-variant flex flex-col gap-1.5 shadow-2xs">
-                  <span className="font-bold text-emerald-800">2. 캐릭터 묘사 (Subject & Trait)</span>
+                  <span className="font-bold text-emerald-800">
+                    {getText('tplStep2Title', {
+                      ko: '2. 캐릭터 묘사 (Subject & Trait)',
+                      ja: '2. キャラクター描写 (Subject & Trait)',
+                      zh: '2. 角色特征描述 (Subject & Trait)',
+                      en: '2. Character Description (Subject & Trait)'
+                    })}
+                  </span>
                   <p className="text-on-surface-variant font-mono text-[12px] bg-slate-50 p-2 rounded border border-slate-200">
                     A chubby cute yellow cat, expressive eyes, wearing casual hoodie
                   </p>
-                  <span className="text-[12px] text-slate-600">외형, 성격, 의상, 소품 등 고유 특징을 구체화합니다.</span>
+                  <span className="text-[12px] text-slate-600">
+                    {getText('tplStep2Desc', {
+                      ko: '외형, 성격, 의상, 소품 등 고유 특징을 구체화합니다.',
+                      ja: '外見、性格、服装、小道具などの固有の特徴を具体化します。',
+                      zh: '具体化外观、性格、服装、配饰等独特特征。',
+                      en: 'Specifies key details like appearance, personality, outfit, and props.'
+                    })}
+                  </span>
                 </div>
                 <div className="bg-white p-4 rounded-md border border-outline-variant flex flex-col gap-1.5 shadow-2xs">
-                  <span className="font-bold text-emerald-800">3. 15종 감정 및 포즈 그리드 (15 Grid Matrix)</span>
+                  <span className="font-bold text-emerald-800">
+                    {getText('tplStep3Title', {
+                      ko: '3. 15종 감정 및 포즈 그리드 (15 Grid Matrix)',
+                      ja: '3. 15種感情・ポーズグリッド (15 Grid Matrix)',
+                      zh: '3. 15格表情与动作矩阵 (15 Grid Matrix)',
+                      en: '3. 15-Emotion & Pose Grid (15 Grid Matrix)'
+                    })}
+                  </span>
                   <p className="text-on-surface-variant font-mono text-[12px] bg-slate-50 p-2 rounded border border-slate-200">
                     5x3 grid sheet: 1. happy thumbs up, 2. crying tears, 3. laughing loud...
                   </p>
-                  <span className="text-[12px] text-slate-600">카카오톡 인기 대화 상황별 15개 감정을 행렬로 배치합니다.</span>
+                  <span className="text-[12px] text-slate-600">
+                    {getText('tplStep3Desc', {
+                      ko: '인기 대화 상황별 15개 감정을 5x3 행렬로 배치합니다.',
+                      ja: '日常会話でよく使われる15種類の感情を5×3のシート行列で配置します。',
+                      zh: '按5x3矩阵整齐排列日常聊天中最常用的15种核心情绪动作。',
+                      en: 'Arranges 15 daily chat emotions into a cohesive 5x3 sheet matrix.'
+                    })}
+                  </span>
                 </div>
                 <div className="bg-white p-4 rounded-md border border-outline-variant flex flex-col gap-1.5 shadow-2xs">
-                  <span className="font-bold text-emerald-800">4. 배경 및 다이컷 분리 (Isolation & Die-cut)</span>
+                  <span className="font-bold text-emerald-800">
+                    {getText('tplStep4Title', {
+                      ko: '4. 배경 및 다이컷 분리 (Isolation & Die-cut)',
+                      ja: '4. 背景＆ダイカット分離 (Isolation & Die-cut)',
+                      zh: '4. 背景与白边裁切 (Isolation & Die-cut)',
+                      en: '4. Background & Die-cut Border (Isolation & Die-cut)'
+                    })}
+                  </span>
                   <p className="text-on-surface-variant font-mono text-[12px] bg-slate-50 p-2 rounded border border-slate-200">
                     Solid white background, isolated stickers, white die-cut border, no overlap
                   </p>
-                  <span className="text-[12px] text-slate-600">누끼(배경 투명화) 제거가 가장 쉬운 단색 배경을 잠급니다.</span>
+                  <span className="text-[12px] text-slate-600">
+                    {getText('tplStep4Desc', {
+                      ko: '누끼(배경 투명화) 제거가 가장 쉬운 단색 배경을 잠급니다.',
+                      ja: '背景透過（切り抜き）が最も簡単な単色背景と白フチを指定します。',
+                      zh: '锁定便于一键抠图透明化的纯白单色背景与白色剪裁外边框。',
+                      en: 'Locks a solid background with white die-cut borders for easy background removal.'
+                    })}
+                  </span>
                 </div>
               </div>
             </div>
 
             <div className="bg-mint-soft/80 p-4 rounded-lg border border-mint-border text-[13px] text-mint-strong font-medium leading-relaxed">
               <strong className="font-bold text-mint-strong block mb-1">
-                🚀 구글 AI 개요 & 챗봇 검색 최적화 포인트:
+                {getText('optStandardTitle', {
+                  ko: '🚀 AI 엔진별 특화 & 이모티콘 승인 규격 최적화:',
+                  ja: '🚀 AIエンジン特性＆スタンプ審査規格の最適化:',
+                  zh: '🚀 AI引擎特性与表情包审核规范深度优化:',
+                  en: '🚀 AI Engines & Emoticon Approval Standard Optimization:'
+                })}
               </strong>
-              본 사이트는 ChatGPT(DALL-E 3), Google Gemini(Imagen 3), xAI Grok(Flux.1) 각 엔진의 특화 파라미터와 카카오톡 이모티콘 심사 승인 규격을 100% 충족하는 프롬프트를 자동으로 조립하여 제공합니다.
+              {getText('optStandardDesc', {
+                ko: '본 사이트는 ChatGPT(DALL-E 3), Google Gemini(Imagen 3), xAI Grok(Flux.1) 각 엔진의 특화 파라미터와 카카오톡·라인 이모티콘 심사 승인 규격을 100% 충족하는 프롬프트를 자동으로 조립하여 제공합니다.',
+                ja: '当サイトは ChatGPT (DALL-E 3)、Google Gemini (Imagen 3)、xAI Grok (Flux.1) の各エンジン特性と、LINE・KakaoTalkスタンプの審査基準を100%満たす最適化プロンプトを自動生成して提供します。',
+                zh: '本网站自动生成完全适配 ChatGPT (DALL-E 3)、Google Gemini (Imagen 3) 和 xAI Grok (Flux.1) 各引擎特性，并100%满足微信、LINE 及 KakaoTalk 表情包审核标准的专业提示词。',
+                en: 'This service automatically generates prompts fully optimized for the specialized parameters of ChatGPT (DALL-E 3), Google Gemini (Imagen 3), and xAI Grok (Flux.1), adhering 100% to LINE and KakaoTalk sticker submission standards.'
+              })}
             </div>
           </div>
         )}
