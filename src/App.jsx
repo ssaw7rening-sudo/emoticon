@@ -1,6 +1,6 @@
 // AI 이모티콘 프롬프트 메이커 메인 애플리케이션
-import React, { useState, useEffect } from 'react';
-import { Shuffle, CheckCircle2, Bot, Sparkles, Zap, Trash2, RotateCcw } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import { Shuffle, CheckCircle2, Bot, Sparkles, Zap, Trash2, RotateCcw } from "lucide-react";
 
 const THEMES_KO = {
   '일상/인사 ①': ['ㅋㅋㅋ', '감사합니다!', '오늘도 힘내요', '좋아요!', '고마워요', '사랑해요', '대박!', '오예~', '죄송해요', '수고하셨습니다', '축하해요!', '헐 대박', '진짜요?', '감동이야 ㅠㅠ', '잘 자요'],
@@ -138,7 +138,8 @@ const THEMES_JA = {
   '子育て/ベビー ①': ['すやすや睡眠中', 'ミルクタイム', 'オムツ替え完了', 'ハイハイできた！', '夜泣き対応中', '抱っこして〜', '離乳食モグモグ', '初めてのあんよ', 'ママ大好き', 'パパ大好き', '天使の寝顔', 'イヤイヤ期突入', 'おもちゃ散乱', '子育てファイト', 'すくすく育ってね'],
   '子育て/ベビー ②': ['ママって言った！', 'よちよち歩き', 'いないいないばあ', 'お昼寝チャンス！', '離乳食拒否…', '歯が生えてきた', '公園で遊ぼう', 'お風呂タイム', '絵本読み聞かせ', 'ぐずぐず期', '寝かしつけ成功！', '予防接種完了', '笑顔にキュン', '今日もワンオペ', '愛してるよ宝物'],
   'MBTI & ミーム ①': ['完全なるE型', '圧倒的I型', '計画通りのJ型', '即興アドリブP型', '論理的なT型', '共感のF型', '直感派N型', '現実派S型', 'MBTI教えて', 'それな〜！', '解釈一致すぎ', '脳内お花畑', 'メンタル無敵', '語彙力消失', '大優勝！'],
-  'MBTI & ミーム ②': ['I型の引きこもり', 'E型の陽キャ発動', 'T型のド正論パンチ', 'F型の涙腺崩壊', 'J型のスケジュール', 'P型の気まぐれ旅', '生粋のMBTIオタク', 'ミーム中毒', 'テンプレ通り', '尊すぎて無理', '分かりみが深すぎる', 'バズ確定', '全人類見て', '推しが神', 'はい天才'],
+  'MBTI & ミーム ②': ['I型の引きこもり', 'E型の陽キャ発動', 'T型のド正論パンチ', 'F型の涙腺崩壊', 'J型のスケジュール', 'P型の気まぐれ旅', '生粋のMBTIオタク', 'ミーム中毒', 'テンプレ通り', '尊すぎて無理', '分かりみが深すぎる', 'バズ確定', '全人類見て', '推しが神', 'はい天才']
+,
   '旅行/休暇 ①': ['空港へ向かう道（ワクワク）', '搭乗完了！', '休暇スタート！（連絡NG）', 'パスポート持った？', 'ホカンスで癒やされ中', '映え写真撮れた！', 'ご当地グルメ制覇', '両替完了！', 'パッキング中', 'ここは天国かな？', '海見に行こう！', '旅行中（返信遅れます）', 'お土産買っていくね', '帰りたくない…', '休暇ロス（現実に復帰）'],
   '旅行/休暇 ②': ['次どこ行く？', '免税店で爆買い', '飛行機の窓際席', 'ホテルチェックイン完了', '夜景見てリラックス', 'プールで水遊び', 'バックパックの旅へ', 'のんびりティータイム', '道に迷ったけど楽しい', 'チケット予約成功！', '飛行機遅延（ぐったり）', '写真撮って〜', '旅行写真連投中', 'また来ようね', '無事帰国完了！'],
   'お買い物/宅配 ①': ['置き配届いた（ワクワク）', '自腹購入レビュー！', 'カート内全品爆買い', 'これ絶対買うべき！', '売り切れ直前に購入完了', 'セールは見逃せない！', '衝動買いして後悔中', 'レシート見て気絶', '財布がすっからかん', '新しい服でお出かけ！', '開封の儀（至福）', 'コスパ最高すぎ', '散財してスッキリ', '買い物最高に楽しい', '来月の自分が払うはず'],
@@ -187,7 +188,8 @@ const THEMES_ZH = {
   '育儿/萌宝 ①': ['香香甜甜睡觉中', '到喝奶喂奶时间啦', '换好干爽纸尿裤啦', '学会四脚爬行啦！', '半夜狂哭紧急哄娃', '伸出双手求抱抱〜', '辅食吃得津津有味', '迈出人生的第一步路', '最喜欢最爱妈妈了', '最喜欢最爱爸爸了', '像小天使一样的可爱睡颜', '正式进入叛逆小烦恼期', '满地都是扔乱的玩具', '今天也要育儿加油鸭', '健健康康快快长大哦'],
   '育儿/萌宝 ②': ['第一次开口叫妈妈了！', '摇摇晃晃蹒跚学步', '躲猫猫捉迷藏哇', '趁娃睡着偷得半日闲！', '把辅食推开拒绝吃…', '开始冒出第一颗小乳牙啦', '去小公园晒太阳玩耍', '舒服泡澡洗香香时间', '讲睡前童话绘本故事', '哼哼唧唧闹脾气小情绪', '成功把小神兽哄睡着了！', '预防针疫苗顺利接种完毕', '被天真无邪的笑容瞬间击中', '今天也是一个人独自带娃的一天', '深深爱着你我的无价之宝'],
   'MBTI & 梗 ①': ['纯正E人社交天花板', '资深I人社恐本恐', '万事按计划来的强迫症J人', '随性即兴发挥的自由P人', '逻辑严密莫得感情的理智T人', '共情能力爆棚的感性F人', '天马行空直觉流N人', '脚踏实地注重现实的S人', '报上你的MBTI暗号', '就是说啊太真实了〜！', '解读简直和我一模一样', '脑子装满了浪漫幻想花海', '内心强大精神状态极度稳定', '瞬间失去一切语言组织能力', '赢麻了直接封神！'],
-  'MBTI & 梗 ②': ['I人只想一个人闭关宅家', 'E人瞬间开启社交牛逼症', 'T人直击灵魂的事实大暴击', 'F人瞬间泪腺大崩溃泪目', 'J人精确到分钟的时间表', 'P人说走就走的即兴旅行', '如假包换的重度MBTI研究员', '重度网络流行梗上瘾患者', '完美符合一切刻板印象模板', '尊贵到难以用言语形容', '共鸣感深到骨髓深处了', '这条发言绝对要火遍全网', '全人类都给我过来看', '我的本命就是至高神明', '绝妙天才神操作'],
+  'MBTI & 梗 ②': ['I人只想一个人闭关宅家', 'E人瞬间开启社交牛逼症', 'T人直击灵魂的事实大暴击', 'F人瞬间泪腺大崩溃泪目', 'J人精确到分钟的时间表', 'P人说走就走的即兴旅行', '如假包换的重度MBTI研究员', '重度网络流行梗上瘾患者', '完美符合一切刻板印象模板', '尊贵到难以用言语形容', '共鸣感深到骨髓深处了', '这条发言绝对要火遍全网', '全人类都给我过来看', '我的本命就是至高神明', '绝妙天才神操作']
+,
   '旅行/度假 ①': ['奔向机场（超期待）', '登机完毕起飞！', '开启休假模式（请勿打扰）', '护照带齐了吗？', '在酒店躺平度假中', '拍到人生照片啦！', '打卡当地美食天堂', '换汇搞定！', '正在收拾行李箱', '这里简直是天堂吧', '一起去看海吧！', '旅行中（回复较慢）', '会给你带伴手礼的', '完全不想回家…', '假期综合症（回工位）'],
   '旅行/度假 ②': ['下一站去哪玩？', '免税店大扫货完毕', '飞机靠窗绝美景观', '酒店办理入住搞定', '看绝美夜景治愈中', '在游泳池欢快戏水', '背上行囊出发探险', '惬意悠闲下午茶', '迷路了但也超开心', '抢票成功万岁！', '航班延误（累瘫了）', '快帮我拍张大片', '疯狂连发旅行美照', '下次还要再来！', '平安落地回家啦！'],
   '购物/快递 ①': ['快递已送达通知（激动）', '纯自费入手测评！', '清空购物车大扫荡', '这个必须狠狠拿下', '库存告急火速下单', '折扣特惠绝不能错过', '冲动消费后开始后悔', '看到账单倒吸一口气', '钱包彻底空空（吃土）', '穿上新衣服出门！', '拆箱开箱时刻（超治愈）', '性价比爆棚神仙好物', '今天尽情买买买剁手', '花钱的感觉最爽快', '下个月的我自会偿还'],
@@ -196,6 +198,102 @@ const THEMES_ZH = {
   '驾驶/交通 ②': ['早晚高峰挤爆公交', '地铁门关上了（差一秒）', '有谁想一起去兜风？', '到处找停车位中', '侧方停车心态大崩', '音量拉满开着音乐兜风', '下班路上一路大堵（好困）', '导航提示已到达目的地', '务必系好安全带', '通过高速收费站', '喜提新车来接你啦', '下雨路滑减速慢行', '前车师傅快起步呀', '交通卡余额不足', '到了给你发微信'],
   '生日/派对 ①': ['祝你生日大快乐（HBD）！🎂', '吹灭生日蛋糕蜡烛〜', '今天的主角就是我啦！', '感谢你的降临来到世界', '生日礼物已发货！', '许了个美好的愿望（一定要实现）', '生日派对正式开场！', '吃长寿面了吗？', '收到你的祝福超感动', '发个大红包/请你喝奶茶', '又长了一岁（假装抹泪）', '愿你一路繁花似锦！', '度过最幸福最棒的一天', '准备接受生日惊喜吧', '每年都要一起过生日哦'],
   '生日/派对 ②': ['祝你生日快乐歌！', '惊喜派对圆满大成功', '全场齐唱生日歌', '戴上可爱的生日尖尖帽', '拆礼物拆到手软感动', '吹熄纪念日蜡烛', '香槟喷涌欢呼庆祝！', '派对全场焦点隆重登场', '您的年龄已自动+1', '今天全部由我买单！', '充满幸福的美好一天', '祝福消息疯狂刷屏', '最最珍贵之人的生日', '派对狂欢现在才刚开始', '把满满的爱都送给你！']
+};
+
+const ART_STYLE_PROMPT_MAP_KO = {
+  '귀여운 2D 만화풍': '얇고 균일한 검정 외곽선, 플랫 컬러 채색에 부드러운 그라데이션 하이라이트, 둥글둥글한 형태 단순화',
+  '한국 웹툰 스타일': '깔끔한 벡터 라인, 인물 위주의 셀셰이딩, 파스텔 계열 배색과 부드러운 그림자 처리',
+  '손그림 낙서풍': '볼펜/색연필로 슥슥 그린 듯한 불규칙한 손떨림 선, 삐뚤빼뚤한 외곽선, 낙서장 여백에 그린 듯한 러프한 채색',
+  '부드러운 수채화풍': '외곽선 최소화, 물감이 번진 듯한 그라데이션 채색, 종이 질감이 살짝 비치는 파스텔 톤',
+  '색연필 동화책풍': '색연필 특유의 결이 보이는 채색, 부드러운 외곽선, 동화책 삽화 느낌의 따뜻한 색감',
+  '레트로 애니메이션풍': '90년대 셀 애니메이션 느낌의 두꺼운 외곽선, 채도 높은 플랫 컬러, 살짝 거친 셀 텍스처',
+  '깔끔한 미니멀 벡터': '극도로 단순화된 형태, 균일한 두께의 벡터 라인, 그림자 없는 플랫 컬러 2~3톤 배색',
+  '통통 튀는 팝아트풍': '굵고 대담한 외곽선, 원색 위주의 고채도 배색, 망점(halftone) 패턴 강조',
+  '굵은 선의 코믹북풍': '두꺼운 검정 잉크 외곽선, 강한 명암 대비, 망점 패턴 채색, 액션감 있는 선 표현',
+  '도트 픽셀 아트풍': '정사각형 픽셀 단위 각진 형태, 안티에일리어싱 없는 계단 현상 윤곽선, 제한된 색상 팔레트(8~16색)',
+  '종이 콜라주풍': '오려 붙인 종이 질감의 레이어드 형태, 살짝 어긋난 그림자, 손으로 자른 듯한 불규칙한 가장자리',
+  '빈티지 인쇄 만화풍': '살짝 바랜 색감, 인쇄 도트 패턴, 종이 질감의 미세한 노이즈, 얇고 거친 외곽선',
+  '📖 흑백 만화 톤': '순수 흑백 잉크 드로잉, 스크린톤(회색 망점) 음영 처리, 외곽선 강조',
+  '✒️ 일본 출판 만화풍': '정교한 G펜 흑백 잉크선, 만화 컷 스크린톤 음영, 섬세한 해칭 음영, 흑백 출판 만화책 펜화 질감 (exquisite G-pen black ink manga lineart, screentone shading, monochrome comic panel style)',
+  '🧸 3D 펠트/클레이 점토 인형풍': '부드러운 양모 펠트와 클레이 점토 질감, 스톱모션 애니메이션 입체 조형 (3D felt clay doll texture, stop-motion claymation aesthetic)',
+  '🖍️ 크레파스 낙서풍': '따뜻하고 거친 크레용/크레파스 손그림 텍스처, 아기자기한 동화책 낙서 감성 (crayon wax pastel doodle texture, playful storybook sketch)',
+  '✨ Y2K 픽셀 스티커풍': '90년대 레트로 다이어리 꾸미기 스티커, 반짝이 글리터와 선명한 픽셀 그래픽 (Y2K retro glitter pixel art sticker)',
+  '💥 열혈 배틀 만화풍': '두껍고 역동적인 외곽선, 강한 속도선/집중선 배경 효과, 고대비 명암과 진한 그림자',
+  '🌸 샤방샤방 순정만화풍': '가늘고 화려한 외곽선, 큰 눈과 반짝이는 하이라이트, 꽃/반짝임 배경 요소, 파스텔 그라데이션 채색',
+  '👾 8090 레트로 애니풍': '80~90년대 일본 애니 셀화 느낌, 채도 높은 플랫 컬러, 두꺼운 외곽선과 단순한 그림자 블록',
+  '🎨 3D 반실사 애니 렌더링': '부드러운 3D 클레이/픽사풍 라이팅, 은은한 그림자와 하이라이트, 통통한 입체감 있는 형태',
+};
+
+const ART_STYLE_PROMPT_MAP_EN = {
+  'Cute 2D cartoon': 'Thin uniform black outline, flat color with soft gradient highlights, rounded form simplification',
+  'Korean webtoon style': 'Clean vector lines, character-focused cel shading, pastel color scheme with soft shadows',
+  'Hand-drawn doodle': 'Irregular hand-drawn lines like ballpoint or colored pencil, shaky outlines, rough color fill like margin doodles',
+  'Soft watercolor': 'Minimal outlines, water-bleed gradient coloring, pastel tones showing subtle paper texture',
+  'Colored-pencil storybook': 'Visible colored-pencil stroke texture, soft outlines, warm tones like a storybook illustration',
+  'Retro animation': 'Thick outlines like 90s cel animation, high-saturation flat colors, slightly grainy cel texture',
+  'Clean minimal vector': 'Extremely simplified shapes, uniform vector lines, shadowless flat colors with 2-3 tone palette',
+  'Vibrant pop art': 'Bold thick outlines, high-saturation primary colors, halftone dot pattern accents',
+  'Bold comic-book style': 'Thick black ink outlines, strong contrast shading, halftone dot coloring, energetic action linework',
+  'Pixel art': 'Blocky square pixel grid shapes, non-antialiased stepped outlines, limited 8-16 color palette',
+  'Paper collage': 'Layered cut-paper texture, slightly offset drop shadows, irregular hand-cut edges',
+  'Vintage print cartoon': 'Faded vintage colors, print dot matrix pattern, subtle paper noise texture, thin rough outlines',
+  '📖 Monochrome Manga Screentone': 'Pure monochrome black ink drawing, screentone halftone shading, emphasized outlines',
+  '💥 Shonen Battle Manga': 'Thick dynamic outlines, intense speed line & focus line background effects, high contrast with deep shadows',
+  '🌸 Shojo Romance Manga': 'Delicate decorative outlines, big sparkling eyes with highlights, flower & sparkle background accents, pastel gradient coloring',
+  '👾 Classic 80s Anime': '80s-90s Japanese anime cel aesthetic, high-saturation flat colors, thick outlines with simple shadow blocks',
+  '🎨 3D Semi-realistic Animated Film': 'Soft 3D clay/Pixar-style studio lighting, subtle soft shadows and highlights, plump 3D volumetric forms',
+};
+
+const getExpandedArtStyleText = (selectedArtStyle, isKo = false) => {
+  if (!selectedArtStyle) return '';
+  const map = isKo ? ART_STYLE_PROMPT_MAP_KO : ART_STYLE_PROMPT_MAP_EN;
+  const detail = map[selectedArtStyle];
+  if (detail) {
+    return `${selectedArtStyle} (${detail})`;
+  }
+  return selectedArtStyle;
+};
+
+const CHARACTER_TAGS_KO = {
+  '🐱 동물': ['시바견', '치즈냥', '포메라니안', '아기 펭귄', '똥실똥실 토끼', '장난꾸러기 원숭이', '햄스터', '다람쥐', '아기 곰', '사막여우', '쿼카', '아기 오리', '판다', '고슴도치', '알파카', '아기 돼지', '느릿느릿 나무늘보', '아기 코끼리', '귀여운 수달', '아기 물개', '웰시코기', '카피바라', '삐약삐약 병아리', '너구리', '아기 사자', '뱁새 (오목눈이)', '참지않는 말티즈', '동글동글 비숑', '골든리트리버', '삼색 고양이', '턱시도 고양이', '하프물범', '레서판다'],
+  '👦 인물': ['단발머리 소녀', '안경 쓴 모범생', '투블럭 남학생', '뽀글머리 아줌마', '수염 난 아저씨', '포니테일 체육생', '양갈래 소녀', '비니 쓴 힙스터', '정장 입은 신사', '한복 입은 꼬마', '정장 입은 커리어우먼', '온화한 백발 할머니', '지팡이 짚은 할아버지', '노란 모자 유치원생', '선글라스 낀 래퍼', '앞치마 두른 바리스타', '까까머리 군인', '헤드폰 낀 프로게이머', '근육질 헬스보이', '카메라 든 배낭여행객', '가운 입은 의사선생님', '제복 입은 경찰관', '기타 치는 록스타', '스케이트보드 타는 소년', '화려한 K팝 아이돌', '푸근한 동네 아저씨', '요가복 입은 강사', '안전모 쓴 건축가', '파리지앵 화가', '오토바이 타는 라이더', '화사한 꽃집 사장님', '가방 멘 취준생', '피곤한 직장인', '에이프런을 두른 제빵사', '정비복 입은 메카닉', '한복 입은 선비', '카우보이 모자 쓴 목동', '해적 안대 쓴 선장', '화려한 마술사', '발레복 입은 무용수', '트레이닝복 입은 백수', '연구원 가운 입은 과학자', '청바지에 흰티 입은 훈남', '드레스 입은 공주님', '갑옷 입은 기사', '도복 입은 태권도 사범', '승무원 유니폼 입은 스튜어디스', '카메라맨', '등산복 입은 산악인', '마이크 든 아나운서', '법복 입은 판사', '소방복 입은 소방관', '요리사 모자 쓴 셰프', '캡모자 쓴 알바생', '밀짚모자 쓴 농부', '화관 쓴 숲속 소녀', '교복 입고 떡볶이 먹는 학생', '서핑보드 든 서퍼', '헤어롤 만 취업준비생', '신입사원', '영혼 털린 직장인', '초보 운전자', '헬창/운동 마니아'],
+  '🦄 판타지/사물': ['유니콘', '아기 드래곤', '꼬마 마법사', '숲의 요정', '말랑말랑 모찌', '달콤한 마카롱', '딸기 케이크', '포동포동 만두', '꼬마 뱀파이어', '바다 인어공주', '용감한 꼬마 기사', '외계인', '아기 구미호', '귀여운 뿔 도깨비', '빛나는 천사', '장난꾸러기 아기 악마', '마법 양탄자', '솜사탕 구름', '신비로운 인어', '날개 달린 페가수스', '말하는 호박', '우주 비행사', '마법 빗자루', '젤리 괴물', '눈사람 요정'],
+  '🤖 로봇/SF': ['아기 로봇', '사이버 냥이', '말랑 슬라임', '우주 햄스터', '아기 공룡', '픽셀 로봇', '꼬마 외계인', '메카 강아지', '네온 유령', '우주 비행 댕댕이', '사이버펑크 토끼', '홀로그램 유령', 'UFO 탄 외계인', '레트로 모니터봇', '미니 게임기봇', '배터리 충전봇', 'AI 안드로이드', '변신 메카 로봇'],
+  '🍞 디저트/음식': ['말하는 붕어빵', '식빵 아저씨', '마카롱 토끼', '아메리카노 유령', '포동 만두 동자', '딸기 찹쌀떡', '초코칩 쿠키', '치즈 핫도그', '말랑 푸딩', '탕후루 요정', '말랑 떡볶이 떡', '삼각김밥 꼬마', '치즈 피자 조각', '바삭 감자튀김', '노릇 계란후라이', '보글보글 라면', '소프트 아이스크림', '쫀득 타코야끼', '달콤 컵케이크', '비엔나 소시지'],
+  '🌿 식물/자연': ['아기 선인장', '네잎클로버 요정', '동글이 버섯', '화분 아기', '해바라기 꼬마', '새싹 요정', '아기 단풍잎', '방울 토마토', '말랑 아보카도', '달콤 복숭아 요정', '매운맛 아기 고추', '민들레 홀씨', '뽀송 목화솜', '상큼 레몬 꼬마', '눈물 흘리는 양파', '동글동글 도토리', '빨간 사과 요정', '가을 꿀밤송이'],
+  '👀 외형/특징': ['둥근 얼굴형', '크고 반짝이는 눈', '통통한 볼살', '짧고 통통한 팔다리', '작고 동그란 코', '발그레한 볼', '복슬복슬한 털', '말랑한 젤리 몸', '길고 쫑긋한 귀', '작은 송곳니', '주근깨', '한쪽 눈을 덮는 앞머리', '동그란 안경', '풍성한 꼬리', '작은 날개', '별 모양 눈동자', '하트 모양 볼무늬', '미니 SD 체형'],
+  '✨ 성격/감정': ['장난기 많은', '시크하고 도도한', '순둥순둥 착한', '늘 피곤에 찌든', '애교가 넘치는', '화가 많은', '느긋한', '눈물 많은', '활발한', '소심한', '엉뚱한', '다정한', '항상 배고픈', '호기심 가득한', '매사에 진지한', '허세 가득한', '사랑에 빠진', '자신감 넘치는', '덜렁거리는', '게으른 뒹굴뒹굴', '열정 만수르', '겁이 많은', '새침떼기', '의욕 상실한', '돈을 좋아하는'],
+  '🖌️ 화풍': ['귀여운 2D 만화풍', '한국 웹툰 스타일', '손그림 낙서풍', '부드러운 수채화풍', '색연필 동화책풍', '레트로 애니메이션풍', '깔끔한 미니멀 벡터', '통통 튀는 팝아트풍', '굵은 선의 코믹북풍', '도트 픽셀 아트풍', '종이 콜라주풍', '빈티지 인쇄 만화풍', '📖 흑백 만화 톤', '💥 열혈 배틀 만화풍', '🌸 샤방샤방 순정만화풍', '👾 8090 레트로 애니풍', '🎨 3D 반실사 애니 렌더링', '✒️ 일본 출판 만화풍', '🧸 3D 펠트/클레이 점토 인형풍', '🖍️ 크레파스 낙서풍', '✨ Y2K 픽셀 스티커풍'],
+  '👕 의상': ['의사 가운', '요리사 앞치마', '회사원 정장', '오버핏 후드티', '멜빵바지', '교복', '트레이닝복', '우비', '포근한 잠옷', '마법사 망토', '화려한 드레스', '스포티한 캡모자', '두꺼운 패딩', '가죽 자켓', '단정한 셔츠와 넥타이', '화사한 꽃무늬 원피스', '힙한 스트릿 패션', '전통 무술 도복', '따뜻한 니트 스웨터', '귀여운 동물 잠옷', '우주복', '탐험가 조끼와 모자', '수영복과 튜브', '클래식한 트렌치코트', '반짝이는 요정 날개', '왕관과 망토', '청바지와 흰 티', '명탐정 코트와 모자'],
+  '🎒 소품/동작': ['스마트폰을 든', '커피잔을 든', '선글라스를 낀', '헤드폰을 낀', '노트북을 하는', '책을 읽는', '풍선을 든', '꽃다발을 안고 있는', '마이크를 잡고 노래하는', '게임패드를 쥐고 있는', '프라이팬을 들고 있는', '커다란 돋보기를 든', '스케치북에 그림 그리는', '마법 지팡이를 휘두르는', '장바구니를 들고 있는', '우산을 쓰고 있는', '팝콘을 먹고 있는', '청소기를 돌리는', '망원경으로 엿보는', '요가 매트에서 스트레칭하는', '스마트워치를 확인하는', '돈다발을 쥐고 있는', '아이스 아메리카노 텀블러를 든', '노트북을 두드리는', '치킨 닭다리를 뜯는', '소주/맥주잔을 부딪치는', '수액 링거 맞고 있는'],
+  '🌏 글로벌/전통 문화': ['전통 한복 입은 선비/아씨', '갓 쓴 힙한 모던 한복', '화려한 K-POP 아이돌 의상', '태권도 도복', '전통 기모노 / 유카타', '아키하바라 메이드 코스프레', '검도를 든 사무라이 / 닌자', '일본 청춘 세일러복 교복', '신사 무녀(미코) 의상', '신비로운 무협/선협 검객 도포', '화려한 전통 치파오 / 한푸', '쿵푸 무술가 (노란 도복)', '경극 가면 배우', '와일드 웨스트 카우보이', '런던 신사 트렌치코트 & 중절모', '사이버펑크 네온 스트릿웨어', '중세 유럽 기사 갑옷', '베레모와 바게트 든 파리지앵', '영국 왕실 근위병 (베어스킨 모자)', '스페인 플라멩코 무용수', '독일 옥토버페스트 레더호젠', '베네치아 가면무도회 귀족', '멕시코 마리아치 & 솜브레로', '망자의 날 슈가 스컬 분장', '브라질 삼바 카니발 댄서', '베트남 아오자이 & 논라 삿갓', '태국 전통 사바이 의상', '인도 전통 사리와 보석 (볼리우드)', '아라비안 나이트 터번 & 요술램프', '하와이안 알로하 셔츠 & 우쿨렐레'],
+  '🎬 영화/애니메이션': ['마법학교 기숙사 교복과 지팡이', '선글라스와 블랙 수트 비밀요원', '빛나는 네온 블레이드 우주 기사', '별빛 요술봉을 든 변신 마법소녀', '가죽 모자와 채찍을 든 고고학 탐험가', '삼각모자와 깃털 장식 해적 선장', '펄럭이는 빨간 망토 슈퍼히어로', '어둠의 카리스마 다크 히어로', '가죽자켓과 선글라스 바이커 라이더', '지브리풍 비행사 모자와 고글', '숲속의 거대 잎사귀 정령', '트렌치코트와 돋보기 든 클래식 명탐정', '우주 헬멧을 쓴 성간 탐사선 비행사', '판초를 두른 서부 무법자 총잡이', '반쪽 하얀 가면의 오페라 유령', '드래곤을 길들이는 바이킹 전사', '시간여행 타임트래블러', '디스토피아 좀비 아포칼립스 생존자'],
+  '💼 직장인/오피스': ['칼퇴 10초 전 시계 쳐다보는', '야근에 찌든 다크서클', '월급날 통장 보고 감격 눈물', '회의실에서 영혼 가출 멍때리기', '사직서 품에 살포시 안은', '커피 3잔 연속 수혈하기', '모니터 뒤에 몰래 숨은', '결재 서류 들고 눈치 보는', '출근길 만원 지하철 끼인', '점심 메뉴 고르며 행복해하는', '금요일 퇴근 발걸음 경쾌한', '월요병으로 침대와 한 몸'],
+  '🎮 게임/E스포츠': ['RGB 게이밍 헤드셋 낀', '키보드 샷건 치며 분노', '랭크 승급하고 폭죽 터뜨리는', '트롤 팀원 보고 뒷목 잡는', '에너지 드링크 마시며 밤샘', 'VR 고글 쓰고 허공 휘젓는', '컨트롤러 쥐고 초집중 눈빛', '치킨이닭 1등 승리 세리머니', '와이파이 끊겨서 절망하는', '보스 레이드 파티 모집하는', '가챠 뽑기 대성공 환호', '가챠 폭망하고 바닥에 엎드림'],
+  '💘 연애/커플': ['시밀러룩 맞춰 입은', '손잡고 꽁냥꽁냥 걷는', '삐져서 볼 부풀리고 등 돌린', '보고 싶어서 영상통화 캡처', '하트 뿅뿅 쿠션 껴안은', '꽃다발 뒤에 얼굴 숨긴', '기념일 케이크 촛불 후 부는', '어깨에 기대어 꿀잠 자는', '손하트 발사하며 애교 부리기', '연락 기다리며 스마트폰 멍하니 보기', '영화관에서 팝콘 같이 집다가 손 닿은', '비 오는 날 우산 기울여 씌워주는'],
+  '💪 헬스/다이어트': ['프로틴 쉐이커 쉑쉑 흔드는', '무거운 덤벨 번쩍 든', '인바디 체지방률 보고 충격', '샐러드 씹으며 치킨 상상하기', '러닝머신 위에서 땀 뻘뻘', '체중계 올라가고 좌절 눈물', '오운완 거울 셀카 찰칵', '스쿼트 하다가 다리 후들거리는', '스트레칭 폼롤러 위에서 비명', '물 2리터 벌컥벌컥 마시는', '근육 펌핑 거울 보며 흐뭇', '치팅데이 피자 버거 폭풍 흡입'],
+  '🌈 배경/효과': ['반짝반짝 빛나는 효과', '하트 뿅뿅 날리는', '별빛이 내리는', '네온사인 번쩍이는', '만화적인 집중선', '벚꽃이 흩날리는', '불타오르는 이펙트', '땀방울이 튀는', '우울한 먹구름', '무지개빛 아우라', '펑 터지는 폭발', '어두운 그림자', '스포트라이트 조명', '눈보라가 치는', '번개가 치는', '뽀글뽀글 거품', '따뜻한 햇살', '음표가 떠다니는', '바람에 흩날리는', '물음표 둥둥 (?)', '느낌표 번쩍 (!)', '부들부들 떨림선', '충격 먹구름', '하트 눈빛 (반짝)']
+};
+
+const CHARACTER_TAGS_EN = {
+  '🐱 Animal': ['Shiba Inu', 'Orange Tabby Cat', 'Pomeranian', 'Baby Penguin', 'Chubby Bunny', 'Mischievous Monkey', 'Hamster', 'Squirrel', 'Baby Bear', 'Fennec Fox', 'Quokka', 'Baby Duck', 'Panda', 'Hedgehog', 'Alpaca', 'Piglet', 'Lazy Sloth', 'Baby Elephant', 'Cute Otter', 'Baby Seal', 'Welsh Corgi', 'Capybara', 'Baby Chick', 'Raccoon', 'Baby lion', 'Korean crow tit (Baepsae)', 'Feisty Maltese', 'Fluffy Bichon Frise', 'Golden Retriever', 'Calico cat', 'Tuxedo cat', 'Harp seal pup', 'Red panda'],
+  '👦 Person': ['Bob cut girl', 'Nerdy student with glasses', 'Two-block cut boy', 'Permed middle-aged woman', 'Bearded uncle', 'Ponytail athlete', 'Pigtail girl', 'Beanie hipster', 'Gentleman in suit', 'Child in Hanbok', 'Career woman in suit', 'Gentle white-haired grandmother', 'Grandfather with cane', 'Yellow hat preschooler', 'Rapper with shades', 'Barista with apron', 'Buzz cut soldier', 'Pro gamer with headset', 'Muscular gym bro', 'Backpacker with camera', 'Doctor in white coat', 'Police officer in uniform', 'Rock star playing guitar', 'Skater boy', 'Glamorous K-Pop idol', 'Friendly neighborhood guy', 'Yoga instructor', 'Architect in hard hat', 'Parisian artist', 'Biker rider', 'Florist shop owner', 'Job seeker with backpack', 'Tired office worker', 'Baker in apron', 'Mechanic in overalls', 'Scholar in traditional robe', 'Cowboy hat rancher', 'Pirate captain with eyepatch', 'Glamorous magician', 'Ballerina in tutu', 'Slacker in tracksuit', 'Scientist in lab coat', 'Handsome guy in tee and jeans', 'Princess in ballgown', 'Knight in shining armor', 'Taekwondo master', 'Flight attendant in uniform', 'Cameraman', 'Hiker in mountain gear', 'Announcer with microphone', 'Judge in legal robe', 'Firefighter in gear', 'Chef in toque', 'Part-timer in cap', 'Farmer in straw hat', 'Forest maiden in flower crown', 'Student eating tteokbokki', 'Surfer with surfboard', 'Hair roller job seeker', 'Rookie employee', 'Burnout office worker', 'Student beginner driver', 'Gym fitness enthusiast'],
+  '🦄 Fantasy/Object': ['Unicorn', 'Baby dragon', 'Tiny wizard', 'Forest fairy', 'Soft mochi', 'Sweet macaron', 'Strawberry shortcake', 'Tiny Jelly Candy', 'Little vampire', 'Mermaid princess', 'Brave young knight', 'Alien buddy', 'Baby nine-tailed fox', 'Cute horned goblin', 'Shining angel', 'Mischievous little devil', 'Flying magic carpet', 'Cotton candy cloud', 'Mystical mermaid', 'Winged Pegasus', 'Talking pumpkin', 'Astronaut', 'Magic broomstick', 'Jelly monster', 'Snowman fairy'],
+  '🤖 Robot/Sci-Fi': ['Baby robot', 'Cyber kitty', 'Jelly slime', 'Space hamster', 'Baby dino', 'Pixel bot', 'Tiny alien', 'Mecha pup', 'Neon ghost', 'Space dog astronaut', 'Cyberpunk bunny', 'Hologram ghost', 'UFO pilot alien', 'Retro monitor bot', 'Handheld game bot', 'Battery charging bot', 'AI android fairy', 'Transforming mecha'],
+  '🍞 Dessert/Food': ['Talking fish pastry', 'Toast bread guy', 'Macaron bunny', 'Iced coffee ghost', 'Chubby dumpling', 'Strawberry mochi', 'Choco chip cookie', 'Cheese corn dog', 'Custard pudding', 'Tanghulu fairy', 'Chewy rice cake', 'Onigiri rice ball', 'Cheesy pizza slice', 'Crispy fries', 'Sunny-side up egg', 'Ramen noodles', 'Soft serve ice cream', 'Chewy takoyaki', 'Sweet cupcake', 'Vienna sausage'],
+  '🌿 Plant/Nature': ['Baby cactus', 'Four-leaf clover fairy', 'Round mushroom', 'Plant pot baby', 'Sunflower buddy', 'Sprout fairy', 'Maple leaf', 'Cherry tomato', 'Cute avocado', 'Sweet peach fairy', 'Spicy chili baby', 'Dandelion fluff', 'Fluffy cotton fairy', 'Fresh lemon buddy', 'Crying onion', 'Cute acorn', 'Red apple fairy', 'Autumn chestnut'],
+  '👀 Appearance': ['Round face shape', 'Large sparkling eyes', 'Chubby cheeks', 'Short chubby limbs', 'Small round nose', 'Rosy blushed cheeks', 'Fluffy soft fur', 'Soft squishy jelly body', 'Long perky ears', 'Tiny fangs', 'Cute freckles', 'Bangs covering one eye', 'Round glasses', 'Fluffy voluminous tail', 'Tiny fairy wings', 'Star-shaped pupils', 'Heart cheek pattern', 'Mini chibi SD body'],
+  '✨ Trait/Emotion': ['Playful and cheeky', 'Chic and aloof', 'Gentle and kind', 'Perpetually exhausted', 'Full of cute charm', 'Hot-tempered', 'Laid-back and easygoing', 'Crybaby', 'Energetic and lively', 'Timid and shy', 'Goofy and quirky', 'Warm and sweet', 'Always hungry', 'Curious and inquisitive', 'Deadly serious', 'Pompous and showy', 'Deeply in love', 'Full of confidence', 'Clumsy butterfingers', 'Lazy couch potato', 'Overflowing with passion', 'Timid scaredy-cat', 'Prudish and sassy', 'Completely unmotivated', 'Money lover'],
+  '🖌️ Art Style': ['Cute 2D cartoon', 'Korean webtoon style', 'Hand-drawn doodle', 'Soft watercolor', 'Colored pencil storybook', 'Retro animation', 'Clean minimal vector', 'Vibrant pop art', 'Bold line comic book', 'Pixel art retro dot', 'Paper collage style', 'Vintage print comic', '📖 Monochrome manga tone', '💥 Hot-blooded battle manga', '🌸 Sparkling shojo manga', '👾 80s-90s retro anime', '🎨 3D Semi-realistic anime rendering', '✒️ Japanese Manga Ink & Tone Style', '🧸 3D Felt & Claymation Doll Style', '🖍️ Crayon Wax Pastel Doodle Style', '✨ Y2K Retro Glitter Pixel Sticker Style'],
+  '👕 Outfit': ['Doctor coat', 'Chef apron', 'Business suit', 'Oversized hoodie', 'Overalls', 'School uniform', 'Tracksuit', 'Raincoat', 'Cozy pajamas', 'Wizard cape', 'Glamorous ballgown', 'Sporty baseball cap', 'Puffer jacket', 'Leather jacket', 'Shirt and tie', 'Floral dress', 'Hip streetwear', 'Martial arts uniform', 'Warm knit sweater', 'Animal onesie', 'Spacesuit', 'Explorer vest and hat', 'Swimwear and tube', 'Classic trench coat', 'Glittering fairy wings', 'Crown and royal cape', 'T-shirt and jeans', 'Detective coat and hat'],
+  '🎒 Prop/Action': ['Holding smartphone', 'Holding coffee cup', 'Wearing sunglasses', 'Wearing headphones', 'Working on laptop', 'Reading a book', 'Holding a balloon', 'Holding flower bouquet', 'Singing into microphone', 'Holding game controller', 'Holding frying pan', 'Holding large magnifying glass', 'Drawing in sketchbook', 'Waving magic wand', 'Holding grocery basket', 'Holding an umbrella', 'Eating popcorn', 'Vacuuming floor', 'Peeking through binoculars', 'Stretching on yoga mat', 'Checking smartwatch', 'Holding stacks of cash', 'Holding iced Americano tumbler', 'Typing on laptop', 'Eating fried chicken drumstick', 'Clinking beer/soju glasses', 'Getting IV drip while exhausted'],
+  '🌏 World Cultures': ['Traditional Hanbok Korean robe', 'Modern hip Hanbok with Gat hat', 'K-Pop idol stage outfit', 'Taekwondo Dobok martial uniform', 'Traditional Japanese Kimono / Yukata', 'Akihabara Maid cafe cosplay', 'Samurai swordsman / Ninja gear', 'Japanese sailor school uniform', 'Shrine maiden Miko robe', 'Wuxia martial arts silk robe', 'Traditional Cheongsam / Hanfu dress', 'Kung Fu martial artist yellow suit', 'Beijing opera mask performer', 'Wild West cowboy sheriff', 'London gentleman trench coat & fedora', 'Cyberpunk neon streetwear', 'Medieval knight armor & cape', 'Parisian with beret and baguette', 'British royal guard with bearskin cap', 'Spanish Flamenco dancer with rose', 'German Oktoberfest Lederhosen', 'Venetian masquerade noble outfit', 'Mexican Mariachi with Sombrero', 'Day of the Dead sugar skull', 'Brazilian Samba carnival dancer', 'Vietnamese Ao Dai & Non La hat', 'Traditional Thai Sabai silk dress', 'Indian Bollywood silk Saree', 'Arabian Nights turban & magic lamp', 'Hawaiian Aloha shirt & Ukulele'],
+  '🎬 Cinema & Anime': ['Wizard school uniform & magic wand', 'Secret agent in black suit & shades', 'Space knight with neon energy blade', 'Magical girl with starlight wand', 'Archaeologist explorer with fedora & whip', 'Pirate captain with tricorn hat & feather', 'Superhero with flowing red cape', 'Dark charismatic masked hero', 'Biker in leather jacket & sunglasses', 'Ghibli-style aviator cap & goggles', 'Giant forest spirit holding a leaf', 'Classic detective with trench coat & magnifying glass', 'Interstellar astronaut with space helmet', 'Western outlaw gunslinger wearing poncho', 'Phantom with half white mask', 'Viking warrior dragon tamer', 'Time traveler with retro goggles', 'Zombie apocalypse survivor'],
+  '💼 Office & Work': ['Watching clock 10s before clock-out', 'Dark circles from overtime work', 'Tears of joy on payday', 'Soul leaving body during meetings', 'Holding resignation letter in pocket', 'Drinking 3 cups of coffee in a row', 'Hiding behind computer monitor', 'Checking boss mood with approval folder', 'Squished in crowded morning subway', 'Happy while picking lunch menu', 'Bouncy joyful Friday clock-out walk', 'Glued to bed with Monday blues'],
+  '🎮 Gaming & Esports': ['Wearing RGB gaming headset', 'Raging and smashing keyboard', 'Confetti celebration on rank up', 'Holding neck in rage at troll teammates', 'All-nighter with energy drinks', 'Swinging arms in VR goggles', 'Laser focus holding controller', 'Winner winner chicken dinner ceremony', 'Despair when Wi-Fi disconnects', 'Recruiting for boss raid party', 'Cheering on gacha jackpot pull', 'Face down crying after failed gacha'],
+  '💘 Romance & Couples': ['Wearing matching couple outfits', 'Holding hands walking sweetly', 'Pouting with puffed cheeks facing away', 'Taking screenshot on video call', 'Hugging glowing heart cushion', 'Hiding face behind flower bouquet', 'Blowing out anniversary cake candle', 'Sleeping sweetly on shoulder', 'Sending finger heart aegyo', 'Staring at phone waiting for text', 'Touching hands over cinema popcorn', 'Tilting umbrella to share in rain'],
+  '💪 Fitness & Diet': ['Shaking protein shaker bottle', 'Lifting heavy dumbbell with pride', 'Shocked looking at InBody body fat scan', 'Chewing salad dreaming of fried chicken', 'Sweating profusely on treadmill', 'Crying in despair on weighing scale', 'Snapping gym mirror selfie (OOTD)', 'Legs shaking after heavy squats', 'Screaming on foam roller stretch', 'Gulping down 2L water bottle', 'Smiling admiring muscle pump in mirror', 'Devouring pizza and burgers on cheat day'],
+  '🌈 Effect/BG': ['Sparkling glittering effect', 'Hearts fluttering around', 'Starlight falling', 'Neon signs blinking', 'Comic action speed lines', 'Cherry blossom petals swirling', 'Blazing fire effect', 'Sweat drops splashing', 'Gloomy rain cloud', 'Rainbow aura', 'Boom explosion', 'Dark ominous shadow', 'Spotlight illumination', 'Blizzard snowstorm', 'Lightning flash', 'Bubbles floating', 'Warm gentle sunshine', 'Musical notes floating', 'Blowing in the wind', 'Floating question marks (?)', 'Sparking exclamation mark (!)', 'Shivering tremble lines', 'Shock dark cloud', 'Heart sparkle eyes']
 };
 
 const CHARACTER_TAGS_JA = {
@@ -240,49 +338,4002 @@ const CHARACTER_TAGS_ZH = {
   '🌈 特效/背景': ['闪闪发光特效', '爱心四处飞散', '星光飘落', '霓虹灯闪烁', '漫画式集中线', '樱花瓣飘舞', '燃起火焰特效', '汗珠飞溅', '忧郁暗云', '彩虹色光晕', '砰然爆炸', '阴森黑影', '聚光灯照明', '暴风雪席卷', '电闪雷鸣', '啵啵冒气泡', '温暖阳光', '音符飘荡', '在风中飞舞', '飘浮问号（？）', '闪烁感叹号（！）', '瑟瑟发抖颤抖线', '大受打击雷雨乌云', '双眼冒爱心（闪亮）']
 };
 
-
-const CHARACTER_TAGS_KO = {
-  '🐱 동물': ['시바견', '치즈냥', '포메라니안', '아기 펭귄', '똥실똥실 토끼', '장난꾸러기 원숭이', '햄스터', '다람쥐', '아기 곰', '사막여우', '쿼카', '아기 오리', '판다', '고슴도치', '알파카', '아기 돼지', '느릿느릿 나무늘보', '아기 코끼리', '귀여운 수달', '아기 물개', '웰시코기', '카피바라', '삐약삐약 병아리', '너구리', '아기 사자', '뱁새 (오목눈이)', '참지않는 말티즈', '동글동글 비숑', '골든리트리버', '삼색 고양이', '턱시도 고양이', '하프물범', '레서판다'],
-  '👦 인물': ['단발머리 소녀', '안경 쓴 모범생', '투블럭 남학생', '뽀글머리 아줌마', '수염 난 아저씨', '포니테일 체육생', '양갈래 소녀', '비니 쓴 힙스터', '정장 입은 신사', '한복 입은 꼬마', '정장 입은 커리어우먼', '온화한 백발 할머니', '지팡이 짚은 할아버지', '노란 모자 유치원생', '선글라스 낀 래퍼', '앞치마 두른 바리스타', '까까머리 군인', '헤드폰 낀 프로게이머', '근육질 헬스보이', '카메라 든 배낭여행객', '가운 입은 의사선생님', '제복 입은 경찰관', '기타 치는 록스타', '스케이트보드 타는 소년', '화려한 K팝 아이돌', '푸근한 동네 아저씨', '요가복 입은 강사', '안전모 쓴 건축가', '파리지앵 화가', '오토바이 타는 라이더', '화사한 꽃집 사장님', '가방 멘 취준생', '피곤한 직장인', '에이프런을 두른 제빵사', '정비복 입은 메카닉', '한복 입은 선비', '카우보이 모자 쓴 목동', '해적 안대 쓴 선장', '화려한 마술사', '발레복 입은 무용수', '트레이닝복 입은 백수', '연구원 가운 입은 과학자', '청바지에 흰티 입은 훈남', '드레스 입은 공주님', '갑옷 입은 기사', '도복 입은 태권도 사범', '승무원 유니폼 입은 스튜어디스', '카메라맨', '등산복 입은 산악인', '마이크 든 아나운서', '법복 입은 판사', '소방복 입은 소방관', '요리사 모자 쓴 셰프', '캡모자 쓴 알바생', '밀짚모자 쓴 농부', '화관 쓴 숲속 소녀', '교복 입고 떡볶이 먹는 학생', '서핑보드 든 서퍼', '헤어롤 만 취업준비생', '신입사원', '영혼 털린 직장인', '초보 운전자', '헬창/운동 마니아'],
-  '🦄 판타지/사물': ['유니콘', '아기 드래곤', '꼬마 마법사', '숲의 요정', '말랑말랑 모찌', '달콤한 마카롱', '딸기 케이크', '포동포동 만두', '꼬마 뱀파이어', '바다 인어공주', '용감한 꼬마 기사', '외계인', '아기 구미호', '귀여운 뿔 도깨비', '빛나는 천사', '장난꾸러기 아기 악마', '마법 양탄자', '솜사탕 구름', '신비로운 인어', '날개 달린 페가수스', '말하는 호박', '우주 비행사', '마법 빗자루', '젤리 괴물', '눈사람 요정'],
-  '🤖 로봇/SF': ['아기 로봇', '사이버 냥이', '말랑 슬라임', '우주 햄스터', '아기 공룡', '픽셀 로봇', '꼬마 외계인', '메카 강아지', '네온 유령', '우주 비행 댕댕이', '사이버펑크 토끼', '홀로그램 유령', 'UFO 탄 외계인', '레트로 모니터봇', '미니 게임기봇', '배터리 충전봇', 'AI 안드로이드', '변신 메카 로봇'],
-  '🍞 디저트/음식': ['말하는 붕어빵', '식빵 아저씨', '마카롱 토끼', '아메리카노 유령', '포동 만두 동자', '딸기 찹쌀떡', '초코칩 쿠키', '치즈 핫도그', '말랑 푸딩', '탕후루 요정', '말랑 떡볶이 떡', '삼각김밥 꼬마', '치즈 피자 조각', '바삭 감자튀김', '노릇 계란후라이', '보글보글 라면', '소프트 아이스크림', '쫀득 타코야끼', '달콤 컵케이크', '비엔나 소시지'],
-  '🌿 식물/자연': ['아기 선인장', '네잎클로버 요정', '동글이 버섯', '화분 아기', '해바라기 꼬마', '새싹 요정', '아기 단풍잎', '방울 토마토', '말랑 아보카도', '달콤 복숭아 요정', '매운맛 아기 고추', '민들레 홀씨', '뽀송 목화솜', '상큼 레몬 꼬마', '눈물 흘리는 양파', '동글동글 도토리', '빨간 사과 요정', '가을 꿀밤송이'],
-  '👀 외형/특징': ['둥근 얼굴형', '크고 반짝이는 눈', '통통한 볼살', '짧고 통통한 팔다리', '작고 동그란 코', '발그레한 볼', '복슬복슬한 털', '말랑한 젤리 몸', '길고 쫑긋한 귀', '작은 송곳니', '주근깨', '한쪽 눈을 덮는 앞머리', '동그란 안경', '풍성한 꼬리', '작은 날개', '별 모양 눈동자', '하트 모양 볼무늬', '미니 SD 체형'],
-  '✨ 성격/감정': ['장난기 많은', '시크하고 도도한', '순둥순둥 착한', '늘 피곤에 찌든', '애교가 넘치는', '화가 많은', '느긋한', '눈물 많은', '활발한', '소심한', '엉뚱한', '다정한', '항상 배고픈', '호기심 가득한', '매사에 진지한', '허세 가득한', '사랑에 빠진', '자신감 넘치는', '덜렁거리는', '게으른 뒹굴뒹굴', '열정 만수르', '겁이 많은', '새침떼기', '의욕 상실한', '돈을 좋아하는'],
-  '🖌️ 화풍': ['귀여운 2D 만화풍', '한국 웹툰 스타일', '손그림 낙서풍', '부드러운 수채화풍', '색연필 동화책풍', '레트로 애니메이션풍', '깔끔한 미니멀 벡터', '통통 튀는 팝아트풍', '굵은 선의 코믹북풍', '도트 픽셀 아트풍', '종이 콜라주풍', '빈티지 인쇄 만화풍', '📖 흑백 만화 톤', '💥 열혈 배틀 만화풍', '🌸 샤방샤방 순정만화풍', '👾 8090 레트로 애니풍', '🎨 3D 반실사 애니 렌더링', '✒️ 일본 출판 만화풍', '🧸 3D 펠트/클레이 점토 인형풍', '🖍️ 크레파스 낙서풍', '✨ Y2K 픽셀 스티커풍'],
-  '👕 의상': ['의사 가운', '요리사 앞치마', '회사원 정장', '오버핏 후드티', '멜빵바지', '교복', '트레이닝복', '우비', '포근한 잠옷', '마법사 망토', '화려한 드레스', '스포티한 캡모자', '두꺼운 패딩', '가죽 자켓', '단정한 셔츠와 넥타이', '화사한 꽃무늬 원피스', '힙한 스트릿 패션', '전통 무술 도복', '따뜻한 니트 스웨터', '귀여운 동물 잠옷', '우주복', '탐험가 조끼와 모자', '수영복과 튜브', '클래식한 트렌치코트', '반짝이는 요정 날개', '왕관과 망토', '청바지와 흰 티', '명탐정 코트와 모자'],
-  '🎒 소품/동작': ['스마트폰을 든', '커피잔을 든', '선글라스를 낀', '헤드폰을 낀', '노트북을 하는', '책을 읽는', '풍선을 든', '꽃다발을 안고 있는', '마이크를 잡고 노래하는', '게임패드를 쥐고 있는', '프라이팬을 들고 있는', '커다란 돋보기를 든', '스케치북에 그림 그리는', '마법 지팡이를 휘두르는', '장바구니를 들고 있는', '우산을 쓰고 있는', '팝콘을 먹고 있는', '청소기를 돌리는', '망원경으로 엿보는', '요가 매트에서 스트레칭하는', '스마트워치를 확인하는', '돈다발을 쥐고 있는', '아이스 아메리카노 텀블러를 든', '노트북을 두드리는', '치킨 닭다리를 뜯는', '소주/맥주잔을 부딪치는', '수액 링거 맞고 있는'],
-  '🌏 글로벌/전통 문화': ['전통 한복 입은 선비/아씨', '갓 쓴 힙한 모던 한복', '화려한 K-POP 아이돌 의상', '태권도 도복', '전통 기모노 / 유카타', '아키하바라 메이드 코스프레', '검도를 든 사무라이 / 닌자', '일본 청춘 세일러복 교복', '신사 무녀(미코) 의상', '신비로운 무협/선협 검객 도포', '화려한 전통 치파오 / 한푸', '쿵푸 무술가 (노란 도복)', '경극 가면 배우', '와일드 웨스트 카우보이', '런던 신사 트렌치코트 & 중절모', '사이버펑크 네온 스트릿웨어', '중세 유럽 기사 갑옷', '베레모와 바게트 든 파리지앵', '영국 왕실 근위병 (베어스킨 모자)', '스페인 플라멩코 무용수', '독일 옥토버페스트 레더호젠', '베네치아 가면무도회 귀족', '멕시코 마리아치 & 솜브레로', '망자의 날 슈가 스컬 분장', '브라질 삼바 카니발 댄서', '베트남 아오자이 & 논라 삿갓', '태국 전통 사바이 의상', '인도 전통 사리와 보석 (볼리우드)', '아라비안 나이트 터번 & 요술램프', '하와이안 알로하 셔츠 & 우쿨렐레'],
-  '🎬 영화/애니메이션': ['마법학교 기숙사 교복과 지팡이', '선글라스와 블랙 수트 비밀요원', '빛나는 네온 블레이드 우주 기사', '별빛 요술봉을 든 변신 마법소녀', '가죽 모자와 채찍을 든 고고학 탐험가', '삼각모자와 깃털 장식 해적 선장', '펄럭이는 빨간 망토 슈퍼히어로', '어둠의 카리스마 다크 히어로', '가죽자켓과 선글라스 바이커 라이더', '지브리풍 비행사 모자와 고글', '숲속의 거대 잎사귀 정령', '트렌치코트와 돋보기 든 클래식 명탐정', '우주 헬멧을 쓴 성간 탐사선 비행사', '판초를 두른 서부 무법자 총잡이', '반쪽 하얀 가면의 오페라 유령', '드래곤을 길들이는 바이킹 전사', '시간여행 타임트래블러', '디스토피아 좀비 아포칼립스 생존자'],
-  '💼 직장인/오피스': ['칼퇴 10초 전 시계 쳐다보는', '야근에 찌든 다크서클', '월급날 통장 보고 감격 눈물', '회의실에서 영혼 가출 멍때리기', '사직서 품에 살포시 안은', '커피 3잔 연속 수혈하기', '모니터 뒤에 몰래 숨은', '결재 서류 들고 눈치 보는', '출근길 만원 지하철 끼인', '점심 메뉴 고르며 행복해하는', '금요일 퇴근 발걸음 경쾌한', '월요병으로 침대와 한 몸'],
-  '🎮 게임/E스포츠': ['RGB 게이밍 헤드셋 낀', '키보드 샷건 치며 분노', '랭크 승급하고 폭죽 터뜨리는', '트롤 팀원 보고 뒷목 잡는', '에너지 드링크 마시며 밤샘', 'VR 고글 쓰고 허공 휘젓는', '컨트롤러 쥐고 초집중 눈빛', '치킨이닭 1등 승리 세리머니', '와이파이 끊겨서 절망하는', '보스 레이드 파티 모집하는', '가챠 뽑기 대성공 환호', '가챠 폭망하고 바닥에 엎드림'],
-  '💘 연애/커플': ['시밀러룩 맞춰 입은', '손잡고 꽁냥꽁냥 걷는', '삐져서 볼 부풀리고 등 돌린', '보고 싶어서 영상통화 캡처', '하트 뿅뿅 쿠션 껴안은', '꽃다발 뒤에 얼굴 숨긴', '기념일 케이크 촛불 후 부는', '어깨에 기대어 꿀잠 자는', '손하트 발사하며 애교 부리기', '연락 기다리며 스마트폰 멍하니 보기', '영화관에서 팝콘 같이 집다가 손 닿은', '비 오는 날 우산 기울여 씌워주는'],
-  '💪 헬스/다이어트': ['프로틴 쉐이커 쉑쉑 흔드는', '무거운 덤벨 번쩍 든', '인바디 체지방률 보고 충격', '샐러드 씹으며 치킨 상상하기', '러닝머신 위에서 땀 뻘뻘', '체중계 올라가고 좌절 눈물', '오운완 거울 셀카 찰칵', '스쿼트 하다가 다리 후들거리는', '스트레칭 폼롤러 위에서 비명', '물 2리터 벌컥벌컥 마시는', '근육 펌핑 거울 보며 흐뭇', '치팅데이 피자 버거 폭풍 흡입'],
-  '🌈 배경/효과': ['반짝반짝 빛나는 효과', '하트 뿅뿅 날리는', '별빛이 내리는', '네온사인 번쩍이는', '만화적인 집중선', '벚꽃이 흩날리는', '불타오르는 이펙트', '땀방울이 튀는', '우울한 먹구름', '무지개빛 아우라', '펑 터지는 폭발', '어두운 그림자', '스포트라이트 조명', '눈보라가 치는', '번개가 치는', '뽀글뽀글 거품', '따뜻한 햇살', '음표가 떠다니는', '바람에 흩날리는', '물음표 둥둥 (?)', '느낌표 번쩍 (!)', '부들부들 떨림선', '충격 먹구름', '하트 눈빛 (반짝)']
+const I18N = {
+  ko: {
+    title: 'Prompt Maker',
+    step1: '캐릭터 설정',
+    whatCharacter: '캐릭터 묘사',
+    clear: '초기화',
+    placeholder: '예: 동글동글 귀여운 노란 고양이',
+    characterSource: '캐릭터 기준',
+    directSource: '✏️ 직접 설정',
+    photoSource: '📷 사진 참고',
+    photoMethod: '사진 반영 방식',
+    photoExact: '최대한 닮게',
+    photoFeatures: '특징만 반영',
+    photoCharacterize: '귀엽게 캐릭터화',
+    photoAttachGuide: '프롬프트를 복사한 뒤 AI 대화창(ChatGPT, Gemini, Grok)에 참고할 사진도 함께 첨부해 주세요.',
+    photoActive: '참고 이미지 사용',
+    phrases: '이모티콘 문구 그리드',
+    themeSelect: '테마 선택',
+    randomMix: '랜덤',
+    gptCopy: 'Copy for ChatGPT',
+    geminiCopy: 'Copy for Gemini',
+    grokCopy: 'Copy for Grok',
+    previewTitle: '프롬프트 미리보기',
+    forGpt: 'ChatGPT',
+    forGemini: 'Gemini',
+    forGrok: 'Grok',
+    guideTitle: '활용 가이드',
+    guide1Q: '🤔 AI 이모티콘 프롬프트 메이커란?',
+    guide1A: '캐릭터와 문구는 떠오르는데 AI에게 어떻게 요청해야 할지 막막하셨나요?\n원하는 캐릭터 특징과 상황을 고르면\nChatGPT, Gemini, Grok에서 바로 활용할 수 있는 이모티콘 제작 프롬프트를\n자동으로 조합해 주는 웹 유틸리티입니다.',
+    guide2Q: '💡 ChatGPT vs Gemini 어떤 것을 써야 할까요?',
+    guide2A: '각 AI 이미지 생성 기능의 장점이 다르므로 목적에 맞게 골라 쓰세요!\n\n🟢 ChatGPT 추천: "이미지 안에 정확한 대사가 필요한 경우"\n• 문구를 포함한 이모티콘 시안을 만들 때 활용하기 좋습니다.\n• 문구가 길거나 중요한 경우 생성 후 철자를 꼭 확인하세요.\n\n🔵 Gemini 이미지 생성 추천: "표정과 행동 중심의 이모티콘"\n• 캐릭터의 표정, 몸짓과 시각 효과로 상황을 표현할 때 활용하기 좋습니다.\n• 시트 전체는 초안으로 만들고, 최종 결과는 15종 개별 분할에서 한 장씩 생성하면 캐릭터 일관성을 관리하기 쉽습니다.\n• 필요하면 Gemini용 글자 설정에서 문구 포함을 선택할 수 있습니다.',
+    modeSheet: '📱 시트 전체 (15종)',
+    modeIndividual: '🖼️ 자유 개별 (1종)',
+    modeBatch: '📋 15종 개별 분할',
+    individualTip: '💡 일관성 팁: 전체 시트(15종)를 먼저 생성한 후, 동일한 채팅창에서 개별 모드 프롬프트를 이어서 입력하세요.',
+    batchTip: '문구를 누르면 현재 선택된 AI의 1개 이미지용 프롬프트가 바로 복사됩니다.',
+    individualInput: '표현할 문구나 상황 직접 입력',
+    individualPlaceholder: '예: 눈물을 흘리며 슬퍼하는 모습',
+    batchSelect: '미리볼 문구 선택',
+    selectedPhrase: '선택 문구',
+    copiedPrompt: '프롬프트 복사 완료',
+    gptTextMode: 'ChatGPT 이미지 글자',
+    gptIncludeText: '문구 포함',
+    gptNoText: '글자 없이',
+    gptBackgroundMode: 'ChatGPT 배경',
+    gptTransparent: '투명 배경',
+    gptSolid: '단색 배경',
+    gptChroma: '크로마키',
+    gptWorkflowTip: 'ChatGPT 팁: 문구 정확도가 중요하면 시트 전체로 초안을 만든 뒤 15종 개별 분할에서 한 장씩 생성해 확인하세요.',
+    geminiTextMode: 'Gemini 이미지 글자',
+    geminiNoText: '글자 없이',
+    geminiIncludeText: '문구 포함',
+    geminiBackgroundMode: 'Gemini 배경',
+    geminiTransparent: '투명 배경',
+    geminiSolid: '단색 배경',
+    geminiChroma: '크로마키',
+    geminiStageMode: 'Gemini 작업 단계',
+    geminiReferenceStage: '① 기준 캐릭터 만들기',
+    geminiFinalStage: '② 기준 이미지로 생성',
+    geminiReferenceTip: '먼저 문구 없는 기준 캐릭터를 만든 뒤, 마음에 드는 결과 이미지를 저장하세요.',
+    geminiFinalTip: 'Gemini는 표정과 행동 중심 생성에 강합니다. 텍스트가 깨질 경우 [글자 미포함] 모드로 생성 후 편집 앱에서 글자를 추가하시면 더욱 깔끔합니다.',
+    gptRepairTitle: 'ChatGPT 이미지 결과 보정',
+    geminiRepairTitle: 'Gemini 이미지 결과 보정',
+    repairHelp: '💡 사용법: AI가 만든 이미지에 결함이 생겼을 때 버튼을 눌러 복사한 뒤, AI 대화창에 그대로 붙여넣어(Ctrl+V) 전송하세요.',
+    geminiRepairIdentity: '캐릭터가 달라졌어요',
+    geminiRepairCrop: '몸이 잘렸어요',
+    geminiRepairText: '문구가 틀렸어요',
+    geminiWorkflowTip: 'Gemini 팁: 시트 전체는 캐릭터와 구도 초안용으로 사용하고, 최종 이미지는 15종 개별 분할로 한 장씩 만드는 것을 권장합니다.',
+    grokTextMode: 'Grok 이미지 글자',
+    grokNoText: '글자 없이',
+    grokIncludeText: '문구 포함',
+    grokBackgroundMode: 'Grok 배경',
+    grokTransparent: '투명 배경',
+    grokSolid: '단색 배경',
+    grokChroma: '크로마키',
+    grokWorkflowTip: 'Grok 팁: Grok은 Flux.1 엔진 기반으로 고화질 스티커 렌더링에 우수합니다. 글자 수정이 필요할 경우 [글자 미포함] 모드로 생성해 보세요.',
+    grokRepairTitle: 'Grok 이미지 결과 보정',
+    emptyPhraseError: '비어 있는 문구가 있습니다. 모든 문구를 입력해 주세요.',
+    duplicatePhraseError: '중복된 문구가 있습니다. 서로 다른 문구로 수정해 주세요.',
+    guide3Q: '✂️ 배경(누끼)은 어떻게 쉽게 지우나요?',
+    guide3A: 'PC에서는 무료 웹사이트(remove.bg)나 국민 뷰어 알씨(ALSee)의 "이미지 편집 - AI 배경 제거" 기능을 이용하면 클릭 한 번에 누끼를 딸 수 있습니다. 스마트폰은 갤러리/사진 앱에서 피사체를 꾹 눌러 "복사/저장"하면 배경이 자동으로 투명해집니다.',
+    guide4Q: '💬 만든 이모티콘을 카톡에 어떻게 쓰나요?',
+    guide4A: '두 가지 방법이 있습니다. 목적에 따라 선택해 보세요!\n\n💰 1. 정식 출시 및 판매를 원할 때\n• "카카오 이모티콘 스튜디오" 사이트에서 제안을 신청해야 합니다.\n• 360x360px 규격의 투명 PNG 이미지 32종을 준비해 제출합니다.\n• 카카오의 내부 심사를 통과하면 공식 스토어에 출시됩니다.\n\n✨ 2. 지인들과 가볍게 무료로 쓸 때 (개인 소장용)\n• 배경을 투명하게 지운 PNG 파일을 스마트폰 갤러리에 저장합니다.\n• 카톡 채팅방에서 [+] 버튼 > [앨범]을 눌러 이미지를 전송합니다.\n• 배경이 투명해서 네모난 사진 테두리가 보이지 않고, 진짜 판매용 스티커처럼 대화창에 아주 깔끔하게 올라갑니다!',
+  },
+  en: {
+    title: 'Prompt Maker',
+    step1: 'Character Description',
+    whatCharacter: 'Description',
+    clear: 'Clear',
+    placeholder: 'e.g., A round, yellow cat who loves bread',
+    characterSource: 'Character source',
+    directSource: '✏️ Build manually',
+    photoSource: '📷 Use a photo',
+    photoMethod: 'Photo reference style',
+    photoExact: 'Match closely',
+    photoFeatures: 'Keep key features',
+    photoCharacterize: 'Cute character version',
+    photoAttachGuide: 'After copying the prompt, attach the reference photo in the AI chat (ChatGPT, Gemini, or Grok) as well.',
+    photoActive: 'Reference image enabled',
+    phrases: 'Phrase Grid',
+    themeSelect: 'Select Theme',
+    randomMix: 'Random Mix',
+    gptCopy: 'Copy for ChatGPT',
+    geminiCopy: 'Copy for Gemini',
+    grokCopy: 'Copy for Grok',
+    previewTitle: 'Prompt Preview',
+    forGpt: 'ChatGPT',
+    forGemini: 'Gemini',
+    forGrok: 'Grok',
+    guideTitle: 'User Guide',
+    guide1Q: '🤔 What is AI Emoji Prompt Maker?',
+    guide1A: 'Have a sticker idea but are not sure how to describe it to AI?\nChoose a character concept and phrases, and this utility will automatically build ready-to-use sticker prompts for ChatGPT, Gemini, and Grok.',
+    guide2Q: '💡 ChatGPT vs Gemini: Which one to use?',
+    guide2A: 'Use ChatGPT when text inside the image is important. Use Gemini image generation for expression- and action-focused stickers. Treat a full sheet as a draft, then generate final stickers one at a time with Batch Split for easier consistency control.',
+    modeSheet: '📱 Full Sheet (15x)',
+    modeIndividual: '🖼️ Single Free (1x)',
+    modeBatch: '📋 Batch Split (15x)',
+    individualTip: '💡 Tip: For consistency, generate a Full Sheet first, then use this prompt in the SAME chat.',
+    batchTip: 'Select a phrase to instantly copy its single-sticker prompt for the active AI.',
+    individualInput: 'Enter a phrase or situation',
+    individualPlaceholder: 'e.g., crying sadly with big tears',
+    batchSelect: 'Select a phrase to preview',
+    selectedPhrase: 'Selected phrase',
+    copiedPrompt: 'Prompt copied',
+    gptTextMode: 'Text in ChatGPT image',
+    gptIncludeText: 'Include phrase',
+    gptNoText: 'No text',
+    gptBackgroundMode: 'ChatGPT background',
+    gptTransparent: 'Transparent',
+    gptSolid: 'Solid color',
+    gptChroma: 'Chroma key',
+    gptWorkflowTip: 'ChatGPT tip: If exact text matters, use the full sheet as a draft, then generate and verify each final sticker with Batch Split.',
+    geminiTextMode: 'Text in Gemini image',
+    geminiNoText: 'No text',
+    geminiIncludeText: 'Include phrase',
+    geminiBackgroundMode: 'Gemini background',
+    geminiTransparent: 'Transparent',
+    geminiSolid: 'Solid color',
+    geminiChroma: 'Chroma key',
+    geminiStageMode: 'Gemini workflow stage',
+    geminiReferenceStage: '① Create base character',
+    geminiFinalStage: '② Generate from reference',
+    geminiReferenceTip: 'First create a text-free base character, then save the result you like.',
+    geminiFinalTip: 'Gemini excels at expression and pose generation. If text breaks, try generating in [Text-Free] mode and add lettering with an editing tool for cleaner results.',
+    gptRepairTitle: 'ChatGPT Image Repair Prompts',
+    geminiRepairTitle: 'Gemini Image Repair Prompts',
+    repairHelp: '💡 How to use: Click a button to copy the prompt, then paste (Ctrl+V) into the active AI chat to fix defects.',
+    geminiRepairIdentity: 'Character changed',
+    geminiRepairCrop: 'Body was cropped',
+    geminiRepairText: 'Phrase is wrong',
+    geminiWorkflowTip: 'Gemini tip: Use the full sheet as a character and layout draft, then generate final images one at a time with Batch Split.',
+    grokTextMode: 'Grok image text',
+    grokNoText: 'No text',
+    grokIncludeText: 'Include text',
+    grokBackgroundMode: 'Grok background',
+    grokTransparent: 'Transparent',
+    grokSolid: 'Solid color',
+    grokChroma: 'Chroma key',
+    grokWorkflowTip: 'Grok tip: Grok powered by Flux.1 excels at sticker renders. If text stutters, switch to [Text-Free] mode and overlay text later.',
+    grokRepairTitle: 'Grok image repair prompts',
+    emptyPhraseError: 'One or more phrases are empty. Please fill in every phrase.',
+    duplicatePhraseError: 'Duplicate phrases found. Please use a different phrase for each sticker.',
+    guide3Q: '✂️ How do I remove the background?',
+    guide3A: 'On PC, you can use free tools like remove.bg or ALSee (AI Background Removal) to extract the character in 1 click. On smartphones, long-press the subject in your default Gallery/Photos app and select "Copy/Save" to extract it with a transparent background.',
+    guide4Q: '💬 How do I use them in messenger apps?',
+    guide4A: 'For official sales, you must submit them to platforms like LINE Creators Market. For personal use, simply save the transparent PNG to your gallery and send it as a regular photo in the chat. It will display cleanly like a sticker.',
+  },
+  ja: {
+    title: 'Prompt Maker',
+    step1: 'キャラクター設定',
+    whatCharacter: 'キャラクター説明',
+    clear: 'リセット',
+    placeholder: '例：パンが大好きな丸い黄色い猫',
+    characterSource: 'キャラクター基準',
+    directSource: '✏️ 直接設定',
+    photoSource: '📷 写真から作成',
+    photoMethod: '写真参照スタイル',
+    photoExact: '写真そのまま再現',
+    photoFeatures: '特徴だけ抽出 (3D)',
+    photoCharacterize: '可愛くSDキャラ化',
+    photoAttachGuide: 'プロンプトコピー後、AIチャットにも写真を添付してください。',
+    photoActive: '参照画像有効中',
+    phrases: 'フレーズ選択 (15種)',
+    themeSelect: 'テーマ選択',
+    randomMix: 'ランダム',
+    gptCopy: 'Copy for ChatGPT',
+    geminiCopy: 'Copy for Gemini',
+    grokCopy: 'Copy for Grok',
+    previewTitle: 'プロンプトプレビュー',
+    forGpt: 'ChatGPT',
+    forGemini: 'Gemini',
+    forGrok: 'Grok',
+    guideTitle: '使い方ガイド',
+    guide1Q: '🤔 AIスタンププロンプトメーカーとは？',
+    guide1A: 'スタンプのアイデアはあるけれど、AIへの指示出しが 難しいとお悩みですか？\n好きなキャラクターの特徴とフレーズを選ぶだけで、ChatGPT、Gemini、Grokで使えるスタンプ制作プロンプトを自動作成します。',
+    guide2Q: '💡 ChatGPT vs Gemini どちらを使うべき？',
+    guide2A: '文字入れ重視ならChatGPT、表情・ポーズ重視ならGeminiがおすすめです。シート全体で試作し、個別生成で1枚ずつ作成すると品質が安定します。',
+    modeSheet: '📱 シート全体 (15種)',
+    modeIndividual: '🖼️ 自由個別 (1種)',
+    modeBatch: '📋 15種個別分割',
+    individualTip: '💡 ヒント: 一貫性を保つため、まず全体シートを生成し、同じチャットで個別プロンプトを入力してください。',
+    batchTip: 'フレーズを押すと、現在選択されているAIの1枚用プロンプトがコピーされます。',
+    individualInput: '表現したいフレーズや状況を入力',
+    individualPlaceholder: '例：涙を流して悲しむ姿',
+    batchSelect: 'プレビューするフレーズを選択',
+    selectedPhrase: '選択中のフレーズ',
+    copiedPrompt: 'プロンプトをコピーしました',
+    gptTextMode: 'ChatGPT画像文字',
+    gptIncludeText: '文字あり',
+    gptNoText: '文字なし',
+    gptBackgroundMode: 'ChatGPT背景',
+    gptTransparent: '透過背景',
+    gptSolid: '単色背景',
+    gptChroma: 'クロマキー',
+    gptWorkflowTip: 'ChatGPTヒント: 文字の精度が重要な場合、シート全体で試作後、15種個別分割で1枚ずつ確認してください。',
+    geminiTextMode: 'Gemini画像文字',
+    geminiNoText: '文字なし',
+    geminiIncludeText: '文字あり',
+    geminiBackgroundMode: 'Gemini背景',
+    geminiTransparent: '透過背景',
+    geminiSolid: '単色背景',
+    geminiChroma: 'クロマキー',
+    geminiStageMode: 'Gemini作業段階',
+    geminiReferenceStage: '① 基準キャラクター作成',
+    geminiFinalStage: '② 基準画像から生成',
+    geminiReferenceTip: 'まず文字なしの基準キャラクターを作成し、お気に入りの結果を保存してください。',
+    geminiFinalTip: 'Geminiは表情やポーズの表現が得意です。シート全体で試作後、15種個別分割で1枚ずつ生成するのがおすすめです。',
+    gptRepairTitle: 'ChatGPT 画像結果補正',
+    geminiRepairTitle: 'Gemini 画像結果補正',
+    repairHelp: '💡 使い方: AIが生成した画像に問題がある場合、ボタンを押してコピーし、AIチャットに貼り付けて(Ctrl+V)送信してください。',
+    geminiRepairIdentity: 'キャラが変わった',
+    geminiRepairCrop: '体が切れた',
+    geminiRepairText: '文字が違う',
+    geminiWorkflowTip: 'Geminiヒント: シート全体は構図の試作として使い、最終画像は15종個別分割で1枚ずつ生成することをおすすめします。',
+    grokTextMode: 'Grok画像文字',
+    grokNoText: '文字なし',
+    grokIncludeText: '文字あり',
+    grokBackgroundMode: 'Grok背景',
+    grokTransparent: '透過背景',
+    grokSolid: '単色背景',
+    grokChroma: 'クロマキー',
+    grokWorkflowTip: 'Grokヒント: GrokはFlux.1エンジンを搭載し、自然なテキストとステッカーの質感を正確に表現します。',
+    grokRepairTitle: 'Grok 画像結果補正',
+    emptyPhraseError: '空のフレーズがあります。すべてのフレーズを入力してください。',
+    duplicatePhraseError: '重複したフレーズがあります。それぞれ異なるフレーズを入力してください。',
+    guide3Q: '✂️ 背景（透過）の簡単な消し方は？',
+    guide3A: 'remove.bgなどの無料Webツールを使うとワンクリックで背景を切り抜けます。スマホではギャラリーアプリで被写体を長押しして「コピー/保存」すると自動的に透過画像になります。',
+    guide4Q: '💬 作ったスタンプはLINEでどう使う？',
+    guide4A: 'LINE Creators Marketで申請して販売することも、透過PNGをギャラリーに保存してトーク画面で画像として送信して楽しむこともできます！',
+  },
+  zh: {
+    title: 'Prompt Maker',
+    step1: '角色设置',
+    whatCharacter: '角色描述',
+    clear: '重置',
+    placeholder: '例：一只喜欢吃面包的圆滚滚黄色小猫',
+    characterSource: '角色来源',
+    directSource: '✏️ 手动描述',
+    photoSource: '📷 上传照片',
+    photoMethod: '照片参考风格',
+    photoExact: '高还原度写真',
+    photoFeatures: '提取特征 (3D)',
+    photoCharacterize: 'Q版SD卡通化',
+    photoAttachGuide: '复制提示词后，请在AI聊天框中同时发送参考照片。',
+    photoActive: '参考图片已启用',
+    phrases: '表情短语网格 (15种)',
+    themeSelect: '主题选择',
+    randomMix: '随机混合',
+    gptCopy: 'Copy for ChatGPT',
+    geminiCopy: 'Copy for Gemini',
+    grokCopy: 'Copy for Grok',
+    previewTitle: '提示词预览',
+    forGpt: 'ChatGPT',
+    forGemini: 'Gemini',
+    forGrok: 'Grok',
+    guideTitle: '使用指南',
+    guide1Q: '🤔 什么是AI表情包提示词生成器？',
+    guide1A: '想制作表情包却不知道如何给AI写提示词？选择你喜欢的角色特征和常用短语，本工具将自动为你生成适用于ChatGPT、Gemini和Grok的表情包提示词。',
+    guide2Q: '💡 ChatGPT vs Gemini 应该选哪一个？',
+    guide2A: '如果表情包中必须包含精准文字，推荐使用ChatGPT；如果更看重动作和神态，推荐使用Gemini。',
+    modeSheet: '📱 完整整页 (15种)',
+    modeIndividual: '🖼️ 自由单张 (1种)',
+    modeBatch: '📋 15种单张拆分',
+    individualTip: '💡 提示：为保持一致性，建议先生成整张表情包，再在同一个对话框中使用单张提示词。',
+    batchTip: '点击短语即可直接复制当前AI的单张表情包提示词。',
+    individualInput: '输入想表达的短语或情境',
+    individualPlaceholder: '例：流着眼泪非常难过的样子',
+    batchSelect: '选择预览短语',
+    selectedPhrase: '已选短语',
+    copiedPrompt: '提示词已复制',
+    gptTextMode: 'ChatGPT文字模式',
+    gptIncludeText: '包含文字',
+    gptNoText: '纯图无字',
+    gptBackgroundMode: 'ChatGPT背景',
+    gptTransparent: '透明背景',
+    gptSolid: '单色背景',
+    gptChroma: '抠图绿幕',
+    gptWorkflowTip: 'ChatGPT提示：如果文字精准度很重要，建议先生成整页草图，再用拆分模式逐张生成校验。',
+    geminiTextMode: 'Gemini文字模式',
+    geminiNoText: '纯图无字',
+    geminiIncludeText: '包含文字',
+    geminiBackgroundMode: 'Gemini背景',
+    geminiTransparent: '透明背景',
+    geminiSolid: '单色背景',
+    geminiChroma: '绿幕抠图',
+    geminiStageMode: 'Gemini制作阶段',
+    geminiReferenceStage: '① 制作基准角色',
+    geminiFinalStage: '② 基于基准图生成',
+    geminiReferenceTip: '请先制作不带文字的基准角色，并保存满意的图片。',
+    geminiFinalTip: 'Gemini擅长生成丰富的表情与动作。建议将整页作为草稿，再使用单张拆分逐张生成。',
+    gptRepairTitle: 'ChatGPT 图像结果修正',
+    geminiRepairTitle: 'Gemini 图像结果修正',
+    repairHelp: '💡 使用方法：若AI生成图出现瑕疵，点击复制修正提示词并粘贴发送至同一AI对话框(Ctrl+V)即可修复。',
+    geminiRepairIdentity: '角色变形了',
+    geminiRepairCrop: '身体被裁剪了',
+    geminiRepairText: '文字出错了',
+    geminiWorkflowTip: 'Gemini提示：建议将整页作为构图草稿，最终成品使用单张拆分模式逐一生成。',
+    grokTextMode: 'Grok文字模式',
+    grokNoText: '纯图无字',
+    grokIncludeText: '包含文字',
+    grokBackgroundMode: 'Grok背景',
+    grokTransparent: '透明背景',
+    grokSolid: '单色背景',
+    grokChroma: '抠图绿幕',
+    grokWorkflowTip: 'Grok提示：Grok基于Flux.1引擎，擅长精准的自然语言指令与矢量贴纸质感。',
+    grokRepairTitle: 'Grok 图像结果修正',
+    emptyPhraseError: '存在空白短语，请填写所有短语。',
+    duplicatePhraseError: '存在重复短语，请修改为不同的短语。',
+    guide3Q: '✂️ 如何轻松去除背景（抠图）？',
+    guide3A: '使用remove.bg等免费在线工具可一键抠图。手机端长按相册中的主体即可直接提取透明PNG。',
+    guide4Q: '💬 制作好的表情包如何在微信中使用？',
+    guide4A: '保存透明PNG到手机相册，在微信聊天框中以图片形式发送，或导入微信表情包自定义收藏即可！',
+  }
 };
 
-const CHARACTER_TAGS_EN = {
-  '🐱 Animal': ['Shiba Inu', 'Orange Cat', 'Pomeranian', 'Baby Penguin', 'Chubby Bunny', 'Playful Monkey', 'Hamster', 'Squirrel', 'Baby Bear', 'Fennec Fox', 'Quokka', 'Baby Duck', 'Panda', 'Hedgehog', 'Alpaca', 'Baby Pig', 'Slow Sloth', 'Baby Elephant', 'Cute Otter', 'Baby Seal', 'Welsh Corgi', 'Capybara', 'Little Chick', 'Raccoon', 'Baby Lion', 'Korean crow tit (Baepsae)', 'Feisty Maltese', 'Fluffy Bichon Frise', 'Golden Retriever', 'Calico cat', 'Tuxedo cat', 'Harp seal pup', 'Red panda'],
-  '👦 Person': ['Bob hair girl', 'Nerd with glasses', 'Two-block boy', 'Curly hair lady', 'Bearded man', 'Ponytail athlete', 'Pigtail girl', 'Hipster with beanie', 'Gentleman in suit', 'Kid in Hanbok', 'Career woman in suit', 'Gentle white-haired grandma', 'Grandpa with cane', 'Kindergartener in yellow hat', 'Rapper with sunglasses', 'Barista with apron', 'Buzz-cut soldier', 'Pro gamer with headphones', 'Muscular gym bro', 'Backpacker with camera', 'Doctor in gown', 'Police officer in uniform', 'Rockstar playing guitar', 'Skateboarder boy', 'Glamorous K-pop idol', 'Friendly neighborhood guy', 'Yoga instructor', 'Architect with hard hat', 'Parisian painter', 'Motorcycle rider', 'Florist', 'Job seeker with backpack', 'Tired office worker', 'Baker in apron', 'Mechanic in coveralls', 'Scholar in Hanbok', 'Cowboy with hat', 'Pirate captain with eyepatch', 'Glamorous magician', 'Ballerina in tutu', 'Slacker in tracksuit', 'Scientist in lab coat', 'Handsome guy in white tee', 'Princess in dress', 'Knight in armor', 'Taekwondo master', 'Flight attendant in uniform', 'Cameraman', 'Hiker in mountain gear', 'Announcer with microphone', 'Judge in legal robe', 'Firefighter in uniform', 'Chef with toque', 'Part-timer with cap', 'Farmer with straw hat', 'Forest girl with flower crown', 'Student eating tteokbokki', 'Surfer with surfboard', 'Job seeker with hair roll', 'Rookie employee', 'Burnout office worker', 'Student beginner driver', 'Gym fitness enthusiast'],
-  '🦄 Fantasy/Object': ['Unicorn', 'Baby dragon', 'Little wizard', 'Forest fairy', 'Soft mochi', 'Sweet macaron', 'Strawberry cake', 'Plump dumpling', 'Little vampire', 'Mermaid princess', 'Brave little knight', 'Alien', 'Baby gumiho', 'Cute horned goblin', 'Shining angel', 'Mischievous baby devil', 'Flying Magic Carpet', 'Cotton candy cloud', 'Mysterious mermaid', 'Winged Pegasus', 'Talking pumpkin', 'Astronaut', 'Magic broom', 'Jelly monster', 'Snowman fairy'],
-  '🤖 Robot/Sci-Fi': ['Baby robot', 'Cyber cat', 'Soft slime', 'Space hamster', 'Baby dinosaur', 'Pixel robot', 'Little alien', 'Mecha dog', 'Neon ghost', 'Space dog astronaut', 'Cyberpunk bunny', 'Hologram ghost', 'UFO pilot alien', 'Retro monitor bot', 'Handheld game bot', 'Battery charging bot', 'AI android fairy', 'Transforming mecha'],
-  '🍞 Dessert/Food': ['Talking fish pastry', 'Toast man', 'Macaron rabbit', 'Americano ghost', 'Plump dumpling boy', 'Strawberry mochi', 'Chocolate chip cookie', 'Cheese corndog', 'Soft pudding', 'Tanghulu fairy', 'Chewy rice cake', 'Onigiri rice ball', 'Cheesy pizza slice', 'Crispy fries', 'Sunny-side up egg', 'Ramen noodles', 'Soft serve ice cream', 'Chewy takoyaki', 'Sweet cupcake', 'Vienna sausage'],
-  '🌿 Plant/Nature': ['Baby cactus', 'Four-leaf clover fairy', 'Round mushroom', 'Pot baby', 'Sunflower kid', 'Sprout fairy', 'Baby maple leaf', 'Cherry tomato', 'Cute avocado', 'Sweet peach fairy', 'Spicy chili baby', 'Dandelion fluff', 'Fluffy cotton fairy', 'Fresh lemon buddy', 'Crying onion', 'Cute acorn', 'Red apple fairy', 'Autumn chestnut'],
-  '👀 Appearance': ['Round face', 'Big sparkling eyes', 'Chubby cheeks', 'Short chubby limbs', 'Small round nose', 'Blushing cheeks', 'Fluffy fur', 'Soft jelly body', 'Long perky ears', 'Small fangs', 'Freckles', 'Bangs covering one eye', 'Round glasses', 'Fluffy tail', 'Small wings', 'Star-shaped pupils', 'Heart cheek pattern', 'Mini SD body'],
-  '✨ Trait/Emotion': ['Playful', 'Chic and haughty', 'Gentle and kind', 'Always tired', 'Full of aegyo', 'Easily angered', 'Laid-back', 'Crybaby', 'Active and lively', 'Timid and shy', 'Quirky and eccentric', 'Warm-hearted', 'Always hungry', 'Curious', 'Deadly serious', 'Full of bravado', 'In love', 'Full of confidence', 'Clumsy', 'Lazy couch potato', 'Full of passion', 'Scaredy-cat', 'Prudish', 'Demotivated', 'Money lover'],
-  '🖌️ Art Style': ['Cute 2D cartoon', 'Korean webtoon style', 'Hand-drawn doodle', 'Soft watercolor', 'Colored pencil storybook', 'Retro anime', 'Clean minimal vector', 'Bouncy pop art', 'Bold line comic book', 'Dot pixel art', 'Paper collage', 'Vintage print comic', '📖 Monochrome manga tone', '💥 Hot-blooded battle manga', '🌸 Sparkling shojo manga', '👾 8090 retro anime', '🎨 3D Semi-realistic anime rendering', '✒️ Japanese Manga Ink & Tone Style', '🧸 3D Felt & Claymation Doll Style', '🖍️ Crayon Wax Pastel Doodle Style', '✨ Y2K Retro Glitter Pixel Sticker Style'],
-  '👕 Outfit': ['Doctor gown', 'Chef apron', 'Office suit', 'Oversized hoodie', 'Overalls', 'School uniform', 'Tracksuit', 'Raincoat', 'Cozy pajamas', 'Wizard cloak', 'Glamorous dress', 'Sporty cap', 'Puffer jacket', 'Leather jacket', 'Neat shirt and tie', 'Floral dress', 'Hip streetwear', 'Traditional martial arts dobok', 'Warm knit sweater', 'Cute animal onesie', 'Spacesuit', 'Explorer vest and hat', 'Swimsuit and tube', 'Classic trench coat', 'Sparkling fairy wings', 'Crown and cape', 'Jeans and white t-shirt', 'Detective coat and hat'],
-  '🎒 Prop/Action': ['Holding smartphone', 'Holding coffee cup', 'Wearing sunglasses', 'Wearing headphones', 'Using laptop', 'Reading book', 'Holding balloon', 'Holding bouquet', 'Holding mic and singing', 'Holding gamepad', 'Holding frying pan', 'Holding large magnifying glass', 'Drawing on sketchbook', 'Waving magic wand', 'Holding shopping basket', 'Holding umbrella', 'Eating popcorn', 'Running vacuum cleaner', 'Peeking through telescope', 'Stretching on yoga mat', 'Checking smartwatch', 'Holding stacks of cash', 'Holding iced Americano tumbler', 'Typing on laptop', 'Eating fried chicken drumstick', 'Clinking beer/soju glasses', 'Getting IV drip while exhausted'],
-  '🌏 World Cultures': ['Traditional Hanbok Korean robe', 'Modern hip Hanbok with Gat hat', 'K-Pop idol stage outfit', 'Taekwondo Dobok martial uniform', 'Traditional Japanese Kimono / Yukata', 'Akihabara Maid cafe cosplay', 'Samurai swordsman / Ninja gear', 'Japanese sailor school uniform', 'Shrine maiden Miko robe', 'Wuxia martial arts silk robe', 'Traditional Cheongsam / Hanfu dress', 'Kung Fu martial artist yellow suit', 'Beijing opera mask performer', 'Wild West cowboy sheriff', 'London gentleman trench coat & fedora', 'Cyberpunk neon streetwear', 'Medieval knight armor & cape', 'Parisian with beret and baguette', 'British royal guard with bearskin cap', 'Spanish Flamenco dancer with rose', 'German Oktoberfest Lederhosen', 'Venetian masquerade noble outfit', 'Mexican Mariachi with Sombrero', 'Day of the Dead sugar skull', 'Brazilian Samba carnival dancer', 'Vietnamese Ao Dai & Non La hat', 'Traditional Thai Sabai silk dress', 'Indian Bollywood silk Saree', 'Arabian Nights turban & magic lamp', 'Hawaiian Aloha shirt & Ukulele'],
-  '🎬 Cinema & Anime': ['Wizard school uniform & magic wand', 'Secret agent in black suit & shades', 'Space knight with neon energy blade', 'Magical girl with starlight wand', 'Archaeologist explorer with fedora & whip', 'Pirate captain with tricorn hat & feather', 'Superhero with flowing red cape', 'Dark charismatic masked hero', 'Biker in leather jacket & sunglasses', 'Ghibli-style aviator cap & goggles', 'Giant forest spirit holding a leaf', 'Classic detective with trench coat & magnifying glass', 'Interstellar astronaut with space helmet', 'Western outlaw gunslinger wearing poncho', 'Phantom with half white mask', 'Viking warrior dragon tamer', 'Time traveler with retro goggles', 'Zombie apocalypse survivor'],
-  '💼 Office & Work': ['Watching clock 10s before clock-out', 'Dark circles from overtime work', 'Tears of joy on payday', 'Soul leaving body during meetings', 'Holding resignation letter in pocket', 'Drinking 3 cups of coffee in a row', 'Hiding behind computer monitor', 'Checking boss mood with approval folder', 'Squished in crowded morning subway', 'Happy while picking lunch menu', 'Bouncy joyful Friday clock-out walk', 'Glued to bed with Monday blues'],
-  '🎮 Gaming & Esports': ['Wearing RGB gaming headset', 'Raging and smashing keyboard', 'Confetti celebration on rank up', 'Holding neck in rage at troll teammates', 'All-nighter with energy drinks', 'Swinging arms in VR goggles', 'Laser focus holding controller', 'Winner winner chicken dinner ceremony', 'Despair when Wi-Fi disconnects', 'Recruiting for boss raid party', 'Cheering on gacha jackpot pull', 'Face down crying after failed gacha'],
-  '💘 Romance & Couples': ['Wearing matching couple outfits', 'Holding hands walking sweetly', 'Pouting with puffed cheeks facing away', 'Taking screenshot on video call', 'Hugging glowing heart cushion', 'Hiding face behind flower bouquet', 'Blowing out anniversary cake candle', 'Sleeping sweetly on shoulder', 'Sending finger heart aegyo', 'Staring at phone waiting for text', 'Touching hands over cinema popcorn', 'Tilting umbrella to share in rain'],
-  '💪 Fitness & Diet': ['Shaking protein shaker bottle', 'Lifting heavy dumbbell with pride', 'Shocked looking at InBody body fat scan', 'Chewing salad dreaming of fried chicken', 'Sweating profusely on treadmill', 'Crying in despair on weighing scale', 'Snapping gym mirror selfie (OOTD)', 'Legs shaking after heavy squats', 'Screaming on foam roller stretch', 'Gulping down 2L water bottle', 'Smiling admiring muscle pump in mirror', 'Devouring pizza and burgers on cheat day'],
-  '🌈 Effect/BG': ['Sparkling effect', 'Hearts floating', 'Starlight falling', 'Neon sign flashing', 'Comic focus lines', 'Cherry blossoms fluttering', 'Flaming fire effect', 'Sweat drops splashing', 'Gloomy dark cloud', 'Rainbow aura', 'Boom explosion', 'Dark shadow', 'Spotlight lighting', 'Snowstorm blowing', 'Lightning striking', 'Bubbling bubbles', 'Warm sunshine', 'Floating music notes', 'Blowing in the wind', 'Floating question marks (?)', 'Sparking exclamation mark (!)', 'Shivering tremble lines', 'Shock dark cloud', 'Heart sparkle eyes']
+const ADSENSE_CLIENT_ID = 'ca-pub-2418297087346563';
+const IS_AD_CONFIGURED = ADSENSE_CLIENT_ID !== 'ca-pub-0000000000000000';
+
+const AdBanner = () => {
+  useEffect(() => {
+    if (!IS_AD_CONFIGURED) return;
+
+    try {
+      (window.adsbygoogle = window.adsbygoogle || []).push({});
+    } catch {}
+  }, []);
+
+  if (!IS_AD_CONFIGURED) return null;
+
+  return (
+    <div className="text-center mt-lg md:mt-xl p-4 md:p-md bg-surface-container-lowest rounded-md border border-outline-variant shadow-bubbly overflow-hidden">
+      <p className="text-[12px] text-neutral-500 mb-2 text-left">Advertisement</p>
+      <ins className="adsbygoogle"
+           style={{display: 'block', minHeight: '90px'}}
+           data-ad-client={ADSENSE_CLIENT_ID}
+           data-ad-slot="1234567890"
+           data-ad-format="auto"
+           data-full-width-responsive="true"></ins>
+    </div>
+  );
 };
 
-// AI 이모티콘 프롬프트 메이커 메인 애플리케이션
+const GUIDE_TEXTS = {
+  ko: {
+    tabBg: '✂️ 배경(누끼) 제거',
+    tabUsage: '💬 메신저 스티커 등록',
+    modelDesc: '각 AI 모델의 강력한 장점이 다르므로 목적에 맞게 골라 쓰세요!',
+    chatgptTitle: 'ChatGPT 이미지 생성 추천',
+    chatgptSub: '"대사가 꼭 필요한 이모티콘"',
+    userCreation: '실제 유저 생성본 ✨',
+    chatgptBullets: [
+      '• 🎯 특징: 한글 및 다국어 타이포그래피(글씨 쓰기) 능력이 압도적으로 뛰어납니다.',
+      '• 💬 예시: 캐릭터가 "고마워!" 라고 외치는 말풍선 텍스트가 시트에 꼭 들어가야 할 때 필수입니다.',
+      '• 🎨 화풍: 부드럽고 몽글몽글한 3D 렌더링, 파스텔톤 수채화 느낌을 내는 데 아주 강합니다.'
+    ],
+    geminiTitle: 'Gemini 이미지 생성 추천',
+    geminiSub: '"표정과 행동으로 말하는 이모티콘"',
+    geminiBullets: [
+      '• 🎯 특징: 채택한 기준 이미지를 다시 첨부해 한 장씩 변형할 때 캐릭터 특징을 안정적으로 이어가기 좋습니다.',
+      '• 💬 예시: 기준 캐릭터를 먼저 만든 뒤, 글씨 없이 표정과 몸짓 중심의 개별 이미지를 만들 때 활용하기 좋습니다.',
+      '• 🎨 권장: 15컷 시트는 구도 초안으로 사용하고 최종 이미지는 15종 개별 분할에서 생성하세요.'
+    ],
+    proTipTitle: '공용 활용 꿀팁!',
+    proTipDesc: '사진을 첨부하면 인물이나 반려동물의 특징을 반영한 캐릭터를 만들 수 있습니다. ChatGPT는 문구가 필요한 이미지에 활용하고, Gemini는 마음에 드는 기준 캐릭터를 만든 뒤 그 이미지를 다시 첨부해 한 장씩 변형해 보세요.',
+    bgSub: '가장 쉽고 빠르게 이모티콘 배경을 투명하게(누끼) 만드는 방법을 소개합니다!',
+    pcTitle: '💻 PC에서 작업할 때',
+    pcMethod1: '방법 1: remove.bg 웹사이트',
+    pcMethod1Bullets: [
+      'remove.bg 사이트에 접속합니다.',
+      '생성된 이모티콘 이미지를 드래그 앤 드롭합니다.',
+      '1초 만에 자동으로 배경이 제거된 PNG를 다운로드합니다.'
+    ],
+    removeBgLink: '👉 remove.bg 바로가기',
+    pcMethod2: '방법 2: 알씨(ALSee) 프로그램',
+    pcMethod2Bullets: [
+      '알씨 실행 후 [도구] ➔ [AI 배경 제거(누끼)] 선택.',
+      '이미지 드래그 후 마우스 클릭으로 간편하게 누끼 작업.'
+    ],
+    alSeeLink: '👉 알씨 다운로드',
+    mobileTitle: '📱 스마트폰에서 작업할 때',
+    galaxyTitle: '🤖 갤럭시 (Galaxy)',
+    galaxyBullets: [
+      '[갤러리] 앱에서 이모티콘 이미지를 엽니다.',
+      '캐릭터 부분을 1초 동안 꾹 누릅니다.',
+      '[스티커로 저장] 또는 [이미지로 저장]을 누르면 배경 투명 PNG 완성!'
+    ],
+    iphoneTitle: '🍎 아이폰 (iPhone)',
+    iphoneBullets: [
+      '[사진] 앱에서 이모티콘 이미지를 엽니다.',
+      '캐릭터 인물을 꾹 누르면 반짝이는 누끼 효과가 나타납니다.',
+      '[복사] 후 메신저에 바로 붙여넣거나 [스티커 추가]를 누르세요!'
+    ],
+    chroma1: '1. 연두색 배경 AI 이미지',
+    chroma2: '2. 클릭 한 번으로 누끼!',
+    chroma3: '3. 완벽한 투명 PNG 완성',
+    usageSub: '만드신 이미지를 실제 메신저(카카오톡, 라인, 위챗)에서 사용하는 두 가지 방법을 소개합니다!',
+    usageOfficialTitle: '1. 정식 출시 및 판매를 원할 때',
+    usageOfficialCard: '이모티콘 스튜디오 제안',
+    warningTag: '⚠️ 주의',
+    warningHeading: 'AI 이미지는 그대로 등록 불가!',
+    warningBody: '현재 플랫폼 정책상 저작권 문제로 인해 AI가 생성한 이미지를 \'그대로\' 제출하는 것은 엄격히 금지되어 있습니다. AI는 기발한 대사와 포즈를 뽑는 최고의 \'참고용 시안\'으로 활용하시고, 정식 제출은 그 시안을 바탕으로 직접 선을 따서 다시 그려서(리디자인) 제출하셔야 합니다.',
+    usageOfficialBullets: [
+      '이미지 준비: 직접 리디자인한 투명 배경 PNG 이미지 준비',
+      '제안하기: 스튜디오 사이트에 접속하여 준비한 이미지를 업로드',
+      '심사 대기: 내부 심사 통과 시 정식 상품으로 출시되어 수익 창출 가능!'
+    ],
+    kakaoStudioLink: '👉 이모티콘 스튜디오 바로가기',
+    usageCasualTitle: '2. 지인들과 가볍게 무료로 쓸 때',
+    usageCasualCard: '개인 소장용 (채팅방 전송)',
+    exampleBadge: '📸 전송 예시',
+    usageCasualBullets: [
+      '위의 [배경(누끼) 제거] 가이드에 따라 투명 배경으로 만든 PNG 파일을 스마트폰 갤러리에 저장합니다.',
+      '채팅방에서 입력창 옆의 [+] 버튼 ➔ [앨범/사진]을 누릅니다.',
+      '갤러리에서 투명하게 만든 캐릭터 이미지를 선택하여 전송합니다.'
+    ],
+    usageCasualTip: '배경이 투명하기 때문에 하얀색 네모 테두리가 보이지 않아, 진짜로 구매한 스티커처럼 대화창에 아주 깔끔하게 올라갑니다!'
+  },
+  en: {
+    tabBg: '✂️ Remove Background',
+    tabUsage: '💬 Use in Messengers',
+    modelDesc: 'Choose the right AI model for your specific needs!',
+    chatgptTitle: 'ChatGPT Image Generation',
+    chatgptSub: '"Emoticons with essential text"',
+    userCreation: 'Actual user creation ✨',
+    chatgptBullets: [
+      '• 🎯 Feature: Unmatched typography and text rendering.',
+      '• 💬 Usage: Essential when speech bubbles or text like "Thanks!" must be included.',
+      '• 🎨 Style: Very strong at soft 3D rendering and pastel watercolor styles.'
+    ],
+    geminiTitle: 'Gemini Image Generation',
+    geminiSub: '"Emoticons speaking through expressions"',
+    geminiBullets: [
+      '• 🎯 Feature: Works best when an accepted base image is attached again for one-at-a-time variations.',
+      '• 💬 Usage: Create the base character first, then generate individual expression- and action-focused images.',
+      '• 🎨 Recommended: Use the 15-panel sheet as a draft and Batch Split for final assets.'
+    ],
+    proTipTitle: 'Pro Tip!',
+    proTipDesc: 'Attach a photo to reflect recognizable features. Use ChatGPT when text matters, and with Gemini create a base character first, then attach that accepted result again for one-at-a-time variations.',
+    bgSub: 'How to easily and quickly remove backgrounds from your emoticons!',
+    pcTitle: '💻 Working on PC',
+    pcMethod1: 'Method 1: remove.bg website',
+    pcMethod1Bullets: [
+      'Visit the remove.bg website.',
+      'Drag and drop your generated emoticon image.',
+      'Download the transparent PNG automatically extracted in 1 sec.'
+    ],
+    removeBgLink: '👉 Go to remove.bg',
+    pcMethod2: 'Method 2: ALSee Program',
+    pcMethod2Bullets: [
+      'Run ALSee and select [Tools] ➔ [AI Background Removal].',
+      'Drag the image and click to clean up background easily.'
+    ],
+    alSeeLink: '👉 Download ALSee',
+    mobileTitle: '📱 Working on Smartphone',
+    galaxyTitle: '🤖 Galaxy (Android)',
+    galaxyBullets: [
+      'Open the image in your [Gallery] app.',
+      'Press and hold the character subject for 1 second.',
+      'Tap [Save as sticker] or [Save as image] for a transparent PNG!'
+    ],
+    iphoneTitle: '🍎 iPhone (iOS)',
+    iphoneBullets: [
+      'Open the image in your [Photos] app.',
+      'Press and hold the character until a shiny outline appears.',
+      'Tap [Copy] to paste in chat or tap [Add Sticker]!'
+    ],
+    chroma1: '1. Green BG AI Image',
+    chroma2: '2. 1-Click Removal!',
+    chroma3: '3. Perfect Transparent PNG',
+    usageSub: 'Two ways to actually use your created images in KakaoTalk & LINE & WeChat!',
+    usageOfficialTitle: '1. Official Release and Sale',
+    usageOfficialCard: 'Studio Submission',
+    warningTag: '⚠️ Warning',
+    warningHeading: 'Cannot Submit AI Images As-Is!',
+    warningBody: 'Due to platform copyright policies, submitting AI-generated images "as-is" is strictly prohibited. Use AI as an excellent "reference draft", and for official submission, you must trace and redraw (redesign) them yourself based on the draft.',
+    usageOfficialBullets: [
+      'Prepare Images: Prepare transparent PNG images redrawn by yourself.',
+      'Submit: Upload your prepared images to the Studio website.',
+      'Wait for Review: If approved, it becomes an official product for monetization!'
+    ],
+    kakaoStudioLink: '👉 Emoticon Studio Submission',
+    usageCasualTitle: '2. Casual Free Use with Friends',
+    usageCasualCard: 'Personal Use (Chatroom Trick)',
+    exampleBadge: '📸 Example',
+    usageCasualBullets: [
+      'Save the transparent background PNG file to your smartphone gallery using the guide above.',
+      'In your chatroom, tap the [+] button ➔ [Album/Photo] next to the input field.',
+      'Select and send the transparent character image from your gallery.'
+    ],
+    usageCasualTip: 'Because the background is transparent, the white rectangular border is invisible, making it look exactly like a real purchased sticker in the chat window!'
+  },
+  ja: {
+    tabBg: '✂️ 背景（透過）の消し方',
+    tabUsage: '💬 スタンプの登録・使用方法',
+    modelDesc: '各AIモデルにはそれぞれ強みがあります。目的に合わせて使い分けましょう！',
+    chatgptTitle: 'ChatGPT画像生成おすすめ',
+    chatgptSub: '「文字入れが必須のスタンプ」',
+    userCreation: 'ユーザーの実際の生成例 ✨',
+    chatgptBullets: [
+      '• 🎯 特徴: 文字（タイポグラフィ）描画能力が非常に優れています。',
+      '• 💬 用途: 「ありがとう！」などの文字や吹き出しをスタンプ内に入れたい時に最適です。',
+      '• 🎨 画風: ふんわりとした3Dレンダリングやパステル調の水彩画風が得意です。'
+    ],
+    geminiTitle: 'Gemini画像生成おすすめ',
+    geminiSub: '「表情やポーズで魅せるスタンプ」',
+    geminiBullets: [
+      '• 🎯 特徴: 基準画像を再添付して1枚ずつ生成する際、キャラクターの一貫性を維持するのに長けています。',
+      '• 💬 用途: まず文字なしの基準キャラを作成し、ポーズや表情メインのスタンプを作るのに向いています。',
+      '• 🎨 推奨: 15コマシートは構図の試作として使い、最終画像は15種個別分割で1枚ずつ生成してください。'
+    ],
+    proTipTitle: '共通活用のコツ！',
+    proTipDesc: '写真を添付すると人物やペットの特徴を反映したキャラを作成できます。文字が必要なスタンプはChatGPTで、表情やポーズ重視ならGeminiで基準キャラを作ってから画像を再添付して1枚ずつ作成するのがコツです。',
+    bgSub: 'スタンプの背景を簡単に透明（透過）にする方法をご紹介します！',
+    pcTitle: '💻 PCで作業する場合',
+    pcMethod1: '方法 1: remove.bg Webサイト',
+    pcMethod1Bullets: [
+      'remove.bg サイトにアクセスします。',
+      '生成されたスタンプ画像をドラッグ＆ドロップします。',
+      '1秒で自動的に背景が透過されたPNGをダウンロードします。'
+    ],
+    removeBgLink: '👉 remove.bg へ移動',
+    pcMethod2: '方法 2: 画像編集ソフト',
+    pcMethod2Bullets: [
+      '画像編集ソフトで「背景透過/切り抜き」を選択。',
+      '画像を読み込んでワンクリックで透過保存。'
+    ],
+    alSeeLink: '👉 編集ソフトを開く',
+    mobileTitle: '📱 スマホで作業する場合',
+    galaxyTitle: '🤖 Galaxy (Android)',
+    galaxyBullets: [
+      '「ギャラリー」アプリでスタンプ画像を開きます。',
+      'キャラクター部分を1秒間長押しします。',
+      '「ステッカーとして保存」または「画像として保存」をタップ！'
+    ],
+    iphoneTitle: '🍎 iPhone (iOS)',
+    iphoneBullets: [
+      '「写真」アプリでスタンプ画像を開きます。',
+      'キャラを長押しすると光る輪郭が表示されます。',
+      '「コピー」してトークに貼り付けるか「ステッカーに追加」をタップ！'
+    ],
+    chroma1: '1. グリーン背景のAI画像',
+    chroma2: '2. ワンクリックで透過！',
+    chroma3: '3. 完璧な透明PNG完成',
+    usageSub: '作成した画像をLINEやメッセージアプリで使う2つの方法！',
+    usageOfficialTitle: '1. 公式スタンプとして販売したい場合',
+    usageOfficialCard: 'LINE Creators Market 申請',
+    warningTag: '⚠️ 注意',
+    warningHeading: 'AI画像のままでは申請不可！',
+    warningBody: '現在プラットフォームの規約上、AI生成画像を「そのまま」提出することは禁止されています。AI画像をアイデアやポーズの「参考案」として使い、申請時はそれを元に自分で描き直して（リデザイン）提出してください。',
+    usageOfficialBullets: [
+      '画像準備: 自分で描き直した 370x320px 透明背景PNG画像を用意',
+      '申請: LINE Creators Market サイトで画像をアップロード',
+      '審査待ち: 審査通過でスタンプとして販売・収益化が可能！'
+    ],
+    kakaoStudioLink: '👉 LINE Creators Market へ',
+    usageCasualTitle: '2. 友達と無料で気軽に使う場合',
+    usageCasualCard: '個人利用（トーク画面で画像送信）',
+    exampleBadge: '📸 送信例',
+    usageCasualBullets: [
+      '上記の透過ガイドに従い、透明背景PNG画像をスマホのギャラリーに保存します。',
+      'トーク画面の [+] ボタン ➔ 「写真」を選択します。',
+      '透明背景のキャラ画像を選んで送信すると、スタンプのように表示されます！'
+    ],
+    usageCasualTip: '背景が透明なため白い枠線が見えず、まるで購入した本物のスタンプ<ctrl42>のようにトーク画面に綺麗に表示されます！'
+  },
+  zh: {
+    tabBg: '✂️ 抠图（透明背景）',
+    tabUsage: '💬 表情包使用指南',
+    modelDesc: '各个AI模型各有强项，请根据具体需求选择最适合的模型！',
+    chatgptTitle: '推荐使用ChatGPT',
+    chatgptSub: '“必须带有文字的表情包”',
+    userCreation: '用户真实生成示例 ✨',
+    chatgptBullets: [
+      '• 🎯 特色: 文字与排版渲染能力极其优秀。',
+      '• 💬 用途: 当表情包中必须包含“谢谢！”等文字对话框时非常推荐。',
+      '• 🎨 画风: 非常擅长表现柔和的3D渲染和粉彩水彩风格。'
+    ],
+    geminiTitle: '推荐使用Gemini',
+    geminiSub: '“通过表情与动作传达的表情包”',
+    geminiBullets: [
+      '• 🎯 特色: 再次附上已选定的基准图片进行单张生成时，能非常稳定地保持角色特征一致。',
+      '• 💬 用途: 适合先生成基准角色，再制作以表情和肢体动作为主的单张无字表情包。',
+      '• 🎨 建议: 15宫格草图作为构图参考，最终高清图片建议通过15种单张拆分逐一生成。'
+    ],
+    proTipTitle: '通用实用技巧！',
+    proTipDesc: '上传照片可以生成融入人物或宠物特征的角色。需要文字说明时使用ChatGPT；想要多变表情和动作时，建议先用Gemini生成满意的基准角色，再重新上传该图片逐一衍生单张表情包。',
+    bgSub: '介绍几种最简单快速的表情包抠图（透明背景）方法！',
+    pcTitle: '💻 在电脑上操作',
+    pcMethod1: '方法 1: remove.bg 网页版',
+    pcMethod1Bullets: [
+      '访问 remove.bg 网站。',
+      '拖拽上传生成的表情包图片。',
+      '一秒内自动生成并下载透明背景PNG。'
+    ],
+    removeBgLink: '👉 前往 remove.bg',
+    pcMethod2: '方法 2: 图像编辑软件',
+    pcMethod2Bullets: [
+      '打开图像软件并选择“AI抠图/透明背景”。',
+      '拖入图片并一键删除背景色。'
+    ],
+    alSeeLink: '👉 打开图像软件',
+    mobileTitle: '📱 在手机上操作',
+    galaxyTitle: '🤖 三星/安卓手机',
+    galaxyBullets: [
+      '在“相册”App中打开表情包图片。',
+      '长按主体角色约1秒。',
+      '点击“保存为贴纸”或“保存为透明图片”即可！'
+    ],
+    iphoneTitle: '🍎 苹果 iPhone',
+    iphoneBullets: [
+      '在“照片”App中打开图片。',
+      '长按角色主体，直到出现轮廓光效。',
+      '点击“复制”直接发送，或点击“添加贴图”！'
+    ],
+    chroma1: '1. 绿色背景AI图片',
+    chroma2: '2. 一键快速抠图！',
+    chroma3: '3. 完美透明PNG完成',
+    usageSub: '在微信、QQ、LINE或KakaoTalk中使用图片的两种方法！',
+    usageOfficialTitle: '1. 上架为官方表情包出售',
+    usageOfficialCard: '微信表情开放平台 / 官方平台提交',
+    warningTag: '⚠️ 注意',
+    warningHeading: '不能直接提交AI原始图片！',
+    warningBody: '目前各平台政策规定，严禁直接上传AI生成的原始图片。请将AI图片作为获取表情动作与构图的“参考草图”，正式提交前需根据草图自行重新绘制（重构）后再上传。',
+    usageOfficialBullets: [
+      '准备图片: 准备由自己重新绘制的透明背景PNG图片',
+      '提交审核: 登录平台上传准备好的表情包图片',
+      '等待审核: 审核通过后即可正式上架并获得收益！'
+    ],
+    kakaoStudioLink: '👉 前往表情开放平台',
+    usageCasualTitle: '2. 与朋友免费聊天发送',
+    usageCasualCard: '个人收藏（聊天发送技巧）',
+    exampleBadge: '📸 发送示例',
+    usageCasualBullets: [
+      '按照上方抠图指南，将生成的透明背景PNG图片保存至手机相册。',
+      '在聊天界面中点击输入框旁边的 [+] ➔ 【相册/图片】。',
+      '选择保存的透明背景角色图片直接发送，即可像真正买的表情包一样展示！'
+    ],
+    usageCasualTip: '由于背景是透明的，因此不会显示白色方框外框，在聊天框中发送效果与购买的正式表情包完全一样干净漂亮！'
+  }
+};
+
+const InfoSection = ({ t, lang }) => {
+  const [activeTab, setActiveTab] = useState('model');
+
+  const getText = (key, customDict = {}) => {
+    if (customDict[lang]) return customDict[lang];
+    if (customDict['en']) return customDict['en'];
+    return customDict['ko'] || '';
+  };
+
+  return (
+    <div id="guide-section" className="scroll-mt-24 flex flex-col gap-4">
+      {/* 탭 헤더 */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-surface-container-lowest p-3 sm:p-4 rounded-md border border-outline-variant shadow-bubbly">
+        <h2 className="font-headline-sm text-headline-sm text-on-surface flex items-center gap-2 shrink-0">
+          <span>❓</span> {t.guideHeader}
+        </h2>
+
+        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar bg-mint-soft p-1.5 rounded-md border border-mint-border shadow-xs w-full lg:w-auto flex-nowrap shrink-0">
+          <button
+            onClick={() => setActiveTab('model')}
+            className={`interactive-control whitespace-nowrap flex-none px-3.5 py-1.5 text-[13px] sm:text-[14px] font-bold rounded-md ${activeTab === 'model' ? 'bg-mint text-mint-strong shadow-xs border border-mint-border' : 'text-mint-strong hover:bg-mint-hover'}`}
+          >
+            🤖 {lang === 'ko' ? 'AI 모델' : lang === 'ja' ? 'AIモデル' : lang === 'zh' ? 'AI模型' : 'AI Models'}
+          </button>
+          <button
+            onClick={() => setActiveTab('bg')}
+            className={`interactive-control whitespace-nowrap flex-none px-3.5 py-1.5 text-[13px] sm:text-[14px] font-bold rounded-md ${activeTab === 'bg' ? 'bg-mint text-mint-strong shadow-xs border border-mint-border' : 'text-mint-strong hover:bg-mint-hover'}`}
+          >
+            ✂️ {lang === 'ko' ? '배경 (누끼) 지우는 법' : lang === 'ja' ? '背景（透過）の消し方' : lang === 'zh' ? '抠图 (透明背景)' : 'Remove Background'}
+          </button>
+          <button
+            onClick={() => setActiveTab('usage')}
+            className={`interactive-control whitespace-nowrap flex-none px-3.5 py-1.5 text-[13px] sm:text-[14px] font-bold rounded-md ${activeTab === 'usage' ? 'bg-mint text-mint-strong shadow-xs border border-mint-border' : 'text-mint-strong hover:bg-mint-hover'}`}
+          >
+            💬 {lang === 'ko' ? '이모티콘 등록·사용법' : lang === 'ja' ? 'スタンプの登録・使用方法' : lang === 'zh' ? '表情包使用指南' : 'How to Use Emoticons'}
+          </button>
+          <button
+            onClick={() => setActiveTab('template')}
+            className={`interactive-control whitespace-nowrap flex-none px-3.5 py-1.5 text-[13px] sm:text-[14px] font-bold rounded-md ${activeTab === 'template' ? 'bg-mint text-mint-strong shadow-xs border border-mint-border' : 'text-mint-strong hover:bg-mint-hover'}`}
+          >
+            💡 {lang === 'ko' ? '프롬프트 템플릿 구조' : lang === 'ja' ? 'プロンプト構造' : lang === 'zh' ? '提示词结构指南' : 'Prompt Template'}
+          </button>
+        </div>
+      </div>
+
+      {/* 탭 콘텐츠 */}
+      <div className="bg-surface-container-lowest rounded-md p-3.5 sm:p-md shadow-bubbly border border-outline-variant">
+        <div className="min-h-[250px]">
+        {activeTab === 'model' && (
+          <div className="animate-in fade-in slide-in-from-bottom-2 duration-300 flex flex-col gap-4 mt-2">
+            <p className="text-[15px] font-bold text-on-surface px-2">
+              {getText('modelSub', {
+                ko: '각 AI 모델의 강력한 장점이 다르므로 목적에 맞게 골라 쓰세요!',
+                ja: 'AIモデルごとに得意分野が異なります。目的に合わせて選んでください！',
+                zh: '各AI模型的强项有所不同，请根据您的需求选择！',
+                en: 'Choose the right AI model for your specific needs!',
+              })}
+            </p>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {/* ChatGPT Card */}
+              <div className="bg-surface-variant/30 p-4 sm:p-5 rounded-md border border-outline-variant flex flex-col gap-4 hover:shadow-md transition-shadow group relative">
+                <div className="font-bold text-[16px] text-on-surface group-hover:text-primary-strong transition-colors">
+                  🟢 {getText('gptTitle', {
+                    ko: 'ChatGPT 이미지 생성 추천',
+                    ja: 'ChatGPT 画像生成のおすすめ',
+                    zh: 'ChatGPT 图像生成推荐',
+                    en: 'ChatGPT Image Generation',
+                  })}
+                </div>
+                <div className="font-black text-[18px] text-primary-strong -mt-3">
+                  {getText('gptSub', {
+                    ko: '"대사가 꼭 필요한 이모티콘"',
+                    ja: '"セリフ・文字入れ가 必須のスタンプ"',
+                    zh: '"包含文字台词的表情包"',
+                    en: '"Emoticons with essential text"',
+                  })}
+                </div>
+                
+                <div className="w-full h-56 rounded-md bg-white border border-outline-variant shadow-sm relative overflow-hidden group">
+                  <img src="/chatgpt_real.jpg" alt="ChatGPT Actual Result" className="w-full h-full object-cover object-top transform group-hover:scale-105 transition-transform duration-500" />
+                  <div className="absolute bottom-2 right-2 bg-black/70 backdrop-blur-sm text-white text-[11px] font-bold px-2 py-1 rounded-md">
+                    {getText('actualBadge', {
+                      ko: '실제 유저 생성본 ✨',
+                      ja: '実際のユーザー作成例 ✨',
+                      zh: '真实用户生成范例 ✨',
+                      en: 'Actual user creation ✨',
+                    })}
+                  </div>
+                </div>
+
+                <ul className="text-[14px] leading-relaxed text-secondary-strong flex flex-col gap-2 mt-2 break-keep">
+                  {lang === 'ko' && (
+                    <>
+                      <li>• 🎯 <strong className="text-on-surface">특징:</strong> 한글 타이포그래피(글씨 쓰기) 능력이 압도적으로 뛰어납니다.</li>
+                      <li>• 💬 <strong className="text-on-surface">예시:</strong> 캐릭터가 "고마워!" 라고 외치는 말풍선 텍스트가 시트에 꼭 들어가야 할 때 필수입니다.</li>
+                      <li>• 🎨 <strong className="text-on-surface">화풍:</strong> 부드럽고 몽글몽글한 3D 렌더링, 파스텔톤 수채화 느낌을 내는 데 아주 강합니다.</li>
+                    </>
+                  )}
+                  {lang === 'ja' && (
+                    <>
+                      <li>• 🎯 <strong className="text-on-surface">特徴:</strong> 文字や台詞の描画能力が圧倒的に優れています。</li>
+                      <li>• 💬 <strong className="text-on-surface">例:</strong> 「ありがとう！」などの文字が入った吹き出し付きスタンプを作りたい時に最適です。</li>
+                      <li>• 🎨 <strong className="text-on-surface">画風:</strong> 柔らかい3Dレンダリングやパステル調の水彩画スタイルが得意です。</li>
+                    </>
+                  )}
+                  {lang === 'zh' && (
+                    <>
+                      <li>• 🎯 <strong className="text-on-surface">特点:</strong> 文字与台词排版能力极其优秀。</li>
+                      <li>• 💬 <strong className="text-on-surface">示例:</strong> 当表情包必须包含“谢谢！”等气泡文字台词时是首选。</li>
+                      <li>• 🎨 <strong className="text-on-surface">画风:</strong> 擅长柔和立体3D渲染和马卡龙/水彩粉彩画风。</li>
+                    </>
+                  )}
+                  {lang !== 'ko' && lang !== 'ja' && lang !== 'zh' && (
+                    <>
+                      <li>• 🎯 <strong className="text-on-surface">Feature:</strong> Unmatched Korean typography and text rendering.</li>
+                      <li>• 💬 <strong className="text-on-surface">Usage:</strong> Essential when speech bubbles or text like "Thanks!" must be included.</li>
+                      <li>• 🎨 <strong className="text-on-surface">Style:</strong> Very strong at soft 3D rendering and pastel watercolor styles.</li>
+                    </>
+                  )}
+                </ul>
+              </div>
+
+              {/* Gemini Card */}
+              <div className="bg-surface-variant/30 p-4 sm:p-5 rounded-md border border-outline-variant flex flex-col gap-4 hover:shadow-md transition-shadow group relative">
+                <div className="font-bold text-[16px] text-on-surface group-hover:text-primary-strong transition-colors">
+                  🔵 {getText('geminiTitle', {
+                    ko: 'Gemini 이미지 생성 추천',
+                    ja: 'Gemini 画像生成のおすすめ',
+                    zh: 'Gemini 图像生成推荐',
+                    en: 'Gemini Image Generation',
+                  })}
+                </div>
+                <div className="font-black text-[18px] text-primary-strong -mt-3">
+                  {getText('geminiSub', {
+                    ko: '"표정과 행동으로 말하는 이모티콘"',
+                    ja: '"表情やポーズで表現するスタンプ"',
+                    zh: '"用表情和肢体动作表达的表情包"',
+                    en: '"Emoticons speaking through expressions"',
+                  })}
+                </div>
+                
+                <div className="w-full h-56 rounded-md bg-white border border-outline-variant shadow-sm relative overflow-hidden group">
+                  <img src="/gemini_real.png" alt="Gemini Actual Result" className="w-full h-full object-cover object-top transform group-hover:scale-105 transition-transform duration-500" />
+                  <div className="absolute bottom-2 right-2 bg-black/70 backdrop-blur-sm text-white text-[11px] font-bold px-2 py-1 rounded-md">
+                    {getText('actualBadge', {
+                      ko: '실제 유저 생성본 ✨',
+                      ja: '実際のユーザー作成例 ✨',
+                      zh: '真实用户生成范例 ✨',
+                      en: 'Actual user creation ✨',
+                    })}
+                  </div>
+                </div>
+
+                <ul className="text-[14px] leading-relaxed text-secondary-strong flex flex-col gap-2 mt-2 break-keep">
+                  {lang === 'ko' && (
+                    <>
+                      <li>• 🎯 <strong className="text-on-surface">특징:</strong> 채택한 기준 이미지를 다시 첨부해 한 장씩 변형할 때 캐릭터 특징을 안정적으로 이어가기 좋습니다.</li>
+                      <li>• 💬 <strong className="text-on-surface">예시:</strong> 기준 캐릭터를 먼저 만든 뒤, 글씨 없이 표정과 몸짓 중심의 개별 이미지를 만들 때 활용하기 좋습니다.</li>
+                      <li>• 🎨 <strong className="text-on-surface">권장:</strong> 15컷 시트는 구도 초안으로 사용하고 최종 이미지는 15종 개별 분할에서 생성하세요.</li>
+                    </>
+                  )}
+                  {lang === 'ja' && (
+                    <>
+                      <li>• 🎯 <strong className="text-on-surface">特徴:</strong> ベース画像を再添付して1枚ずつ変形する際、キャラの特徴を安定して維持できます。</li>
+                      <li>• 💬 <strong className="text-on-surface">例:</strong> ベースキャラを先に作成し、文字なしで表情やポーズ中心の個別画像を作るのに最適です。</li>
+                      <li>• 🎨 <strong className="text-on-surface">推奨:</strong> 15コマシートは下書きとして使い、最終画像は個別分割で生成してください。</li>
+                    </>
+                  )}
+                  {lang === 'zh' && (
+                    <>
+                      <li>• 🎯 <strong className="text-on-surface">特点:</strong> 将满意的基准角色图重新附带并逐张生成变体时，能稳定保持角色特征的一致性。</li>
+                      <li>• 💬 <strong className="text-on-surface">示例:</strong> 先生成基准角色，再制作无文字、专注于丰富表情与动作的单张表情包。</li>
+                      <li>• 🎨 <strong className="text-on-surface">建议:</strong> 15格图作为构图草稿，最终成品在15种单张分割中生成。</li>
+                    </>
+                  )}
+                  {lang !== 'ko' && lang !== 'ja' && lang !== 'zh' && (
+                    <>
+                      <li>• 🎯 <strong className="text-on-surface">Feature:</strong> Works best when an accepted base image is attached again for one-at-a-time variations.</li>
+                      <li>• 💬 <strong className="text-on-surface">Usage:</strong> Create the base character first, then generate individual expression- and action-focused images.</li>
+                      <li>• 🎨 <strong className="text-on-surface">Recommended:</strong> Use the 15-panel sheet as a draft and Batch Split for final assets.</li>
+                    </>
+                  )}
+                </ul>
+              </div>
+
+              {/* Grok Card */}
+              <div className="bg-surface-variant/30 p-4 sm:p-5 rounded-md border border-outline-variant flex flex-col gap-4 hover:shadow-md transition-shadow group relative">
+                <div className="font-bold text-[16px] text-on-surface group-hover:text-primary-strong transition-colors">
+                  🟣 {getText('grokTitle', {
+                    ko: 'Grok (xAI) 이미지 생성 추천',
+                    ja: 'Grok (xAI) 画像生成のおすすめ',
+                    zh: 'Grok (xAI) 图像生成推荐',
+                    en: 'Grok (xAI) Image Generation',
+                  })}
+                </div>
+                <div className="font-black text-[17px] sm:text-[18px] text-primary-strong -mt-3">
+                  {getText('grokSub', {
+                    ko: '"선명한 2D 벡터와 스티커 질감"',
+                    ja: '"鮮明な2Dベクターとステッカー質感"',
+                    zh: '"清晰的2D矢量与贴纸质感"',
+                    en: '"Crisp 2D vector & sticker texture"',
+                  })}
+                </div>
+                
+                <div className="w-full h-48 sm:h-52 rounded-md bg-white border border-outline-variant shadow-sm relative overflow-hidden group">
+                  <img src="/grok_real.jpg" alt="Grok Actual Result" className="w-full h-full object-cover object-top transform group-hover:scale-105 transition-transform duration-500" />
+                  <div className="absolute bottom-2 right-2 bg-black/70 backdrop-blur-sm text-white text-[11px] font-bold px-2 py-1 rounded-md">
+                    {getText('actualBadge', {
+                      ko: '실제 유저 생성본 ✨',
+                      ja: '実際のユーザー作成例 ✨',
+                      zh: '真实用户生成范例 ✨',
+                      en: 'Actual user creation ✨',
+                    })}
+                  </div>
+                </div>
+
+                <ul className="text-[13px] sm:text-[14px] leading-relaxed text-secondary-strong flex flex-col gap-2 mt-1 break-keep">
+                  {lang === 'ko' && (
+                    <>
+                      <li>• 🎯 <strong className="text-on-surface">특징:</strong> Flux.1 엔진 기반으로 자연어 지시 이해 및 2D 선화(Linework) 표현력이 우수합니다.</li>
+                      <li>• 💬 <strong className="text-on-surface">예시:</strong> 흰색 스티커 테두리(Die-cut)와 깔끔한 메신저 스티커 느낌을 연출하고 싶을 때 적합합니다.</li>
+                      <li>• 🎨 <strong className="text-on-surface">장점:</strong> 이미지 글자 표현 및 3x5 그리드 레이아웃 배치를 유연하게 반영합니다.</li>
+                    </>
+                  )}
+                  {lang === 'ja' && (
+                    <>
+                      <li>• 🎯 <strong className="text-on-surface">特徴:</strong> Flux.1エンジン搭載で、自然言語理解と鮮明な2D線画表現が優れています。</li>
+                      <li>• 💬 <strong className="text-on-surface">例:</strong> 白フチのステッカー加工やメッセンジャースタンプ風の仕上げに最適です。</li>
+                      <li>• 🎨 <strong className="text-on-surface">長所:</strong> テキスト描画と3x5グリッドレイアウトの配置に柔軟に対応します。</li>
+                    </>
+                  )}
+                  {lang === 'zh' && (
+                    <>
+                      <li>• 🎯 <strong className="text-on-surface">特点:</strong> 基于Flux.1引擎，自然语言理解与2D线条表现极其出色。</li>
+                      <li>• 💬 <strong className="text-on-surface">示例:</strong> 强烈推荐制作带白色剪裁边框的高清矢量贴纸。</li>
+                      <li>• 🎨 <strong className="text-on-surface">优势:</strong> 灵活支持文字渲染与3x5网格布局排布。</li>
+                    </>
+                  )}
+                  {lang !== 'ko' && lang !== 'ja' && lang !== 'zh' && (
+                    <>
+                      <li>• 🎯 <strong className="text-on-surface">Feature:</strong> Powered by Flux.1 for crisp 2D linework and strong prompt fidelity.</li>
+                      <li>• 💬 <strong className="text-on-surface">Usage:</strong> Perfect for clean stickers with die-cut white outlines.</li>
+                      <li>• 🎨 <strong className="text-on-surface">Strength:</strong> Excellent control over text rendering and 3x5 layout structure.</li>
+                    </>
+                  )}
+                </ul>
+              </div>
+            </div>
+
+            {/* Unified Tip Box */}
+            <div className="bg-primary/10 text-primary-strong p-3.5 sm:p-4 rounded-md border border-primary/20 mt-2 flex gap-3 items-start shadow-sm overflow-hidden">
+              <span className="text-[20px] drop-shadow-sm leading-none mt-0.5 shrink-0">📸</span>
+              <div className="min-w-0 flex-1">
+                <strong className="font-bold block mb-1 text-[15px]">
+                  {getText('tipTitle', {
+                    ko: '공용 활용 꿀팁!',
+                    ja: '共通活用テクニック！',
+                    zh: '通用实用技巧！',
+                    en: 'Pro Tip!',
+                  })}
+                </strong>
+                <span className="text-[13px] sm:text-[14px] leading-relaxed opacity-90 break-words block">
+                  {getText('tipContent', {
+                    ko: '사진을 첨부하면 인물이나 반려동물의 특징을 반영한 캐릭터를 만들 수 있습니다. ChatGPT는 문구가 필요한 이미지에, Gemini는 기준 캐릭터 기반 변형에, Grok은 선명한 2D 스티커 질감 연출에 활용해 보세요.',
+                    ja: '写真を添付すると人物やペットの特徴を反映したキャラが作れます。文字が必要な場合はChatGPTを使い、Geminiでは気に入ったベースキャラを作成後、その画像を再添付して1枚ずつバリエーションを生成するのがおすすめです。',
+                    zh: '附带照片可为您、孩子或宠物量身定制角色。包含台词时建议使用ChatGPT；使用Gemini时可先生成满意的基准角色，再重新附带该图片逐张生成表情变体。',
+                    en: 'Attach a photo to reflect recognizable features. Use ChatGPT when text matters, and with Gemini create a base character first, then attach that accepted result again for one-at-a-time variations.',
+                  })}
+                </span>
+              </div>
+            </div>
+          </div>
+        )}
+        {activeTab === 'bg' && (
+          <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
+            <div className="flex flex-col gap-5 mb-6">
+              <p className="text-[16px] font-black text-on-surface px-2 tracking-tight">
+                {getText('bgSub', {
+                  ko: '가장 쉽고 빠르게 이모티콘 배경을 투명하게(누끼) 만드는 방법을 소개합니다!',
+                  ja: 'スタンプの背景を簡単に透明化（透過）するおすすめの方法をご紹介します！',
+                  zh: '为您介绍最简单快捷的表情包透明背景（抠图）制作方法！',
+                  en: 'How to easily and quickly remove backgrounds from your emoticons!',
+                })}
+              </p>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* PC Guide */}
+                <div className="bg-[#FAF9F6] p-4 sm:p-5 rounded-md border border-[#E5E0D8] flex flex-col gap-4">
+                  <div className="flex items-center gap-2 font-bold text-[#5C3A21] text-[16px] ml-2">
+                    <span className="text-[18px]">💻</span>
+                    {getText('pcTitle', {
+                      ko: 'PC에서 작업할 때',
+                      ja: 'PCで作業する場合',
+                      zh: '在电脑 (PC) 上操作',
+                      en: 'Working on PC',
+                    })}
+                  </div>
+                  <div className="flex flex-col gap-3 h-full">
+                    <div className="bg-white p-4 sm:p-5 rounded-md md:rounded-md border border-[#E5E0D8] shadow-sm flex-1 flex flex-col">
+                      <strong className="text-on-surface block mb-2 text-[15px]">
+                        {getText('m1Title', {
+                          ko: '방법 1: remove.bg 웹사이트',
+                          ja: '方法 1: remove.bg ウェブサイト',
+                          zh: '方法 1: remove.bg 网站',
+                          en: 'Method 1: remove.bg website',
+                        })}
+                      </strong>
+                      <ul className="text-[14px] leading-relaxed text-secondary-strong flex flex-col gap-1.5 break-keep list-decimal pl-4 mb-3">
+                        {lang === 'ko' && (
+                          <>
+                            <li>인터넷 창을 열고 <strong>remove.bg</strong> 사이트에 접속합니다.</li>
+                            <li>AI로 만든 이미지를 화면에 <strong>드래그 앤 드롭</strong> 합니다.</li>
+                            <li>약 3초 뒤, AI가 자동으로 배경을 투명하게 날려줍니다.</li>
+                            <li>결과물을 확인하고 파란색 <strong>[다운로드]</strong> 버튼을 누릅니다.</li>
+                            <li>PC에 투명한 배경의 PNG 캐릭터가 따로 저장됩니다!</li>
+                          </>
+                        )}
+                        {lang === 'ja' && (
+                          <>
+                            <li>ブラウザを開き、<strong>remove.bg</strong> サイトにアクセスします。</li>
+                            <li>AIで作成した画像を画面に<strong>ドラッグ＆ドロップ</strong>します。</li>
+                            <li>約3秒でAIが自動的に背景を透明化します。</li>
+                            <li>結果を確認し、青い <strong>[ダウンロード]</strong> ボタンを押します。</li>
+                            <li>PCに透明背景のPNGキャラクターが保存されます！</li>
+                          </>
+                        )}
+                        {lang === 'zh' && (
+                          <>
+                            <li>打开浏览器并访问 <strong>remove.bg</strong> 网站。</li>
+                            <li>将AI生成的表情包图片<strong>拖拽</strong>到网页中。</li>
+                            <li>约3秒后，AI会自动完成透明抠图。</li>
+                            <li>确认效果后点击蓝色的 <strong>[下载]</strong> 按钮。</li>
+                            <li>电脑上即刻保存透明背景的PNG角色图片！</li>
+                          </>
+                        )}
+                        {lang !== 'ko' && lang !== 'ja' && lang !== 'zh' && (
+                          <>
+                            <li>Open a browser and visit <strong>remove.bg</strong>.</li>
+                            <li><strong>Drag and drop</strong> your AI image onto the screen.</li>
+                            <li>After 3 seconds, AI removes the background automatically.</li>
+                            <li>Check the result and click the blue <strong>[Download]</strong> button.</li>
+                            <li>A transparent PNG is saved on your PC!</li>
+                          </>
+                        )}
+                      </ul>
+                      <a href="https://www.remove.bg/" target="_blank" rel="noreferrer" className="text-blue-500 hover:text-blue-700 hover:underline font-bold text-[14px] transition-colors inline-flex items-center gap-1 mt-auto">
+                        <span>👉</span> {getText('goRemoveBg', { ko: 'remove.bg 바로가기', ja: 'remove.bg へ移動', zh: '前往 remove.bg', en: 'Go to remove.bg' })}
+                      </a>
+                    </div>
+                    <div className="bg-white p-4 sm:p-5 rounded-md md:rounded-md border border-[#E5E0D8] shadow-sm flex-1 flex flex-col">
+                      <strong className="text-on-surface block mb-2 text-[15px]">
+                        {getText('m2Title', {
+                          ko: '방법 2: 이미지 편집 프로그램',
+                          ja: '方法 2: 画像編集ソフト',
+                          zh: '方法 2: 图片编辑工具',
+                          en: 'Method 2: Image Editor Program',
+                        })}
+                      </strong>
+                      <ul className="text-[14px] leading-relaxed text-secondary-strong flex flex-col gap-1.5 break-keep list-decimal pl-4 mb-3">
+                        {lang === 'ko' && (
+                          <>
+                            <li>무료 이미지 뷰어 <strong>알씨(ALSee)</strong>를 설치하고 엽니다.</li>
+                            <li>알씨에서 다운로드 받은 이모티콘 이미지를 엽니다.</li>
+                            <li>상단 메뉴에서 <strong>"이미지 편집 ➔ AI 배경 제거"</strong>를 누릅니다.</li>
+                            <li>AI가 잠시 분석한 뒤, 배경을 아주 깔끔하게 지워줍니다.</li>
+                            <li><strong>[저장]</strong> 버튼을 눌러 PNG 형식으로 저장하면 끝입니다!</li>
+                          </>
+                        )}
+                        {lang === 'ja' && (
+                          <>
+                            <li>無料の画像編集ソフトまたはペイントツールを開きます。</li>
+                            <li>ダウンロードしたスタンプ画像を開きます。</li>
+                            <li>メニューから<strong>「背景自動消去」</strong>を選択します。</li>
+                            <li>AIが背景を綺麗に削除します。</li>
+                            <li><strong>[保存]</strong> を押してPNG形式で保存すれば完了です！</li>
+                          </>
+                        )}
+                        {lang === 'zh' && (
+                          <>
+                            <li>打开常用免费图片编辑软件。</li>
+                            <li>在软件中打开下载好的表情包图片。</li>
+                            <li>点击菜单中的 <strong>“AI背景消除”</strong>。</li>
+                            <li>AI自动精准识别并清除背景。</li>
+                            <li>点击 <strong>[保存]</strong> 为PNG格式即可！</li>
+                          </>
+                        )}
+                        {lang !== 'ko' && lang !== 'ja' && lang !== 'zh' && (
+                          <>
+                            <li>Install and open an image editor program.</li>
+                            <li>Open the downloaded emoticon image.</li>
+                            <li>Click <strong>"Image Edit ➔ AI Background Removal"</strong> in the menu.</li>
+                            <li>AI analyzes and cleanly removes the background.</li>
+                            <li>Click <strong>[Save]</strong> to save as a transparent PNG!</li>
+                          </>
+                        )}
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Mobile Guide */}
+                <div className="bg-[#FAF9F6] p-4 sm:p-5 rounded-md border border-[#E5E0D8] flex flex-col gap-4">
+                  <div className="flex items-center gap-2 font-bold text-[#5C3A21] text-[16px] ml-2">
+                    <span className="text-[18px]">📱</span>
+                    {getText('mobileTitle', {
+                      ko: '스마트폰에서 작업할 때',
+                      ja: 'スマホで作業する場合',
+                      zh: '在智能手机上操作',
+                      en: 'Working on Smartphone',
+                    })}
+                  </div>
+                  <div className="flex flex-col gap-3 h-full">
+                    <div className="bg-white p-4 sm:p-5 rounded-md md:rounded-md border border-[#E5E0D8] shadow-sm flex-1 flex flex-col">
+                      <strong className="text-on-surface block mb-2 text-[15px] flex items-center gap-1.5"><span className="text-[16px]">🤖</span> Galaxy</strong>
+                      <ul className="text-[14px] leading-relaxed text-secondary-strong flex flex-col gap-1.5 break-keep list-decimal pl-4">
+                        {lang === 'ko' && (
+                          <>
+                            <li>AI로 만든 이미지를 <strong>기본 갤러리 앱</strong>에서 엽니다.</li>
+                            <li>원하는 캐릭터를 손가락으로 <strong>1초 이상 꾹~ 누릅니다.</strong></li>
+                            <li>캐릭터 주변만 반짝거리며 배경과 분리됩니다.</li>
+                            <li>이때 손을 떼면 나타나는 팝업 메뉴에서 <strong>"이미지로 저장"</strong>을 누릅니다.</li>
+                            <li>갤러리에 투명한 배경의 캐릭터가 새롭게 저장됩니다!</li>
+                          </>
+                        )}
+                        {lang === 'ja' && (
+                          <>
+                            <li>AIで作成した画像を<strong>標準ギャラリーアプリ</strong>で開きます。</li>
+                            <li>対象のキャラクターを指で<strong>1秒以上長押し</strong>します。</li>
+                            <li>キャラの周りが光り、背景から分離されます。</li>
+                            <li>「<strong>画像として保存</strong>」をタップします。</li>
+                            <li>ギャラリーに透過PNGとして新しく保存されます！</li>
+                          </>
+                        )}
+                        {lang === 'zh' && (
+                          <>
+                            <li>在系统自带<strong>相册APP</strong>中打开AI生成的图片。</li>
+                            <li>用手指<strong>长按</strong>想要提取的角色1秒以上。</li>
+                            <li>主体角色边缘高亮并与背景分离。</li>
+                            <li>松开手指在弹出的菜单中点击“<strong>保存为图片</strong>”。</li>
+                            <li>相册中即刻生成一张透明背景的PNG文件！</li>
+                          </>
+                        )}
+                        {lang !== 'ko' && lang !== 'ja' && lang !== 'zh' && (
+                          <>
+                            <li>Open the AI image in the <strong>default Gallery app</strong>.</li>
+                            <li><strong>Long press</strong> the character for at least 1 second.</li>
+                            <li>The subject separates from the background.</li>
+                            <li>Release and tap <strong>"Save as image"</strong> from the popup.</li>
+                            <li>A transparent PNG is saved in your gallery!</li>
+                          </>
+                        )}
+                      </ul>
+                    </div>
+                    <div className="bg-white p-4 sm:p-5 rounded-md md:rounded-md border border-[#E5E0D8] shadow-sm flex-1 flex flex-col">
+                      <strong className="text-on-surface block mb-2 text-[15px] flex items-center gap-1.5"><span className="text-[16px]">🍎</span> iPhone</strong>
+                      <ul className="text-[14px] leading-relaxed text-secondary-strong flex flex-col gap-1.5 break-keep list-decimal pl-4">
+                        {lang === 'ko' && (
+                          <>
+                            <li>AI로 만든 이미지를 <strong>기본 사진 앱</strong>에서 엽니다.</li>
+                            <li>원하는 캐릭터를 손가락으로 <strong>1초 이상 꾹~ 누릅니다.</strong></li>
+                            <li>빛이 한 바퀴 돌면서 피사체가 배경과 분리됩니다.</li>
+                            <li>손을 떼고 나타나는 메뉴에서 <strong>"공유" ➔ "이미지 저장"</strong>을 누릅니다.</li>
+                            <li>사진첩에 배경이 투명한 PNG 파일로 깔끔하게 저장됩니다!</li>
+                          </>
+                        )}
+                        {lang === 'ja' && (
+                          <>
+                            <li>AI画像を<strong>標準の写真アプリ</strong>で開きます。</li>
+                            <li>キャラクターを指で<strong>1秒以上長押し</strong>します。</li>
+                            <li>光が走り、対象が背景から切り抜かれます。</li>
+                            <li>「<strong>共有</strong>」➔「<strong>画像を保存</strong>」をタップします。</li>
+                            <li>写真アプリに透明PNGとして保存されます！</li>
+                          </>
+                        )}
+                        {lang === 'zh' && (
+                          <>
+                            <li>在系统自带“<strong>照片</strong>”APP中打开AI生成的图片。</li>
+                            <li>用手指<strong>长按</strong>目标角色1秒以上。</li>
+                            <li>主体四周闪烁光芒并完成自动抠图。</li>
+                            <li>松手并在出现的菜单中选择“<strong>分享</strong>”➔“<strong>保存图像</strong>”。</li>
+                            <li>相册中即自动存入干净的透明PNG文件！</li>
+                          </>
+                        )}
+                        {lang !== 'ko' && lang !== 'ja' && lang !== 'zh' && (
+                          <>
+                            <li>Open the AI image in the <strong>Photos app</strong>.</li>
+                            <li><strong>Long press</strong> the character for at least 1 second.</li>
+                            <li>The subject highlights and separates from the background.</li>
+                            <li>Release and tap <strong>"Share" ➔ "Save Image"</strong>.</li>
+                            <li>A transparent PNG is saved in your photos!</li>
+                          </>
+                        )}
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            {/* Visual Tutorial for Background Removal */}
+            <div className="flex flex-col md:flex-row items-center justify-center gap-6 bg-[#F4F4F4] p-8 rounded-md border border-[#E5E5E5]">
+              
+              {/* Step 1 */}
+              <div className="flex flex-col items-center gap-3">
+                <div className="w-28 h-28 rounded-md bg-[#00FF00] flex items-center justify-center border-4 border-dashed border-primary shadow-sm relative overflow-hidden group hover:scale-105 transition-transform">
+                  <span className="text-[56px] relative z-10 drop-shadow-md">🐱</span>
+                </div>
+                <span className="text-[13px] font-bold text-secondary-strong">
+                  {getText('step1Text', {
+                    ko: '1. 연두색 배경 AI 이미지',
+                    ja: '1. 黄緑色背景のAI画像',
+                    zh: '1. 绿色背景AI生成图',
+                    en: '1. Green BG AI Image',
+                  })}
+                </span>
+              </div>
+
+              {/* Arrow */}
+              <div className="text-primary-strong hidden md:block">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+              </div>
+              <div className="text-primary-strong md:hidden rotate-90 my-2">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+              </div>
+
+              {/* Step 2 */}
+              <div className="flex flex-col items-center gap-3">
+                <div className="w-28 h-28 rounded-md bg-white flex flex-col items-center justify-center border-2 border-outline-variant shadow-bubbly relative group hover:scale-105 transition-transform">
+                  <div className="absolute -top-3 -right-3 bg-error text-white text-[11px] font-bold px-3 py-1 rounded-full shadow-md animate-bounce">{lang === 'ko' ? 'AI 툴' : 'AI Tool'}</div>
+                  <span className="font-black text-[16px] text-primary-strong">remove.bg</span>
+                  <span className="text-[12px] text-secondary-strong font-bold mt-1">or Mobile APP</span>
+                </div>
+                <span className="text-[13px] font-bold text-secondary-strong">
+                  {getText('step2Text', {
+                    ko: '2. 클릭 한 번으로 누끼!',
+                    ja: '2. ワンクリックで透過！',
+                    zh: '2. 一键轻松抠图！',
+                    en: '2. 1-Click Removal!',
+                  })}
+                </span>
+              </div>
+
+              {/* Arrow */}
+              <div className="text-primary-strong hidden md:block">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+              </div>
+              <div className="text-primary-strong md:hidden rotate-90 my-2">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+              </div>
+
+              {/* Step 3 */}
+              <div className="flex flex-col items-center gap-3">
+                <div className="w-28 h-28 rounded-md flex items-center justify-center border-2 border-outline-variant shadow-sm relative group hover:scale-105 transition-transform" style={{ backgroundImage: 'conic-gradient(#e5e7eb 25%, white 25%, white 50%, #e5e7eb 50%, #e5e7eb 75%, white 75%, white)', backgroundSize: '16px 16px' }}>
+                  <span className="text-[64px] drop-shadow-xl z-10">🐱</span>
+                </div>
+                <span className="text-[13px] font-bold text-secondary-strong">
+                  {getText('step3Text', {
+                    ko: '3. 완벽한 투명 PNG 완성',
+                    ja: '3. 完璧な透明PNGの完成',
+                    zh: '3. 完美生成透明PNG',
+                    en: '3. Perfect Transparent PNG',
+                  })}
+                </span>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'template' && (
+          <div className="animate-in fade-in slide-in-from-bottom-2 duration-300 flex flex-col gap-5 mt-2">
+            <div className="bg-[#FFF9EE] p-4 sm:p-5 rounded-lg border border-[#FFECA1] flex flex-col gap-2">
+              <h3 className="font-headline-sm text-headline-sm text-primary-strong flex items-center gap-2">
+                <span>📌</span> {lang === 'ko' ? '이모티콘 프롬프트 메이커란?' : 'What is the Emoticon Prompt Maker?'}
+              </h3>
+              <p className="text-[14px] sm:text-[15px] leading-relaxed text-on-surface font-medium">
+                {lang === 'ko'
+                  ? '이모티콘 프롬프트 메이커는 사용자의 키워드 선택이나 사진을 바탕으로 ChatGPT(DALL-E 3), Google Gemini(Imagen 3), xAI Grok(Flux.1)에 즉시 사용 가능한 15종 카카오톡·라인 이모티콘 프롬프트를 1초 만에 자동 생성해 주는 무료 웹 도구입니다.'
+                  : 'A free web tool that generates 15-emoticon sticker sheet prompts for ChatGPT, Gemini, and Grok in 1 second based on keywords or photos.'}
+              </p>
+            </div>
+
+            <div className="flex flex-col gap-3">
+              <h4 className="font-bold text-[16px] text-on-surface flex items-center gap-2">
+                <span>💡</span> {lang === 'ko' ? 'AI 이모티콘 프롬프트 작성을 위한 필수 4단계 템플릿' : '4-Step Essential Prompt Template'}
+              </h4>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-[13px] sm:text-[14px]">
+                <div className="bg-white p-4 rounded-md border border-outline-variant flex flex-col gap-1.5 shadow-2xs">
+                  <span className="font-bold text-emerald-800">1. 핵심 스타일 (Core Style)</span>
+                  <p className="text-on-surface-variant font-mono text-[12px] bg-slate-50 p-2 rounded border border-slate-200">
+                    Cute vector emoticon, kawaii 2D sticker, clean bold outline, flat color
+                  </p>
+                  <span className="text-[12px] text-slate-600">이모티콘 특유의 깔끔한 2D 그래픽 질감을 선언합니다.</span>
+                </div>
+                <div className="bg-white p-4 rounded-md border border-outline-variant flex flex-col gap-1.5 shadow-2xs">
+                  <span className="font-bold text-emerald-800">2. 캐릭터 묘사 (Subject & Trait)</span>
+                  <p className="text-on-surface-variant font-mono text-[12px] bg-slate-50 p-2 rounded border border-slate-200">
+                    A chubby cute yellow cat, expressive eyes, wearing casual hoodie
+                  </p>
+                  <span className="text-[12px] text-slate-600">외형, 성격, 의상, 소품 등 고유 특징을 구체화합니다.</span>
+                </div>
+                <div className="bg-white p-4 rounded-md border border-outline-variant flex flex-col gap-1.5 shadow-2xs">
+                  <span className="font-bold text-emerald-800">3. 15종 감정 및 포즈 그리드 (15 Grid Matrix)</span>
+                  <p className="text-on-surface-variant font-mono text-[12px] bg-slate-50 p-2 rounded border border-slate-200">
+                    5x3 grid sheet: 1. happy thumbs up, 2. crying tears, 3. laughing loud...
+                  </p>
+                  <span className="text-[12px] text-slate-600">카카오톡 인기 대화 상황별 15개 감정을 행렬로 배치합니다.</span>
+                </div>
+                <div className="bg-white p-4 rounded-md border border-outline-variant flex flex-col gap-1.5 shadow-2xs">
+                  <span className="font-bold text-emerald-800">4. 배경 및 다이컷 분리 (Isolation & Die-cut)</span>
+                  <p className="text-on-surface-variant font-mono text-[12px] bg-slate-50 p-2 rounded border border-slate-200">
+                    Solid white background, isolated stickers, white die-cut border, no overlap
+                  </p>
+                  <span className="text-[12px] text-slate-600">누끼(배경 투명화) 제거가 가장 쉬운 단색 배경을 잠급니다.</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-mint-soft/80 p-4 rounded-lg border border-mint-border text-[13px] text-mint-strong font-medium leading-relaxed">
+              <strong className="font-bold text-mint-strong block mb-1">
+                🚀 구글 AI 개요 & 챗봇 검색 최적화 포인트:
+              </strong>
+              본 사이트는 ChatGPT(DALL-E 3), Google Gemini(Imagen 3), xAI Grok(Flux.1) 각 엔진의 특화 파라미터와 카카오톡 이모티콘 심사 승인 규격을 100% 충족하는 프롬프트를 자동으로 조립하여 제공합니다.
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'usage' && (
+          <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
+            <div className="flex flex-col gap-5 mb-6">
+              <p className="text-[16px] font-black text-on-surface px-2 tracking-tight">
+                {getText('usageSub', {
+                  ko: '만드신 이미지를 실제 카카오톡에서 사용하는 두 가지 방법을 소개합니다!',
+                  ja: '作成した画像を実際のメッセンジャー（LINE・KakaoTalk等）で使う2つの方法をご紹介します！',
+                  zh: '为您介绍将生成的图片用于微信/QQ/Line/KakaoTalk的两种使用方式！',
+                  en: 'Two ways to actually use your created images in KakaoTalk!',
+                })}
+              </p>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Method 1: Official */}
+                <div className="bg-[#FAF9F6] p-4 sm:p-5 rounded-md border border-[#E5E0D8] flex flex-col gap-4">
+                  <div className="flex items-center gap-2 font-bold text-[#5C3A21] text-[16px] ml-2">
+                    <span className="text-[18px]">💰</span>
+                    {getText('officialTitle', {
+                      ko: '1. 정식 출시 및 판매를 원할 때',
+                      ja: '1. 公式スタンプとして販売・出品したい場合',
+                      zh: '1. 作为官方表情包上架与销售',
+                      en: '1. Official Release and Sale',
+                    })}
+                  </div>
+                  <div className="bg-white p-4 sm:p-5 rounded-md md:rounded-md border border-[#E5E0D8] shadow-sm flex-1 flex flex-col gap-3">
+                    <strong className="text-on-surface block text-[15px]">
+                      {getText('studioTitle', {
+                        ko: '카카오 이모티콘 스튜디오 제안',
+                        ja: 'クリエイターズマーケットへの申請',
+                        zh: '开放平台/创作平台提交',
+                        en: 'Kakao Emoticon Studio Submission',
+                      })}
+                    </strong>
+                    
+                    {/* AI Policy Warning Box */}
+                    <div className="bg-[#FFF5F5] text-[#D32F2F] p-3.5 sm:p-4 rounded-md border border-[#FFCDD2] my-1">
+                      <div className="mb-2">
+                        <span className="inline-flex items-center gap-1 bg-[#D32F2F] text-white text-[12px] font-bold px-2 py-0.5 rounded-md mb-1.5">
+                          <span className="text-[12px] leading-none">⚠️</span>
+                          {getText('warnBadge', { ko: '주의', ja: 'ご注意', zh: '注意事项', en: 'Warning' })}
+                        </span>
+                        <strong className="block text-[15px] font-black tracking-tight">
+                          {getText('warnTitle', {
+                            ko: 'AI 이미지는 그대로 등록 불가!',
+                            ja: 'AI画像のそのままの申請は不可！',
+                            zh: 'AI生成原图不可直接提交！',
+                            en: 'Cannot Submit AI Images As-Is!',
+                          })}
+                        </strong>
+                      </div>
+                      <p className="text-[13px] leading-[1.6] break-keep opacity-90">
+                        {lang === 'ko' && (
+                          <>
+                            현재 카카오 정책상 저작권 문제로 인해 <strong>AI가 생성한 이미지를 '그대로' 제출하는 것은 엄격히 금지</strong>되어 있습니다.<br/>
+                            AI는 기발한 대사와 포즈를 뽑는 <strong>최고의 '참고용 시안'</strong>으로 활용하시고, 정식 제출은 그 시안을 바탕으로 <strong>직접 선을 따서 다시 그려서(리디자인)</strong> 제출하셔야 합니다.
+                          </>
+                        )}
+                        {lang === 'ja' && (
+                          <>
+                            現在の各プラットフォームのポリシー上、<strong>AI生成画像を「そのまま」提出することは禁止</strong>されています。<br/>
+                            AIは構図やポーズを得る<strong>「下書きデザイン」</strong>として活用し、申請時はそれを元に<strong>自分でトレース・描き直して（リデザイン）</strong>ご提出ください。
+                          </>
+                        )}
+                        {lang === 'zh' && (
+                          <>
+                            根据目前各大平台规定，<strong>禁止直接提交未经修改的AI原图</strong>。<br/>
+                            请将AI作为获取台词与姿势的<strong>“优质设计草稿”</strong>，正式提交时需根据草稿由人工<strong>重新描线绘制 (重新设计)</strong> 后提交。
+                          </>
+                        )}
+                        {lang !== 'ko' && lang !== 'ja' && lang !== 'zh' && (
+                          <>
+                            Due to copyright policy, <strong>submitting AI-generated images "as-is" is strictly prohibited.</strong><br/>
+                            Use AI as an excellent <strong>"reference draft"</strong>, and for official submission, you must <strong>trace and redraw (redesign) them yourself</strong>.
+                          </>
+                        )}
+                      </p>
+                    </div>
+
+                    <ul className="text-[14px] leading-relaxed text-secondary-strong flex flex-col gap-2 break-keep list-disc pl-5 mb-2">
+                      {lang === 'ko' && (
+                        <>
+                          <li><strong>이미지 준비:</strong> '직접 리디자인한' 360x360px 투명 배경 PNG 이미지 32종 준비</li>
+                          <li><strong>제안하기:</strong> 스튜디오 사이트에 접속하여 준비한 이미지를 업로드</li>
+                          <li><strong>심사 대기:</strong> 내부 심사 통과 시 정식 상품으로 출시되어 수익 창출 가능!</li>
+                        </>
+                      )}
+                      {lang === 'ja' && (
+                        <>
+                          <li><strong>画像準備:</strong> 「自分で描き直した」透明背景PNGを用意</li>
+                          <li><strong>申請:</strong> クリエイターズサイトにアクセスして画像をアップロード</li>
+                          <li><strong>審査待ち:</strong> 審査通過後、公式スタンプとして販売され収益化が可能！</li>
+                        </>
+                      )}
+                      {lang === 'zh' && (
+                        <>
+                          <li><strong>准备图片:</strong> 准备好“人工重新绘制”的透明背景PNG格式图片</li>
+                          <li><strong>提交审核:</strong> 登录开放平台/创作平台上传准备好的表情包</li>
+                          <li><strong>等待审核:</strong> 审核通过后即可成为官方表情包并获得收益！</li>
+                        </>
+                      )}
+                      {lang !== 'ko' && lang !== 'ja' && lang !== 'zh' && (
+                        <>
+                          <li><strong>Prepare Images:</strong> Prepare 32 'redrawn' transparent PNG images.</li>
+                          <li><strong>Submit:</strong> Upload your prepared images to the Studio website.</li>
+                          <li><strong>Wait for Review:</strong> If approved, it becomes an official product!</li>
+                        </>
+                      )}
+                    </ul>
+                  </div>
+                </div>
+
+                {/* Method 2: Personal */}
+                <div className="bg-[#FAF9F6] p-4 sm:p-5 rounded-md border border-[#E5E0D8] flex flex-col gap-4">
+                  <div className="flex items-center gap-2 font-bold text-[#5C3A21] text-[16px] ml-2">
+                    <span className="text-[18px]">✨</span>
+                    {getText('personalTitle', {
+                      ko: '2. 지인들과 가볍게 무료로 쓸 때',
+                      ja: '2. 友達とチャットで無料・気軽に使う場合',
+                      zh: '2. 与亲友免费在聊天中随心使用',
+                      en: '2. Casual Free Use with Friends',
+                    })}
+                  </div>
+                  <div className="bg-white p-4 sm:p-5 rounded-md md:rounded-md border border-[#E5E0D8] shadow-sm flex-1 flex flex-col gap-3">
+                    <strong className="text-on-surface block mb-1 text-[15px]">
+                      {getText('chatTrickTitle', {
+                        ko: '개인 소장용 (채팅방 활용법)',
+                        ja: '個人使用（トーク画面での活用法）',
+                        zh: '个人收藏 (聊天界面使用技巧)',
+                        en: 'Personal Use (Chatroom Trick)',
+                      })}
+                    </strong>
+                    
+                    {/* Visual Example Image */}
+                    <div className="w-full h-40 rounded-md overflow-hidden border border-[#E5E0D8] my-1 shadow-sm relative group">
+                      <img src="/chat_trick.jpg" alt="채팅방 전송 예시" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"/>
+                      <div className="absolute top-2 left-2 bg-white/90 backdrop-blur-sm text-[#5C3A21] text-[11px] font-bold px-2.5 py-1 rounded-full shadow-sm flex items-center gap-1">
+                        <span>📸</span> {getText('exBadge', { ko: '전송 예시', ja: '送信例', zh: '发送示例', en: 'Example' })}
+                      </div>
+                    </div>
+
+                    <ul className="text-[14px] leading-relaxed text-secondary-strong flex flex-col gap-2 break-keep list-decimal pl-5">
+                      {lang === 'ko' && (
+                        <>
+                          <li>위의 [배경(누끼) 제거] 가이드에 따라 <strong>투명 배경으로 만든 PNG 파일</strong>을 스마트폰 갤러리에 저장합니다.</li>
+                          <li>카카오톡 채팅방에서 입력창 옆의 <strong>[+] 버튼 ➔ [앨범]</strong>을 누릅니다.</li>
+                          <li>갤러리에서 투명하게 만든 캐릭터 이미지를 선택하여 전송합니다.</li>
+                        </>
+                      )}
+                      {lang === 'ja' && (
+                        <>
+                          <li>上の [背景の消し方] ガイドに従い、<strong>透過背景にしたPNGファイル</strong>をスマホのアルバムに保存します。</li>
+                          <li>トーク画面の入力欄横の <strong>[+] ボタン ➔ [写真/アルバム]</strong> をタップします。</li>
+                          <li>アルバムから透明背景のキャラ画像を選択して送信します。</li>
+                        </>
+                      )}
+                      {lang === 'zh' && (
+                        <>
+                          <li>根据上方抠图指南，将<strong>透明背景PNG图片</strong>保存至手机相册。</li>
+                          <li>在聊天界面点击输入框旁边的 <strong>[+] 按钮 ➔ [相册/图片]</strong>。</li>
+                          <li>选择相册中透明背景的角色图片直接发送。</li>
+                        </>
+                      )}
+                      {lang !== 'ko' && lang !== 'ja' && lang !== 'zh' && (
+                        <>
+                          <li>Save the <strong>transparent background PNG file</strong> to your smartphone gallery using the background removal guide above.</li>
+                          <li>In a chatroom, tap the <strong>[+] button ➔ [Album]</strong> next to the input field.</li>
+                          <li>Select and send the transparent character image from your gallery.</li>
+                        </>
+                      )}
+                    </ul>
+                    <div className="mt-auto bg-primary/10 text-primary-strong font-bold text-[13px] p-3 rounded-md flex items-start gap-2 leading-relaxed">
+                      <span className="text-[16px] leading-none mt-0.5">💡</span>
+                      {getText('chatTip', {
+                        ko: '배경이 투명하기 때문에 하얀색 네모 테두리가 보이지 않아, 진짜로 구매한 스티커처럼 대화창에 아주 깔끔하게 올라갑니다!',
+                        ja: '背景が透明なので白い枠が表示されず、まるで本物のスタンプのようにチャット画面にとても綺麗に送信されます！',
+                        zh: '由于背景透明无白边，发在聊天界面效果非常干净自然，就像购买的官方表情包一样！',
+                        en: 'Because the background is transparent, the white rectangular border is invisible, making it look exactly like a real purchased sticker in the chat window!',
+                      })}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const PHRASE_ACTION_MAP_KO = {
+  // 일상 / 인사
+  'ㅋㅋㅋㅋ': '몸을 구부리며 자지러지게 웃는 모습 (bent over laughing hard)',
+  '안녕!': '한 손을 높이 들고 반갑게 흔드는 모습 (waving one arm high)',
+  '오늘도 화이팅': '양 주먹을 불끈 쥐고 의지를 다지는 포즈 (fists clenched, determined)',
+  '좋아요': '밝게 웃으며 엄지척을 하는 포즈 (thumbs up)',
+  '고마워요': '두 손을 가슴 앞에 모으고 감사의 인사를 건네는 포즈 (hands together bowing)',
+  '사랑해요': '양손으로 가슴/머리 위에 하트를 만들고 미소짓는 모습 (heart hands + small heart)',
+  '최고!': '양 팔을 들고 신나게 점프하는 포즈 (jumping both arms up)',
+  '오예': '한쪽 주먹을 위로 들어 올리며 환호하는 점프 포즈 (jumping one fist up)',
+  '미안해요': '손을 모으고 미안한 표정으로 사과하는 모습 (apologetic bow)',
+  '수고했어요': '지쳐서 앉아 땀을 닦는 모습과 별 효과 (sitting tired + star bubble)',
+  '축하해요': '박수를 치며 꽃가루가 날리는 환호 포즈 (clapping + confetti)',
+  '대박': '양 손으로 뺨을 감싸며 경악/감탄하는 포즈 (hands on cheeks shocked)',
+  '헐': '입을 손으로 막고 충격받아 멍해진 표정 (hand over mouth surprised)',
+  '감동': '가슴에 손을 얹고 눈물이 글썽글썽한 표정과 하트 (hands on chest teary + hearts)',
+  '잘자요': '베개에 누워 편안하게 잠든 모습과 Zzz 효과 (lying on pillow sleeping + Zzz)',
+
+  // 직장인
+  '네!': '차렷 자세로 또렷하게 대답하는 직장인 포즈 (standing straight acknowledging)',
+  '알겠습니다': '고개를 끄덕이며 서류판에 메모하는 포즈 (nodding while taking notes)',
+  '수정 부탁드립니다': '모니터를 가리키며 진지하게 요청하는 포즈 (pointing to screen requesting edit)',
+  '감사합니다': '고개 숙여 깍듯하게 인사하는 직장인 (polite bow of gratitude)',
+  '퇴근!': '가방을 챙겨 신나게 가벼운 발걸음으로 달려 나가는 포즈 (running out joyful after work)',
+  '회의 중': '입에 손가락을 대고 슉 安静히 회의하는 모습 (finger on lips in meeting)',
+  '파일 첨부합니다': '이메일 수신 아이콘을 내미는 포즈 (presenting email attachment)',
+  '맛점하세요': '숟가락과 젓가락을 들고 식사 준비하는 모습 (holding spoon and chopsticks excited for lunch)',
+  '화이팅!': '커피 잔을 들고 피로를 이겨내며 에너지를 내는 포즈 (holding coffee cup cheering)',
+  '죄송합니다': '식은땀을 흘리며 두 손 모아 진심으로 사과하는 모습 (sweating and bowing in apology)',
+  '일정 확인해주세요': '달력을 가리키며 검토를 요청하는 포즈 (pointing to calendar)',
+  '수고하셨습니다': '따뜻한 음료를 내밀며 격려하는 모습 (offering warm drink)',
+  '먼저 퇴근하겠습니다': '살금살금 가방 들고 퇴근길에 오르는 모습 (sneaking out happily)',
+  '확인했습니다': 'OK 손가락 포즈를 취하며 미소짓는 모습 (OK hand sign with confident smile)',
+  '검토 부탁드립니다': '서류 봉투를 양 손으로 정중히 건네는 모습 (handing over documents for review)',
+  '연차 씁니다': '선글라스를 끼고 튜브를 든 휴가 모드 (wearing sunglasses with swim ring)',
+  '휴가 다녀오겠습니다': '캐리어를 끌고 신나게 손을 흔드는 포즈 (pulling suitcase waving goodbye)',
+  '메일 확인 부탁드립니다': '편지 봉투를 가리키며 밝게 웃는 모습 (pointing to email envelope)',
+  '참고 부탁드립니다': '메모지 포스트잇을 붙이는 모습 (sticking reference sticky note)',
+  '일정 변경 가능할까요?': '달력 시계를 가리키며 미안한 표정 (pointing to clock calendar apologetically)',
+  '결재 부탁드립니다': '결재 서류판을 펜과 함께 정중히 올리는 포즈 (offering approval board with pen)',
+  '공지 확인해주세요': '확성기를 들고 크게 알리는 포즈 (holding megaphone announcing)',
+  '지옥철 탑승': '사람들에 끼여 지친 표정으로 손잡이를 잡은 포즈 (squeezed in crowded subway holding handle)',
+  '야근 확정': '다크서클 짙게 모니터 불빛 앞에 앉은 포즈 (sitting in dark with dark circles at monitor)',
+  '커피 시급': '빈 커피 컵을 들고 영혼이 나간 표정 (holding empty coffee cup soul leaving body)',
+  '팀회식': '건배 잔을 들고 신나게 웃는 포즈 (raising toast glass at team dinner)',
+  '칼퇴 기원': '시계를 간절하게 바라보며 기도하는 포즈 (praying eagerly looking at clock)',
+  '버티는 중': '머리에 띠를 두르고 꿋꿋하게 견디는 포즈 (headband on standing tough)',
+  '공유합니다': '차트를 가리키며 브리핑하는 포즈 (pointing to presentation chart)',
+  '수정 완료했습니다': '완료 체크표시 피켓을 들고 자랑스러워하는 포즈 (holding completion check sign)',
+
+  // 주식 / 재테크
+  '떡상!': '양 손을 들고 녹색/빨간 상승 화살표를 타며 점프하는 포즈 (riding green rocket chart up)',
+  '구조대 언제 옴?': '망원경을 들고 먼 곳을 바라보며 기다리는 모습 (looking through binoculars waiting)',
+  '익절!': '돈다발을 들고 행복하게 미소짓는 포즈 (holding cash fan smiling happily)',
+  '손절': '눈물을 흘리며 빨간 하트를 반으로 쪼개는 모습 (tears dropping with broken heart)',
+  '월급 증발': '지갑을 탈탈 털어 먼지만 날리는 포즈 (shaking empty wallet dust flying)',
+  '영끌 투입': '모든 자산을 기운 차게 쏟아붓는 포즈 (throwing all in enthusiastically)',
+  '존버는 승리한다': '돌처럼 튼튼하게 땅에 굳건히 서서 견디는 포즈 (standing firm like stone endurance)',
+  '원금 회복': '만세를 부르며 감격의 눈물을 흘리는 포즈 (cheering with emotional tears of relief)',
+  '물렸다': '밧줄에 꽁꽁 묶여 억울한 표정을 짓는 포즈 (tied with rope trapped look)',
+  '매수 완료': '장바구니에 주식을 담고 클릭하는 포즈 (clicking buy order button proudly)',
+  '양봉이다!': '빨간 촛불 캔들을 들고 춤추는 포즈 (dancing holding red candlestick chart)',
+  '음봉 눈물': '파란 촛불 캔들 아래 웅크려 울고 있는 포즈 (crouching under blue candlestick crying)',
+  '상한가 릴레이': '트로피를 들고 신나게 달리는 포즈 (running joyfully holding trophy)',
+  '폭락장 경악': '머리를 감싸쥐고 그래프 하락에 놀라는 포즈 (holding head shocked at falling line)',
+  '계좌 녹는 중': '얼음처럼 스르륵 녹아내리는 계좌 캐릭터 (character melting like ice)',
+
+  // 음식 / 다이어트
+  '배고파': '배를 움켜쥐고 꼬르륵 소리가 나는 포즈 (holding tummy with hungry sound effect)',
+  '오늘 뭐 먹지?': '턱을 괴고 음식 메뉴판을 고민하는 모습 (chin on hand pondering food menu)',
+  '치킨?': '튀긴 닭다리를 들고 입을 쩍 벌린 모습 (holding fried chicken drumstick mouth open)',
+  '다이어트는 내일부터': '햄버거와 피자를 양손에 들고 행복해하는 모습 (holding burger and pizza happily)',
+  '당 충전': '마카롱과 케이크를 먹으며 눈이 반짝이는 포즈 (eating macaron cake eyes sparkling)',
+  '야식 타임': '야식 족발/라면 그릇을 들고 밤에 웃는 모습 (holding night snack noodles smiling at night)',
+  '맛집 발견!': '입에 침을 흘리며 검지 손가락을 세운 포즈 (drooling holding fork enthusiast)',
+  '배부르다': '배가 빵빵해져서 배를 두드리며 누운 모습 (pattin big full belly lying down)',
+  '잘 먹겠습니다': '식사 도구를 들고 모자/턱받이 쓴 모습 (holding fork knife ready to eat)',
+  '소화불량': '배를 문지르며 사이다 캔을 든 모습 (rubbing stomach holding soda can)',
+  '물 섭취 중': '물병을 마시며 수분 충전하는 모습 (drinking from water bottle)',
+  '오운완': '운동복 차림으로 아령을 들고 근육을 자랑하는 포즈 (holding dumbbell showing muscle in gym wear)',
+  '샐러드 냠냠': '풀을 먹으며 살짝 씁쓸하게 웃는 모습 (eating salad smiling faintly)',
+  '먹방 스타트': '방송 카메라 앞에서 먹을 준비 완료한 포즈 (setting up food mukbang camera)',
+  '탄수화물 최고': '갓 구운 빵을 안고 감동받은 모습 (hugging fresh warm bread teary eyed)',
+
+  // 분노 / 짜증
+  '아 진짜': '이마를 짚고 깊은 한숨을 쉬는 포즈 (hand on forehead deep sigh)',
+  '선 넘네': '레드카드를 들어 올리며 정색하는 모습 (holding up red card serious face)',
+  '말이야 방구야': '귀를 막고 어이없다는 표정을 짓는 포즈 (covering ears dumbfounded expression)',
+  '어이없음': '팔짱을 끼고 고개를 갸웃거리는 포즈 (arms crossed tilting head in disbelief)',
+  '빡침': '머리 위에서 불꽃 폭발 연기가 피어오르는 모습 (fire fumes exploding from head)',
+  '극발노': '얼굴이 붉어지며 주먹을 떨고 있는 모습 (face turning red shaking fists in anger)',
+  '참을 인 100개': '참을 인(忍) 자 피켓을 들고 이 악물고 버티는 포즈 (holding patience sign gritting teeth)',
+  '혈압 상승': '목을 잡고 뒷목 당겨하는 모습 (holding back of neck high blood pressure)',
+  '스트레스': '머리를 쥐어뜯으며 괴로워하는 포즈 (pulling hair distressed)',
+  '진정하자': '심호흡하며 손을 내리누르는 모습 (taking deep breath pressing hands down)',
+  '건들지 마라': '접근 금지 표지판을 내미는 포즈 (holding keep out warning sign)',
+  '떽!': '검지 손가락을 휘두르며 호통치는 포즈 (shaking index finger sternly)',
+
+  // 축하 / 응원
+  '생일 축하해': '생일 케이크를 들고 고깔모자 쓰고 웃는 모습 (holding birthday cake wearing party hat)',
+  '꽃길만 걷자': '꽃가루가 휘날리는 꽃길을 걸어가는 모습 (walking on flower path with petals falling)',
+  '잘했어!': '어깨를 톡톡 두드려주며 칭찬하는 포즈 (patting shoulder praising warmly)',
+  '다 잘될 거야': '따뜻하게 감싸 안아주며 미소짓는 모습 (warm hug smiling reassuringly)',
+  '대박나세요': '복주머니와 황금 동전을 뿌리는 포즈 (throwing fortune pouch and gold coins)',
+  '응원할게': '응원 수술 파폼을 들고 신나게 춤추는 포즈 (shaking cheer pom-poms dancing)',
+  '최고의 날': '트로피와 면류관을 쓰고 환호하는 포즈 (wearing crown holding trophy cheering)',
+  '자랑스러워': '엄지 두 개를 동시에 세우며 감격해하는 포즈 (double thumbs up proud face)',
+  '파티 타임': '샴페인 폭죽을 터뜨리며 즐거워하는 모습 (popping champagne bottle partying)',
+};
+
+const PHRASE_ACTION_MAP_EN = {
+  // English mappings correspond to Korean actions
+  'ㅋㅋㅋㅋ': 'bent over laughing hard',
+  '안녕!': 'waving one arm high',
+  '오늘도 화이팅': 'fists clenched, determined',
+  '좋아요': 'thumbs up',
+  '고마워요': 'hands together bowing',
+  '사랑해요': 'heart hands + small heart',
+  '최고!': 'jumping both arms up',
+  '오예': 'jumping one fist up',
+  '미안해요': 'apologetic bow',
+  '수고했어요': 'sitting tired + star bubble',
+  '축하해요': 'clapping + confetti',
+  '대박': 'hands on cheeks shocked',
+  '헐': 'hand over mouth surprised',
+  '감동': 'hands on chest teary + hearts',
+  '잘자요': 'lying on pillow sleeping + Zzz',
+  'Yes sir!': 'standing straight acknowledging boss',
+  'Understood': 'nodding taking notes',
+  'Leaving work': 'running out joyful after work',
+  'In a meeting': 'finger on lips in meeting',
+  'Fighting!': 'holding coffee cup cheering',
+  'To the moon!': 'riding green rocket chart up',
+  'Hungry': 'holding tummy with hungry sound effect',
+  'Chicken?': 'holding fried chicken drumstick mouth open',
+  'Angry': 'fire fumes exploding from head',
+  'Happy Birthday': 'holding birthday cake wearing party hat',
+  'Cheer up': 'shaking cheer pom-poms dancing',
+};
+
+const getPhraseActionKo = (phrase) => {
+  const p = phrase.trim();
+  return PHRASE_ACTION_MAP_KO[p] || `${p} 맥락에 맞는 독창적인 전신 동작`;
+};
+
+const getPhraseActionEn = (phrase) => {
+  const p = phrase.trim();
+  return PHRASE_ACTION_MAP_EN[p] || `unique expressive full-body posture matching ${p}`;
+};
+
+function App() {
+  const [lang, setLang] = useState('ko');
+
+  useEffect(() => {
+    document.documentElement.lang = lang === 'zh' ? 'zh-CN' : lang === 'ja' ? 'ja' : lang === 'ko' ? 'ko' : 'en';
+    if (lang === 'zh') {
+      document.body.classList.add('lang-zh');
+    } else {
+      document.body.classList.remove('lang-zh');
+    }
+  }, [lang]);
+  const t = I18N[lang] || I18N.ko;
+  
+  const getThemesByLang = (l) => {
+    if (l === 'ja') return THEMES_JA;
+    if (l === 'zh') return THEMES_ZH;
+    if (l === 'en') return THEMES_EN;
+    return THEMES_KO;
+  };
+
+  const getTagsByLang = (l) => {
+    if (l === 'ja') return CHARACTER_TAGS_JA;
+    if (l === 'zh') return CHARACTER_TAGS_ZH;
+    if (l === 'en') return CHARACTER_TAGS_EN;
+    return CHARACTER_TAGS_KO;
+  };
+
+  const currentThemes = getThemesByLang(lang);
+  const currentTags = getTagsByLang(lang);
+  const themeKeys = Object.keys(currentThemes);
+  const categoryKeys = Object.keys(currentTags);
+  
+  const [charManual, setCharManual] = useState('');
+  const [characterSource, setCharacterSource] = useState('direct');
+  const [photoReferenceMode, setPhotoReferenceMode] = useState('exact');
+  const [activeTagCategory, setActiveTagCategory] = useState(categoryKeys[0]);
+  
+  const [emoticons, setEmoticons] = useState(currentThemes[themeKeys[0]]);
+  const [activeTheme, setActiveTheme] = useState(themeKeys[0]);
+  
+  const [generationMode, setGenerationMode] = useState('sheet'); // 'sheet' | 'individual' | 'batch'
+  const [individualPhrase, setIndividualPhrase] = useState('');
+  const [batchPhrase, setBatchPhrase] = useState('');
+
+  const [copiedType, setCopiedType] = useState(null);
+  const [previewMode, setPreviewMode] = useState('gpt');
+  const [gptTextMode, setGptTextMode] = useState('text');
+  const [gptBackgroundMode, setGptBackgroundMode] = useState('transparent');
+  const [geminiTextMode, setGeminiTextMode] = useState('visual');
+  const [geminiBackgroundMode, setGeminiBackgroundMode] = useState('transparent');
+  const [grokTextMode, setGrokTextMode] = useState('visual');
+  const [toastMessage, setToastMessage] = useState('');
+
+  const getCategoryRuleBadge = (category) => {
+    const isArtStyle = category === '🖌️ 화풍' || category === '🖌️ Art Style';
+    const isSubject = [
+      '🐱 동물', '👦 인물', '🦄 판타지/사물', '🤖 로봇/SF', '🍞 디저트/음식', '🌿 식물/자연',
+      '🐱 Animal', '👦 Person', '🦄 Fantasy/Object', '🤖 Robot/Sci-Fi', '🍞 Dessert/Food', '🌿 Plant/Nature'
+    ].includes(category);
+
+    if (isArtStyle) return lang === 'ko' ? '🎨 1개 선택' : '🎨 Single Select';
+    if (isSubject) return lang === 'ko' ? '👤 1종류 선택' : '👤 1 Subject';
+    return lang === 'ko' ? '✨ 다중 선택 가능' : '✨ Multi-Select';
+  };
+
+  const isTagSelected = (tag) => {
+    if (!charManual || !tag) return false;
+    const target = tag.trim().toLowerCase();
+    const currentList = charManual.split(',').map(v => v.trim().toLowerCase()).filter(Boolean);
+    return currentList.includes(target);
+  };
+
+  const removeSelectedTag = (tagToRemove) => {
+    setCharManual(prev => {
+      const currentTags = prev.split(',').map(v => v.trim()).filter(Boolean);
+      return currentTags.filter(t => t !== tagToRemove).join(', ');
+    });
+    showToast(lang === 'ko' ? `태그 삭제됨: [${tagToRemove}]` : `Tag removed: [${tagToRemove}]`);
+  };
+
+  const showToast = (msg) => {
+    setToastMessage(msg);
+    setTimeout(() => {
+      setToastMessage(prev => prev === msg ? '' : prev);
+    }, 3000);
+  };
+  const [grokBackgroundMode, setGrokBackgroundMode] = useState('transparent');
+
+  const changeLanguage = (newLang) => {
+    if (newLang === lang) return;
+    const oldThemes = getThemesByLang(lang);
+    const oldThemeKeys = Object.keys(oldThemes);
+    const newThemes = getThemesByLang(newLang);
+    const newThemeKeys = Object.keys(newThemes);
+    const oldTags = getTagsByLang(lang);
+    const newTags = getTagsByLang(newLang);
+    const oldCategoryKeys = Object.keys(oldTags);
+    const newCategoryKeys = Object.keys(newTags);
+    
+    setLang(newLang);
+
+    if (activeTheme !== 'custom') {
+      const themeIndex = oldThemeKeys.indexOf(activeTheme);
+      const nextThemeKey = newThemeKeys[themeIndex >= 0 ? themeIndex : 0] || newThemeKeys[0];
+      setActiveTheme(nextThemeKey);
+      setEmoticons(newThemes[nextThemeKey]);
+    }
+
+    const categoryIndex = oldCategoryKeys.indexOf(activeTagCategory);
+    setActiveTagCategory(newCategoryKeys[categoryIndex >= 0 ? categoryIndex : 0] || newCategoryKeys[0]);
+    
+    setCharManual('');
+  };
+
+  const handleEmoticonChange = (index, value) => {
+    const newEmoticons = [...emoticons];
+    newEmoticons[index] = value;
+    setEmoticons(newEmoticons);
+    setActiveTheme('custom');
+  };
+
+  const handleThemeSelect = (e) => {
+    const themeName = e.target.value;
+    if (currentThemes[themeName]) {
+      setEmoticons(currentThemes[themeName]);
+      setActiveTheme(themeName);
+    }
+  };
+
+  const shuffleEmoticons = () => {
+    const ALL_PHRASES = Array.from(new Set(Object.values(currentThemes).flat()));
+    const shuffled = [...ALL_PHRASES].sort(() => 0.5 - Math.random());
+    setEmoticons(shuffled.slice(0, 15));
+    setActiveTheme('custom');
+  };
+
+  const handleGenerationModeChange = (mode) => {
+    setGenerationMode(mode);
+    if (mode === 'individual' && !individualPhrase.trim()) {
+      setIndividualPhrase(emoticons[0] || '');
+    }
+    if (mode === 'batch' && !emoticons.includes(batchPhrase)) {
+      setBatchPhrase(emoticons[0] || '');
+    }
+  };
+
+  const generateRandomCharacter = () => {
+    // 1. All 6 main subject categories (동물, 인물, 판타지, 로봇/SF, 디저트/음식, 식물/자연)
+    const allSubjects = [
+      // 🐱 동물
+      '뱁새 (오목눈이)', '참지않는 말티즈', '치즈냥', '똥실똥실 토끼', '동글동글 비숑', 
+      '골든리트리버', '쿼카', '시바견', '아기 펭귄', '햄스터', '카피바라', '레서판다',
+      '삼색 고양이', '하프물범', '사막여우', '아기 곰',
+      
+      // 👦 인물 / 직업
+      '단발머리 소녀', '신입사원', '영혼 털린 직장인', '화려한 K팝 아이돌', '헤드폰 낀 프로게이머', 
+      '초보 운전자', '안경 쓴 모범생', '투블럭 남학생', '노란 모자 유치원생', '앞치마 두른 바리스타',
+      '헬창/운동 마니아', '가방 멘 취준생', '피곤한 직장인', '에이프런을 두른 제빵사',
+
+      // 🦄 판타지 / 사물
+      '유니콘', '아기 드래곤', '꼬마 마법사', '숲의 요정', '말랑말랑 모찌', '빛나는 천사', 
+      '장난꾸러기 아기 악마', '꼬마 뱀파이어', '솜사탕 구름', '신비로운 인어', '눈사람 요정',
+
+      // 🤖 로봇 / SF
+      '아기 로봇', '사이버 냥이', '우주 비행 댕댕이', '사이버펑크 토끼', '홀로그램 유령', 
+      'UFO 탄 외계인', '레트로 모니터봇', '미니 게임기봇', 'AI 안드로이드', '말랑 슬라임',
+
+      // 🍞 디저트 / 음식
+      '탕후루 요정', '말랑 떡볶이 떡', '모락모락 삼각김밥', '치즈 피자 조각', '바삭 감자튀김', 
+      '노릇 계란후라이', '보글보글 라면', '소프트 아이스크림', '쫀득 타코야끼', '식빵 아저씨', '마카롱 토끼',
+
+      // 🌿 식물 / 자연
+      '아기 선인장', '네잎클로버 요정', '동글이 버섯', '달콤 복숭아 요정', '말랑 아보카도', 
+      '매운맛 아기 고추', '민들레 홀씨', '뽀송 목화솜', '상큼 레몬 꼬마', '빨간 사과 요정'
+    ];
+
+    // 2. 의상 / 패션
+    const outfits = [
+      '오버핏 후드티', '포근한 잠옷', '회사원 정장', '트레이닝복', '멜빵바지', 
+      '단정한 셔츠와 넥타이', '귀여운 동물 잠옷', '스포티한 캡모자', '두꺼운 패딩',
+      '화사한 꽃무늬 원피스', '힙한 스트릿 패션', '따뜻한 니트 스웨터'
+    ];
+
+    // 3. 소품 / 동작
+    const props = [
+      '아이스 아메리카노 텀블러를 든', '스마트폰을 든', '노트북을 두드리는', 
+      '치킨 닭다리를 뜯는', '돈다발을 쥐고 있는', '헤드폰을 낀', '커피잔을 든',
+      '꽃다발을 안고 있는', '마이크를 잡고 노래하는', '게임패드를 쥐고 있는',
+      '소주/맥주잔을 부딪치는', '선글라스를 낀'
+    ];
+
+    // 4. 화풍
+    const styles = [
+      '귀여운 2D 만화풍', '✒️ 일본 출판 만화풍', '🧸 3D 펠트/클레이 점토 인형풍', 
+      '한국 웹툰 스타일', '🖍️ 크레파스 낙서풍', '📖 흑백 만화 톤', '깔끔한 미니멀 벡터',
+      '통통 튀는 팝아트풍', '🌸 샤방샤방 순정만화풍', '✨ Y2K 픽셀 스티커풍'
+    ];
+
+    // 5. 배경 / 효과
+    const effects = [
+      '반짝반짝 빛나는 효과', '하트 뿅뿅 날리는', '만화적인 집중선', 
+      '물음표 둥둥 (?)', '불타오르는 이펙트', '느낌표 번쩍 (!)', '부들부들 떨림선',
+      '별빛이 내리는', '벚꽃이 흩날리는', '따뜻한 햇살'
+    ];
+
+    const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
+    const combo = `${pick(allSubjects)}, ${pick(outfits)}, ${pick(props)}, ${pick(styles)}, ${pick(effects)}`;
+    
+    setCharManual(combo);
+    setCharacterSource('direct');
+    showToast(lang === 'ko' 
+      ? `🎲 [${combo.split(',')[0].trim()}] 전 카테고리 랜덤 조합 완료!` 
+      : `🎲 Random character generated: ${combo.split(',')[0].trim()}`);
+  };
+
+  const clearTags = () => {
+    setCharacterSource('direct');
+    setPhotoReferenceMode('characterize');
+    setCharManual('');
+  };
+
+  const appendTag = (tag) => {
+    // 1. Identify categories
+    const isArtStyleCategory = activeTagCategory === '🖌️ 화풍' || activeTagCategory === '🖌️ Art Style';
+    const isSubjectCategory = [
+      '🐱 동물', '👦 인물', '🦄 판타지/사물', '🤖 로봇/SF', '🍞 디저트/음식', '🌿 식물/자연',
+      '🐱 Animal', '👦 Human', '🦄 Fantasy/Object', '🤖 Robot/SF', '🍞 Dessert/Food', '🌿 Plant/Nature'
+    ].includes(activeTagCategory);
+
+    // All subject tags for replacement logic (Safely handled)
+    const koSubjectKeys = ['🐱 동물', '👦 인물', '🦄 판타지/사물', '🤖 로봇/SF', '🍞 디저트/음식', '🌿 식물/자연'];
+    const enSubjectKeys = ['🐱 Animal', '👦 Person', '🦄 Fantasy/Object', '🤖 Robot/Sci-Fi', '🍞 Dessert/Food', '🌿 Plant/Nature'];
+
+    const subjectTagList = [];
+    koSubjectKeys.forEach(k => { if (CHARACTER_TAGS_KO[k]) subjectTagList.push(...CHARACTER_TAGS_KO[k]); });
+    enSubjectKeys.forEach(k => { if (CHARACTER_TAGS_EN[k]) subjectTagList.push(...CHARACTER_TAGS_EN[k]); });
+
+    const allSubjectTags = new Set(subjectTagList);
+
+    const allArtStyles = new Set([
+      ...CHARACTER_TAGS_KO['🖌️ 화풍'],
+      ...CHARACTER_TAGS_EN['🖌️ Art Style'],
+    ]);
+
+    setCharManual(prev => {
+      const currentTags = prev.split(',').map(v => v.trim()).filter(Boolean);
+      const hasTag = currentTags.includes(tag);
+
+      // Toggle off if already selected
+      if (hasTag) {
+        showToast(lang === 'ko' ? `선택 해제됨: [${tag}]` : `Unselected: [${tag}]`);
+        return currentTags.filter(t => t !== tag).join(', ');
+      }
+
+      // Rule 1: Single Art Style replacement
+      if (isArtStyleCategory) {
+        const prevStyle = currentTags.find(t => allArtStyles.has(t));
+        const withoutStyles = currentTags.filter(t => !allArtStyles.has(t));
+        if (prevStyle && prevStyle !== tag) {
+          showToast(lang === 'ko' 
+            ? `🎨 화풍은 1개만 적용됩니다: [${prevStyle}] → [${tag}](으)로 변경` 
+            : `🎨 Only 1 Art Style applied: [${prevStyle}] → [${tag}]`);
+        } else {
+          showToast(lang === 'ko' ? `🎨 화풍 적용: [${tag}]` : `🎨 Art Style applied: [${tag}]`);
+        }
+        return [...withoutStyles, tag].join(', ');
+      }
+
+      // Rule 2: Single Subject replacement (Prevents Cat + Rabbit + Robot collision)
+      if (isSubjectCategory) {
+        const prevSubject = currentTags.find(t => allSubjectTags.has(t));
+        const withoutSubjects = currentTags.filter(t => !allSubjectTags.has(t));
+        if (prevSubject && prevSubject !== tag) {
+          showToast(lang === 'ko' 
+            ? `👤 캐릭터 종류는 1개만 선택 가능합니다: [${prevSubject}] → [${tag}](으)로 변경` 
+            : `👤 Single character type allowed: [${prevSubject}] → [${tag}]`);
+        } else {
+          showToast(lang === 'ko' ? `👤 캐릭터 종류 적용: [${tag}]` : `👤 Character type applied: [${tag}]`);
+        }
+        return [...withoutSubjects, tag].join(', ');
+      }
+
+      // Default: Append new tag
+      showToast(lang === 'ko' ? `✨ 태그 추가됨: [${tag}]` : `✨ Tag added: [${tag}]`);
+      return [...currentTags, tag].join(', ');
+    });
+
+
+  };
+
+  const getPhotoModeLabel = (labelLanguage = lang) => ({
+    exact: I18N[labelLanguage].photoExact,
+    features: I18N[labelLanguage].photoFeatures,
+    characterize: I18N[labelLanguage].photoCharacterize,
+  }[photoReferenceMode]);
+
+  const getReferenceImageInstruction = (promptLanguage = lang) => {
+    if (characterSource !== 'photo') {
+      return promptLanguage === 'ko'
+        ? '만약 이 프롬프트와 함께 이미지가 첨부되었다면, 첨부 이미지의 주요 특징을 캐릭터 디자인에 반영해주세요.'
+        : 'If an image is attached with this prompt, use its key visual features as reference for the character design.';
+    }
+
+    const modeInstructions = {
+      exact: {
+        ko: '사진 속 대상의 실제 얼굴 비율, 이목구비(눈 크기·모양, 코, 입술, 턱선), 헤어스타일, 피부톤을 사실적으로 재현한 캐리커처 스타일 2D 스티커로 그려주세요. 한눈에 "이 사람이다"라고 알아볼 수 있을 정도로 얼굴 유사도를 높게 유지하되, 외곽선과 채색은 깔끔한 2D 스티커로 마무리하세요.',
+        en: 'Draw a caricature-style 2D sticker that realistically reproduces the subject\'s actual face proportions, facial features (eye size and shape, nose, lips, jawline), hairstyle, and skin tone. The face must be recognizable enough that viewers can immediately identify the person, while the linework and coloring should have a clean 2D sticker finish.',
+      },
+      features: {
+        ko: '사진 속 대상의 얼굴 자체를 닮게 그릴 필요는 없습니다. 대신 헤어스타일, 안경 유무, 의상, 체형, 전체적인 분위기 등 시그니처 포인트만 추출하여 스타일리시한 2D 캐릭터 아바타로 새롭게 디자인해주세요.',
+        en: 'You do NOT need to match the subject\'s actual face. Instead, extract only their signature points — hairstyle, glasses (if any), outfit, body type, and overall vibe — and design a stylish 2D character avatar around those key traits.',
+      },
+      characterize: {
+        ko: '사진 속 대상의 전체적인 인상(헤어 색상, 분위기)만 살짝 참고하고, 나머지는 2.5등신의 커다란 머리, 동글동글한 몸, 반짝이는 큰 눈을 가진 극도로 귀여운 SD/Chibi 마스코트 캐릭터로 완전히 새롭게 변환해주세요.',
+        en: 'Use only the subject\'s general impression (hair color, overall vibe) as a loose reference. Transform everything else into an ultra-cute SD/Chibi mascot with a 2.5-head ratio, big round head, chubby body, and huge sparkling eyes.',
+      },
+    };
+    const promptLang = promptLanguage === 'ko' ? 'ko' : 'en';
+    const intro = promptLang === 'ko'
+      ? '이 프롬프트를 사용할 때 AI 채팅에 함께 첨부한 사진을 최우선 참고 이미지로 사용해주세요.'
+      : 'Use the photo attached in the AI chat as the primary visual reference.';
+    return `${intro}\n${modeInstructions[photoReferenceMode][promptLang]}`;
+  };
+
+  const getSelectedPhrase = () => {
+    if (generationMode === 'individual') return individualPhrase.trim() || (emoticons[0] || '안녕!');
+    return emoticons.includes(batchPhrase) ? batchPhrase : (emoticons[0] || '안녕!');
+  };
+
+  const getSelectedArtStyle = () => {
+    const artStyles = [
+      ...CHARACTER_TAGS_KO['🖌️ 화풍'],
+      ...CHARACTER_TAGS_EN['🖌️ Art Style'],
+    ];
+    const selectedTagSet = new Set(
+      charManual.split(',').map(value => value.trim()).filter(Boolean)
+    );
+    return artStyles
+      .filter(style => selectedTagSet.has(style))
+      .sort((a, b) => charManual.lastIndexOf(a) - charManual.lastIndexOf(b))
+      .at(-1) || '';
+  };
+
+  const getGeminiStyleTags = (promptLang = lang) => {
+    const selectedArtStyle = getSelectedArtStyle();
+    const isKo = promptLang === 'ko';
+    if (selectedArtStyle) {
+      const expanded = getExpandedArtStyleText(selectedArtStyle, isKo);
+      return isKo
+        ? `${expanded} (최우선 화풍 지침: 선 굵기, 채색 기법, 질감을 이 화풍 지시문대로 100% 엄격하게 적용하세요)`
+        : `${expanded}; treat this selected art style as the highest-priority visual direction for linework, coloring, and texture`;
+    }
+    if (characterSource === 'photo') {
+      if (photoReferenceMode === 'exact') {
+        return isKo
+          ? '참고 사진의 실제 이목구비와 비율을 정밀하게 반영한 사실적 캐리커처 2D 스티커 화풍'
+          : 'Caricature-style 2D sticker with realistic facial proportions and features closely matching the reference photo, finished with clean 2D sticker outlines and coloring';
+      }
+      if (photoReferenceMode === 'features') {
+        return isKo
+          ? '참고 사진의 대표 시그니처 특징(헤어, 안경, 의상)만 추출한 세련된 2D 벡터 캐릭터 화풍'
+          : 'Stylish 2D character avatar sticker built around the signature points (hairstyle, glasses, outfit, vibe) from the reference photo; the face itself is a new generic cute design';
+      }
+      return isKo
+        ? '2.5등신 커다란 머리와 동글동글한 몸체를 가진 극도로 귀여운 SD/Chibi 마스코트 스티커 화풍'
+        : 'Ultra-cute 2.5-head SD/Chibi mascot sticker only loosely inspired by the reference photo\'s general impression';
+    }
+    return isKo
+      ? '귀엽고 친근한 고품질 2D 메신저 이모티콘 일러스트 화풍 (깔끔한 윤곽선과 조화로운 셀 셰이딩 채색)'
+      : 'cute, approachable, high-quality 2D messenger sticker illustration with clean outlines and harmonious colors';
+  };
+
+  const getSelectedCharacterRoles = () => {
+    const koCategories = Object.values(CHARACTER_TAGS_KO);
+    const enCategories = Object.values(CHARACTER_TAGS_EN);
+    const selectedTagSet = new Set(
+      charManual.split(',').map(value => value.trim()).filter(Boolean)
+    );
+    const roleTags = index => [...koCategories[index], ...enCategories[index]];
+    const findSelected = indexes => indexes
+      .flatMap(index => roleTags(index))
+      .filter(tag => selectedTagSet.has(tag));
+    const recognizedTags = new Set([...koCategories.flat(), ...enCategories.flat()]);
+    const additionalDescription = Array.from(selectedTagSet)
+      .filter(value => !recognizedTags.has(value))
+      .join(', ');
+    const subjects = findSelected([0, 1, 2, 3, 4, 5]);
+    const appearances = findSelected([6]);
+    const personalities = findSelected([7]);
+    // index 8 = 화풍 → getSelectedArtStyle()에서 별도 처리
+    const outfits = findSelected([9]);
+    const props = findSelected([10]);
+    const effects = findSelected([11]);
+
+    return { subjects, appearances, personalities, outfits, props, effects, additionalDescription };
+  };
+
+  const getGeminiCharacterDetails = () => {
+    const { subjects, appearances, personalities, outfits, props, effects, additionalDescription } = getSelectedCharacterRoles();
+    const subjectParts = [
+      ...(characterSource === 'photo' ? ['the subject in the attached reference photo'] : []),
+      ...subjects,
+      ...(additionalDescription ? [additionalDescription] : []),
+    ];
+
+    const photoAppearanceEn = {
+      exact: 'strictly preserve exact eye angle, eye size ratio, nose bridge/tip, lip thickness, jawline, hairstyle, and skin tone from reference photo without blurring features into generic cartoon templates; do not add unrequested accessories',
+      features: 'do NOT try to match the subject\'s actual face; instead extract only signature points (hairstyle, glasses if any, outfit, body type, overall vibe) and build a stylish new character around those traits; do not add unrequested accessories',
+      characterize: 'use only the general impression (hair color, vibe) as a loose reference and transform into an ultra-cute 2.5-head SD/Chibi mascot with a big round head, chubby body, and huge sparkling eyes',
+    }[photoReferenceMode];
+
+    const photoAppearanceKo = {
+      exact: '스타일화하더라도 참고 사진 인물의 실제 눈매 각도, 눈 크기 비율, 콧대, 입술 두께, 턱선, 헤어스타일, 피부톤을 절대 변형하지 말고 95% 이상 동일하게 유지 (사진에 없는 악세사리 임의 추가 금지)',
+      features: '얼굴 자체를 닮게 그릴 필요 없음; 헤어스타일, 안경 유무, 의상, 체형, 전체 분위기 등 시그니처 포인트만 추출하여 스타일리시한 새 캐릭터로 디자인 (사진에 없는 악세사리 임의 추가 금지)',
+      characterize: '전체적인 인상(헤어 색상, 분위기)만 살짝 참고하고 2.5등신 커다란 머리와 동글동글한 몸체의 극도로 귀여운 SD/Chibi 마스코트로 완전 변환',
+    }[photoReferenceMode];
+
+    return {
+      subject: subjectParts.join(', ') || 'a cute original character',
+      appearance: appearances.join(', ') || (characterSource === 'photo'
+        ? photoAppearanceEn
+        : 'use a simple, recognizable silhouette and keep it unchanged'),
+      personality: personalities.join(', ') || 'friendly and expressive',
+      outfit: outfits.join(', ') || 'no fixed outfit specified; once chosen, keep it unchanged',
+      props: props.join(', ') || 'none required',
+      effects: effects.join(', ') || 'use only a minimal effect when it clarifies the emotion',
+      artStyle: getGeminiStyleTags(),
+    };
+  };
+
+  const getGptCharacterDetails = () => {
+    const { subjects, appearances, personalities, outfits, props, effects, additionalDescription } = getSelectedCharacterRoles();
+    const isKo = lang === 'ko';
+    const subjectParts = [
+      ...(characterSource === 'photo'
+        ? [isKo ? 'AI 채팅에 첨부한 참고 사진 속 대상' : 'the subject in the reference photo attached in the AI chat']
+        : []),
+      ...subjects,
+      ...(additionalDescription ? [additionalDescription] : []),
+    ];
+
+    const photoAppearanceEn = {
+      exact: 'strictly preserve exact eye angle, eye size ratio, nose bridge/tip, lip thickness, jawline, hairstyle, and skin tone from reference photo without blurring features into generic cartoon templates; do not add unrequested accessories',
+      features: 'do NOT try to match the subject\'s actual face; instead extract only signature points (hairstyle, glasses if any, outfit, body type, overall vibe) and build a stylish new character around those traits; do not add unrequested accessories',
+      characterize: 'use only the general impression (hair color, vibe) as a loose reference and transform into an ultra-cute 2.5-head SD/Chibi mascot with a big round head, chubby body, and huge sparkling eyes',
+    }[photoReferenceMode];
+
+    const photoAppearanceKo = {
+      exact: '스타일화하더라도 참고 사진 인물의 실제 눈매 각도, 눈 크기 비율, 콧대, 입술 두께, 턱선, 헤어스타일, 피부톤을 절대 변형하지 말고 95% 이상 동일하게 유지 (사진에 없는 악세사리 임의 추가 금지)',
+      features: '얼굴 자체를 닮게 그릴 필요 없음; 헤어스타일, 안경 유무, 의상, 체형, 전체 분위기 등 시그니처 포인트만 추출하여 스타일리시한 새 캐릭터로 디자인 (사진에 없는 악세사리 임의 추가 금지)',
+      characterize: '전체적인 인상(헤어 색상, 분위기)만 살짝 참고하고 2.5등신 커다란 머리와 동글동글한 몸체의 극도로 귀여운 SD/Chibi 마스코트로 완전 변환',
+    }[photoReferenceMode];
+
+    return {
+      subject: subjectParts.join(', ') || (isKo ? '귀여운 오리지널 캐릭터' : 'a cute original character'),
+      appearance: appearances.join(', ') || (characterSource === 'photo'
+        ? (isKo ? photoAppearanceKo : photoAppearanceEn)
+        : (isKo ? '단순하고 알아보기 쉬운 실루엣을 정한 뒤 그대로 유지' : 'use a simple recognizable silhouette and keep it unchanged')),
+      personality: personalities.join(', ') || (isKo ? '친근하고 표정이 풍부한' : 'friendly and expressive'),
+      outfit: outfits.join(', ') || (isKo ? '지정 없음. 처음 정한 의상은 모든 이미지에서 유지' : 'not specified; once chosen, keep it unchanged'),
+      props: props.join(', ') || (isKo ? '필수 소품 없음' : 'no prop required'),
+      effects: effects.join(', ') || (isKo ? '감정 전달에 필요한 최소한의 효과만 사용' : 'use only a minimal effect when it clarifies the emotion'),
+    };
+  };
+
+  const getGptBackgroundInstruction = () => {
+    const instructions = {
+      transparent: {
+        ko: '진짜 알파 투명도가 적용된 투명 배경으로 생성해주세요. 투명도를 흉내 낸 체크무늬나 흰색 바탕을 그리지 마세요.',
+        en: 'Generate a genuinely transparent background with alpha transparency. Do not draw a checkerboard pattern or fake transparency with a white background.',
+      },
+      solid: {
+        ko: '캐릭터와 충분히 대비되는 하나의 깨끗한 단색 배경을 사용해주세요. 그라데이션, 질감과 배경 사물은 넣지 마세요.',
+        en: 'Use one clean solid background color with strong contrast against the character. No gradient, texture, or background objects.',
+      },
+      chroma: {
+        ko: '배경 제거가 쉽도록 캐릭터 색상과 겹치지 않는 밝은 연두색 #00FF00 단색 크로마키 배경을 사용해주세요. 배경색이 캐릭터 테두리에 묻어나면 안 됩니다.',
+        en: 'Use a solid bright green #00FF00 chroma-key background that does not overlap the character colors. No green spill may appear on the character outline.',
+      },
+    };
+    return instructions[gptBackgroundMode][lang === 'ko' ? 'ko' : 'en'];
+  };
+
+  const getGeminiBackgroundInstruction = () => {
+    const instructions = {
+      transparent: 'Clean solid pure white background with a crisp white sticker die-cut outline around each character. Absolutely DO NOT draw any gray-and-white checkerboard pattern, transparency grid tiles, or fake PNG checkerboard texture.',
+      solid: 'One clean solid background color with strong contrast against the character. No gradient, texture, or background objects. No checkerboard tiles.',
+      chroma: 'Solid bright green #00FF00 chroma-key background for easy background removal. No green spill on the character outline.',
+    };
+    return instructions[geminiBackgroundMode] || instructions.transparent;
+  };
+
+  const getPromptValidationError = (phraseOverride = null) => {
+    if (generationMode === 'individual' || phraseOverride !== null) {
+      const targetPhrase = generationMode === 'individual' ? individualPhrase.trim() : phraseOverride.trim();
+      return targetPhrase ? '' : t.emptyPhraseError;
+    }
+
+    const normalizedPhrases = emoticons.map(phrase => phrase.trim());
+    if (normalizedPhrases.some(phrase => !phrase)) return t.emptyPhraseError;
+    if (new Set(normalizedPhrases).size !== normalizedPhrases.length) return t.duplicatePhraseError;
+    return '';
+  };
+
+  const generateGptPrompt = (phraseOverride = null) => {
+    const character = getGptCharacterDetails();
+    const hasPhraseOverride = phraseOverride !== null;
+    const targetPhrase = generationMode === 'individual'
+      ? getSelectedPhrase()
+      : (phraseOverride || '').trim();
+    const referenceInstruction = `${characterSource === 'photo'
+      ? `${lang === 'ko' ? `사진 반영 방식: ${getPhotoModeLabel('ko')}` : `Photo reference style: ${getPhotoModeLabel('en')}`}\n`
+      : ''}${getReferenceImageInstruction(lang)}`;
+    const selectedArtStyle = getSelectedArtStyle();
+    const expandedArtStyle = getExpandedArtStyleText(selectedArtStyle, lang === 'ko');
+    const artDirection = expandedArtStyle || (lang === 'ko'
+      ? '귀엽고 친근한 고품질 2D 메신저 이모티콘 스타일, 깔끔한 외곽선, 조화로운 색감'
+      : 'cute, approachable, high-quality 2D messenger sticker style with clean outlines and harmonious colors');
+
+    if (generationMode === 'individual' || hasPhraseOverride) {
+      if (lang === 'ko') {
+        const textPolicy = gptTextMode === 'text'
+          ? `정확한 문구 "${targetPhrase}"를 이미지에 한 번만 적어주세요. 생성 전에 철자와 띄어쓰기를 확인하고, 텍스트 박스 없이 읽기 쉬운 손글씨로 표현하세요. 다른 글자는 넣지 마세요.`
+          : `문구 "${targetPhrase}"는 장면을 정하는 참고 맥락으로만 사용하세요. 이미지에는 글자, 숫자, 타이포그래피를 그리지 마세요.`;
+        const textExclusion = gptTextMode === 'text'
+          ? '추가 문구, 틀린 철자, 임의의 글자, 숫자, 따옴표와 텍스트 박스 금지.'
+          : '글자, 숫자, 타이포그래피와 의미 없는 기호 금지.';
+
+        return `[목표]
+상황을 즉시 이해할 수 있는 완성도 높은 개인용 메신저 이모티콘 1개를 그려주세요.
+
+[참고 이미지]
+${referenceInstruction}
+
+[캐릭터 고정 정보 — 변경 금지]
+대상: ${character.subject}
+외형: ${character.appearance}
+성격: ${character.personality}
+의상: ${character.outfit}
+
+[최우선 화풍]
+${artDirection}. 선, 질감, 색감과 캐릭터 비율을 동일하게 유지해주세요.
+
+[장면]
+문구 맥락: "${targetPhrase}"
+이 문구에서 바로 이해할 수 있는 표정 하나와 명확한 전신 자세 하나를 구성하세요. 보조 소품과 만화 효과는 각각 최대 하나만 사용하세요.
+설정에서 선택한 소품 또는 행동: ${character.props}.
+설정에서 선택한 시각 효과: ${character.effects}.
+
+[구도 및 배경]
+1:1 정사각형 캔버스. 완전한 캐릭터 한 명만 중앙에 배치하고, 전신이 잘리지 않도록 사방에 최소 12% 여백을 남겨주세요.
+${getGptBackgroundInstruction()}
+
+[일관성]
+같은 채팅에 이전 시트나 캐릭터 이미지가 있다면 얼굴, 체형, 색상, 의상과 화풍을 그대로 유지하세요. 이번 장면에 필요한 표정, 자세, 보조 소품과 효과만 변경하세요.
+
+[글자 정책]
+${textPolicy}
+
+[제외 조건]
+${textExclusion} 워터마크, 프레임, 중복 캐릭터, 추가 팔다리, 잘린 신체, 복잡한 풍경과 실사 배경 금지.`;
+      } else {
+        const textPolicy = gptTextMode === 'text'
+          ? `Render the exact phrase "${targetPhrase}" once. Verify spelling and spacing before rendering it, and use legible hand-drawn lettering without a text box. Do not add any other text.`
+          : `Use "${targetPhrase}" only as visual context. Do not render text, letters, numbers, or typography.`;
+        const textExclusion = gptTextMode === 'text'
+          ? 'No extra words, altered spelling, random letters, numbers, quotation marks, or text box.'
+          : 'No text, letters, numbers, typography, or meaningless symbols.';
+
+        return `[GOAL]
+Create one high-quality personal messenger sticker that communicates the situation immediately.
+
+[REFERENCE IMAGE]
+${referenceInstruction}
+
+[CHARACTER IDENTITY — LOCKED]
+Subject: ${character.subject}
+Appearance: ${character.appearance}
+Personality: ${character.personality}
+Outfit: ${character.outfit}
+
+[ART DIRECTION — HIGHEST PRIORITY]
+${artDirection}. Keep the same linework, texture, color treatment, and character proportions.
+
+[SCENE]
+Phrase context: "${targetPhrase}"
+Create one unmistakable facial expression and one clear full-body pose. Use at most one supporting prop and one simple comic effect.
+Preferred prop or action from the setup: ${character.props}.
+Preferred visual effect from the setup: ${character.effects}.
+
+[COMPOSITION AND BACKGROUND]
+Square 1:1 canvas. Exactly one complete centered character with at least 12% empty margin on every side.
+${getGptBackgroundInstruction()}
+
+[CONSISTENCY]
+If a previous sheet or character image exists in this chat, preserve its face, body proportions, colors, outfit, and art style. Change only the expression, pose, supporting prop, and effect required for this scene.
+
+[TEXT POLICY]
+${textPolicy}
+
+[EXCLUDE]
+${textExclusion} No watermark, frame, duplicate character, extra limbs, cropped body, 3D textures, realistic shading, glossy gradients, complex scenery, or photorealistic background.`;
+      }
+    }
+
+    if (lang === 'ko') {
+      const panelPlan = emoticons.map((phrase, index) => `${Math.floor(index / 5) + 1}행 ${index % 5 + 1}열: "${phrase.trim()}"`).join('\n');
+      const textPolicy = gptTextMode === 'text'
+        ? '각 셀에 지정된 문구를 정확히 한 번만 적으세요. 생성 전에 15개 문구의 철자와 띄어쓰기를 확인하고, 일관되고 읽기 쉬운 손글씨를 사용하세요. 다른 글자는 넣지 마세요.'
+        : '각 문구는 해당 셀의 표정, 자세와 행동을 정하는 맥락으로만 사용하세요. 이미지에는 문구나 다른 글자를 그리지 마세요.';
+      const textExclusion = gptTextMode === 'text'
+        ? '추가 문구, 틀린 철자, 임의의 글자, 셀 번호, 따옴표와 텍스트 박스 금지.'
+        : '글자, 숫자, 타이포그래피, 셀 번호와 의미 없는 기호 금지.';
+
+      return `[목표]
+동일한 캐릭터의 서로 다른 표현 15개가 담긴 완성도 높은 개인용 메신저 이모티콘 시트 한 장을 그려주세요.
+
+[참고 이미지]
+${referenceInstruction}
+
+[캐릭터 고정 정보 — 변경 금지]
+대상: ${character.subject}
+외형: ${character.appearance}
+성격: ${character.personality}
+의상: ${character.outfit}
+
+[최우선 화풍]
+${artDirection}. 15개 셀 모두 같은 선, 질감, 색감과 캐릭터 비율을 적용하세요.
+
+[패널 계획]
+각 문구에서 바로 이해할 수 있는 표정 하나와 서로 다른 전신 자세 하나를 구성하세요. 셀마다 보조 소품과 만화 효과는 각각 최대 하나만 사용하고 자세를 반복하지 마세요.
+설정에서 선택한 소품 또는 행동: ${character.props}.
+설정에서 선택한 시각 효과: ${character.effects}.
+${panelPlan}
+
+[구도 및 배경]
+가로형 캔버스에 정확히 5열 3행으로 배치하세요. 동일한 크기의 셀 15개에 완전한 캐릭터 한 명씩 배치하고, 캐릭터·소품·효과·글자가 다른 셀을 침범하지 않게 하세요. 셀 경계선, 구별선, 격자선(grid lines), 테두리선과 셀 번호는 이미지에 절대 그리지 마세요.
+${getGptBackgroundInstruction()}
+
+[일관성]
+15개 셀 모두 얼굴, 체형, 색상, 의상과 화풍을 동일하게 유지하세요. 문구에 필요한 표정, 자세, 보조 소품과 효과만 변경하세요.
+
+[글자 정책]
+${textPolicy}
+
+[제외 조건]
+${textExclusion} 격자선, 셀 경계선, 구별선, 테두리선, 워터마크, 전체 프레임, 셀 안의 중복 캐릭터, 추가 팔다리, 잘린 신체, 복잡한 풍경과 실사 배경 금지.`;
+    } else {
+      const panelPlan = emoticons.map((phrase, index) => `Row ${Math.floor(index / 5) + 1}, Column ${index % 5 + 1}: "${phrase.trim()}"`).join('\n');
+      const textPolicy = gptTextMode === 'text'
+        ? 'Render each assigned phrase exactly once in its corresponding cell. Verify spelling and spacing for all 15 phrases before rendering them. Use consistent, legible hand-drawn lettering and add no other text.'
+        : 'Use each phrase only as context for its cell\'s expression, pose, and action. Do not render any phrase or other text.';
+      const textExclusion = gptTextMode === 'text'
+        ? 'No extra words, altered spelling, random letters, cell numbers, quotation marks, or text boxes.'
+        : 'No text, letters, numbers, typography, cell labels, or meaningless symbols.';
+
+      return `[GOAL]
+Create one high-quality personal messenger sticker sheet containing 15 distinct variations of the same character.
+
+[REFERENCE IMAGE]
+${referenceInstruction}
+
+[CHARACTER IDENTITY — LOCKED]
+Subject: ${character.subject}
+Appearance: ${character.appearance}
+Personality: ${character.personality}
+Outfit: ${character.outfit}
+
+[ART DIRECTION — HIGHEST PRIORITY]
+${artDirection}. Apply identical linework, texture, color treatment, and character proportions to all 15 cells.
+
+[PANEL PLAN]
+For every phrase, create one unmistakable facial expression and one distinct full-body pose. Use at most one supporting prop and one simple comic effect per cell. Do not repeat a pose.
+Preferred props or actions from the setup: ${character.props}.
+Preferred visual effects from the setup: ${character.effects}.
+${panelPlan}
+
+[COMPOSITION AND BACKGROUND]
+Use one wide landscape canvas with exactly 5 columns and 3 rows. Create 15 equally sized cells and place exactly one complete character inside each cell. No character, prop, effect, or text may cross into another cell. Absolutely NO grid lines, NO cell division lines, NO border lines between cells, NO cell numbers.
+${getGptBackgroundInstruction()}
+
+[CONSISTENCY]
+All 15 cells must preserve the same face, body proportions, colors, outfit, and art style. Change only the expression, pose, supporting prop, and effect required by each phrase.
+
+[TEXT POLICY]
+${textPolicy}
+
+[EXCLUDE]
+${textExclusion} No grid lines, no cell division lines, no border lines between cells, no cell frames, no watermark, no full-sheet frame, no duplicate character inside a cell, no extra limbs, no cropped body, no complex scenery, or photorealistic background.`;
+    }
+  };
+
+  const generateGeminiPrompt = (phraseOverride = null) => {
+    const isKorean = lang === 'ko';
+    const character = getGeminiCharacterDetails(isKorean ? 'ko' : 'en');
+    const hasPhraseOverride = phraseOverride !== null;
+    const targetPhrase = generationMode === 'individual'
+      ? getSelectedPhrase()
+      : (phraseOverride || '').trim();
+
+    if (isKorean) {
+      const referenceInstructionKo = characterSource === 'photo' ? {
+        exact: '[고품질 사실적 인물 캐리커처 스티커] 첨부된 인물 사진과 95% 이상 높은 얼굴 유사도를 유지하는 캐리커처 컷아웃 스티커로 제작하세요. 참고 사진의 실제 얼굴 텍스처, 피부톤, 헤어스타일, 의상 특징을 정교하게 반영하세요.',
+        features: '[시그니처 포인트 추출] 참고 사진에서 인물의 상징적인 특징(안경, 헤어스타일, 점, 분위기, 의상)만 추출하세요. 세련된 2D 벡터 일러스트 스타일로 나타내되 주요 특징을 강조하세요.',
+        characterize: '[귀여운 SD 캐릭터화] 참고 사진의 인상을 바탕으로 큰 머리와 동그란 눈, 귀여운 비율을 가진 2.5등신 SD Chibi 캐릭터로 만드세요.',
+      }[photoReferenceMode] : '동일한 캐릭터의 정체성과 외형 특징을 엄격하게 유지하세요.';
+
+      const geminiProportionsKo = characterSource === 'photo' ? {
+        exact: '참고 사진의 얼굴 비율과 특징을 정확하게 반영한 고품질 2D 스티커 일러스트.',
+        features: '시그니처 특징(헤어, 안경, 주요 특징)을 추출한 세련된 2D 그래픽 벡터 일러스트.',
+        characterize: '큰 동그란 얼굴, 반짝이는 눈, 통통한 볼을 가진 귀여운 2.5등신 SD/Chibi 캐릭터 마스코트.',
+      }[photoReferenceMode] : '귀엽고 친근한 2.5등신 SD/Chibi 마스코트 비율.';
+
+      const bgInstructionKo = {
+        transparent: '단일 연계형 순백색 배경 시트(Single continuous pure white background sheet). 15개 전신 스티커가 여백을 두고 자유롭게 배치되며, 각 캐릭터 주변에 선명한 흰색 스티커 테두리(Die-cut white outline)가 감싸진 형태. 전체 캔버스에 깔끔한 순백색 바탕만 존재하며 회색·흰색 체크무늬(체커보드 격자, 모자이크 패턴, PNG 투명 그리드 타일)는 절대로 그리지 마세요.',
+        solid: '캐릭터와 선명하게 대비되는 깔끔한 단색 배경. 격자 패턴이나 체크무늬 타일 절대 금지.',
+        chroma: '배경 분리(누끼)용 선명한 연두색 #00FF00 크로마키 배경. 캐릭터 외곽선에 녹색 번짐 없음.',
+      }[geminiBackgroundMode] || '단일 연계형 순백색 배경 시트.';
+
+      if (generationMode === 'individual' || hasPhraseOverride) {
+        const textPolicyKo = geminiTextMode === 'text'
+          ? `[고품질 한글 타이포그래피 정밀 지침] 정확한 한글 철자 "${targetPhrase}"를 오탈자 없이 명확하게 그리세요. 캐릭터 옆이나 위에 읽기 편하고 깔끔한 귀여운 손글씨 캘리그라피 타이포그래피 스타일로 자연스럽게 배치하세요. 글자 외곽선이 또렷하고 배경과 대비되는 높은 가독성의 색상을 사용하세요. 텍스트 상자(박스), 괄호 (), 따옴표 "", 말풍선은 절대 그리지 마세요.`
+          : `한국어 문구 "${targetPhrase}"는 표정과 자세를 정하기 위한 맥락으로만 사용하고, 이미지 안에 절대로 텍스트, 글자, 숫자로 그리지 마세요.`;
+        const textExclusionKo = geminiTextMode === 'text'
+          ? '글자/단어/음절 중복 반복(예: 화이팅 화이팅, 미안해요 미안해요, 최 최고), 불필요한 일본어/가타카나/한자/외국어, 철자 변형, 폰트 뭉개짐, 스티커 번호, 괄호, 따옴표, 텍스트 상자 절대 금지.'
+          : '텍스트, 글자, 숫자, 말풍선, 스티커 라벨, 의미 없는 기호 절대 금지.';
+
+        return `[목표]
+일관된 캐릭터가 담긴 고품질 2D 메신저 스티커 (카카오톡/라인 스타일) 1장을 그려주세요.
+
+[시각적 참고 & 정체성]
+사진 참고 스타일: ${getPhotoModeLabel('ko')}. 첨부된 사진을 최우선 참고 이미지로 사용하세요.
+${referenceInstructionKo}
+- 대상: ${character.subject}
+- 외형 및 특징: ${character.appearance}
+- 의상: ${character.outfit}
+
+[화풍 및 비율]
+지정 화풍: ${character.artStyle}. ${geminiProportionsKo} 깔끔하고 선명한 벡터 외곽선, 부드러운 셀 셰이딩, 조화로운 색감. 머리부터 발끝까지 전신이 잘리지 않게 표현하세요.
+
+[포즈 및 표정]
+- 감정/상황 맥락: "${targetPhrase}"
+- 표정: "${targetPhrase}"에 꼭 맞는 풍부하고 명확한 표정.
+- 자세: 머리부터 발끝까지 완전한 전신을 보여주는 역동적인 포즈 (앉기, 웅크리기, 점프, 소품 들기, 윙크 등).
+- 보조 소품 및 효과: ${character.props}, ${character.effects}, 귀여운 포인트 효과.
+
+[캔버스 및 배치]
+1:1 정사각형 캔버스. 전신 캐릭터 한 명을 중앙에 배치하고 여백을 넉넉히 주세요. ${bgInstructionKo}
+
+[일관성 규칙]
+기존 캐릭터의 얼굴, 체형, 색상, 의상, 화풍을 동일하게 유지하고 표정과 자세만 변경하세요.
+
+[글자 정책]
+${textPolicyKo}
+
+[제외 조건]
+${textExclusionKo} 격자선, 셀 경계선, 구별선, 테두리선, 표 선, 크롭 마크, 바운딩 박스, 워터마크, 전체 프레임, 캐릭터 중복, 팔다리 누락/추가, 반신·흉상 컷, 회색·흰색 체크무늬 패턴, 실사 느낌.`;
+      }
+
+      const panelPlanKo = [
+        `1행 (스티커 1~5): 1. "${(emoticons[0]||'ㅋㅋㅋㅋ').trim()}" | 2. "${(emoticons[1]||'안녕!').trim()}" | 3. "${(emoticons[2]||'오늘도 화이팅').trim()}" | 4. "${(emoticons[3]||'좋아요').trim()}" | 5. "${(emoticons[4]||'고마워요').trim()}"`,
+        `2행 (스티커 6~10): 6. "${(emoticons[5]||'사랑해요').trim()}" | 7. "${(emoticons[6]||'최고!').trim()}" | 8. "${(emoticons[7]||'오예').trim()}" | 9. "${(emoticons[8]||'미안해요').trim()}" | 10. "${(emoticons[9]||'수고했어요').trim()}"`,
+        `3행 (스티커 11~15): 11. "${(emoticons[10]||'축하해요').trim()}" | 12. "${(emoticons[11]||'대박').trim()}" | 13. "${(emoticons[12]||'헐').trim()}" | 14. "${(emoticons[13]||'감동').trim()}" | 15. "${(emoticons[14]||'잘자요').trim()}"`
+      ].join('\n');
+
+      const textPolicyKo = geminiTextMode === 'text'
+        ? `[한글 타이포그래피 — 3D 입체 팝아트 스티커 글자 최고도화 지침] ${getEmotionTextColorGuideKo(emoticons)}
+1. 글자를 단순 텍스트가 아닌 '상업용 카카오톡 이모티콘 3D 입체 스티커 배지(Sticker Graphic Badge)'로 렌더링하세요.
+2. 글자 스타일: 검은색 또는 고채도 원색의 두꺼운 볼드 손글씨 폰트 채움 + 글자 자모 자체에 선명한 2~3px 검은색 윤곽선 + 겉면에 매우 두꺼운 순백색 스티커 테두리(Heavy White Die-Cut Outline).
+3. 절대적 단일 출력 규칙: 각 스티커 셀당 지정된 한글 문구를 '오직 단 한 번(EXACTLY ONCE)'만 완벽한 한글로 그리세요.
+4. 중복 및 표기 오류 엄격 금지: 단어나 글자를 두 번 반복하여 그리는 행위(예: "오늘도 화이팅 화이팅", "미안해요 미안해요", "최 최고!" 등 중복 표기) 및 일본어/가타카나/한자/외국어 기호 섞임은 100% 엄격히 금지합니다.`
+        : '한국어 문구는 표정과 자세를 정하기 위한 맥락으로만 사용하고, 이미지 안에 절대로 텍스트, 글자, 숫자로 그리지 마세요.';
+      const textExclusionKo = geminiTextMode === 'text'
+        ? '불필요한 단어, 철자 변경, 임의의 글자, 스티커 번호, 괄호, 따옴표, 텍스트 상자 금지.'
+        : '텍스트, 글자, 숫자, 말풍선, 스티커 라벨, 의미 없는 기호 절대 금지.';
+
+      return `[목표]
+전체 스티커에 걸쳐 일관된 캐릭터가 등장하는 15종 2D 메신저 스티커 시트 (카카오톡 / 라인 스타일) 한 장을 생성해 주세요.
+
+[시각적 참고 & 정체성]
+사진 참고 스타일: ${getPhotoModeLabel('ko')}. 첨부된 사진을 최우선 참고 이미지로 사용하세요.
+${referenceInstructionKo}
+- 대상: ${character.subject}
+- 외형 및 특징: ${character.appearance}
+- 의상: ${character.outfit}
+- 구도 조화: 전신 컷을 기본(70% 이상)으로 하되, 감정 표현이 강조되는 문구는 상반신/바스트 컷을 자연스럽게 섞어 GPT 스타일의 생동감 넘치는 이모티콘 시트로 구성하세요.
+
+[화풍 및 비율]
+지정 화풍: ${character.artStyle}. ${geminiProportionsKo} 깔끔하고 선명한 벡터 외곽선, 부드러운 셀 셰이딩, 조화로운 색감. 15개 스티커 전체에서 지정된 최우선 화풍의 선, 채색, 질감 및 캐릭터 비율을 100% 엄격히 유지하세요. 15개 셀의 얼굴은 마치 같은 사진에서 포즈만 바꾼 것처럼 눈 크기, 눈매, 얼굴 폭, 턱선이 픽셀 단위로 동일해야 합니다. 셀마다 다른 사람처럼 보이지 않도록 각별히 주의하세요.
+
+[15종 역동적인 포즈 & 표정]
+각 스티커마다 독창적이고 표정이 살아있는 얼굴 감정과 역동적인 전신 자세를 구성하세요 (앉기, 웅크리기, 점프, 소품 들기, 윙크, 먹기, 응원하기 등). 각 문구의 감정에 맞춰 전신 포즈, 상반신 컷, 상체 컷을 다채롭게 배정하세요:
+${panelPlanKo}
+보조 소품 & 반짝이 효과: ${character.props}, ${character.effects}, 최소한의 포인트 효과.
+
+[캔버스 레이아웃 — 절대적 5열 × 3행 15셀 그리드 고정]
+반드시 정확히 가로 5개 × 세로 3행 구조로만 총 15개 스티커를 일정 간격으로 깨끗하게 배치하세요. 4행 구조, 세로 배치, 비대칭 삐뚤어진 배열은 엄격히 금지됩니다.
+1행에 스티커 5개, 2행에 스티커 5개, 3행에 스티커 5개가 완벽한 수평 수직 열에 맞춰 배치되어야 합니다. ${bgInstructionKo} 격자선, 구별선, 크롭 마크, 바운딩 박스, 스티커 번호 절대 금지.
+
+[글자 정책]
+${textPolicyKo}
+
+[제외 조건]
+${textExclusionKo} 가이드선, 격자선, 셀 구별선, 테두리선, 표 선, 크롭 마크, 패널 상자, 워터마크, 외곽 프레임, 한 스티커 안의 캐릭터 중복, 팔다리 누락/추가, 크롭된 신체, 반신·흉상 컷, 탁한 배경색, 회색·흰색 체크무늬/체커보드 패치.`;
+    }
+
+    // English Version (Matches User Best Template Exactly)
+    const photoModeBlockEn = characterSource === 'photo' ? {
+      exact: '[HIGH-FIDELITY REALISTIC PHOTO CARICATURE] Create a photo-realistic caricature cutout sticker preserving 95%+ exact visual resemblance to the attached person photo. Do NOT render as a 2D vector cartoon. Preserve real photographic face texture, skin tone, hairstyle, and authentic outfit texture, stylized into a high-end photo cutout sticker.',
+      features: '[SIGNATURE FEATURE EXTRACTION] Extract only the iconic signature elements (e.g., glasses, unique haircut, facial mark, distinct expression/outfit) from the reference photo. Render in a clean, stylish 2D vector illustration while accentuating those key signature traits.',
+      characterize: '[CUTE SD CHIBI MASCOT] Transform the reference photo into an adorable 2.5-head Chibi SD mascot with a big round head, large expressive eyes, chubby cheeks, and clean 2D vector sticker styling.',
+    }[photoReferenceMode] : 'Preserve the same character identity and key visual features strictly across all stickers.';
+
+    const proportionStyleEn = characterSource === 'photo' ? {
+      exact: 'High-fidelity photo-realistic caricature cutout sticker style matching the attached reference photo accurately, with real photographic face texture, hair, skin tone, and authentic outfit details.',
+      features: 'Stylish 2D graphic vector illustration with clean stylized proportions, extracting iconic signature features (hair, glasses, distinct traits).',
+      characterize: 'Adorable 2.5-head Chibi SD mascot proportion with a big round head, sparkling expressive eyes, and chubby cheeks.',
+    }[photoReferenceMode] : 'Adorable 2.5-head Chibi SD mascot proportion with a big round head, sparkling expressive eyes, and chubby cheeks.';
+
+    const bgInstructionEn = {
+      transparent: 'Single continuous pure white background sheet. Arrange all 15 full-body stickers floating freely with generous spacing. Each character has a subtle crisp sticker die-cut white outline. Pure blank white background across the entire canvas. Absolutely DO NOT draw any gray-and-white checkerboard pattern, transparency tiles, or fake PNG grid texture.',
+      solid: 'Clean, continuous solid background color with strong contrast against the character. No checkerboard tiles.',
+      chroma: 'Solid bright green #00FF00 chroma-key background for easy background removal. No green spill on character edges.',
+    }[geminiBackgroundMode] || 'Single continuous pure white background sheet.';
+
+    if (generationMode === 'individual' || hasPhraseOverride) {
+      const textPolicy = geminiTextMode === 'text'
+        ? `[HIGH-PRECISION KOREAN TYPOGRAPHY DIRECTIVE] Render the exact Korean phrase "${targetPhrase}" with 100% correct Hangul spelling and zero typos. Position the text naturally beside or floating near the character in playful, highly legible hand-drawn calligraphy typography. Ensure sharp vector text outlines and strong color contrast against the background. Do NOT draw rectangular text boxes, background boxes, speech bubbles, parentheses (), or quotation marks "".`
+        : `Do not render text, letters, or numbers. Use "${targetPhrase}" only as visual context for expression and pose.`;
+      const textExclusion = geminiTextMode === 'text'
+        ? 'No extra words, altered spelling, random letters, numbers, parentheses, or text boxes.'
+        : 'No text, letters, numbers, typography, or meaningless symbols.';
+
+      return `[GOAL]
+Create a master 2D messenger sticker (KakaoTalk / LINE style) featuring a consistent character.
+
+[VISUAL REFERENCE & IDENTITY]
+Photo reference style: ${getPhotoModeLabel('en')}. Use the photo attached in the AI chat as the primary visual reference.
+${photoModeBlockEn}
+- Subject: ${character.subject}
+- Appearance & Features: ${character.appearance}
+- Outfit: ${character.outfit}
+
+[ART DIRECTION & PROPORTIONS]
+cute, approachable, high-quality 2D messenger sticker illustration with clean outlines and harmonious colors. ${proportionStyleEn} Clean crisp vector outlines, vibrant colors, and soft cell shading. Maintain identical character proportions and style.
+
+[SCENE, POSE & EXPRESSION]
+- Target Phrase / Mood: "${targetPhrase}"
+- Facial Expression: Highly expressive, unmistakable emotion matching "${targetPhrase}".
+- Body Pose: Dynamic, energetic full-body posture (e.g. sitting, crouching, jumping, holding props, or waving). Every character must be full-body, head-to-toe, uncropped.
+- Supporting Props & Sparkle Effects: ${character.props}, ${character.effects}, cute accents.
+
+[CANVAS & COMPOSITION]
+Square 1:1 canvas. Exactly one complete centered full-body character visible from head to toe with generous spacing. ${bgInstructionEn}
+
+[CONSISTENCY RULE]
+If a previous sticker sheet or character image exists in this chat, preserve its face, body proportions, colors, outfit, and art style identically. Change only the expression, pose, supporting prop, and effect required for this scene.
+
+[TEXT POLICY]
+${textPolicy}
+
+[DO NOT INCLUDE]
+${textExclusion} No guide lines, no grid lines, no cell dividers, no border lines, no table lines, no crop marks, no panel boxes, no watermark, no outer frame, no duplicate character inside a single sticker, no extra limbs, no cropped body, no half-body bust shot, no dull background color, or photorealism.`;
+    }
+
+    const panelPlan = [
+      `Row 1 (Stickers 1-5): 1. "${(emoticons[0]||'ㅋㅋㅋㅋ').trim()}" | 2. "${(emoticons[1]||'안녕!').trim()}" | 3. "${(emoticons[2]||'오늘도 화이팅').trim()}" | 4. "${(emoticons[3]||'좋아요').trim()}" | 5. "${(emoticons[4]||'고마워요').trim()}"`,
+      `Row 2 (Stickers 6-10): 6. "${(emoticons[5]||'사랑해요').trim()}" | 7. "${(emoticons[6]||'최고!').trim()}" | 8. "${(emoticons[7]||'오예').trim()}" | 9. "${(emoticons[8]||'미안해요').trim()}" | 10. "${(emoticons[9]||'수고했어요').trim()}"`,
+      `Row 3 (Stickers 11-15): 11. "${(emoticons[10]||'축하해요').trim()}" | 12. "${(emoticons[11]||'대박').trim()}" | 13. "${(emoticons[12]||'헐').trim()}" | 14. "${(emoticons[13]||'감동').trim()}" | 15. "${(emoticons[14]||'잘자요').trim()}"`
+    ].join('\n');
+    const textPolicy = geminiTextMode === 'text'
+      ? `[HIGH-IMPACT KOREAN STICKER TYPOGRAPHY — GPT STYLE 3D BADGE DIRECTIVE] ${getEmotionTextColorGuideEn(emoticons)}
+1. Treat text not as flat overlay, but as a commercial KakaoTalk/LINE 3D Sticker Graphic Badge element.
+2. Letter Fill & Line: Bold solid black or high-saturation vivid color fill with a crisp black inner outline.
+3. Double Die-Cut Stroke: Enclose the entire lettering in a thick, heavy continuous white die-cut border to create 3D pop depth.
+4. Arrangement: Tilt lettering slightly for a dynamic, energetic 2D messenger sticker graphic aesthetic. Never use thin, faint body fonts.
+5. Single Precision Rendering: Render each phrase EXACTLY ONCE per cell. Strictly prohibit repeating words/letters twice or including foreign/Japanese symbols.`
+      : 'The Korean phrases are context for determining expression and pose only — never render them as text, letters, or numbers in the image.';
+    const textExclusion = geminiTextMode === 'text'
+      ? 'No extra words, altered spelling, random letters, sticker numbers, parentheses, quotation marks, or text boxes.'
+      : 'No text, no letters, no numbers, no speech bubbles, no sticker labels, no meaningless symbols.';
+
+    return `[GOAL]
+Create a master 15-sticker 2D messenger sheet (KakaoTalk / LINE style) featuring a consistent character across all stickers.
+
+[VISUAL REFERENCE & IDENTITY]
+Photo reference style: ${getPhotoModeLabel('en')}. Use the photo attached in the AI chat as the primary visual reference.
+${photoModeBlockEn}
+- Subject: ${character.subject}
+- Appearance & Features: ${character.appearance}
+- Outfit: ${character.outfit}
+- COMPOSITION HARMONY: Use full-body poses as the primary baseline (70%+), but naturally incorporate 3/4 upper-body shots and expressive close-ups where the emotion calls for it, creating a lively KakaoTalk/LINE sticker sheet like GPT.
+
+[ART DIRECTION & PROPORTIONS]
+cute, approachable, high-quality 2D messenger sticker illustration with clean outlines and harmonious colors. ${proportionStyleEn} Clean crisp vector outlines, vibrant colors, and soft cell shading. Maintain identical character proportions, facial details, eye shape, and jawline identically across all 15 stickers as if from the same photo session.
+
+[15 DYNAMIC POSES & EXPRESSIONS]
+For each sticker, infer a unique, highly expressive facial emotion and a DYNAMIC full-body pose (e.g. sitting, crouching, jumping, holding props, winking, eating, or cheering). Every sticker MUST show a complete full-body character visible head-to-toe:
+${panelPlan}
+Supporting props & sparkle effects: ${character.props}, ${character.effects}, cute accents.
+
+[CANVAS & GRID ALIGNMENT — STRICT 5 COLUMNS x 3 ROWS]
+MUST arrange all 15 stickers in a wide horizontal canvas with an exact 5-column by 3-row uniform grid layout (5 stickers per row across 3 rows). 4-row or irregular arrangements are strictly forbidden. This 5x3 grid rule takes highest precedence over all other directives. ${bgInstructionEn} Absolutely NO guide lines, NO grid lines, NO cell borders, NO table lines, NO dividing lines, NO crop marks, NO bounding boxes, NO sticker numbers.
+
+[TEXT POLICY]
+${textPolicy}
+
+[DO NOT INCLUDE]
+${textExclusion} No guide lines, no grid lines, no cell dividers, no border lines, no table lines, no crop marks, no panel boxes, no watermark, no outer frame, no duplicate character inside a single sticker, no extra limbs, no cropped body, no half-body bust shot, no dull background color, or photorealism.`;
+  };
+
+  const getGrokBackgroundInstruction = () => {
+    const instructions = {
+      transparent: 'Clean solid white background with a subtle crisp sticker die-cut white outline.',
+      solid: 'One clean solid background color with strong contrast against the character. No gradient, texture, or background objects.',
+      chroma: 'Solid bright green #00FF00 chroma-key background for easy background removal. No green spill on the character outline.',
+    };
+    return instructions[grokBackgroundMode] || instructions.transparent;
+  };
+
+  const getGrokCharacterDetails = (langMode = lang) => {
+    const { subjects, appearances, personalities, outfits, props, effects, additionalDescription } = getSelectedCharacterRoles();
+    const isKo = langMode === 'ko';
+    const subjectParts = [
+      ...(characterSource === 'photo' 
+        ? [isKo ? 'AI 채팅에 첨부한 참고 사진 속 대상' : 'the subject in the reference photo attached in the AI chat'] 
+        : []),
+      ...subjects,
+      ...(additionalDescription ? [additionalDescription] : []),
+    ];
+
+    const photoAppearanceEn = {
+      exact: 'realistically reproduce actual face proportions, facial structure, eye shape, nose, lips, jawline, hairstyle, and skin tone matching reference photo so the person is immediately recognizable; do not add unrequested accessories',
+      features: 'do NOT match actual face; instead extract signature points (hairstyle, glasses if any, outfit, body type, vibe) and design a stylish new 2D character avatar; do not add unrequested accessories',
+      characterize: 'use general impression as loose reference and transform into an ultra-cute 2.5-head SD/Chibi mascot with big round head, chubby body, and huge sparkling eyes',
+    }[photoReferenceMode];
+
+    const photoAppearanceKo = {
+      exact: '참고 사진 인물의 실제 얼굴 비율, 이목구비 구조, 눈매, 코, 입술, 턱선, 헤어스타일, 피부톤을 95% 이상 리얼하게 재현하여 본인임을 즉시 알아볼 수 있게 함 (사진에 없는 악세사리 임의 추가 금지)',
+      features: '얼굴 자체를 닮게 그릴 필요 없음; 헤어스타일, 안경 유무, 의상, 체형, 전체 분위기 등 시그니처 포인트만 추출하여 스타일리시한 새 캐릭터로 디자인 (사진에 없는 악세사리 임의 추가 금지)',
+      characterize: '전체적인 인상(헤어 색상, 분위기)만 살짝 참고하고 2.5등신 커다란 머리와 동글동글한 몸체의 극도로 귀여운 SD/Chibi 마스코트로 완전 변환',
+    }[photoReferenceMode];
+
+    return {
+      subject: subjectParts.join(', ') || (isKo ? '귀여운 오리지널 캐릭터' : 'a cute original character'),
+      appearance: appearances.join(', ') || (characterSource === 'photo'
+        ? (isKo ? photoAppearanceKo : photoAppearanceEn)
+        : (isKo ? '단순하고 알아보기 쉬운 실루엣을 정한 뒤 그대로 유지' : 'simple, recognizable silhouette kept unchanged')),
+      personality: personalities.join(', ') || (isKo ? '친근하고 표정이 풍부한' : 'friendly and expressive'),
+      outfit: outfits.join(', ') || (isKo ? '지정 없음. 처음 정한 의상은 모든 이미지에서 유지' : 'no fixed outfit specified; once chosen, keep it unchanged'),
+      props: props.join(', ') || (isKo ? '필수 소품 없음' : 'none required'),
+      effects: effects.join(', ') || (isKo ? '감정 전달에 필요한 최소한의 효과만 사용' : 'use only a minimal effect when it clarifies the emotion'),
+      artStyle: getGeminiStyleTags(langMode),
+    };
+  };
+
+  const generateGrokPrompt = (phraseOverride = null) => {
+    const isKorean = lang === 'ko';
+    const character = getGrokCharacterDetails(isKorean ? 'ko' : 'en');
+    const hasPhraseOverride = phraseOverride !== null;
+    const targetPhrase = generationMode === 'individual'
+      ? getSelectedPhrase()
+      : (phraseOverride || '').trim();
+
+    if (isKorean) {
+      const referenceInstructionKo = characterSource === 'photo'
+        ? `첨부한 사진을 참고하여 대상의 키 비주얼 특징을 캐릭터 디자인의 참고 자료로 사용하세요 (${getPhotoModeLabel('ko')}).`
+        : '동일한 캐릭터의 정체성과 외형 특징을 엄격하게 유지하세요.';
+
+      const grokProportionsKo = characterSource === 'photo' ? {
+        exact: '실제 얼굴 비율과 이목구비, 헤어스타일, 피부톤을 사실적으로 재현한 캐리커처 2D 스티커 마감.',
+        features: '시그니처 특징(헤어, 안경, 의상, 체형, 분위기)만 반영한 2D 캐릭터 아바타 일러스트 마감.',
+        characterize: '큰 동그란 얼굴, 반짝이는 눈, 통통한 볼을 가진 귀여운 2.5등신 SD/Chibi 캐릭터 마감.',
+      }[photoReferenceMode] : '귀엽고 친근한 2.5등신 SD/Chibi 마스코트 비율.';
+
+      const bgInstructionKo = {
+        transparent: '깨끗하고 선명한 단색 흰색 배경에 캐릭터 주변에 선명한 흰색 스티커 테두리(Die-cut white outline)가 감싸진 형태. 회색·흰색 체크무늬 패턴은 절대로 그리지 마세요.',
+        solid: '캐릭터와 대비되는 단색 배경으로 생성하세요.',
+        chroma: '배경 분리(누끼)용 선명한 연두색 #00FF00 크로마키 배경으로 생성하세요.',
+      }[grokBackgroundMode] || '깨끗하고 선명한 단색 흰색 배경에 흰색 스티커 테두리가 감싸진 형태.';
+
+      if (generationMode === 'individual' || hasPhraseOverride) {
+        const textPolicyKo = grokTextMode === 'text'
+          ? `캐릭터 옆에 한글 문구 "${targetPhrase}"를 손글씨 타이포그래피 스타일로 정갈하게 배치하세요. 괄호 (), 상자는 그리지 마세요.`
+          : `한국어 문구 "${targetPhrase}"는 표정과 자세를 정하기 위한 맥락으로만 사용하고, 이미지 안에 절대로 텍스트, 글자, 숫자로 그리지 마세요.`;
+        const textExclusionKo = grokTextMode === 'text'
+          ? '불필요한 글자, 괄호, 텍스트 상자 금지.'
+          : '텍스트, 글자, 숫자, 말풍선, 스티커 라벨, 의미 없는 기호 절대 금지.';
+
+        return `동일한 캐릭터가 등장하는 고품질 2D 메신저 스티커 (카카오톡 / 라인 스타일) 한 장을 그려주세요. 정사각형 캔버스, 고해상도.
+
+[CRITICAL IDENTITY LOCK — 자연스러운 얼굴 닮은꼴 보존 (왜곡 방지)]
+참고 사진 인물의 눈매 각도, 콧대, 입술 모양, 턱선, 헤어스타일의 특징을 90% 이상 자연스럽게 반영하세요.
+[얼굴 찌그러짐 엄격 방지]: 이목구비를 억지로 구겨 넣거나 기괴하게 왜곡시키지 말고, 깔끔하고 균형 잡힌 2D 이목구비 윤곽선으로 자연스럽게 그리세요.
+${referenceInstructionKo}
+- 대상: ${character.subject}
+- 외형 및 특징: ${character.appearance}
+- 의상: ${character.outfit}
+- 화풍 상세 스펙 (반드시 엄격히 준수):
+  * 주요 화풍: ${character.artStyle} (${grokProportionsKo})
+  * 외곽선: 두께 3~4px 균일한 검정 벡터 라인, 끊김 없이 선명하게 연결
+  * 채색: 각 색상 영역을 2단계 명암(기본색 + 그림자색 1단)으로만 구분하는 정교한 셀 셰이딩, 부드러운 그라데이션 사용 엄격 금지
+  * 색상: 채도 높은 플랫 컬러 5~6가지 깔끔한 팔레트로 제한 (피부색, 머리색, 상의색, 하의색, 포인트색)
+  * 형태 비율: 얼굴과 손을 제외한 신체 비율은 2.5등신~3등신 SD(Super Deformed) 캐릭터 비율
+  * 렌더링 스타일 키워드: 카카오톡 이모티콘 스튜디오 승인작 스타일, 라인프렌즈 캐릭터 렌더링 방식과 동일한 수준의 선/채색 마감
+  * 금지 사항: 이 화풍 스펙과 다른 방식(3D 렌더링, 반실사 렌더링, 사실적 음영, 과도한 그라데이션, 수채화 느낌)으로 그리지 마세요. 임의의 액세서리 추가 금지.
+
+[품질 규칙]
+캐릭터의 얼굴 디테일, 선화 선명도, 색상 채도를 높은 수준으로 렌더링하세요. 머리부터 발끝까지 전신이 잘리지 않고 보여야 합니다.
+
+[장면, 표정 & 포즈]
+- 감정/상황 맥락: "${targetPhrase}"
+- 표정과 자세: "${targetPhrase}"에 맞춘 유일하고 표현력 풍부한 얼굴 감정과 역동적인 전신 자세 (앉기, 웅크리기, 점프, 소품 들기, 윙크 등).
+- 최소한의 보조 소품 및 효과: ${character.props}, ${character.effects}.
+
+[배경 & 흰색 스티커 테두리]
+캐릭터 실루엣 주변에 선명한 흰색 스티커 테두리(Die-cut white outline)가 감싸진 형태. ${bgInstructionKo}
+
+[캐릭터 일관성]
+기존 캐릭터의 얼굴, 체형, 색상, 의상, 화풍을 동일하게 유지하세요.
+
+[글자 정책]
+${textPolicyKo}
+
+[제외 조건]
+${textExclusionKo} 워터마크, 외곽 프레임, 바운딩 박스, 캐릭터 중복, 팔다리 누락/추가, 반신·흉상 컷, 실사 느낌, 반실사 렌더링, 3D 텍스처, 그라데이션 음영, 애니메이션풍 광택 하이라이트, 과도하게 큰 눈, 얼굴 왜곡 절대 금지.`;
+      }
+
+      const panelPlanKo = emoticons.map((phrase, index) => `${index + 1}. "${phrase.trim()}" – ${getPhraseActionKo(phrase)}`).join('\n');
+      const textPolicyKo = grokTextMode === 'text'
+        ? `[고품질 한글 타이포그래피 정밀 지침] ${getEmotionTextColorGuideKo(emoticons)} 각 한글 문구를 해당 캐릭터 옆이나 위에 오탈자 없이 손글씨 캘리그라피 스타일로 자연스럽게 배치하세요. 딱딱한 고딕체 금지. 괄호 (), 텍스트 상자는 절대로 그리지 마세요.`
+        : '한국어 문구는 표정과 자세를 정하기 위한 맥락으로만 사용하고, 이미지 안에 절대로 텍스트, 글자, 숫자로 그리지 마세요.';
+      const textExclusionKo = grokTextMode === 'text'
+        ? '불필요한 글자, 괄호, 스티커 번호, 텍스트 상자 금지.'
+        : '텍스트, 글자, 숫자, 말풍선, 스티커 라벨, 의미 없는 기호 절대 금지.';
+
+      return `동일한 캐릭터가 3행 × 5열 격자 구조로 배치된 완성도 높은 15셀 카카오톡/라인 스티커 시트 한 장을 생성해 주세요. 정사각형 캔버스, 고해상도. 격자선, 셀 테두리, 숫자 없음.
+
+[캐릭터 고정 — 15개 셀 전체 동일 적용]
+${referenceInstructionKo}
+Subject: ${character.subject}
+Appearance & Features: ${character.appearance}
+Outfit: ${character.outfit}
+Art Style Mechanical Spec (Strict Compliance):
+  * Main Style: ${character.artStyle} (${grokProportionsKo})
+  * Linework: Uniform 3-4px crisp black vector line art with continuous edges
+  * Coloring: 2-tone cell shading only (flat base color + 1 shade layer), no soft gradients
+  * Palette: Vivid flat colors limited to 5-6 palette colors (skin, hair, top, bottom, accent)
+  * Proportions: 2.5 to 3-head SD (Super Deformed) character ratio
+  * Benchmark: KakaoTalk Emoticon Studio approved quality, LINE Friends character rendering finish
+  * Prohibitions: No 3D rendering, realistic shading, glossy highlights, or soft watercolor gradients.
+
+[품질 & 일관성 규칙]
+15개 셀 캐릭터 모두 동일하게 높은 수준의 얼굴 디테일, 선명한 선화, 색상 채도를 유지하세요. 전신 컷과 상반신 컷을 감정에 맞춰 다채롭게 구성하고, 피사체가 답답하게 눌리지 않도록 자연스럽게 표현하세요.
+
+[15 스티커 포즈]
+각 셀은 서 있는 자세를 반복하지 말고, 앉기·점프·웅크리기·눕기·엎드리기 등 최소 6가지 이상 서로 다른 신체 자세를 사용하세요. 단순히 팔 위치만 바꾸는 것을 엄격히 금지합니다. 각 문구의 감정 맥락에 맞춰 독창적이고 표정이 살아있는 얼굴 감정과 역동적인 전신 자세를 구성하세요:
+${panelPlanKo}
+감정 전달에 최소한으로 필요한 보조 소품이나 반짝이 효과만 사용하세요 (${character.props}, ${character.effects}).
+
+[배경 & 흰색 스티커 테두리]
+각 캐릭터마다 실루엣 주변에 선명한 흰색 스티커 테두리(Die-cut outline)가 깔끔하게 감싸져 있어야 합니다. 15개 스티커는 3행 × 5열 배치 안에서 여백을 두고 자유롭게 떠 있습니다. ${bgInstructionKo} 격자선, 셀 테두리, 구분선, 크롭 마크, 바운딩 박스, 스티커 번호 절대 금지.
+
+[캐릭터 일관성]
+15개 스티커 모두 얼굴, 체형, 색상, 의상, 화풍을 엄격하게 동일하게 유지하세요. 각 감정에 필요한 표정, 자세, 최소 소품만 변경하세요.
+
+[글자 정책]
+${textPolicyKo}
+
+[제외 조건]
+${textExclusionKo} 문구 뒤에 쉼표(,), 마침표(.), 느낌표 중복 등 원래 문구에 없는 불필요한 문장부호를 절대 추가하지 마세요. 워터마크, 격자선, 셀 테두리, 구분선, 크롭 마크, 외곽 프레임, 바운딩 박스, 한 셀 안의 캐릭터 중복, 팔다리 누락/추가, 반신·흉상 컷, 실사 느낌, 얼굴 왜곡, 15개 셀 간 얼굴·체형·의상 불일치 절대 금지.`;
+    }
+
+    // English Version (Matches User Preferred Exact Template)
+    const referenceInstruction = characterSource === 'photo'
+      ? `If an image is attached with this prompt, use its key visual features as reference for the character design (${getPhotoModeLabel('en')}).`
+      : 'Preserve the same character identity and key visual features strictly across all stickers.';
+
+    const grokProportions = characterSource === 'photo' ? {
+      exact: "Caricature-style 2D sticker that realistically reproduces the subject's actual face proportions, facial structure, eye shape, nose, lips, jawline, hairstyle, and skin tone matching photo.",
+      features: "Stylish 2D character avatar sticker designed around signature points (hairstyle, glasses if any, outfit, body type, overall vibe).",
+      characterize: "Adorable 2.5-head Chibi SD manga/anime mascot proportion with a big round head, huge sparkling expressive eyes, chubby cheeks, and cute sticker styling.",
+    }[photoReferenceMode] : 'Adorable 2.5-head Chibi SD manga/anime mascot proportion with a big round head, huge sparkling expressive eyes, chubby cheeks, and cute sticker styling.';
+
+    if (generationMode === 'individual' || hasPhraseOverride) {
+      const textPolicy = grokTextMode === 'text'
+        ? `Render the exact phrase "${targetPhrase}" once in playful hand-drawn typography beside the character. No parentheses (), brackets [], or rectangular text boxes.`
+        : `Do not render text, letters, or numbers. Use "${targetPhrase}" only as visual context for expression and pose.`;
+      const textExclusion = grokTextMode === 'text'
+        ? 'No extra words, altered spelling, random letters, numbers, parentheses, or text boxes.'
+        : 'No text, letters, numbers, typography, or meaningless symbols.';
+
+      return `Create a high-end 2D messenger sticker (KakaoTalk / LINE style) featuring one consistent character. Square canvas, high resolution.
+
+[CRITICAL IDENTITY LOCK — NATURAL FACIAL RESEMBLANCE (NO DISTORTION)]
+Replicate the key facial identity from reference photo (eye angle, nose bridge, lips, jawline, hairstyle) preserving 90%+ natural likeness.
+[STRICT DISTORTION PREVENTION]: Do NOT warp, distort, or contort facial features. Maintain balanced, clean 2D facial anatomy with harmonious proportions.
+${referenceInstruction}
+Subject: ${character.subject}
+Appearance & Features: ${character.appearance}
+Outfit: ${character.outfit}
+Art Style Mechanical Specifications (Strict Compliance Required):
+  * Main Style: ${character.artStyle} (${grokProportions})
+  * Linework: Uniform 3-4px crisp black vector line art with continuous unbroken edges.
+  * Coloring: Precision 2-tone cell shading only (base color + 1 shade level), absolutely NO soft gradients or airbrush washes.
+  * Palette: High-saturation flat color palette limited to 5-6 clean colors (skin, hair, top, bottom, accent color).
+  * Proportions: 2.5 to 3-head SD (Super Deformed) character body ratio.
+  * Benchmark Quality: KakaoTalk Emoticon Studio approved quality, LINE Friends character rendering style.
+  * Strict Prohibitions: Do NOT use 3D rendering, semi-realistic shading, realistic texture, or glossy gradient highlights.
+
+[QUALITY & UNIFORMITY RULE]
+Render the character at a high level of facial detail, linework sharpness, and color saturation. Primarily full-body with a natural mix of expressive upper-body shots matching the emotion.
+
+[SCENE, EXPRESSION & POSE]
+Emotional Context / Mood: "${targetPhrase}"
+Infer a unique, highly expressive facial emotion and dynamic full-body posture matching "${targetPhrase}".
+Minimal supporting props or sparkle effects only when they clarify the emotion — keep accents small and simple (${character.props}, ${character.effects}).
+
+[BACKGROUND & DIE-CUT LAYOUT]
+Each character has a crisp white sticker die-cut outline clearly visible around its silhouette. ${getGrokBackgroundInstruction()}
+
+[CHARACTER CONSISTENCY]
+If a previous sticker image exists in this chat, maintain identical face, body proportions, color palette, outfit, and art style. Vary only pose, facial expression, and the minimal prop/effect needed for this emotion.
+
+[TEXT POLICY]
+${textPolicy}
+
+[NEGATIVE PROMPT]
+${textExclusion} No watermark, no outer frame, no bounding boxes, no duplicate character, no missing or extra limbs, no half-body/bust-only shots, no photorealism, no facial distortion.`;
+    }
+
+    const panelPlan = emoticons.map((phrase, index) => `${index + 1}. "${phrase.trim()}" – ${getPhraseActionEn(phrase)}`).join('\n');
+    const textPolicy = grokTextMode === 'text'
+      ? `[HIGH-PRECISION KOREAN TYPOGRAPHY DIRECTIVE] ${getEmotionTextColorGuideEn(emoticons)} Render each quoted Korean phrase beside or above its corresponding character in playful hand-drawn calligraphy typography. No parentheses (), brackets [], or rectangular text boxes.`
+      : 'Korean phrases above are emotional context only — do not render any text, letters, or numbers in the image.';
+    const textExclusion = grokTextMode === 'text'
+      ? 'No extra words, altered spelling, random letters, sticker numbers, parentheses, quotation marks, or text boxes.'
+      : 'No text, no letters, no numbers, no speech bubbles, no sticker labels, no meaningless symbols.';
+
+    return `Create a master 15-cell KakaoTalk/LINE sticker sheet featuring one consistent character arranged in a 3-row × 5-column grid layout with generous spacing between characters. Square canvas, high resolution. No grid lines, no cell borders, no numbers.
+
+[CHARACTER LOCK — IDENTICAL ACROSS ALL 15 CELLS]
+${referenceInstruction}
+Subject: ${character.subject}
+Appearance & Features: ${character.appearance}
+Outfit: ${character.outfit}
+Art Style Mechanical Specifications (Strict Compliance Required):
+  * Main Style: ${character.artStyle} (${grokProportions})
+  * Linework: Uniform 3-4px crisp black vector line art with continuous unbroken edges.
+  * Coloring: Precision 2-tone cell shading only (base color + 1 shade level), absolutely NO soft gradients or airbrush washes.
+  * Palette: High-saturation flat color palette limited to 5-6 clean colors (skin, hair, top, bottom, accent color).
+  * Proportions: 2.5 to 3-head SD (Super Deformed) character body ratio.
+  * Benchmark Quality: KakaoTalk Emoticon Studio approved quality, LINE Friends character rendering style.
+  * Strict Prohibitions: Do NOT use 3D rendering, semi-realistic shading, realistic texture, or glossy gradient highlights.
+
+[QUALITY & UNIFORMITY RULE]
+Render all 15 characters at the exact same level of facial detail, linework sharpness, and color saturation across the entire sheet — no degradation toward edges or bottom rows. Primarily full-body with a natural mix of expressive upper-body shots matching the emotion.
+
+[15 STICKER POSES]
+Do NOT repeat standing postures across cells. Incorporate at least 6 or more distinctly different body postures (such as sitting, jumping, crouching, lying down, kneeling, leaning). Simply tweaking arm positions while standing is strictly forbidden. Infer a unique, highly expressive facial emotion and dynamic full-body posture for each cell, based on the following emotional context:
+${panelPlan}
+Minimal supporting props or sparkle effects only when they clarify the emotion — keep accents small and simple (${character.props}, ${character.effects}).
+
+[BACKGROUND & DIE-CUT LAYOUT]
+Each character has a crisp white sticker die-cut outline clearly visible around its silhouette. All 15 stickers float freely in the 3-row × 5-column arrangement. ${getGrokBackgroundInstruction()} Absolutely no grid lines, no cell borders, no table dividers, no crop marks, no bounding boxes, no sticker numbers.
+
+[CHARACTER CONSISTENCY]
+All 15 stickers must strictly share the same face, body proportions, color palette, outfit, and art style. Vary only pose, facial expression, and the minimal prop/effect needed for each emotion.
+
+[TEXT POLICY]
+${textPolicy}
+
+[NEGATIVE PROMPT]
+${textExclusion} Do NOT add any unrequested trailing punctuation marks at the end of phrases such as trailing commas (,), periods (.), or duplicate exclamation marks. No watermark, no grid lines, no cell borders, no table dividers, no crop marks, no outer frame, no bounding boxes, no duplicate character within a single cell, no missing or extra limbs, no half-body/bust-only shots, no photorealism, no facial distortion, no inconsistent face/body/outfit across the 15 cells.`;
+  };
+
+  const getRepairPrompt = (repairType, textMode, model = 'gpt') => {
+    const targetPhrase = getSelectedPhrase();
+
+    const modelTag = {
+      gpt: lang === 'ko' ? '[대상 AI: ChatGPT (OpenAI / DALL-E 3 엔진)]' : lang === 'ja' ? '[対象AI: ChatGPT (OpenAI / DALL-E 3)]' : lang === 'zh' ? '[目标AI: ChatGPT (OpenAI / DALL-E 3)]' : '[TARGET AI: ChatGPT (OpenAI / DALL-E 3 Engine)]',
+      gemini: lang === 'ko' ? '[대상 AI: Gemini (Google / Imagen 3 엔진)]' : lang === 'ja' ? '[対象AI: Gemini (Google / Imagen 3)]' : lang === 'zh' ? '[目标AI: Gemini (Google / Imagen 3)]' : '[TARGET AI: Gemini (Google / Imagen 3 Engine)]',
+      grok: lang === 'ko' ? '[대상 AI: Grok (xAI / Flux.1 엔진)]' : lang === 'ja' ? '[対象AI: Grok (xAI / Flux.1)]' : lang === 'zh' ? '[目标AI: Grok (xAI / Flux.1)]' : '[TARGET AI: Grok (xAI / Flux.1 Engine)]',
+    }[model] || '';
+
+    const defaultTrait = {
+      ko: '동글동글 귀여운 마스코트',
+      ja: 'まん丸でかわいいマスコット',
+      zh: '圆滚滚可爱的吉祥物',
+      en: 'Cute round mascot character',
+    }[lang] || 'Cute mascot';
+
+    const currentCharTrait = charManual.trim() || defaultTrait;
+
+    // 1. Korean Repair Prompts
+    if (lang === 'ko') {
+      const repairPromptsKo = {
+        identity: `${modelTag}
+[긴급 시각 수정: 캐릭터 얼굴 및 외형 재작업]
+직전 생성된 이미지에서 캐릭터의 얼굴과 이목구비가 변형되었습니다. 기존의 포즈와 배경은 유지하되, 캐릭터의 얼굴, 헤어/귀, 눈매, 체형을 다음 정의에 맞춰 눈에 띄게 다시 그려주세요:
+👉 캐릭터 원본 정의: "${currentCharTrait}"
+얼굴 왜곡을 완벽히 바로잡고, 해당 캐릭터의 고유 외형이 100% 확실하게 반영된 새로운 보정본 1장을 즉시 생성하세요.`,
+
+        crop: `${modelTag}
+[긴급 구도 수정: 카메라 줌아웃 및 전신 여백 확보]
+직전 이미지에서 캐릭터의 머리나 발끝이 프레임에 잘렸습니다!
+카메라 시점을 뒤로 30% 줌아웃(Zoom Out)하여 캐릭터 크기를 줄여주세요.
+머리끝(귀/모자 포함)부터 발끝까지 전신이 화면 한가운데에 완벽하게 쏙 들어오고, 상하좌우에 최소 20%의 여백이 남도록 구도를 완전히 재배치해서 다시 그려주세요.`,
+
+        text: `${modelTag}
+[긴급 텍스트 수정: 기존 오타 지우고 한글 재인쇄]
+직전 이미지의 글자가 뭉개졌거나 오탈자가 있습니다.
+기존에 적힌 이상한 글자를 완전히 지우고, 캐릭터 옆에 오직 한글 "${targetPhrase}"라는 단어만 크고 선명한 스티커 폰트로 정확하게 인쇄해 주세요. (추가 오타 절대 금지)`,
+      };
+      return repairPromptsKo[repairType];
+    }
+
+    // 2. Japanese Repair Prompts
+    if (lang === 'ja') {
+      const repairPromptsJa = {
+        identity: `${modelTag}
+[緊急修正: キャラクターの顔と外見の再描画]
+直前の画像でキャラクターの顔や特徴が崩れてしまいました。ポーズと背景は維持したまま、顔、目、耳/髪型、体型を以下の定義に合わせて明確に描き直してください:
+👉 キャラクターの元デザイン: "${currentCharTrait}"
+顔の歪みを修正し、キャラクターの個性が100%反映された新しい修正版を1枚生成してください。`,
+
+        crop: `${modelTag}
+[緊急修正: カメラのズームアウトと全身の余白確保]
+直前の画像でキャラクターの頭や足先が見切れてしまいました！
+カメラを30%ズームアウトしてキャラクターサイズを調整してください。
+頭（耳/帽子含む）から足先まで全身が中央に完全に収まり、四方に最低20%の余白ができるように構図を再配置して描き直してください。`,
+
+        text: `${modelTag}
+[緊急修正: 誤字を消去してテキストを正確に再印字]
+直前の画像の文字が崩れているか誤字があります。
+不正確な文字を完全に消去し、キャラクターの横に日本語で「${targetPhrase}」というフレーズのみを、くっきりと読みやすいステッカーフォントで正確に描いてください。`,
+      };
+      return repairPromptsJa[repairType];
+    }
+
+    // 3. Chinese Repair Prompts
+    if (lang === 'zh') {
+      const repairPromptsZh = {
+        identity: `${modelTag}
+[紧急修正: 重新绘制角色面部与特征]
+上一张图片中的角色面部特征发生了变形。请保持当前的姿势和背景，并严格按照以下定义明显重绘面部、五官、发型/耳朵及体型:
+👉 角色原始设定: "${currentCharTrait}"
+彻底修复面部扭曲，生成一张100%还原该角色外观的全新修正图。`,
+
+        crop: `${modelTag}
+[紧急修正: 镜头拉远并确保全身完整及边距]
+上一张图片中角色的头部或脚部被边缘裁剪了！
+请将镜头向后拉远(Zoom Out) 30%以缩小角色比例。
+确保从头顶（包括耳朵/帽子）到脚尖的全身完整显示在画面正中央，且四周保留至少20%的充足白色边距。`,
+
+        text: `${modelTag}
+[紧急修正: 清除错别字并准确重印文本]
+上一张图片中的文字模糊或出现了错别字。
+请彻底清除错误的文字，仅在角色身旁用清晰醒目的贴纸字体准确印上中文“${targetPhrase}”。（严禁出现多余错字）`,
+      };
+      return repairPromptsZh[repairType];
+    }
+
+    // 4. English / Global Default Repair Prompts
+    const repairPromptsEn = {
+      identity: `${modelTag}
+[URGENT VISUAL CORRECTION — REDRAW CHARACTER FACE & IDENTITY]
+In the previous image, the character's facial features and silhouette were distorted. Keep the current pose and background, but visibly REDRAW the face, ears/hair, eyes, and body proportions to strictly match:
+👉 Target Character Blueprint: "${currentCharTrait}"
+Fix any facial distortion and return one crisp, corrected image with distinct character fidelity.`,
+
+      crop: `${modelTag}
+[URGENT COMPOSITION FIX — ZOOM OUT & FULL BODY MARGINS]
+In the previous image, parts of the character (head/feet) were cropped or touching the edges!
+ZOOM OUT the camera by 30% to shrink the character inside the frame.
+Ensure the ENTIRE full body from head to toe is 100% visible inside the canvas with at least 20% clear margin on all four sides. No clipping allowed!`,
+
+      text: `${modelTag}
+[URGENT TEXT FIX — ERASE & REPRINT EXACT TEXT]
+The text in the previous image was blurry or misspelled.
+Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "${targetPhrase}" in a bold, highly legible sticker typography without any spelling errors.`,
+    };
+    return repairPromptsEn[repairType];
+  };
+
+  const copyRepairPrompt = (repairType, textMode, keyPrefix = 'repair', model = 'gpt') => {
+    navigator.clipboard.writeText(getRepairPrompt(repairType, textMode, model));
+    setCopiedType(`${keyPrefix}-${repairType}`);
+    setTimeout(() => setCopiedType(null), 2500);
+  };
+
+  const getPreviewPrompt = () => {
+    const phraseOverride = generationMode === 'batch' ? getSelectedPhrase() : null;
+    const error = getPromptValidationError(phraseOverride);
+    if (error) return error;
+    if (previewMode === 'gpt') return generateGptPrompt(phraseOverride);
+    if (previewMode === 'gemini') return generateGeminiPrompt(phraseOverride);
+    return generateGrokPrompt(phraseOverride);
+  };
+
+  const launchAiCompanion = (type, selectedPhraseOverride = null) => {
+    const phraseOverride = selectedPhraseOverride ?? (generationMode === 'batch' ? getSelectedPhrase() : null);
+    if (getPromptValidationError(phraseOverride)) return;
+    
+    const textToCopy = type === 'gpt'
+      ? generateGptPrompt(phraseOverride)
+      : type === 'gemini'
+        ? generateGeminiPrompt(phraseOverride)
+        : generateGrokPrompt(phraseOverride);
+
+    // 1. Copy to clipboard
+    navigator.clipboard.writeText(textToCopy);
+    setCopiedType(type);
+    setTimeout(() => setCopiedType(null), 3000);
+
+    // 2. Determine target URL
+    let targetUrl = 'https://chatgpt.com/';
+    let toastName = 'ChatGPT';
+
+    if (type === 'gpt') {
+      targetUrl = `https://chatgpt.com/?q=${encodeURIComponent(textToCopy)}`;
+      toastName = 'ChatGPT';
+    } else if (type === 'gemini') {
+      targetUrl = 'https://gemini.google.com/app';
+      toastName = 'Google Gemini';
+    } else if (type === 'grok') {
+      targetUrl = 'https://grok.com/';
+      toastName = 'xAI Grok';
+    }
+
+    // 3. Open side-by-side companion split window on desktop
+    const width = Math.min(880, Math.floor(window.screen.availWidth * 0.52));
+    const height = window.screen.availHeight || 900;
+    const left = Math.max(0, window.screen.availWidth - width);
+    const top = 0;
+
+    const popupFeatures = `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes,status=yes`;
+    
+    const popup = window.open(targetUrl, `AI_Companion_${type}`, popupFeatures);
+    if (popup) {
+      showToast(lang === 'ko' 
+        ? `📋 프롬프트 자동 복사 완료! 우측 ${toastName} 창에서 [Ctrl + V]로 붙여넣으세요.` 
+        : `📋 Prompt auto-copied! Press [Ctrl + V] in the ${toastName} side window.`);
+    } else {
+      window.open(targetUrl, '_blank');
+      showToast(lang === 'ko' 
+        ? `📋 프롬프트 자동 복사 완료! 새 창에서 [Ctrl + V]로 붙여넣으세요.` 
+        : `📋 Prompt auto-copied! Press [Ctrl + V] in the new tab.`);
+    }
+  };
+
+  const copyToClipboard = (type, selectedPhraseOverride = null, copyKey = type) => {
+    const phraseOverride = selectedPhraseOverride ?? (generationMode === 'batch' ? getSelectedPhrase() : null);
+    if (getPromptValidationError(phraseOverride)) return;
+    const textToCopy = type === 'gpt'
+      ? generateGptPrompt(phraseOverride)
+      : type === 'gemini'
+        ? generateGeminiPrompt(phraseOverride)
+        : generateGrokPrompt(phraseOverride);
+    navigator.clipboard.writeText(textToCopy);
+    setCopiedType(copyKey);
+    setTimeout(() => setCopiedType(null), 2500);
+  };
+
+  const promptValidationError = getPromptValidationError(
+    generationMode === 'batch' ? getSelectedPhrase() : null
+  );
+  const visiblePromptValidationError = promptValidationError;
+
+  return (
+    <div className={`font-body-md text-body-md antialiased pb-32 max-w-full w-full ${lang === 'zh' ? 'lang-zh' : ''}`}>
+      {/* TopAppBar */}
+      <header className="w-full top-0 bg-background/95 backdrop-blur-md z-50 sticky border-b border-outline-variant/30 shadow-xs">
+        <div className="max-w-3xl mx-auto flex items-center justify-between px-container-margin min-h-14 py-2 w-full">
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+            <h1 className="brand-logo text-[18px] sm:text-[22px] leading-none font-extrabold text-primary-strong tracking-tight whitespace-nowrap flex items-center gap-1.5">
+              <span>Prompt Maker</span>
+            </h1>
+          </div>
+          <div className="flex items-center gap-1 sm:gap-2 shrink-0">
+            <button 
+              onClick={() => {
+                const el = document.getElementById('guide-section');
+                if (el) {
+                  const y = el.getBoundingClientRect().top + window.scrollY - 80;
+                  window.scrollTo({ top: y, behavior: 'smooth' });
+                }
+              }}
+              className="interactive-control flex items-center gap-1 min-h-9 px-2 sm:px-3 py-1 rounded-full bg-[#FFF4E5] border border-[#FFE8CC] text-[#8A4B00] text-[12px] sm:text-[13px] font-bold hover:bg-[#FFE8CC] shadow-sm whitespace-nowrap shrink-0"
+            >
+              <span className="text-[13px] sm:text-[14px]">💡</span>
+              <span>{lang === 'ko' ? '꿀팁' : lang === 'ja' ? 'ガイド' : lang === 'zh' ? '指南' : 'Guide'}</span>
+            </button>
+            <div className="flex items-center gap-0.5 sm:gap-1 bg-surface-container-lowest p-0.5 sm:p-1 rounded-full border border-outline-variant shadow-sm shrink-0" role="group" aria-label="Language Selector">
+              {[
+                ['ko', 'KO', '한국어'],
+                ['en', 'EN', 'English'],
+                ['ja', 'JA', '日本語'],
+                ['zh', 'ZH', '中文'],
+              ].map(([code, shortLabel, fullLabel]) => (
+                <button
+                  key={code}
+                  type="button"
+                  aria-pressed={lang === code}
+                  onClick={() => changeLanguage(code)}
+                  className={`brand-logo interactive-control w-8 sm:w-9 h-7 sm:h-8 flex items-center justify-center text-[11px] sm:text-[12px] font-extrabold rounded-full transition-all ${
+                    lang === code
+                      ? 'bg-mint text-mint-strong shadow-xs border border-mint-border'
+                      : 'text-on-surface-variant hover:bg-mint-soft'
+                  }`}
+                  title={fullLabel}
+                >
+                  <span>{shortLabel}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main className="max-w-3xl mx-auto px-container-margin mt-md md:mt-xl flex flex-col gap-lg md:gap-xl">
+        {/* App Intro Hero Section */}
+        <section className="relative overflow-hidden bg-gradient-to-br from-[#FFD3B6] via-[#FFE8B6] to-[#FFC2C2] text-[#5C3A21] p-4 sm:p-6 md:p-xl rounded-md shadow-bubbly text-center flex flex-col items-center justify-center gap-3 sm:gap-4 md:gap-6 border-2 sm:border-4 border-white max-w-full w-full">
+          {/* Decorative floating emojis */}
+          <div className="absolute top-6 left-8 hidden sm:block text-[40px] transform -rotate-12 drop-shadow-md">✨</div>
+          <div className="absolute bottom-8 left-12 hidden sm:block text-[48px] transform rotate-12 drop-shadow-md">🎨</div>
+          <div className="absolute top-12 right-12 hidden sm:block text-[48px] transform rotate-12 drop-shadow-md">🚀</div>
+          <div className="absolute bottom-10 right-10 hidden sm:block text-[40px] transform -rotate-12 drop-shadow-md">💖</div>
+          
+          <div className="z-10 flex flex-col gap-2 sm:gap-3 w-full max-w-full px-1">
+            <span className="brand-logo inline-block bg-white/70 text-[#5C3A21] font-black text-[12px] sm:text-[14px] tracking-wider px-3.5 sm:px-4.5 py-1.5 rounded-full backdrop-blur-sm border border-white/90 mx-auto shadow-sm max-w-full text-ellipsis overflow-hidden">
+              {lang === 'ko' 
+                ? '✨ AI 이모티콘 프롬프트 메이커' 
+                : lang === 'ja' 
+                ? '✨ AIスタンププロンプトメーカー' 
+                : lang === 'zh' 
+                ? '✨ AI表情包提示词生成器' 
+                : '✨ AI Emoticon Prompt Maker'}
+            </span>
+            <h2 className="text-[18px] xs:text-[22px] sm:text-[28px] md:text-[38px] font-black tracking-tight leading-snug drop-shadow-sm w-full max-w-full px-1 [word-break:keep-all] [text-wrap:balance]">
+              {(() => {
+                const text = t.guide1Q.replace('🤔 ', '');
+                const match = text.match(/^(.*?)(\S{2,}[\?？!！]?)$/);
+                if (match) {
+                  return (
+                    <>
+                      {match[1]}
+                      <span className="inline-block whitespace-nowrap">{match[2]}</span>
+                    </>
+                  );
+                }
+                return text;
+              })()}
+            </h2>
+          </div>
+          
+          <p className="z-10 text-[13px] sm:text-[15px] md:text-[17px] leading-relaxed max-w-2xl mx-auto font-bold bg-white/40 p-3.5 sm:p-5 rounded-md backdrop-blur-md border border-white/60 shadow-sm whitespace-pre-wrap [word-break:keep-all] w-full">
+            {t.guide1A}
+          </p>
+        </section>
+
+        {/* Section 1: Character Setup */}
+        <section className="flex flex-col gap-md">
+          <div className="flex flex-col gap-2">
+            <div className="flex justify-between items-center">
+              <h2 className="font-headline-sm text-headline-sm text-on-surface">{t.step1}</h2>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={generateRandomCharacter}
+                  className="interactive-control flex items-center gap-1.5 min-h-10 px-3 py-1 text-[13px] font-bold text-[#7A4F00] bg-[#FFF5DC] hover:bg-[#FFECA1] border border-[#E8C66A] rounded-lg shadow-2xs transition-all cursor-pointer"
+                  title={lang === 'ko' ? '랜덤 캐릭터 조합' : 'Random Character'}
+                >
+                  <span className="text-[15px]">🎲</span>
+                  <span>{lang === 'ko' ? '랜덤 캐릭터 추천' : lang === 'ja' ? 'ランダムキャラ生成' : lang === 'zh' ? '随机角色生成' : 'Random Character'}</span>
+                </button>
+                <button onClick={clearTags} className="flex items-center gap-1 min-h-10 px-2 text-[13px] font-bold text-error hover:bg-red-50 rounded-lg cursor-pointer">
+                  <Trash2 size={14} /> {t.clear}
+                </button>
+              </div>
+            </div>
+            
+            {/* Live Active Settings Status Banner (Original Brand Palette) */}
+            <div className="bg-[#EAF8F3] text-mint-strong rounded-lg p-3 shadow-bubbly flex flex-col sm:flex-row sm:items-center justify-between gap-2 border border-mint-border">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="bg-[#C5F2E3] text-[#184F43] border border-[#A6E3D0] text-[11px] font-black px-2.5 py-0.5 rounded-md uppercase tracking-wide shadow-xs">
+                  ⚡ {lang === 'ko' ? '실시간 프롬프트 적용 중' : 'Live Prompt Active'}
+                </span>
+                <span className="text-[13px] font-bold text-mint-strong">
+                  {characterSource === 'photo' 
+                    ? `📸 ${lang === 'ko' ? '참고 사진' : 'Photo Reference'} (${getPhotoModeLabel(lang)})`
+                    : `✏️ ${lang === 'ko' ? '직접 캐릭터 설정' : 'Direct Character Setup'}`}
+                </span>
+              </div>
+              <div className="text-[12px] font-bold text-mint-strong/90 truncate max-w-md">
+                {charManual.trim() 
+                  ? `${lang === 'ko' ? '적용된 태그:' : 'Active Tags:'} ${charManual}` 
+                  : (lang === 'ko' ? '태그 미선택 (기본 2D 캐릭터 자동 적용)' : 'No tags (Default 2D character active)')}
+              </div>
+            </div>
+          </div>
+          
+          <div className="bg-surface-container-lowest rounded-md p-3.5 sm:p-md shadow-bubbly border border-outline-variant">
+            <div className="mb-md flex flex-col gap-3">
+              <span className="px-1 text-[13px] font-bold text-on-surface-variant">{t.characterSource}</span>
+              <div className="grid grid-cols-2 gap-2" role="group" aria-label={t.characterSource}>
+                {[
+                  ['direct', t.directSource],
+                  ['photo', t.photoSource],
+                ].map(([source, label]) => (
+                  <button
+                    key={source}
+                    type="button"
+                    aria-pressed={characterSource === source}
+                    onClick={() => setCharacterSource(source)}
+                    className={`interactive-control min-h-11 rounded-[8px] border px-3 py-2 text-[14px] font-bold focus:outline-none focus-visible:ring-2 focus-visible:ring-mint-strong focus-visible:ring-offset-2 ${
+                      characterSource === source
+                        ? 'bg-mint text-mint-strong border-mint-border shadow-sm'
+                        : 'bg-white text-on-surface border-outline-variant hover:bg-mint-soft'
+                    }`}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+
+              {characterSource === 'photo' && (
+                <div className="rounded-lg border-2 border-amber-300 bg-amber-50/90 p-4 flex flex-col gap-3 shadow-sm">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[14px] font-bold text-amber-900 flex items-center gap-1.5">
+                      📸 {lang === 'ko' ? '참고 사진 + 캐릭터 태그 융합 중' : 'Photo Reference + Character Tags Active'}
+                    </span>
+                    <span className="text-[12px] font-bold text-amber-700 bg-amber-200/80 px-2 py-0.5 rounded-full">
+                      {lang === 'ko' ? '사진 정체성 기반 적용' : 'Photo Identity Applied'}
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2" role="group" aria-label={t.photoMethod}>
+                    {[
+                      ['exact', t.photoExact],
+                      ['features', t.photoFeatures],
+                      ['characterize', t.photoCharacterize],
+                    ].map(([mode, label]) => (
+                      <button
+                        key={mode}
+                        type="button"
+                        aria-pressed={photoReferenceMode === mode}
+                        onClick={() => setPhotoReferenceMode(mode)}
+                        className={`interactive-control min-h-10 rounded-[8px] border px-2 py-2 text-[13px] font-bold flex items-center justify-center gap-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E8C66A] ${
+                          photoReferenceMode === mode
+                            ? 'bg-[#FFE8B5] text-[#5A461B] border-[#E8C66A] shadow-sm ring-1 ring-[#E8C66A]/30'
+                            : 'bg-white text-on-surface border-[#E9DFC5] hover:bg-[#FFF3D8]'
+                        }`}
+                      >
+                        {photoReferenceMode === mode && <CheckCircle2 size={16} aria-hidden="true" />}
+                        {label}
+                      </button>
+                    ))}
+                  </div>
+                  <div className="text-[14px] leading-relaxed text-amber-900 bg-white/90 p-3.5 rounded-lg border border-amber-200 flex flex-col gap-2 shadow-2xs font-normal">
+                    <p className="font-bold flex items-center gap-1.5 text-[14px] text-amber-900">
+                      💡 {lang === 'ko' ? '사진 참고 모드 (인물 / 동물 / 사물 자유 결합)' : 'Photo Reference Mode (Person / Animal / Object)'}
+                    </p>
+                    <p className="text-[13px] text-amber-800 leading-normal font-normal">
+                      {lang === 'ko'
+                        ? '사람 사진뿐만 아니라 반려견/반려묘(동물), 캐릭터/인형/사물 사진도 모두 가능하며 선택하신 태그와 100% 융합됩니다.'
+                        : 'Supports photos of people, pets/animals, or objects/characters. All selected tags combine 100% into the prompt.'}
+                    </p>
+                    <div className="bg-amber-50/80 p-2.5 rounded-md text-[12.5px] text-amber-850 font-normal border border-amber-200/70 leading-normal">
+                      <span>✨ {lang === 'ko' ? '예시: 사람 사진을 올리고 [시바견] 태그 선택 시 → [최대한 닮게]: 사진 속 인물이 시바견 인형옷/귀를 쓴 캐릭터 | [귀여운 SD 캐릭터화]: 인상의 분위기를 닮은 2.5등신 시바견 마스코트로 멋지게 융합됩니다!' : 'Example: Person photo + [Shiba Inu] tag → [Exact]: Person wearing Shiba Inu costume | [Chibi]: Cute 2.5-head Shiba Inu mascot matching the person\'s vibe!'}</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+                        {/* Selected Tags Summary Bar & Real-time Sync Indicator */}
+            <div className="mb-3 flex flex-col gap-2">
+              <div className="flex items-center justify-between bg-mint-soft/80 border border-mint-border rounded-lg px-3 py-2 text-[12px] font-bold text-mint-strong">
+                <span className="flex items-center gap-1.5">
+                  ⚡ {lang === 'ko' ? '버튼 클릭 시 입력 상자 & AI 프롬프트 100% 실시간 자동 동기화' : 'Real-time auto-sync to Textbox & Prompts'}
+                </span>
+                <span className="text-[11px] text-mint-strong/80">
+                  {lang === 'ko' ? '태그 재클릭 시 ON/OFF 토글' : 'Click again to toggle ON/OFF'}
+                </span>
+              </div>
+
+              {charManual.trim() && (
+                <div className="bg-[#EAF8F3] border border-mint-border rounded-lg p-3 flex flex-col gap-2 shadow-xs">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[13px] font-bold text-mint-strong flex items-center gap-1.5">
+                      🏷️ {lang === 'ko' ? '현재 적용된 캐릭터 태그' : 'Active Character Tags'}
+                      <span className="bg-mint-strong text-white text-[11px] px-2 py-0.5 rounded-full font-bold">
+                        {charManual.split(',').map(v => v.trim()).filter(Boolean).length}개
+                      </span>
+                    </span>
+                    <button 
+                      type="button"
+                      onClick={clearTags} 
+                      className="text-[12px] font-bold text-error hover:underline flex items-center gap-0.5"
+                    >
+                      <Trash2 size={12} /> {lang === 'ko' ? '전체 초기화' : 'Clear All'}
+                    </button>
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {charManual.split(',').map(v => v.trim()).filter(Boolean).map(tag => (
+                      <span 
+                        key={tag} 
+                        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white text-mint-strong border border-mint-border text-[12px] font-bold shadow-xs"
+                      >
+                        ✓ {tag}
+                        <button 
+                          type="button"
+                          onClick={() => removeSelectedTag(tag)} 
+                          className="hover:text-error text-slate-400 font-bold text-[14px] leading-none"
+                          title={lang === 'ko' ? '삭제' : 'Remove'}
+                        >
+                          ×
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <textarea 
+              className="w-full bg-white border-2 border-mint-border rounded-md p-3.5 sm:p-4 text-on-surface font-bold placeholder:text-on-surface-variant focus:outline-none focus:ring-4 focus:ring-mint focus:border-mint-border resize-y min-h-[100px] shadow-sm" 
+              placeholder={t.placeholder}
+              value={charManual}
+              onChange={(e) => setCharManual(e.target.value)}
+            />
+
+            {!charManual.trim() && (
+              <div className="mt-3 bg-mint-soft border border-mint-border rounded-md p-3 sm:p-3.5 flex items-start gap-2.5 text-[13px] text-mint-strong">
+                <span className="text-[16px] leading-none shrink-0 mt-0.5">💡</span>
+                <div className="leading-relaxed">
+                  <strong className="font-bold">
+                    {lang === 'ko' ? '캐릭터 미설정 시 기본 동작' : lang === 'ja' ? 'キャラクター未設定時のデフォルト動作' : lang === 'zh' ? '未设置角色时的默认选项' : 'Default Character Setting'}
+                  </strong>
+                  <p className="mt-0.5 opacity-95">
+                    {lang === 'ko' 
+                      ? '설정을 비워두셔도 AI가 가장 귀엽고 표정이 풍부한 2D 오리지널 캐릭터(기본 의상/화풍)를 자동으로 완성해 드립니다.' 
+                      : lang === 'ja'
+                      ? '入力欄を空欄のままにしておくと、AIが自動的に可愛く個性豊かな2Dオリジナルキャラクターを設定します。'
+                      : lang === 'zh'
+                      ? '若留空，AI将默认自动为您生成可爱且表情丰富的2D原创角色。'
+                      : 'Leaving this empty automatically generates a cute, highly expressive 2D original character by default.'}
+                  </p>
+                </div>
+              </div>
+            )}
+            
+            {/* Tag Category Selection Rules Info Card & Real-time AI Quality Gauge */}
+            <div className="mt-md bg-surface-container-highest rounded-md overflow-hidden border border-mint-border">
+              <div className="bg-[#E2F5EE] px-3.5 py-2.5 border-b border-mint-border flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-[13px] font-bold text-mint-strong">
+                <span className="flex items-center gap-1.5 flex-wrap">
+                  📌 {lang === 'ko' ? '태그 선택 규칙:' : 'Tag Rules:'}
+                  <span className="bg-white/90 px-2.5 py-0.5 rounded text-[12px] border border-mint-border">
+                    {lang === 'ko' ? '화풍/피사체: 대표 1개 선택' : 'Art/Subject: 1 Main Select'}
+                  </span>
+                  <span className="bg-white/90 px-2.5 py-0.5 rounded text-[12px] border border-mint-border">
+                    {lang === 'ko' ? '의상/소품/성격/효과: 여러 개 다중 선택 가능' : 'Outfit/Props/Effects: Multi-Select'}
+                  </span>
+                </span>
+                <span className="bg-[#C5F2E3] text-[#184F43] border border-[#A6E3D0] px-3 py-0.5 rounded-full text-[12px] font-extrabold shadow-xs shrink-0 self-start sm:self-auto">
+                  {getCategoryRuleBadge(activeTagCategory)}
+                </span>
+              </div>
+
+              {/* Real-time AI Quality Gauge Bar */}
+              {(() => {
+                const tagCount = charManual.split(',').filter(s => s.trim().length > 0).length;
+                if (tagCount === 0) return null;
+                const isOptimal = tagCount >= 3 && tagCount <= 5;
+                const isTooMany = tagCount > 5;
+
+                return (
+                  <div className={`px-3.5 py-2 border-b flex items-center justify-between text-[12px] font-bold transition-all ${
+                    isOptimal 
+                      ? 'bg-[#F0FDF4] text-[#166534] border-[#BBF7D0]' 
+                      : isTooMany 
+                      ? 'bg-[#FEF2F2] text-[#991B1B] border-[#FECACA]'
+                      : 'bg-[#FFFBEB] text-[#92400E] border-[#FDE68A]'
+                  }`}>
+                    <span className="flex items-center gap-1.5">
+                      {isOptimal ? '✨ [사진급 최고 화질]' : isTooMany ? '⚠️ [태그 과다 - 퀄리티 저하 주의]' : '💡 [화질 최적화 추천]'}
+                      <span>
+                        {isOptimal 
+                          ? (lang === 'ko' ? 'AI 가중치가 가장 선명하게 집중되는 3~5개 황금 비율 상태입니다! (사진급 일관성)' : 'Golden Ratio! AI attention is 100% focused for crisp sticker quality.')
+                          : isTooMany 
+                          ? (lang === 'ko' ? '태그가 6개 이상이면 AI가 특징을 뭉갤 수 있으니 4~5개로 줄여보세요.' : 'Too many tags (6+) may dilute AI focus. Reduce to 4-5 for best quality.')
+                          : (lang === 'ko' ? '태그를 1~2개 더 조합하시면(의상/소품/화풍) 캐릭터가 더욱 완성도 높게 나옵니다.' : 'Add 1-2 more tags (outfit/prop/style) for full character identity.')}
+                      </span>
+                    </span>
+                    <span className="px-2 py-0.5 rounded bg-white/90 border text-[11px] shrink-0 font-extrabold shadow-2xs">
+                      {lang === 'ko' ? `선택 태그: ${tagCount}개` : `Tags: ${tagCount}`}
+                    </span>
+                  </div>
+                );
+              })()}
+
+              <div className="no-scrollbar flex flex-wrap bg-[#EAF8F3] px-2 border-b border-mint-border">
+                {categoryKeys.map(category => (
+                  <button
+                    key={category}
+                    type="button"
+                    onClick={() => setActiveTagCategory(category)}
+                    className={`whitespace-nowrap px-3 py-2 text-[13px] font-bold transition-colors flex items-center gap-1 ${
+                      activeTagCategory === category 
+                        ? 'text-mint-strong border-b-2 border-mint-strong bg-white/50' 
+                        : 'text-mint-strong hover:bg-mint-hover border-b-2 border-transparent'
+                    }`}
+                  >
+                    <span>{category}</span>
+                  </button>
+                ))}
+              </div>
+              <div className="p-3 flex flex-wrap gap-2 bg-surface-container-lowest min-h-[80px]">
+                {currentTags[activeTagCategory]?.map(tag => {
+                  const selected = isTagSelected(tag);
+                  return (
+                    <button
+                      key={tag}
+                      type="button"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        appendTag(tag);
+                      }}
+                      aria-pressed={selected}
+                      className={`interactive-control min-h-[38px] px-3.5 py-1.5 rounded-full text-[13px] font-bold transition-all flex items-center gap-1.5 cursor-pointer select-none ${
+                        selected
+                          ? 'bg-mint-strong text-white border-2 border-[#1E453B] shadow-md scale-105 ring-2 ring-mint-strong/40 font-black'
+                          : 'bg-white text-on-surface hover:bg-mint-soft hover:text-mint-strong border border-outline-variant hover:border-mint-border shadow-xs'
+                      }`}
+                    >
+                      {selected ? (
+                        <>
+                          <span className="bg-white text-mint-strong text-[10px] px-1.5 py-0.5 rounded-full font-extrabold shrink-0 shadow-xs">✓ ON</span>
+                          <span className="font-extrabold">{tag}</span>
+                        </>
+                      ) : (
+                        <>
+                          <span className="text-on-surface-variant text-[11px] font-bold shrink-0">+</span>
+                          <span>{tag}</span>
+                        </>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Section 2: Emoji Phrases */}
+        <section className="flex flex-col gap-md">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="flex flex-col gap-1">
+              <h2 className="font-headline-sm text-headline-sm text-on-surface">{t.phrases}</h2>
+              <span className="text-[12px] font-bold text-mint-strong flex items-center gap-1">
+                📌 {lang === 'ko' ? '현재 활성화된 테마:' : 'Active Theme:'} 
+                <span className="bg-mint-soft text-mint-strong border border-mint-border px-2 py-0.5 rounded-full">
+                  {activeTheme === 'custom' 
+                    ? (lang === 'ko' ? '✏️ 사용자 지정 (커스텀 문구)' : '✏️ Custom Theme')
+                    : activeTheme}
+                </span>
+              </span>
+            </div>
+            <div className="flex gap-2">
+              <select 
+                value={currentThemes[activeTheme] ? activeTheme : ''} 
+                onChange={handleThemeSelect}
+                className="px-3 py-1.5 text-[14px] font-bold rounded-full border border-mint-border bg-surface-container-lowest text-on-surface cursor-pointer focus:outline-none focus:ring-2 focus:ring-mint"
+              >
+                <option value="" disabled>{t.themeSelect}</option>
+                {themeKeys.map(theme => (
+                  <option key={theme} value={theme}>{theme}</option>
+                ))}
+              </select>
+              
+              <button 
+                onClick={shuffleEmoticons}
+                className="interactive-control flex items-center gap-1 min-h-10 px-3 py-1.5 text-[14px] font-bold rounded-full bg-mint text-mint-strong hover:bg-mint-hover border border-mint-border"
+              >
+                <Shuffle size={14} /> {t.randomMix}
+              </button>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-sm md:gap-md bg-surface-container-lowest rounded-md p-3.5 sm:p-md shadow-bubbly border border-outline-variant">
+            {emoticons.map((text, idx) => (
+              <input 
+                key={idx}
+                type="text" 
+                value={text}
+                onChange={(e) => handleEmoticonChange(idx, e.target.value)}
+                className={`interactive-control w-full h-[48px] bg-mint-soft rounded-full px-1.5 sm:px-3 text-center text-mint-strong text-[12px] sm:text-[14px] font-bold tracking-tight placeholder:text-on-secondary-container focus:outline-none focus:ring-2 focus:ring-mint-strong border border-mint-border text-ellipsis overflow-hidden whitespace-nowrap ${
+                  idx === emoticons.length - 1
+                    ? 'col-span-2 max-w-[calc(50%_-_6px)] justify-self-center sm:col-span-1 sm:max-w-none'
+                    : ''
+                }`}
+                placeholder={`Phrase ${idx+1}`}
+              />
+            ))}
+          </div>
+
+        </section>
+
+        {/* Section 3: Prompt Preview */}
+        <section className="flex flex-col gap-md">
+          <div className="bg-[#FFF7DF] rounded-md p-3 md:p-4 border border-[#F6D77A] shadow-sm flex flex-col gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2" role="group" aria-label={lang === 'ko' ? '프롬프트 생성 방식' : 'Prompt generation mode'}>
+              {[
+                ['sheet', t.modeSheet],
+                ['individual', t.modeIndividual],
+                ['batch', t.modeBatch],
+              ].map(([mode, label]) => (
+                <button
+                  key={mode}
+                  type="button"
+                  aria-pressed={generationMode === mode}
+                  onClick={() => handleGenerationModeChange(mode)}
+                  className={`interactive-control min-h-12 px-3 py-2 rounded-md text-[14px] font-bold border focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E8C66A] focus-visible:ring-offset-2 ${
+                    generationMode === mode
+                      ? 'bg-[#FFE8B5] text-[#5A461B] border-[#E8C66A] shadow-sm'
+                      : 'bg-white text-on-surface border-[#E9DFC5] hover:bg-[#FFF3D8]'
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+
+            {generationMode === 'individual' && (
+              <div className="flex flex-col gap-2">
+                <label htmlFor="individual-phrase" className="px-1 text-[13px] font-bold text-[#795B16]">
+                  {t.individualInput}
+                </label>
+                <input
+                  id="individual-phrase"
+                  type="text"
+                  value={individualPhrase}
+                  onChange={(e) => setIndividualPhrase(e.target.value)}
+                  className="w-full min-h-12 rounded-md bg-white px-4 text-on-surface font-bold border border-[#E8C66A] focus:outline-none focus:ring-2 focus:ring-[#E8C66A]"
+                  placeholder={t.individualPlaceholder}
+                />
+                <p className="px-1 text-[13px] leading-relaxed text-[#795B16]">{t.individualTip}</p>
+              </div>
+            )}
+
+            {generationMode === 'batch' && (
+              <div className="flex flex-col gap-2">
+                <span className="px-1 text-[13px] font-bold text-[#795B16]">{t.batchSelect}</span>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                  {emoticons.map((phrase, idx) => {
+                    const isSelected = getSelectedPhrase() === phrase;
+                    const copyKey = `batch-${previewMode}-${idx}`;
+                    return (
+                      <button
+                        key={`${idx}-${phrase}`}
+                        type="button"
+                        aria-pressed={isSelected}
+                        aria-label={`${idx + 1}. ${phrase} ${previewMode === 'gpt' ? t.gptCopy : t.geminiCopy}`}
+                        onClick={() => {
+                          setBatchPhrase(phrase);
+                          copyToClipboard(previewMode, phrase, copyKey);
+                        }}
+                        className={`interactive-control min-h-11 px-3 py-2 rounded-md border font-bold flex items-center justify-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E8C66A] focus-visible:ring-offset-2 ${
+                          isSelected
+                            ? 'bg-[#FFE8B5] text-[#5A461B] border-[#E8C66A] shadow-sm'
+                            : 'bg-white text-on-surface border-[#E9DFC5] hover:bg-[#FFF3D8]'
+                        }`}
+                      >
+                        {copiedType === copyKey
+                          ? <CheckCircle2 size={17} aria-label={t.copiedPrompt} />
+                          : <span className="text-[12px] font-black opacity-70">{idx + 1}</span>}
+                        <span className="truncate">{phrase}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+                <p className="px-1 text-[13px] leading-relaxed text-[#795B16]">{t.batchTip}</p>
+              </div>
+            )}
+          </div>
+
+          {visiblePromptValidationError && (
+            <p role="alert" className="rounded-md border border-error/30 bg-[#FFF0F0] px-4 py-3 text-[13px] font-bold text-error">
+              {visiblePromptValidationError}
+            </p>
+          )}
+
+          {characterSource === 'photo' && (
+            <div className="flex flex-wrap items-center gap-2 px-1" aria-live="polite">
+              <span className="inline-flex min-h-9 items-center rounded-full bg-mint-soft px-4 py-1.5 text-[13px] font-bold text-mint-strong border border-mint-border">
+                📷 {t.photoActive}
+              </span>
+              <strong className="text-[13px] text-on-surface-variant">{getPhotoModeLabel()}</strong>
+            </div>
+          )}
+
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-3">
+            <h2 className="font-headline-sm text-headline-sm text-on-surface [word-break:break-word]">{t.previewTitle}</h2>
+            <div className="flex w-full sm:w-auto bg-mint-soft rounded-full p-1 border border-mint-border shadow-sm">
+              <button 
+                onClick={() => setPreviewMode('gpt')}
+                className={`interactive-control flex-1 sm:flex-none min-h-11 px-3 sm:px-4 py-1.5 text-[13px] sm:text-[14px] font-bold rounded-full ${
+                  previewMode === 'gpt' 
+                  ? 'bg-mint text-mint-strong shadow-sm border border-mint-border' 
+                  : 'text-mint-strong hover:bg-mint-hover'
+                }`}
+              >
+                {t.forGpt}
+              </button>
+              <button 
+                onClick={() => setPreviewMode('gemini')}
+                className={`interactive-control flex-1 sm:flex-none min-h-11 px-3 sm:px-4 py-1.5 text-[13px] sm:text-[14px] font-bold rounded-full ${
+                  previewMode === 'gemini' 
+                  ? 'bg-mint text-mint-strong shadow-sm border border-mint-border' 
+                  : 'text-mint-strong hover:bg-mint-hover'
+                }`}
+              >
+                {t.forGemini}
+              </button>
+              <button 
+                onClick={() => setPreviewMode('grok')}
+                className={`interactive-control flex-1 sm:flex-none min-h-11 px-3 sm:px-4 py-1.5 text-[13px] sm:text-[14px] font-bold rounded-full ${
+                  previewMode === 'grok' 
+                  ? 'bg-mint text-mint-strong shadow-sm border border-mint-border' 
+                  : 'text-mint-strong hover:bg-mint-hover'
+                }`}
+              >
+                {t.forGrok}
+              </button>
+            </div>
+          </div>
+          {previewMode === 'gpt' && (
+            <div className="rounded-lg border border-[#F6D77A] bg-[#FFF7DF] p-3 flex flex-col gap-3">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                <span className="text-[13px] font-bold text-[#795B16]">{t.gptTextMode}</span>
+                <div className="grid grid-cols-2 gap-1.5 sm:gap-2 w-full sm:w-auto" role="group" aria-label={t.gptTextMode}>
+                  {[
+                    ['text', t.gptIncludeText],
+                    ['visual', t.gptNoText],
+                  ].map(([mode, label]) => (
+                    <button
+                      key={mode}
+                      type="button"
+                      aria-pressed={gptTextMode === mode}
+                      onClick={() => setGptTextMode(mode)}
+                      className={`interactive-control min-h-10 rounded-[8px] border px-2 sm:px-3 py-2 text-[12px] sm:text-[13px] font-bold text-center focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E8C66A] ${
+                        gptTextMode === mode
+                          ? 'bg-[#FFE8B5] text-[#5A461B] border-[#E8C66A] shadow-sm'
+                          : 'bg-white text-on-surface border-[#E9DFC5] hover:bg-[#FFF3D8]'
+                      }`}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                <span className="text-[13px] font-bold text-[#795B16]">{t.gptBackgroundMode}</span>
+                <div className="grid grid-cols-3 gap-1 sm:gap-2 w-full sm:w-auto" role="group" aria-label={t.gptBackgroundMode}>
+                  {[
+                    ['transparent', t.gptTransparent],
+                    ['solid', t.gptSolid],
+                    ['chroma', t.gptChroma],
+                  ].map(([mode, label]) => (
+                    <button
+                      key={mode}
+                      type="button"
+                      aria-pressed={gptBackgroundMode === mode}
+                      onClick={() => setGptBackgroundMode(mode)}
+                      className={`interactive-control min-h-10 rounded-[8px] border px-1 sm:px-2 py-2 text-[11px] xs:text-[12px] sm:text-[13px] font-bold text-center text-ellipsis overflow-hidden whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E8C66A] ${
+                        gptBackgroundMode === mode
+                          ? 'bg-[#FFE8B5] text-[#5A461B] border-[#E8C66A] shadow-sm'
+                          : 'bg-white text-on-surface border-[#E9DFC5] hover:bg-[#FFF3D8]'
+                      }`}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="flex flex-col gap-2 border-t border-[#E9DFC5] pt-3">
+                <div className="flex flex-col gap-0.5">
+                  <span className="text-[13px] font-bold text-[#795B16]">{t.gptRepairTitle}</span>
+                  <span className="text-[12px] font-medium text-[#8A661C] leading-snug">{t.repairHelp}</span>
+                </div>
+                <div className="grid grid-cols-1 min-[430px]:grid-cols-3 gap-2">
+                  {[
+                    ['identity', t.geminiRepairIdentity],
+                    ['crop', t.geminiRepairCrop],
+                    ...(gptTextMode === 'text' ? [['text', t.geminiRepairText]] : []),
+                  ].map(([repairType, label]) => (
+                    <button
+                      key={repairType}
+                      type="button"
+                      onClick={() => copyRepairPrompt(repairType, gptTextMode, 'gpt-repair', 'gpt')}
+                      className="interactive-control min-h-10 rounded-[8px] border border-[#E9DFC5] bg-white px-3 py-2 text-[13px] font-bold text-[#795B16] hover:bg-[#FFF3D8] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E8C66A]"
+                    >
+                      {copiedType === `gpt-repair-${repairType}` ? '✓ ' : ''}{label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <p className="text-[13px] leading-relaxed text-[#795B16]">💡 {t.gptWorkflowTip}</p>
+            </div>
+          )}
+          {previewMode === 'gemini' && (
+            <div className="rounded-[8px] border border-[#E8C66A] bg-[#FFF8E8] p-3 flex flex-col gap-3">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                <span className="text-[13px] font-bold text-[#795B16]">{t.geminiTextMode}</span>
+                <div className="grid grid-cols-2 gap-1.5 sm:gap-2 w-full sm:w-auto" role="group" aria-label={t.geminiTextMode}>
+                  {[
+                    ['text', t.geminiIncludeText],
+                    ['visual', t.geminiNoText],
+                  ].map(([mode, label]) => (
+                    <button
+                      key={mode}
+                      type="button"
+                      aria-pressed={geminiTextMode === mode}
+                      onClick={() => setGeminiTextMode(mode)}
+                      className={`interactive-control min-h-10 rounded-[8px] border px-2 sm:px-3 py-2 text-[12px] sm:text-[13px] font-bold text-center focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E8C66A] ${
+                        geminiTextMode === mode
+                          ? 'bg-[#FFE8B5] text-[#5A461B] border-[#E8C66A] shadow-sm'
+                          : 'bg-white text-[#795B16] border-[#E9DFC5] hover:bg-[#FFF3D8]'
+                      }`}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                <span className="text-[13px] font-bold text-[#795B16]">{t.geminiBackgroundMode}</span>
+                <div className="grid grid-cols-3 gap-1 sm:gap-2 w-full sm:w-auto" role="group" aria-label={t.geminiBackgroundMode}>
+                  {[
+                    ['transparent', t.geminiTransparent],
+                    ['solid', t.geminiSolid],
+                    ['chroma', t.geminiChroma],
+                  ].map(([mode, label]) => (
+                    <button
+                      key={mode}
+                      type="button"
+                      aria-pressed={geminiBackgroundMode === mode}
+                      onClick={() => setGeminiBackgroundMode(mode)}
+                      className={`interactive-control min-h-10 rounded-[8px] border px-1 sm:px-2 py-2 text-[11px] xs:text-[12px] sm:text-[13px] font-bold text-center text-ellipsis overflow-hidden whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E8C66A] ${
+                        geminiBackgroundMode === mode
+                          ? 'bg-[#FFE8B5] text-[#5A461B] border-[#E8C66A] shadow-sm'
+                          : 'bg-white text-[#795B16] border-[#E9DFC5] hover:bg-[#FFF3D8]'
+                      }`}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="flex flex-col gap-2 border-t border-[#E9DFC5] pt-3">
+                <div className="flex flex-col gap-0.5">
+                  <span className="text-[13px] font-bold text-[#795B16]">{t.geminiRepairTitle}</span>
+                  <span className="text-[12px] font-medium text-[#8A661C] leading-snug">{t.repairHelp}</span>
+                </div>
+                <div className="grid grid-cols-1 min-[430px]:grid-cols-3 gap-2">
+                  {[
+                    ['identity', t.geminiRepairIdentity],
+                    ['crop', t.geminiRepairCrop],
+                    ...(geminiTextMode === 'text' ? [['text', t.geminiRepairText]] : []),
+                  ].map(([repairType, label]) => (
+                    <button
+                      key={repairType}
+                      type="button"
+                      onClick={() => copyRepairPrompt(repairType, geminiTextMode, 'gemini-repair', 'gemini')}
+                      className="interactive-control min-h-10 rounded-[8px] border border-[#E9DFC5] bg-white px-3 py-2 text-[13px] font-bold text-[#795B16] hover:bg-[#FFF3D8] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E8C66A]"
+                    >
+                      {copiedType === `gemini-repair-${repairType}` ? '✓ ' : ''}{label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <p className="text-[13px] leading-relaxed text-[#795B16]">💡 {t.geminiFinalTip}</p>
+            </div>
+          )}
+          {previewMode === 'grok' && (
+            <div className="rounded-[8px] border border-[#E8C66A] bg-[#FFF8E8] p-3 flex flex-col gap-3">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                <span className="text-[13px] font-bold text-[#795B16]">{t.grokTextMode}</span>
+                <div className="grid grid-cols-2 gap-1.5 sm:gap-2 w-full sm:w-auto" role="group" aria-label={t.grokTextMode}>
+                  {[
+                    ['text', t.grokIncludeText],
+                    ['visual', t.grokNoText],
+                  ].map(([mode, label]) => (
+                    <button
+                      key={mode}
+                      type="button"
+                      aria-pressed={grokTextMode === mode}
+                      onClick={() => setGrokTextMode(mode)}
+                      className={`interactive-control min-h-10 rounded-[8px] border px-2 sm:px-3 py-2 text-[12px] sm:text-[13px] font-bold text-center focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E8C66A] ${
+                        grokTextMode === mode
+                          ? 'bg-[#FFE8B5] text-[#5A461B] border-[#E8C66A] shadow-sm'
+                          : 'bg-white text-[#795B16] border-[#E9DFC5] hover:bg-[#FFF3D8]'
+                      }`}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                <span className="text-[13px] font-bold text-[#795B16]">{t.grokBackgroundMode}</span>
+                <div className="grid grid-cols-3 gap-1 sm:gap-2 w-full sm:w-auto" role="group" aria-label={t.grokBackgroundMode}>
+                  {[
+                    ['transparent', t.grokTransparent],
+                    ['solid', t.grokSolid],
+                    ['chroma', t.grokChroma],
+                  ].map(([mode, label]) => (
+                    <button
+                      key={mode}
+                      type="button"
+                      aria-pressed={grokBackgroundMode === mode}
+                      onClick={() => setGrokBackgroundMode(mode)}
+                      className={`interactive-control min-h-10 rounded-[8px] border px-1 sm:px-2 py-2 text-[11px] xs:text-[12px] sm:text-[13px] font-bold text-center text-ellipsis overflow-hidden whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E8C66A] ${
+                        grokBackgroundMode === mode
+                          ? 'bg-[#FFE8B5] text-[#5A461B] border-[#E8C66A] shadow-sm'
+                          : 'bg-white text-[#795B16] border-[#E9DFC5] hover:bg-[#FFF3D8]'
+                      }`}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="flex flex-col gap-2 border-t border-[#E9DFC5] pt-3">
+                <div className="flex flex-col gap-0.5">
+                  <span className="text-[13px] font-bold text-[#795B16]">{t.grokRepairTitle}</span>
+                  <span className="text-[12px] font-medium text-[#8A661C] leading-snug">{t.repairHelp}</span>
+                </div>
+                <div className="grid grid-cols-1 min-[430px]:grid-cols-3 gap-2">
+                  {[
+                    ['identity', t.geminiRepairIdentity],
+                    ['crop', t.geminiRepairCrop],
+                    ...(grokTextMode === 'text' ? [['text', t.geminiRepairText]] : []),
+                  ].map(([repairType, label]) => (
+                    <button
+                      key={repairType}
+                      type="button"
+                      onClick={() => copyRepairPrompt(repairType, grokTextMode, 'grok-repair', 'grok')}
+                      className="interactive-control min-h-10 rounded-[8px] border border-[#E9DFC5] bg-white px-3 py-2 text-[13px] font-bold text-[#795B16] hover:bg-[#FFF3D8] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E8C66A]"
+                    >
+                      {copiedType === `grok-repair-${repairType}` ? '✓ ' : ''}{label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <p className="text-[13px] leading-relaxed text-[#795B16]">💡 {t.grokWorkflowTip}</p>
+            </div>
+          )}
+          {generationMode !== 'sheet' && (
+            <div className="flex flex-wrap items-center gap-2 px-1" aria-live="polite">
+              <span className="text-[13px] font-bold text-on-surface-variant">{t.selectedPhrase}</span>
+              <strong className="inline-flex min-h-9 items-center rounded-full bg-[#FFE8B5] px-4 py-1.5 text-[14px] text-[#5A461B] border border-[#E8C66A] shadow-sm">
+                {getSelectedPhrase()}
+              </strong>
+            </div>
+          )}
+          <div className="bg-surface-container-lowest rounded-md p-3.5 sm:p-md shadow-[#B8E3D2] border border-outline-variant">
+            <textarea 
+              className="w-full bg-white border-2 border-outline-variant rounded-md p-4 text-on-surface font-normal focus:outline-none resize-y min-h-[200px] shadow-sm" 
+              readOnly
+              value={getPreviewPrompt()}
+            />
+          </div>
+
+        </section>
+
+        {/* Actions: One-Click Split Screen Launch & Copy Dual Hub */}
+        <section className="flex flex-col gap-3 mt-sm pb-xl">
+          <div className="bg-[#EAF8F3] p-3 rounded-lg border border-mint-border flex items-center justify-between text-[12.5px] font-bold text-mint-strong">
+            <span className="flex items-center gap-1.5">
+              🚀 {lang === 'ko' 
+                ? '원클릭 1초 분할 실행: 버튼 클릭 시 클립보드 자동 복사 + 우측 분할 창으로 AI 사이트가 즉시 열립니다!' 
+                : lang === 'ja'
+                ? 'ワンクリック分割起動: プロンプトが自動コピーされ、右側にAI画面が開きます！'
+                : lang === 'zh'
+                ? '一键分屏启动: 点击后自动复制提示词，并在右侧直接打开AI网站！'
+                : 'One-Click Split Launch: Auto-copies prompt & opens AI site in side split window!'}
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
+            {/* ChatGPT Action Card */}
+            <div className="bg-white p-3.5 rounded-lg border-2 border-[#E8C66A]/60 flex flex-col gap-2 shadow-xs hover:border-[#E8C66A] transition-all">
+              <button
+                type="button"
+                onClick={() => launchAiCompanion('gpt')}
+                disabled={Boolean(promptValidationError)}
+                className="interactive-control w-full min-h-[52px] rounded-md bg-gradient-to-r from-[#2D7D64] to-[#1E5C49] text-white font-bold text-[15px] flex items-center justify-center gap-2 shadow-sm hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+              >
+                <Bot size={20} className="text-[#A6E3D0]" />
+                <span>{lang === 'ko' ? '🚀 ChatGPT 분할 실행' : lang === 'ja' ? '🚀 ChatGPT 分割起動' : lang === 'zh' ? '🚀 ChatGPT 分屏启动' : '🚀 Launch ChatGPT'}</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => copyToClipboard('gpt')}
+                disabled={Boolean(promptValidationError)}
+                className="interactive-control w-full min-h-[38px] rounded-md bg-[#FFF9EE] text-[#7A4F00] border border-[#FFECA1] font-bold text-[13px] flex items-center justify-center gap-1.5 hover:bg-[#FFECA1] cursor-pointer"
+              >
+                {copiedType === 'gpt' ? <CheckCircle2 size={16} className="text-[#2D7D64]" /> : <CheckCircle2 size={16} className="text-[#7A4F00]" />}
+                <span>{copiedType === 'gpt' ? (lang === 'ko' ? '✓ 복사 완료!' : lang === 'ja' ? '✓ コピー完了！' : lang === 'zh' ? '✓ 复制成功！' : '✓ Copied!') : (lang === 'ko' ? '📋 프롬프트만 복사' : lang === 'ja' ? '📋 プロンプトのみコピー' : lang === 'zh' ? '📋 仅复制提示词' : '📋 Copy Prompt')}</span>
+              </button>
+              <p className="text-[11px] text-slate-500 text-center">
+                {lang === 'ko' ? '✨ 자동 텍스트 전달 + 클립보드 복사' : lang === 'ja' ? '✨ 自動入力 + クリップボードコピー' : lang === 'zh' ? '✨ 自动传递文本 + 剪贴板复制' : '✨ Auto text passing + clipboard copy'}
+              </p>
+            </div>
+
+            {/* Gemini Action Card */}
+            <div className="bg-white p-3.5 rounded-lg border-2 border-[#E8C66A]/60 flex flex-col gap-2 shadow-xs hover:border-[#E8C66A] transition-all">
+              <button
+                type="button"
+                onClick={() => launchAiCompanion('gemini')}
+                disabled={Boolean(visiblePromptValidationError)}
+                className="interactive-control w-full min-h-[52px] rounded-md bg-gradient-to-r from-[#D97706] to-[#B45309] text-white font-bold text-[15px] flex items-center justify-center gap-2 shadow-sm hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+              >
+                <Sparkles size={20} className="text-[#FFECA1]" />
+                <span>{lang === 'ko' ? '🚀 Gemini 분할 실행' : lang === 'ja' ? '🚀 Gemini 分割起動' : lang === 'zh' ? '🚀 Gemini 分屏启动' : '🚀 Launch Gemini'}</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => copyToClipboard('gemini')}
+                disabled={Boolean(visiblePromptValidationError)}
+                className="interactive-control w-full min-h-[38px] rounded-md bg-[#FFF9EE] text-[#7A4F00] border border-[#FFECA1] font-bold text-[13px] flex items-center justify-center gap-1.5 hover:bg-[#FFECA1] cursor-pointer"
+              >
+                {copiedType === 'gemini' ? <CheckCircle2 size={16} className="text-[#D97706]" /> : <CheckCircle2 size={16} className="text-[#7A4F00]" />}
+                <span>{copiedType === 'gemini' ? (lang === 'ko' ? '✓ 복사 완료!' : lang === 'ja' ? '✓ コピー完了！' : lang === 'zh' ? '✓ 复制成功！' : '✓ Copied!') : (lang === 'ko' ? '📋 프롬프트만 복사' : lang === 'ja' ? '📋 プロンプトのみコピー' : lang === 'zh' ? '📋 仅复制提示词' : '📋 Copy Prompt')}</span>
+              </button>
+              <p className="text-[11px] text-amber-700 font-medium text-center">
+                {lang === 'ko' ? '📋 복사 완료! 창 열리면 [Ctrl+V] 누르세요' : lang === 'ja' ? '📋 コピー完了！画面が開いたら [Ctrl+V]' : lang === 'zh' ? '📋 复制成功！打开窗口后按 [Ctrl+V]' : '📋 Copied! Press [Ctrl+V] in Gemini'}
+              </p>
+            </div>
+
+            {/* Grok Action Card */}
+            <div className="bg-white p-3.5 rounded-lg border-2 border-[#E8C66A]/60 flex flex-col gap-2 shadow-xs hover:border-[#E8C66A] transition-all">
+              <button
+                type="button"
+                onClick={() => launchAiCompanion('grok')}
+                disabled={Boolean(visiblePromptValidationError)}
+                className="interactive-control w-full min-h-[52px] rounded-md bg-gradient-to-r from-[#7C3AED] to-[#5B21B6] text-white font-bold text-[15px] flex items-center justify-center gap-2 shadow-sm hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+              >
+                <Zap size={20} className="text-[#DDD6FE]" />
+                <span>{lang === 'ko' ? '🚀 Grok 분할 실행' : lang === 'ja' ? '🚀 Grok 分割起動' : lang === 'zh' ? '🚀 Grok 分屏启动' : '🚀 Launch Grok'}</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => copyToClipboard('grok')}
+                disabled={Boolean(visiblePromptValidationError)}
+                className="interactive-control w-full min-h-[38px] rounded-md bg-[#FFF9EE] text-[#7A4F00] border border-[#FFECA1] font-bold text-[13px] flex items-center justify-center gap-1.5 hover:bg-[#FFECA1] cursor-pointer"
+              >
+                {copiedType === 'grok' ? <CheckCircle2 size={16} className="text-[#7C3AED]" /> : <CheckCircle2 size={16} className="text-[#7A4F00]" />}
+                <span>{copiedType === 'grok' ? (lang === 'ko' ? '✓ 복사 완료!' : lang === 'ja' ? '✓ コピー完了！' : lang === 'zh' ? '✓ 复制成功！' : '✓ Copied!') : (lang === 'ko' ? '📋 프롬프트만 복사' : lang === 'ja' ? '📋 プロンプトのみコピー' : lang === 'zh' ? '📋 仅复制提示词' : '📋 Copy Prompt')}</span>
+              </button>
+              <p className="text-[11px] text-purple-700 font-medium text-center">
+                {lang === 'ko' ? '📋 복사 완료! 창 열리면 [Ctrl+V] 누르세요' : lang === 'ja' ? '📋 コピー完了！画面が開いたら [Ctrl+V]' : lang === 'zh' ? '📋 复制成功！打开窗口后按 [Ctrl+V]' : '📋 Copied! Press [Ctrl+V] in Grok'}
+              </p>
+            </div>
+          </div>
+        </section>
+        
+        <AdBanner />
+
+        <div className="bg-[#FFF5E6] text-[#8C3D18] p-4 sm:p-5 md:p-6 rounded-md border border-[#FDE0B5] flex gap-3 md:gap-4 items-start shadow-sm mt-2 relative overflow-hidden">
+          <div className="absolute -right-4 -top-6 text-[#FCD3A1] opacity-40 text-[120px] sm:text-[140px] transform -rotate-12 select-none pointer-events-none drop-shadow-sm">📸</div>
+          <span className="text-[20px] sm:text-[22px] drop-shadow-sm leading-none mt-0.5 relative z-10">📸</span>
+          <div className="relative z-10 flex-1 min-w-0">
+            <strong className="font-black block mb-1.5 sm:mb-2 text-[15px] sm:text-[17px] tracking-tight text-[#C2410C]">
+              {lang === 'ko' 
+                ? '✨ 초강력 꿀팁: 사진 첨부로 세상에 하나뿐인 이모티콘 만들기!' 
+                : lang === 'ja'
+                ? '✨ 超強力なコツ: 写真添付で世界にひとつだけのスタンプ作成！'
+                : lang === 'zh'
+                ? '✨ 超实用技巧: 附带照片制作独一无二的表情包！'
+                : '✨ Pro Tip: Make Emojis from Photos!'}
+            </strong>
+            <span className="text-[13px] sm:text-[14.5px] leading-relaxed opacity-90 [word-break:break-word] block font-medium mb-3 sm:mb-4 pr-4 sm:pr-16 text-[#8C3D18]">
+              {lang === 'ko' 
+                ? '이 프롬프트를 복사해서 AI(ChatGPT, Gemini, Grok)에 붙여넣을 때, 본인이나 우리 아이, 반려동물의 사진을 함께 첨부해 보세요. 대상을 똑닮은 완벽한 커스텀 이모티콘 시트가 만들어집니다!' 
+                : lang === 'ja'
+                ? 'このプロンプトをコピーしてAI(ChatGPT, Gemini, Grok)に貼り付ける際、ご自身や子ども、ペットの写真も一緒に添付してみてください。そっくりなカスタムスタンプシートが作れます！'
+                : lang === 'zh'
+                ? '将此提示词复制粘贴给AI (ChatGPT, Gemini, Grok) 时，可以同时发送您自己、孩子或宠物的照片。AI将完美还原特征，生成独一无二的专属表情包！'
+                : 'When pasting this prompt into AI (ChatGPT, Gemini, or Grok), attach a photo of yourself, your child, or your pet. It will generate a custom emoji sheet!'}
+            </span>
+            <div className="bg-white/60 rounded-md p-3 sm:p-4 border border-[#FCD3A1]/60 shadow-sm flex flex-col gap-1.5 sm:gap-2 w-full">
+              <strong className="text-[#C2410C] text-[13.5px] sm:text-[14.5px] flex items-center gap-1.5 font-bold">
+                <span className="text-[15px] sm:text-[16px]">📌</span> 
+                {lang === 'ko' 
+                  ? 'LLM 첨부 사진 권장 규칙' 
+                  : lang === 'ja'
+                  ? 'LLM添付写真の推奨ルール'
+                  : lang === 'zh'
+                  ? 'LLM照片上传建议'
+                  : 'Recommended Photo Specs'}
+              </strong>
+              <ul className="list-disc pl-4 sm:pl-5 opacity-90 text-[#9A3412] font-medium flex flex-col gap-1 sm:gap-1.5 mt-0.5 sm:mt-1 text-[12.5px] sm:text-[13.5px] marker:text-[#C2410C] [word-break:break-word]">
+                <li>
+                  {lang === 'ko' 
+                    ? '크기/비율: 제한 없음 (일반적인 스마트폰 사진 포맷 가능)' 
+                    : lang === 'ja'
+                    ? 'サイズ/比率: 制限なし (標準的なスマホ写真フォーマット可能)'
+                    : lang === 'zh'
+                    ? '尺寸/比例: 不限（标准手机照片格式均可）'
+                    : 'Size/Ratio: Any standard photo format'}
+                </li>
+                <li>
+                  {lang === 'ko' 
+                    ? '권장: 이목구비, 헤어스타일, 모색 등 특징이 선명한 정면 사진 1장' 
+                    : lang === 'ja'
+                    ? '推奨: 目鼻立ち、ヘアスタイル、毛色などの特徴が鮮明な正面写真1枚'
+                    : lang === 'zh'
+                    ? '建议: 正面清晰照片1张（五官、发型、毛色等特征明显）'
+                    : 'Recommended: Clear front-facing photo showing distinct features'}
+                </li>
+                <li>
+                  {lang === 'ko' 
+                    ? '주의: 인물이 너무 작거나 흔들리고 어두운 사진은 피해주세요.' 
+                    : lang === 'ja'
+                    ? '注意: 人物が小さすぎる、ブレている、暗すぎる写真は避けてください。'
+                    : lang === 'zh'
+                    ? '注意: 请避免人物太小、模糊或过暗的照片。'
+                    : 'Avoid: Blurry, dark, or zoomed-out photos'}
+                </li>
+                <li>
+                  {lang === 'ko' 
+                    ? '💡 실물 싱크로율 100% 꿀팁: 15종 시트는 포즈/구도 초안용으로 사용하고, 최종 완성품은 [📋 15종 개별 분할] 모드에서 1장씩 생성하기 (AI가 오직 1명의 이목구비에만 100% 집중하여 사진과 똑같이 생성됨)' 
+                    : lang === 'ja'
+                    ? '💡 再現度100%のコツ: 全体シートは構図案として使い、仕上げは[15種個別分割]で1枚ずつ生成（AIが1人の顔に100%集中して写真そっくりに生成）'
+                    : lang === 'zh'
+                    ? '💡 100%还原技巧: 整页作为姿态草稿，最终成品使用[15种单张拆分]模式逐张生成（AI将100%专注于单张面部，精准还原特征）'
+                    : '💡 100% Likeness Tip: Use Full Sheet as a pose draft, then generate final stickers one by one with [Batch Split] (AI focuses 100% on a single face for accurate likeness).'}
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <InfoSection t={t} lang={lang} />
+      </main>
+
+      {/* Footer */}
+      <footer className="mt-12 py-10 bg-[#FAF9F6] border-t border-[#E5E0D8] text-center w-full">
+        <div className="max-w-3xl mx-auto px-6 flex flex-col gap-2">
+          <p className="text-[14px] text-[#8C7A6B] font-bold">
+            © {new Date().getFullYear()} Prompt Maker. All rights reserved.
+          </p>
+          <p className="text-[12px] text-[#A69B8F]">
+            {lang === 'ko' 
+              ? '* 본 서비스는 카카오(Kakao) 및 라인(LINE)과 공식적인 관련이 없습니다.' 
+              : lang === 'ja'
+              ? '* 本サービスはLINEまたはKakaoTalkと公式に提携しているものではありません。'
+              : lang === 'zh'
+              ? '* 本服务非微信、LINE或KakaoTalk官方合作服务。'
+              : '* This service is not officially affiliated with Kakao or LINE.'}
+          </p>
+        </div>
+      </footer>
+    </div>
+  );
+}
 
 export default App;
