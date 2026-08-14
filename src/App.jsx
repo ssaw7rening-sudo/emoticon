@@ -371,7 +371,7 @@ const I18N = {
     forGrok: 'Grok',
     guideTitle: '활용 가이드',
     guide1Q: '🤔 AI 이모티콘 프롬프트 메이커란?',
-    guide1A: '캐릭터와 문구는 떠오르는데 AI에게 어떻게 요청해야 할지 막막하셨나요?\n원하는 캐릭터 특징과 상황을 고르면\nChatGPT, Gemini, Grok에서 바로 활용할 수 있는 이모티콘 제작 프롬프트를\n자동으로 조합해 주는 웹 유틸리티입니다.',
+    guide1A: '키워드만 찍으면 15가지 감정 시트 1초 완성!\n카톡 톡방 짤, SNS 프로필, 블로그 스티커로 나만의 감정을 자유롭게 표현해 보세요.\n원하는 캐릭터와 상황을 고르면 ChatGPT·Gemini·Grok 맞춤형 프롬프트가 즉시 생성됩니다.',
     guide2Q: '💡 ChatGPT vs Gemini 어떤 것을 써야 할까요?',
     guide2A: '각 AI 이미지 생성 기능의 장점이 다르므로 목적에 맞게 골라 쓰세요!\n\n🟢 ChatGPT 추천: "이미지 안에 정확한 대사가 필요한 경우"\n• 문구를 포함한 이모티콘 시안을 만들 때 활용하기 좋습니다.\n• 문구가 길거나 중요한 경우 생성 후 철자를 꼭 확인하세요.\n\n🔵 Gemini 이미지 생성 추천: "표정과 행동 중심의 이모티콘"\n• 캐릭터의 표정, 몸짓과 시각 효과로 상황을 표현할 때 활용하기 좋습니다.\n• 시트 전체는 초안으로 만들고, 최종 결과는 15종 개별 분할에서 한 장씩 생성하면 캐릭터 일관성을 관리하기 쉽습니다.\n• 필요하면 Gemini용 글자 설정에서 문구 포함을 선택할 수 있습니다.',
     modeSheet: '📱 시트 전체 (15종)',
@@ -4434,6 +4434,48 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                     : lang === 'zh'
                     ? '💡 100%还原技巧: 整页作为姿态草稿，最终成品使用[15种单张拆分]模式逐张生成（AI将100%专注于单张面部，精准还原特征）'
                     : '💡 100% Likeness Tip: Use Full Sheet as a pose draft, then generate final stickers one by one with [Batch Split] (AI focuses 100% on a single face for accurate likeness).'}
+                </li>
+              </ul>
+            </div>
+
+            <div className="bg-white/60 rounded-md p-3 sm:p-4 border border-[#FCD3A1]/60 shadow-sm flex flex-col gap-1.5 sm:gap-2 w-full mt-2 sm:mt-3">
+              <strong className="text-[#C2410C] text-[13.5px] sm:text-[14.5px] flex items-center gap-1.5 font-bold">
+                <span className="text-[15px] sm:text-[16px]">🎯</span> 
+                {lang === 'ko' 
+                  ? '이모티콘 200% 실전 활용 아이디어' 
+                  : lang === 'ja'
+                  ? 'スタンプの200%実践活用アイデア'
+                  : lang === 'zh'
+                  ? '表情包200%实用场景推荐'
+                  : 'Creative Ways to Use Your Emojis'}
+              </strong>
+              <ul className="list-disc pl-4 sm:pl-5 opacity-90 text-[#9A3412] font-medium flex flex-col gap-1 sm:gap-1.5 mt-0.5 sm:mt-1 text-[12.5px] sm:text-[13.5px] marker:text-[#C2410C] [word-break:break-word]">
+                <li>
+                  {lang === 'ko' 
+                    ? 'SNS 프로필 & 스토리: 내 얼굴이나 반려동물 캐릭터로 인스타, X, 유튜브 프로필 및 감정 아바타로 활용' 
+                    : lang === 'ja'
+                    ? 'SNSアイコン＆ストーリー: 自分やペットのキャラでInstagram、X、LINEのアイコンやリアクションに'
+                    : lang === 'zh'
+                    ? '社交头像与动态贴纸: 将自己或宠物的卡通形象用于微信、小红书、微博头像及动态表情'
+                    : 'SNS Profiles & Avatars: Use custom characters as profile icons or story stickers on Instagram, X, or YouTube.'}
+                </li>
+                <li>
+                  {lang === 'ko' 
+                    ? '메신저 톡방 감정 짤: 배경 투명화 후 스마트폰 앨범에 저장해 친구·가족 톡방에서 개성 넘치는 리액션 짤로 전송' 
+                    : lang === 'ja'
+                    ? 'メッセンジャートークのリアクション: 背景透過してスマホに保存し、LINE等のトークルームで特製スタンプとして送信'
+                    : lang === 'zh'
+                    ? '群聊斗图专属表情: 抠图透明化后保存至手机相册，在聊天群中一键发送专属趣味表情'
+                    : 'Messenger Chat Reactions: Save transparent PNGs to your phone gallery and send unique personalized reaction stickers in chats.'}
+                </li>
+                <li>
+                  {lang === 'ko' 
+                    ? '블로그 포스팅 & 디지털 다꾸: 네이버 블로그 글 중간 포인트 스티커, 굿노트·노션 다이어리 스탬프로 장식' 
+                    : lang === 'ja'
+                    ? 'ブログ＆デジタル手帳の装飾: ブログ記事のアクセントやGoodNotes・Notionの手帳デコレーションスタンプに'
+                    : lang === 'zh'
+                    ? '博客插图与电子手帐: 用于博客文章点缀、GoodNotes、Notion 电子手帐及日程标记'
+                    : 'Blog & Digital Planner Decor: Decorate blog posts, GoodNotes journals, or Notion pages with custom sticker stamps.'}
                 </li>
               </ul>
             </div>
