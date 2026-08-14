@@ -3,151 +3,101 @@ import React, { useState, useEffect } from 'react';
 import { Shuffle, CheckCircle2, Bot, Sparkles, Zap, Trash2, RotateCcw } from 'lucide-react';
 
 const THEMES_KO = {
-  '일상/인사 ①': ['ㅋㅋㅋㅋ', '안녕!', '오늘도 화이팅', '좋아요', '고마워요', '사랑해요', '최고!', '오예', '미안해요', '수고했어요', '축하해요', '대박', '헐', '감동', '잘자요'],
-  '일상/인사 ②': ['반가워요', '뭐해?', '밥 먹었어?', '보고싶어', '굿모닝', '심심해', '어디야?', '놀자!', '화이팅', '응원할게', '멋져요', '완벽해', '기대돼', '수고했어 오늘도', '다음에 봐!'],
-  '직장인 ①': ['넵!', '확인했습니다', '수정 부탁드립니다', '감사합니다', '퇴근하겠습니다', '회의 중입니다', '파일 첨부했습니다', '점심 맛있게 드세요', '화이팅!', '죄송합니다', '일정 확인', '수고하셨습니다', '먼저 들어가보겠습니다', '네 알겠습니다', '검토 부탁드립니다'],
-  '직장인 ②': ['휴가 다녀오겠습니다', '연차 쓸게요', '메일 확인 부탁드립니다', '참고 부탁드립니다', '일정 조율 가능할까요?', '결재 부탁드립니다', '공지사항 확인', '출근길 지옥', '야근 확정', '커피 수혈 시급', '점심 회식', '칼퇴 기원', '이번 주도 무사히', '업무 공유드립니다', '수정 완료했습니다'],
-  '학생/학교 ①': ['과제 지옥', '시험 끝!', '살려주세요', '교수님...', '밤샘각', '종강 마렵다', '출튀', '휴강', 'A+ 가즈아', '조별과제 ㅠㅠ', '점심 뭐먹지?', '지각이다', '도서관', '공부 시러', '졸려'],
-  '학생/학교 ②': ['수강신청 망함', '우주공강', '학식', '동아리', 'MT 가자', '과제 다 했어?', '벼락치기', '시험기간', '성적 확인', '졸업작품', '재수강', '레포트', '팀플 빌런', '수업 집중 안됨', '방학 언제 와'],
-  '주식/재테크 ①': ['떡상 가자!', '구조대 언제 옴?', '익절 완료', '손절 쳤다', '월급 전광석화', '영끌 투자', '존버는 승리한다', '원금 회수', '물렸다', '매수 완료', '빨간불 켜졌다', '파란불 눈물', '상한가 터졌다', '폭락이다', '계좌 녹는다'],
-  '주식/재테크 ②': ['차트 분석 중', '시드머니 모으기', '단타 성공', '장기 투자', '불장 온다', '하락장 견디기', '뇌동매매 금지', '멘탈 잡자', '수익률 인증', '투자 성공', '펜트하우스 입성', '구조대 탑승', '시황 체크', '배당금 입금', '성투하세요'],
-  '게임/게이머 ①': ['한 판만 더!', '내가 캐리함', '트롤 금지', '접속 완료', '헤드셋 장착', '승급전 실패', '팀운 실화냐', '게임할 사람?', '막판 가자', '멸망전', '길드원 모집', '보스 레이드', '아이템 득템', '스킬 쿨타임', '게임 오버'],
-  '게임/게이머 ②': ['레벨업 완료', '퀘스트 완료', '피지컬 장인', '컨트롤 천재', '손가락 미끄러짐', '서렌 치자', '역전승이다', '개버릇 남 못 줌', '게임 폐인', '사운드 플레이', '공략 숙지', '강화 성공', '강화 파괴', '체력 게이지 방전', 'GG 쳤다'],
-  '건강/피곤 ①': ['만성 피로', '몸살 기운', '영양제 복용', '허리 바삭', '비타민 충전', '병원 다녀옴', '오늘은 쉬자', '눈이 뻑뻑해', '약 먹는 중', '골골대는 중', '체력 저하', '면역력 뚝', '스트레칭 중', '건강 검진', '꿀잠 자자'],
-  '건강/피곤 ②': ['몸이 근질근질', '두통 지옥', '어깨 뻐근', '목 디스크 경고', '카페인 섭취', '체력 회복', '몸보신 하자', '감기 조심', '독감 예방', '상쾌한 아침', '붓기 쏙', '건강이 최고', '푹 쉬세요', '운동하자', '체력 차오름'],
-  '유머/밈 ①': ['현기증 나요', '아아악', '퇴사 마렵다', '집에 갈래', '격렬하게 쉬고싶다', '오히려 좋아', '가보자고', '어림없지', '응 아니야', '킹받네', '폼 미쳤다', '이게 맞나', '머쓱', '야근 당첨', '입틀막'],
-  '유머/밈 ②': ['중요한 건 꺾이지 않는 마음', '너 T야?', '알빠노', '오운완', '폼 미쳤다이', '무야호', '오히려 안 좋아', '어쩔티비', '쉽지않네', '이왜진', '뇌정지', '안물안궁', '할말하않', '억텐', '웃안웃'],
-  '감정표현 ①': ['행복해', '슬퍼요', '화가 난다', '우울해', '신난다', '짜증나', '부끄러워', '깜짝이야', '심심해', '외로워', '불안해', '답답해', '기대돼', '뿌듯해', '어휴'],
-  '감정표현 ②': ['감동이야', '설레요', '놀라워라', '기가 막혀', '황당해', '억울해', '후회돼', '미치겠네', '답답하다', '속상해', '기운 빠져', '평온해', '신경 쓰여', '짜릿해', '지루해'],
-  '커플/연애 ①': ['보고싶어', '사랑해', '뭐해?', '밥 먹었어?', '빨리 와', '삐졌어', '우앙', '최고야', '알라뷰', '뽀뽀', '데이트 가자', '기다릴게', '행복해', '내꺼', '자기야'],
-  '커플/연애 ②': ['안아줘', '손잡자', '내꿈꿔', '보고만 있어도 좋아', '오늘 뭐입지?', '영화 볼래?', '집 앞이야', '통화할까?', '늦어서 미안해', '네 생각 중', '너뿐이야', '심쿵', '꽃 사왔어', '여행 갈까?', '평생 함께해'],
-  '가족/부모님 ①': ['엄마 사랑해', '아빠 최고', '집에 언제 와?', '밥은 먹었어?', '건강 조심해', '용돈 주세요', '효도할게요', '우리 가족 사랑해', '조심해서 와', '보고 싶어', '생일 축하해', '아프지 마', '항상 고마워', '주말에 봐요', '내 맘 알지?'],
-  '가족/부모님 ②': ['조심해서 들어가', '가족 단톡방입니다', '엄마 아빠 짱', '다같이 밥 먹자', '명절 잘 보내세요', '할머니 할아버지 건강하세요', '용돈 감사해요', '사랑으로 키워주셔서', '우리 가족 화목하게', '잔소리 금지', '집밥 최고', '일찍 일찍 다녀라', '보일러 켜', '오늘 뭐 먹지?', '가족여행 가자'],
-  '음식/다이어트 ①': ['배고파', '오늘 뭐 먹지?', '치킨 고?', '다이어트는 내일부터', '당 떨어져', '야식의 유혹', '맛집 발견!', '배불러', '잘 먹겠습니다', '소화불량', '물 마셔라', '오운완', '샐러드 먹는 중', '먹방 타임', '탄수화물 최고'],
-  '음식/다이어트 ②': ['맛있게 먹으면 0칼로리', '디저트 배는 따로', '식단 조절 중', '살찌는 소리', '오늘은 치팅데이', '빵순이', '마라탕 수혈', '커피는 생명수', '단짠단짠', '야식 참자', '또 먹어?', '다이어트 포기', '맵찔이', '아아 필수', '배터지겠다'],
-  '오타쿠/덕질 ①': ['내 통장을 바칠게', '존잘', '너무 귀여워', '숨 멎을 듯', '이건 사야해', '광광 우럭따', '덕질 최고', '티켓팅 성공기원', '피의 연회', '입틀막', '앓다 죽을', '현망진창', '내 최애', '행복 회로', '어덕행덕'],
-  '오타쿠/덕질 ②': ['최애만 보여', '스밍 돌리자', '굿즈 양도 구함', '투표 잊지마', '컴백 언제해', '밤샘 스밍', '실물 영접', '포카 교환', '콘서트 가고싶다', '입덕 부정기', '덕업일치', '텅장', '어차피 덕질할거', '회전문', '평생 덕질'],
-  '분노/짜증 ①': ['아놔', '선 넘네', '할많하않', '어쩌라고', '열받아', '딥빡', '참을 인 세 번', '혈압 상승', '스트레스', '진정해', '건들지 마', '뒷목 잡음', '짜증나', '부들부들', '어이없음'],
-  '분노/짜증 ②': ['아 진짜', '왜 저래', '할 말 잃음', '극대노', '이마 짚음', '킹받아', '뒷골 땡겨', '혈압주의', '참자 참아', '한숨 푹', '노답', '눈으로 욕하는 중', '기가 막혀서', '선 세게 넘네', '마상'],
-  '축하/응원 ①': ['생일 축하해', '꽃길만 걷자', '수고했어', '잘될 거야', '대박 나세요', '항상 응원해', '최고의 하루', '기특해', '축하파티', '빛나는 너의 앞날', '행복하자', '고생 많았어', '자랑스러워', '힘내', '널 믿어'],
-  '축하/응원 ②': ['합격 기원', '취뽀 축하해', '승진 축하', '늘 곁에 있을게', '토닥토닥', '넌 할 수 있어', '포기하지 마', '오늘도 수고했어', '무조건 네 편', '앞으로도 잘 부탁해', '결혼 축하해', '새출발 응원해', '건승을 빕니다', '잘 해낼 거야', '꽃길 예약'],
-  '계절/날씨 ①': ['너무 더워', '얼어 죽음', '비 온다', '눈 내린다', '벚꽃 엔딩', '에어컨 틀자', '이불 밖은 위험해', '날씨 좋다', '미세먼지 나쁨', '우산 챙겨', '봄 타나 봐', '가을 타나 봐', '패딩 필수', '모기 조심', '폭염 주의'],
-  '계절/날씨 ②': ['감기 조심', '꽃가루 주의', '장마철 극혐', '햇살 맛집', '눈사람 만들자', '붕어빵의 계절', '손발이 꽁꽁', '찜통 더위', '선풍기 앞', '비 오는 날엔 파전', '미끄럼 주의', '가을 타는 중', '단풍놀이 가자', '봄바람 살랑살랑', '집콕이 최고'],
-  '반려동물/집사 ①': ['간식 줘!', '산책 갈까?', '츄르 내놔', '냥냥펀치', '집사 사랑해', '배 긁어줘', '우다다 타임', '사고쳤어요', '귀여우면 다야?', '집사 일해라', '털 뿜뿜', '멍때리기', '심쿵 집사', '낮잠 중', '간식 냄새!'],
-  '반려동물/집사 ②': ['놀아줘!', '간식 뺏김', '병원 싫어', '꼬리 살랑살랑', '골골송', '간식 더 줘', '이불 덮어줘', '삐졌냥', '문 열어라 인간', '내꺼 찜!', '쉭쉭 경계', '하품 쩌억', '반가워!', '목욕 결사반대', '냥빨 당함'],
-  '집순이/집돌이 ①': ['기 빨린다', '약속 취소 개꿀', '침대와 한몸', '혼자만의 시간', '사회생활 OFF', '배터리 충전 중...', '이불 밖은 위험해', '내적 비명', '누워있는 중', '연락 늦어 미안', '말 걸지 마', '넷플릭스 보는 중', '배달 도착', '집이 최고야', '읽씹 아님!'],
-  '집순이/집돌이 ②': ['외출 금지', '에너지 방전', '이불 덮고 뒹굴', '집콕 모드', '스마트폰 중독', '약속 잡지 마', '말투 삐그덕', '침대 밖 0초', '배달의 민족', '온라인 쇼핑', '내 방이 천국', '약속 당일 취소', '극 I 성향', '집에 가고 싶다', '다음에 봐'],
-  '육아/베이비 ①': ['육퇴 성공!', '맘마 줘', '응애', '낮잠 타임', '조용히 해 (아기 자요)', '독박육아 중', '칭찬 스티커', '이앓이 중', '사고치는 중', '뽀로로 틀어줘', '엄마 최고', '아빠 힘내', '기저귀 갈아줘', '우당탕탕', '사랑둥이'],
-  '육아/베이비 ②': ['육아는 장비빨', '밤수 타임', '통잠 기원', '오늘도 육아전쟁', '걸음마 연습', '이유식 냠냠', '우리아기 천사', '등원 완료', '하원 전쟁', '열난다 ㅠㅠ', '엄마 껌딱지', '아빠 좋아', '육퇴 축하', '폭풍 성장', '세젤귀'],
-  'MBTI & 밈 ①': ['파워 F 눈물', '극 T 팩폭', '계획대로 착착 (J)', '즉흥 번개 고? (P)', '인싸력 폭발 (E)', '사회성 방전 (I)', '영혼 없는 리액션', '팩트 체크', '과몰입 중', '공감해줘 ㅠㅠ', '팩폭 금지', '현실 자각 타임', '감성 폭발', '논리 오류', '어쩌다 이렇게'],
-  'MBTI & 밈 ②': ['F 감수성', 'T발 C야?', '계획 충실 J', '무계획 여행 P', 'E 성향 폭발', 'I 성향 급속방전', 'MBTI 과몰입', '영혼 가출', '팩트로 패지 마', '오열각', '이성적 판단', '감정 조절 불가', '뇌세포 정지', '반박 불가', '납득 완료']
+  '일상/인사 ①': ['ㅋㅋㅋ', '감사합니다!', '오늘도 힘내요', '좋아요!', '고마워요', '사랑해요', '대박!', '오예~', '죄송해요', '수고하셨습니다', '축하해요!', '헐 대박', '진짜요?', '감동이야 ㅠㅠ', '잘 자요'],
+  '일상/인사 ②': ['잘 부탁드려요', '무슨 일이야?', '밥 먹었어?', '보고 싶다', '좋은 아침!', '심심해', '어디야?', '놀자!', '힘내!', '응원할게', '최고야!', '완벽해!', '기대돼!', '오늘도 수고했어', '다음에 봐!'],
+  '직장인 ①': ['출근 중', '퇴근할게요!', '먼저 퇴근합니다', '확인했습니다', '네, 알겠습니다', '월요병', '월급날!', '커피 수혈 중', '회의 중', '야근 중', '오늘도 고생했어', '불금이다!', '퇴사하고 싶다', '넵!', '살려줘…'],
+  '직장인 ②': ['칼퇴 성공!', '확인 부탁드립니다', '잠시만요', '수고하셨습니다', '점심 뭐 먹지?', '일하기 싫다', '영혼 가출', '눈물 찔끔', '할 일이 태산', '답장이 늦었습니다', '수고하세요', '멘붕 상태', '주말만 기다려', '잠깐 쉬는 중', '연차 쓸게요'],
+  '학생/학교 ①': ['등교 중', '시험 끝났다!', '망했다…', '끝나고 뭐해?', '과제 폭탄', '지각이다!', '밤샘 공부', '방학 언제 와?', '방학이다!', '자리 바꿔줘', '배고파 죽겠다', '교과서 빌려줘', '졸려…', 'A+ 가자!', '졸업 축하해!'],
+  '학생/학교 ②': ['학식 먹으러 가자', '수업 중', '필기 좀 보여줘', '쉬는 시간!', '동아리 가는 중', '중간고사 기간', '재수강 각', '독서실 자리 잡음', '학교 가기 싫어', '집에 가고 싶다', '수학여행 기대돼', '체육대회 1등!', '야자 쨀까?', '공부 1도 안 함', '합격 기원!'],
+  '주식/재테크 ①': ['가즈아!', '떡상 가자!', '손절합니다…', '존버는 승리한다', '월급 로그아웃', '돈이 복사가 된다고!', '물타기 들어간다', '구조대 언제 와요?', '떡락 중… (눈물)', '익절 완료!', '내 돈 어디 갔어?', '영끌 투자', '한강 가야 하나…', '보너스 받았다!', '주식의 신!'],
+  '주식/재테크 ②': ['풀매수 완료', '바닥인 줄 알았는데', '용돈 주세요', '마이너스의 손', '통장 잔고 0원', '텅장', '거지 됐음', '절약 모드 돌입', '플렉스 해버렸지', '파이어족 꿈꾸며', '오늘 내가 쏜다!', '호가창만 보는 중', '원금 회수 완료', '적금 만기!', '돈이 최고야'],
+  '게임/게이머 ①': ['치킨이닭!', '캐리했다!', '트롤 그만해', '내 탓 아님', '한 판만 더!', '접속 중', '팀운 실화냐?', '버그 났어', '밤샘 게임', '렉 걸려', '피지컬 지렸다', '캐리 부탁해', 'GG 굿게임', '막타 쳤다', '나 먼저 누울게'],
+  '게임/게이머 ②': ['가챠 대박!', '픽뚫 당함…', '현질 완료', '천장 쳤다 (눈물)', '공략 보는 중', '팟 구함 (1/4)', '랭크 승급!', '강등 당함…', '컨트롤 미스', '포지션 양보 좀', '템 파밍 중', '보스 잡으러 가자', '부활시켜 줘', '딜량 1등!', '게임 삭제각'],
+  '건강/피곤 ①': ['피곤해 죽겠다', '머리 아파', '일찍 잘래', '약 먹었어?', '허리 아프다', '방전 직전 (배터리 1%)', '힐링 필요해', '병원 가는 중', '건강 챙겨!', '비타민 챙겨 먹어', '카페인 부족', '어깨 결려', '눈이 침침해', '감기 걸렸어', '힘이 안 나…'],
+  '건강/피곤 ②': ['기절 직전', '영양제 먹는 중', '삭신이 쑤신다', '꿀잠 잤다!', '스트레칭 중', '숨 쉬기 운동 중', '마사지 받고 싶다', '생존 신고', '무리하지 마', '면역력 저하', '눕방 중', '피로 누적', '따뜻한 차 한 잔', '아프지 마요', '부활 완료!'],
+  '유머/밈 ①': ['어쩔티비', '킹받네', '알잘딱깔센', '억까 당함', '폼 미쳤다', '오히려 좋아', '중꺾마 (중요한 건 꺾이지 않는 마음)', '자 드가자~', '너 T야?', '식빵 굽는 중', '머선 129', '레전드다 진짜', '내적 댄스 폭발', '뇌정지 옴', '이게 맞나?'],
+  '유머/밈 ②': ['극락 가는 중', '이게 되네?', '할많하않', '갓생 사는 중', '무물보 (무엇이든 물어보세요)', '주작이지?', '뼈 맞았어 (팩폭)', '이왜진?', '킹리적 갓심', '멘탈 바사삭', '주접 부리는 중', '팝콘 각', '웃안웃 (웃긴데 안 웃겨)', '현웃 터짐', '팩트 폭행'],
+  '감정표현 ①': ['행복해!', '감동이야 ㅠㅠ', '화났음 (부들부들)', '뿌엥 (울음)', '깜짝이야!', '두근두근 설렘', '심심해 죽겠다', '외로워…', '부끄러워 (발그레)', '무서워 ㅠㅠ', '답답해 죽겠네', '짜증나!', '자신감 뿜뿜', '뿌듯하다', '걱정마!'],
+  '감정표현 ②': ['속이 뻥 뚫린다', '멘탈 붕괴', '신난다 오예~', '서운해…', '기분 째짐!', '안도 (휴~)', '질투 폭발', '당황스러움 (땀 삐질)', '충격과 공포', '홀린 듯 쳐다봄', '후회 중…', '억울해 죽겠네', '마음이 따뜻해', '기절초풍', '사랑이 넘쳐요'],
+  '커플/연애 ①': ['보고 싶어', '지금 뭐해?', '사랑해 ♥', '평생 함께하자', '꿈에서 만나', '목소리 듣고 싶어', '사진 보내줘', '손잡을래?', '안아줘', '외로워 자기야', '빨리 보고 싶다', '내 사랑', '잘 자 내 꿈꿔', '오늘도 반했어', '심쿵!'],
+  '커플/연애 ②': ['데이트 가자!', '어디 갈까?', '기념일 축하해!', '싸우지 말자', '삐졌어 (흥!)', '바람피우면 죽는다', '나 얼마나 사랑해?', '네 편이야 언제나', '설레서 잠이 안 와', '오늘 멋있다/예쁘다', '전화할 수 있어?', '집 앞이야 나와', '커플룩 입자', '네가 제일 좋아', '영원히 사랑해'],
+  '가족/부모님 ①': ['밥 먹었어?', '조심히 들어가요', '사랑해요 엄마/아빠', '건강하세요', '용돈 감사해요!', '늘 감사해요', '아프지 마세요', '금방 갈게요!', '엄마 밥 최고!', '아빠 힘내세요', '가족이 최고야', '주말에 갈게요', '감기 조심해요', '자랑스러워요', '효도할게요!'],
+  '가족/부모님 ②': ['어디쯤이야?', '일찍 들어와!', '문단속 잘해', '반찬 보냈어', '엄마 보고 싶어', '아빠 최고!', '약 잘 챙겨 드세요', '옷 따뜻하게 입어', '별일 없지?', '용돈 보냈어요', '오래오래 사세요', '가족 여행 가자', '항상 응원해요', '집에 도착했어요', '고마워요!'],
+  '음식/다이어트 ①': ['뭐 먹지?', '배고파 죽겠다', '맛있겠다!', '다이어트는 내일부터', '야식 땡긴다', '치킨 시킬까?', '잘 먹었습니다!', '배불러 터짐', '디저트 배는 따로', '먹방 찍는 중', '고기 굽는 중', '카페 가자', 'JMT (존맛탱)', '단짠단짠', '오늘 한턱 쏠게!'],
+  '음식/다이어트 ②': ['치팅데이!', '0칼로리 맛있으면', '운동 완료 오운완', '몸무게 줄었다!', '살쪘어 ㅠㅠ', '당 충전 필요', '매운 거 땡겨', '샐러드 먹는 중', '물 2리터 마시기', '먹방 보는 중', '맛집 줄 서는 중', '요리하는 중', '푸드파이터', '배달 완료!', '맛있어서 기절'],
+  '오타쿠/덕질 ①': ['최애가 세상을 구한다', '통장 바칠게요', '얼굴 천재', '성지순례 완료', '앨범 샀다', '포카 교환 구함', '티켓팅 성공!', '피켓팅 망함…', '생카 투어 중', '덕통사고 당함', '입덕 완료', '탈덕은 없다', '굿즈 풀세트 구매', '콘서트 가는 중', '덕질이 최고야'],
+  '오타쿠/덕질 ②': ['갓벽하다 진짜', '심장 저격', '컴백 기다리는 중', '팬싸 당첨!', '무대 찢었다', '눈물 줄줄', '주접 그만할 수 없음', '존재 자체가 빛', '직캠 무한 재생', '1열 관람 성공', '공식 굿즈 대기 중', '오프 뛰러 감', '덕질 메이트 구함', '응원봉 흔들흔들', '평생 덕질할게'],
+  '분노/짜증 ①': ['진짜 화난다', '장난하나 지금?', '어이없네', '짜증 대폭발', '말 걸지 마', '심호흡 중 (후~)', '참을 인 세 번', '용서 못 해', '열받아 죽겠네', '조용히 해', '할 말이 없다', '생각 좀 하고 말해', '선 넘지 마라', '폭발 직전', '진정해 나 자신'],
+  '분노/짜증 ②': ['싸우자는 건가?', '적당히 해라', '한숨 푹푹', '부들부들 떨림', '극대노 상태', '스트레스 만땅', '눈에 흙이 들어가도 안 됨', '너나 잘하세요', '다신 안 봐', '혈압 상승 중', '속 터져 죽겠네', '주먹 쥐는 중', '폭발 3초 전', '노답이다 진짜', '그만 좀 해!'],
+  '축하/응원 ①': ['축하합니다!', '고생 많았어!', '응원할게 파이팅!', '넌 할 수 있어!', '수고하셨습니다', '대성공!', '꿈은 이루어진다', '축하 파티하자', '자랑스럽다!', '힘내라 힘!', '언제나 네 편이야', '꽃길만 걷자', '행복해야 해!', '짠~ 건배!', '최고의 결과!'],
+  '축하/응원 ②': ['합격을 축하해!', '취업 성공 축하!', '결혼 축하합니다!', '생일 축하해!', '승진 축하드려요!', '노력은 배신하지 않아', '기적을 믿어', '끝까지 포기 마', '도움이 되어 기뻐', '멋지다 정말!', '눈부신 성장', '최선을 다했어!', '승리의 순간', '영광을 너에게', '축복합니다!'],
+  '계절/날씨 ①': ['봄이 왔어요', '벚꽃 보러 가자', '더워 죽겠다 (폭염)', '바다 가고 싶다', '단풍 구경 가자', '독서의 계절', '추워 죽겠다 (한파)', '첫눈 온다!', '비 온다 주륵주륵', '우산 챙겨!', '태풍 조심해', '더위 먹었어', '따뜻한 햇살', '손이 꽁꽁 발이 꽁꽁', '환절기 조심'],
+  '계절/날씨 ②': ['벚꽃 엔딩', '에어컨 풀가동', '장마 시작', '물놀이 가자!', '가을 타는 중', '군고구마 땡겨', '이불 밖은 위험해', '눈사람 만드는 중', '폭설 주의보', '맑은 하늘 드라이브', '습도 100% 찝찝', '건조해 미치겠네', '청명한 가을 하늘', '선크림 필수!', '따뜻하게 입어'],
+  '반려동물/집사 ①': ['우리 애기 천사', '간식 주세요!', '산책 가자!', '골골송 부르는 중', '털 뿜뿜 힐링', '사고 쳤어요…', '동물병원 가는 중', '츄르 먹방', '놀아줘 놀아줘', '쿨쿨 자는 중', '꼬리 살랑살랑', '발톱 깎기 싫어', '집사야 밥 줘', '퇴근 맞이 냥이/댕이', '우주 최강 귀요미'],
+  '반려동물/집사 ②': ['츄르는 사랑입니다', '젤리 발바닥 꾹', '아침 산책 완료', '그루밍 중', '손 주는 중', '멍멍! 짖는 중', '야옹~ 부르는 중', '집사 바라기', '다묘/다견 가정 행복', '꾹꾹이 하는 중', '캣타워 정복', '안아달라고 찡찡', '삐진 댕댕이/냥이', '반려동물은 가족', '건강하게 오래 살자'],
+  '집순이/집돌이 ①': ['이불 밖은 위험해', '침대와 한 몸', '하루 종일 뒹굴뒹굴', '넷플릭스 정주행', '배달 음식 시킴', '파자마 차림', '나가기 귀찮아', '집이 최고야!', '방콕 모드 돌입', '외출 거부권 행사', '스마트폰 중독', '택배 언박싱 완료', '에어컨 밑이 천국', '나 혼자 산다', '완전 충전 중'],
+  '집순이/집돌이 ②': ['이불 속이 내 우주', '바깥세상 무서워', '홈카페 오픈', '유튜브 알고리즘 탐험', '게임 삼매경', '최애 영상 무한 반복', '낮잠 타임', '잠옷이 정장', '프로 집콕러', '방 청소 완료 뿌듯', '혼술 타임', '창밖 구경 중', '완벽한 휴식', '집이 제일 편해', '평생 집에서 쉴래'],
+  '육아/베이비 ①': ['쿨쿨 잘 자요', '맘마 먹을 시간', '기저귀 갈았어요', '배밀이 성공!', '새벽 수유 중 (졸려)', '안아줘요 으앙~', '이유식 냠냠', '첫 걸음마 뗐어요', '엄마 좋아!', '아빠 좋아!', '천사 같은 아기', '폭풍 옹알이 중', '장난감 어질러짐', '육아팅 힘내요!', '무럭무럭 자라라'],
+  '육아/베이비 ②': ['엄마라고 불렀어!', '아장아장 걸음마', '까꿍 놀이 중', '낮잠 타임 (자유시간)', '이유식 거부…', '이가 나고 있어요', '놀이터 가자!', '목욕 시간 첨벙첨벙', '동화책 읽어주기', '투정 부리는 중', '육퇴 성공! (만세)', '예방접종 완료', '웃는 모습 심쿵', '독박육아 중…', '사랑해 우리 아기'],
+  'MBTI & 밈 ①': ['극 E (파워 인싸)', '극 I (파워 집돌이)', '파워 J (완벽 계획)', '파워 P (즉흥 여행)', '극 T (팩트 폭격)', '극 F (폭풍 공감)', 'N 성향 (상상 폭발)', 'S 성향 (현실 직시)', 'MBTI 물어보기', '인싸력 폭발 (E)', '사회성 방전 (I)', '영혼 없는 리액션', '과몰입 중', '공감해줘 ㅠㅠ', '팩폭 금지'],
+  'MBTI & 밈 ②': ['F 감수성', 'T발 C야?', '계획 충실 J', '무계획 여행 P', 'E 성향 폭발', 'I 성향 급속방전', 'MBTI 과몰입', '영혼 가출', '팩트로 패지 마', '오열각', '이성적 판단', '감정 조절 불가', '뇌세포 정지', '반박 불가', '납득 완료'],
+  '여행/휴가 ①': ['공항 가는 길 (설렘)', '비행기 탑승 완료', '휴가 시작! (연락 금지)', '여권 챙겼지?', '호캉스 힐링 중', '인생샷 건졌다', '현지 맛집 정복', '환전 완료', '캐리어 짐 싸는 중', '여기가 천국인가', '바다 보러 가자', '여행 중 (답장 늦음)', '기념품 사갈게', '집에 가기 싫다', '휴가 후유증 (복귀)'],
+  '여행/휴가 ②': ['다음 여행 어디 갈까?', '면세점 쇼핑 완료', '비행기 창가 자리', '호텔 체크인 완료', '야경 보며 힐링', '수영장에서 물놀이', '배낭여행 떠나요', '여유로운 티타임', '길 잃었지만 행복', '티켓 예매 성공!', '비행기 연착됨 (지침)', '인생 사진 찍어줘', '여행 사진 방출', '다음에 또 오자', '무사 귀국 완료!'],
+  '쇼핑/택배 ①': ['택배 도착 알림 (두근)', '내돈내산 인증!', '장바구니 다 털었다', '이건 무조건 사야 해', '품절 임박 결제 완료', '할인 특가 놓칠 수 없지', '충동구매 후 후회 중', '영수증 보고 기절', '지갑이 텅텅 (거지)', '새 옷 입고 외출!', '언박싱 타임 (행복)', '가성비 최고 득템', '오늘 하루 탕진잼', '돈 쓰는 게 제일 짜릿해', '다음 달의 내가 갚겠지'],
+  '쇼핑/택배 ②': ['주문 완료 (배송 기다림)', '문 앞 배송 완료!', '사이즈 딱 맞는다', '무료 배송 채우기', '신상 입고 알림', '라이브 특가 득템', '반품/교환 고민 중', '포토 리뷰 작성 완료', '위시리스트 추가', '쇼핑백 양손 가득', '지름신 강림!', '월급 순삭 삭제', '카드 한도 초과 위기', '이건 나를 위한 선물', '내 통장 눈감아'],
+  '운전/교통 ①': ['초보운전 (양보 감사)', '주차 성공 (감격)', '출근길 차 막힘 (지각)', '안전운전 중 (답장 늦음)', '세차했더니 비 옴 (분노)', '네비가 길 잘못 알려줌', '고속도로 시원하게 질주', '기름값 실화냐 (주유)', '버스 놓쳤다 (전력질주)', '지하철 환승 지옥', '도착 5분 전!', '대리운전 불렀음', '오늘도 무사 귀가 완료', '신호 대기 중', '빵빵 경적 금지 (초보)'],
+  '운전/교통 ②': ['출퇴근길 만원 버스', '지하철 문 닫힘 (아깝다)', '드라이브 갈 사람?', '주차 자리 찾는 중', '평행주차 멘붕', '음악 크게 틀고 드라이브', '퇴근길 정체 (졸려)', '네비게이션 도착 완료', '안전벨트 착용 필수', '톨게이트 통과', '차 뽑았다 널 데리러 가', '비 와서 서행 운전', '앞차 출발하세요', '교통카드 잔액 부족', '도착해서 연락할게'],
+  '생일/파티 ①': ['생일 축하해 (HBD)!', '케이크 촛불 후~', '오늘 주인공은 나야 나', '태어나줘서 고마워', '선물 배송 보냈어!', '소원 빌었어 (이뤄져라)', '생일 파티 시작!', '미역국 챙겨 먹었어?', '축하해줘서 폭풍 감동', '용돈/기프티콘 쏩니다', '한 살 더 먹었네 (눈물)', '꽃길만 걷자!', '최고로 행복한 하루 보내', '생일빵 각오해라', '평생 함께 축하하자'],
+  '생일/파티 ②': ['해피 버스데이 투 유!', '서프라이즈 파티 대성공', '생일 축하 노래 떼창', '고깔모자 착용 완료', '선물 언박싱 감동', '기념일 촛불 끄기', '샴페인 팡팡 터뜨리기', '파티 주인공 입장!', '나이 한 살 배달 완료', '생일 턱 쏠게!', '행복 가득한 날', '축하 메시지 폭발', '소중한 사람의 생일', '파티는 이제부터 시작', '사랑 가득한 하루!']
 };
 
 const THEMES_EN = {
-  'Daily/Greeting ①': ['LMAO', 'Hello!', 'Cheer up today', 'Sounds good', 'Thank you', 'Love you', 'Awesome!', 'Oh yeah', 'Sorry', 'Good job', 'Congrats', 'Wow', 'OMG', 'Touched', 'Good night'],
-  'Daily/Greeting ②': ['Nice to meet you', 'What\'s up?', 'Had lunch?', 'Miss you', 'Good morning', 'I\'m bored', 'Where are you?', 'Let\'s hang out!', 'Fighting', 'I support you', 'Cool', 'Perfect', 'Looking forward to it', 'Great work today', 'See you next time!'],
-  'Office ①': ['Yes sir!', 'Understood', 'Please revise', 'Thank you', 'Leaving work', 'In a meeting', 'File attached', 'Enjoy your lunch', 'Fighting!', 'My apologies', 'Check schedule', 'Great work', 'I\'ll head out first', 'Got it', 'Please review'],
-  'Office ②': ['Taking PTO', 'Going on vacation', 'Please check email', 'For your reference', 'Can we reschedule?', 'Please approve', 'Check announcement', 'Commute hell', 'Overtime confirmed', 'Need coffee ASAP', 'Team lunch', 'Praying to leave on time', 'Surviving this week', 'Sharing updates', 'Revision completed'],
-  'Student/School ①': ['Assignment hell', 'Exams over!', 'Save me', 'Professor...', 'All-nighter', 'Need vacation', 'Skipping class', 'Class canceled', 'Let\'s get A+', 'Group project T.T', 'What\'s for lunch?', 'I\'m late', 'Library', 'Hate studying', 'Sleepy'],
-  'Student/School ②': ['Failed course registration', 'Huge gap between classes', 'Cafeteria', 'Club', 'Let\'s go to MT', 'Finished homework?', 'Cramming', 'Exam week', 'Checking grades', 'Graduation project', 'Retaking class', 'Report', 'Team project villain', 'Can\'t focus in class', 'When is break'],
-  'Stock/Investment ①': ['To the moon!', 'When rescue coming?', 'Profit taken', 'Cut losses', 'Salary vanished', 'All-in investment', 'HODL for win', 'Principal recovered', 'Stuck in stock', 'Buy order done', 'Green candles!', 'Red candles cry', 'Hit upper limit', 'Market crash', 'Melting portfolio'],
-  'Stock/Investment ②': ['Analyzing charts', 'Saving seed money', 'Day trade win', 'Long-term hold', 'Bull market coming', 'Bear market hold', 'No panic buying', 'Stay calm', 'ROI flex', 'Investment success', 'Penthouse bound', 'Rescued!', 'Checking market', 'Dividend in', 'Happy investing'],
-  'Gamer/Gaming ①': ['One more game!', 'I\'ll carry', 'No trolling', 'Logged in', 'Headset on', 'Promo match fail', 'Worst teammates', 'Wanna play?', 'Last match!', 'Final showdown', 'Recruiting guild', 'Boss raid', 'Loot drop!', 'Skill cooldown', 'Game Over'],
-  'Gamer/Gaming ②': ['Level Up!', 'Quest Complete', 'Godlike mechanics', 'Pro controller', 'Missclick!', 'Vote FF / Surrender', 'Comeback win!', 'Gamer habit', 'Gaming addiction', 'Soundplay on', 'Guide memorized', 'Enchant Success!', 'Enchant Destroyed', 'HP Bar empty', 'Called GG'],
-  'Health/Fatigue ①': ['Chronic fatigue', 'Aching body', 'Taking vitamins', 'Back hurting', 'Vitamin boost', 'Visited clinic', 'Let\'s rest today', 'Dry eyes', 'Taking meds', 'Feeling unwell', 'Low stamina', 'Immunity dropped', 'Stretching now', 'Health checkup', 'Deep sleep'],
-  'Health/Fatigue ②': ['Restless body', 'Headache hell', 'Stiff shoulders', 'Neck strain warning', 'Caffeine boost', 'Stamina recovered', 'Nourishing meal', 'Watch out for cold', 'Flu prevention', 'Refreshing morning', 'Swelling gone', 'Health is best', 'Rest well', 'Let\'s workout', 'Energy recharged'],
-  'Meme/Humor ①': ['Dizzy', 'Aaahhh', 'Wanna quit', 'Wanna go home', 'Need rest badly', 'Actually good', 'Let\'s go', 'No way', 'Nope', 'So annoying', 'Crazy form', 'Is this right?', 'Awkward', 'Night shift', 'Speechless'],
-  'Meme/Humor ②': ['Unbreakable spirit', 'Are you T?', 'Who cares', 'Workout done', 'Insane form', 'Muyaho', 'Actually bad', 'Whatever TV', 'Not easy', 'Is this real?', 'Brain freeze', 'Didn\'t ask', 'No words', 'Fake hype', 'Funny but sad'],
-  'Emotions ①': ['Happy', 'Sad', 'Angry', 'Depressed', 'Excited', 'Annoyed', 'Shy', 'Surprised', 'Bored', 'Lonely', 'Anxious', 'Frustrated', 'Looking forward', 'Proud', 'Phew'],
-  'Emotions ②': ['Touched', 'Fluttering', 'Amazing', 'Unbelievable', 'Absurd', 'Unfair', 'Regretful', 'Going crazy', 'Stifling', 'Upset', 'Drained', 'Peaceful', 'Bothered', 'Thrilling', 'Boring'],
-  'Couple/Love ①': ['Miss you', 'Love you', 'Whatcha doing?', 'Ate yet?', 'Come quick', 'I\'m mad', 'Wow', 'You\'re the best', 'I love u', 'Kiss', 'Let\'s date', 'I\'ll wait', 'Happy', 'Mine', 'Babe'],
-  'Couple/Love ②': ['Hug me', 'Hold hands', 'Dream of me', 'Just looking at you is nice', 'What to wear?', 'Wanna watch a movie?', 'I\'m in front of your house', 'Wanna call?', 'Sorry I\'m late', 'Thinking of you', 'Only you', 'Heart flutter', 'Bought flowers', 'Wanna go on a trip?', 'Together forever'],
-  'Family/Parents ①': ['Love you mom', 'Dad is the best', 'When coming home?', 'Did you eat?', 'Take care', 'Need allowance', 'I will be good', 'Love our family', 'Come safe', 'Miss you', 'Happy Birthday', 'Stay healthy', 'Always thankful', 'See you weekend', 'You know my heart?'],
-  'Family/Parents ②': ['Get home safe', 'Family group chat', 'Mom and Dad are the best', 'Let\'s eat together', 'Happy holidays', 'Stay healthy grandparents', 'Thanks for the allowance', 'Thanks for raising me with love', 'Happy family', 'No nagging', 'Home cooked meal is best', 'Come home early', 'Turn on the heater', 'What to eat today?', 'Let\'s go on a family trip'],
-  'Food/Diet ①': ['Hungry', 'What to eat?', 'Chicken?', 'Diet starts tomorrow', 'Need sugar', 'Late night snack', 'Found a good place!', 'Full', 'Bon appetit', 'Indigestion', 'Drink water', 'Workout done', 'Eating salad', 'Mukbang time', 'Carbs are the best'],
-  'Food/Diet ②': ['0 calories if it\'s delicious', 'Separate stomach for dessert', 'On a diet', 'Sound of gaining weight', 'Today is cheat day', 'Bread lover', 'Need Malatang', 'Coffee is life', 'Sweet and salty', 'Resist late night snack', 'Eating again?', 'Giving up diet', 'Can\'t eat spicy', 'Iced Americano is a must', 'Stomach is exploding'],
-  'Fandom/Fangirl ①': ['Take my money', 'So handsome', 'Too cute', 'Breathtaking', 'Must buy', 'Crying out loud', 'Stan life', 'Ticketing success', 'Bloody banquet', 'Speechless', 'Dying of love', 'Real life ruined', 'My bias', 'Happy circuit', 'Happy fangirling'],
-  'Fandom/Fangirl ②': ['Only see my bias', 'Keep streaming', 'Looking for merch transfer', 'Don\'t forget to vote', 'When is the comeback', 'All night streaming', 'Seeing in person', 'Photocard exchange', 'Wanna go to concert', 'Denial phase of stanning', 'Hobby becomes job', 'Empty bank account', 'Gonna stan anyway', 'Revolving door', 'Stan for life'],
-  'Angry/Annoyed ①': ['Oh come on', 'Crossing the line', 'No words', 'Whatever', 'Pissed off', 'Deeply angry', 'Patience', 'Blood pressure rising', 'Stress', 'Calm down', 'Don\'t touch me', 'Grabbing my neck', 'Annoying', 'Trembling', 'Absurd'],
-  'Angry/Annoyed ②': ['Oh seriously', 'What\'s wrong with them', 'Speechless', 'Extreme rage', 'Facepalm', 'So annoying', 'Neck pain', 'Blood pressure warning', 'Hold it in', 'Deep sigh', 'No answer', 'Cursing with eyes', 'Dumbfounded', 'Crossing the line hard', 'Heartbroken'],
-  'Celebrate/Cheer ①': ['Happy Birthday', 'Only flower paths', 'Good job', 'Everything will be fine', 'Hit the jackpot', 'Always cheering for you', 'Best day ever', 'Proud of you', 'Party time', 'Shining future', 'Let\'s be happy', 'You worked hard', 'So proud', 'Cheer up', 'I believe in you'],
-  'Celebrate/Cheer ②': ['Praying for admission', 'Congrats on getting a job', 'Congrats on promotion', 'Always by your side', 'Pat pat', 'You can do it', 'Don\'t give up', 'Good job today too', 'Always on your side', 'Looking forward to working with you', 'Happy wedding', 'Cheering for your new start', 'Wishing you success', 'You will do great', 'Flower path reserved'],
-  'Season/Weather ①': ['Too hot', 'Freezing to death', 'It\'s raining', 'It\'s snowing', 'Cherry blossoms', 'Turn on the AC', 'Dangerous outside bed', 'Nice weather', 'Bad air quality', 'Take an umbrella', 'Spring fever', 'Autumn vibes', 'Puffer jacket needed', 'Watch out for mosquitoes', 'Heatwave warning'],
-  'Season/Weather ②': ['Catch a cold', 'Pollen warning', 'Hate rainy season', 'Sunshine spot', 'Let\'s make a snowman', 'Season for Taiyaki', 'Freezing hands and feet', 'Sweltering heat', 'In front of a fan', 'Pajeon on a rainy day', 'Slippery warning', 'Feeling autumn vibes', 'Let\'s go see autumn leaves', 'Soft spring breeze', 'Staying home is best']
-};
-
-const getEmotionTextColorGuideKo = (phrases) => {
-  const palette = [
-    '노란색', '분홍색', '빨간색', '핑크색', '민트색',
-    '빨간색', '주황색', '보라색', '하늘색', '노란색',
-    '분홍색', '빨간색', '보라색', '분홍색', '남색'
-  ];
-  const items = phrases.map((p, i) => `${p.trim()}→${palette[i % palette.length]}`).join(', ');
-  return `각 문구의 글자 색상을 감정에 맞춰 다르게 지정하세요: ${items}. 모든 글자에 흰색 외곽선(stroke)을 두껍게 넣어 스티커 텍스트처럼 입체감 있게 표현하세요.`;
-};
-
-const getEmotionTextColorGuideEn = (phrases) => {
-  const palette = [
-    'Bright Yellow', 'Soft Pink', 'Vibrant Red', 'Cute Pink', 'Fresh Mint',
-    'Passion Red', 'Energetic Orange', 'Vivid Purple', 'Sky Blue', 'Bright Yellow',
-    'Warm Pink', 'Crimson Red', 'Deep Purple', 'Soft Pink', 'Deep Navy'
-  ];
-  const items = phrases.map((p, i) => `"${p.trim()}" -> ${palette[i % palette.length]}`).join(', ');
-  return `Vary text color per phrase according to emotion: ${items}. Add a thick white outline stroke around every text to create a bold, 3D sticker lettering appearance.`;
-};
-
-const ART_STYLE_PROMPT_MAP_KO = {
-  '귀여운 2D 만화풍': '얇고 균일한 검정 외곽선, 플랫 컬러 채색에 부드러운 그라데이션 하이라이트, 둥글둥글한 형태 단순화',
-  '한국 웹툰 스타일': '깔끔한 벡터 라인, 인물 위주의 셀셰이딩, 파스텔 계열 배색과 부드러운 그림자 처리',
-  '손그림 낙서풍': '볼펜/색연필로 슥슥 그린 듯한 불규칙한 손떨림 선, 삐뚤빼뚤한 외곽선, 낙서장 여백에 그린 듯한 러프한 채색',
-  '부드러운 수채화풍': '외곽선 최소화, 물감이 번진 듯한 그라데이션 채색, 종이 질감이 살짝 비치는 파스텔 톤',
-  '색연필 동화책풍': '색연필 특유의 결이 보이는 채색, 부드러운 외곽선, 동화책 삽화 느낌의 따뜻한 색감',
-  '레트로 애니메이션풍': '90년대 셀 애니메이션 느낌의 두꺼운 외곽선, 채도 높은 플랫 컬러, 살짝 거친 셀 텍스처',
-  '깔끔한 미니멀 벡터': '극도로 단순화된 형태, 균일한 두께의 벡터 라인, 그림자 없는 플랫 컬러 2~3톤 배색',
-  '통통 튀는 팝아트풍': '굵고 대담한 외곽선, 원색 위주의 고채도 배색, 망점(halftone) 패턴 강조',
-  '굵은 선의 코믹북풍': '두꺼운 검정 잉크 외곽선, 강한 명암 대비, 망점 패턴 채색, 액션감 있는 선 표현',
-  '도트 픽셀 아트풍': '정사각형 픽셀 단위 각진 형태, 안티에일리어싱 없는 계단 현상 윤곽선, 제한된 색상 팔레트(8~16색)',
-  '종이 콜라주풍': '오려 붙인 종이 질감의 레이어드 형태, 살짝 어긋난 그림자, 손으로 자른 듯한 불규칙한 가장자리',
-  '빈티지 인쇄 만화풍': '살짝 바랜 색감, 인쇄 도트 패턴, 종이 질감의 미세한 노이즈, 얇고 거친 외곽선',
-  '📖 흑백 만화 톤': '순수 흑백 잉크 드로잉, 스크린톤(회색 망점) 음영 처리, 외곽선 강조',
-  '✒️ 일본 출판 만화풍': '정교한 G펜 흑백 잉크선, 만화 컷 스크린톤 음영, 섬세한 해칭 음영, 흑백 출판 만화책 펜화 질감 (exquisite G-pen black ink manga lineart, screentone shading, monochrome comic panel style)',
-  '🧸 3D 펠트/클레이 점토 인형풍': '부드러운 양모 펠트와 클레이 점토 질감, 스톱모션 애니메이션 입체 조형 (3D felt clay doll texture, stop-motion claymation aesthetic)',
-  '🖍️ 크레파스 낙서풍': '따뜻하고 거친 크레용/크레파스 손그림 텍스처, 아기자기한 동화책 낙서 감성 (crayon wax pastel doodle texture, playful storybook sketch)',
-  '✨ Y2K 픽셀 스티커풍': '90년대 레트로 다이어리 꾸미기 스티커, 반짝이 글리터와 선명한 픽셀 그래픽 (Y2K retro glitter pixel art sticker)',
-  '💥 열혈 배틀 만화풍': '두껍고 역동적인 외곽선, 강한 속도선/집중선 배경 효과, 고대비 명암과 진한 그림자',
-  '🌸 샤방샤방 순정만화풍': '가늘고 화려한 외곽선, 큰 눈과 반짝이는 하이라이트, 꽃/반짝임 배경 요소, 파스텔 그라데이션 채색',
-  '👾 8090 레트로 애니풍': '80~90년대 일본 애니 셀화 느낌, 채도 높은 플랫 컬러, 두꺼운 외곽선과 단순한 그림자 블록',
-  '🎨 3D 반실사 애니 렌더링': '부드러운 3D 클레이/픽사풍 라이팅, 은은한 그림자와 하이라이트, 통통한 입체감 있는 형태',
-};
-
-const ART_STYLE_PROMPT_MAP_EN = {
-  'Cute 2D cartoon': 'Thin uniform black outline, flat color with soft gradient highlights, rounded form simplification',
-  'Korean webtoon style': 'Clean vector lines, character-focused cel shading, pastel color scheme with soft shadows',
-  'Hand-drawn doodle': 'Irregular hand-drawn lines like ballpoint or colored pencil, shaky outlines, rough color fill like margin doodles',
-  'Soft watercolor': 'Minimal outlines, water-bleed gradient coloring, pastel tones showing subtle paper texture',
-  'Colored-pencil storybook': 'Visible colored-pencil stroke texture, soft outlines, warm tones like a storybook illustration',
-  'Retro animation': 'Thick outlines like 90s cel animation, high-saturation flat colors, slightly grainy cel texture',
-  'Clean minimal vector': 'Extremely simplified shapes, uniform vector lines, shadowless flat colors with 2-3 tone palette',
-  'Vibrant pop art': 'Bold thick outlines, high-saturation primary colors, halftone dot pattern accents',
-  'Bold comic-book style': 'Thick black ink outlines, strong contrast shading, halftone dot coloring, energetic action linework',
-  'Pixel art': 'Blocky square pixel grid shapes, non-antialiased stepped outlines, limited 8-16 color palette',
-  'Paper collage': 'Layered cut-paper texture, slightly offset drop shadows, irregular hand-cut edges',
-  'Vintage print cartoon': 'Faded vintage colors, print dot matrix pattern, subtle paper noise texture, thin rough outlines',
-  '📖 Monochrome Manga Screentone': 'Pure monochrome black ink drawing, screentone halftone shading, emphasized outlines',
-  '💥 Shonen Battle Manga': 'Thick dynamic outlines, intense speed line & focus line background effects, high contrast with deep shadows',
-  '🌸 Shojo Romance Manga': 'Delicate decorative outlines, big sparkling eyes with highlights, flower & sparkle background accents, pastel gradient coloring',
-  '👾 Classic 80s Anime': '80s-90s Japanese anime cel aesthetic, high-saturation flat colors, thick outlines with simple shadow blocks',
-  '🎨 3D Semi-realistic Animated Film': 'Soft 3D clay/Pixar-style studio lighting, subtle soft shadows and highlights, plump 3D volumetric forms',
-};
-
-const getExpandedArtStyleText = (selectedArtStyle, isKo = false) => {
-  if (!selectedArtStyle) return '';
-  const map = isKo ? ART_STYLE_PROMPT_MAP_KO : ART_STYLE_PROMPT_MAP_EN;
-  const detail = map[selectedArtStyle];
-  if (detail) {
-    return `${selectedArtStyle} (${detail})`;
-  }
-  return selectedArtStyle;
+  'Daily/Greetings ①': ['LOL', 'Thank you!', 'You got this today', 'Nice!', 'Thanks a lot', 'Love you', 'Awesome!', 'Yay~', 'Sorry about that', 'Great job today', 'Congrats!', 'OMG', 'Really?', 'So touched ㅠㅠ', 'Good night'],
+  'Daily/Greetings ②': ['Nice to meet you', 'What\'s up?', 'Did you eat?', 'Miss you', 'Good morning!', 'Bored', 'Where are you?', 'Let\'s hang out!', 'Cheer up!', 'Rooting for you', 'You\'re the best!', 'Perfect!', 'Excited!', 'Good work today', 'See you later!'],
+  'Office Life ①': ['On my way to work', 'Leaving work now!', 'Heading out first', 'Noted with thanks', 'Understood', 'Monday blues', 'Payday!', 'Caffeine recharge', 'In a meeting', 'Working late', 'Great job today', 'TGIF!', 'Wanna quit', 'Got it!', 'Save me…'],
+  'Office Life ②': ['On-time clock out!', 'Please check this', 'One moment please', 'Good work everyone', 'What\'s for lunch?', 'Don\'t wanna work', 'Soul left body', 'Tearing up', 'Tons of work', 'Sorry for late reply', 'Have a good one', 'Mental breakdown', 'Waiting for weekend', 'Taking a short break', 'Taking PTO'],
+  'Students/School ①': ['Going to school', 'Exams are over!', 'I\'m doomed…', 'What after school?', 'Homework bomb', 'I\'m late!', 'All-nighter study', 'When is break?', 'It\'s vacation!', 'Switch seats please', 'Starving to death', 'Lend me textbook', 'So sleepy…', 'Aiming for A+!', 'Happy graduation!'],
+  'Students/School ②': ['Let\'s go to cafeteria', 'In class right now', 'Show me your notes', 'Recess time!', 'Going to club room', 'Midterm season', 'Gotta retake class', 'Got seat in library', 'Hate going to school', 'Wanna go home', 'Excited for field trip', 'Took 1st in sports day', 'Should we ditch?', 'Studied zero percent', 'Wish me luck!'],
+  'Stock/Investment ①': ['To the moon!', 'Rocket surge!', 'Cutting losses…', 'HODL to victory', 'Paycheck logged out', 'Money printer go brrr', 'Averaging down', 'Rescue team when?', 'Plunging hard (crying)', 'Took profits!', 'Where\'s my money?', 'All-in YOLO', 'Going bankrupt…', 'Got my bonus!', 'Stock god!'],
+  'Stock/Investment ②': ['Full buy executed', 'Thought it was dip', 'Give me allowance', 'Midas in reverse', 'Account balance 0', 'Empty wallet', 'Went broke', 'Saving mode ON', 'Just flexed it', 'Dreaming of FIRE', 'My treat today!', 'Staring at chart', 'Broke even finally', 'Savings matured!', 'Cash is king'],
+  'Gaming/Gamer ①': ['Winner winner!', 'Hard carried!', 'Stop trolling', 'Not my fault', 'Just one more game', 'Logging in', 'Team luck is unreal', 'Found a bug', 'All-night gaming', 'Lagging so bad', 'Insane micro plays', 'Carry me please', 'GG good game', 'Got the last hit', 'Going down first'],
+  'Gaming/Gamer ②': ['Gacha jackpot!', 'Lost 50/50…', 'Bought in-game cash', 'Hit the pity (tears)', 'Reading guide', 'Looking for party', 'Rank promoted!', 'Demoted…', 'Control miss', 'Can I have role?', 'Farming gear', 'Let\'s slay boss', 'Revive me please', 'Top DPS dealer!', 'Gonna uninstall'],
+  'Health/Fatigue ①': ['Exhausted to death', 'Headache', 'Gonna sleep early', 'Did you take meds?', 'Back hurts', 'Battery at 1%', 'Need healing', 'Going to clinic', 'Stay healthy!', 'Take vitamins', 'Need more coffee', 'Stiff shoulders', 'Blurry eyes', 'Caught a cold', 'No energy left…'],
+  'Health/Fatigue ②': ['Fainting soon', 'Taking supplements', 'Whole body aches', 'Slept so well!', 'Stretching out', 'Breathing exercise', 'Want a massage', 'Proof of life', 'Don\'t push too hard', 'Immunity drop', 'Lying in bed', 'Built up fatigue', 'Warm cup of tea', 'Get well soon', 'Revived completely!'],
+  'Humor/Memes ①': ['Whatever', 'So triggered', 'Clean & tidy', 'Got unfairly wrecked', 'Form is crazy', 'Actually better', 'Unbroken heart', 'Let\'s gooo~', 'Are you a T?', 'Baking bread', 'What in the world', 'Absolute legend', 'Inner dance party', 'Brain freeze', 'Is this right?'],
+  'Humor/Memes ②': ['Ascending to heaven', 'Wait, this works?', 'Too much to say', 'Living god life', 'Ask me anything', 'Fake news right?', 'Got fact checked', 'Why is this real?', 'Logical suspicion', 'Mental shattered', 'Fangirling hard', 'Grabbing popcorn', 'Funny but sad', 'Burst out laughing', 'Fact violence'],
+  'Emotions ①': ['So happy!', 'Touched to tears', 'So angry (fuming)', 'Waaaah (crying)', 'Surprise jump scare', 'Heart fluttering', 'Bored to death', 'Lonely…', 'Blushing (shy)', 'Scared to death', 'So frustrating', 'Annoyed!', 'Super confident', 'Feeling proud', 'Don\'t worry!'],
+  'Emotions ②': ['Feeling so refreshed', 'Mental collapse', 'So hyped up yay~', 'Feeling hurt…', 'Feeling fantastic!', 'Relief (phew~)', 'Jealous explosion', 'Flustered (sweat drop)', 'Shock and horror', 'Mesmerized gaze', 'Deep in regret…', 'So unfair!', 'Heartwarming', 'Shocked out of mind', 'Overflowing with love'],
+  'Couples/Romance ①': ['I miss you', 'What are you doing?', 'I love you ♥', 'Together forever', 'See you in dreams', 'Wanna hear your voice', 'Send me a selfie', 'Hold my hand?', 'Give me a hug', 'Lonely babe', 'Wanna see you soon', 'My darling', 'Good night sweet dreams', 'Fell for you again', 'Heart thump!'],
+  'Couples/Romance ②': ['Let\'s go on a date!', 'Where should we go?', 'Happy anniversary!', 'Let\'s not fight', 'Pouting (hmph!)', 'Don\'t you cheat', 'How much you love me?', 'Always by your side', 'Too excited to sleep', 'Looking gorgeous today', 'Can we talk on phone?', 'Outside your door', 'Matching outfit time', 'You\'re my favorite', 'Love you endlessly'],
+  'Family/Parents ①': ['Did you eat?', 'Get home safe', 'Love you mom/dad', 'Stay healthy', 'Thanks for allowance!', 'Always grateful', 'Don\'t get sick', 'I\'ll be home soon!', 'Mom\'s cooking is best', 'Dad cheer up', 'Family comes first', 'Visiting this weekend', 'Watch out for cold', 'Proud of you', 'I\'ll treat you well!'],
+  'Family/Parents ②': ['Where are you now?', 'Come home early!', 'Lock the doors', 'Sent side dishes', 'Miss you mom', 'Dad you\'re the best!', 'Take your medicine', 'Dress warmly', 'Everything alright?', 'Sent some pocket money', 'Live long and healthy', 'Family trip time', 'Always cheering you on', 'Arrived safely', 'Thank you!'],
+  'Food/Diet ①': ['What to eat?', 'Starving to death', 'Looks delicious!', 'Diet starts tomorrow', 'Craving late snack', 'Order chicken?', 'Thanks for the meal!', 'Stuffed full', 'Dessert stomach separate', 'Mukbang time', 'Grilling meat', 'Let\'s hit a cafe', 'Super delicious', 'Sweet and salty', 'My treat today!'],
+  'Food/Diet ②': ['Cheat day!', '0 calories if yummy', 'Workout finished', 'Lost weight!', 'Gained weight ㅠㅠ', 'Need sugar rush', 'Craving spicy food', 'Eating salad', 'Drinking 2L water', 'Watching food videos', 'Waiting in restaurant line', 'Cooking right now', 'Food fighter mode', 'Delivered!', 'Fainting from deliciousness'],
+  'Otaku/Fandom ①': ['My bias saves world', 'Take my wallet', 'Face genius', 'Pilgrimage completed', 'Bought album', 'Trading photocards', 'Ticket secured!', 'Ticketing failed…', 'Birthday cafe tour', 'Struck by bias', 'Fully joined fandom', 'No exit from here', 'Bought full merch set', 'Going to concert', 'Fangirling is life'],
+  'Otaku/Fandom ②': ['God-tier visuals', 'Hit right in heart', 'Waiting for comeback', 'Won fansign event!', 'Tore up the stage', 'Crying tears of joy', 'Can\'t stop fangirling', 'Pure shining existence', 'Looping fancam 24/7', 'Secured 1st row view', 'Waiting for official merch', 'Going to offline event', 'Looking for fandom buddy', 'Waving lightstick', 'Fan for life'],
+  'Anger/Frustration ①': ['Seriously mad', 'Are you kidding me?', 'Unbelievable', 'Rage explosion', 'Don\'t talk to me', 'Deep breathing (inhale)', 'Patience running out', 'Cannot forgive this', 'Boiling with rage', 'Be quiet', 'Speechless', 'Think before you speak', 'Don\'t cross the line', 'About to burst', 'Calm down self'],
+  'Anger/Frustration ②': ['Wanna fight?', 'Cut it out', 'Deep heavy sigh', 'Trembling with anger', 'Maximum fury mode', 'Full of stress', 'Over my dead body', 'Mind your own business', 'Never seeing you again', 'Blood pressure rising', 'So frustrating inside', 'Clenching my fist', '3 seconds before blast', 'Totally hopeless', 'Just stop it!'],
+  'Cheers/Celebration ①': ['Congratulations!', 'Great job everyone!', 'Rooting for you!', 'You can do it!', 'Thank you for hard work', 'Huge success!', 'Dreams come true', 'Let\'s have party', 'So proud of you!', 'Go for it!', 'Always on your side', 'Walk on flower path', 'Be happy always!', 'Cheers clink!', 'Best outcome ever!'],
+  'Cheers/Celebration ②': ['Congrats on passing!', 'Congrats on new job!', 'Happy wedding!', 'Happy birthday!', 'Congrats on promotion!', 'Effort never betrays', 'Believe in miracles', 'Never give up', 'Glad to be of help', 'Simply awesome!', 'Dazzling growth', 'Did your best!', 'Moment of victory', 'Glory to you', 'Blessings to you!'],
+  'Season/Weather ①': ['Spring is here', 'Let\'s see cherry blossoms', 'Sweltering hot heat', 'Wanna go to beach', 'Autumn foliage trip', 'Season for reading', 'Freezing cold winter', 'First snow is falling!', 'Pouring rain outside', 'Grab your umbrella!', 'Watch out for typhoon', 'Heat stroke alert', 'Warm sunshine', 'Frozen hands & feet', 'Beware change of seasons'],
+  'Season/Weather ②': ['Cherry blossom ending', 'AC on full blast', 'Monsoon season started', 'Let\'s go swimming!', 'Catching autumn vibes', 'Craving roasted sweet potato', 'Outside blanket is dangerous', 'Building a snowman', 'Heavy snow warning', 'Clear sky road trip', '100% humidity sticky', 'So dry and thirsty', 'Crisp autumn sky', 'Sunscreen is a must!', 'Dress warm today'],
+  'Pets/Owners ①': ['My baby angel', 'Give me treats!', 'Let\'s go for a walk!', 'Purring engine running', 'Fluffy shedding healing', 'Made a mess…', 'On way to vet', 'Churu feast time', 'Play with me now', 'Sleeping soundly', 'Tail wagging fast', 'Hate trimming claws', 'Feed me hooman', 'Welcoming home greeting', 'Cutest in universe'],
+  'Pets/Owners ②': ['Churu is pure love', 'Paw jelly bean squeeze', 'Morning walk done', 'Grooming right now', 'Giving high paw', 'Bark bark barking', 'Meow meow calling', 'Obsessed with my pet', 'Happy multi-pet home', 'Making biscuits (kneading)', 'Conquered cat tower', 'Whining for cuddles', 'Pouting pet mode', 'Pets are family', 'Stay healthy forever'],
+  'Homebody/Stay Home ①': ['Outside blanket is danger', 'Merged with my bed', 'Rolling around all day', 'Binging Netflix show', 'Ordered takeout food', 'Pajama lifestyle', 'Too lazy to go out', 'Home is the best!', 'Entering bunker mode', 'Exercising stay-home right', 'Smartphone addiction', 'Package unboxing done', 'Under AC is paradise', 'I live alone bliss', 'Recharging to 100%'],
+  'Homebody/Stay Home ②': ['Under covers is my universe', 'Outside world is scary', 'Home cafe is open', 'YouTube rabbit hole', 'Lost in video games', 'Looping favorite clips', 'Afternoon nap time', 'Pajamas are my suit', 'Pro homebody master', 'Cleaned room feeling proud', 'Solo drinking night', 'Staring out window', 'Perfect rest day', 'Comfiest at home', 'Wanna rest forever'],
+  'Parenting/Baby ①': ['Sleeping like an angel', 'Baby feeding time', 'Diaper changed clean', 'Crawling mastered!', 'Midnight feeding shift', 'Hold me waaaah~', 'Baby food yum yum', 'Took first tiny steps', 'I love mommy!', 'I love daddy!', 'Angelic baby face', 'Babbling thunderstorm', 'Toys scattered around', 'Parenting cheer up!', 'Grow up strong and well'],
+  'Parenting/Baby ②': ['Said mommy first!', 'Toddling tiny steps', 'Peek-a-boo game', 'Nap time (free time!)', 'Refusing baby food…', 'First tiny tooth out', 'Let\'s go to playground!', 'Splash splash bath time', 'Reading bedtime story', 'Fussy cranky mood', 'Baby sleep shift success!', 'Vaccination completed', 'Melting at that smile', 'Solo parenting today…', 'Love you my precious'],
+  'MBTI & Memes ①': ['Ultra E (Social King)', 'Ultra I (Homebody Master)', 'Power J (Master Plan)', 'Power P (Spontaneous Trip)', 'Ultra T (Truth Bomber)', 'Ultra F (Empathy Machine)', 'N Trait (Wild Imaginations)', 'S Trait (Grounded Reality)', 'What is your MBTI?', 'Extrovert energy peak', 'Social battery drained', 'Soulless reaction', 'Overthinking it all', 'Comfort me please ㅠㅠ', 'No truth bombs allowed'],
+  'MBTI & Memes ②': ['F Sensitivity', 'Are you a T?', 'Planned everything J', 'No plan travel P', 'E energy explosion', 'I battery rapidly drained', 'MBTI over-immersion', 'Soul leaving body', 'Don\'t hit with facts', 'Crying rivers', 'Logical judgment', 'Uncontrollable emotions', 'Brain cell shutdown', 'Cannot refute this', 'Fully convinced'],
+  'Travel/Vacation ①': ['On My Way to Airport!', 'Boarding Completed', 'Vacation Mode: ON (DND)', 'Got Your Passport?', 'Hotel Staycation Healing', 'Got the Perfect Shot!', 'Conquering Local Food', 'Currency Exchange Done', 'Packing My Suitcase', 'Is This Paradise?', 'Let\'s Go to the Beach', 'Traveling (Slow Reply)', 'Buying You Souvenirs', 'I Never Wanna Leave', 'Post-Vacation Blues'],
+  'Travel/Vacation ②': ['Where Next?', 'Duty-Free Shopping Spree', 'Window Seat View', 'Hotel Checked In', 'Night View Healing', 'Poolside Splash', 'Backpacking Adventure', 'Relaxing Teatime', 'Lost but Happy', 'Booked the Tickets!', 'Flight Delayed (Tired)', 'Take My Photo Please', 'Dumping Travel Pics', 'Let\'s Come Again', 'Safely Back Home!'],
+  'Shopping/Delivery ①': ['Package Arrived! (Excited)', 'Bought with My Own Money', 'Cleared My Entire Cart', 'Must-Have Item!', 'Ordered Before Sold Out', 'Can\'t Miss This Deal!', 'Regretting Impulsive Buy', 'Fainting at the Receipt', 'Wallet is Empty (Broke)', 'Wearing New Clothes Out!', 'Unboxing Time (Bliss)', 'Best Value Deal Ever', 'Retail Therapy Done', 'Spending Money is Fun', 'Future Me Will Pay for It'],
+  'Shopping/Delivery ②': ['Order Placed (Waiting)', 'Left at Front Door!', 'Fits Perfectly', 'Adding for Free Shipping', 'New Arrival Alert', 'Live Deal Snagged', 'Should I Return or Keep?', 'Left a 5-Star Photo Review', 'Added to Wishlist', 'Bags in Both Hands', 'Shopping Spree Mode', 'Paycheck Disappeared', 'Card Limit Alert', 'A Gift to Myself', 'Bank Account Don\'t Look'],
+  'Driving/Commute ①': ['Student Driver (Thanks!)', 'Parked Perfectly (Joy)', 'Stuck in Traffic (Late)', 'Driving (Will Reply Later)', 'Rained After Car Wash', 'GPS Gave Wrong Turn', 'Cruising Highway', 'Gas Prices Are Crazy', 'Missed the Bus (Sprinting)', 'Subway Transfer Hell', '5 Mins Away!', 'Called a Designated Driver', 'Made it Home Safely', 'Waiting at Red Light', 'Please Don\'t Honk!'],
+  'Driving/Commute ②': ['Crowded Commute Bus', 'Doors Closed (So Close!)', 'Who Wants a Drive?', 'Hunting for Parking Spot', 'Parallel Parking Panic', 'Blasting Music on Drive', 'Stuck on Way Home (Sleepy)', 'Arrived at Destination', 'Fasten Seatbelt Always', 'Passing Tollgate', 'Got a New Car!', 'Slow Driving in Rain', 'Green Light Go Please', 'Insufficient Transit Card', 'Will Text When I Arrive'],
+  'Birthday/Party ①': ['Happy Birthday (HBD)! 🎂', 'Blowing Out Candles', 'Birthday King/Queen Today!', 'Thank You for Being Born', 'Sent You a Gift!', 'Made a Wish (Come True)', 'Party Time Begins!', 'Did You Eat Soup?', 'Touched by Your Wishes', 'Sending You a Treat/Card', 'One Year Older (Tears)', 'Wishing You Blossom Days', 'Have the Best Day Ever', 'Ready for Birthday Pranks', 'Celebrating Forever Together'],
+  'Birthday/Party ②': ['Happy Birthday to You!', 'Surprise Party Success!', 'Singing Birthday Song', 'Party Hat On!', 'Gift Unboxing Tears', 'Anniversary Candle Lit', 'Popping Champagne!', 'VIP of the Party Enters', 'Delivered +1 Year to Age', 'Treating You Today!', 'A Day Full of Joy', 'Message Inbox Exploding', 'Special Someone\'s B-Day', 'Party is Just Starting', 'Sending Tons of Love!']
 };
 
 const THEMES_JA = {
@@ -188,7 +138,15 @@ const THEMES_JA = {
   '子育て/ベビー ①': ['すやすや睡眠中', 'ミルクタイム', 'オムツ替え完了', 'ハイハイできた！', '夜泣き対応中', '抱っこして〜', '離乳食モグモグ', '初めてのあんよ', 'ママ大好き', 'パパ大好き', '天使の寝顔', 'イヤイヤ期突入', 'おもちゃ散乱', '子育てファイト', 'すくすく育ってね'],
   '子育て/ベビー ②': ['ママって言った！', 'よちよち歩き', 'いないいないばあ', 'お昼寝チャンス！', '離乳食拒否…', '歯が生えてきた', '公園で遊ぼう', 'お風呂タイム', '絵本読み聞かせ', 'ぐずぐず期', '寝かしつけ成功！', '予防接種完了', '笑顔にキュン', '今日もワンオペ', '愛してるよ宝物'],
   'MBTI & ミーム ①': ['完全なるE型', '圧倒的I型', '計画通りのJ型', '即興アドリブP型', '論理的なT型', '共感のF型', '直感派N型', '現実派S型', 'MBTI教えて', 'それな〜！', '解釈一致すぎ', '脳内お花畑', 'メンタル無敵', '語彙力消失', '大優勝！'],
-  'MBTI & ミーム ②': ['I型の引きこもり', 'E型の陽キャ発動', 'T型のド正論パンチ', 'F型の涙腺崩壊', 'J型のスケジュール', 'P型の気まぐれ旅', '生粋のMBTIオタク', 'ミーム中毒', 'テンプレ通り', '尊すぎて無理', '分かりみが深すぎる', 'バズ確定', '全人類見て', '推しが神', 'はい天才']
+  'MBTI & ミーム ②': ['I型の引きこもり', 'E型の陽キャ発動', 'T型のド正論パンチ', 'F型の涙腺崩壊', 'J型のスケジュール', 'P型の気まぐれ旅', '生粋のMBTIオタク', 'ミーム中毒', 'テンプレ通り', '尊すぎて無理', '分かりみが深すぎる', 'バズ確定', '全人類見て', '推しが神', 'はい天才'],
+  '旅行/休暇 ①': ['空港へ向かう道（ワクワク）', '搭乗完了！', '休暇スタート！（連絡NG）', 'パスポート持った？', 'ホカンスで癒やされ中', '映え写真撮れた！', 'ご当地グルメ制覇', '両替完了！', 'パッキング中', 'ここは天国かな？', '海見に行こう！', '旅行中（返信遅れます）', 'お土産買っていくね', '帰りたくない…', '休暇ロス（現実に復帰）'],
+  '旅行/休暇 ②': ['次どこ行く？', '免税店で爆買い', '飛行機の窓際席', 'ホテルチェックイン完了', '夜景見てリラックス', 'プールで水遊び', 'バックパックの旅へ', 'のんびりティータイム', '道に迷ったけど楽しい', 'チケット予約成功！', '飛行機遅延（ぐったり）', '写真撮って〜', '旅行写真連投中', 'また来ようね', '無事帰国完了！'],
+  'お買い物/宅配 ①': ['置き配届いた（ワクワク）', '自腹購入レビュー！', 'カート内全品爆買い', 'これ絶対買うべき！', '売り切れ直前に購入完了', 'セールは見逃せない！', '衝動買いして後悔中', 'レシート見て気絶', '財布がすっからかん', '新しい服でお出かけ！', '開封の儀（至福）', 'コスパ最高すぎ', '散財してスッキリ', '買い物最高に楽しい', '来月の自分が払うはず'],
+  'お買い物/宅配 ②': ['注文完了（届くの待ち）', '玄関前に配達完了！', 'サイズぴったり！', '送料無料まであと少し', '新作入荷通知！', 'ライブ配信で安くゲット', '返品するか迷い中', '写真付きレビュー投稿', '欲しいものリスト追加', '両手いっぱいの紙袋', '物欲センサー爆発', '給料が秒で消滅', 'カード限度額ピンチ', '自分へのご褒美', '口座残高見ないでおこう'],
+  '運転/交通 ①': ['初心者マーク（譲ってくれて感謝）', '駐車成功！（感動）', '通勤ラッシュ渋滞（遅刻ピンチ）', '運転中（返信遅れます）', '洗車したら雨降った（怒）', 'ナビに騙された…', '高速道路を快適ドライブ', 'ガソリン高すぎ！', 'バス乗り遅れた（猛ダッシュ）', '地下鉄乗り換え地獄', 'あと5分で着く！', '代行運転呼びました', '今日も無事帰宅完了', '信号待ち中', 'クラクション鳴らさないで（初心者）'],
+  '運転/交通 ②': ['通勤満員バス', '電車のドア閉まった（悔しい）', 'ドライブ行く人？', '駐車場探し中', '縦列駐車でパニック', '音楽爆音でドライブ', '帰り道の大渋滞（眠い）', '目的地に到着しました', 'シートベルト必須！', '料金所通過', '車買ったよ！迎えに行くね', '雨だから安全運転', '前の車進んで〜', 'ICカード残高不足', '着いたら連絡するね'],
+  '誕生日/パーティー ①': ['お誕生日おめでとう（おたおめ）！🎂', 'ろうそくをふーっ！', '今日の主役は私！', '生まれてきてくれてありがとう', 'プレゼント送ったよ！', '願い事した（叶いますように）', 'パーティーの始まり！', 'お祝いしてくれて感動', 'ギフトカード奢るね！', 'また一つ歳をとった（涙）', '花道だけを歩こう！', '最高に幸せな一日を', '誕生日プレゼント期待してね', 'ずっと一緒にお祝いしよう', 'いつもありがとう！'],
+  '誕生日/パーティー ②': ['ハッピーバースデートゥーユー！', 'サプライズ大成功！', 'バースデーソング合唱', '三角帽子かぶったよ', 'プレゼント開封で涙', '記念日のロウソク消し', 'シャンパンで乾杯！', 'パーティーの主役登場！', '年齢＋1歳をお届け', '今日は奢っちゃう！', '幸せいっぱいの記念日', 'お祝いメッセージ殺到', '大切な人の特別な日', 'パーティーはこれから！', '愛を込めておめでとう！']
 };
 
 const THEMES_ZH = {
@@ -204,7 +162,7 @@ const THEMES_ZH = {
   '游戏/电竞 ②': ['来一发单抽', '抽卡歪了…', '极限死忠粉', '被帅到晕厥…', '再打最后一局', '网络掉线了', '加个游戏好友', '狂肝游戏活动', '参加线下活动', '感谢官方爸爸', '此生不换本命', '良心好运营', '全连完美通关！', '能开语音吗？', 'GG！承让承让'],
   '健康/疲劳 ①': ['累瘫了…', '头痛欲裂', '赶紧睡觉去', '吃药了吗？', '腰酸背痛', '体力彻底见底', '需要被治愈', '刚从医院回来', '注意身体健康', '必须来杯咖啡', '肩膀酸痛僵硬', '眼睛快瞎了', '感冒了难受', '补充点营养', '打起精神来！'],
   '健康/疲劳 ②': ['整个人筋疲力尽', '喝了瓶功能饮料', '全身肌肉酸痛', '睡了个饱觉！', '喘口气放松下', '身体健康第一', '好想去按摩', '终于活过来了', '千万别硬撑', '吃点维生素', '累得快倒下了', '严重睡眠不足', '泡个热水澡吧', '好好保重身体', '满血复活！'],
-  '幽默/梗 ①': ['绝了', '谁懂啊家人们', '笑出猪叫', '笑死我了', '太尊了…', '全场最佳！', '直接词穷', '懂的都懂', '嘤嘤嘤太难了', '绿茶心机', '神仙', '确实如此', '简直是天才', '过于真实'],
+  '幽默/梗 ①': ['绝了', '谁懂啊家人们', '笑出猪叫', '笑死我了', '太尊了…', '全场最佳！', '直接词穷', '懂的都懂', '嘤嘤嘤太难了', '绿茶心机', '神仙', '确实如此', '简直是天才', '过于真实', '破防了'],
   '幽默/梗 ②': ['笑到头掉', '我有异议！', '彻底完蛋', '笑飞了', '太戳我了', '直接火出圈', '全场最佳', '完结撒花', '我不理解但我大受震撼', '你就是第一名', '天才神回复', '全网泪目', '年度最佳发言', '万分感恩', '反驳无效！'],
   '情感表达 ①': ['超级幸福〜', '太感动了', '我生气了哦', '快要哭了', '吓我一跳！', '超期待好兴奋', '好无聊啊', '感到好孤单', '害羞不好意思', '吓死宝宝了', '神清气爽！', '心里堵得慌', '为你感到骄傲', '好担心你', '好爱你'],
   '情感表达 ②': ['超满足！', '心态大崩溃', '高兴到起飞！', '难过心碎…', '烦躁抓狂', '扑通扑通心跳', '总算松了口气', '我吃醋了', '大慌乱大恐慌！', '大受打击…', '如痴如醉', '后悔莫及', '太不甘心了！', '心里暖洋洋的', '心里满是感谢'],
@@ -229,7 +187,15 @@ const THEMES_ZH = {
   '育儿/萌宝 ①': ['香香甜甜睡觉中', '到喝奶喂奶时间啦', '换好干爽纸尿裤啦', '学会四脚爬行啦！', '半夜狂哭紧急哄娃', '伸出双手求抱抱〜', '辅食吃得津津有味', '迈出人生的第一步路', '最喜欢最爱妈妈了', '最喜欢最爱爸爸了', '像小天使一样的可爱睡颜', '正式进入叛逆小烦恼期', '满地都是扔乱的玩具', '今天也要育儿加油鸭', '健健康康快快长大哦'],
   '育儿/萌宝 ②': ['第一次开口叫妈妈了！', '摇摇晃晃蹒跚学步', '躲猫猫捉迷藏哇', '趁娃睡着偷得半日闲！', '把辅食推开拒绝吃…', '开始冒出第一颗小乳牙啦', '去小公园晒太阳玩耍', '舒服泡澡洗香香时间', '讲睡前童话绘本故事', '哼哼唧唧闹脾气小情绪', '成功把小神兽哄睡着了！', '预防针疫苗顺利接种完毕', '被天真无邪的笑容瞬间击中', '今天也是一个人独自带娃的一天', '深深爱着你我的无价之宝'],
   'MBTI & 梗 ①': ['纯正E人社交天花板', '资深I人社恐本恐', '万事按计划来的强迫症J人', '随性即兴发挥的自由P人', '逻辑严密莫得感情的理智T人', '共情能力爆棚的感性F人', '天马行空直觉流N人', '脚踏实地注重现实的S人', '报上你的MBTI暗号', '就是说啊太真实了〜！', '解读简直和我一模一样', '脑子装满了浪漫幻想花海', '内心强大精神状态极度稳定', '瞬间失去一切语言组织能力', '赢麻了直接封神！'],
-  'MBTI & 梗 ②': ['I人只想一个人闭关宅家', 'E人瞬间开启社交牛逼症', 'T人直击灵魂的事实大暴击', 'F人瞬间泪腺大崩溃泪目', 'J人精确到分钟的时间表', 'P人说走就走的即兴旅行', '如假包换的重度MBTI研究员', '重度网络流行梗上瘾患者', '完美符合一切刻板印象模板', '尊贵到难以用言语形容', '共鸣感深到骨髓深处了', '这条发言绝对要火遍全网', '全人类都给我过来看', '我的本命就是至高神明', '绝妙天才神操作']
+  'MBTI & 梗 ②': ['I人只想一个人闭关宅家', 'E人瞬间开启社交牛逼症', 'T人直击灵魂的事实大暴击', 'F人瞬间泪腺大崩溃泪目', 'J人精确到分钟的时间表', 'P人说走就走的即兴旅行', '如假包换的重度MBTI研究员', '重度网络流行梗上瘾患者', '完美符合一切刻板印象模板', '尊贵到难以用言语形容', '共鸣感深到骨髓深处了', '这条发言绝对要火遍全网', '全人类都给我过来看', '我的本命就是至高神明', '绝妙天才神操作'],
+  '旅行/度假 ①': ['奔向机场（超期待）', '登机完毕起飞！', '开启休假模式（请勿打扰）', '护照带齐了吗？', '在酒店躺平度假中', '拍到人生照片啦！', '打卡当地美食天堂', '换汇搞定！', '正在收拾行李箱', '这里简直是天堂吧', '一起去看海吧！', '旅行中（回复较慢）', '会给你带伴手礼的', '完全不想回家…', '假期综合症（回工位）'],
+  '旅行/度假 ②': ['下一站去哪玩？', '免税店大扫货完毕', '飞机靠窗绝美景观', '酒店办理入住搞定', '看绝美夜景治愈中', '在游泳池欢快戏水', '背上行囊出发探险', '惬意悠闲下午茶', '迷路了但也超开心', '抢票成功万岁！', '航班延误（累瘫了）', '快帮我拍张大片', '疯狂连发旅行美照', '下次还要再来！', '平安落地回家啦！'],
+  '购物/快递 ①': ['快递已送达通知（激动）', '纯自费入手测评！', '清空购物车大扫荡', '这个必须狠狠拿下', '库存告急火速下单', '折扣特惠绝不能错过', '冲动消费后开始后悔', '看到账单倒吸一口气', '钱包彻底空空（吃土）', '穿上新衣服出门！', '拆箱开箱时刻（超治愈）', '性价比爆棚神仙好物', '今天尽情买买买剁手', '花钱的感觉最爽快', '下个月的我自会偿还'],
+  '购物/快递 ②': ['下单成功（坐等收货）', '放在家门口签收啦！', '尺码刚刚好超级合身', '凑单包邮中', '新品上架通知！', '直播间抢到神价', '纠结要不要退换货', '带图好评已发布', '加入心愿心动单', '两手提满大购物袋', '购物欲彻底大爆发', '工资瞬间秒没', '信用卡额度亮红灯', '这是给自己的犒赏', '我的银行卡闭上眼睛'],
+  '驾驶/交通 ①': ['新手上路（感谢让行）', '一把入库倒车入库成功', '早高峰大堵车（要迟到）', '正在安全驾驶中（稍后回复）', '刚洗完车就下雨（抓狂）', '导航带我走错路了', '在高速上畅快飞驰', '油价真的太贵了（加油）', '没赶上公交（狂奔中）', '地铁换乘修罗场', '还有5分钟到达！', '叫了代驾回家', '今天也平安顺利到家', '正在红灯等待中', '请勿催促按喇叭（新手）'],
+  '驾驶/交通 ②': ['早晚高峰挤爆公交', '地铁门关上了（差一秒）', '有谁想一起去兜风？', '到处找停车位中', '侧方停车心态大崩', '音量拉满开着音乐兜风', '下班路上一路大堵（好困）', '导航提示已到达目的地', '务必系好安全带', '通过高速收费站', '喜提新车来接你啦', '下雨路滑减速慢行', '前车师傅快起步呀', '交通卡余额不足', '到了给你发微信'],
+  '生日/派对 ①': ['祝你生日大快乐（HBD）！🎂', '吹灭生日蛋糕蜡烛〜', '今天的主角就是我啦！', '感谢你的降临来到世界', '生日礼物已发货！', '许了个美好的愿望（一定要实现）', '生日派对正式开场！', '吃长寿面了吗？', '收到你的祝福超感动', '发个大红包/请你喝奶茶', '又长了一岁（假装抹泪）', '愿你一路繁花似锦！', '度过最幸福最棒的一天', '准备接受生日惊喜吧', '每年都要一起过生日哦'],
+  '生日/派对 ②': ['祝你生日快乐歌！', '惊喜派对圆满大成功', '全场齐唱生日歌', '戴上可爱的生日尖尖帽', '拆礼物拆到手软感动', '吹熄纪念日蜡烛', '香槟喷涌欢呼庆祝！', '派对全场焦点隆重登场', '您的年龄已自动+1', '今天全部由我买单！', '充满幸福的美好一天', '祝福消息疯狂刷屏', '最最珍贵之人的生日', '派对狂欢现在才刚开始', '把满满的爱都送给你！']
 };
 
 const CHARACTER_TAGS_JA = {
