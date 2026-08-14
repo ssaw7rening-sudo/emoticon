@@ -708,13 +708,13 @@ const AdBanner = () => {
   if (!IS_AD_CONFIGURED) return null;
 
   return (
-    <div className="text-center mt-lg md:mt-xl p-4 md:p-md bg-surface-container-lowest rounded-md border border-outline-variant shadow-bubbly overflow-hidden">
-      <p className="text-[12px] text-neutral-500 mb-2 text-left">Advertisement</p>
+    <div className="w-full text-center my-1.5 p-2 sm:p-2.5 bg-surface-container-lowest rounded-lg border border-outline-variant/60 shadow-2xs overflow-hidden max-h-[120px]">
+      <p className="text-[10px] font-semibold text-neutral-400 mb-0.5 text-left tracking-wider uppercase">Advertisement</p>
       <ins className="adsbygoogle"
-           style={{display: 'block', minHeight: '90px'}}
+           style={{display: 'inline-block', width: '100%', height: '90px', maxHeight: '90px'}}
            data-ad-client={ADSENSE_CLIENT_ID}
            data-ad-slot="1234567890"
-           data-ad-format="auto"
+           data-ad-format="horizontal"
            data-full-width-responsive="true"></ins>
     </div>
   );
@@ -3407,7 +3407,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
         </div>
       </header>
 
-      <main className="max-w-3xl mx-auto px-container-margin mt-md md:mt-xl flex flex-col gap-lg md:gap-xl">
+      <main className="max-w-3xl mx-auto px-container-margin mt-md md:mt-lg flex flex-col gap-4 sm:gap-5">
         {/* App Intro Hero Section */}
         <section className="relative overflow-hidden bg-gradient-to-br from-[#FFD3B6] via-[#FFE8B6] to-[#FFC2C2] text-[#5C3A21] p-4 sm:p-6 md:p-xl rounded-md shadow-bubbly text-center flex flex-col items-center justify-center gap-3 sm:gap-4 md:gap-6 border-2 sm:border-4 border-white max-w-full w-full">
           {/* Decorative floating emojis */}
