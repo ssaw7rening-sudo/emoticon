@@ -3146,7 +3146,13 @@ Please edit the most recent image. Keep the character design, face, expression, 
           
           <div className="z-10 flex flex-col gap-2 sm:gap-3 w-full max-w-full px-1">
             <span className="brand-logo inline-block bg-white/70 text-[#5C3A21] font-black text-[12px] sm:text-[14px] tracking-wider px-3.5 sm:px-4.5 py-1.5 rounded-full backdrop-blur-sm border border-white/90 mx-auto shadow-sm max-w-full text-ellipsis overflow-hidden">
-              ✨ AI 프롬프트 메이커 (Prompt Maker)
+              {lang === 'ko' 
+                ? '✨ AI 프롬프트 메이커' 
+                : lang === 'ja' 
+                ? '✨ AIスタンププロンプトメーカー' 
+                : lang === 'zh' 
+                ? '✨ AI表情包提示词生成器' 
+                : '✨ AI Prompt Maker'}
             </span>
             <h2 className="text-[18px] xs:text-[22px] sm:text-[28px] md:text-[38px] font-black tracking-tight leading-snug drop-shadow-sm w-full max-w-full px-1 [word-break:keep-all] [text-wrap:balance]">
               {(() => {
@@ -3846,7 +3852,13 @@ Please edit the most recent image. Keep the character design, face, expression, 
         <section className="flex flex-col gap-3 mt-sm pb-xl">
           <div className="bg-[#EAF8F3] p-3 rounded-lg border border-mint-border flex items-center justify-between text-[12.5px] font-bold text-mint-strong">
             <span className="flex items-center gap-1.5">
-              🚀 {lang === 'ko' ? '원클릭 1초 분할 실행: 버튼 클릭 시 클립보드 자동 복사 + 우측 분할 창으로 AI 사이트가 즉시 열립니다!' : 'One-Click Split Launch: Auto-copies prompt & opens AI site in side split window!'}
+              🚀 {lang === 'ko' 
+                ? '원클릭 1초 분할 실행: 버튼 클릭 시 클립보드 자동 복사 + 우측 분할 창으로 AI 사이트가 즉시 열립니다!' 
+                : lang === 'ja'
+                ? 'ワンクリック分割起動: プロンプトが自動コピーされ、右側にAI画面が開きます！'
+                : lang === 'zh'
+                ? '一键分屏启动: 点击后自动复制提示词，并在右侧直接打开AI网站！'
+                : 'One-Click Split Launch: Auto-copies prompt & opens AI site in side split window!'}
             </span>
           </div>
 
@@ -3860,7 +3872,7 @@ Please edit the most recent image. Keep the character design, face, expression, 
                 className="interactive-control w-full min-h-[52px] rounded-md bg-gradient-to-r from-[#2D7D64] to-[#1E5C49] text-white font-bold text-[15px] flex items-center justify-center gap-2 shadow-sm hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
               >
                 <Bot size={20} className="text-[#A6E3D0]" />
-                <span>{lang === 'ko' ? '🚀 ChatGPT 분할 실행' : '🚀 Launch ChatGPT'}</span>
+                <span>{lang === 'ko' ? '🚀 ChatGPT 분할 실행' : lang === 'ja' ? '🚀 ChatGPT 分割起動' : lang === 'zh' ? '🚀 ChatGPT 分屏启动' : '🚀 Launch ChatGPT'}</span>
               </button>
               <button
                 type="button"
@@ -3869,10 +3881,10 @@ Please edit the most recent image. Keep the character design, face, expression, 
                 className="interactive-control w-full min-h-[38px] rounded-md bg-[#FFF9EE] text-[#7A4F00] border border-[#FFECA1] font-bold text-[13px] flex items-center justify-center gap-1.5 hover:bg-[#FFECA1] cursor-pointer"
               >
                 {copiedType === 'gpt' ? <CheckCircle2 size={16} className="text-[#2D7D64]" /> : <CheckCircle2 size={16} className="text-[#7A4F00]" />}
-                <span>{copiedType === 'gpt' ? (lang === 'ko' ? '✓ 복사 완료!' : '✓ Copied!') : (lang === 'ko' ? '📋 프롬프트만 복사' : '📋 Copy Prompt')}</span>
+                <span>{copiedType === 'gpt' ? (lang === 'ko' ? '✓ 복사 완료!' : lang === 'ja' ? '✓ コピー完了！' : lang === 'zh' ? '✓ 复制成功！' : '✓ Copied!') : (lang === 'ko' ? '📋 프롬프트만 복사' : lang === 'ja' ? '📋 プロンプトのみコピー' : lang === 'zh' ? '📋 仅复制提示词' : '📋 Copy Prompt')}</span>
               </button>
               <p className="text-[11px] text-slate-500 text-center">
-                {lang === 'ko' ? '✨ 자동 텍스트 전달 + 클립보드 복사' : '✨ Auto text passing + clipboard copy'}
+                {lang === 'ko' ? '✨ 자동 텍스트 전달 + 클립보드 복사' : lang === 'ja' ? '✨ 自動入力 + クリップボードコピー' : lang === 'zh' ? '✨ 自动传递文本 + 剪贴板复制' : '✨ Auto text passing + clipboard copy'}
               </p>
             </div>
 
@@ -3885,7 +3897,7 @@ Please edit the most recent image. Keep the character design, face, expression, 
                 className="interactive-control w-full min-h-[52px] rounded-md bg-gradient-to-r from-[#D97706] to-[#B45309] text-white font-bold text-[15px] flex items-center justify-center gap-2 shadow-sm hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
               >
                 <Sparkles size={20} className="text-[#FFECA1]" />
-                <span>{lang === 'ko' ? '🚀 Gemini 분할 실행' : '🚀 Launch Gemini'}</span>
+                <span>{lang === 'ko' ? '🚀 Gemini 분할 실행' : lang === 'ja' ? '🚀 Gemini 分割起動' : lang === 'zh' ? '🚀 Gemini 分屏启动' : '🚀 Launch Gemini'}</span>
               </button>
               <button
                 type="button"
@@ -3894,10 +3906,10 @@ Please edit the most recent image. Keep the character design, face, expression, 
                 className="interactive-control w-full min-h-[38px] rounded-md bg-[#FFF9EE] text-[#7A4F00] border border-[#FFECA1] font-bold text-[13px] flex items-center justify-center gap-1.5 hover:bg-[#FFECA1] cursor-pointer"
               >
                 {copiedType === 'gemini' ? <CheckCircle2 size={16} className="text-[#D97706]" /> : <CheckCircle2 size={16} className="text-[#7A4F00]" />}
-                <span>{copiedType === 'gemini' ? (lang === 'ko' ? '✓ 복사 완료!' : '✓ Copied!') : (lang === 'ko' ? '📋 프롬프트만 복사' : '📋 Copy Prompt')}</span>
+                <span>{copiedType === 'gemini' ? (lang === 'ko' ? '✓ 복사 완료!' : lang === 'ja' ? '✓ コピー完了！' : lang === 'zh' ? '✓ 复制成功！' : '✓ Copied!') : (lang === 'ko' ? '📋 프롬프트만 복사' : lang === 'ja' ? '📋 プロンプトのみコピー' : lang === 'zh' ? '📋 仅复制提示词' : '📋 Copy Prompt')}</span>
               </button>
               <p className="text-[11px] text-amber-700 font-medium text-center">
-                {lang === 'ko' ? '📋 복사 완료! 창 열리면 [Ctrl+V] 누르세요' : '📋 Copied! Press [Ctrl+V] in Gemini'}
+                {lang === 'ko' ? '📋 복사 완료! 창 열리면 [Ctrl+V] 누르세요' : lang === 'ja' ? '📋 コピー完了！画面が開いたら [Ctrl+V]' : lang === 'zh' ? '📋 复制成功！打开窗口后按 [Ctrl+V]' : '📋 Copied! Press [Ctrl+V] in Gemini'}
               </p>
             </div>
 
@@ -3910,7 +3922,7 @@ Please edit the most recent image. Keep the character design, face, expression, 
                 className="interactive-control w-full min-h-[52px] rounded-md bg-gradient-to-r from-[#7C3AED] to-[#5B21B6] text-white font-bold text-[15px] flex items-center justify-center gap-2 shadow-sm hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
               >
                 <Zap size={20} className="text-[#DDD6FE]" />
-                <span>{lang === 'ko' ? '🚀 Grok 분할 실행' : '🚀 Launch Grok'}</span>
+                <span>{lang === 'ko' ? '🚀 Grok 분할 실행' : lang === 'ja' ? '🚀 Grok 分割起動' : lang === 'zh' ? '🚀 Grok 分屏启动' : '🚀 Launch Grok'}</span>
               </button>
               <button
                 type="button"
@@ -3919,10 +3931,10 @@ Please edit the most recent image. Keep the character design, face, expression, 
                 className="interactive-control w-full min-h-[38px] rounded-md bg-[#FFF9EE] text-[#7A4F00] border border-[#FFECA1] font-bold text-[13px] flex items-center justify-center gap-1.5 hover:bg-[#FFECA1] cursor-pointer"
               >
                 {copiedType === 'grok' ? <CheckCircle2 size={16} className="text-[#7C3AED]" /> : <CheckCircle2 size={16} className="text-[#7A4F00]" />}
-                <span>{copiedType === 'grok' ? (lang === 'ko' ? '✓ 복사 완료!' : '✓ Copied!') : (lang === 'ko' ? '📋 프롬프트만 복사' : '📋 Copy Prompt')}</span>
+                <span>{copiedType === 'grok' ? (lang === 'ko' ? '✓ 복사 완료!' : lang === 'ja' ? '✓ コピー完了！' : lang === 'zh' ? '✓ 复制成功！' : '✓ Copied!') : (lang === 'ko' ? '📋 프롬프트만 복사' : lang === 'ja' ? '📋 プロンプトのみコピー' : lang === 'zh' ? '📋 仅复制提示词' : '📋 Copy Prompt')}</span>
               </button>
               <p className="text-[11px] text-purple-700 font-medium text-center">
-                {lang === 'ko' ? '📋 복사 완료! 창 열리면 [Ctrl+V] 누르세요' : '📋 Copied! Press [Ctrl+V] in Grok'}
+                {lang === 'ko' ? '📋 복사 완료! 창 열리면 [Ctrl+V] 누르세요' : lang === 'ja' ? '📋 コピー完了！画面が開いたら [Ctrl+V]' : lang === 'zh' ? '📋 复制成功！打开窗口后按 [Ctrl+V]' : '📋 Copied! Press [Ctrl+V] in Grok'}
               </p>
             </div>
           </div>
