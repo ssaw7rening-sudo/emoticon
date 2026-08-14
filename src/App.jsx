@@ -48,7 +48,16 @@ const THEMES_KO = {
   '운전/교통 ①': ['초보운전 (양보 감사)', '주차 성공 (감격)', '출근길 차 막힘 (지각)', '안전운전 중 (답장 늦음)', '세차했더니 비 옴 (분노)', '네비가 길 잘못 알려줌', '고속도로 시원하게 질주', '기름값 실화냐 (주유)', '버스 놓쳤다 (전력질주)', '지하철 환승 지옥', '도착 5분 전!', '대리운전 불렀음', '오늘도 무사 귀가 완료', '신호 대기 중', '빵빵 경적 금지 (초보)'],
   '운전/교통 ②': ['출퇴근길 만원 버스', '지하철 문 닫힘 (아깝다)', '드라이브 갈 사람?', '주차 자리 찾는 중', '평행주차 멘붕', '음악 크게 틀고 드라이브', '퇴근길 정체 (졸려)', '네비게이션 도착 완료', '안전벨트 착용 필수', '톨게이트 통과', '차 뽑았다 널 데리러 가', '비 와서 서행 운전', '앞차 출발하세요', '교통카드 잔액 부족', '도착해서 연락할게'],
   '생일/파티 ①': ['생일 축하해 (HBD)!', '케이크 촛불 후~', '오늘 주인공은 나야 나', '태어나줘서 고마워', '선물 배송 보냈어!', '소원 빌었어 (이뤄져라)', '생일 파티 시작!', '미역국 챙겨 먹었어?', '축하해줘서 폭풍 감동', '용돈/기프티콘 쏩니다', '한 살 더 먹었네 (눈물)', '꽃길만 걷자!', '최고로 행복한 하루 보내', '생일빵 각오해라', '평생 함께 축하하자'],
-  '생일/파티 ②': ['해피 버스데이 투 유!', '서프라이즈 파티 대성공', '생일 축하 노래 떼창', '고깔모자 착용 완료', '선물 언박싱 감동', '기념일 촛불 끄기', '샴페인 팡팡 터뜨리기', '파티 주인공 입장!', '나이 한 살 배달 완료', '생일 턱 쏠게!', '행복 가득한 날', '축하 메시지 폭발', '소중한 사람의 생일', '파티는 이제부터 시작', '사랑 가득한 하루!']
+  '생일/파티 ②': ['해피 버스데이 투 유!', '서프라이즈 파티 대성공', '생일 축하 노래 떼창', '고깔모자 착용 완료', '선물 언박싱 감동', '기념일 촛불 끄기', '샴페인 팡팡 터뜨리기', '파티 주인공 입장!', '나이 한 살 배달 완료', '생일 턱 쏠게!', '행복 가득한 날', '축하 메시지 폭발', '소중한 사람의 생일', '파티는 이제부터 시작', '사랑 가득한 하루!'],
+  '헬스/오운완': ['오운완!', '득근득근', '근손실 경보', '헬스장 출석', '하체 하는 날', '프로틴 수혈', '1세트만 더!', '스쿼트 완료', '유산소 지옥', '닭가슴살 냠냠', '체지방 컷!', '무게 치러 감', '땀방울 뻘뻘', '몸짱 가자!', '운동 끝!'],
+  '절약/거지방': ['무지출 성공!', '지갑 봉인', '숨만 쉬는 중', '통장이 텅장', '식비 0원 컷', '할인쿠폰 영끌', '가성비 최고', '소비 참음', '거지방 생존', '절약 모드', '포인트 적립', '영수증 충격', '도시락 쌌음', '티끌 모아 태산', '돈 아끼자'],
+  '스터디/취준': ['열공 중!', '스카 출석', '순공 10시간', '기상 인증 完', '멘탈 잡자', 'D-DAY 카운트', '면접 파이팅', '취뽀 가자!', '합격 기원', '과제 마감', '필기 정리 중', '시험 뿌시기', '졸음 퇴치', '꽃길만 걷자', '공부 끝!'],
+  '자취/1인가구': ['배달 도착!', '혼밥 타임', '혼술 (캬~)', '냉장고 털기', '빨래 너는 중', '분리수거 날', '벌레다! (기절)', '집밥 먹고파', '청소 완료', '넷플 정주행', '택배 언박싱', '전등 갈기', '자취 요리사', '포근한 내 방', '소등 굿밤'],
+  '약속/카페투어': ['도착 5분 전', '어디쯤이야?', '카페 가자!', '아아 수혈 중', '자리 잡았음', '웨이팅 중', '여기 존맛!', '디저트 배 따로', '얼른 와~', '뭐 마실래?', '1차 출발', '배 터지겠다', '사진 찰칵', '오늘 꿀잼', '다음에 또 봐'],
+  '캠핑/아웃도어': ['캠핑 출발!', '불멍 타임', '텐트 피칭 完', '고기 굽굽', '감성 충전', '자연 힐링', '라면 끓이는 중', '밤하늘 별빛', '장비 뽐뿌', '커피 내리는 중', '날씨 요정', '우중 캠핑', '철수 완료', '피톤치드 뿜뿜', '집으로 복귀'],
+  '스포츠/직관': ['홈런이다!', '골! 골! 골!', '역전 승리!', '직관 가는 중', '치맥 준비 完', '심판 눈 떠라', '나이스 샷!', '짜릿한 승리', '연장전 돌입', '패배 (눈물)', '응원가 열창', '선발 교체', '우승 가자!', '피켓팅 성공', '오늘 경기 끝'],
+  '대청소/정리': ['대청소 시작!', '당근마켓 나눔', '먼지 털기', '물청소 뽀송', '비우는 삶', '환기 중', '이불 빨래 完', '정리 끝 깔끔', '쓰레기 배출', '새집 같아', '청소 지옥', '뿌듯한 하루', '침대 커버 교체', '방이 반짝반짝', '이제 쉰다'],
+  '페스티벌/노래방': ['티켓팅 성공!', '1열 잡았다', '노래방 가자', '마이크 내 꺼', '흥 폭발!', '떼창 준비', '목 쉬었음', '앵콜 외치는 중', '응원봉 흔들', '페스티벌 출발', '성대 결절 각', '고음 폭발', '여운 남음', '체력 방전', '귀가 완료']
 };
 
 const THEMES_EN = {
@@ -97,7 +106,16 @@ const THEMES_EN = {
   'Driving/Commute ①': ['Student Driver (Thanks!)', 'Parked Perfectly (Joy)', 'Stuck in Traffic (Late)', 'Driving (Will Reply Later)', 'Rained After Car Wash', 'GPS Gave Wrong Turn', 'Cruising Highway', 'Gas Prices Are Crazy', 'Missed the Bus (Sprinting)', 'Subway Transfer Hell', '5 Mins Away!', 'Called a Designated Driver', 'Made it Home Safely', 'Waiting at Red Light', 'Please Don\'t Honk!'],
   'Driving/Commute ②': ['Crowded Commute Bus', 'Doors Closed (So Close!)', 'Who Wants a Drive?', 'Hunting for Parking Spot', 'Parallel Parking Panic', 'Blasting Music on Drive', 'Stuck on Way Home (Sleepy)', 'Arrived at Destination', 'Fasten Seatbelt Always', 'Passing Tollgate', 'Got a New Car!', 'Slow Driving in Rain', 'Green Light Go Please', 'Insufficient Transit Card', 'Will Text When I Arrive'],
   'Birthday/Party ①': ['Happy Birthday (HBD)! 🎂', 'Blowing Out Candles', 'Birthday King/Queen Today!', 'Thank You for Being Born', 'Sent You a Gift!', 'Made a Wish (Come True)', 'Party Time Begins!', 'Did You Eat Soup?', 'Touched by Your Wishes', 'Sending You a Treat/Card', 'One Year Older (Tears)', 'Wishing You Blossom Days', 'Have the Best Day Ever', 'Ready for Birthday Pranks', 'Celebrating Forever Together'],
-  'Birthday/Party ②': ['Happy Birthday to You!', 'Surprise Party Success!', 'Singing Birthday Song', 'Party Hat On!', 'Gift Unboxing Tears', 'Anniversary Candle Lit', 'Popping Champagne!', 'VIP of the Party Enters', 'Delivered +1 Year to Age', 'Treating You Today!', 'A Day Full of Joy', 'Message Inbox Exploding', 'Special Someone\'s B-Day', 'Party is Just Starting', 'Sending Tons of Love!']
+  'Birthday/Party ②': ['Happy Birthday to You!', 'Surprise Party Success!', 'Singing Birthday Song', 'Party Hat On!', 'Gift Unboxing Tears', 'Anniversary Candle Lit', 'Popping Champagne!', 'VIP of the Party Enters', 'Delivered +1 Year to Age', 'Treating You Today!', 'A Day Full of Joy', 'Message Inbox Exploding', 'Special Someone\'s B-Day', 'Party is Just Starting', 'Sending Tons of Love!'],
+  'Fitness/Gym': ['Workout Done!', 'Muscle gain', 'Gym time', 'Leg day tears', '1 more set!', 'Protein refill', 'Squat complete', 'Cardio burn', 'Chicken breast', 'Sweat & grind', 'Heavy lifting', 'Cut that fat!', 'Fit & strong', 'Post-workout', 'Workout finish'],
+  'Frugal/No Spend': ['$0 Spend Day!', 'Wallet sealed', 'Saving mode', 'Empty account', '$0 meal cut', 'Coupon hunt', 'Best value', 'Resisted urge', 'Budget survival', 'Frugal life', 'Earn points', 'Receipt shock', 'Packed lunch', 'Every penny counts', 'Save money'],
+  'Study/Career': ['Studying hard!', 'Library check-in', '10hr study', 'Wake up check', 'Stay focused', 'D-Day countdown', 'Ace the interview', 'Get hired!', 'Pass the exam', 'Due today', 'Taking notes', 'Crush tests', 'Beat sleepiness', 'Bright future', 'Study done!'],
+  'Solo Life/Home': ['Delivery arrived!', 'Solo dining', 'Solo drink (Cheers)', 'Empty fridge', 'Hanging laundry', 'Trash day', 'Bug alert! (Scream)', 'Craving home food', 'Clean room', 'Binge watching', 'Unboxing parcel', 'Lightbulb fixed', 'Home chef', 'Cozy sweet room', 'Lights out, gn'],
+  'Hangout/Cafe': ['5 mins away', 'Where are you?', 'Cafe time!', 'Iced coffee refill', 'Got a table', 'In line waiting', 'So delicious!', 'Room for dessert', 'Hurry over!', 'What to drink?', 'Let\'s head out', 'So full!', 'Photo time 📸', 'So much fun', 'See you soon'],
+  'Camping/Outdoor': ['Camping trip!', 'Campfire chill', 'Tent pitched', 'BBQ grilling', 'Cozy vibes', 'Nature healing', 'Ramen boiling', 'Starry night', 'Gear envy', 'Drip coffee', 'Sunny weather', 'Rainy camping', 'Camp packed up', 'Fresh forest air', 'Heading home'],
+  'Sports/Stadium': ['Home run!', 'Goal Goal Goal!', 'Comeback win!', 'Headed to stadium', 'Beer & snacks ready', 'Open your eyes ref', 'Nice shot!', 'Thrilling victory', 'Overtime thriller', 'Heartbreaking loss', 'Singing chants', 'Pitcher sub', 'Championship bound!', 'Got tickets!', 'Game over'],
+  'Deep Clean/Organize': ['Deep clean starts!', 'Giving away items', 'Dusting off', 'Mopping fresh', 'Minimalist life', 'Airing out', 'Bedding washed', 'All neat & clean', 'Trash taken out', 'Looks brand new', 'Cleaning grind', 'Proud productive day', 'Fresh bed sheets', 'Sparkling clean', 'Rest time now'],
+  'Festival/Karaoke': ['Got the ticket!', 'Front row seat', 'Karaoke time!', 'Mic is mine', 'Hype overload!', 'Ready to sing along', 'Voice is gone', 'Chanting encore', 'Wave lightsticks', 'Festival bound!', 'Vocal cords fried', 'High note burst', 'Post-concert high', 'Total burnout', 'Safe at home']
 };
 
 const THEMES_JA = {
@@ -147,7 +165,16 @@ const THEMES_JA = {
   '運転/交通 ①': ['初心者マーク（譲ってくれて感謝）', '駐車成功！（感動）', '通勤ラッシュ渋滞（遅刻ピンチ）', '運転中（返信遅れます）', '洗車したら雨降った（怒）', 'ナビに騙された…', '高速道路を快適ドライブ', 'ガソリン高すぎ！', 'バス乗り遅れた（猛ダッシュ）', '地下鉄乗り換え地獄', 'あと5分で着く！', '代行運転呼びました', '今日も無事帰宅完了', '信号待ち中', 'クラクション鳴らさないで（初心者）'],
   '運転/交通 ②': ['通勤満員バス', '電車のドア閉まった（悔しい）', 'ドライブ行く人？', '駐車場探し中', '縦列駐車でパニック', '音楽爆音でドライブ', '帰り道の大渋滞（眠い）', '目的地に到着しました', 'シートベルト必須！', '料金所通過', '車買ったよ！迎えに行くね', '雨だから安全運転', '前の車進んで〜', 'ICカード残高不足', '着いたら連絡するね'],
   '誕生日/パーティー ①': ['お誕生日おめでとう（おたおめ）！🎂', 'ろうそくをふーっ！', '今日の主役は私！', '生まれてきてくれてありがとう', 'プレゼント送ったよ！', '願い事した（叶いますように）', 'パーティーの始まり！', 'お祝いしてくれて感動', 'ギフトカード奢るね！', 'また一つ歳をとった（涙）', '花道だけを歩こう！', '最高に幸せな一日を', '誕生日プレゼント期待してね', 'ずっと一緒にお祝いしよう', 'いつもありがとう！'],
-  '誕生日/パーティー ②': ['ハッピーバースデートゥーユー！', 'サプライズ大成功！', 'バースデーソング合唱', '三角帽子かぶったよ', 'プレゼント開封で涙', '記念日のロウソク消し', 'シャンパンで乾杯！', 'パーティーの主役登場！', '年齢＋1歳をお届け', '今日は奢っちゃう！', '幸せいっぱいの記念日', 'お祝いメッセージ殺到', '大切な人の特別な日', 'パーティーはこれから！', '愛を込めておめでとう！']
+  '誕生日/パーティー ②': ['ハッピーバースデートゥーユー！', 'サプライズ大成功！', 'バースデーソング合唱', '三角帽子かぶったよ', 'プレゼント開封で涙', '記念日のロウソク消し', 'シャンパンで乾杯！', 'パーティーの主役登場！', '年齢＋1歳をお届け', '今日は奢っちゃう！', '幸せいっぱいの記念日', 'お祝いメッセージ殺到', '大切な人の特別な日', 'パーティーはこれから！', '愛を込めておめでとう！'],
+  'フィットネス・筋トレ': ['筋トレ完了！', 'パンプアップ', 'ジム到着', '脚トレの日', 'あと1セット！', 'プロテイン補給', 'スクワット完', '有酸素地獄', 'チキン胸肉', '汗だく', '重量更新', '脂肪燃焼', 'マッチョ化', '筋肉痛…', '運動終了！'],
+  '節約・無支出': ['ノーマネーデー成功！', '財布封印', '節約モード', '口座すっからかん', '食費0円カット', 'クーポン活用', 'コスパ最強', '衝動買い我慢', '節約生活', 'ポイント貯金', 'レシートの悲劇', 'お弁当持参', '塵も積もれば', 'コツコツ貯金', '無駄遣いゼロ'],
+  '勉強・就活': ['猛勉強中！', '自習室到着', '集中10時間', '起床確認！', 'メンタル維持', 'D-Dayカウント', '面接ファイト', '内定ゲット！', '合格祈願', '課題締切', 'ノート整理中', 'テスト満点', '眠気撃退', 'サクラ咲け', '今日の勉強完！'],
+  '一人暮らし・自炊': ['出前到着！', 'ひとり飯', '晩酌タイム（乾杯）', '冷蔵庫整理', '洗濯干し中', 'ゴミ出し日', '虫出た！（悲鳴）', 'お袋の味恋しい', '掃除完了', '動画一気見', '荷物開封', '電球交換完了', '自炊マスター', '落ち着く我が家', '消灯おやすみ'],
+  'カフェ巡り・約束': ['あと5分で到着', '今どこ？', 'カフェ行こう！', 'アイスコーヒー補給', '席取ったよ', '行列待ち中', 'めっちゃ美味しい！', '別腹スイーツ', '早く来て～', '何飲む？', '1次会出発', 'お腹いっぱい', '写真パシャリ', '今日楽しかった', 'また会おうね'],
+  'キャンプ・アウトドア': ['キャンプ出発！', '焚き火タイム', 'テント設営完了', 'お肉ジュージュー', 'エモい雰囲気', '自然で癒し', 'ラーメン調理中', '満天の星空', 'ギア自慢', 'ドリップコーヒー', '晴れ男/晴れ女', '雨中キャンプ', '撤収完了', '森林浴最高', '帰路へ'],
+  'スポーツ・現地観戦': ['ホームラン！', 'ゴーーール！', '逆転勝利！', 'スタジアム現地観戦', 'チキン＆ビール完', '審判どこ見てる', 'ナイスショット！', '劇的勝利', '延長戦突入', '悔し涙…', '応援歌大合唱', '選手交代', '優勝目指せ！', 'チケット争奪戦勝利', '試合終了！'],
+  '大掃除・断捨離': ['大掃除スタート！', 'フリマ断捨離', 'ホコリ払い', '水拭きピカピカ', 'ミニマリスト', '換気中', '布団丸洗い完了', '片付け完了綺麗', 'ゴミ捨て完了', '新築みたい', '掃除地獄', '充実した一日', 'シーツ交換', '部屋ピカピカ', 'やっとひと息'],
+  'フェス・カラオケ': ['チケ発大勝利！', '最前列ゲット', 'カラオケ行こう', 'マイク独占', 'テンション爆発！', '大合唱の準備', '喉ガラガラ', 'アンコール叫ぶ', 'ペンライト振る', 'フェス出発！', '声帯崩壊寸前', '高音シャウト', '余韻ひたひた', '体力ゼロ', '無事帰宅']
 };
 
 const THEMES_ZH = {
@@ -197,7 +224,16 @@ const THEMES_ZH = {
   '驾驶/交通 ①': ['新手上路（感谢让行）', '一把入库倒车入库成功', '早高峰大堵车（要迟到）', '正在安全驾驶中（稍后回复）', '刚洗完车就下雨（抓狂）', '导航带我走错路了', '在高速上畅快飞驰', '油价真的太贵了（加油）', '没赶上公交（狂奔中）', '地铁换乘修罗场', '还有5分钟到达！', '叫了代驾回家', '今天也平安顺利到家', '正在红灯等待中', '请勿催促按喇叭（新手）'],
   '驾驶/交通 ②': ['早晚高峰挤爆公交', '地铁门关上了（差一秒）', '有谁想一起去兜风？', '到处找停车位中', '侧方停车心态大崩', '音量拉满开着音乐兜风', '下班路上一路大堵（好困）', '导航提示已到达目的地', '务必系好安全带', '通过高速收费站', '喜提新车来接你啦', '下雨路滑减速慢行', '前车师傅快起步呀', '交通卡余额不足', '到了给你发微信'],
   '生日/派对 ①': ['祝你生日大快乐（HBD）！🎂', '吹灭生日蛋糕蜡烛〜', '今天的主角就是我啦！', '感谢你的降临来到世界', '生日礼物已发货！', '许了个美好的愿望（一定要实现）', '生日派对正式开场！', '吃长寿面了吗？', '收到你的祝福超感动', '发个大红包/请你喝奶茶', '又长了一岁（假装抹泪）', '愿你一路繁花似锦！', '度过最幸福最棒的一天', '准备接受生日惊喜吧', '每年都要一起过生日哦'],
-  '生日/派对 ②': ['祝你生日快乐歌！', '惊喜派对圆满大成功', '全场齐唱生日歌', '戴上可爱的生日尖尖帽', '拆礼物拆到手软感动', '吹熄纪念日蜡烛', '香槟喷涌欢呼庆祝！', '派对全场焦点隆重登场', '您的年龄已自动+1', '今天全部由我买单！', '充满幸福的美好一天', '祝福消息疯狂刷屏', '最最珍贵之人的生日', '派对狂欢现在才刚开始', '把满满的爱都送给你！']
+  '生日/派对 ②': ['祝你生日快乐歌！', '惊喜派对圆满大成功', '全场齐唱生日歌', '戴上可爱的生日尖尖帽', '拆礼物拆到手软感动', '吹熄纪念日蜡烛', '香槟喷涌欢呼庆祝！', '派对全场焦点隆重登场', '您的年龄已自动+1', '今天全部由我买单！', '充满幸福的美好一天', '祝福消息疯狂刷屏', '最最珍贵之人的生日', '派对狂欢现在才刚开始', '把满满的爱都送给你！'],
+  '健身/今日运动打卡': ['今日运动打卡！', '增肌中', '健身房报道', '痛苦练腿日', '再来一组！', '蛋白粉补充', '深蹲完成', '疯狂有氧', '鸡胸肉干饭', '挥洒汗水', '加重量！', '减脂冲刺', '身材管理', '肌肉酸痛', '运动结束！'],
+  '节约/无消费日': ['无消费日打卡！', '封印钱包', '省钱模式', '钱包比脸干净', '伙食费0元', '优惠券叠满', '性价比王者', '忍住不买', '贫穷苟住', '省吃俭用', '积分兑换', '看账单心梗', '自带便当', '积少成多', '攒钱暴富'],
+  '学习/求职备考': ['沉迷学习！', '自习室报道', '专注10小时', '早起打卡', '稳住心态', '考试倒计时', '面试冲刺', '顺利上岸！', '逢考必过', '作业截止', '笔记整理中', '拿下考试', '赶走瞌睡', '前程似锦', '今日学完！'],
+  '独居/一人生活': ['外卖到了！', '一人食时间', '小酌一杯（爽）', '清理冰箱', '晾晒衣服', '扔垃圾日', '有虫！（尖叫）', '想吃家常菜', '大扫除完成', '疯狂刷剧', '快乐拆快递', '换灯泡成功', '独居小厨神', '温馨小窝', '关灯晚安'],
+  '约会/探店喝咖啡': ['还有5分钟到', '你到哪啦？', '去咖啡馆吧！', '冰美式续命', '占到位置了', '排队中', '绝绝子超好吃！', '甜品第二个胃', '快来呀～', '喝点什么？', '第一轮出发', '撑到爆炸', '拍照打卡 📸', '今天超开心', '下次再聚'],
+  '露营/户外治愈': ['露营出发！', '篝火发呆时刻', '帐篷搭建完毕', '烤肉滋滋香', '氛围感拉满', '大自然治愈', '煮泡面中', '漫天繁星', '装备大赏', '手冲咖啡', '晴天好天气', '雨中露营', '撤营完毕', '吸氧森林浴', '平安到家'],
+  '体育/球赛现场': ['全垒打！', '进球啦！！！', '绝地大逆转！', '现场观赛中', '炸鸡啤酒就位', '裁判睁开眼', '漂亮一击！', '燃炸绝杀', '进入加时赛', '惜败泪目…', '高唱助威歌', '换人调整', '冲向冠军！', '抢票大成功', '比赛结束！'],
+  '大扫除/极简收纳': ['大扫除开始！', '断舍离送闲置', '掸灰除尘', '拖地干干净净', '极简生活', '开窗通风', '洗晒被褥完毕', '收纳整整齐齐', '垃圾分类清运', '焕然一新', '保洁地狱', '充实的一天', '换新床单', '屋子亮闪闪', '终于能歇了'],
+  '音乐节/K歌嗨唱': ['抢票成功！', '抢到前排C位', '去KTV飙歌', '话筒是我的', '嗨翻全场！', '全场大合唱', '嗓子喊哑了', '大喊安可中', '挥舞荧光棒', '音乐节出发！', '声带升华', '高音轰炸', '余音绕梁', '电量耗尽', '安全到家']
 };
 
 const ART_STYLE_PROMPT_MAP_KO = {
