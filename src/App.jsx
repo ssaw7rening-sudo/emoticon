@@ -3460,19 +3460,24 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
               </div>
             </div>
             
-            {/* Live Active Settings Status Banner (Original Brand Palette) */}
-            <div className="bg-[#EAF8F3] text-mint-strong rounded-lg p-3 shadow-bubbly flex flex-col sm:flex-row sm:items-center justify-between gap-2 border border-mint-border">
-              <div className="flex items-center gap-2 flex-wrap">
+            {/* Live Active Settings Status Banner (Strict 1-Line Clean Header) */}
+            <div className="bg-[#EAF8F3] text-mint-strong rounded-lg px-3.5 py-2.5 shadow-bubbly flex items-center justify-between gap-3 border border-mint-border overflow-hidden">
+              <div className="flex items-center gap-2 shrink-0 whitespace-nowrap">
                 <span className="bg-[#C5F2E3] text-[#184F43] border border-[#A6E3D0] text-[11px] font-black px-2.5 py-0.5 rounded-md uppercase tracking-wide shadow-xs">
                   ⚡ {lang === 'ko' ? '실시간 프롬프트 적용 중' : 'Live Prompt Active'}
                 </span>
-                <span className="text-[13px] font-bold text-mint-strong">
+                <span className="text-[13px] font-bold text-mint-strong whitespace-nowrap">
                   {characterSource === 'photo' 
                     ? `📸 ${lang === 'ko' ? '참고 사진' : 'Photo Reference'} (${getPhotoModeLabel(lang)})`
+                    : characterSource === 'random'
+                    ? `🎲 ${lang === 'ko' ? '랜덤 캐릭터 모드' : 'Random Character'}`
                     : `✏️ ${lang === 'ko' ? '직접 캐릭터 설정' : 'Direct Character Setup'}`}
                 </span>
               </div>
-              <div className="text-[12px] font-bold text-mint-strong/90 truncate max-w-md">
+              <div 
+                className="min-w-0 flex-1 text-right text-[12px] font-bold text-mint-strong/90 truncate cursor-default whitespace-nowrap" 
+                title={charManual.trim() ? `${lang === 'ko' ? '적용된 태그:' : 'Active Tags:'} ${charManual}` : ''}
+              >
                 {charManual.trim() 
                   ? `${lang === 'ko' ? '적용된 태그:' : 'Active Tags:'} ${charManual}` 
                   : (lang === 'ko' ? '태그 미선택 (기본 2D 캐릭터 자동 적용)' : 'No tags (Default 2D character active)')}
