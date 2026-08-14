@@ -2525,8 +2525,8 @@ function App() {
 
     const modeInstructions = {
       exact: {
-        ko: '이 프롬프트를 사용할 때 AI 채팅에 함께 첨부한 사진을 최우선 참고 이미지로 사용해주세요.\n사진 속 대상의 실제 얼굴 비율, 이목구비(눈 크기·모양, 코, 입술, 턱선), 헤어스타일, 피부톤을 사실적으로 재현한 캐리커처 스타일 2D 스티커로 그려주세요. 한눈에 "이 사람이다"라고 알아볼 수 있을 정도로 얼굴 유사도를 높게 유지하되, 외곽선과 채색은 깔끔한 2D 스티커로 마무리하세요.',
-        en: 'When using this prompt, treat the attached photo in the AI chat as the highest priority reference image.\nDraw a caricature-style 2D sticker that realistically reproduces the subject\'s actual face proportions, facial features (eye size and shape, nose, lips, jawline), hairstyle, and skin tone. The face must be recognizable enough that viewers can immediately identify the person, while the linework and coloring should have a clean 2D sticker finish.',
+        ko: '이 프롬프트를 사용할 때 AI 채팅에 함께 첨부한 사진을 최우선 참고 이미지로 사용해주세요.\n사진 속 대상의 실제 얼굴 비율, 이목구비(눈 크기·모양, 코, 입술, 턱선), 헤어스타일, 피부톤을 95% 이상 사실적으로 재현한 2.5등신 대두 SD/Chibi 마스코트 캐리커처 스티커로 그려주세요. 한눈에 "이 사람이다"라고 알아볼 수 있을 정도로 얼굴 유사도를 높게 유지하되, 전체 체형은 머리가 크고 앙증맞은 2.5등신 SD 마스코트로 표현하고, 외곽선과 채색은 깔끔한 2D 스티커로 마무리하세요.',
+        en: 'When using this prompt, treat the attached photo in the AI chat as the highest priority reference image.\nDraw a 2.5-head SD/Chibi mascot caricature sticker that realistically reproduces the subject\'s actual face proportions, facial features (eye size and shape, nose, lips, jawline), hairstyle, and skin tone with 95%+ high resemblance. Keep the face recognizable as the real person while rendering the full body in a cute 2.5-head SD chibi mascot proportion with clean 2D sticker linework.',
       },
       features: {
         ko: '사진 속 대상의 얼굴 자체를 닮게 그릴 필요는 없습니다. 대신 헤어스타일, 안경 유무, 의상, 체형, 전체적인 분위기 등 시그니처 포인트만 추출하여 스타일리시한 2D 캐릭터 아바타로 새롭게 디자인해주세요.',
@@ -2632,7 +2632,7 @@ function App() {
     }[photoReferenceMode];
 
     const photoAppearanceKo = {
-      exact: '스타일화하더라도 참고 사진 인물의 실제 눈매 각도, 눈 크기 비율, 콧대, 입술 두께, 턱선, 헤어스타일, 피부톤을 절대 변형하지 말고 95% 이상 동일하게 유지 (사진에 없는 악세사리 임의 추가 금지)',
+      exact: '스타일화하더라도 참고 사진 인물의 실제 눈매 각도, 눈 크기 비율, 콧대, 입술 두께, 턱선, 헤어스타일, 피부톤을 절대 변형하지 말고 95% 이상 동일하게 유지하되, 머리가 크고 앙증맞은 2.5등신 SD/Chibi 마스코트 체형 적용 (사진에 없는 악세사리 임의 추가 금지)',
       features: '이목구비 자체를 닮게 그릴 필요 없이, 사진에서 상징적인 특징(헤어스타일/품종 실루엣, 안경/목줄/스카프, 의상/털 배색, 분위기)만 추출하여 머리가 크고 앙증맞은 2D SD/Chibi 마스코트 캐릭터로 디자인 (사진에 없는 악세사리 임의 추가 금지)',
       characterize: '전체적인 인상(헤어/털 색상, 분위기)만 가볍게 참고하고, 큰 동그란 머리와 앙증맞고 통통한 몸체, 반짝이는 눈을 가진 극도로 귀여운 2.5등신 SD/Chibi 마스코트 캐릭터로 완전 변환',
     }[photoReferenceMode];
@@ -2669,7 +2669,7 @@ function App() {
     }[photoReferenceMode];
 
     const photoAppearanceKo = {
-      exact: '스타일화하더라도 참고 사진 인물의 실제 눈매 각도, 눈 크기 비율, 콧대, 입술 두께, 턱선, 헤어스타일, 피부톤을 절대 변형하지 말고 95% 이상 동일하게 유지 (사진에 없는 악세사리 임의 추가 금지)',
+      exact: '스타일화하더라도 참고 사진 인물의 실제 눈매 각도, 눈 크기 비율, 콧대, 입술 두께, 턱선, 헤어스타일, 피부톤을 절대 변형하지 말고 95% 이상 동일하게 유지하되, 머리가 크고 앙증맞은 2.5등신 SD/Chibi 마스코트 체형 적용 (사진에 없는 악세사리 임의 추가 금지)',
       features: '이목구비 자체를 닮게 그릴 필요 없이, 사진에서 상징적인 특징(헤어스타일/품종 실루엣, 안경/목줄/스카프, 의상/털 배색, 분위기)만 추출하여 머리가 크고 앙증맞은 2D SD/Chibi 마스코트 캐릭터로 디자인 (사진에 없는 악세사리 임의 추가 금지)',
       characterize: '전체적인 인상(헤어/털 색상, 분위기)만 가볍게 참고하고, 큰 동그란 머리와 앙증맞고 통통한 몸체, 반짝이는 눈을 가진 극도로 귀여운 2.5등신 SD/Chibi 마스코트 캐릭터로 완전 변환',
     }[photoReferenceMode];
@@ -2837,7 +2837,11 @@ ${textExclusion} No watermark, frame, duplicate character, extra limbs, cropped 
     if (lang === 'ko') {
       const panelPlan = emoticons.map((phrase, index) => `${Math.floor(index / 5) + 1}행 ${index % 5 + 1}열: "${phrase.trim()}"`).join('\n');
       const textPolicy = gptTextMode === 'text'
-        ? '각 셀에 지정된 문구를 캐릭터 옆이나 위에 정확히 한 번만 적으세요. 생성 전에 15개 문구의 철자와 띄어쓰기를 확인하고, 일관되고 읽기 쉬운 손글씨를 사용하세요. 다른 글자는 넣지 마세요.'
+        ? `[고품질 한글 타이포그래피 및 감정 포인트 효과 지침]
+1. 각 셀에 지정된 문구를 캐릭터 옆이나 머리 위에 읽기 쉬운 2D 볼드 팝아트 손글씨 스티커 폰트로 정확히 한 번만 적으세요.
+2. 모든 글자에 또렷하고 두꺼운 순백색 스티커 테두리(White Die-Cut Outline Stroke)를 둘러 선명하게 돋보이게 렌더링하세요.
+3. 각 문구의 감정에 맞춰 아기자기한 포인트 효과(하트💕, 황금왕관👑, 따봉👍, 폭죽🎉, 꽃다발💐, 땀방울💦, 반짝이✨, zZ 등)를 글자 주변에 자연스럽게 결합하세요.
+4. 텍스트 상자(박스), 말풍선, 괄호 (), 대괄호 [], 따옴표 "", 스티커 번호는 절대로 넣지 마세요.`
         : '각 문구는 해당 셀의 표정, 자세와 행동을 정하는 맥락으로만 사용하세요. 이미지에는 문구나 다른 글자를 그리지 마세요.';
       const textExclusion = gptTextMode === 'text'
         ? '추가 문구, 틀린 철자, 임의의 글자, 셀 번호, 따옴표와 텍스트 박스 금지.'
@@ -2856,7 +2860,7 @@ ${referenceInstruction}
 의상: ${character.outfit}
 
 [최우선 화풍]
-${artDirection}. 15개 셀 모두 같은 선, 질감, 색감과 캐릭터 비율을 적용하세요.
+귀엽고 친근한 2.5등신 대두 SD/Chibi 마스코트 이모티콘 스타일, 깔끔한 외곽선, 조화로운 색감. 15개 셀 모두 같은 선, 질감, 색감과 2.5등신 캐릭터 비율을 적용하세요.
 
 [패널 계획]
 각 문구에서 바로 이해할 수 있는 표정 하나와 서로 다른 전신 자세 하나를 구성하세요. 셀마다 보조 소품과 만화 효과는 각각 최대 하나만 사용하고 자세를 반복하지 마세요.
