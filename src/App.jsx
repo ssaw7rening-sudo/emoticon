@@ -2963,17 +2963,24 @@ ${textExclusion} Do NOT add any unrequested trailing punctuation marks at the en
 
   const getRepairPrompt = (repairType, textMode, model = 'gpt') => {
     const targetPhrase = getSelectedPhrase();
-    const isKorean = lang === 'ko';
 
     const modelTag = {
-      gpt: isKorean ? '[대상 AI: ChatGPT (OpenAI / DALL-E 3 엔진)]' : '[TARGET AI: ChatGPT (OpenAI / DALL-E 3 Engine)]',
-      gemini: isKorean ? '[대상 AI: Gemini (Google / Imagen 3 엔진)]' : '[TARGET AI: Gemini (Google / Imagen 3 Engine)]',
-      grok: isKorean ? '[대상 AI: Grok (xAI / Flux.1 엔진)]' : '[TARGET AI: Grok (xAI / Flux.1 Engine)]',
+      gpt: lang === 'ko' ? '[대상 AI: ChatGPT (OpenAI / DALL-E 3 엔진)]' : lang === 'ja' ? '[対象AI: ChatGPT (OpenAI / DALL-E 3)]' : lang === 'zh' ? '[目标AI: ChatGPT (OpenAI / DALL-E 3)]' : '[TARGET AI: ChatGPT (OpenAI / DALL-E 3 Engine)]',
+      gemini: lang === 'ko' ? '[대상 AI: Gemini (Google / Imagen 3 엔진)]' : lang === 'ja' ? '[対象AI: Gemini (Google / Imagen 3)]' : lang === 'zh' ? '[目标AI: Gemini (Google / Imagen 3)]' : '[TARGET AI: Gemini (Google / Imagen 3 Engine)]',
+      grok: lang === 'ko' ? '[대상 AI: Grok (xAI / Flux.1 엔진)]' : lang === 'ja' ? '[対象AI: Grok (xAI / Flux.1)]' : lang === 'zh' ? '[目标AI: Grok (xAI / Flux.1)]' : '[TARGET AI: Grok (xAI / Flux.1 Engine)]',
     }[model] || '';
 
-    const currentCharTrait = charManual.trim() || (isKorean ? '동글동글 귀여운 마스코트' : 'Cute mascot');
+    const defaultTrait = {
+      ko: '동글동글 귀여운 마스코트',
+      ja: 'まん丸でかわいいマスコット',
+      zh: '圆滚滚可爱的吉祥物',
+      en: 'Cute round mascot character',
+    }[lang] || 'Cute mascot';
 
-    if (isKorean) {
+    const currentCharTrait = charManual.trim() || defaultTrait;
+
+    // 1. Korean Repair Prompts
+    if (lang === 'ko') {
       const repairPromptsKo = {
         identity: `${modelTag}
 [긴급 시각 수정: 캐릭터 얼굴 및 외형 재작업]
@@ -2995,6 +3002,53 @@ ${textExclusion} Do NOT add any unrequested trailing punctuation marks at the en
       return repairPromptsKo[repairType];
     }
 
+    // 2. Japanese Repair Prompts
+    if (lang === 'ja') {
+      const repairPromptsJa = {
+        identity: `${modelTag}
+[緊急修正: キャラクターの顔と外見の再描画]
+直前の画像でキャラクターの顔や特徴が崩れてしまいました。ポーズと背景は維持したまま、顔、目、耳/髪型、体型を以下の定義に合わせて明確に描き直してください:
+👉 キャラクターの元デザイン: "${currentCharTrait}"
+顔の歪みを修正し、キャラクターの個性が100%反映された新しい修正版を1枚生成してください。`,
+
+        crop: `${modelTag}
+[緊急修正: カメラのズームアウトと全身の余白確保]
+直前の画像でキャラクターの頭や足先が見切れてしまいました！
+カメラを30%ズームアウトしてキャラクターサイズを調整してください。
+頭（耳/帽子含む）から足先まで全身が中央に完全に収まり、四方に最低20%の余白ができるように構図を再配置して描き直してください。`,
+
+        text: `${modelTag}
+[緊急修正: 誤字を消去してテキストを正確に再印字]
+直前の画像の文字が崩れているか誤字があります。
+不正確な文字を完全に消去し、キャラクターの横に日本語で「${targetPhrase}」というフレーズのみを、くっきりと読みやすいステッカーフォントで正確に描いてください。`,
+      };
+      return repairPromptsJa[repairType];
+    }
+
+    // 3. Chinese Repair Prompts
+    if (lang === 'zh') {
+      const repairPromptsZh = {
+        identity: `${modelTag}
+[紧急修正: 重新绘制角色面部与特征]
+上一张图片中的角色面部特征发生了变形。请保持当前的姿势和背景，并严格按照以下定义明显重绘面部、五官、发型/耳朵及体型:
+👉 角色原始设定: "${currentCharTrait}"
+彻底修复面部扭曲，生成一张100%还原该角色外观的全新修正图。`,
+
+        crop: `${modelTag}
+[紧急修正: 镜头拉远并确保全身完整及边距]
+上一张图片中角色的头部或脚部被边缘裁剪了！
+请将镜头向后拉远(Zoom Out) 30%以缩小角色比例。
+确保从头顶（包括耳朵/帽子）到脚尖的全身完整显示在画面正中央，且四周保留至少20%的充足白色边距。`,
+
+        text: `${modelTag}
+[紧急修正: 清除错别字并准确重印文本]
+上一张图片中的文字模糊或出现了错别字。
+请彻底清除错误的文字，仅在角色身旁用清晰醒目的贴纸字体准确印上中文“${targetPhrase}”。（严禁出现多余错字）`,
+      };
+      return repairPromptsZh[repairType];
+    }
+
+    // 4. English / Global Default Repair Prompts
     const repairPromptsEn = {
       identity: `${modelTag}
 [URGENT VISUAL CORRECTION — REDRAW CHARACTER FACE & IDENTITY]
