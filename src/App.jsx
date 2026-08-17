@@ -2549,8 +2549,8 @@ function App() {
 
     const modeInstructions = {
       exact: {
-        ko: '이 프롬프트를 사용할 때 AI 채팅에 함께 첨부한 사진을 최우선 참고 이미지로 사용해주세요.\n사진 속 대상의 실제 얼굴 비율, 이목구비(눈 크기·모양, 코, 입술, 턱선), 헤어스타일, 피부톤을 95% 이상 사실적으로 재현한 2.5등신 대두 SD/Chibi 마스코트 캐리커처 스티커로 그려주세요. 한눈에 "이 사람이다"라고 알아볼 수 있을 정도로 얼굴 유사도를 높게 유지하되, 전체 체형은 머리가 크고 앙증맞은 2.5등신 SD 마스코트로 표현하고, 외곽선과 채색은 깔끔한 2D 스티커로 마무리하세요.',
-        en: 'When using this prompt, treat the attached photo in the AI chat as the highest priority reference image.\nDraw a 2.5-head SD/Chibi mascot caricature sticker that realistically reproduces the subject\'s actual face proportions, facial features (eye size and shape, nose, lips, jawline), hairstyle, and skin tone with 95%+ high resemblance. Keep the face recognizable as the real person while rendering the full body in a cute 2.5-head SD chibi mascot proportion with clean 2D sticker linework.',
+        ko: '사진 속 대상의 실제 얼굴 비율, 이목구비(눈 크기·모양, 코, 입술, 턱선), 헤어스타일, 피부톤을 95% 이상 사실적으로 재현한 2.5등신 대두 SD/Chibi 마스코트 캐리커처 스티커로 그려주세요. 한눈에 "이 사람이다"라고 알아볼 수 있을 정도로 얼굴 유사도를 높게 유지하되, 전체 체형은 머리가 크고 앙증맞은 2.5등신 SD 마스코트로 표현하고, 외곽선과 채색은 깔끔한 2D 스티커로 마무리하세요.',
+        en: 'Draw a 2.5-head SD/Chibi mascot caricature sticker that realistically reproduces the subject\'s actual face proportions, facial features (eye size and shape, nose, lips, jawline), hairstyle, and skin tone with 95%+ high resemblance. Keep the face recognizable as the real person while rendering the full body in a cute 2.5-head SD chibi mascot proportion with clean 2D sticker linework.',
       },
       features: {
         ko: '사진 속 대상의 얼굴 자체를 닮게 그릴 필요는 없습니다. 대신 헤어스타일, 안경 유무, 의상, 체형, 전체적인 분위기 등 시그니처 포인트만 추출하여 스타일리시한 2D 캐릭터 아바타로 새롭게 디자인해주세요.',
