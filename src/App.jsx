@@ -3069,15 +3069,17 @@ ${referenceInstructionKo}
 ${panelPlanKo}
 보조 소품 & 반짝이 효과: ${character.props}, ${character.effects}, 최소한의 포인트 효과.
 
-[캔버스 레이아웃 — 절대적 5열 × 3행 15셀 그리드 고정]
-반드시 정확히 가로 5개 × 세로 3행 구조로만 총 15개 스티커를 일정 간격으로 깨끗하게 배치하세요. 4행 구조, 세로 배치, 비대칭 삐뚤어진 배열은 엄격히 금지됩니다.
-1행에 스티커 5개, 2행에 스티커 5개, 3행에 스티커 5개가 완벽한 수평 수직 열에 맞춰 배치되어야 합니다. ${bgInstructionKo} 격자선, 구별선, 크롭 마크, 바운딩 박스, 스티커 번호 절대 금지.
+[캔버스 레이아웃 — 절대적 5열 × 3행 15셀 그리드 고정 (16개 4×4 생성 엄격 금지)]
+1. 총 개수 엄격 준수: 스티커의 총 개수는 반드시 '정확히 15개(5개 × 3행)'여야 하며, 16개(4×4), 12개, 20개 등 다른 개수로 생성하는 것을 절대 금지합니다. 특히 '4열 × 4행(16개) 그리드'는 흔히 발생하는 심각한 실수이니 절대로 만들지 마세요.
+2. 5×3 수평 수직 정렬: 반드시 1행에 5개, 2행에 5개, 3행에 5개(총 3개 행)의 수평·수직 격자 열에 완벽히 맞춰 배치하세요. 세로형 배치나 비대칭 배열은 엄격히 금지됩니다.
+3. 자체 카운트 재검증: 이미지를 완성하기 전에 각 행의 스티커 개수를 '1행 5개, 2행 5개, 3행 5개'로 직접 세어 총 15개가 맞는지 반드시 재검증한 뒤 렌더링하세요.
+4. 배경 및 테두리: ${bgInstructionKo} 격자선, 구별선, 크롭 마크, 바운딩 박스, 스티커 번호 절대 금지.
 
 [글자 정책]
 ${textPolicyKo}
 
 [제외 조건]
-${textExclusionKo} 가이드선, 격자선, 셀 구별선, 테두리선, 표 선, 크롭 마크, 패널 상자, 워터마크, 외곽 프레임, 한 스티커 안의 캐릭터 중복, 팔다리 누락/추가, 크롭된 신체, 반신·흉상 컷, 탁한 배경색, 회색·흰색 체크무늬/체커보드 패치.`;
+${textExclusionKo} 4×4(16개) 그리드 레이아웃, 15개 초과/미만 개수 생성, 가이드선, 격자선, 셀 구별선, 테두리선, 표 선, 크롭 마크, 패널 상자, 워터마크, 외곽 프레임, 한 스티커 안의 캐릭터 중복, 팔다리 누락/추가, 크롭된 신체, 반신·흉상 컷, 탁한 배경색, 회색·흰색 체크무늬/체커보드 패치.`;
     }
 
     // English Version (Matches User Best Template Exactly)
@@ -3175,14 +3177,17 @@ For each sticker, infer a unique, highly expressive facial emotion and a DYNAMIC
 ${panelPlan}
 Supporting props & sparkle effects: ${character.props}, ${character.effects}, cute accents.
 
-[CANVAS & GRID ALIGNMENT — STRICT 5 COLUMNS x 3 ROWS]
-MUST arrange all 15 stickers in a wide horizontal canvas with an exact 5-column by 3-row uniform grid layout (5 stickers per row across 3 rows). 4-row or irregular arrangements are strictly forbidden. This 5x3 grid rule takes highest precedence over all other directives. ${bgInstructionEn} Absolutely NO guide lines, NO grid lines, NO cell borders, NO table lines, NO dividing lines, NO crop marks, NO bounding boxes, NO sticker numbers.
+[CANVAS & GRID ALIGNMENT — STRICT 5 COLUMNS x 3 ROWS (EXACTLY 15 STICKERS, NO 4x4 16-CELL GRID)]
+1. Strict Count (Exact 15 Stickers): The total count MUST be EXACTLY 15 stickers (5 columns x 3 rows). Any other count such as 16 (4x4), 12, or 20 stickers is STRICTLY FORBIDDEN. Do NOT create a 4x4 (16-sticker) grid layout — this is a common mistake that must be avoided.
+2. Uniform 5x3 Grid: Perfectly align 5 stickers in Row 1, 5 stickers in Row 2, and 5 stickers in Row 3 across a wide horizontal canvas. Vertical or asymmetric layouts are strictly prohibited.
+3. Self-Verification Count: Before finalizing the render, directly count the stickers in each row (5, 5, 5) to confirm there are exactly 15 stickers in total.
+4. Background & Clean Canvas: ${bgInstructionEn} Absolutely NO guide lines, NO grid lines, NO cell borders, NO table lines, NO dividing lines, NO crop marks, NO bounding boxes, NO sticker numbers.
 
 [TEXT POLICY]
 ${textPolicy}
 
 [DO NOT INCLUDE]
-${textExclusion} No guide lines, no grid lines, no cell dividers, no border lines, no table lines, no crop marks, no panel boxes, no watermark, no outer frame, no duplicate character inside a single sticker, no extra limbs, no cropped body, no half-body bust shot, no dull background color, or photorealism.`;
+${textExclusion} 4x4 16-sticker grid layout, generating more or fewer than 15 stickers, guide lines, grid lines, cell dividers, border lines, table lines, crop marks, panel boxes, watermark, outer frame, duplicate character inside a single sticker, extra limbs, cropped body, half-body bust shot, dull background color, or photorealism.`;
   };
 
   const getGrokBackgroundInstruction = () => {
