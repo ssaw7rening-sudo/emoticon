@@ -2641,10 +2641,13 @@ function App() {
     return { subjects, appearances, personalities, outfits, props, effects, additionalDescription };
   };
 
-  const getGeminiCharacterDetails = () => {
+  const getGeminiCharacterDetails = (langMode = lang) => {
     const { subjects, appearances, personalities, outfits, props, effects, additionalDescription } = getSelectedCharacterRoles();
+    const isKo = langMode === 'ko';
     const subjectParts = [
-      ...(characterSource === 'photo' ? ['the subject in the attached reference photo'] : []),
+      ...(characterSource === 'photo'
+        ? [isKo ? 'AI 채팅에 첨부한 참고 사진 속 대상' : 'the subject in the attached reference photo']
+        : []),
       ...subjects,
       ...(additionalDescription ? [additionalDescription] : []),
     ];
@@ -2662,15 +2665,15 @@ function App() {
     }[photoReferenceMode];
 
     return {
-      subject: subjectParts.join(', ') || 'a cute original character',
+      subject: subjectParts.join(', ') || (isKo ? '귀여운 오리지널 캐릭터' : 'a cute original character'),
       appearance: [
         ...(characterSource === 'photo' ? [isKo ? photoAppearanceKo : photoAppearanceEn] : []),
         ...appearances,
       ].join(', ') || (isKo ? '깔끔하고 명확한 캐릭터 실루엣 유지' : 'use a simple, recognizable silhouette and keep it unchanged'),
-      personality: personalities.join(', ') || 'friendly and expressive',
-      outfit: outfits.join(', ') || 'no fixed outfit specified; once chosen, keep it unchanged',
-      props: props.join(', ') || 'none required',
-      effects: effects.join(', ') || 'use only a minimal effect when it clarifies the emotion',
+      personality: personalities.join(', ') || (isKo ? '친근하고 표정이 풍부한' : 'friendly and expressive'),
+      outfit: outfits.join(', ') || (isKo ? '지정 없음. 처음 정한 의상은 모든 이미지에서 유지' : 'no fixed outfit specified; once chosen, keep it unchanged'),
+      props: props.join(', ') || (isKo ? '필수 소품 없음' : 'none required'),
+      effects: effects.join(', ') || (isKo ? '감정 전달에 필요한 최소한의 효과만 사용' : 'use only a minimal effect when it clarifies the emotion'),
       artStyle: getGeminiStyleTags(),
     };
   };
