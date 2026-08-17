@@ -3395,21 +3395,21 @@ ${textPolicyKo}
     // English Version (Highest Priority Facial Identity Standard)
     const referenceInstruction = characterSource === 'photo'
       ? `=== HIGHEST PRIORITY: FACIAL IDENTITY ===
-The character MUST be an extremely accurate likeness of the woman in the reference photo (${getPhotoModeLabel('en')}).
+The character MUST be an extremely accurate likeness of the subject in the reference photo (${getPhotoModeLabel('en')}).
 Prioritize real facial resemblance above all stylization.
 Preserve exactly:
-- Her almond-shaped eyes with clear double eyelids
-- Her specific nose bridge and tip shape
-- Her lip shape, fullness and natural smile line
-- Her jawline, cheek structure and overall face proportions
-- Her skin tone and natural expression
+- Almond-shaped eyes with clear double eyelids matching the photo
+- Specific nose bridge and tip shape
+- Lip shape, fullness and natural smile line
+- Jawline, cheek structure and overall face proportions
+- Real skin tone and natural expression
 The face must be immediately recognizable as the same person.
-Do NOT turn her into a generic cute anime or chibi face.
+Do NOT turn the character into a generic cute anime or chibi face.
 Do not overly enlarge the eyes or simplify facial features. Do not add any accessories not present in the photo.
 
 Body proportion: 3.5–4 head ratio (mild SD, not extreme). Keep the face detailed and true to the reference so identity remains clear.
 
-Hair: long straight black hair with the exact same parting, length, volume and flow as the reference photo.
+Hair: ${character.appearance.includes('머리') || character.appearance.includes('hair') || character.appearance.includes('Hair') ? character.appearance : 'Exact same hairstyle, length, parting, volume and flow as the reference photo.'}
 Clothing: ${character.outfit}
 Keep hair, clothing, skin tone and body type identical across all 15 stickers.`
       : `=== CHARACTER IDENTITY ===
@@ -3464,7 +3464,7 @@ STRICT PROHIBITIONS:
 - No heavy shading, excessive gradients, 3D rendering, face distortion, missing/extra limbs, or half-body/bust-only shots.
 - No unnecessary punctuation added to the given phrase.
 
-Final check: The face must be clearly recognizable as the woman in the reference photo.
+Final check: The face must be clearly recognizable as the person in the reference photo.
 
 [Optional X-ready output request]
 After generating the sticker, also prepare a short, engaging Korean caption + English hashtags that can be directly copied and posted on X (Twitter).`;
@@ -3516,7 +3516,7 @@ STRICT PROHIBITIONS:
 - No heavy shading, excessive gradients, 3D rendering, face distortion, missing/extra limbs, or inconsistent faces/bodies/outfits across the 15 stickers.
 - No unnecessary punctuation added to the given phrases.
 
-Final check: exactly 15 stickers in 3×5 on pure white background. The face must be clearly recognizable as the woman in the reference photo.
+Final check: exactly 15 stickers in 3×5 on pure white background. The face must be clearly recognizable as the person in the reference photo.
 
 [Optional X-ready output request]
 After generating the sticker sheet, also prepare a short, engaging Korean caption + English hashtags that can be directly copied and posted on X (Twitter). Make it fun, shareable, and suitable for AI-art / sticker community.`;
