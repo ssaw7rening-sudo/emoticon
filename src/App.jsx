@@ -4648,16 +4648,17 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
           </div>
 
           {/* X (Twitter) Social Share & Caption Helper Card */}
-          <div className="mt-3.5 bg-gradient-to-r from-slate-900 to-slate-800 text-white rounded-lg p-3.5 sm:p-4 border border-slate-700 shadow-sm flex flex-col gap-2.5">
+          <div className="mt-3.5 bg-white rounded-lg p-3.5 sm:p-4 border-2 border-slate-200/90 shadow-xs flex flex-col gap-2.5">
             <div className="flex items-center justify-between gap-2 flex-wrap">
-              <span className="text-[13px] sm:text-[14px] font-bold text-white flex items-center gap-1.5">
-                <span>𝕏</span> {lang === 'ko' ? 'X(트위터) SNS 홍보·자랑 캡션' : 'X (Twitter) Share Caption'}
+              <span className="text-[13px] sm:text-[14px] font-extrabold text-slate-900 flex items-center gap-2">
+                <span className="bg-black text-white text-[11px] font-black px-1.5 py-0.5 rounded flex items-center justify-center leading-none">𝕏</span>
+                <span>{lang === 'ko' ? 'X(트위터) SNS 홍보·자랑 캡션' : 'X (Twitter) Share Caption'}</span>
               </span>
-              <span className="text-[11px] font-bold text-slate-300 bg-slate-700/80 px-2 py-0.5 rounded-full">
-                ✨ {lang === 'ko' ? '클릭 한 번으로 복사 & 트윗' : '1-Click Copy & Tweet'}
+              <span className="text-[11px] font-bold text-slate-600 bg-slate-100 px-2.5 py-0.5 rounded-full border border-slate-200">
+                ✨ {lang === 'ko' ? '원클릭 복사 & 바로 트윗' : '1-Click Copy & Tweet'}
               </span>
             </div>
-            <p className="text-[12px] sm:text-[13px] text-slate-300 leading-relaxed font-normal">
+            <p className="text-[12.5px] sm:text-[13px] text-slate-600 leading-relaxed font-normal">
               {lang === 'ko'
                 ? '완성된 이모티콘 이미지를 X(트위터)에 올릴 때 바로 붙여넣어 사용할 수 있는 최적화된 캡션 & 해시태그입니다.'
                 : 'Engaging, copy-ready caption and trending hashtags to showcase your generated sticker sheet on X (Twitter).'}
@@ -4666,25 +4667,25 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
               <button
                 type="button"
                 onClick={() => copySocialCaption('ko')}
-                className="interactive-control min-h-[38px] rounded-md bg-slate-800 hover:bg-slate-700 border border-slate-600 text-white font-bold text-[12px] sm:text-[13px] flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs"
+                className="interactive-control min-h-[38px] rounded-md bg-[#F8FAFC] hover:bg-[#EDF2F7] border border-slate-300 text-slate-800 font-bold text-[12.5px] sm:text-[13px] flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs transition-colors"
               >
-                {copiedType === 'social_ko' ? <CheckCircle2 size={15} className="text-emerald-400" /> : <span>📋</span>}
+                {copiedType === 'social_ko' ? <CheckCircle2 size={15} className="text-[#2D7D64]" /> : <span>📋</span>}
                 <span>{copiedType === 'social_ko' ? (lang === 'ko' ? '✓ 한글 캡션 복사됨!' : '✓ Korean Copied!') : (lang === 'ko' ? '한글 캡션 복사' : 'Copy KO Caption')}</span>
               </button>
               <button
                 type="button"
                 onClick={() => copySocialCaption('en')}
-                className="interactive-control min-h-[38px] rounded-md bg-slate-800 hover:bg-slate-700 border border-slate-600 text-white font-bold text-[12px] sm:text-[13px] flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs"
+                className="interactive-control min-h-[38px] rounded-md bg-[#F8FAFC] hover:bg-[#EDF2F7] border border-slate-300 text-slate-800 font-bold text-[12.5px] sm:text-[13px] flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs transition-colors"
               >
-                {copiedType === 'social_en' ? <CheckCircle2 size={15} className="text-emerald-400" /> : <span>📋</span>}
+                {copiedType === 'social_en' ? <CheckCircle2 size={15} className="text-[#2D7D64]" /> : <span>📋</span>}
                 <span>{copiedType === 'social_en' ? (lang === 'ko' ? '✓ 영문 캡션 복사됨!' : '✓ English Copied!') : (lang === 'ko' ? '영문 캡션 복사' : 'Copy EN Caption')}</span>
               </button>
               <button
                 type="button"
                 onClick={() => shareOnTwitter(lang === 'ko' ? 'ko' : 'en')}
-                className="interactive-control min-h-[38px] rounded-md bg-white hover:bg-slate-100 text-black font-extrabold text-[12px] sm:text-[13px] flex items-center justify-center gap-1.5 cursor-pointer shadow-sm"
+                className="interactive-control min-h-[38px] rounded-md bg-black hover:bg-slate-800 text-white font-extrabold text-[12.5px] sm:text-[13px] flex items-center justify-center gap-1.5 cursor-pointer shadow-xs transition-colors"
               >
-                <span>𝕏</span>
+                <span className="text-[13px]">𝕏</span>
                 <span>{lang === 'ko' ? '𝕏에 바로 트윗하기' : 'Post on 𝕏'}</span>
               </button>
             </div>
