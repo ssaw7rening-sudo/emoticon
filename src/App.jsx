@@ -2979,6 +2979,42 @@ ${textExclusion} No grid lines, no cell division lines, no border lines between 
       ? getSelectedPhrase()
       : (phraseOverride || '').trim();
 
+    const inlineTypographyEn = [
+      'Bright Golden Yellow bold curved font with sparkle stars',
+      'Vibrant Hot Pink bouncy font with mini hearts',
+      'Red/Orange gradient font with sparkling stars',
+      'Vivid Pink/Red bold font with thumbs-up icon',
+      'Deep Navy/Purple clean elegant font',
+      'Hot Pink vertical bold font with floating hearts',
+      'Golden Yellow bold font with crown icon',
+      'Bubbly Violet/Purple font with colorful party confetti',
+      'Sky Blue font with blue sweat/tear drops',
+      'Warm Sunny Orange/Yellow font with flower sparkles',
+      'Magenta/Pink vertical festive font with party popper ribbons',
+      'Giant Golden Yellow comic font with dark red outline and explosion sparkles',
+      'Electric Neon Yellow font with purple outline and lightning shock lines',
+      'Soft Glowing Rose/Pink font with sparkling tear drops',
+      'Deep Night Purple/Indigo font with yellow crescent moon and zZ'
+    ];
+
+    const inlineTypographyKo = [
+      '반짝이 별이 포함된 화사한 골든 옐로우 볼드 곡선 폰트',
+      '미니 하트가 퐁퐁 떠 있는 생동감 넘치는 핫핑크 통통 폰트',
+      '빛나는 별 효과가 들어간 레드/오렌지 그라데이션 폰트',
+      '따봉 아이콘이 결합된 선명한 핑크/레드 볼드 폰트',
+      '깔끔하고 정중한 딥네이비/퍼플 폰트',
+      '풍성한 하트가 감싸는 핫핑크 세로형 입체 폰트',
+      '황금 왕관 아이콘이 얹어진 골든 옐로우 볼드 폰트',
+      '화려한 축제 폭죽 리본과 컨페티가 흩날리는 바이올렛/퍼플 폰트',
+      '흘리는 땀방울/눈물방울 효과의 스카이블루 폰트',
+      '꽃잎 반짝이가 흩날리는 따스한 오렌지/옐로우 폰트',
+      '파티 폭죽 리본이 터지는 화려한 마젠타/핑크 세로형 축제 폰트',
+      '폭발 스파클과 다크레드 외곽선의 큼직한 골든 옐로우 만화 폰트',
+      '번개 스파크 효과와 퍼플 외곽선의 일렉트릭 네온 옐로우 폰트',
+      '감동의 반짝이는 눈물방울과 하트가 어우러진 소프트 로즈핑크 폰트',
+      '노란 초승달과 zZ 아이콘이 포함된 딥나이트 퍼플/인디고 야간 폰트'
+    ];
+
     const bgInstructionKo = {
       transparent: '단일 연속 순수 단색 순백색(#FFFFFF) 배경. 각 스티커 실루엣 주변에 선명하고 깔끔한 흰색 다이컷(Die-cut) 외곽선이 둘러져 있습니다. 체커보드 투명 패턴, 회색 격자선 절대 금지.',
       solid: '캐릭터와 뚜렷하게 대비되는 깔끔한 단색 배경 (Solid contrasting background). 질감이나 잡음 없이 균일한 단색으로 생성하세요. 체커보드 패턴 절대 금지.',
@@ -3005,15 +3041,15 @@ ${textExclusion} No grid lines, no cell division lines, no border lines between 
 
       if (generationMode === 'individual' || hasPhraseOverride) {
         const textPolicyKo = geminiTextMode === 'text'
-          ? `[타이포그래피 규칙 — 중복 절대 금지 및 정확도]
-- 단일 렌더링 원칙: 캐릭터 상단 우측에 지정된 한글 텍스트 "${targetPhrase}"를 정확히 '단 1번'만 렌더링하세요. (상단과 하단에 2번 중복 표기 절대 금지).
-- 텍스트 스타일: 단일 두꺼운 흰색 다이컷 외곽선이 적용된 볼드한 3D 입체 한글 타이포그래피.
+          ? `[타이포그래피 스타일 — 화려한 카카오톡 팝아트 스티커 폰트]
+- 스타일: 통통하고 생동감 넘치는 카카오톡 스타일 팝아트 손글씨 스티커 폰트 (채도 높은 다채로운 색상 채움 + 선명한 다크 테두리 + 도톰한 순백색 다이컷 외곽선).
+- 단일 렌더링 원칙: 캐릭터 주변에 지정된 한글 텍스트 "${targetPhrase}"를 정확히 '단 1번'만 렌더링하세요. (상단/하단 2번 중복 표기 절대 금지).
 - 엄격 금지: 단어 반복 금지, 단일 셀 내 텍스트 2회 이상 중복 표기 금지, 첫 자음/모음 중복 표기("축축하해요", "미미안해요" 등) 절대 금지.`
           : `[텍스트 규칙]
 한국어 문구 "${targetPhrase}"는 표정과 자세 결정을 위한 감정 맥락으로만 사용하며 이미지 내에 텍스트, 글자, 숫자를 그리지 마세요.`;
 
         const textExclusionKo = geminiTextMode === 'text'
-          ? '텍스트 2회 중복 렌더링, 단어 반복, 첫 글자 자음/모음 중복(축축하해요, 미미안해요 등), 두 번 쓰인 글자, 평면 2D 만화 선화, 낮은 인물 유사도, 전형적인 양산형 만화 얼굴, 한글 오타, 글자 누락, 체커보드 투명 배경, 잘린 사지, 뭉개진 인물.'
+          ? '텍스트 2회 중복 렌더링, 단어 반복, 첫 글자 자음/모음 중복(축축하해요, 미미안해요 등), 밋밋한 흑백 글자, 평면 2D 만화 선화, 낮은 인물 유사도, 전형적인 양산형 만화 얼굴, 한글 오타, 글자 누락, 체커보드 투명 배경, 잘린 사지, 뭉개진 인물.'
           : '모든 텍스트, 글자, 숫자, 말풍선, 평면 2D 만화, 신체 크롭, 격자선.';
 
         return `[포맷 & 캔버스 비율]
@@ -3035,54 +3071,60 @@ ${textExclusionKo}`;
       const row1Plan = [0, 1, 2, 3, 4].map(i => {
         const phrase = (emoticons[i] || '').trim();
         const action = getPhraseActionKo(phrase);
-        return `${i + 1}. [1-${i + 1}] ${action} | Text: "${phrase}"`;
+        const typo = inlineTypographyKo[i % 15];
+        return `${i + 1}. [1-${i + 1}] ${action} | 텍스트: "${phrase}" (${typo})`;
       }).join('\n');
 
       const row2Plan = [5, 6, 7, 8, 9].map(i => {
         const phrase = (emoticons[i] || '').trim();
         const action = getPhraseActionKo(phrase);
-        return `${i + 1}. [2-${i - 4}] ${action} | Text: "${phrase}"`;
+        const typo = inlineTypographyKo[i % 15];
+        return `${i + 1}. [2-${i - 4}] ${action} | 텍스트: "${phrase}" (${typo})`;
       }).join('\n');
 
       const row3Plan = [10, 11, 12, 13, 14].map(i => {
         const phrase = (emoticons[i] || '').trim();
         const action = getPhraseActionKo(phrase);
-        return `${i + 1}. [3-${i - 9}] ${action} | Text: "${phrase}"`;
+        const typo = inlineTypographyKo[i % 15];
+        return `${i + 1}. [3-${i - 9}] ${action} | 텍스트: "${phrase}" (${typo})`;
       }).join('\n');
 
       const textPolicyKo = geminiTextMode === 'text'
-        ? `[Typography Rules - Anti-Duplication & Accuracy]
-- Exact Single Placement: Render each Korean text exactly ONCE at the top-right of each character.
-- Single Instance Rule: Under no circumstances render the text twice in a single sticker cell (NO top + bottom double rendering).
-- Text Style: Bold 3D glossy Korean typography with a single thick white die-cut outline.
-- STRICT: Absolutely NO repeated words, NO duplicate text inside a single cell, NO doubled initial consonants (e.g. NO "축축하해요", NO "미미안해요").`
+        ? `[타이포그래피 스타일 — 화려한 카카오톡 팝아트 스티커 폰트 (중복 방지 & 고품질)]
+- 폰트 스타일: 통통하고 생동감 넘치는 카카오톡 스타일 팝아트 손글씨 스티커 타이포그래피. 채도 높은 선명한 색상 채움 + 짙은 외곽선 스트로크 + 도톰한 순백색 다이컷 외곽선.
+- 각 문구별 맞춤 효과: 반짝이 별, 하트, 왕관, 파티 리본, 땀방울, 번개 쇼크 등 각 문구에 지정된 고유의 예쁜 포인트 장식 효과를 함께 자연스럽게 결합하세요.
+- 단일 렌더링 원칙: 각 셀 안에서 한글 텍스트를 캐릭터 상단 우측이나 옆에 '정확히 단 1회'만 렌더링하세요. 상단과 하단에 2번 중복해서 쓰지 마세요.
+- 엄격 금지: 단어 반복 금지, 단일 셀 내 텍스트 중복 표기 금지, 첫 자음/모음 중복("축축하해요", "미미안해요" 등) 절대 금지.`
         : `[Typography Rules]
 - Korean phrases below are emotional context only — do not render any text, letters, or numbers in the image.`;
 
       const textExclusionKo = geminiTextMode === 'text'
-        ? 'Duplicate text, repeated words, double Korean characters, text rendered twice, double text blocks per cell, flat 2D anime line art, low likeness, generic cartoon face, Korean spelling errors, missing letters, extra 4th row, 4x4 layout, transparent checkerboard background, cut-off limbs, merged figures.'
+        ? '텍스트 중복 렌더링, 단어 반복, 첫 글자 자음/모음 중복, 밋밋하고 평범한 폰트, 평면 2D 애니 선화, 낮은 인물 유사도, 전형적인 양산형 만화 얼굴, 한글 오타, 글자 누락, 4번째 행 추가 생성, 4x4 레이아웃, 투명 체커보드 배경, 잘린 사지, 뭉개진 인물.'
         : 'No text, no letters, no numbers, 4x4 layout, 16 stickers, 4th row, flat 2D anime, deformed limbs, cropped figures, panel borders, grid lines.';
 
-      return `[Format & Canvas Ratio - 16:9 Landscape Grid]
-- Canvas: 16:9 wide landscape aspect ratio, strictly arranged in a 5 columns × 3 rows grid (Exactly 15 distinct stickers in total).
-- Background: ${bgInstructionKo}
-- Absolute Constraints: No 4x4 layout, no 16th sticker, no background grid lines, no checkerboard transparency pattern.
+      return `[포맷 & 캔버스 비율 — 16:9 와이드 가로형 그리드]
+- 캔버스: 16:9 와이드 가로 직사각형 비율, 엄격한 5열 × 3행 그리드 배치 (정확히 총 15개의 개별 스티커).
+- 배경: ${bgInstructionKo}
+- 절대 금지 조건: 4x4 레이아웃 절대 금지, 16번째 스티커 금지, 배경 격자선 금지, 체커보드 투명 패턴 금지.
 
 ${referenceInstructionKo}
 
 ${textPolicyKo}
 
-[15 Stickers & Exact Korean Text Matrix]
-[Row 1]
+[15종 스티커 & 화려한 이모티콘 팝아트 타이포그래피 매트릭스]
+[제 1행 — 상단 5개 스티커]
 ${row1Plan}
 
-[Row 2]
+[제 2행 — 중단 5개 스티커]
 ${row2Plan}
 
-[Row 3]
+[제 3행 — 하단 5개 스티커]
 ${row3Plan}
 
-[Negative Directives]
+[종료 검증]
+- 15번째 스티커에서 완벽히 렌더링이 종료됩니다. 4번째 행은 없으며 총 스티커 개수는 정확히 15개입니다.
+
+[제외 조건 (Negative Directives)]
 ${textExclusionKo}`;
     }
 
@@ -3100,14 +3142,13 @@ ${textExclusionKo}`;
 
     if (generationMode === 'individual' || hasPhraseOverride) {
       const textPolicy = geminiTextMode === 'text'
-        ? `[Typography Rules - Anti-Duplication & Accuracy]
-- Exact Single Placement: Render the Korean text "${targetPhrase}" exactly ONCE at the top-right of the character.
-- Single Instance Rule: Under no circumstances render the text twice in a single sticker cell (NO top + bottom double rendering).
-- Text Style: Bold 3D glossy Korean typography with a single thick white die-cut outline.
+        ? `[Typography Style — Vibrant KakaoTalk Pop-Art Sticker Font]
+- Font Styling: Bold, bubbly, highly expressive KakaoTalk-style pop-art hand-lettered sticker typography (saturated vibrant color fill + sharp dark stroke + thick crisp white die-cut contour).
+- Exact Single Placement: Render the Korean text "${targetPhrase}" exactly ONCE at the top-right or adjacent to the character.
 - STRICT: Absolutely NO repeated words, NO duplicate text inside a single cell, NO doubled initial consonants.`
         : `Do not render text, letters, or numbers. Use "${targetPhrase}" only as visual context for expression and pose.`;
       const textExclusion = geminiTextMode === 'text'
-        ? 'Duplicate text, repeated words, double Korean characters, text rendered twice, double text blocks per cell, flat 2D anime line art, low likeness, generic cartoon face, Korean spelling errors, missing letters, transparent checkerboard background, cut-off limbs, merged figures.'
+        ? 'Duplicate text, repeated words, double Korean characters, text rendered twice, plain dull font, flat 2D anime line art, low likeness, generic cartoon face, Korean spelling errors, missing letters, transparent checkerboard background, cut-off limbs, merged figures.'
         : 'No text, no letters, no numbers, no speech bubbles, no sticker labels, no meaningless symbols.';
 
       return `[Format & Canvas Ratio]
@@ -3129,32 +3170,35 @@ ${textExclusion}`;
     const row1Plan = [0, 1, 2, 3, 4].map(i => {
       const phrase = (emoticons[i] || '').trim();
       const action = getPhraseActionEn(phrase);
-      return `${i + 1}. [1-${i + 1}] ${action} | Text: "${phrase}"`;
+      const typo = inlineTypographyEn[i % 15];
+      return `${i + 1}. [1-${i + 1}] ${action} | Text: "${phrase}" (${typo})`;
     }).join('\n');
 
     const row2Plan = [5, 6, 7, 8, 9].map(i => {
       const phrase = (emoticons[i] || '').trim();
       const action = getPhraseActionEn(phrase);
-      return `${i + 1}. [2-${i - 4}] ${action} | Text: "${phrase}"`;
+      const typo = inlineTypographyEn[i % 15];
+      return `${i + 1}. [2-${i - 4}] ${action} | Text: "${phrase}" (${typo})`;
     }).join('\n');
 
     const row3Plan = [10, 11, 12, 13, 14].map(i => {
       const phrase = (emoticons[i] || '').trim();
       const action = getPhraseActionEn(phrase);
-      return `${i + 1}. [3-${i - 9}] ${action} | Text: "${phrase}"`;
+      const typo = inlineTypographyEn[i % 15];
+      return `${i + 1}. [3-${i - 9}] ${action} | Text: "${phrase}" (${typo})`;
     }).join('\n');
 
     const textPolicy = geminiTextMode === 'text'
-      ? `[Typography Rules - Anti-Duplication & Accuracy]
-- Exact Single Placement: Render each Korean text exactly ONCE at the top-right of each character.
-- Single Instance Rule: Under no circumstances render the text twice in a single sticker cell (NO top + bottom double rendering).
-- Text Style: Bold 3D glossy Korean typography with a single thick white die-cut outline.
+      ? `[Typography Style — Vibrant KakaoTalk 3D Pop-Art Typography (Anti-Duplication & High Appeal)]
+- Font Styling: Bold, bubbly, highly expressive KakaoTalk-style pop-art hand-lettered sticker typography with vibrant saturated colors, crisp dark strokes, and thick pure white die-cut contours.
+- Embellishments: Integrate matching joyful micro-effects (sparkles, hearts, crown, confetti ribbons, sweat drops, shock lines) according to each sticker specification.
+- Exact Single Placement: Render each Korean text exactly ONCE per character at the top-right position. Under no circumstances render the text twice in a single sticker cell (NO top + bottom double rendering).
 - STRICT: Absolutely NO repeated words, NO duplicate text inside a single cell, NO doubled initial consonants (e.g. NO "축축하해요", NO "미미안해요").`
       : `[Typography Rules]
 - Korean phrases below are emotional context only — do not render any text, letters, or numbers in the image.`;
 
     const textExclusion = geminiTextMode === 'text'
-      ? 'Duplicate text, repeated words, double Korean characters, text rendered twice, double text blocks per cell, flat 2D anime line art, low likeness, generic cartoon face, Korean spelling errors, missing letters, extra 4th row, 4x4 layout, transparent checkerboard background, cut-off limbs, merged figures.'
+      ? 'Duplicate text, repeated words, double Korean characters, text rendered twice, plain dull font, flat 2D anime line art, low likeness, generic cartoon face, Korean spelling errors, missing letters, extra 4th row, 4x4 layout, transparent checkerboard background, cut-off limbs, merged figures.'
       : 'No text, no letters, no numbers, 4x4 layout, 16 stickers, 4th row, flat 2D anime, deformed limbs, cropped figures, panel borders, grid lines.';
 
     return `[Format & Canvas Ratio - 16:9 Landscape Grid]
@@ -3166,15 +3210,18 @@ ${referenceInstruction}
 
 ${textPolicy}
 
-[15 Stickers & Exact Korean Text Matrix]
-[Row 1]
+[15 Stickers & Vibrant Emoticon Pop-Art Typography Matrix]
+[Row 1 - Top 5 Stickers]
 ${row1Plan}
 
-[Row 2]
+[Row 2 - Middle 5 Stickers]
 ${row2Plan}
 
-[Row 3]
+[Row 3 - Bottom 5 Stickers]
 ${row3Plan}
+
+[Termination Check]
+- Total 15 stickers strictly concluded at Sticker 15. No Row 4.
 
 [Negative Directives]
 ${textExclusion}`;
