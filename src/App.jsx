@@ -2671,7 +2671,9 @@ function App() {
         ...appearances,
       ].join(', ') || (isKo ? '깔끔하고 명확한 캐릭터 실루엣 유지' : 'use a simple, recognizable silhouette and keep it unchanged'),
       personality: personalities.join(', ') || (isKo ? '친근하고 표정이 풍부한' : 'friendly and expressive'),
-      outfit: outfits.join(', ') || (isKo ? '지정 없음. 처음 정한 의상은 모든 이미지에서 유지' : 'no fixed outfit specified; once chosen, keep it unchanged'),
+      outfit: outfits.join(', ') || (characterSource === 'photo'
+        ? (isKo ? '참고 사진의 의상 스타일 유지' : 'preserve outfit from reference photo')
+        : (isKo ? '지정 없음. 처음 정한 의상은 모든 이미지에서 유지' : 'no fixed outfit specified; once chosen, keep it unchanged')),
       props: props.join(', ') || (isKo ? '필수 소품 없음' : 'none required'),
       effects: effects.join(', ') || (isKo ? '감정 전달에 필요한 최소한의 효과만 사용' : 'use only a minimal effect when it clarifies the emotion'),
       artStyle: getGeminiStyleTags(),
@@ -3224,11 +3226,14 @@ ${textExclusion} 4x4 16-sticker grid layout, generating more or fewer than 15 st
 
     return {
       subject: subjectParts.join(', ') || (isKo ? '귀여운 오리지널 캐릭터' : 'a cute original character'),
-      appearance: appearances.join(', ') || (characterSource === 'photo'
-        ? (isKo ? photoAppearanceKo : photoAppearanceEn)
-        : (isKo ? '단순하고 알아보기 쉬운 실루엣을 정한 뒤 그대로 유지' : 'simple, recognizable silhouette kept unchanged')),
+      appearance: [
+        ...(characterSource === 'photo' ? [isKo ? photoAppearanceKo : photoAppearanceEn] : []),
+        ...appearances,
+      ].join(', ') || (isKo ? '단순하고 알아보기 쉬운 실루엣을 정한 뒤 그대로 유지' : 'simple, recognizable silhouette kept unchanged'),
       personality: personalities.join(', ') || (isKo ? '친근하고 표정이 풍부한' : 'friendly and expressive'),
-      outfit: outfits.join(', ') || (isKo ? '지정 없음. 처음 정한 의상은 모든 이미지에서 유지' : 'no fixed outfit specified; once chosen, keep it unchanged'),
+      outfit: outfits.join(', ') || (characterSource === 'photo'
+        ? (isKo ? '참고 사진의 의상 스타일 유지' : 'preserve outfit from reference photo')
+        : (isKo ? '지정 없음. 처음 정한 의상은 모든 이미지에서 유지' : 'no fixed outfit specified; once chosen, keep it unchanged')),
       props: props.join(', ') || (isKo ? '필수 소품 없음' : 'none required'),
       effects: effects.join(', ') || (isKo ? '감정 전달에 필요한 최소한의 효과만 사용' : 'use only a minimal effect when it clarifies the emotion'),
       artStyle: getGeminiStyleTags(langMode),
@@ -3325,7 +3330,7 @@ ${textExclusionKo} 워터마크, 외곽 프레임, 바운딩 박스, 캐릭터 �
         : '텍스트, 글자, 숫자, 말풍선, 스티커 라벨, 의미 없는 기호 절대 금지.';
 
       return `[목표]
-동일한 캐릭터가 3행 × 5열 격자 구조로 배치된 완성도 높은 15셀 카카오톡/라인 스티커 시트 한 장을 생성해 주세요. 정사각형 캔버스, 고해상도. 격자선, 셀 테두리, 숫자 없음.
+동일한 캐릭터가 3행 × 5열 격자 구조로 배치된 완성도 높은 15셀 카카오톡/라인 스티커 시트 한 장을 생성해 주세요. 총 개수는 반드시 정확히 15개여야 하며 16개(4×4), 12개 등 다른 개수는 절대 금지합니다. 정사각형 캔버스, 고해상도. 격자선, 셀 테두리, 숫자 없음.
 
 [캐릭터 고정 — 15개 셀 전체 동일 적용]
 ${referenceInstructionKo}
@@ -3349,8 +3354,8 @@ Art Style Mechanical Spec (Strict Compliance):
 ${panelPlanKo}
 감정 전달에 최소한으로 필요한 보조 소품이나 반짝이 효과만 사용하세요 (${character.props}, ${character.effects}).
 
-[배경 & 흰색 스티커 테두리]
-각 캐릭터마다 실루엣 주변에 선명한 흰색 스티커 테두리(Die-cut outline)가 깔끔하게 감싸져 있어야 합니다. 15개 스티커는 3행 × 5열 배치 안에서 여백을 두고 자유롭게 떠 있습니다. ${bgInstructionKo} 격자선, 셀 테두리, 구분선, 크롭 마크, 바운딩 박스, 스티커 번호 절대 금지.
+[배경 & 레이아웃 — 5열 × 3행 15셀 고정 (16개 4×4 생성 엄격 금지)]
+각 캐릭터마다 실루엣 주변에 선명한 흰색 스티커 테두리(Die-cut outline)가 깔끔하게 감싸져 있어야 합니다. 총 스티커 개수는 정확히 15개(1행 5개, 2행 5개, 3행 5개)여야 하며, 4열 × 4행(16개) 그리드는 절대로 만들지 마세요. 완성 전 스티커 개수를 직접 세어 15개인지 확인하세요. 15개 스티커는 3행 × 5열 배치 안에서 여백을 두고 자유롭게 떠 있습니다. ${bgInstructionKo} 격자선, 셀 테두리, 구분선, 크롭 마크, 바운딩 박스, 스티커 번호 절대 금지.
 
 [캐릭터 일관성]
 15개 스티커 모두 얼굴, 체형, 색상, 의상, 화풍을 엄격하게 동일하게 유지하세요. 각 감정에 필요한 표정, 자세, 최소 소품만 변경하세요.
@@ -3359,7 +3364,7 @@ ${panelPlanKo}
 ${textPolicyKo}
 
 [제외 조건]
-${textExclusionKo} 문구 뒤에 쉼표(,), 마침표(.), 느낌표 중복 등 원래 문구에 없는 불필요한 문장부호를 절대 추가하지 마세요. 워터마크, 격자선, 셀 테두리, 구분선, 크롭 마크, 외곽 프레임, 바운딩 박스, 한 셀 안의 캐릭터 중복, 팔다리 누락/추가, 반신·흉상 컷, 실사 느낌, 얼굴 왜곡, 15개 셀 간 얼굴·체형·의상 불일치 절대 금지.`;
+${textExclusionKo} 4×4(16개) 그리드 레이아웃, 15개 초과/미만 개수 생성, 문구 뒤에 쉼표(,), 마침표(.), 느낌표 중복 등 원래 문구에 없는 불필요한 문장부호를 절대 추가하지 마세요. 워터마크, 격자선, 셀 테두리, 구분선, 크롭 마크, 외곽 프레임, 바운딩 박스, 한 셀 안의 캐릭터 중복, 팔다리 누락/추가, 반신·흉상 컷, 실사 느낌, 얼굴 왜곡, 15개 셀 간 얼굴·체형·의상 불일치 절대 금지.`;
     }
 
     // English Version (Matches User Preferred Exact Template)
@@ -3430,7 +3435,7 @@ ${textExclusion} No watermark, no outer frame, no bounding boxes, no duplicate c
       : 'No text, no letters, no numbers, no speech bubbles, no sticker labels, no meaningless symbols.';
 
     return `[GOAL]
-Create a master 15-cell KakaoTalk/LINE sticker sheet featuring one consistent character arranged in a 3-row × 5-column grid layout with generous spacing between characters. Square canvas, high resolution. No grid lines, no cell borders, no numbers.
+Create a master 15-cell KakaoTalk/LINE sticker sheet featuring one consistent character arranged in a 3-row × 5-column grid layout (exact 15 stickers, no 16-sticker 4x4 layout). Square canvas, high resolution. No grid lines, no cell borders, no numbers.
 
 [CHARACTER LOCK — IDENTICAL ACROSS ALL 15 CELLS]
 ${referenceInstruction}
@@ -3454,8 +3459,8 @@ Do NOT repeat standing postures across cells. Incorporate at least 6 or more dis
 ${panelPlan}
 Minimal supporting props or sparkle effects only when they clarify the emotion — keep accents small and simple (${character.props}, ${character.effects}).
 
-[BACKGROUND & DIE-CUT LAYOUT]
-Each character has a crisp white sticker die-cut outline clearly visible around its silhouette. All 15 stickers float freely in the 3-row × 5-column arrangement. ${getGrokBackgroundInstruction()} Absolutely no grid lines, no cell borders, no table dividers, no crop marks, no bounding boxes, no sticker numbers.
+[BACKGROUND & DIE-CUT LAYOUT — EXACT 5x3 15 STICKERS (NO 4x4 16-CELL GRID)]
+Each character has a crisp white sticker die-cut outline clearly visible around its silhouette. The total count must be EXACTLY 15 stickers (5 stickers in Row 1, 5 in Row 2, 5 in Row 3). Do NOT create a 4x4 16-cell grid layout. Before finalizing, count stickers in each row (5, 5, 5) to verify exactly 15 stickers. All 15 stickers float freely in the 3-row × 5-column arrangement. ${getGrokBackgroundInstruction()} Absolutely no grid lines, no cell borders, no table dividers, no crop marks, no bounding boxes, no sticker numbers.
 
 [CHARACTER CONSISTENCY]
 All 15 stickers must strictly share the same face, body proportions, color palette, outfit, and art style. Vary only pose, facial expression, and the minimal prop/effect needed for each emotion.
@@ -3464,7 +3469,7 @@ All 15 stickers must strictly share the same face, body proportions, color palet
 ${textPolicy}
 
 [NEGATIVE PROMPT]
-${textExclusion} Do NOT add any unrequested trailing punctuation marks at the end of phrases such as trailing commas (,), periods (.), or duplicate exclamation marks. No watermark, no grid lines, no cell borders, no table dividers, no crop marks, no outer frame, no bounding boxes, no duplicate character within a single cell, no missing or extra limbs, no half-body/bust-only shots, no photorealism, no facial distortion, no inconsistent face/body/outfit across the 15 cells.`;
+${textExclusion} 4x4 16-sticker grid layout, generating more or fewer than 15 stickers, do NOT add any unrequested trailing punctuation marks at the end of phrases such as trailing commas (,), periods (.), or duplicate exclamation marks. No watermark, no grid lines, no cell borders, no table dividers, no crop marks, no outer frame, no bounding boxes, no duplicate character within a single cell, no missing or extra limbs, no half-body/bust-only shots, no photorealism, no facial distortion, no inconsistent face/body/outfit across the 15 cells.`;
   };
 
   const getRepairPrompt = (repairType, textMode, model = 'gpt') => {
