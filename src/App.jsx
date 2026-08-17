@@ -3039,15 +3039,15 @@ ${textExclusionKo} 격자선, 셀 경계선, 구별선, 테두리선, 표 선, �
       ].join('\n');
 
       const textPolicyKo = geminiTextMode === 'text'
-        ? `[한글 타이포그래피 — 재미나이 안정형 지침]
+        ? `[한글 타이포그래피 — 재미나이 안정형 지침 (카카오톡/라인 상업용 기준)]
 1. 각 문구를 캐릭터 옆이나 위에 굵고 읽기 쉬운 손글씨 스타일 폰트로 정확히 한 번만 그리세요.
 2. 글자 스타일은 단일 레이어로 단순하게 유지하세요: 진하고 채도 높은 단색 채움 + 배경과 대비되는 두꺼운 순백색 테두리(Single White Outline) 하나만 사용하세요. 이중 윤곽선, 그림자, 기울임, 입체 배지 효과는 사용하지 마세요 — 레이어가 많을수록 한글 오타 위험이 커집니다.
-3. 절대적 단일 출력 규칙: 각 스티커 셀당 지정된 한글 문구를 '오직 단 한 번(EXACTLY ONCE)'만 정확한 철자로 그리세요.
-4. 중복 및 표기 오류 엄격 금지: 단어나 글자를 두 번 반복하여 그리는 행위, 자모 순서 뒤바뀜, 획 누락, 일본어/가타카나/한자/외국어 기호 섞임을 100% 엄격히 금지합니다.
-5. 15개 문구를 모두 그린 뒤, 지정된 문구와 한 글자씩 대조하여 철자가 정확히 일치하는지 스스로 검증한 뒤 최종 렌더링하세요.`
+3. 한 줄 배치 & 글자 크기 최적화 규칙 (절대 준수): 4~6글자 이내의 짧은 단어("대박", "감동", "좋아요", "미안해요", "사랑해요", "수고했어요" 등)는 절대로 2줄로 쪼개거나 세로로 쌓지 말고 반드시 '한 줄 가로 배치'로 렌더링하세요. 캐릭터 옆 공간이 좁다면 줄바꿈하지 말고 '글자 크기를 줄여서' 한 줄에 온전히 들어가게 만드세요. 공백이 있는 긴 문구("오늘도 화이팅")만 띄어쓰기 기준으로 최대 2줄 허용합니다.
+4. 첫 글자 중복 및 표기 오류 엄격 금지: 첫 글자가 겹쳐 나오는 오류(예: "축하해요"→"축축하해요", "미안해요"→"미미안해요", "최고"→"최최고"), 단어 반복, 자모 순서 뒤바뀜, 획 누락, 일본어/가타카나/한자/외국어 기호 섞임을 100% 엄격히 금지합니다.
+5. 자체 대조 검증(Self-Check): 15개 문구를 렌더링하기 직전, 지정된 15개 문구 원본과 한 글자씩 대조하여 중복 글자나 억지 줄바꿈이 없는지 스스로 검증한 뒤 최종 출력하세요.`
         : '한국어 문구는 표정과 자세를 정하기 위한 맥락으로만 사용하고, 이미지 안에 절대로 텍스트, 글자, 숫자로 그리지 마세요.';
       const textExclusionKo = geminiTextMode === 'text'
-        ? '불필요한 단어, 철자 변경, 임의의 글자, 스티커 번호, 괄호, 따옴표, 텍스트 상자 금지.'
+        ? '첫 글자 중복(축축하해요, 미미안해요 등), 억지 줄바꿈, 세로 글자 쌓기, 4~6자 짧은 단어 2줄 쪼개기, 불필요한 단어, 철자 변경, 임의의 글자, 스티커 번호, 괄호, 따옴표, 텍스트 상자 금지.'
         : '텍스트, 글자, 숫자, 말풍선, 스티커 라벨, 의미 없는 기호 절대 금지.';
 
       return `[목표]
@@ -3145,15 +3145,15 @@ ${textExclusion} No guide lines, no grid lines, no cell dividers, no border line
       `Row 3 (Stickers 11-15): 11. "${(emoticons[10]||'축하해요').trim()}" | 12. "${(emoticons[11]||'대박').trim()}" | 13. "${(emoticons[12]||'헐').trim()}" | 14. "${(emoticons[13]||'감동').trim()}" | 15. "${(emoticons[14]||'잘자요').trim()}"`
     ].join('\n');
     const textPolicy = geminiTextMode === 'text'
-      ? `[KOREAN TYPOGRAPHY — GEMINI STABLE DIRECTIVE]
+      ? `[KOREAN TYPOGRAPHY — GEMINI STABLE DIRECTIVE (COMMERCIAL EMOTICON BENCHMARK)]
 1. Render each Korean phrase beside or above its character in a bold, clean, legible hand-drawn font exactly once.
-2. Keep text styling to a single robust layer: bold saturated solid color fill + one crisp thick white outline (Single White Outline). Do NOT add 3D badge effects, double inner outlines, tilt, or complex drop shadows — fewer visual layers prevent Hangul spelling and jamo order glitches in Gemini.
-3. Strict Single-Output Rule: Render each quoted Korean phrase EXACTLY ONCE per cell with 100% correct Hangul spelling.
-4. Strictly forbid repeating words (e.g. no "화이팅 화이팅"), jamo reordering, missing strokes, or mixing Japanese/Chinese/foreign characters.
-5. Self-Verification: Cross-check every rendered Hangul phrase character-by-character against the provided list to ensure flawless spelling before finalizing the render.`
+2. Keep text styling to a single robust layer: bold saturated solid color fill + one crisp thick white outline (Single White Outline). Do NOT add 3D badge effects, double inner outlines, tilt, or complex drop shadows — fewer visual layers prevent Hangul spelling glitches in Gemini.
+3. Single-Line Placement & Font Scaling Rule (Strict): Short phrases under 4-6 syllables (e.g. "대박", "감동", "좋아요", "미안해요", "사랑해요", "수고했어요") MUST be rendered on a single horizontal line. Never split short words into 2 lines (e.g. do NOT split "대박" into "대" and "박") or stack characters vertically. If space is tight, scale down the font size instead of line-breaking. Only phrases with spaces (e.g. "오늘도 화이팅") may wrap at word boundaries (max 2 lines).
+4. Strictly Prohibit Leading Character Duplication: Never duplicate the first syllable (e.g. NO "축축하해요", NO "미미안해요", NO "최최고"). Forbid repeating words, jamo reordering, missing strokes, or mixing foreign characters.
+5. Self-Verification (Cross-Check): Cross-check every rendered Hangul phrase character-by-character against the provided list to verify zero duplicated characters and zero forced line breaks before finalizing the render.`
       : 'The Korean phrases are context for determining expression and pose only — never render them as text, letters, or numbers in the image.';
     const textExclusion = geminiTextMode === 'text'
-      ? 'No extra words, altered spelling, random letters, sticker numbers, parentheses, quotation marks, or text boxes.'
+      ? 'Leading syllable duplication (e.g. 축축하해요, 미미안해요), forced line breaks on short words, vertical letter stacking, extra words, altered spelling, random letters, sticker numbers, parentheses, quotation marks, or text boxes.'
       : 'No text, no letters, no numbers, no speech bubbles, no sticker labels, no meaningless symbols.';
 
     return `[GOAL]
