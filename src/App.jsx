@@ -3029,24 +3029,21 @@ ${textExclusionKo} Deformed limbs, cropped figure, frame borders, grid lines, wa
         const phrase = (emoticons[i] || '').trim();
         const action = getPhraseActionKo(phrase);
         const cellNum = i + 1;
-        const cellPos = i === 0 ? ' (상단 1번째)' : ` (상단 ${i + 1}번째)`;
-        return `Cell ${cellNum}${cellPos}: ${action} | 문구: "${phrase}"`;
+        return `[1행 ${i + 1}열] 스티커 ${cellNum}: ${action} | 텍스트: "${phrase}"`;
       }).join('\n');
 
       const row2Plan = [5, 6, 7, 8, 9].map(i => {
         const phrase = (emoticons[i] || '').trim();
         const action = getPhraseActionKo(phrase);
         const cellNum = i + 1;
-        const cellPos = i === 5 ? ' (중단 1번째)' : ` (중단 ${i - 4}번째)`;
-        return `Cell ${cellNum}${cellPos}: ${action} | 문구: "${phrase}"`;
+        return `[2행 ${i - 4}열] 스티커 ${cellNum}: ${action} | 텍스트: "${phrase}"`;
       }).join('\n');
 
       const row3Plan = [10, 11, 12, 13, 14].map(i => {
         const phrase = (emoticons[i] || '').trim();
         const action = getPhraseActionKo(phrase);
         const cellNum = i + 1;
-        const cellPos = i === 10 ? ' (하단 1번째)' : i === 14 ? ' (하단 5번째, 마지막 셀)' : ` (하단 ${i - 9}번째)`;
-        return `Cell ${cellNum}${cellPos}: ${action} | 문구: "${phrase}"`;
+        return `[3행 ${i - 9}열] 스티커 ${cellNum}: ${action} | 텍스트: "${phrase}"`;
       }).join('\n');
 
       const textPolicyKo = geminiTextMode === 'text'
@@ -3054,40 +3051,41 @@ ${textExclusionKo} Deformed limbs, cropped figure, frame borders, grid lines, wa
         : `*한국어 문구는 감정 및 동작 지침으로만 사용하며 이미지 내에 어떤 글자, 텍스트, 숫자도 렌더링하지 마세요.*`;
 
       const textExclusionKo = geminiTextMode === 'text'
-        ? '4x4 그리드, 16개 스티커, 4번째 행 생성, 16번째 스티커, 15개 초과/미만 개수, 한글 자모 분리 오타, 첫 글자 중복, 깨진 글꼴, 신체 부위 누락/크롭, 패널 경계선, 격자선 오버레이.'
+        ? '4x4 그리드, 4행 4열 16개 스티커 생성(절대 금지), 4번째 행, 16번째 스티커, 세로형 4열 배치, 한글 자모 분리 오타, 첫 글자 중복, 깨진 글꼴, 신체 부위 누락/크롭, 패널 경계선, 격자선 오버레이.'
         : '모든 텍스트, 글자, 숫자, 말풍선, 4x4 그리드, 16개 스티커, 4번째 행, 신체 크롭, 패널 경계선, 격자선.';
 
-      return `[Identity & Visual Baseline]
+      return `[캔버스 포맷 & 비율 — 가로 와이드 16:9 필수 (3행 × 5열 강제)]
+- 비율: 가로가 넓은 16:9 와이드 직사각형 캔버스 (Wide landscape orientation).
+- 배열 구조: 반드시 '가로 5개 열 × 세로 3개 행' (총 정확히 15개 스티커).
+- 4x4(16개) 절대 금지 규칙: 세로 4행이나 가로 4열(4x4 = 16개)로 배치하지 마세요. 1행에 5개, 2행에 5개, 3행에 5개를 배치하고 15번째 스티커에서 완벽히 종료하세요. 4번째 행은 절대로 그리지 마세요.
+- 배경: ${bgInstructionKo}
+- 프레이밍: 격자선, 패널 박스, 셀 테두리선, 체커보드 투명 패턴, 워터마크 없음.
+
+[Identity & Visual Baseline]
 - Reference: 2.5-head SD Chibi 2D vector sticker sheet based strictly on the reference image.
 ${referenceInstructionKo}
 - Art Style: Crisp clean vector outlines, smooth 2D cel-shading, vibrant colors, uniform character proportions across all 15 instances.
 
-[Canvas & Layout Constraints - STRICT 15 COUNT LOCK]
-- Grid Arrangement: Exactly 3 horizontal rows of 5 stickers each (Total 15 stickers: Row 1 = 5, Row 2 = 5, Row 3 = 5).
-- ABSOLUTE PROHIBITION ON 4x4: Absolutely DO NOT draw a 4th row. Absolutely DO NOT draw a 16th sticker. The sheet strictly terminates at Cell 15.
-- Background: ${bgInstructionKo}
-- Framing: No bounding boxes, no panel lines, no grid separators, no checkerboard transparency tiles, no watermarks.
-
-[15-Cell Dynamic Pose & Exact Korean Typography Matrix]
+[15종 3행 × 5열 배치 및 한글 텍스트 매트릭스]
 ${textPolicyKo}
 
-[Row 1 — Exactly 5 Stickers (Cells 1 to 5)]
+[제 1행 — 상단 가로 5개 스티커 (스티커 1 ~ 5)]
 ${row1Plan}
 
-[Row 2 — Exactly 5 Stickers (Cells 6 to 10)]
+[제 2행 — 중단 가로 5개 스티커 (스티커 6 ~ 10)]
 ${row2Plan}
 
-[Row 3 — Exactly 5 Stickers (Cells 11 to 15)]
+[제 3행 — 하단 가로 5개 스티커 (스티커 11 ~ 15 / 최종 종료)]
 ${row3Plan}
 
-[Termination Check]
-- Stop immediately after Cell 15. There is NO Row 4 and NO Cell 16. Total sticker count = 15.
+[종료 검증]
+- 1행 5개 + 2행 5개 + 3행 5개 = 총 15개로 완성 후 렌더링을 종료합니다. (4행 없음, 16개 생성 절대 불가)
 
 [Negative Directives]
 ${textExclusionKo}`;
     }
 
-    // English Version (Hierarchical Gemini Framework with Strict 15 Count Lock)
+    // English Version (Hierarchical Gemini Framework with 16:9 Wide Aspect Ratio Lock)
     const referenceInstruction = characterSource === 'photo'
       ? `[Identity & Visual Baseline]
 - Reference: 2.5-head SD Chibi 2D vector sticker sheet based strictly on the reference image (${getPhotoModeLabel('en')}).
@@ -3131,24 +3129,21 @@ ${textExclusion}`;
       const phrase = (emoticons[i] || '').trim();
       const action = getPhraseActionEn(phrase);
       const cellNum = i + 1;
-      const cellPos = i === 0 ? ' (Top Row, Cell 1)' : ` (Top Row, Cell ${i + 1})`;
-      return `Cell ${cellNum}${cellPos}: ${action} | Text: "${phrase}"`;
+      return `[Row 1, Col ${i + 1}] Sticker ${cellNum}: ${action} | Text: "${phrase}"`;
     }).join('\n');
 
     const row2Plan = [5, 6, 7, 8, 9].map(i => {
       const phrase = (emoticons[i] || '').trim();
       const action = getPhraseActionEn(phrase);
       const cellNum = i + 1;
-      const cellPos = i === 5 ? ' (Middle Row, Cell 6)' : ` (Middle Row, Cell ${i + 1})`;
-      return `Cell ${cellNum}${cellPos}: ${action} | Text: "${phrase}"`;
+      return `[Row 2, Col ${i - 4}] Sticker ${cellNum}: ${action} | Text: "${phrase}"`;
     }).join('\n');
 
     const row3Plan = [10, 11, 12, 13, 14].map(i => {
       const phrase = (emoticons[i] || '').trim();
       const action = getPhraseActionEn(phrase);
       const cellNum = i + 1;
-      const cellPos = i === 10 ? ' (Bottom Row, Cell 11)' : i === 14 ? ' (Bottom Row, Cell 15 - Final Cell)' : ` (Bottom Row, Cell ${i + 1})`;
-      return `Cell ${cellNum}${cellPos}: ${action} | Text: "${phrase}"`;
+      return `[Row 3, Col ${i - 9}] Sticker ${cellNum}: ${action} | Text: "${phrase}"`;
     }).join('\n');
 
     const textPolicy = geminiTextMode === 'text'
@@ -3156,31 +3151,32 @@ ${textExclusion}`;
       : `*Korean phrases above are emotional context only — do not render any text, letters, or numbers in the image.*`;
 
     const textExclusion = geminiTextMode === 'text'
-      ? '4x4 grid layout, 16 stickers, generating Row 4, 16th sticker, broken Korean characters, typos, duplicate consonants, less or more than 15 stickers, missing limbs, partial body crops, panel borders, grid line overlays.'
+      ? '4x4 grid layout, 16 stickers, 4 columns x 4 rows, generating Row 4, 16th sticker, broken Korean characters, typos, duplicate consonants, less or more than 15 stickers, missing limbs, partial body crops, panel borders, grid line overlays.'
       : 'No text, no letters, no numbers, 4x4 layout, 16 stickers, 4th row, deformed limbs, cropped figures, panel borders, grid lines.';
 
-    return `${referenceInstruction}
-
-[Canvas & Layout Constraints - STRICT 15 COUNT LOCK]
-- Grid Arrangement: Exactly 3 horizontal rows of 5 stickers each (Total 15 stickers: Row 1 = 5, Row 2 = 5, Row 3 = 5).
-- ABSOLUTE PROHIBITION ON 4x4: Absolutely DO NOT draw a 4th row. Absolutely DO NOT draw a 16th sticker. The sheet strictly terminates at Cell 15.
+    return `[Canvas Format & Aspect Ratio — Wide Horizontal 16:9 (Strict 3 Rows × 5 Columns)]
+- Format: Wide horizontal landscape canvas (16:9 aspect ratio).
+- Grid Matrix: Exactly 5 columns horizontally across the width, and 3 rows vertically down the height (5 wide × 3 high = exactly 15 stickers).
+- ABSOLUTE PROHIBITION ON 4x4: DO NOT arrange as 4 columns × 4 rows (16 stickers). Arrange 5 stickers in Row 1, 5 stickers in Row 2, and 5 stickers in Row 3. Absolutely NO Row 4 and NO 16th sticker.
 - Background: ${bgInstructionEn}
 - Framing: No bounding boxes, no panel lines, no grid separators, no checkerboard transparency tiles, no watermarks.
 
-[15-Cell Dynamic Pose & Exact Korean Typography Matrix]
+${referenceInstruction}
+
+[15-Cell Dynamic Pose & Exact Korean Typography Matrix (3 Rows × 5 Columns)]
 ${textPolicy}
 
-[Row 1 — Exactly 5 Stickers (Cells 1 to 5)]
+[Row 1 — Top 5 Horizontal Stickers (Stickers 1 to 5)]
 ${row1Plan}
 
-[Row 2 — Exactly 5 Stickers (Cells 6 to 10)]
+[Row 2 — Middle 5 Horizontal Stickers (Stickers 6 to 10)]
 ${row2Plan}
 
-[Row 3 — Exactly 5 Stickers (Cells 11 to 15)]
+[Row 3 — Bottom 5 Horizontal Stickers (Stickers 11 to 15 / Final)]
 ${row3Plan}
 
 [Termination Check]
-- Stop immediately after Cell 15. There is NO Row 4 and NO Cell 16. Total sticker count = 15.
+- Sheet concludes immediately after Sticker 15. Exactly 15 stickers in total (5 + 5 + 5). No 4th row.
 
 [Negative Directives]
 ${textExclusion}`;
