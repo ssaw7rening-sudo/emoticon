@@ -2999,15 +2999,15 @@ ${textExclusion} No grid lines, no cell division lines, no border lines between 
 
       if (generationMode === 'individual' || hasPhraseOverride) {
         const textPolicyKo = geminiTextMode === 'text'
-          ? `[타이포그래피 규칙 — 중복 방지 및 정확도]
-- 정확한 배치: 각 캐릭터 상단 우측(또는 옆)에 지정된 한글 텍스트 "${targetPhrase}"를 정확히 '단 1회'만 렌더링하세요.
+          ? `[타이포그래피 규칙 — 중복 절대 금지 및 정확도]
+- 단일 렌더링 원칙: 캐릭터 상단 우측에 지정된 한글 텍스트 "${targetPhrase}"를 정확히 '단 1번'만 렌더링하세요. (상단과 하단에 2번 중복 표기 절대 금지).
 - 텍스트 스타일: 단일 두꺼운 흰색 다이컷 외곽선이 적용된 볼드한 3D 입체 한글 타이포그래피.
-- 엄격 금지: 단어 반복 금지, 단일 셀 내 텍스트 중복 렌더링 금지, 첫 자음/모음 중복 금지.`
+- 엄격 금지: 단어 반복 금지, 단일 셀 내 텍스트 2회 이상 중복 표기 금지, 첫 자음/모음 중복 표기("축축하해요", "미미안해요" 등) 절대 금지.`
           : `[텍스트 규칙]
 한국어 문구 "${targetPhrase}"는 표정과 자세 결정을 위한 감정 맥락으로만 사용하며 이미지 내에 텍스트, 글자, 숫자를 그리지 마세요.`;
 
         const textExclusionKo = geminiTextMode === 'text'
-          ? '텍스트 중복 렌더링, 단어 반복, 첫 글자 자음/모음 중복, 두 번 쓰인 글자, 평면 2D 만화 선화, 낮은 인물 유사도, 전형적인 양산형 만화 얼굴, 한글 오타, 글자 누락, 체커보드 투명 배경, 잘린 사지, 뭉개진 인물.'
+          ? '텍스트 2회 중복 렌더링, 단어 반복, 첫 글자 자음/모음 중복(축축하해요, 미미안해요 등), 두 번 쓰인 글자, 평면 2D 만화 선화, 낮은 인물 유사도, 전형적인 양산형 만화 얼굴, 한글 오타, 글자 누락, 체커보드 투명 배경, 잘린 사지, 뭉개진 인물.'
           : '모든 텍스트, 글자, 숫자, 말풍선, 평면 2D 만화, 신체 크롭, 격자선.';
 
         return `[포맷 & 캔버스 비율]
@@ -3046,14 +3046,15 @@ ${textExclusionKo}`;
 
       const textPolicyKo = geminiTextMode === 'text'
         ? `[Typography Rules - Anti-Duplication & Accuracy]
-- Exact Placement: Render each Korean text exactly ONCE at the top-right of each character.
+- Exact Single Placement: Render each Korean text exactly ONCE at the top-right of each character.
+- Single Instance Rule: Under no circumstances render the text twice in a single sticker cell (NO top + bottom double rendering).
 - Text Style: Bold 3D glossy Korean typography with a single thick white die-cut outline.
-- STRICT: Absolutely NO repeated words, NO duplicate text inside a single cell, NO doubled initial consonants.`
+- STRICT: Absolutely NO repeated words, NO duplicate text inside a single cell, NO doubled initial consonants (e.g. NO "축축하해요", NO "미미안해요").`
         : `[Typography Rules]
 - Korean phrases below are emotional context only — do not render any text, letters, or numbers in the image.`;
 
       const textExclusionKo = geminiTextMode === 'text'
-        ? 'Duplicate text, repeated words, double Korean characters, text rendered twice, flat 2D anime line art, low likeness, generic cartoon face, Korean spelling errors, missing letters, extra 4th row, 4x4 layout, transparent checkerboard background, cut-off limbs, merged figures.'
+        ? 'Duplicate text, repeated words, double Korean characters, text rendered twice, double text blocks per cell, flat 2D anime line art, low likeness, generic cartoon face, Korean spelling errors, missing letters, extra 4th row, 4x4 layout, transparent checkerboard background, cut-off limbs, merged figures.'
         : 'No text, no letters, no numbers, 4x4 layout, 16 stickers, 4th row, flat 2D anime, deformed limbs, cropped figures, panel borders, grid lines.';
 
       return `[Format & Canvas Ratio - 16:9 Landscape Grid]
@@ -3100,12 +3101,13 @@ ${textExclusionKo}`;
     if (generationMode === 'individual' || hasPhraseOverride) {
       const textPolicy = geminiTextMode === 'text'
         ? `[Typography Rules - Anti-Duplication & Accuracy]
-- Exact Placement: Render each Korean text "${targetPhrase}" exactly ONCE at the top-right of the character.
+- Exact Single Placement: Render the Korean text "${targetPhrase}" exactly ONCE at the top-right of the character.
+- Single Instance Rule: Under no circumstances render the text twice in a single sticker cell (NO top + bottom double rendering).
 - Text Style: Bold 3D glossy Korean typography with a single thick white die-cut outline.
 - STRICT: Absolutely NO repeated words, NO duplicate text inside a single cell, NO doubled initial consonants.`
         : `Do not render text, letters, or numbers. Use "${targetPhrase}" only as visual context for expression and pose.`;
       const textExclusion = geminiTextMode === 'text'
-        ? 'Duplicate text, repeated words, double Korean characters, text rendered twice, flat 2D anime line art, low likeness, generic cartoon face, Korean spelling errors, missing letters, transparent checkerboard background, cut-off limbs, merged figures.'
+        ? 'Duplicate text, repeated words, double Korean characters, text rendered twice, double text blocks per cell, flat 2D anime line art, low likeness, generic cartoon face, Korean spelling errors, missing letters, transparent checkerboard background, cut-off limbs, merged figures.'
         : 'No text, no letters, no numbers, no speech bubbles, no sticker labels, no meaningless symbols.';
 
       return `[Format & Canvas Ratio]
@@ -3144,14 +3146,15 @@ ${textExclusion}`;
 
     const textPolicy = geminiTextMode === 'text'
       ? `[Typography Rules - Anti-Duplication & Accuracy]
-- Exact Placement: Render each Korean text exactly ONCE at the top-right of each character.
+- Exact Single Placement: Render each Korean text exactly ONCE at the top-right of each character.
+- Single Instance Rule: Under no circumstances render the text twice in a single sticker cell (NO top + bottom double rendering).
 - Text Style: Bold 3D glossy Korean typography with a single thick white die-cut outline.
-- STRICT: Absolutely NO repeated words, NO duplicate text inside a single cell, NO doubled initial consonants.`
+- STRICT: Absolutely NO repeated words, NO duplicate text inside a single cell, NO doubled initial consonants (e.g. NO "축축하해요", NO "미미안해요").`
       : `[Typography Rules]
 - Korean phrases below are emotional context only — do not render any text, letters, or numbers in the image.`;
 
     const textExclusion = geminiTextMode === 'text'
-      ? 'Duplicate text, repeated words, double Korean characters, text rendered twice, flat 2D anime line art, low likeness, generic cartoon face, Korean spelling errors, missing letters, extra 4th row, 4x4 layout, transparent checkerboard background, cut-off limbs, merged figures.'
+      ? 'Duplicate text, repeated words, double Korean characters, text rendered twice, double text blocks per cell, flat 2D anime line art, low likeness, generic cartoon face, Korean spelling errors, missing letters, extra 4th row, 4x4 layout, transparent checkerboard background, cut-off limbs, merged figures.'
       : 'No text, no letters, no numbers, 4x4 layout, 16 stickers, 4th row, flat 2D anime, deformed limbs, cropped figures, panel borders, grid lines.';
 
     return `[Format & Canvas Ratio - 16:9 Landscape Grid]
