@@ -2979,47 +2979,11 @@ ${textExclusion} No grid lines, no cell division lines, no border lines between 
       ? getSelectedPhrase()
       : (phraseOverride || '').trim();
 
-    const inlineColorsEn = [
-      'Bright Yellow/Orange font with sparkles',
-      'Vibrant Pink font with small heart',
-      'Red/Orange gradient font with stars',
-      'Vivid Pink/Red font with thumbs-up icon',
-      'Deep Navy/Purple clean font',
-      'Hot Pink 3D font with floating hearts',
-      'Golden Yellow bold font with crown',
-      'Purple/Violet glowing font with confetti',
-      'Sky Blue font with tear drop',
-      'Orange/Coral font with sparkles',
-      'Magenta/Pink festive font with party ribbon',
-      'Bold Yellow-Red explosion comic font',
-      'Purple/Neon Yellow electric font',
-      'Soft Pink/Red glowing font with hearts',
-      'Deep Indigo/Purple night font with yellow moon'
-    ];
-
-    const inlineColorsKo = [
-      '반짝이가 포함된 선명한 노란/주황 폰트',
-      '작은 하트가 포함된 생동감 있는 핑크 폰트',
-      '별 효과가 포함된 레드/오렌지 그라데이션 폰트',
-      '따봉 아이콘이 포함된 선명한 핑크/레드 폰트',
-      '깔끔한 딥네이비/퍼플 폰트',
-      '하트가 떠 있는 핫핑크 3D 폰트',
-      '왕관이 포함된 골든 옐로우 볼드 폰트',
-      '폭죽 리본이 포함된 퍼플/바이올렛 발광 폰트',
-      '땀방울이 포함된 스카이블루 폰트',
-      '반짝이가 포함된 오렌지/코랄 폰트',
-      '파티 리본이 포함된 마젠타/핑크 축제 폰트',
-      '폭발 만화 스타일의 볼드 옐로우-레드 폰트',
-      '퍼플/네온 옐로우 일렉트릭 폰트',
-      '하트가 포함된 부드러운 핑크/레드 발광 폰트',
-      '노란 달이 포함된 딥인디고/퍼플 야간 폰트'
-    ];
-
     if (isKorean) {
       const referenceInstructionKo = characterSource === 'photo'
         ? `[시각적 정체성 & 실사 캐리커처 스타일]
 - 캐릭터 스타일: 2.5등신 치비/버블헤드 캐리커처 (참고 사진의 실제 얼굴을 직접 반영한 고화질 실사풍 얼굴).
-- 얼굴 정확도 (최우선 순위): 참고 사진 속 실제 인물의 눈매, 쌍꺼풀, 코, 미소선, 얼굴 윤곽, 피부 결, 실제 조명 느낌을 95% 이상 극도로 정밀하게 유지하세요. 단순한 2D 플랫 선화로 뭉개지 말고, 실제 사람의 얼굴 입체감과 자연스러운 피부톤을 온전히 살리세요.
+- 얼굴 정확도 (최우선 순위): 참고 사진 속 실제 인물의 눈매, 쌍꺼풀/무쌍 구조, 코, 미소선, 얼굴 윤곽, 피부 결, 실제 조명 느낌을 95% 이상 극도로 정밀하게 유지하세요. 단순한 2D 플랫 선화로 뭉개지 말고, 실제 사람의 얼굴 입체감과 자연스러운 피부톤을 온전히 살리세요.
 - 의상 및 헤어 일관성: ${character.appearance}, ${character.outfit}. 15개 모든 셀에서 동일한 의상과 헤어스타일을 완벽히 일관되게 유지하세요.`
         : `[시각적 정체성 & 캐릭터 스타일]
 - 대상: ${character.subject}
@@ -3035,14 +2999,16 @@ ${textExclusion} No grid lines, no cell division lines, no border lines between 
 
       if (generationMode === 'individual' || hasPhraseOverride) {
         const textPolicyKo = geminiTextMode === 'text'
-          ? `[한글 텍스트 규칙]
-지정된 한국어 문구 "${targetPhrase}"를 카카오톡 스타일의 두껍고 선명한 3D 입체 폰트와 흰색 외곽선 스트로크를 적용하여 캐릭터 옆에 가로로 정확히 한 번만 렌더링하세요. 말풍선, 텍스트 박스, 따옴표, 괄호 금지.`
+          ? `[타이포그래피 규칙 — 중복 방지 및 정확도]
+- 정확한 배치: 각 캐릭터 상단 우측(또는 옆)에 지정된 한글 텍스트 "${targetPhrase}"를 정확히 '단 1회'만 렌더링하세요.
+- 텍스트 스타일: 단일 두꺼운 흰색 다이컷 외곽선이 적용된 볼드한 3D 입체 한글 타이포그래피.
+- 엄격 금지: 단어 반복 금지, 단일 셀 내 텍스트 중복 렌더링 금지, 첫 자음/모음 중복 금지.`
           : `[텍스트 규칙]
 한국어 문구 "${targetPhrase}"는 표정과 자세 결정을 위한 감정 맥락으로만 사용하며 이미지 내에 텍스트, 글자, 숫자를 그리지 마세요.`;
 
         const textExclusionKo = geminiTextMode === 'text'
-          ? '한글 오타, 첫 글자 자음/모음 중복, 깨진 글자, 불필요한 단어, 텍스트 상자 금지.'
-          : '텍스트, 글자, 숫자, 말풍선, 스티커 라벨, 의미 없는 기호 금지.';
+          ? '텍스트 중복 렌더링, 단어 반복, 첫 글자 자음/모음 중복, 두 번 쓰인 글자, 평면 2D 만화 선화, 낮은 인물 유사도, 전형적인 양산형 만화 얼굴, 한글 오타, 글자 누락, 체커보드 투명 배경, 잘린 사지, 뭉개진 인물.'
+          : '모든 텍스트, 글자, 숫자, 말풍선, 평면 2D 만화, 신체 크롭, 격자선.';
 
         return `[포맷 & 캔버스 비율]
 - 캔버스: 1:1 정사각형 캔버스 중앙에 단일 스티커 1개 배치.
@@ -3051,80 +3017,79 @@ ${textExclusion} No grid lines, no cell division lines, no border lines between 
 
 ${referenceInstructionKo}
 
-[포즈 & 한국어 타이포그래피]
-- 감정 / 동작: "${targetPhrase}" — ${getPhraseActionKo(targetPhrase)}. 최소 소품: ${character.props}, ${character.effects}.
 ${textPolicyKo}
 
+[포즈 & 문구]
+- 감정 / 동작: "${targetPhrase}" — ${getPhraseActionKo(targetPhrase)}. 최소 소품: ${character.props}, ${character.effects}.
+
 [제외 조건 (Negative Directives)]
-${textExclusionKo} 평면적인 2D 애니 선화, 낮은 인물 유사도, 전형적인 양산형 만화 얼굴, 잘린 신체.`;
+${textExclusionKo}`;
       }
 
       const row1Plan = [0, 1, 2, 3, 4].map(i => {
         const phrase = (emoticons[i] || '').trim();
         const action = getPhraseActionKo(phrase);
-        const color = inlineColorsKo[i % 15];
-        return `${i + 1}. [1-${i + 1}] ${action} | 텍스트: "${phrase}" (${color})`;
+        return `${i + 1}. [1-${i + 1}] ${action} | Text: "${phrase}"`;
       }).join('\n');
 
       const row2Plan = [5, 6, 7, 8, 9].map(i => {
         const phrase = (emoticons[i] || '').trim();
         const action = getPhraseActionKo(phrase);
-        const color = inlineColorsKo[i % 15];
-        return `${i + 1}. [2-${i - 4}] ${action} | 텍스트: "${phrase}" (${color})`;
+        return `${i + 1}. [2-${i - 4}] ${action} | Text: "${phrase}"`;
       }).join('\n');
 
       const row3Plan = [10, 11, 12, 13, 14].map(i => {
         const phrase = (emoticons[i] || '').trim();
         const action = getPhraseActionKo(phrase);
-        const color = inlineColorsKo[i % 15];
-        return `${i + 1}. [3-${i - 9}] ${action} | 텍스트: "${phrase}" (${color})`;
+        return `${i + 1}. [3-${i - 9}] ${action} | Text: "${phrase}"`;
       }).join('\n');
 
       const textPolicyKo = geminiTextMode === 'text'
-        ? `*각 캐릭터 옆에 화려한 카카오톡 스타일의 입체감 있는 한글 타이포그래피와 다채로운 그라데이션 채움, 두꺼운 흰색 외곽선 스트로크를 적용하여 가로로 정확히 한 번만 렌더링하세요.*`
-        : `*한국어 문구는 감정 및 동작 지침으로만 사용하며 이미지 내에 어떤 글자, 텍스트, 숫자도 렌더링하지 마세요.*`;
+        ? `[Typography Rules - Anti-Duplication & Accuracy]
+- Exact Placement: Render each Korean text exactly ONCE at the top-right of each character.
+- Text Style: Bold 3D glossy Korean typography with a single thick white die-cut outline.
+- STRICT: Absolutely NO repeated words, NO duplicate text inside a single cell, NO doubled initial consonants.`
+        : `[Typography Rules]
+- Korean phrases below are emotional context only — do not render any text, letters, or numbers in the image.`;
 
       const textExclusionKo = geminiTextMode === 'text'
-        ? '평면적인 2D 애니 선화, 낮은 인물 유사도, 전형적인 양산형 만화 얼굴, 한글 맞춤법 오류, 글자 누락, 4번째 행 추가 생성, 4x4 레이아웃, 투명 체커보드 배경, 잘린 사지, 뭉개진 인물.'
-        : '모든 텍스트, 글자, 숫자, 평면 2D 만화, 4x4 레이아웃, 16개 스티커, 4번째 행, 신체 크롭, 격자선.';
+        ? 'Duplicate text, repeated words, double Korean characters, text rendered twice, flat 2D anime line art, low likeness, generic cartoon face, Korean spelling errors, missing letters, extra 4th row, 4x4 layout, transparent checkerboard background, cut-off limbs, merged figures.'
+        : 'No text, no letters, no numbers, 4x4 layout, 16 stickers, 4th row, flat 2D anime, deformed limbs, cropped figures, panel borders, grid lines.';
 
-      return `[포맷 & 캔버스 비율 — 16:9 와이드 가로형 그리드]
-- 캔버스: 16:9 와이드 가로 직사각형 비율, 엄격한 5열 × 3행 그리드 배치 (정확히 총 15개의 개별 스티커).
-- 배경: ${bgInstructionKo}
-- 절대 금지 조건: 4x4 레이아웃 절대 금지, 16번째 스티커 금지, 배경 격자선 금지, 체커보드 투명 패턴 금지.
+      return `[Format & Canvas Ratio - 16:9 Landscape Grid]
+- Canvas: 16:9 wide landscape aspect ratio, strictly arranged in a 5 columns × 3 rows grid (Exactly 15 distinct stickers in total).
+- Background: ${bgInstructionKo}
+- Absolute Constraints: No 4x4 layout, no 16th sticker, no background grid lines, no checkerboard transparency pattern.
 
 ${referenceInstructionKo}
 
-[15종 스티커 & 다채로운 이모티콘 타이포그래피 매트릭스]
 ${textPolicyKo}
 
-[제 1행 — 상단 5개 스티커]
+[15 Stickers & Exact Korean Text Matrix]
+[Row 1]
 ${row1Plan}
 
-[제 2행 — 중단 5개 스티커]
+[Row 2]
 ${row2Plan}
 
-[제 3행 — 하단 5개 스티커]
+[Row 3]
 ${row3Plan}
 
-[종료 검증]
-- 15번째 스티커에서 완벽히 렌더링이 종료됩니다. 4번째 행은 없으며 총 스티커 개수는 정확히 15개입니다.
-
-[제외 조건 (Negative Directives)]
+[Negative Directives]
 ${textExclusionKo}`;
     }
 
-    // English Version (16:9 Landscape Grid + Realistic Chibi Style Framework)
+    // English Version (Matches exact user specification)
     const referenceInstruction = characterSource === 'photo'
       ? `[Visual Identity & Realistic Chibi Style]
 - Character Style: 2.5-head Chibi/Bobblehead Caricature featuring a realistic, high-fidelity face directly from the reference photo (${getPhotoModeLabel('en')}).
 - Facial Accuracy (Highest Priority): Maintain 95%+ exact likeness of the reference photo's actual eyes, eyelid shape, nose, smile lines, facial contour, skin texture, and realistic lighting. DO NOT flatten into 2D line art. Keep real human facial depth and skin tone.
 - Consistent Outfits: ${character.appearance}, ${character.outfit} across all 15 cells.`
-      : `[Visual Identity & Character Style]
+      : `[Visual Identity & Realistic Chibi Style]
 - Subject: ${character.subject}
 - Appearance & Features: ${character.appearance}
 - Outfit: ${character.outfit}
-- Character Style: 2.5-head Chibi caricature with expressive facial structure.`;
+- Character Style: 2.5-head Chibi caricature featuring realistic facial structure and depth.`;
 
     const bgInstructionEn = {
       transparent: 'Pure solid white background (#FFFFFF) with a distinct white die-cut sticker contour around each sticker silhouette. Absolutely no background grid lines, no checkerboard transparency pattern.',
@@ -3134,10 +3099,13 @@ ${textExclusionKo}`;
 
     if (generationMode === 'individual' || hasPhraseOverride) {
       const textPolicy = geminiTextMode === 'text'
-        ? `*Render vibrant KakaoTalk-style 3D glossy Korean typography with colorful gradient fill and thick white outline next to the character. No speech bubbles, no text boxes, no brackets, no quotes, no numbers.*`
+        ? `[Typography Rules - Anti-Duplication & Accuracy]
+- Exact Placement: Render each Korean text "${targetPhrase}" exactly ONCE at the top-right of the character.
+- Text Style: Bold 3D glossy Korean typography with a single thick white die-cut outline.
+- STRICT: Absolutely NO repeated words, NO duplicate text inside a single cell, NO doubled initial consonants.`
         : `Do not render text, letters, or numbers. Use "${targetPhrase}" only as visual context for expression and pose.`;
       const textExclusion = geminiTextMode === 'text'
-        ? 'Flat 2D anime line art, low likeness, generic cartoon face, Korean text spelling errors, missing letters, transparent checkerboard background, cut-off limbs, merged figures.'
+        ? 'Duplicate text, repeated words, double Korean characters, text rendered twice, flat 2D anime line art, low likeness, generic cartoon face, Korean spelling errors, missing letters, transparent checkerboard background, cut-off limbs, merged figures.'
         : 'No text, no letters, no numbers, no speech bubbles, no sticker labels, no meaningless symbols.';
 
       return `[Format & Canvas Ratio]
@@ -3147,9 +3115,10 @@ ${textExclusionKo}`;
 
 ${referenceInstruction}
 
-[Pose & Typography]
-- Emotion / Action: "${targetPhrase}" — ${getPhraseActionEn(targetPhrase)}
 ${textPolicy}
+
+[Pose & Action]
+- Emotion / Action: "${targetPhrase}" — ${getPhraseActionEn(targetPhrase)}
 
 [Negative Directives]
 ${textExclusion}`;
@@ -3158,31 +3127,32 @@ ${textExclusion}`;
     const row1Plan = [0, 1, 2, 3, 4].map(i => {
       const phrase = (emoticons[i] || '').trim();
       const action = getPhraseActionEn(phrase);
-      const color = inlineColorsEn[i % 15];
-      return `${i + 1}. [1-${i + 1}] ${action} | Text: "${phrase}" (${color})`;
+      return `${i + 1}. [1-${i + 1}] ${action} | Text: "${phrase}"`;
     }).join('\n');
 
     const row2Plan = [5, 6, 7, 8, 9].map(i => {
       const phrase = (emoticons[i] || '').trim();
       const action = getPhraseActionEn(phrase);
-      const color = inlineColorsEn[i % 15];
-      return `${i + 1}. [2-${i - 4}] ${action} | Text: "${phrase}" (${color})`;
+      return `${i + 1}. [2-${i - 4}] ${action} | Text: "${phrase}"`;
     }).join('\n');
 
     const row3Plan = [10, 11, 12, 13, 14].map(i => {
       const phrase = (emoticons[i] || '').trim();
       const action = getPhraseActionEn(phrase);
-      const color = inlineColorsEn[i % 15];
-      return `${i + 1}. [3-${i - 9}] ${action} | Text: "${phrase}" (${color})`;
+      return `${i + 1}. [3-${i - 9}] ${action} | Text: "${phrase}"`;
     }).join('\n');
 
     const textPolicy = geminiTextMode === 'text'
-      ? `*Render vibrant KakaoTalk-style 3D glossy Korean typography with colorful gradient fill and thick white outline next to each character.*`
-      : `*Korean phrases above are emotional context only — do not render any text, letters, or numbers in the image.*`;
+      ? `[Typography Rules - Anti-Duplication & Accuracy]
+- Exact Placement: Render each Korean text exactly ONCE at the top-right of each character.
+- Text Style: Bold 3D glossy Korean typography with a single thick white die-cut outline.
+- STRICT: Absolutely NO repeated words, NO duplicate text inside a single cell, NO doubled initial consonants.`
+      : `[Typography Rules]
+- Korean phrases below are emotional context only — do not render any text, letters, or numbers in the image.`;
 
     const textExclusion = geminiTextMode === 'text'
-      ? 'Flat 2D anime line art, low likeness, generic cartoon face, Korean text spelling errors, missing letters, extra 4th row, 4x4 layout, transparent checkerboard background, cut-off limbs, merged figures.'
-      : 'No text, no letters, no numbers, 4x4 layout, 16 stickers, 4th row, deformed limbs, cropped figures, panel borders, grid lines.';
+      ? 'Duplicate text, repeated words, double Korean characters, text rendered twice, flat 2D anime line art, low likeness, generic cartoon face, Korean spelling errors, missing letters, extra 4th row, 4x4 layout, transparent checkerboard background, cut-off limbs, merged figures.'
+      : 'No text, no letters, no numbers, 4x4 layout, 16 stickers, 4th row, flat 2D anime, deformed limbs, cropped figures, panel borders, grid lines.';
 
     return `[Format & Canvas Ratio - 16:9 Landscape Grid]
 - Canvas: 16:9 wide landscape aspect ratio, strictly arranged in a 5 columns × 3 rows grid (Exactly 15 distinct stickers in total).
@@ -3191,20 +3161,17 @@ ${textExclusion}`;
 
 ${referenceInstruction}
 
-[15 Stickers & Colorful Emoticon Typography Matrix]
 ${textPolicy}
 
-[Row 1 - Top 5 Stickers]
+[15 Stickers & Exact Korean Text Matrix]
+[Row 1]
 ${row1Plan}
 
-[Row 2 - Middle 5 Stickers]
+[Row 2]
 ${row2Plan}
 
-[Row 3 - Bottom 5 Stickers]
+[Row 3]
 ${row3Plan}
-
-[Termination Check]
-- Total 15 stickers strictly concluded at Sticker 15. No Row 4.
 
 [Negative Directives]
 ${textExclusion}`;
