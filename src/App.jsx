@@ -3375,7 +3375,10 @@ ${textPolicyKo}
 - 사실적 음영, 부드러운 그라데이션, 3D 렌더링, 얼굴 왜곡, 팔다리 누락/추가, 15개 스티커 간 얼굴/체형/의상 불일치 금지.
 - 원래 문구에 없는 불필요한 문장부호 추가 금지.
 
-완성 전 최종 확인: 스티커 개수를 세어 반드시 정확히 15개(3행 × 5열)여야 합니다. 얼굴은 참조 사진의 인물임을 즉시 알아볼 수 있게 명확해야 합니다.`;
+완성 전 최종 확인: 스티커 개수를 세어 반드시 정확히 15개(3행 × 5열)여야 합니다. 얼굴은 참조 사진의 인물임을 즉시 알아볼 수 있게 명확해야 합니다.
+
+[X (트위터) 공유 문구 생성 옵션]
+스티커 시트 생성 후, X(트위터)에 바로 복사하여 업로드할 수 있는 매력적인 한글 캡션과 영문 해시태그(#카카오톡스티커 #라인스티커 #AI스티커 #이모티콘 #GrokArt)를 함께 작성해 주세요.`;
     }
 
     // English Version (Matches User Refined Grok Standard)
@@ -3441,7 +3444,10 @@ STRICT PROHIBITIONS:
 - No realistic shading, soft gradients, 3D rendering, face distortion, missing/extra limbs, or half-body/bust-only shots.
 - No unnecessary punctuation added to the given phrase.
 
-Final check before finishing: Face must remain clearly recognizable as the person in the reference photo.`;
+Final check before finishing: Face must remain clearly recognizable as the person in the reference photo.
+
+[Optional X-ready output request]
+After generating the sticker, also prepare a short, engaging Korean caption + English hashtags that can be directly copied and posted on X (Twitter).`;
     }
 
     const panelPlan = emoticons.map((phrase, index) => {
@@ -3495,7 +3501,27 @@ STRICT PROHIBITIONS:
 - No realistic shading, soft gradients, 3D rendering, face distortion, missing/extra limbs, or inconsistent faces/bodies/outfits across the 15 stickers.
 - No unnecessary punctuation added to the given phrases.
 
-Final check before finishing: Count the stickers — there must be exactly 15. Faces must remain clearly recognizable as the person in the reference photo.`;
+Final check before finishing: Count the stickers — there must be exactly 15. Faces must remain clearly recognizable as the person in the reference photo.
+
+[Optional X-ready output request]
+After generating the sticker sheet, also prepare a short, engaging Korean caption + English hashtags that can be directly copied and posted on X (Twitter). Make it fun, shareable, and suitable for AI-art / sticker community.`;
+  };
+
+  const copySocialCaption = (mode = 'ko') => {
+    const text = mode === 'ko'
+      ? `나만의 카톡/라인 스티커 15장 완성! 💕\n참고 사진 그대로 닮은 캐릭터로 감정 표현 풀세트 만들었어요 ✨\nㅋㅋㅋㅋ부터 잘자요까지 다 있음 ㅋㅋ\n\n#카카오톡스티커 #라인스티커 #AI스티커 #이모티콘 #GrokArt`
+      : `Just made my own 15-piece KakaoTalk/LINE sticker sheet with AI ✨\nBased on a real photo — same face, same vibe, full emotion set!\n\n#KakaoTalkSticker #LINESticker #AIArt #CustomEmoticon #StickerSheet #Grok`;
+    navigator.clipboard.writeText(text);
+    setCopiedType(`social_${mode}`);
+    setTimeout(() => setCopiedType(null), 2500);
+  };
+
+  const shareOnTwitter = (mode = 'ko') => {
+    const text = mode === 'ko'
+      ? `나만의 카톡/라인 스티커 15장 완성! 💕\n참고 사진 그대로 닮은 캐릭터로 감정 표현 풀세트 만들었어요 ✨\nㅋㅋㅋㅋ부터 잘자요까지 다 있음 ㅋㅋ\n\n#카카오톡스티커 #라인스티커 #AI스티커 #이모티콘 #GrokArt`
+      : `Just made my own 15-piece KakaoTalk/LINE sticker sheet with AI ✨\nBased on a real photo — same face, same vibe, full emotion set!\n\n#KakaoTalkSticker #LINESticker #AIArt #CustomEmoticon #StickerSheet #Grok`;
+    const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
+    window.open(url, '_blank', 'noopener,noreferrer');
   };
 
   const getRepairPrompt = (repairType, textMode, model = 'gpt') => {
@@ -4618,6 +4644,49 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
               <p className="text-[11px] text-purple-700 font-medium text-center">
                 {lang === 'ko' ? '📋 복사 완료! 창 열리면 [Ctrl+V] 누르세요' : lang === 'ja' ? '📋 コピー完了！画面が開いたら [Ctrl+V]' : lang === 'zh' ? '📋 复制成功！打开窗口后按 [Ctrl+V]' : '📋 Copied! Press [Ctrl+V] in Grok'}
               </p>
+            </div>
+          </div>
+
+          {/* X (Twitter) Social Share & Caption Helper Card */}
+          <div className="mt-3.5 bg-gradient-to-r from-slate-900 to-slate-800 text-white rounded-lg p-3.5 sm:p-4 border border-slate-700 shadow-sm flex flex-col gap-2.5">
+            <div className="flex items-center justify-between gap-2 flex-wrap">
+              <span className="text-[13px] sm:text-[14px] font-bold text-white flex items-center gap-1.5">
+                <span>𝕏</span> {lang === 'ko' ? 'X(트위터) SNS 홍보·자랑 캡션' : 'X (Twitter) Share Caption'}
+              </span>
+              <span className="text-[11px] font-bold text-slate-300 bg-slate-700/80 px-2 py-0.5 rounded-full">
+                ✨ {lang === 'ko' ? '클릭 한 번으로 복사 & 트윗' : '1-Click Copy & Tweet'}
+              </span>
+            </div>
+            <p className="text-[12px] sm:text-[13px] text-slate-300 leading-relaxed font-normal">
+              {lang === 'ko'
+                ? '완성된 이모티콘 이미지를 X(트위터)에 올릴 때 바로 붙여넣어 사용할 수 있는 최적화된 캡션 & 해시태그입니다.'
+                : 'Engaging, copy-ready caption and trending hashtags to showcase your generated sticker sheet on X (Twitter).'}
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mt-1">
+              <button
+                type="button"
+                onClick={() => copySocialCaption('ko')}
+                className="interactive-control min-h-[38px] rounded-md bg-slate-800 hover:bg-slate-700 border border-slate-600 text-white font-bold text-[12px] sm:text-[13px] flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs"
+              >
+                {copiedType === 'social_ko' ? <CheckCircle2 size={15} className="text-emerald-400" /> : <span>📋</span>}
+                <span>{copiedType === 'social_ko' ? (lang === 'ko' ? '✓ 한글 캡션 복사됨!' : '✓ Korean Copied!') : (lang === 'ko' ? '한글 캡션 복사' : 'Copy KO Caption')}</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => copySocialCaption('en')}
+                className="interactive-control min-h-[38px] rounded-md bg-slate-800 hover:bg-slate-700 border border-slate-600 text-white font-bold text-[12px] sm:text-[13px] flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs"
+              >
+                {copiedType === 'social_en' ? <CheckCircle2 size={15} className="text-emerald-400" /> : <span>📋</span>}
+                <span>{copiedType === 'social_en' ? (lang === 'ko' ? '✓ 영문 캡션 복사됨!' : '✓ English Copied!') : (lang === 'ko' ? '영문 캡션 복사' : 'Copy EN Caption')}</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => shareOnTwitter(lang === 'ko' ? 'ko' : 'en')}
+                className="interactive-control min-h-[38px] rounded-md bg-white hover:bg-slate-100 text-black font-extrabold text-[12px] sm:text-[13px] flex items-center justify-center gap-1.5 cursor-pointer shadow-sm"
+              >
+                <span>𝕏</span>
+                <span>{lang === 'ko' ? '𝕏에 바로 트윗하기' : 'Post on 𝕏'}</span>
+              </button>
             </div>
           </div>
         </section>
