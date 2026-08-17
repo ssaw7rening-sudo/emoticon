@@ -3518,8 +3518,8 @@ After generating the sticker sheet, also prepare a short, engaging Korean captio
 
   const copySocialCaption = (mode = 'ko') => {
     const text = mode === 'ko'
-      ? `나만의 카톡/라인 스티커 15장 완성! 💕\n참고 사진 그대로 닮은 캐릭터로 감정 표현 풀세트 만들었어요 ✨\nㅋㅋㅋㅋ부터 잘자요까지 다 있음 ㅋㅋ\n\n#카카오톡스티커 #라인스티커 #AI스티커 #이모티콘 #GrokArt`
-      : `Just made my own 15-piece KakaoTalk/LINE sticker sheet with AI ✨\nBased on a real photo — same face, same vibe, full emotion set!\n\n#KakaoTalkSticker #LINESticker #AIArt #CustomEmoticon #StickerSheet #Grok`;
+      ? `나만의 카톡/라인 스티커 15장 완성! 💕\n참고 사진 그대로 닮은 캐릭터로 감정 표현 풀세트 만들었어요 ✨\nㅋㅋㅋㅋ부터 잘자요까지 다 있음 ㅋㅋ\n\n👉 무료 AI 프롬프트 생성기: https://emoticon-beige.vercel.app/\n\n#카카오톡스티커 #라인스티커 #AI스티커 #이모티콘 #프롬프트메이커`
+      : `Just made my own 15-piece KakaoTalk/LINE sticker sheet with AI ✨\nBased on a real photo — same face, same vibe, full emotion set!\n\n👉 Free AI Prompt Maker: https://emoticon-beige.vercel.app/\n\n#KakaoTalkSticker #LINESticker #AIArt #CustomEmoticon #StickerSheet #PromptMaker`;
     navigator.clipboard.writeText(text);
     setCopiedType(`social_${mode}`);
     setTimeout(() => setCopiedType(null), 2500);
@@ -3527,8 +3527,8 @@ After generating the sticker sheet, also prepare a short, engaging Korean captio
 
   const shareOnTwitter = (mode = 'ko') => {
     const text = mode === 'ko'
-      ? `나만의 카톡/라인 스티커 15장 완성! 💕\n참고 사진 그대로 닮은 캐릭터로 감정 표현 풀세트 만들었어요 ✨\nㅋㅋㅋㅋ부터 잘자요까지 다 있음 ㅋㅋ\n\n#카카오톡스티커 #라인스티커 #AI스티커 #이모티콘 #GrokArt`
-      : `Just made my own 15-piece KakaoTalk/LINE sticker sheet with AI ✨\nBased on a real photo — same face, same vibe, full emotion set!\n\n#KakaoTalkSticker #LINESticker #AIArt #CustomEmoticon #StickerSheet #Grok`;
+      ? `나만의 카톡/라인 스티커 15장 완성! 💕\n참고 사진 그대로 닮은 캐릭터로 감정 표현 풀세트 만들었어요 ✨\nㅋㅋㅋㅋ부터 잘자요까지 다 있음 ㅋㅋ\n\n👉 무료 AI 프롬프트 생성기: https://emoticon-beige.vercel.app/\n\n#카카오톡스티커 #라인스티커 #AI스티커 #이모티콘 #프롬프트메이커`
+      : `Just made my own 15-piece KakaoTalk/LINE sticker sheet with AI ✨\nBased on a real photo — same face, same vibe, full emotion set!\n\n👉 Free AI Prompt Maker: https://emoticon-beige.vercel.app/\n\n#KakaoTalkSticker #LINESticker #AIArt #CustomEmoticon #StickerSheet #PromptMaker`;
     const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
     window.open(url, '_blank', 'noopener,noreferrer');
   };
@@ -4674,8 +4674,8 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
             </div>
             <p className="text-[12.5px] sm:text-[13px] text-slate-600 leading-relaxed font-normal">
               {lang === 'ko'
-                ? '완성된 이모티콘 이미지를 SNS에 올릴 때 바로 붙여넣어 사용할 수 있는 최적화된 캡션 & 해시태그입니다.'
-                : 'Engaging, copy-ready caption and trending hashtags to showcase your generated sticker sheet on social media (X, Instagram, etc.).'}
+                ? 'AI에서 생성한 완성 이미지를 저장한 뒤, SNS에 올릴 때 바로 붙여넣어 사용할 수 있는 사이트 링크 & 홍보 캡션 & 해시태그입니다. (트윗 창에서 저장한 사진을 첨부해 주세요!)'
+                : 'Engaging, copy-ready caption, site link, and trending hashtags to showcase your generated sticker sheet on social media (X, Instagram, etc.). Attach your saved image in the tweet composer!'}
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mt-1">
               <button
