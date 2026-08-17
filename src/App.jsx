@@ -2990,7 +2990,11 @@ ${textExclusion} No grid lines, no cell division lines, no border lines between 
 
       if (generationMode === 'individual' || hasPhraseOverride) {
         const textPolicyKo = geminiTextMode === 'text'
-          ? `[고품질 한글 타이포그래피 정밀 지침] 정확한 한글 철자 "${targetPhrase}"를 오탈자 없이 명확하게 그리세요. 캐릭터 옆이나 위에 읽기 편하고 깔끔한 귀여운 손글씨 캘리그라피 타이포그래피 스타일로 자연스럽게 배치하세요. 글자 외곽선이 또렷하고 배경과 대비되는 높은 가독성의 색상을 사용하세요. 텍스트 상자(박스), 괄호 (), 따옴표 "", 말풍선은 절대 그리지 마세요.`
+          ? `[고품질 한글 타이포그래피 및 감정 포인트 효과 지침]
+1. 지정된 문구 "${targetPhrase}"를 캐릭터 옆이나 머리 위에 읽기 쉬운 2D 볼드 팝아트 손글씨 스티커 폰트로 정확히 한 번만 적으세요.
+2. 모든 글자에 또렷하고 두꺼운 순백색 스티커 테두리(White Die-Cut Outline Stroke)를 둘러 선명하게 돋보이게 렌더링하세요.
+3. 문구의 감정에 맞춰 아기자기한 포인트 효과(하트💕, 황금왕관👑, 따봉👍, 폭죽🎉, 꽃다발💐, 땀방울💦, 반짝이✨, zZ 등)를 글자 주변에 자연스럽게 결합하세요.
+4. 텍스트 상자(박스), 말풍선, 괄호 (), 대괄호 [], 따옴표 "", 스티커 번호는 절대로 넣지 마세요.`
           : `한국어 문구 "${targetPhrase}"는 표정과 자세를 정하기 위한 맥락으로만 사용하고, 이미지 안에 절대로 텍스트, 글자, 숫자로 그리지 마세요.`;
         const textExclusionKo = geminiTextMode === 'text'
           ? '글자/단어/음절 중복 반복(예: 화이팅 화이팅, 미안해요 미안해요, 최 최고), 불필요한 일본어/가타카나/한자/외국어, 철자 변형, 폰트 뭉개짐, 스티커 번호, 괄호, 따옴표, 텍스트 상자 절대 금지.'
@@ -3035,11 +3039,11 @@ ${textExclusionKo} 격자선, 셀 경계선, 구별선, 테두리선, 표 선, �
       ].join('\n');
 
       const textPolicyKo = geminiTextMode === 'text'
-        ? `[한글 타이포그래피 — 3D 입체 팝아트 스티커 글자 최고도화 지침] ${getEmotionTextColorGuideKo(emoticons)}
-1. 글자를 단순 텍스트가 아닌 '상업용 카카오톡 이모티콘 3D 입체 스티커 배지(Sticker Graphic Badge)'로 렌더링하세요.
-2. 글자 스타일: 검은색 또는 고채도 원색의 두꺼운 볼드 손글씨 폰트 채움 + 글자 자모 자체에 선명한 2~3px 검은색 윤곽선 + 겉면에 매우 두꺼운 순백색 스티커 테두리(Heavy White Die-Cut Outline).
-3. 절대적 단일 출력 규칙: 각 스티커 셀당 지정된 한글 문구를 '오직 단 한 번(EXACTLY ONCE)'만 완벽한 한글로 그리세요.
-4. 중복 및 표기 오류 엄격 금지: 단어나 글자를 두 번 반복하여 그리는 행위(예: "오늘도 화이팅 화이팅", "미안해요 미안해요", "최 최고!" 등 중복 표기) 및 일본어/가타카나/한자/외국어 기호 섞임은 100% 엄격히 금지합니다.`
+        ? `[고품질 한글 타이포그래피 및 감정 포인트 효과 지침] ${getEmotionTextColorGuideKo(emoticons)}
+1. 각 셀에 지정된 문구를 캐릭터 옆이나 머리 위에 읽기 쉬운 2D 볼드 팝아트 손글씨 스티커 폰트로 정확히 한 번만 적으세요.
+2. 모든 글자에 또렷하고 두꺼운 순백색 스티커 테두리(White Die-Cut Outline Stroke)를 둘러 선명하게 돋보이게 렌더링하세요.
+3. 각 문구의 감정에 맞춰 아기자기한 포인트 효과(하트💕, 황금왕관👑, 따봉👍, 폭죽🎉, 꽃다발💐, 땀방울💦, 반짝이✨, zZ 등)를 글자 주변에 자연스럽게 결합하세요.
+4. 텍스트 상자(박스), 말풍선, 괄호 (), 대괄호 [], 따옴표 "", 스티커 번호는 절대로 넣지 마세요.`
         : '한국어 문구는 표정과 자세를 정하기 위한 맥락으로만 사용하고, 이미지 안에 절대로 텍스트, 글자, 숫자로 그리지 마세요.';
       const textExclusionKo = geminiTextMode === 'text'
         ? '불필요한 단어, 철자 변경, 임의의 글자, 스티커 번호, 괄호, 따옴표, 텍스트 상자 금지.'
@@ -3252,7 +3256,11 @@ ${textExclusion} No guide lines, no grid lines, no cell dividers, no border line
 
       if (generationMode === 'individual' || hasPhraseOverride) {
         const textPolicyKo = grokTextMode === 'text'
-          ? `캐릭터 옆에 한글 문구 "${targetPhrase}"를 손글씨 타이포그래피 스타일로 정갈하게 배치하세요. 괄호 (), 상자는 그리지 마세요.`
+          ? `[고품질 한글 타이포그래피 및 감정 포인트 효과 지침]
+1. 지정된 문구 "${targetPhrase}"를 캐릭터 옆이나 머리 위에 읽기 쉬운 2D 볼드 팝아트 손글씨 스티커 폰트로 정확히 한 번만 적으세요.
+2. 모든 글자에 또렷하고 두꺼운 순백색 스티커 테두리(White Die-Cut Outline Stroke)를 둘러 선명하게 돋보이게 렌더링하세요.
+3. 문구의 감정에 맞춰 아기자기한 포인트 효과(하트💕, 황금왕관👑, 따봉👍, 폭죽🎉, 꽃다발💐, 땀방울💦, 반짝이✨, zZ 등)를 글자 주변에 자연스럽게 결합하세요.
+4. 텍스트 상자(박스), 말풍선, 괄호 (), 대괄호 [], 따옴표 "", 스티커 번호는 절대로 넣지 마세요.`
           : `한국어 문구 "${targetPhrase}"는 표정과 자세를 정하기 위한 맥락으로만 사용하고, 이미지 안에 절대로 텍스트, 글자, 숫자로 그리지 마세요.`;
         const textExclusionKo = grokTextMode === 'text'
           ? '불필요한 글자, 괄호, 텍스트 상자 금지.'
@@ -3300,7 +3308,11 @@ ${textExclusionKo} 워터마크, 외곽 프레임, 바운딩 박스, 캐릭터 �
 
       const panelPlanKo = emoticons.map((phrase, index) => `${index + 1}. "${phrase.trim()}" – ${getPhraseActionKo(phrase)}`).join('\n');
       const textPolicyKo = grokTextMode === 'text'
-        ? `[고품질 한글 타이포그래피 정밀 지침] ${getEmotionTextColorGuideKo(emoticons)} 각 한글 문구를 해당 캐릭터 옆이나 위에 오탈자 없이 손글씨 캘리그라피 스타일로 자연스럽게 배치하세요. 딱딱한 고딕체 금지. 괄호 (), 텍스트 상자는 절대로 그리지 마세요.`
+        ? `[고품질 한글 타이포그래피 및 감정 포인트 효과 지침] ${getEmotionTextColorGuideKo(emoticons)}
+1. 각 셀에 지정된 문구를 캐릭터 옆이나 머리 위에 읽기 쉬운 2D 볼드 팝아트 손글씨 스티커 폰트로 정확히 한 번만 적으세요.
+2. 모든 글자에 또렷하고 두꺼운 순백색 스티커 테두리(White Die-Cut Outline Stroke)를 둘러 선명하게 돋보이게 렌더링하세요.
+3. 각 문구의 감정에 맞춰 아기자기한 포인트 효과(하트💕, 황금왕관👑, 따봉👍, 폭죽🎉, 꽃다발💐, 땀방울💦, 반짝이✨, zZ 등)를 글자 주변에 자연스럽게 결합하세요.
+4. 텍스트 상자(박스), 말풍선, 괄호 (), 대괄호 [], 따옴표 "", 스티커 번호는 절대로 넣지 마세요.`
         : '한국어 문구는 표정과 자세를 정하기 위한 맥락으로만 사용하고, 이미지 안에 절대로 텍스트, 글자, 숫자로 그리지 마세요.';
       const textExclusionKo = grokTextMode === 'text'
         ? '불필요한 글자, 괄호, 스티커 번호, 텍스트 상자 금지.'
