@@ -4675,8 +4675,8 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
             </div>
             <p className="text-[12.5px] sm:text-[13px] text-slate-600 leading-relaxed font-normal">
               {lang === 'ko'
-                ? '완성된 이모티콘 이미지를 X(트위터)에 올릴 때 바로 붙여넣어 사용할 수 있는 최적화된 캡션 & 해시태그입니다.'
-                : 'Engaging, copy-ready caption and trending hashtags to showcase your generated sticker sheet on X (Twitter).'}
+                ? '완성된 이모티콘 이미지를 SNS에 올릴 때 바로 붙여넣어 사용할 수 있는 최적화된 캡션 & 해시태그입니다.'
+                : 'Engaging, copy-ready caption and trending hashtags to showcase your generated sticker sheet on social media (X, Instagram, etc.).'}
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mt-1">
               <button
