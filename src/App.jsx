@@ -3739,27 +3739,27 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
               </div>
             </div>
             
-            {/* Live Active Settings Status Banner (Strict 1-Line Clean Header) */}
-            <div className="bg-[#EAF8F3] text-mint-strong rounded-lg px-3.5 py-2.5 shadow-bubbly flex items-center justify-between gap-3 border border-mint-border overflow-hidden">
+            {/* Live Active Settings Status Banner (Responsive Clean Header) */}
+            <div className="bg-[#EAF8F3] text-mint-strong rounded-lg px-3 py-2 sm:px-3.5 sm:py-2.5 shadow-bubbly flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 sm:gap-3 border border-mint-border overflow-hidden">
               <div className="flex items-center gap-2 shrink-0 whitespace-nowrap">
-                <span className="bg-[#C5F2E3] text-[#184F43] border border-[#A6E3D0] text-[11px] font-black px-2.5 py-0.5 rounded-md uppercase tracking-wide shadow-xs">
-                  ⚡ {lang === 'ko' ? '실시간 프롬프트 적용 중' : 'Live Prompt Active'}
+                <span className="bg-[#C5F2E3] text-[#184F43] border border-[#A6E3D0] text-[11px] font-black px-2 py-0.5 rounded-md uppercase tracking-wide shadow-xs">
+                  ⚡ {lang === 'ko' ? '실시간 적용' : 'Live Active'}
                 </span>
-                <span className="text-[13px] font-bold text-mint-strong whitespace-nowrap">
+                <span className="text-[12.5px] sm:text-[13px] font-bold text-mint-strong whitespace-nowrap">
                   {characterSource === 'photo' 
-                    ? `📸 ${lang === 'ko' ? '참고 사진' : 'Photo Reference'} (${getPhotoModeLabel(lang)})`
+                    ? `📸 ${lang === 'ko' ? '사진 참고' : 'Photo'} (${getPhotoModeLabel(lang)})`
                     : characterSource === 'random'
-                    ? `🎲 ${lang === 'ko' ? '랜덤 캐릭터 모드' : 'Random Character'}`
-                    : `✏️ ${lang === 'ko' ? '직접 캐릭터 설정' : 'Direct Character Setup'}`}
+                    ? `🎲 ${lang === 'ko' ? '랜덤 캐릭터' : 'Random Char'}`
+                    : `✏️ ${lang === 'ko' ? '직접 캐릭터 설정' : 'Direct Setup'}`}
                 </span>
               </div>
               <div 
-                className="min-w-0 flex-1 text-right text-[12px] font-bold text-mint-strong/90 truncate cursor-default whitespace-nowrap" 
+                className="min-w-0 text-left sm:text-right text-[11.5px] sm:text-[12px] font-bold text-mint-strong/90 truncate cursor-default whitespace-nowrap" 
                 title={charManual.trim() ? `${lang === 'ko' ? '적용된 태그:' : 'Active Tags:'} ${charManual}` : ''}
               >
                 {charManual.trim() 
-                  ? `${lang === 'ko' ? '적용된 태그:' : 'Active Tags:'} ${charManual}` 
-                  : (lang === 'ko' ? '태그 미선택 (기본 2D 캐릭터 자동 적용)' : 'No tags (Default 2D character active)')}
+                  ? `${lang === 'ko' ? '태그:' : 'Tags:'} ${charManual}` 
+                  : (lang === 'ko' ? '태그 미선택 (기본 2D 캐릭터)' : 'No tags (Default 2D active)')}
               </div>
             </div>
           </div>
@@ -3824,12 +3824,12 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
 
               {characterSource === 'photo' && (
                 <div className="rounded-lg border-2 border-amber-300 bg-amber-50/90 p-4 flex flex-col gap-3 shadow-sm">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[14px] font-bold text-amber-900 flex items-center gap-1.5">
-                      📸 {lang === 'ko' ? '참고 사진 + 캐릭터 태그 융합 중' : 'Photo Reference + Character Tags Active'}
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-[13px] sm:text-[14px] font-bold text-amber-950 flex items-center gap-1.5 shrink-0 whitespace-nowrap">
+                      📸 {lang === 'ko' ? '참고 사진 + 태그 연동' : 'Photo + Tag Synergy'}
                     </span>
-                    <span className="text-[12px] font-bold text-amber-700 bg-amber-200/80 px-2 py-0.5 rounded-full">
-                      {lang === 'ko' ? '사진 정체성 기반 적용' : 'Photo Identity Applied'}
+                    <span className="text-[11px] sm:text-[12px] font-bold text-amber-800 bg-amber-200/90 px-2 py-0.5 rounded-full shrink-0 whitespace-nowrap">
+                      ✨ {lang === 'ko' ? '사진 기반 융합' : 'Photo Active'}
                     </span>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-2" role="group" aria-label={t.photoMethod}>
