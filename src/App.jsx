@@ -3261,23 +3261,32 @@ ${textExclusion} 4x4 16-sticker grid layout, generating more or fewer than 15 st
 
     if (isKorean) {
       const referenceInstructionKo = characterSource === 'photo'
-        ? `인물 정체성 보존 지침 (최우선 순위):
-캐릭터는 첨부된 참조 사진 속 인물과 극도로 정밀하게 일치해야 합니다 (${getPhotoModeLabel('ko')}). 실제 얼굴 구조를 최대 충실도로 보존하세요: 정확한 눈매와 쌍꺼풀, 콧대와 코끝, 입술 모양과 볼륨, 턱선, 광대, 얼굴 비율, 피부톤 및 인물 특유의 자연스러운 표정을 그대로 재현하세요. 사진 속 인물임을 즉시 알아볼 수 있어야 하며, 흔한 양산형 애니메이션 캐릭터 얼굴로 평균화하거나 뭉개지 마세요. 사진에 없는 임의의 액세서리는 추가하지 마세요.
+        ? `=== 최우선 순위: 인물 얼굴 정체성 및 실사 유사도 ===
+캐릭터는 첨부된 참조 사진 속 인물과 극도로 정밀하게 일치해야 합니다 (${getPhotoModeLabel('ko')}).
+모든 스타일화보다 실제 얼굴 유사도를 최우선으로 두세요:
+- 선명한 쌍꺼풀과 고유한 눈매 형상
+- 실제 콧대 높이와 코끝 모양
+- 입술 모양과 볼륨감, 자연스러운 미소선
+- 턱선, 광대뼈 구조 및 전체 얼굴 비율
+- 실제 피부톤과 자연스러운 표정 느낌
+얼굴은 사진 속 인물임을 즉시 알아볼 수 있어야 합니다.
+흔한 양산형 귀여운 애니메이션이나 극단적인 치비 얼굴로 바꾸지 마세요.
+눈을 과도하게 키우거나 이목구비의 고유한 특징을 단순화하여 뭉개지 마세요. 사진에 없는 임의의 액세서리는 추가하지 마세요.
 
-체형 비율: 3~3.5등신 (자연스러운 약한 SD 비율). 실제 인물의 이목구비 특징이 선명하게 드러나도록 얼굴의 입체감과 디테일을 보존하세요. 눈을 비현실적으로 과도하게 키우거나 일그러뜨리지 마세요.
+체형 비율: 3.5~4등신 (인물 특징 보존을 위한 자연스러운 약한 SD 비율). 인물 정체성이 명확히 유지되도록 얼굴을 디테일하고 실물에 충실하게 유지하세요.
 
-헤어 및 의상 일관성:
-- 헤어: 참조 사진의 헤어스타일, 기장, 가르마, 볼륨, 색상을 그대로 유지하세요.
+헤어 및 의상:
+- 헤어: 참조 사진의 헤어스타일, 기장, 가르마, 볼륨, 흐름을 그대로 유지하세요.
 - 의상: ${character.outfit}
-- 피부톤 및 체형 스타일 일관 유지.`
-        : `캐릭터 정체성:
+- 15개 스티커 전체에서 헤어, 의상, 피부톤, 체형을 완벽히 일관되게 유지하세요.`
+        : `=== 캐릭터 정체성 ===
 - 대상: ${character.subject}
 - 외형 및 특징: ${character.appearance}
 - 의상: ${character.outfit}
-- 체형: 3~3.5등신 자연스러운 SD 마스코트 비율.`;
+- 체형 비율: 3.5~4등신 자연스러운 SD 마스코트 비율.`;
 
       const bgInstructionKo = {
-        transparent: '순수 단색 순백색(#FFFFFF) 배경. 체크무늬 패턴, 회색, 격자선, 셀 테두리, 숫자, 크롭 마크, 프레임, 워터마크 절대 금지.',
+        transparent: '순수 단색 순백색(#FFFFFF) 배경. 그라데이션, 체크무늬 패턴, 회색, 격자선, 셀 테두리, 숫자, 크롭 마크, 프레임, 워터마크 절대 금지.',
         solid: '캐릭터와 대비되는 단색 배경으로 생성하세요.',
         chroma: '배경 분리(누끼)용 선명한 연두색 #00FF00 크로마키 배경으로 생성하세요.',
       }[grokBackgroundMode] || '순수 단색 순백색(#FFFFFF) 배경.';
@@ -3285,7 +3294,7 @@ ${textExclusion} 4x4 16-sticker grid layout, generating more or fewer than 15 st
       if (generationMode === 'individual' || hasPhraseOverride) {
         const textPolicyKo = grokTextMode === 'text'
           ? `글자 규칙:
-- 지정된 한국어 문구 "${targetPhrase}"를 캐릭터 옆이나 머리 위에 굵은 2D 팝아트 손글씨 스티커 폰트로 정확히 한 번만 배치하세요.
+- 지정된 한국어 문구 "${targetPhrase}"를 굵은 2D 팝아트 손글씨 스티커 폰트로 캐릭터 옆이나 머리 위에 정확히 한 번만 배치하세요.
 - 모든 글자에 두껍고 선명한 순백색 다이컷 외곽선 스트로크(White die-cut outline stroke)를 넣으세요.
 - 감정을 보조하는 최소한의 포인트 효과(${character.props}, ${character.effects})만 추가하세요.
 - 말풍선, 텍스트 상자(박스), 괄호 (), 대괄호 [], 따옴표 "", 스티커 번호 절대 금지.`
@@ -3296,31 +3305,32 @@ ${textExclusion} 4x4 16-sticker grid layout, generating more or fewer than 15 st
           ? '불필요한 글자, 괄호, 텍스트 상자 금지.'
           : '텍스트, 글자, 숫자, 말풍선, 스티커 라벨, 의미 없는 기호 절대 금지.';
 
-        return `순수 단색 순백색 배경 위에 단일 고해상도 정사각형 2D 카카오톡/라인 스타일 스티커 1장을 생성해 주세요. ${bgInstructionKo}
+        return `순수 단색 순백색(#FFFFFF) 배경 위에 단일 고해상도 정사각형 2D 카카오톡/라인 스타일 스티커 1장을 생성해 주세요. ${bgInstructionKo}
 
-스티커는 캐릭터 전체 실루엣을 둘러싼 두껍고 선명한 흰색 다이컷 외곽선(Die-cut outline)이 적용되어 있습니다.
+스티커는 캐릭터 전체 실루엣을 둘러싼 두껍고 선명하며 깔끔한 흰색 다이컷 외곽선(Die-cut outline)이 적용되어 있습니다.
 
 ${referenceInstructionKo}
 
-화풍 (엄격 준수):
-- 깔끔한 실사 캐리커처 2D 스티커 스타일 (${character.artStyle})
-- 끊김 없는 3~4px 균일하고 선명한 검정 벡터 선화
-- 엄격한 2단계 셀 셰이딩만 적용 (기본 베이스 컬러 + 1단계 플랫 음영층)
-- 5~6가지 색상으로 제한된 선명한 플랫 컬러 팔레트
-- 부드러운 그라데이션, 에어브러시, 광택 하이라이트, 3D 렌더링, 수채화 질감 절대 금지
+화풍:
+- 실사 캐리커처 2D 스티커 스타일 (${character.artStyle})
+- 깔끔하고 균일한 3~4px 선명한 검정 벡터 선화
+- 대부분 플랫한 2단계 셀 셰이딩 (기본 베이스 + 1단계 음영층)
+- 얼굴의 볼륨감과 인물 유사도를 살리기 위한 얼굴 부분의 미세하고 부드러운 음영만 예외적 허용
+- 제한된 선명한 플랫 컬러 팔레트
+- 무거운 그라데이션, 에어브러시 발광, 3D 렌더링, 수채화 질감 금지
 - 카카오톡 이모티콘 / 라인 프렌즈 공식 스티커 품질 마감
 
 장면 & 포즈:
 - 감정/맥락: "${targetPhrase}"
-- "${targetPhrase}"에 맞춘 유일하고 표현력 풍부한 얼굴 감정과 역동적인 자세. 최소 소품/효과: ${character.props}, ${character.effects}.
+- "${targetPhrase}"에 맞춘 유일하고 표현력 풍부한 얼굴 감정과 자세. 최소 소품/효과: ${character.props}, ${character.effects}.
 
 ${textPolicyKo}
 
 엄격 금지 사항:
-- ${textExclusionKo} 사실적 음영, 부드러운 그라데이션, 3D 렌더링, 얼굴 왜곡, 팔다리 누락/추가, 반신·흉상 컷, 실사 느낌 금지.
+- ${textExclusionKo} 무거운 음영, 과도한 그라데이션, 3D 렌더링, 얼굴 왜곡, 팔다리 누락/추가, 반신·흉상 컷, 실사 느낌 금지.
 - 원래 문구에 없는 불필요한 문장부호 추가 금지.
 
-완성 전 최종 확인: 얼굴은 참조 사진의 인물임을 즉시 알아볼 수 있게 명확해야 합니다.
+완성 전 최종 확인: 순백색 배경에 얼굴은 참조 사진 속 인물임을 즉시 알아볼 수 있어야 합니다.
 
 [X (트위터) 공유 문구 생성 옵션]
 스티커 생성 후, X(트위터)에 바로 복사하여 업로드할 수 있는 매력적인 한글 캡션과 영문 해시태그(#카카오톡스티커 #라인스티커 #AI스티커 #이모티콘 #GrokArt)를 함께 작성해 주세요.`;
@@ -3333,9 +3343,9 @@ ${textPolicyKo}
 
       const textPolicyKo = grokTextMode === 'text'
         ? `글자 규칙:
-- 지정된 한국어 문구를 굵은 2D 팝아트 손글씨 스티커 폰트로 정확히 한 번만 배치하세요.
+- 지정된 한국어 문구를 굵은 2D 팝아트 손글씨 스티커 폰트로 캐릭터 옆이나 머리 위에 정확히 한 번만 배치하세요.
 - 모든 글자에 두껍고 선명한 순백색 다이컷 외곽선 스트로크(White die-cut outline stroke)를 넣으세요.
-- 각 문구에 지정된 글자 색상을 사용하세요.
+- 각 문구에 지정된 정확한 글자 색상을 사용하세요.
 - 감정을 보조하는 최소한의 포인트 효과(하트, 왕관, 따봉, 폭죽, 땀방울, 반짝이, zZ 등)만 추가하세요.
 - 말풍선, 텍스트 상자(박스), 괄호 (), 대괄호 [], 따옴표 "", 스티커 번호 절대 금지.`
         : `글자 규칙:
@@ -3345,25 +3355,24 @@ ${textPolicyKo}
         ? '불필요한 글자, 괄호, 스티커 번호, 텍스트 상자 금지.'
         : '텍스트, 글자, 숫자, 말풍선, 스티커 라벨, 의미 없는 기호 절대 금지.';
 
-      return `순수 단색 순백색 배경 위에 정확히 15개의 스티커가 3행 × 5열로 배치된 고해상도 정사각형 스티커 시트 1장을 생성해 주세요. ${bgInstructionKo}
+      return `순수 단색 순백색(#FFFFFF) 배경 위에 정확히 15개의 스티커가 3행 × 5열로 배치된 고해상도 정사각형 스티커 시트 1장을 생성해 주세요. ${bgInstructionKo}
 
-정확히 15개의 스티커가 3행 × 5열로 균등한 간격을 두고 배치되며, 스티커들은 자연스러운 여백을 두고 자유롭게 떠 있습니다. 각 스티커는 캐릭터 전체 실루엣을 둘러싼 두껍고 선명하며 깔끔한 흰색 다이컷 외곽선(Die-cut outline)이 적용되어 있습니다.
+정확히 15개의 스티커가 3행 × 5열로 균등하고 자연스러운 간격을 두고 배치되며, 스티커들은 여백 안에서 자유롭게 떠 있습니다. 각 스티커는 캐릭터 전체 실루엣 주변에 두껍고 선명하며 깔끔한 흰색 다이컷 외곽선(Die-cut outline)이 둘러져 있습니다.
 
 ${referenceInstructionKo}
 
-화풍 (엄격 준수):
-- 깔끔한 실사 캐리커처 2D 스티커 스타일 (${character.artStyle})
-- 끊김 없는 3~4px 균일하고 선명한 검정 벡터 선화
-- 엄격한 2단계 셀 셰이딩만 적용 (기본 베이스 컬러 + 1단계 플랫 음영층)
-- 5~6가지 색상으로 제한된 선명한 플랫 컬러 팔레트
-- 부드러운 그라데이션, 에어브러시, 광택 하이라이트, 3D 렌더링, 수채화 질감 절대 금지
+화풍:
+- 실사 캐리커처 2D 스티커 스타일 (${character.artStyle})
+- 깔끔하고 균일한 3~4px 선명한 검정 벡터 선화
+- 대부분 플랫한 2단계 셀 셰이딩 (기본 베이스 + 1단계 음영층)
+- 얼굴의 볼륨감과 인물 유사도를 살리기 위한 얼굴 부분의 미세하고 부드러운 음영만 예외적 허용
+- 제한된 선명한 플랫 컬러 팔레트
+- 무거운 그라데이션, 에어브러시 발광, 3D 렌더링, 수채화 질감 금지
 - 카카오톡 이모티콘 / 라인 프렌즈 공식 스티커 품질 마감
 
-15개 캐릭터 모두 얼굴, 헤어, 체형 비율, 의상 색상, 선화 품질이 완벽히 동일해야 합니다. 감정에 따른 표정, 자세, 최소 소품만 변경하세요.
+15개 캐릭터 모두 얼굴, 헤어, 체형 비율, 의상이 완벽히 동일해야 합니다. 감정에 따른 표정, 포즈, 최소 소품만 변경하세요.
 
-레이아웃 & 포즈 구성:
-- 감정에 맞춰 전신 컷과 상반신 컷을 자연스럽게 믹스하세요.
-- 서 있기, 앉기, 점프, 눕기, 무릎 꿇기, 웅크리기 등 최소 6가지 이상의 명확히 서로 다른 신체 자세를 사용하세요.
+서 있기, 앉기, 점프, 눕기, 무릎 꿇기, 웅크리기 등 최소 6가지 이상의 서로 다른 신체 자세를 사용하고 전신 컷과 상반신 컷을 자연스럽게 믹스하세요.
 
 15개 스티커 — 정확한 포즈 및 한글 문구:
 ${panelPlanKo}
@@ -3374,7 +3383,7 @@ ${textPolicyKo}
 - 16개 스티커, 4×4 그리드, 15개 초과 또는 미만 개수 금지.
 - 격자선, 셀 테두리, 번호, 워터마크, 외곽 프레임 금지.
 - ${textExclusionKo}
-- 사실적 음영, 부드러운 그라데이션, 3D 렌더링, 얼굴 왜곡, 팔다리 누락/추가, 15개 스티커 간 얼굴/체형/의상 불일치 금지.
+- 무거운 음영, 과도한 그라데이션, 3D 렌더링, 얼굴 왜곡, 팔다리 누락/추가, 15개 스티커 간 얼굴/체형/의상 불일치 금지.
 - 원래 문구에 없는 불필요한 문장부호 추가 금지.
 
 완성 전 최종 확인: 3×5 배열에 정확히 15개 스티커여야 하며, 순백색 배경에 얼굴은 참조 사진 속 인물임을 즉시 알아볼 수 있어야 합니다.
@@ -3383,28 +3392,37 @@ ${textPolicyKo}
 스티커 시트 생성 후, X(트위터)에 바로 복사하여 업로드할 수 있는 매력적인 한글 캡션과 영문 해시태그(#카카오톡스티커 #라인스티커 #AI스티커 #이모티콘 #GrokArt)를 함께 작성해 주세요.`;
     }
 
-    // English Version (Grok Imagine Identity-First Standard)
+    // English Version (Highest Priority Facial Identity Standard)
     const referenceInstruction = characterSource === 'photo'
-      ? `CRITICAL IDENTITY INSTRUCTION (highest priority):
-The character must be an extremely accurate likeness of the exact person in the reference photo (${getPhotoModeLabel('en')}). Preserve real facial structure at maximum possible fidelity: exact eye shape and double eyelids, exact nose bridge and tip, exact lip shape and fullness, exact jawline, cheekbones, face proportions, skin tone, and natural gentle expression. The face must be immediately recognizable as the same person. Do not average or genericize the face into a typical cute anime face. Do not add any accessories not present in the photo.
+      ? `=== HIGHEST PRIORITY: FACIAL IDENTITY ===
+The character MUST be an extremely accurate likeness of the woman in the reference photo (${getPhotoModeLabel('en')}).
+Prioritize real facial resemblance above all stylization.
+Preserve exactly:
+- Her almond-shaped eyes with clear double eyelids
+- Her specific nose bridge and tip shape
+- Her lip shape, fullness and natural smile line
+- Her jawline, cheek structure and overall face proportions
+- Her skin tone and natural expression
+The face must be immediately recognizable as the same person.
+Do NOT turn her into a generic cute anime or chibi face.
+Do not overly enlarge the eyes or simplify facial features. Do not add any accessories not present in the photo.
 
-Body proportion: 3–3.5 head ratio (slightly chibi but not extreme). Keep the face natural and detailed enough that the real person’s features remain clear. Do not squash or overly enlarge the eyes beyond what still looks like the reference.
+Body proportion: 3.5–4 head ratio (mild SD, not extreme). Keep the face detailed and true to the reference so identity remains clear.
 
-Clothing and hair must stay consistent with the reference photo across all 15 stickers:
-- Hair: ${character.appearance.includes('머리') || character.appearance.includes('hair') ? character.appearance : 'Keep the exact hairstyle, length, parting, volume, and color from the reference photo.'}
-- Outfit: ${character.outfit}
-- Same overall body type and skin tone.`
-      : `CHARACTER IDENTITY:
+Hair: long straight black hair with the exact same parting, length, volume and flow as the reference photo.
+Clothing: ${character.outfit}
+Keep hair, clothing, skin tone and body type identical across all 15 stickers.`
+      : `=== CHARACTER IDENTITY ===
 - Subject: ${character.subject}
 - Appearance & Features: ${character.appearance}
 - Outfit: ${character.outfit}
-- Body proportion: 3–3.5 head ratio.`;
+- Body proportion: 3.5–4 head ratio (mild SD, not extreme).`;
 
     const bgInstructionEn = {
-      transparent: 'pure solid pure white background only. Absolutely no checkered pattern, no gray, no grid lines, no cell borders, no numbers, no crop marks, no frames, no watermarks.',
+      transparent: 'pure solid pure white (#FFFFFF) background only. Absolutely no gradients, no checkered pattern, no gray, no grid lines, no cell borders, no numbers, no crop marks, no frames, no watermarks.',
       solid: 'solid clean background contrasting with the character.',
       chroma: 'solid bright lime-green #00FF00 chroma key background for easy cutout.',
-    }[grokBackgroundMode] || 'pure solid pure white background only.';
+    }[grokBackgroundMode] || 'pure solid pure white (#FFFFFF) background only.';
 
     if (generationMode === 'individual' || hasPhraseOverride) {
       const textPolicy = grokTextMode === 'text'
@@ -3422,17 +3440,18 @@ Clothing and hair must stay consistent with the reference photo across all 15 st
 
       return `Create a single high-resolution square sticker on ${bgInstructionEn}
 
-The sticker has a thick, sharp, clean white die-cut outline surrounding the entire character silhouette.
+The sticker has a thick, sharp, clean white die-cut outline around the entire character silhouette.
 
 ${referenceInstruction}
 
-Art style (strict):
-- Clean realistic-caricature 2D sticker style (${character.artStyle})
-- Unbroken uniform 3–4px sharp black vector line art
-- Strict 2-tone cel shading only (base color + one flat shadow layer)
-- Limited vivid flat color palette (5–6 colors)
-- No soft gradients, no airbrush, no glossy highlights, no 3D rendering, no watercolor texture
-- Official KakaoTalk / LINE Friends sticker quality finish
+Art style:
+- Realistic-caricature 2D sticker style (${character.artStyle})
+- Clean 3–4px uniform sharp black vector line art
+- Mostly flat 2-tone cel shading (base + one shadow layer)
+- Allow very subtle soft shading only on the face to preserve volume and likeness
+- Limited vivid flat color palette
+- No heavy gradients, no airbrush glow, no 3D render, no watercolor
+- Clean KakaoTalk / LINE-style sticker finish with white die-cut outlines
 
 SCENE & POSE:
 - Emotion / context: "${targetPhrase}"
@@ -3442,10 +3461,10 @@ ${textPolicy}
 
 STRICT PROHIBITIONS:
 - ${textExclusion}
-- No realistic shading, soft gradients, 3D rendering, face distortion, missing/extra limbs, or half-body/bust-only shots.
+- No heavy shading, excessive gradients, 3D rendering, face distortion, missing/extra limbs, or half-body/bust-only shots.
 - No unnecessary punctuation added to the given phrase.
 
-Final check: Face must be clearly recognizable as the person in the reference photo.
+Final check: The face must be clearly recognizable as the woman in the reference photo.
 
 [Optional X-ready output request]
 After generating the sticker, also prepare a short, engaging Korean caption + English hashtags that can be directly copied and posted on X (Twitter).`;
@@ -3457,11 +3476,7 @@ After generating the sticker, also prepare a short, engaging Korean caption + En
     }).join('\n');
 
     const textPolicy = grokTextMode === 'text'
-      ? `TEXT RULES:
-- Use these Korean texts exactly once, bold 2D pop-art hand-lettered sticker font with thick pure white die-cut outline stroke
-- Use the exact colors specified for each phrase
-- Add only the minimal matching effect (heart, crown, thumbs-up, confetti, sweat drops, sparkles, zZ)
-- No speech bubbles, no text boxes, no brackets, no quotation marks, no sticker numbers`
+      ? `Exact 15 stickers with Korean text (bold 2D pop-art hand-lettered font with thick pure white die-cut outline, exact colors, place text once beside or above each character):`
       : `TEXT RULES:
 - Korean phrases above are emotional context only — do not render any text, letters, or numbers in the image.`;
 
@@ -3471,35 +3486,37 @@ After generating the sticker, also prepare a short, engaging Korean caption + En
 
     return `Create a single high-resolution square sticker sheet on ${bgInstructionEn}
 
-Exactly 15 stickers arranged in clean 3 rows × 5 columns with natural even spacing. Stickers float freely with comfortable margins. Each sticker has a thick, sharp, clean white die-cut outline surrounding the entire character silhouette.
+Exactly 15 stickers arranged in clean 3 rows × 5 columns with even natural spacing. Stickers float freely. Each sticker has a thick, sharp, clean white die-cut outline around the entire character silhouette.
 
 ${referenceInstruction}
 
-Art style (strict):
-- Clean realistic-caricature 2D sticker style (${character.artStyle})
-- Unbroken uniform 3–4px sharp black vector line art
-- Strict 2-tone cel shading only (base color + one flat shadow layer)
-- Limited vivid flat color palette (5–6 colors)
-- No soft gradients, no airbrush, no glossy highlights, no 3D rendering, no watercolor texture
-- Official KakaoTalk / LINE Friends sticker quality finish
+Art style:
+- Realistic-caricature 2D sticker style (${character.artStyle})
+- Clean 3–4px uniform sharp black vector line art
+- Mostly flat 2-tone cel shading (base + one shadow layer)
+- Allow very subtle soft shading only on the face to preserve volume and likeness
+- Limited vivid flat color palette
+- No heavy gradients, no airbrush glow, no 3D render, no watercolor
+- Clean KakaoTalk / LINE-style sticker finish with white die-cut outlines
 
-All 15 characters must have identical face, hair, body proportions, clothing colors, and line quality. Only change expression, pose, and minimal props according to the list below.
+All 15 characters must have the same face, hair, body proportions and clothing. Only change expression, pose and minimal props.
 
-Exact 15 stickers (exact poses and Korean text):
-${panelPlan}
+Use at least 6 different body poses (standing, sitting, jumping, lying, kneeling, crouching). Mix full-body and upper-body cuts naturally.
 
 ${textPolicy}
+${panelPlan}
 
-Mix full-body and upper-body cuts naturally. Use at least 6 clearly different body poses (standing, sitting, jumping, lying, kneeling, crouching).
+Only minimal effects (hearts, crown, confetti, sweat, sparkles, zZ).
+No speech bubbles, no text boxes, no brackets, no quotes, no numbers.
 
 STRICT PROHIBITIONS:
 - No 16 stickers, no 4×4 grid, no extra or fewer than 15.
 - No grid lines, cell borders, numbers, watermarks, or any framing.
 - ${textExclusion}
-- No realistic shading, soft gradients, 3D rendering, face distortion, missing/extra limbs, or inconsistent faces/bodies/outfits across the 15 stickers.
+- No heavy shading, excessive gradients, 3D rendering, face distortion, missing/extra limbs, or inconsistent faces/bodies/outfits across the 15 stickers.
 - No unnecessary punctuation added to the given phrases.
 
-Final check: exactly 15 stickers in 3×5, pure white background, face must be clearly recognizable as the person in the reference photo.
+Final check: exactly 15 stickers in 3×5 on pure white background. The face must be clearly recognizable as the woman in the reference photo.
 
 [Optional X-ready output request]
 After generating the sticker sheet, also prepare a short, engaging Korean caption + English hashtags that can be directly copied and posted on X (Twitter). Make it fun, shareable, and suitable for AI-art / sticker community.`;
