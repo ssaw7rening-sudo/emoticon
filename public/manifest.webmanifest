@@ -1,0 +1,30 @@
+{
+  "name": "프롬프트 메이커 - AI 카카오톡 이모티콘 프롬프트 생성기",
+  "short_name": "프롬프트 메이커",
+  "description": "ChatGPT, Gemini, Grok 전용 15종 카카오톡·라인 이모티콘 프롬프트 1초 자동 완성 앱",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FFFDF9",
+  "theme_color": "#FFF8E7",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

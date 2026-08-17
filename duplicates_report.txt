@@ -1,0 +1,3 @@
+Total unique phrases in KO: 1200
+Total duplicate phrases across themes: 0
+
