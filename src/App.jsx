@@ -3589,7 +3589,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
     let toastName = 'ChatGPT';
 
     if (type === 'gpt') {
-      targetUrl = `https://chatgpt.com/?q=${encodeURIComponent(textToCopy)}`;
+      targetUrl = 'https://chatgpt.com/';
       toastName = 'ChatGPT';
     } else if (type === 'gemini') {
       targetUrl = 'https://gemini.google.com/app';
