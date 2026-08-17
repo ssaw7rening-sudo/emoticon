@@ -4065,24 +4065,29 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                 const isTooMany = tagCount > 5;
 
                 return (
-                  <div className={`px-3.5 py-2 border-b flex items-center justify-between text-[12px] font-bold transition-all ${
+                  <div className={`px-3.5 py-2 border-b flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 text-[12px] font-bold transition-all ${
                     isOptimal 
                       ? 'bg-[#F0FDF4] text-[#166534] border-[#BBF7D0]' 
                       : isTooMany 
                       ? 'bg-[#FEF2F2] text-[#991B1B] border-[#FECACA]'
                       : 'bg-[#FFFBEB] text-[#92400E] border-[#FDE68A]'
                   }`}>
-                    <span className="flex items-center gap-1.5">
-                      {isOptimal ? '✨ [사진급 최고 화질]' : isTooMany ? '⚠️ [태그 과다 - 퀄리티 저하 주의]' : '💡 [화질 최적화 추천]'}
-                      <span>
-                        {isOptimal 
-                          ? (lang === 'ko' ? 'AI 가중치가 가장 선명하게 집중되는 3~5개 황금 비율 상태입니다! (사진급 일관성)' : 'Golden Ratio! AI attention is 100% focused for crisp sticker quality.')
-                          : isTooMany 
-                          ? (lang === 'ko' ? '태그가 6개 이상이면 AI가 특징을 뭉갤 수 있으니 4~5개로 줄여보세요.' : 'Too many tags (6+) may dilute AI focus. Reduce to 4-5 for best quality.')
-                          : (lang === 'ko' ? '태그를 1~2개 더 조합하시면(의상/소품/화풍) 캐릭터가 더욱 완성도 높게 나옵니다.' : 'Add 1-2 more tags (outfit/prop/style) for full character identity.')}
+                    <div className="flex items-center justify-between sm:justify-start gap-2">
+                      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-white/95 border shrink-0 whitespace-nowrap shadow-2xs">
+                        {isOptimal ? '✨ 사진급 최고 화질' : isTooMany ? '⚠️ 태그 과다 주의' : '💡 화질 최적화 추천'}
                       </span>
-                    </span>
-                    <span className="px-2 py-0.5 rounded bg-white/90 border text-[11px] shrink-0 font-extrabold shadow-2xs">
+                      <span className="sm:hidden px-2 py-0.5 rounded bg-white/95 border text-[11px] font-extrabold shrink-0 shadow-2xs">
+                        {lang === 'ko' ? `선택 태그: ${tagCount}개` : `Tags: ${tagCount}`}
+                      </span>
+                    </div>
+                    <p className="text-[11.5px] sm:text-[12px] font-medium leading-relaxed break-keep flex-1">
+                      {isOptimal 
+                        ? (lang === 'ko' ? 'AI 가중치가 가장 선명하게 집중되는 3~5개 황금 비율 상태입니다! (사진급 일관성)' : 'Golden Ratio! AI attention is 100% focused for crisp sticker quality.')
+                        : isTooMany 
+                        ? (lang === 'ko' ? '태그가 6개 이상이면 AI가 특징을 뭉갤 수 있으니 4~5개로 줄여보세요.' : 'Too many tags (6+) may dilute AI focus. Reduce to 4-5 for best quality.')
+                        : (lang === 'ko' ? '태그를 1~2개 더 조합하시면(의상/소품/화풍) 캐릭터가 더욱 완성도 높게 나옵니다.' : 'Add 1-2 more tags (outfit/prop/style) for full character identity.')}
+                    </p>
+                    <span className="hidden sm:inline-flex px-2.5 py-0.5 rounded bg-white/95 border text-[11px] font-extrabold shrink-0 shadow-2xs">
                       {lang === 'ko' ? `선택 태그: ${tagCount}개` : `Tags: ${tagCount}`}
                     </span>
                   </div>
