@@ -3666,7 +3666,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
   const visiblePromptValidationError = promptValidationError;
 
   return (
-    <div className={`font-body-md text-body-md antialiased pb-32 max-w-full w-full ${lang === 'zh' ? 'lang-zh' : ''}`}>
+    <div className={`font-body-md text-body-md antialiased max-w-full w-full ${lang === 'zh' ? 'lang-zh' : ''}`}>
       {/* TopAppBar */}
       <header className="w-full top-0 bg-background/95 backdrop-blur-md z-50 sticky border-b border-outline-variant/30 shadow-xs">
         <div className="max-w-3xl mx-auto flex items-center justify-between px-container-margin min-h-14 py-2 w-full">
@@ -4735,7 +4735,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
       </main>
 
       {/* Footer */}
-      <footer className="mt-12 py-10 bg-[#FAF9F6] border-t border-[#E5E0D8] text-center w-full">
+      <footer className="mt-8 sm:mt-10 py-6 sm:py-7 bg-[#FAF9F6] border-t border-[#E5E0D8] text-center w-full">
         <div className="max-w-3xl mx-auto px-6 flex flex-col gap-2">
           <p className="text-[14px] text-[#8C7A6B] font-bold">
             © {new Date().getFullYear()} Prompt Maker. All rights reserved.
