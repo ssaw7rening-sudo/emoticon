@@ -3863,11 +3863,12 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                     </p>
                     <p className="text-[13px] text-amber-800 leading-normal font-normal">
                       {lang === 'ko'
-                        ? '사람 사진뿐만 아니라 반려견/반려묘(동물), 캐릭터/인형/사물 사진도 모두 가능하며 선택하신 태그와 100% 융합됩니다.'
-                        : 'Supports photos of people, pets/animals, or objects/characters. All selected tags combine 100% into the prompt.'}
+                        ? '단독 인물·커플·가족 사진뿐만 아니라 반려견/반려묘(동물), 캐릭터/사물 사진도 모두 가능하며 선택하신 테마 및 태그와 100% 융합됩니다.'
+                        : 'Supports photos of single persons, couples, pets/animals, or objects. All selected themes and tags combine 100% into the prompt.'}
                     </p>
-                    <div className="bg-amber-50/80 p-2.5 rounded-md text-[12.5px] text-amber-850 font-normal border border-amber-200/70 leading-normal">
-                      <span>✨ {lang === 'ko' ? '예시: 사람 사진을 올리고 [시바견] 태그 선택 시 → [최대한 닮게]: 사진 속 인물이 시바견 인형옷/귀를 쓴 캐릭터 | [귀여운 SD 캐릭터화]: 인상의 분위기를 닮은 2.5등신 시바견 마스코트로 멋지게 융합됩니다!' : 'Example: Person photo + [Shiba Inu] tag → [Exact]: Person wearing Shiba Inu costume | [Chibi]: Cute 2.5-head Shiba Inu mascot matching the person\'s vibe!'}</span>
+                    <div className="bg-amber-50/80 p-2.5 rounded-md text-[12.5px] text-amber-850 font-normal border border-amber-200/70 leading-normal flex flex-col gap-1">
+                      <span>✨ {lang === 'ko' ? '커플/웨딩 사진 + [결혼/신혼부부] 테마 → 둘만의 사랑스러운 2.5등신 커플 메신저 이모티콘 완성!' : 'Couple photo + [Wedding/Newlyweds] theme → Adorable 2.5-head couple sticker pack!'}</span>
+                      <span>✨ {lang === 'ko' ? '선생님 사진 + [선생님/교사] 테마 → 학생들에게 찍어줄 세상에 하나뿐인 "참 잘했어요!" 얼굴 스탬프 완성!' : 'Teacher photo + [Teacher/Educator] theme → Personalized teacher praise & evaluation stamp!'}</span>
                     </div>
                   </div>
                 </div>
@@ -4679,6 +4680,24 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                     : lang === 'zh'
                     ? '博客插图与电子手帐: 用于博客文章点缀、GoodNotes、Notion 电子手帐及日程标记'
                     : 'Blog & Digital Planner Decor: Decorate blog posts, GoodNotes journals, or Notion pages with custom sticker stamps.'}
+                </li>
+                <li>
+                  {lang === 'ko' 
+                    ? '어린이집·유치원·학교 선생님 스탬프: 알림장, 숙제 검사, 칭찬 스티커판, 학생 피드백용 "참 잘했어요!" 맞춤형 교육 스탬프로 활용' 
+                    : lang === 'ja'
+                    ? '保育園・幼稚園・学校の先生スタンプ: 連絡帳、宿題チェック、ご褒美シール、生徒へのフィードバック用特製スタンプに'
+                    : lang === 'zh'
+                    ? '幼儿园/学校教师评语印章: 用于家校联系本、作业批改、表扬贴纸、学生反馈的个性化教师印章'
+                    : 'Teacher & Classroom Stamps: Perfect for homework check stamps, reward sticker charts, student feedback, and digital classrooms.'}
+                </li>
+                <li>
+                  {lang === 'ko' 
+                    ? '커플·신혼부부 추억 이모티콘: 둘만의 커플 사진으로 시크릿 메신저 짤, 모바일 청첩장 스티커, 포토북 및 기념일 굿즈 제작' 
+                    : lang === 'ja'
+                    ? 'カップル・新婚夫婦の記念スタンプ: 二人の写真でカップル専用スタンプ、結婚式の招待状、フォトブックや記念日グッズに'
+                    : lang === 'zh'
+                    ? '情侣与新婚夫妇专属表情: 用情侣合照制作二人专属聊天表情包、电子请柬、纪念日相册与周边文创'
+                    : 'Couple & Wedding Memories: Transform couple photos into private messenger stickers, wedding invitations, photobooks, and anniversary gifts.'}
                 </li>
               </ul>
             </div>
