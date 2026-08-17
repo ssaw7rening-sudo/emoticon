@@ -2980,224 +2980,202 @@ ${textExclusion} No grid lines, no cell division lines, no border lines between 
       : (phraseOverride || '').trim();
 
     if (isKorean) {
-      const referenceInstructionKo = characterSource === 'photo' ? {
-        exact: '[귀엽고 사랑스러운 2.5등신 SD 캐리커처 스티커] 참고 사진 속 인물의 헤어스타일, 눈매, 얼굴 특징 및 분위기를 찰떡같이 반영하되, 머리가 크고 앙증맞은 2.5등신 SD/Chibi 대두 캐릭터 비율로 사랑스럽게 캐리커처화하세요.',
-        features: '[시그니처 포인트 추출 2.5등신 SD] 참고 사진에서 인물의 상징적인 특징(헤어스타일, 안경, 분위기, 의상)을 추출하여 감각적이고 귀여운 2.5등신 SD 캐릭터로 제작하세요.',
-        characterize: '[극도로 귀여운 2.5등신 SD 캐릭터화] 큰 동그란 머리, 반짝이는 눈, 통통하고 앙증맞은 몸체를 가진 사랑스러운 2.5등신 SD Chibi 마스코트로 만드세요.',
-      }[photoReferenceMode] : '동일한 캐릭터의 정체성과 외형 특징을 엄격하게 유지하세요.';
-
-      const geminiProportionsKo = characterSource === 'photo' ? {
-        exact: '참고 사진의 얼굴 비율과 특징을 정확하게 반영한 고품질 2D 스티커 일러스트.',
-        features: '시그니처 특징(헤어, 안경, 주요 특징)을 추출한 세련된 2D 그래픽 벡터 일러스트.',
-        characterize: '큰 동그란 얼굴, 반짝이는 눈, 통통한 볼을 가진 귀여운 2.5등신 SD/Chibi 캐릭터 마스코트.',
-      }[photoReferenceMode] : '귀엽고 친근한 2.5등신 SD/Chibi 마스코트 비율.';
+      const referenceInstructionKo = characterSource === 'photo'
+        ? `[참고 이미지 기준 일관성 (최우선)]
+- 참고 사진 기반: 첨부된 사진을 절대적 기준으로 삼아 95% 이상 얼굴 유사도를 유지하는 2D 벡터 SD/Chibi 스티커 제작 (${getPhotoModeLabel('ko')}).
+- 얼굴/헤어/의상: ${character.appearance}, ${character.outfit}. 15개 모든 셀에서 동일 인물임이 즉시 인식되도록 얼굴형, 눈매, 피부톤, 헤어, 의상 색상을 100% 일치시키세요.
+- 화풍: 깔끔하고 선명한 2D 벡터 선화, 부드러운 셀 셰이딩, 선명한 플랫 색감.`
+        : `[캐릭터 정체성 & 시각적 기준]
+- 대상: ${character.subject}
+- 외형 & 특징: ${character.appearance}
+- 의상: ${character.outfit}
+- 화풍: 깔끔하고 선명한 2D 벡터 선화, 부드러운 셀 셰이딩, 선명한 색감.`;
 
       const bgInstructionKo = {
-        transparent: '단일 연계형 순백색 배경 시트(Single continuous pure white background sheet). 15개 전신 스티커가 여백을 두고 자유롭게 배치되며, 각 캐릭터 주변에 선명한 흰색 스티커 테두리(Die-cut white outline)가 감싸진 형태. 전체 캔버스에 깔끔한 순백색 바탕만 존재하며 회색·흰색 체크무늬(체커보드 격자, 모자이크 패턴, PNG 투명 그리드 타일)는 절대로 그리지 마세요.',
-        solid: '캐릭터와 선명하게 대비되는 깔끔한 단색 배경. 격자 패턴이나 체크무늬 타일 절대 금지.',
-        chroma: '배경 분리(누끼)용 선명한 연두색 #00FF00 크로마키 배경. 캐릭터 외곽선에 녹색 번짐 없음.',
-      }[geminiBackgroundMode] || '단일 연계형 순백색 배경 시트.';
+        transparent: '단일 연속 순수 단색 순백색 배경 (#FFFFFF). 각 스티커는 캐릭터 전체 실루엣을 둘러싼 선명하고 두꺼운 흰색 다이컷(Die-cut) 외곽선이 둘러져 있습니다. 체커보드 투명 패턴, 회색 격자 절대 금지.',
+        solid: '캐릭터와 대비되는 단색 배경. 체커보드 패턴 없음.',
+        chroma: '배경 분리용 선명한 연두색 #00FF00 크로마키 배경.',
+      }[geminiBackgroundMode] || '단일 연속 순수 단색 순백색 배경 (#FFFFFF).';
 
       if (generationMode === 'individual' || hasPhraseOverride) {
         const textPolicyKo = geminiTextMode === 'text'
-          ? `[고품질 한글 타이포그래피 및 감정 포인트 효과 지침]
-1. 지정된 문구 "${targetPhrase}"를 캐릭터 옆이나 머리 위에 읽기 쉬운 2D 볼드 팝아트 손글씨 스티커 폰트로 정확히 한 번만 적으세요.
-2. 모든 글자에 또렷하고 두꺼운 순백색 스티커 테두리(White Die-Cut Outline Stroke)를 둘러 선명하게 돋보이게 렌더링하세요.
-3. 문구의 감정에 맞춰 아기자기한 포인트 효과(하트💕, 황금왕관👑, 따봉👍, 폭죽🎉, 꽃다발💐, 땀방울💦, 반짝이✨, zZ 등)를 글자 주변에 자연스럽게 결합하세요.
-4. 텍스트 상자(박스), 말풍선, 괄호 (), 대괄호 [], 따옴표 "", 스티커 번호는 절대로 넣지 마세요.`
-          : `한국어 문구 "${targetPhrase}"는 표정과 자세를 정하기 위한 맥락으로만 사용하고, 이미지 안에 절대로 텍스트, 글자, 숫자로 그리지 마세요.`;
+          ? `[한글 텍스트 규칙]
+지정된 한국어 문구 "${targetPhrase}"를 굵고 선명한 단색 폰트에 흰색 외곽선 스트로크를 적용하여 캐릭터 옆이나 머리 위에 가로로 정확히 한 번만 렌더링하세요. 말풍선, 텍스트 박스, 따옴표, 괄호 금지.`
+          : `[텍스트 규칙]
+한국어 문구 "${targetPhrase}"는 표정과 자세 결정을 위한 감정 맥락으로만 사용하며 이미지 내에 텍스트, 글자, 숫자를 그리지 마세요.`;
+
         const textExclusionKo = geminiTextMode === 'text'
-          ? '글자/단어/음절 중복 반복(예: 화이팅 화이팅, 미안해요 미안해요, 최 최고), 불필요한 일본어/가타카나/한자/외국어, 철자 변형, 폰트 뭉개짐, 스티커 번호, 괄호, 따옴표, 텍스트 상자 절대 금지.'
-          : '텍스트, 글자, 숫자, 말풍선, 스티커 라벨, 의미 없는 기호 절대 금지.';
+          ? '한글 오타, 첫 글자 자음/모음 중복, 깨진 글자, 불필요한 단어, 텍스트 상자 금지.'
+          : '텍스트, 글자, 숫자, 말풍선, 스티커 라벨, 의미 없는 기호 금지.';
 
-        return `[목표]
-일관된 캐릭터가 담긴 고품질 2D 메신저 스티커 (카카오톡/라인 스타일) 1장을 그려주세요.
-
-[시각적 참고 & 정체성]
-사진 참고 스타일: ${getPhotoModeLabel('ko')}. 첨부된 사진을 최우선 참고 이미지로 사용하세요.
+        return `[Identity & Visual Baseline]
+- Reference: 2.5-head SD Chibi 2D vector sticker based on the reference.
 ${referenceInstructionKo}
-- 대상: ${character.subject}
-- 외형 및 특징: ${character.appearance}
-- 의상: ${character.outfit}
 
-[화풍 및 비율]
-지정 화풍: ${character.artStyle}. ${geminiProportionsKo} 깔끔하고 선명한 벡터 외곽선, 부드러운 셀 셰이딩, 조화로운 색감. 머리부터 발끝까지 전신이 잘리지 않게 표현하세요.
+[Canvas & Layout Constraints - STRICT]
+- Layout: Exactly 1 single centered full-body sticker on a square 1:1 canvas.
+- Background: ${bgInstructionKo}
+- Framing: No bounding boxes, no panel lines, no grid separators, no checkerboard transparency tiles, no watermarks.
 
-[포즈 및 표정]
-- 감정/상황 맥락: "${targetPhrase}"
-- 표정: "${targetPhrase}"에 꼭 맞는 풍부하고 명확한 표정.
-- 자세: 머리부터 발끝까지 완전한 전신을 보여주는 역동적인 포즈 (앉기, 웅크리기, 점프, 소품 들기, 윙크 등).
-- 보조 소품 및 효과: ${character.props}, ${character.effects}, 귀여운 포인트 효과.
-
-[캔버스 및 배치]
-1:1 정사각형 캔버스. 전신 캐릭터 한 명을 중앙에 배치하고 여백을 넉넉히 주세요. ${bgInstructionKo}
-
-[일관성 규칙]
-기존 캐릭터의 얼굴, 체형, 색상, 의상, 화풍을 동일하게 유지하고 표정과 자세만 변경하세요.
-
-[글자 정책]
+[Pose & Korean Typography]
+- Emotion / Action: "${targetPhrase}" — unique, highly expressive pose and facial emotion matching "${targetPhrase}". Minimal props: ${character.props}, ${character.effects}.
 ${textPolicyKo}
 
-[제외 조건]
-${textExclusionKo} 격자선, 셀 경계선, 구별선, 테두리선, 표 선, 크롭 마크, 바운딩 박스, 워터마크, 전체 프레임, 캐릭터 중복, 팔다리 누락/추가, 반신·흉상 컷, 회색·흰색 체크무늬 패턴, 실사 느낌.`;
+[Negative Directives]
+${textExclusionKo} Deformed limbs, cropped figure, frame borders, grid lines, watermark.`;
       }
 
-      const panelPlanKo = [
-        `1행 (스티커 1~5): 1. "${(emoticons[0]||'ㅋㅋㅋㅋ').trim()}" | 2. "${(emoticons[1]||'안녕!').trim()}" | 3. "${(emoticons[2]||'오늘도 화이팅').trim()}" | 4. "${(emoticons[3]||'좋아요').trim()}" | 5. "${(emoticons[4]||'고마워요').trim()}"`,
-        `2행 (스티커 6~10): 6. "${(emoticons[5]||'사랑해요').trim()}" | 7. "${(emoticons[6]||'최고!').trim()}" | 8. "${(emoticons[7]||'오예').trim()}" | 9. "${(emoticons[8]||'미안해요').trim()}" | 10. "${(emoticons[9]||'수고했어요').trim()}"`,
-        `3행 (스티커 11~15): 11. "${(emoticons[10]||'축하해요').trim()}" | 12. "${(emoticons[11]||'대박').trim()}" | 13. "${(emoticons[12]||'헐').trim()}" | 14. "${(emoticons[13]||'감동').trim()}" | 15. "${(emoticons[14]||'잘자요').trim()}"`
-      ].join('\n');
+      const row1Plan = [0, 1, 2, 3, 4].map(i => {
+        const phrase = (emoticons[i] || '').trim();
+        const action = getPhraseActionKo(phrase);
+        const cellNum = i + 1;
+        const cellPos = i === 0 ? ' (상단 좌측)' : '';
+        return `Cell ${cellNum}${cellPos}: ${action} | 문구: "${phrase}"`;
+      }).join('\n');
+
+      const row2Plan = [5, 6, 7, 8, 9].map(i => {
+        const phrase = (emoticons[i] || '').trim();
+        const action = getPhraseActionKo(phrase);
+        const cellNum = i + 1;
+        const cellPos = i === 5 ? ' (중단 좌측)' : '';
+        return `Cell ${cellNum}${cellPos}: ${action} | 문구: "${phrase}"`;
+      }).join('\n');
+
+      const row3Plan = [10, 11, 12, 13, 14].map(i => {
+        const phrase = (emoticons[i] || '').trim();
+        const action = getPhraseActionKo(phrase);
+        const cellNum = i + 1;
+        const cellPos = i === 10 ? ' (하단 좌측)' : i === 14 ? ' (하단 우측)' : '';
+        return `Cell ${cellNum}${cellPos}: ${action} | 문구: "${phrase}"`;
+      }).join('\n');
 
       const textPolicyKo = geminiTextMode === 'text'
-        ? `[한글 타이포그래피 — 재미나이 안정형 지침 (카카오톡/라인 상업용 기준)]
-1. 각 문구를 캐릭터 옆이나 위에 굵고 읽기 쉬운 손글씨 스타일 폰트로 정확히 한 번만 그리세요.
-2. 글자 스타일은 단일 레이어로 단순하게 유지하세요: 진하고 채도 높은 단색 채움 + 배경과 대비되는 두꺼운 순백색 테두리(Single White Outline) 하나만 사용하세요. 이중 윤곽선, 그림자, 기울임, 입체 배지 효과는 사용하지 마세요 — 레이어가 많을수록 한글 오타 위험이 커집니다.
-3. 한 줄 배치 & 글자 크기 최적화 규칙 (절대 준수): 4~6글자 이내의 짧은 단어("대박", "감동", "좋아요", "미안해요", "사랑해요", "수고했어요" 등)는 절대로 2줄로 쪼개거나 세로로 쌓지 말고 반드시 '한 줄 가로 배치'로 렌더링하세요. 캐릭터 옆 공간이 좁다면 줄바꿈하지 말고 '글자 크기를 줄여서' 한 줄에 온전히 들어가게 만드세요. 공백이 있는 긴 문구("오늘도 화이팅")만 띄어쓰기 기준으로 최대 2줄 허용합니다.
-4. 첫 글자 중복 및 표기 오류 엄격 금지: 첫 글자가 겹쳐 나오는 오류(예: "축하해요"→"축축하해요", "미안해요"→"미미안해요", "최고"→"최최고"), 단어 반복, 자모 순서 뒤바뀜, 획 누락, 일본어/가타카나/한자/외국어 기호 섞임을 100% 엄격히 금지합니다.
-5. 자체 대조 검증(Self-Check): 15개 문구를 렌더링하기 직전, 지정된 15개 문구 원본과 한 글자씩 대조하여 중복 글자나 억지 줄바꿈이 없는지 스스로 검증한 뒤 최종 출력하세요.`
-        : '한국어 문구는 표정과 자세를 정하기 위한 맥락으로만 사용하고, 이미지 안에 절대로 텍스트, 글자, 숫자로 그리지 마세요.';
+        ? `*각 캐릭터 옆이나 머리 위에 지정된 한국어 문구를 굵은 단색 폰트와 깨끗한 흰색 단일 외곽선 스트로크(White single stroke)를 적용하여 가로로 정확히 한 번만 렌더링하세요.*`
+        : `*한국어 문구는 감정 및 동작 지침으로만 사용하며 이미지 내에 어떤 글자, 텍스트, 숫자도 렌더링하지 마세요.*`;
+
       const textExclusionKo = geminiTextMode === 'text'
-        ? '첫 글자 중복(축축하해요, 미미안해요 등), 억지 줄바꿈, 세로 글자 쌓기, 4~6자 짧은 단어 2줄 쪼개기, 불필요한 단어, 철자 변경, 임의의 글자, 스티커 번호, 괄호, 따옴표, 텍스트 상자 금지.'
-        : '텍스트, 글자, 숫자, 말풍선, 스티커 라벨, 의미 없는 기호 절대 금지.';
+        ? '한글 자모 분리 오타, 첫 글자 중복(축축하해요, 미미안해요 등), 깨진 글꼴, 4x4 그리드, 16개 스티커, 15개 미만 생성, 신체 부위 누락/크롭, 패널 경계선, 격자선 오버레이.'
+        : '모든 텍스트, 글자, 숫자, 말풍선, 4x4 그리드, 16개 스티커, 신체 크롭, 패널 경계선, 격자선.';
 
-      return `[목표]
-전체 스티커에 걸쳐 일관된 캐릭터가 등장하는 15종 2D 메신저 스티커 시트 (카카오톡 / 라인 스타일) 한 장을 생성해 주세요.
-
-[시각적 참고 & 정체성]
-사진 참고 스타일: ${getPhotoModeLabel('ko')}. 첨부된 사진을 최우선 참고 이미지로 사용하세요.
+      return `[Identity & Visual Baseline]
+- Reference: 2.5-head SD Chibi 2D vector sticker sheet based strictly on the reference image.
 ${referenceInstructionKo}
-- 대상: ${character.subject}
-- 외형 및 특징: ${character.appearance}
-- 의상: ${character.outfit}
-- 구도 조화: 전신 컷을 기본(70% 이상)으로 하되, 감정 표현이 강조되는 문구는 상반신/바스트 컷을 자연스럽게 섞어 GPT 스타일의 생동감 넘치는 이모티콘 시트로 구성하세요.
+- Art Style: Crisp clean vector outlines, smooth 2D cel-shading, vibrant colors, uniform character proportions across all 15 instances.
 
-[화풍 및 비율]
-지정 화풍: ${character.artStyle}. ${geminiProportionsKo} 깔끔하고 선명한 벡터 외곽선, 부드러운 셀 셰이딩, 조화로운 색감. 15개 스티커 전체에서 지정된 최우선 화풍의 선, 채색, 질감 및 캐릭터 비율을 100% 엄격히 유지하세요. 15개 셀의 얼굴은 마치 같은 사진에서 포즈만 바꾼 것처럼 눈 크기, 눈매, 얼굴 폭, 턱선이 픽셀 단위로 동일해야 합니다. 셀마다 다른 사람처럼 보이지 않도록 각별히 주의하세요.
+[Canvas & Layout Constraints - STRICT]
+- Grid Layout: Exactly 5 columns × 3 rows (Total 15 distinct stickers, absolutely NO 4x4, NO 16 cells).
+- Background: ${bgInstructionKo}
+- Framing: No bounding boxes, no panel lines, no grid separators, no checkerboard transparency tiles, no watermarks.
 
-[15종 역동적인 포즈 & 표정]
-각 스티커마다 독창적이고 표정이 살아있는 얼굴 감정과 역동적인 전신 자세를 구성하세요 (앉기, 웅크리기, 점프, 소품 들기, 윙크, 먹기, 응원하기 등). 각 문구의 감정에 맞춰 전신 포즈, 상반신 컷, 상체 컷을 다채롭게 배정하세요:
-${panelPlanKo}
-보조 소품 & 반짝이 효과: ${character.props}, ${character.effects}, 최소한의 포인트 효과.
-
-[캔버스 레이아웃 — 절대적 5열 × 3행 15셀 그리드 고정 (16개 4×4 생성 엄격 금지)]
-1. 총 개수 엄격 준수: 스티커의 총 개수는 반드시 '정확히 15개(5개 × 3행)'여야 하며, 16개(4×4), 12개, 20개 등 다른 개수로 생성하는 것을 절대 금지합니다. 특히 '4열 × 4행(16개) 그리드'는 흔히 발생하는 심각한 실수이니 절대로 만들지 마세요.
-2. 5×3 수평 수직 정렬: 반드시 1행에 5개, 2행에 5개, 3행에 5개(총 3개 행)의 수평·수직 격자 열에 완벽히 맞춰 배치하세요. 세로형 배치나 비대칭 배열은 엄격히 금지됩니다.
-3. 자체 카운트 재검증: 이미지를 완성하기 전에 각 행의 스티커 개수를 '1행 5개, 2행 5개, 3행 5개'로 직접 세어 총 15개가 맞는지 반드시 재검증한 뒤 렌더링하세요.
-4. 배경 및 테두리: ${bgInstructionKo} 격자선, 구별선, 크롭 마크, 바운딩 박스, 스티커 번호 절대 금지.
-
-[글자 정책]
+[15-Cell Dynamic Pose & Exact Korean Typography Matrix]
 ${textPolicyKo}
 
-[제외 조건]
-${textExclusionKo} 4×4(16개) 그리드 레이아웃, 15개 초과/미만 개수 생성, 가이드선, 격자선, 셀 구별선, 테두리선, 표 선, 크롭 마크, 패널 상자, 워터마크, 외곽 프레임, 한 스티커 안의 캐릭터 중복, 팔다리 누락/추가, 크롭된 신체, 반신·흉상 컷, 탁한 배경색, 회색·흰색 체크무늬/체커보드 패치.`;
+[Row 1]
+${row1Plan}
+
+[Row 2]
+${row2Plan}
+
+[Row 3]
+${row3Plan}
+
+[Negative Directives]
+${textExclusionKo}`;
     }
 
-    // English Version (Matches User Best Template Exactly)
-    const photoModeBlockEn = characterSource === 'photo' ? {
-      exact: '[HIGH-FIDELITY REALISTIC PHOTO CARICATURE] Create a photo-realistic caricature cutout sticker preserving 95%+ exact visual resemblance to the attached person photo. Do NOT render as a 2D vector cartoon. Preserve real photographic face texture, skin tone, hairstyle, and authentic outfit texture, stylized into a high-end photo cutout sticker.',
-      features: '[SIGNATURE FEATURE EXTRACTION] Extract only the iconic signature elements (e.g., glasses, unique haircut, facial mark, distinct expression/outfit) from the reference photo. Render in a clean, stylish 2D vector illustration while accentuating those key signature traits.',
-      characterize: '[CUTE SD CHIBI MASCOT] Transform the reference photo into an adorable 2.5-head Chibi SD mascot with a big round head, large expressive eyes, chubby cheeks, and clean 2D vector sticker styling.',
-    }[photoReferenceMode] : 'Preserve the same character identity and key visual features strictly across all stickers.';
-
-    const proportionStyleEn = characterSource === 'photo' ? {
-      exact: 'High-fidelity photo-realistic caricature cutout sticker style matching the attached reference photo accurately, with real photographic face texture, hair, skin tone, and authentic outfit details.',
-      features: 'Stylish 2D graphic vector illustration with clean stylized proportions, extracting iconic signature features (hair, glasses, distinct traits).',
-      characterize: 'Adorable 2.5-head Chibi SD mascot proportion with a big round head, sparkling expressive eyes, and chubby cheeks.',
-    }[photoReferenceMode] : 'Adorable 2.5-head Chibi SD mascot proportion with a big round head, sparkling expressive eyes, and chubby cheeks.';
+    // English Version (Hierarchical Gemini Framework)
+    const referenceInstruction = characterSource === 'photo'
+      ? `[Identity & Visual Baseline]
+- Reference: 2.5-head SD Chibi 2D vector sticker sheet based strictly on the reference image (${getPhotoModeLabel('en')}).
+- Consistent Features: ${character.appearance}, ${character.outfit}. Maintain 95%+ facial feature consistency across all 15 cells: facial structure, eye shape, hairstyle, skin tone, and clothing colors.
+- Art Style: Crisp clean vector outlines, smooth 2D cel-shading, vibrant colors, uniform character proportions across all 15 instances.`
+      : `[Identity & Visual Baseline]
+- Subject: ${character.subject}
+- Features: ${character.appearance}, ${character.outfit}.
+- Art Style: Crisp clean vector outlines, smooth 2D cel-shading, vibrant colors, 2.5-head SD Chibi proportions across all 15 instances.`;
 
     const bgInstructionEn = {
-      transparent: 'Single continuous pure white background sheet. Arrange all 15 full-body stickers floating freely with generous spacing. Each character has a subtle crisp sticker die-cut white outline. Pure blank white background across the entire canvas. Absolutely DO NOT draw any gray-and-white checkerboard pattern, transparency tiles, or fake PNG grid texture.',
+      transparent: 'Pure solid white background (#FFFFFF) with a distinct white die-cut sticker contour line around each character. Absolutely no checkerboard transparency pattern, no gray grid.',
       solid: 'Clean, continuous solid background color with strong contrast against the character. No checkerboard tiles.',
-      chroma: 'Solid bright green #00FF00 chroma-key background for easy background removal. No green spill on character edges.',
-    }[geminiBackgroundMode] || 'Single continuous pure white background sheet.';
+      chroma: 'Solid bright green #00FF00 chroma-key background for easy cutout.',
+    }[geminiBackgroundMode] || 'Pure solid white background (#FFFFFF) with a distinct white die-cut sticker contour line around each character.';
 
     if (generationMode === 'individual' || hasPhraseOverride) {
       const textPolicy = geminiTextMode === 'text'
-        ? `[HIGH-PRECISION KOREAN TYPOGRAPHY DIRECTIVE] Render the exact Korean phrase "${targetPhrase}" with 100% correct Hangul spelling and zero typos. Position the text naturally beside or floating near the character in playful, highly legible hand-drawn calligraphy typography. Ensure sharp vector text outlines and strong color contrast against the background. Do NOT draw rectangular text boxes, background boxes, speech bubbles, parentheses (), or quotation marks "".`
+        ? `*Render the exact Korean text "${targetPhrase}" in a bold solid font with a clean white single stroke horizontally adjacent to the character. No speech bubbles, no text boxes, no brackets, no quotes, no numbers.*`
         : `Do not render text, letters, or numbers. Use "${targetPhrase}" only as visual context for expression and pose.`;
       const textExclusion = geminiTextMode === 'text'
-        ? 'No extra words, altered spelling, random letters, numbers, parentheses, or text boxes.'
-        : 'No text, letters, numbers, typography, or meaningless symbols.';
+        ? 'Korean text typos, duplicate initial letters, broken glyphs, deformed limbs, cropped figures, panel borders, grid lines, watermark.'
+        : 'No text, no letters, no numbers, no speech bubbles, no sticker labels, no meaningless symbols.';
 
-      return `[GOAL]
-Create a master 2D messenger sticker (KakaoTalk / LINE style) featuring a consistent character.
+      return `${referenceInstruction}
 
-[VISUAL REFERENCE & IDENTITY]
-Photo reference style: ${getPhotoModeLabel('en')}. Use the photo attached in the AI chat as the primary visual reference.
-${photoModeBlockEn}
-- Subject: ${character.subject}
-- Appearance & Features: ${character.appearance}
-- Outfit: ${character.outfit}
+[Canvas & Layout Constraints - STRICT]
+- Layout: Exactly 1 single centered full-body sticker on a square 1:1 canvas.
+- Background: ${bgInstructionEn}
+- Framing: No bounding boxes, no panel lines, no grid separators, no checkerboard transparency tiles, no watermarks.
 
-[ART DIRECTION & PROPORTIONS]
-cute, approachable, high-quality 2D messenger sticker illustration with clean outlines and harmonious colors. ${proportionStyleEn} Clean crisp vector outlines, vibrant colors, and soft cell shading. Maintain identical character proportions and style.
-
-[SCENE, POSE & EXPRESSION]
-- Target Phrase / Mood: "${targetPhrase}"
-- Facial Expression: Highly expressive, unmistakable emotion matching "${targetPhrase}".
-- Body Pose: Dynamic, energetic full-body posture (e.g. sitting, crouching, jumping, holding props, or waving). Every character must be full-body, head-to-toe, uncropped.
-- Supporting Props & Sparkle Effects: ${character.props}, ${character.effects}, cute accents.
-
-[CANVAS & COMPOSITION]
-Square 1:1 canvas. Exactly one complete centered full-body character visible from head to toe with generous spacing. ${bgInstructionEn}
-
-[CONSISTENCY RULE]
-If a previous sticker sheet or character image exists in this chat, preserve its face, body proportions, colors, outfit, and art style identically. Change only the expression, pose, supporting prop, and effect required for this scene.
-
-[TEXT POLICY]
+[Pose & Korean Typography]
+- Emotion / Action: "${targetPhrase}" — ${getPhraseActionEn(targetPhrase)}
 ${textPolicy}
 
-[DO NOT INCLUDE]
-${textExclusion} No guide lines, no grid lines, no cell dividers, no border lines, no table lines, no crop marks, no panel boxes, no watermark, no outer frame, no duplicate character inside a single sticker, no extra limbs, no cropped body, no half-body bust shot, no dull background color, or photorealism.`;
+[Negative Directives]
+${textExclusion}`;
     }
 
-    const panelPlan = [
-      `Row 1 (Stickers 1-5): 1. "${(emoticons[0]||'ㅋㅋㅋㅋ').trim()}" | 2. "${(emoticons[1]||'안녕!').trim()}" | 3. "${(emoticons[2]||'오늘도 화이팅').trim()}" | 4. "${(emoticons[3]||'좋아요').trim()}" | 5. "${(emoticons[4]||'고마워요').trim()}"`,
-      `Row 2 (Stickers 6-10): 6. "${(emoticons[5]||'사랑해요').trim()}" | 7. "${(emoticons[6]||'최고!').trim()}" | 8. "${(emoticons[7]||'오예').trim()}" | 9. "${(emoticons[8]||'미안해요').trim()}" | 10. "${(emoticons[9]||'수고했어요').trim()}"`,
-      `Row 3 (Stickers 11-15): 11. "${(emoticons[10]||'축하해요').trim()}" | 12. "${(emoticons[11]||'대박').trim()}" | 13. "${(emoticons[12]||'헐').trim()}" | 14. "${(emoticons[13]||'감동').trim()}" | 15. "${(emoticons[14]||'잘자요').trim()}"`
-    ].join('\n');
+    const row1Plan = [0, 1, 2, 3, 4].map(i => {
+      const phrase = (emoticons[i] || '').trim();
+      const action = getPhraseActionEn(phrase);
+      const cellNum = i + 1;
+      const cellPos = i === 0 ? ' (Top-Left)' : '';
+      return `Cell ${cellNum}${cellPos}: ${action} | Text: "${phrase}"`;
+    }).join('\n');
+
+    const row2Plan = [5, 6, 7, 8, 9].map(i => {
+      const phrase = (emoticons[i] || '').trim();
+      const action = getPhraseActionEn(phrase);
+      const cellNum = i + 1;
+      const cellPos = i === 5 ? ' (Mid-Left)' : '';
+      return `Cell ${cellNum}${cellPos}: ${action} | Text: "${phrase}"`;
+    }).join('\n');
+
+    const row3Plan = [10, 11, 12, 13, 14].map(i => {
+      const phrase = (emoticons[i] || '').trim();
+      const action = getPhraseActionEn(phrase);
+      const cellNum = i + 1;
+      const cellPos = i === 10 ? ' (Bottom-Left)' : i === 14 ? ' (Bottom-Right)' : '';
+      return `Cell ${cellNum}${cellPos}: ${action} | Text: "${phrase}"`;
+    }).join('\n');
+
     const textPolicy = geminiTextMode === 'text'
-      ? `[KOREAN TYPOGRAPHY — GEMINI STABLE DIRECTIVE (COMMERCIAL EMOTICON BENCHMARK)]
-1. Render each Korean phrase beside or above its character in a bold, clean, legible hand-drawn font exactly once.
-2. Keep text styling to a single robust layer: bold saturated solid color fill + one crisp thick white outline (Single White Outline). Do NOT add 3D badge effects, double inner outlines, tilt, or complex drop shadows — fewer visual layers prevent Hangul spelling glitches in Gemini.
-3. Single-Line Placement & Font Scaling Rule (Strict): Short phrases under 4-6 syllables (e.g. "대박", "감동", "좋아요", "미안해요", "사랑해요", "수고했어요") MUST be rendered on a single horizontal line. Never split short words into 2 lines (e.g. do NOT split "대박" into "대" and "박") or stack characters vertically. If space is tight, scale down the font size instead of line-breaking. Only phrases with spaces (e.g. "오늘도 화이팅") may wrap at word boundaries (max 2 lines).
-4. Strictly Prohibit Leading Character Duplication: Never duplicate the first syllable (e.g. NO "축축하해요", NO "미미안해요", NO "최최고"). Forbid repeating words, jamo reordering, missing strokes, or mixing foreign characters.
-5. Self-Verification (Cross-Check): Cross-check every rendered Hangul phrase character-by-character against the provided list to verify zero duplicated characters and zero forced line breaks before finalizing the render.`
-      : 'The Korean phrases are context for determining expression and pose only — never render them as text, letters, or numbers in the image.';
+      ? `*Render each designated Korean text in a bold solid font with a clean white single stroke horizontally adjacent to the character.*`
+      : `*Korean phrases above are emotional context only — do not render any text, letters, or numbers in the image.*`;
+
     const textExclusion = geminiTextMode === 'text'
-      ? 'Leading syllable duplication (e.g. 축축하해요, 미미안해요), forced line breaks on short words, vertical letter stacking, extra words, altered spelling, random letters, sticker numbers, parentheses, quotation marks, or text boxes.'
-      : 'No text, no letters, no numbers, no speech bubbles, no sticker labels, no meaningless symbols.';
+      ? 'Broken Korean characters, typos, duplicate consonants, 4x4 layout, 16 stickers, less than 15 stickers, missing limbs, partial body crops, panel borders, grid line overlays.'
+      : 'No text, no letters, no numbers, 4x4 layout, 16 stickers, deformed limbs, cropped figures, panel borders, grid lines.';
 
-    return `[GOAL]
-Create a master 15-sticker 2D messenger sheet (KakaoTalk / LINE style) featuring a consistent character across all stickers.
+    return `${referenceInstruction}
 
-[VISUAL REFERENCE & IDENTITY]
-Photo reference style: ${getPhotoModeLabel('en')}. Use the photo attached in the AI chat as the primary visual reference.
-${photoModeBlockEn}
-- Subject: ${character.subject}
-- Appearance & Features: ${character.appearance}
-- Outfit: ${character.outfit}
-- COMPOSITION HARMONY: Use full-body poses as the primary baseline (70%+), but naturally incorporate 3/4 upper-body shots and expressive close-ups where the emotion calls for it, creating a lively KakaoTalk/LINE sticker sheet like GPT.
+[Canvas & Layout Constraints - STRICT]
+- Grid Layout: Exactly 5 columns × 3 rows (Total 15 distinct stickers, absolutely NO 4x4, NO 16 cells).
+- Background: ${bgInstructionEn}
+- Framing: No bounding boxes, no panel lines, no grid separators, no checkerboard transparency tiles, no watermarks.
 
-[ART DIRECTION & PROPORTIONS]
-cute, approachable, high-quality 2D messenger sticker illustration with clean outlines and harmonious colors. ${proportionStyleEn} Clean crisp vector outlines, vibrant colors, and soft cell shading. Maintain identical character proportions, facial details, eye shape, and jawline identically across all 15 stickers as if from the same photo session.
-
-[15 DYNAMIC POSES & EXPRESSIONS]
-For each sticker, infer a unique, highly expressive facial emotion and a DYNAMIC full-body pose (e.g. sitting, crouching, jumping, holding props, winking, eating, or cheering). Every sticker MUST show a complete full-body character visible head-to-toe:
-${panelPlan}
-Supporting props & sparkle effects: ${character.props}, ${character.effects}, cute accents.
-
-[CANVAS & GRID ALIGNMENT — STRICT 5 COLUMNS x 3 ROWS (EXACTLY 15 STICKERS, NO 4x4 16-CELL GRID)]
-1. Strict Count (Exact 15 Stickers): The total count MUST be EXACTLY 15 stickers (5 columns x 3 rows). Any other count such as 16 (4x4), 12, or 20 stickers is STRICTLY FORBIDDEN. Do NOT create a 4x4 (16-sticker) grid layout — this is a common mistake that must be avoided.
-2. Uniform 5x3 Grid: Perfectly align 5 stickers in Row 1, 5 stickers in Row 2, and 5 stickers in Row 3 across a wide horizontal canvas. Vertical or asymmetric layouts are strictly prohibited.
-3. Self-Verification Count: Before finalizing the render, directly count the stickers in each row (5, 5, 5) to confirm there are exactly 15 stickers in total.
-4. Background & Clean Canvas: ${bgInstructionEn} Absolutely NO guide lines, NO grid lines, NO cell borders, NO table lines, NO dividing lines, NO crop marks, NO bounding boxes, NO sticker numbers.
-
-[TEXT POLICY]
+[15-Cell Dynamic Pose & Exact Korean Typography Matrix]
 ${textPolicy}
 
-[DO NOT INCLUDE]
-${textExclusion} 4x4 16-sticker grid layout, generating more or fewer than 15 stickers, guide lines, grid lines, cell dividers, border lines, table lines, crop marks, panel boxes, watermark, outer frame, duplicate character inside a single sticker, extra limbs, cropped body, half-body bust shot, dull background color, or photorealism.`;
+[Row 1]
+${row1Plan}
+
+[Row 2]
+${row2Plan}
+
+[Row 3]
+${row3Plan}
+
+[Negative Directives]
+${textExclusion}`;
   };
 
   const getGrokBackgroundInstruction = () => {
