@@ -81,6 +81,8 @@ const THEMES_KO = {
   '선생님/교사 ②': ['확인 완료!', '숙제 검사 完', '오답 수정!', '다시 제출!', '조금만 더!', '감점 주의!', '재시험 대상', '출석 완료!', '피드백 확인', '수행평가 접수', '교무실로 와', '지각 금지!', '수업 집중!', '시험 잘 봐!', '오늘 수업 끝!'],
   '결혼/신혼부부 ①': ['결혼합니다!', '행복하게 살게요', '청첩장 드려요', '여보 오늘 밥은?', '설거지 당번!', '신혼여행 출발', '프로포즈 성공', '내 반쪽 ♥', '장보러 가자', '칼퇴하고 갈게', '여보 수고했어', '우리 집 놀러 와', '부모님 뵙는 날', '달콤한 신혼', '영원한 내 편'],
   '결혼/신혼부부 ②': ['여보 사랑해', '빨래 널어줘', '데이트 가자', '야식 콜?', '여보 삐졌어?', '찌개 끓였어', '기념일 축하해', '결혼 조하~', '음쓰 버려줘', '여보뿐이야', '안마해 줄게', '달달한 우리', '행복한 우리 집', '조심히 들어와', '여보 잘자요'],
+  'MZ 신조어/단축어 ①': ['갓생 사는 중', '알잘딱깔센', '중꺾마!', '폼 미쳤다', '오히려 좋아', '억까 당함', '스불재...', '킹받네', '오운완!', '점메추 ㄱ?', '극락...', '내또출...', '주말순삭', '생존신고!', '기절각 zZ'],
+  '학생/10대 유행어 ②': ['하교각!', '매점 ㄱ?', '벼락치기 중', '시험 망함', 'ㅇㅈ (인정)', 'ㄹㅇ 팩트', 'ㄱㄷ (기달)', 'ㄱㅊ (괜찮)', '나 지금 진지함', '학탈 성공', '배고파 기절', '숙제 했어?', '폰 압수...', '달려보자!', '내일 봐!'],
 };
 
 const THEMES_EN = {
@@ -162,6 +164,8 @@ const THEMES_EN = {
   'Teacher/Educator ②': ['Check complete! ⭕', 'Homework checked', 'Fix your mistakes!', 'Resubmit please!', 'Just a bit more!', 'Watch for deduction!', 'Subject to re-test', 'Attendance check!', 'Check your feedback', 'Performance task in', 'To teacher\'s office', 'No being late!', 'Focus on class!', 'Good luck on test!', 'Class dismissed!'],
   'Wedding/Newlyweds ①': ['We are getting married!', 'Will live happily', 'Here is wedding invite', 'Honey what\'s for dinner?', 'Dishwashing duty!', 'Honeymoon departure', 'Proposal success', 'My other half ♥', 'Let\'s go grocery', 'Off to home early', 'Great job honey', 'Come visit our home', 'Meeting the in-laws', 'Sweet honeymoon life', 'My forever person'],
   'Wedding/Newlyweds ②': ['Love you honey', 'Hang the laundry', 'Let\'s go on date', 'Late night snack?', 'Honey are you mad?', 'Made stew for you', 'Happy anniversary', 'Married life sweet', 'Take out food waste', 'Only you honey', 'Give you massage', 'Sweet couple us', 'Happy our sweet home', 'Come home safe', 'Good night honey'],
+  'MZ Slang & Trending ①': ['Living God-life', 'Clean & Sensible', 'Unbroken Spirit!', 'Insane Form', 'Even Better!', 'Unfairly Wrecked', 'Self-made Chaos', 'So Annoying', 'Workout Done!', 'Lunch Pick?', 'Pure Bliss...', 'Work Again Tmrw', 'Weekend Vanished', 'Still Alive!', 'Passing Out zZ'],
+  'Student & Teen Trends ②': ['Time to go home!', 'Snack run?', 'Cramming hard', 'Exam ruined', 'Agreed (Valid)', 'Real Facts', 'Wait a sec', 'It\'s all good', 'I\'m serious rn', 'Escaped academy', 'Starving to death', 'Did you do homework?', 'Phone confiscated', 'Let\'s go for it!', 'See you tmrw!'],
 };
 
 const THEMES_JA = {
@@ -244,6 +248,8 @@ const THEMES_JA = {
   '先生・教員 ②': ['確認完了！⭕', '宿題チェック済', 'やり直し！', '再提出してください', 'あと一歩！', '減点注意！', '再テスト対象', '出席確認！', '講評を確認してね', '課題提出完了', '職員室に来てね', '遅刻禁止！', '授業に集中！', 'テスト頑張って！', '今日の授業終了！'],
   '結婚・新婚 ①': ['結婚します！', '幸せになります', '招待状です', '今日のご飯何？', '皿洗い当番！', '新婚旅行出発', 'プロポーズ大成功', '私の大切な人♥', '買い物行こう', '定時で帰るね', 'お疲れ様あなた', '遊びに来てね', 'ご両親への挨拶', '甘い新婚生活', '永遠の味方'],
   '結婚・新婚 ②': ['あなた大好き♥', '洗濯物干してね', 'デート行こう', '夜食食べる？', 'すねちゃった？', 'ご飯作ったよ', '記念日おめでとう', '結婚してよかった', 'ゴミ出しお願い', 'あなただけだよ', 'マッサージしてあげる', 'ラブラブな私たち', '幸せな我が家', '気をつけて帰ってね', 'おやすみなさい'],
+  'MZ 流行語・略語 ①': ['充実ライフ中', '言わずとも完璧', '折れない心！', '神がかった調子', 'むしろ好都合', '理不尽な災難', '自業自得…', 'ムカつくな', '今日筋トレ完！', '昼飯何にする？', '至福の極楽…', '明日も出勤…', '週末が一瞬で消滅', '生存報告！', '気絶寸前 zZ'],
+  '学生・10代 流行語 ②': ['下校の時間！', '購買行く？', '一夜漬け中', 'テスト爆死', 'それな (激同)', 'マジの真実', 'ちょい待ち', '大丈夫・平気', '今ガチで真剣', '塾から脱出成功', '腹減りすぎて気絶', '宿題やった？', 'スマホ没収…', '気合入れていこう！', 'また明日ね！'],
 };
 
 const THEMES_ZH = {
@@ -326,6 +332,8 @@ const THEMES_ZH = {
   '老师/教师 ②': ['批阅完毕！⭕', '作业已检查', '及时订正！', '重新提交！', '再加把劲！', '注意扣分点！', '补考通知', '点名完毕！', '查看评语', '提交随堂作业', '来趟办公室', '严禁迟到！', '专心听讲！', '考试加油！', '下课！'],
   '结婚/新婚 ①': ['我们要结婚啦！', '会幸福的生活', '给你的请柬', '老公今天吃什么？', '洗碗值日生！', '蜜月旅行出发', '求婚大成功！', '我的另一半♥', '一起去买菜', '准时下班回家', '老公辛苦啦', '来我们家玩呀', '拜见双方父母', '甜蜜新婚生活', '永远的依靠'],
   '结婚/新婚 ②': ['老公我爱你', '帮忙晒衣服呀', '去约会吧', '要吃夜宵吗？', '老公生气了吗？', '汤煮好啦', '纪念日快乐', '结婚真好呀', '帮忙扔下垃圾', '只有你最好', '给你捏捏肩', '甜甜蜜蜜的我们', '幸福小家', '路上注意安全', '老公晚安'],
+  'MZ 网络流行语 ①': ['自律搞钱搞生活', '心领神会秒懂', '绝不服输的心！', '状态封神了', '反而是好事', '纯属被针对', '自作自受...', '太气人了吧', '今日打卡完成！', '午饭吃什么？', '极乐升天...', '明天又要上班...', '周末一眨眼没了', '生存打卡！', '原地倒头秒睡 zZ'],
+  '学生/00后 流行语 ②': ['放学啦！', '小卖部走起？', '临时抱佛脚中', '考砸了凉凉', '狠狠认可了', '真实人间清醒', '等我一下', '没事不用慌', '我现在很认真', '补习班脱逃成功', '饿到晕厥', '作业写完了吗？', '手机被没收了...', '冲鸭干就完了！', '明天见啦！'],
 };
 
 const ART_STYLE_PROMPT_MAP_KO = {
