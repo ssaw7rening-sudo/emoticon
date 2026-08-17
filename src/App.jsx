@@ -1233,7 +1233,7 @@ const InfoSection = ({ t, lang }) => {
                 </div>
                 
                 <div className="w-full h-56 rounded-md bg-white border border-outline-variant shadow-sm relative overflow-hidden group">
-                  <img src="/chatgpt_real.jpg" alt="ChatGPT Actual Result" className="w-full h-full object-cover object-top transform group-hover:scale-105 transition-transform duration-500" />
+                  <img src="/chatgpt_real.png" alt="ChatGPT Actual Result" className="w-full h-full object-cover object-top transform group-hover:scale-105 transition-transform duration-500" />
                   <div className="absolute bottom-2 right-2 bg-black/70 backdrop-blur-sm text-white text-[11px] font-bold px-2 py-1 rounded-md">
                     {getText('actualBadge', {
                       ko: '실제 유저 생성본 ✨',
