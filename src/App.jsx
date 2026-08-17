@@ -3041,15 +3041,15 @@ ${textExclusion} No grid lines, no cell division lines, no border lines between 
 
       if (generationMode === 'individual' || hasPhraseOverride) {
         const textPolicyKo = geminiTextMode === 'text'
-          ? `[타이포그래피 스타일 — 화려한 카카오톡 팝아트 스티커 폰트]
-- 스타일: 통통하고 생동감 넘치는 카카오톡 스타일 팝아트 손글씨 스티커 폰트 (채도 높은 다채로운 색상 채움 + 선명한 다크 테두리 + 도톰한 순백색 다이컷 외곽선).
-- 단일 렌더링 원칙: 캐릭터 주변에 지정된 한글 텍스트 "${targetPhrase}"를 정확히 '단 1번'만 렌더링하세요. (상단/하단 2번 중복 표기 절대 금지).
-- 엄격 금지: 단어 반복 금지, 단일 셀 내 텍스트 2회 이상 중복 표기 금지, 첫 자음/모음 중복 표기("축축하해요", "미미안해요" 등) 절대 금지.`
+          ? `[타이포그래피 규칙 — 하단 중복 원천 금지 & 단 1회 렌더링]
+- 단일 렌더링 원칙: 캐릭터 상단 또는 측면에 지정된 한글 텍스트 "${targetPhrase}"를 정확히 '단 1번'만 렌더링하세요.
+- 하단 텍스트 절대 금지: 캐릭터 하단(다리/바닥 아래)에 문구를 다시 반복해서 쓰거나 쪼개어 적지 마세요. 하단 공간은 글자 없는 깨끗한 배경이어야 합니다.
+- 엄격 금지: 상단과 하단에 2번 중복 표기 금지, 단어 반복 금지, 첫 자음/모음 중복 표기("축축하해요", "미미안해요" 등) 절대 금지.`
           : `[텍스트 규칙]
 한국어 문구 "${targetPhrase}"는 표정과 자세 결정을 위한 감정 맥락으로만 사용하며 이미지 내에 텍스트, 글자, 숫자를 그리지 마세요.`;
 
         const textExclusionKo = geminiTextMode === 'text'
-          ? '텍스트 2회 중복 렌더링, 단어 반복, 첫 글자 자음/모음 중복(축축하해요, 미미안해요 등), 밋밋한 흑백 글자, 평면 2D 만화 선화, 낮은 인물 유사도, 전형적인 양산형 만화 얼굴, 한글 오타, 글자 누락, 체커보드 투명 배경, 잘린 사지, 뭉개진 인물.'
+          ? '하단 텍스트 중복, 텍스트 2회 중복 렌더링, 단어 반복, 첫 글자 자음/모음 중복(축축하해요, 미미안해요 등), 밋밋한 흑백 글자, 평면 2D 만화 선화, 낮은 인물 유사도, 전형적인 양산형 만화 얼굴, 한글 오타, 글자 누락, 체커보드 투명 배경, 잘린 사지, 뭉개진 인물.'
           : '모든 텍스트, 글자, 숫자, 말풍선, 평면 2D 만화, 신체 크롭, 격자선.';
 
         return `[포맷 & 캔버스 비율]
@@ -3072,34 +3072,38 @@ ${textExclusionKo}`;
         const phrase = (emoticons[i] || '').trim();
         const action = getPhraseActionKo(phrase);
         const typo = inlineTypographyKo[i % 15];
-        return `${i + 1}. [1-${i + 1}] ${action} | 텍스트: "${phrase}" (${typo})`;
+        return `${i + 1}. [1-${i + 1}] ${action} | 텍스트 (상단/측면 단 1회): "${phrase}" (${typo})`;
       }).join('\n');
 
       const row2Plan = [5, 6, 7, 8, 9].map(i => {
         const phrase = (emoticons[i] || '').trim();
         const action = getPhraseActionKo(phrase);
         const typo = inlineTypographyKo[i % 15];
-        return `${i + 1}. [2-${i - 4}] ${action} | 텍스트: "${phrase}" (${typo})`;
+        return `${i + 1}. [2-${i - 4}] ${action} | 텍스트 (상단/측면 단 1회): "${phrase}" (${typo})`;
       }).join('\n');
 
       const row3Plan = [10, 11, 12, 13, 14].map(i => {
         const phrase = (emoticons[i] || '').trim();
         const action = getPhraseActionKo(phrase);
         const typo = inlineTypographyKo[i % 15];
-        return `${i + 1}. [3-${i - 9}] ${action} | 텍스트: "${phrase}" (${typo})`;
+        return `${i + 1}. [3-${i - 9}] ${action} | 텍스트 (상단/측면 단 1회): "${phrase}" (${typo})`;
       }).join('\n');
 
       const textPolicyKo = geminiTextMode === 'text'
-        ? `[타이포그래피 스타일 — 화려한 카카오톡 팝아트 스티커 폰트 (중복 방지 & 고품질)]
-- 폰트 스타일: 통통하고 생동감 넘치는 카카오톡 스타일 팝아트 손글씨 스티커 타이포그래피. 채도 높은 선명한 색상 채움 + 짙은 외곽선 스트로크 + 도톰한 순백색 다이컷 외곽선.
-- 각 문구별 맞춤 효과: 반짝이 별, 하트, 왕관, 파티 리본, 땀방울, 번개 쇼크 등 각 문구에 지정된 고유의 예쁜 포인트 장식 효과를 함께 자연스럽게 결합하세요.
-- 단일 렌더링 원칙: 각 셀 안에서 한글 텍스트를 캐릭터 상단 우측이나 옆에 '정확히 단 1회'만 렌더링하세요. 상단과 하단에 2번 중복해서 쓰지 마세요.
-- 엄격 금지: 단어 반복 금지, 단일 셀 내 텍스트 중복 표기 금지, 첫 자음/모음 중복("축축하해요", "미미안해요" 등) 절대 금지.`
+        ? `[타이포그래피 필수 규칙 — 하단 중복 절대 금지 & 상단/측면 단 1회 렌더링 (CRITICAL)]
+1. 단일 위치 렌더링 (Exact Single Placement): 각 문구는 캐릭터 머리 위(Top) 또는 옆(Side) 중 '오직 한 군데'에만 단 1개의 텍스트 블록으로 렌더링하세요.
+2. 캐릭터 하단 텍스트 절대 금지 (Zero Bottom Text): 캐릭터 다리, 손, 무릎 아래 공간에는 절대로 글자를 적지 마세요. 하단 영역은 100% 글자 없는 순백색 여백이어야 합니다.
+3. 상·하단 중복 표기 원천 금지 (Forbidden Double Text):
+   - 상단에 "오늘도 화이팅"을 적고 하단에 "화이팅"을 또 적는 행위 절대 금지.
+   - 상단에 "수고했어요"를 적고 하단에 "수고했어요"를 또 적는 행위 절대 금지.
+   - 상단에 "오예"를 적고 하단에 "예"를 또 적는 행위 절대 금지.
+   - 한 스티커 셀 안의 텍스트 개수는 무조건 '정확히 1개'여야 합니다.
+4. 폰트 스타일: 통통하고 생동감 넘치는 카카오톡 스타일 팝아트 손글씨 스티커 타이포그래피 (채도 높은 원색 채움 + 다크 테두리 + 순백색 다이컷 외곽선 + 지정된 포인트 장식).`
         : `[Typography Rules]
 - Korean phrases below are emotional context only — do not render any text, letters, or numbers in the image.`;
 
       const textExclusionKo = geminiTextMode === 'text'
-        ? '텍스트 중복 렌더링, 단어 반복, 첫 글자 자음/모음 중복, 밋밋하고 평범한 폰트, 평면 2D 애니 선화, 낮은 인물 유사도, 전형적인 양산형 만화 얼굴, 한글 오타, 글자 누락, 4번째 행 추가 생성, 4x4 레이아웃, 투명 체커보드 배경, 잘린 사지, 뭉개진 인물.'
+        ? '하단 텍스트 중복 렌더링(오늘도 화이팅/화이팅 2번 쓰기, 수고했어요 위아래 2번 쓰기, 오예/예 2번 쓰기 등 절대 금지), 상하단 이중 텍스트, 캐릭터 아래 글자, 단어 반복, 첫 글자 자음/모음 중복, 밋밋한 폰트, 평면 2D 만화, 낮은 인물 유사도, 전형적인 양산형 만화 얼굴, 한글 오타, 글자 누락, 4x4 레이아웃, 투명 체커보드 배경, 잘린 사지.'
         : 'No text, no letters, no numbers, 4x4 layout, 16 stickers, 4th row, flat 2D anime, deformed limbs, cropped figures, panel borders, grid lines.';
 
       return `[포맷 & 캔버스 비율 — 16:9 와이드 가로형 그리드]
@@ -3142,13 +3146,13 @@ ${textExclusionKo}`;
 
     if (generationMode === 'individual' || hasPhraseOverride) {
       const textPolicy = geminiTextMode === 'text'
-        ? `[Typography Style — Vibrant KakaoTalk Pop-Art Sticker Font]
-- Font Styling: Bold, bubbly, highly expressive KakaoTalk-style pop-art hand-lettered sticker typography (saturated vibrant color fill + sharp dark stroke + thick crisp white die-cut contour).
-- Exact Single Placement: Render the Korean text "${targetPhrase}" exactly ONCE at the top-right or adjacent to the character.
-- STRICT: Absolutely NO repeated words, NO duplicate text inside a single cell, NO doubled initial consonants.`
+        ? `[Typography Rules — Zero Bottom Text & Strict Single Placement]
+- Top/Side Single Placement: Render the Korean text "${targetPhrase}" exactly ONCE above or adjacent to the character.
+- Zero Bottom Text: DO NOT render any text beneath the character. The area below must be completely blank.
+- STRICT: Absolutely NO repeated words, NO top-and-bottom double text, NO doubled initial consonants.`
         : `Do not render text, letters, or numbers. Use "${targetPhrase}" only as visual context for expression and pose.`;
       const textExclusion = geminiTextMode === 'text'
-        ? 'Duplicate text, repeated words, double Korean characters, text rendered twice, plain dull font, flat 2D anime line art, low likeness, generic cartoon face, Korean spelling errors, missing letters, transparent checkerboard background, cut-off limbs, merged figures.'
+        ? 'Bottom text echo, top-and-bottom double text, duplicate text, repeated words, double Korean characters, text rendered twice, plain dull font, flat 2D anime line art, low likeness, generic cartoon face, Korean spelling errors, missing letters, transparent checkerboard background, cut-off limbs, merged figures.'
         : 'No text, no letters, no numbers, no speech bubbles, no sticker labels, no meaningless symbols.';
 
       return `[Format & Canvas Ratio]
@@ -3171,34 +3175,38 @@ ${textExclusion}`;
       const phrase = (emoticons[i] || '').trim();
       const action = getPhraseActionEn(phrase);
       const typo = inlineTypographyEn[i % 15];
-      return `${i + 1}. [1-${i + 1}] ${action} | Text: "${phrase}" (${typo})`;
+      return `${i + 1}. [1-${i + 1}] ${action} | Text (Top/Side single block only): "${phrase}" (${typo})`;
     }).join('\n');
 
     const row2Plan = [5, 6, 7, 8, 9].map(i => {
       const phrase = (emoticons[i] || '').trim();
       const action = getPhraseActionEn(phrase);
       const typo = inlineTypographyEn[i % 15];
-      return `${i + 1}. [2-${i - 4}] ${action} | Text: "${phrase}" (${typo})`;
+      return `${i + 1}. [2-${i - 4}] ${action} | Text (Top/Side single block only): "${phrase}" (${typo})`;
     }).join('\n');
 
     const row3Plan = [10, 11, 12, 13, 14].map(i => {
       const phrase = (emoticons[i] || '').trim();
       const action = getPhraseActionEn(phrase);
       const typo = inlineTypographyEn[i % 15];
-      return `${i + 1}. [3-${i - 9}] ${action} | Text: "${phrase}" (${typo})`;
+      return `${i + 1}. [3-${i - 9}] ${action} | Text (Top/Side single block only): "${phrase}" (${typo})`;
     }).join('\n');
 
     const textPolicy = geminiTextMode === 'text'
-      ? `[Typography Style — Vibrant KakaoTalk 3D Pop-Art Typography (Anti-Duplication & High Appeal)]
-- Font Styling: Bold, bubbly, highly expressive KakaoTalk-style pop-art hand-lettered sticker typography with vibrant saturated colors, crisp dark strokes, and thick pure white die-cut contours.
-- Embellishments: Integrate matching joyful micro-effects (sparkles, hearts, crown, confetti ribbons, sweat drops, shock lines) according to each sticker specification.
-- Exact Single Placement: Render each Korean text exactly ONCE per character at the top-right position. Under no circumstances render the text twice in a single sticker cell (NO top + bottom double rendering).
-- STRICT: Absolutely NO repeated words, NO duplicate text inside a single cell, NO doubled initial consonants (e.g. NO "축축하해요", NO "미미안해요").`
+      ? `[Typography Rules — Zero Bottom Text & Strict Single Placement Mandate (CRITICAL)]
+1. Top/Side Single Placement: Render each Korean phrase strictly ONCE per character, positioned exclusively above the head or adjacent to the shoulders/head.
+2. ZERO BOTTOM TEXT MANDATE: Absolutely DO NOT render any text beneath the character's body, hands, knees, or waist. The area below the character MUST remain 100% clean blank white space with zero text.
+3. FORBIDDEN BOTTOM DUPLICATION:
+   - NEVER write "오늘도 화이팅" at the top and "화이팅" at the bottom.
+   - NEVER write "수고했어요" at both top and bottom.
+   - NEVER write "오예" at the top and repeat "예" at the bottom.
+   - Exactly ONE single text instance per sticker cell (Count = 1).
+4. Font Styling: Bold, bubbly, highly expressive KakaoTalk-style pop-art hand-lettered sticker typography (saturated vibrant colors + dark stroke + white die-cut contour + designated micro-effects).`
       : `[Typography Rules]
 - Korean phrases below are emotional context only — do not render any text, letters, or numbers in the image.`;
 
     const textExclusion = geminiTextMode === 'text'
-      ? 'Duplicate text, repeated words, double Korean characters, text rendered twice, plain dull font, flat 2D anime line art, low likeness, generic cartoon face, Korean spelling errors, missing letters, extra 4th row, 4x4 layout, transparent checkerboard background, cut-off limbs, merged figures.'
+      ? 'Bottom text echo, top-and-bottom double text (e.g. writing 오늘도 화이팅 and 화이팅 twice, writing 수고했어요 twice, repeating 오예/예 twice), text rendered beneath character, duplicate text blocks per cell, repeated words, double Korean consonants, plain dull font, flat 2D anime line art, low likeness, generic cartoon face, Korean spelling errors, missing letters, extra 4th row, 4x4 layout, transparent checkerboard background, cut-off limbs, merged figures.'
       : 'No text, no letters, no numbers, 4x4 layout, 16 stickers, 4th row, flat 2D anime, deformed limbs, cropped figures, panel borders, grid lines.';
 
     return `[Format & Canvas Ratio - 16:9 Landscape Grid]
