@@ -4650,7 +4650,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
             <div className="flex items-center justify-between gap-2 flex-wrap">
               <span className="text-[13px] sm:text-[14px] font-extrabold text-slate-900 flex items-center gap-2">
                 <span className="bg-[#1D9BF0] text-white text-[11px] font-black px-1.5 py-0.5 rounded flex items-center justify-center leading-none">𝕏</span>
-                <span>{lang === 'ko' ? 'X(트위터) SNS 홍보·자랑 캡션' : 'X (Twitter) Share Caption'}</span>
+                <span>{lang === 'ko' ? '트위터(X) SNS 홍보·자랑 캡션' : 'Twitter (X) Share Caption'}</span>
               </span>
               <span className="text-[11px] font-bold text-sky-700 bg-sky-50 px-2.5 py-0.5 rounded-full border border-sky-200">
                 ✨ {lang === 'ko' ? '원클릭 복사 & 바로 트윗' : '1-Click Copy & Tweet'}
@@ -4683,8 +4683,8 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                 onClick={() => shareOnTwitter(lang === 'ko' ? 'ko' : 'en')}
                 className="interactive-control min-h-[38px] rounded-md bg-[#1D9BF0] hover:bg-[#1A8CD8] text-white font-extrabold text-[12.5px] sm:text-[13px] flex items-center justify-center gap-1.5 cursor-pointer shadow-sm hover:brightness-105 transition-all"
               >
-                <span className="text-[13px]">𝕏</span>
-                <span>{lang === 'ko' ? '𝕏에 바로 트윗하기' : 'Post on 𝕏'}</span>
+                <span className="text-[13px] font-black">𝕏</span>
+                <span>{lang === 'ko' ? '바로 트윗하기' : 'Tweet Now'}</span>
               </button>
             </div>
           </div>
