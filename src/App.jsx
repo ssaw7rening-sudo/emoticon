@@ -2979,6 +2979,18 @@ ${textExclusion} No grid lines, no cell division lines, no border lines between 
       ? getSelectedPhrase()
       : (phraseOverride || '').trim();
 
+    const bgInstructionKo = {
+      transparent: '단일 연속 순수 단색 순백색(#FFFFFF) 배경. 각 스티커 실루엣 주변에 선명하고 깔끔한 흰색 다이컷(Die-cut) 외곽선이 둘러져 있습니다. 체커보드 투명 패턴, 회색 격자선 절대 금지.',
+      solid: '캐릭터와 뚜렷하게 대비되는 깔끔한 단색 배경 (Solid contrasting background). 질감이나 잡음 없이 균일한 단색으로 생성하세요. 체커보드 패턴 절대 금지.',
+      chroma: '배경 분리(누끼 작업)를 위한 선명한 연두색 단색 크로마키 배경 (#00FF00 Chroma-key Green). 캐릭터 외곽선에 녹색이 번지지 않게 깔끔하게 분리하세요.',
+    }[geminiBackgroundMode] || '단일 연속 순수 단색 순백색(#FFFFFF) 배경.';
+
+    const bgInstructionEn = {
+      transparent: 'Pure solid white background (#FFFFFF) with a distinct white die-cut sticker contour around each sticker silhouette. Absolutely no background grid lines, no checkerboard transparency pattern.',
+      solid: 'One clean solid background color with strong contrast against the character. No gradient, no texture, no background objects, no checkerboard pattern.',
+      chroma: 'Solid bright green #00FF00 chroma-key background for easy background removal. Clean edges with no green color bleed on character borders.',
+    }[geminiBackgroundMode] || 'Pure solid white background (#FFFFFF) with a distinct white die-cut sticker contour around each sticker silhouette.';
+
     if (isKorean) {
       const referenceInstructionKo = characterSource === 'photo'
         ? `[시각적 정체성 & 실사 캐리커처 스타일]
@@ -2990,12 +3002,6 @@ ${textExclusion} No grid lines, no cell division lines, no border lines between 
 - 외형 & 특징: ${character.appearance}
 - 의상: ${character.outfit}
 - 캐릭터 스타일: 2.5등신 치비 캐리커처, 선명한 이목구비와 입체감.`;
-
-      const bgInstructionKo = {
-        transparent: '단일 연속 순수 단색 순백색(#FFFFFF) 배경. 각 스티커 실루엣 주변에 선명하고 깔끔한 흰색 다이컷(Die-cut) 외곽선이 둘러져 있습니다. 체커보드 투명 패턴, 회색 격자선 절대 금지.',
-        solid: '캐릭터와 대비되는 깔끔한 단색 배경. 체커보드 패턴 없음.',
-        chroma: '배경 분리용 선명한 연두색 #00FF00 크로마키 배경.',
-      }[geminiBackgroundMode] || '단일 연속 순수 단색 순백색(#FFFFFF) 배경.';
 
       if (generationMode === 'individual' || hasPhraseOverride) {
         const textPolicyKo = geminiTextMode === 'text'
@@ -3080,7 +3086,7 @@ ${row3Plan}
 ${textExclusionKo}`;
     }
 
-    // English Version (Matches exact user specification)
+    // English Version
     const referenceInstruction = characterSource === 'photo'
       ? `[Visual Identity & Realistic Chibi Style]
 - Character Style: 2.5-head Chibi/Bobblehead Caricature featuring a realistic, high-fidelity face directly from the reference photo (${getPhotoModeLabel('en')}).
@@ -3091,12 +3097,6 @@ ${textExclusionKo}`;
 - Appearance & Features: ${character.appearance}
 - Outfit: ${character.outfit}
 - Character Style: 2.5-head Chibi caricature featuring realistic facial structure and depth.`;
-
-    const bgInstructionEn = {
-      transparent: 'Pure solid white background (#FFFFFF) with a distinct white die-cut sticker contour around each sticker silhouette. Absolutely no background grid lines, no checkerboard transparency pattern.',
-      solid: 'Clean, continuous solid background color with strong contrast against the character. No checkerboard tiles.',
-      chroma: 'Solid bright green #00FF00 chroma-key background for easy cutout.',
-    }[geminiBackgroundMode] || 'Pure solid white background (#FFFFFF) with a distinct white die-cut sticker contour around each sticker silhouette.';
 
     if (generationMode === 'individual' || hasPhraseOverride) {
       const textPolicy = geminiTextMode === 'text'
@@ -3182,7 +3182,7 @@ ${textExclusion}`;
 
   const getGrokBackgroundInstruction = () => {
     const instructions = {
-      transparent: 'Clean solid white background with a subtle crisp sticker die-cut white outline.',
+      transparent: 'Clean solid white background with a subtle crisp sticker die-cut white outline. Pure solid white (#FFFFFF).',
       solid: 'One clean solid background color with strong contrast against the character. No gradient, texture, or background objects.',
       chroma: 'Solid bright green #00FF00 chroma-key background for easy background removal. No green spill on the character outline.',
     };
@@ -3239,6 +3239,18 @@ ${textExclusion}`;
     const inlineColorsEn = ['vivid yellow', 'hot pink', 'strong red', 'pink', 'mint', 'red', 'orange', 'purple', 'sky blue', 'yellow', 'pink', 'red', 'purple', 'pink', 'navy'];
     const inlineColorsKo = ['선명한 노란색', '핫핑크색', '강렬한 빨간색', '분홍색', '민트색', '빨간색', '주황색', '보라색', '하늘색', '노란색', '분홍색', '빨간색', '보라색', '분홍색', '남색'];
 
+    const bgInstructionKo = {
+      transparent: '순수 단색 순백색(#FFFFFF) 배경. 그라데이션, 체크무늬 패턴, 회색, 격자선, 셀 테두리, 숫자, 크롭 마크, 프레임, 워터마크 절대 금지.',
+      solid: '캐릭터와 뚜렷하게 대비되는 단색 배경. 그라데이션, 질감 없음.',
+      chroma: '배경 분리(누끼 작업)용 선명한 연두색 #00FF00 단색 크로마키 배경. 캐릭터 외곽선에 녹색 번짐 없음.',
+    }[grokBackgroundMode] || '순수 단색 순백색(#FFFFFF) 배경.';
+
+    const bgInstructionEn = {
+      transparent: 'pure solid pure white (#FFFFFF) background only. Absolutely no gradients, no checkered pattern, no gray, no grid lines, no cell borders, no numbers, no crop marks, no frames, no watermarks.',
+      solid: 'solid clean background contrasting with the character. No gradient, no texture, no background objects.',
+      chroma: 'solid bright lime-green #00FF00 chroma key background for easy cutout. No green bleed on character outlines.',
+    }[grokBackgroundMode] || 'pure solid pure white (#FFFFFF) background only.';
+
     if (isKorean) {
       const referenceInstructionKo = characterSource === 'photo'
         ? `=== 최우선 순위: 인물 얼굴 정체성 및 실사 유사도 ===
@@ -3265,12 +3277,6 @@ ${textExclusion}`;
 - 의상: ${character.outfit}
 - 체형 비율: 3.5~4등신 자연스러운 SD 마스코트 비율.`;
 
-      const bgInstructionKo = {
-        transparent: '순수 단색 순백색(#FFFFFF) 배경. 그라데이션, 체크무늬 패턴, 회색, 격자선, 셀 테두리, 숫자, 크롭 마크, 프레임, 워터마크 절대 금지.',
-        solid: '캐릭터와 대비되는 단색 배경으로 생성하세요.',
-        chroma: '배경 분리(누끼)용 선명한 연두색 #00FF00 크로마키 배경으로 생성하세요.',
-      }[grokBackgroundMode] || '순수 단색 순백색(#FFFFFF) 배경.';
-
       if (generationMode === 'individual' || hasPhraseOverride) {
         const textPolicyKo = grokTextMode === 'text'
           ? `글자 규칙:
@@ -3285,7 +3291,8 @@ ${textExclusion}`;
           ? '불필요한 글자, 괄호, 텍스트 상자 금지.'
           : '텍스트, 글자, 숫자, 말풍선, 스티커 라벨, 의미 없는 기호 절대 금지.';
 
-        return `순수 단색 순백색(#FFFFFF) 배경 위에 단일 고해상도 정사각형 2D 카카오톡/라인 스타일 스티커 1장을 생성해 주세요. ${bgInstructionKo}
+        return `단일 고해상도 정사각형 2D 카카오톡/라인 스타일 스티커 1장을 생성해 주세요.
+배경: ${bgInstructionKo}
 
 스티커는 캐릭터 전체 실루엣을 둘러싼 두껍고 선명하며 깔끔한 흰색 다이컷 외곽선(Die-cut outline)이 적용되어 있습니다.
 
@@ -3310,7 +3317,7 @@ ${textPolicyKo}
 - ${textExclusionKo} 무거운 음영, 과도한 그라데이션, 3D 렌더링, 얼굴 왜곡, 팔다리 누락/추가, 반신·흉상 컷, 실사 느낌 금지.
 - 원래 문구에 없는 불필요한 문장부호 추가 금지.
 
-완성 전 최종 확인: 순백색 배경에 얼굴은 참조 사진 속 인물임을 즉시 알아볼 수 있어야 합니다.
+완성 전 최종 확인: 얼굴은 참조 사진 속 인물임을 즉시 알아볼 수 있어야 합니다.
 
 [X (트위터) 공유 문구 생성 옵션]
 스티커 생성 후, X(트위터)에 바로 복사하여 업로드할 수 있는 매력적인 한글 캡션과 영문 해시태그(#카카오톡스티커 #라인스티커 #AI스티커 #이모티콘 #GrokArt)를 함께 작성해 주세요.`;
@@ -3335,7 +3342,8 @@ ${textPolicyKo}
         ? '불필요한 글자, 괄호, 스티커 번호, 텍스트 상자 금지.'
         : '텍스트, 글자, 숫자, 말풍선, 스티커 라벨, 의미 없는 기호 절대 금지.';
 
-      return `순수 단색 순백색(#FFFFFF) 배경 위에 정확히 15개의 스티커가 3행 × 5열로 배치된 고해상도 정사각형 스티커 시트 1장을 생성해 주세요. ${bgInstructionKo}
+      return `정확히 15개의 스티커가 3행 × 5열로 배치된 고해상도 정사각형 스티커 시트 1장을 생성해 주세요.
+배경 설정: ${bgInstructionKo}
 
 정확히 15개의 스티커가 3행 × 5열로 균등하고 자연스러운 간격을 두고 배치되며, 스티커들은 여백 안에서 자유롭게 떠 있습니다. 각 스티커는 캐릭터 전체 실루엣 주변에 두껍고 선명하며 깔끔한 흰색 다이컷 외곽선(Die-cut outline)이 둘러져 있습니다.
 
@@ -3366,13 +3374,13 @@ ${textPolicyKo}
 - 무거운 음영, 과도한 그라데이션, 3D 렌더링, 얼굴 왜곡, 팔다리 누락/추가, 15개 스티커 간 얼굴/체형/의상 불일치 금지.
 - 원래 문구에 없는 불필요한 문장부호 추가 금지.
 
-완성 전 최종 확인: 3×5 배열에 정확히 15개 스티커여야 하며, 순백색 배경에 얼굴은 참조 사진 속 인물임을 즉시 알아볼 수 있어야 합니다.
+완성 전 최종 확인: 3×5 배열에 정확히 15개 스티커여야 하며, 얼굴은 참조 사진 속 인물임을 즉시 알아볼 수 있어야 합니다.
 
 [X (트위터) 공유 문구 생성 옵션]
 스티커 시트 생성 후, X(트위터)에 바로 복사하여 업로드할 수 있는 매력적인 한글 캡션과 영문 해시태그(#카카오톡스티커 #라인스티커 #AI스티커 #이모티콘 #GrokArt)를 함께 작성해 주세요.`;
     }
 
-    // English Version (Highest Priority Facial Identity Standard)
+    // English Version
     const referenceInstruction = characterSource === 'photo'
       ? `=== HIGHEST PRIORITY: FACIAL IDENTITY ===
 The character MUST be an extremely accurate likeness of the subject in the reference photo (${getPhotoModeLabel('en')}).
@@ -3398,12 +3406,6 @@ Keep hair, clothing, skin tone and body type identical across all 15 stickers.`
 - Outfit: ${character.outfit}
 - Body proportion: 3.5–4 head ratio (mild SD, not extreme).`;
 
-    const bgInstructionEn = {
-      transparent: 'pure solid pure white (#FFFFFF) background only. Absolutely no gradients, no checkered pattern, no gray, no grid lines, no cell borders, no numbers, no crop marks, no frames, no watermarks.',
-      solid: 'solid clean background contrasting with the character.',
-      chroma: 'solid bright lime-green #00FF00 chroma key background for easy cutout.',
-    }[grokBackgroundMode] || 'pure solid pure white (#FFFFFF) background only.';
-
     if (generationMode === 'individual' || hasPhraseOverride) {
       const textPolicy = grokTextMode === 'text'
         ? `TEXT RULES:
@@ -3418,7 +3420,8 @@ Keep hair, clothing, skin tone and body type identical across all 15 stickers.`
         ? 'No extra words, altered spelling, random letters, numbers, parentheses, or text boxes.'
         : 'No text, letters, numbers, typography, or meaningless symbols.';
 
-      return `Create a single high-resolution square sticker on ${bgInstructionEn}
+      return `Create a single high-resolution square sticker.
+Background: ${bgInstructionEn}
 
 The sticker has a thick, sharp, clean white die-cut outline around the entire character silhouette.
 
@@ -3464,7 +3467,8 @@ After generating the sticker, also prepare a short, engaging Korean caption + En
       ? 'No extra words, altered spelling, random letters, sticker numbers, parentheses, quotation marks, or text boxes.'
       : 'No text, no letters, no numbers, no speech bubbles, no sticker labels, no meaningless symbols.';
 
-    return `Create a single high-resolution square sticker sheet on ${bgInstructionEn}
+    return `Create a single high-resolution square sticker sheet.
+Background: ${bgInstructionEn}
 
 Exactly 15 stickers arranged in clean 3 rows × 5 columns with even natural spacing. Stickers float freely. Each sticker has a thick, sharp, clean white die-cut outline around the entire character silhouette.
 
@@ -3496,7 +3500,7 @@ STRICT PROHIBITIONS:
 - No heavy shading, excessive gradients, 3D rendering, face distortion, missing/extra limbs, or inconsistent faces/bodies/outfits across the 15 stickers.
 - No unnecessary punctuation added to the given phrases.
 
-Final check: exactly 15 stickers in 3×5 on pure white background. The face must be clearly recognizable as the person in the reference photo.
+Final check: exactly 15 stickers in 3×5 on pure background. The face must be clearly recognizable as the person in the reference photo.
 
 [Optional X-ready output request]
 After generating the sticker sheet, also prepare a short, engaging Korean caption + English hashtags that can be directly copied and posted on X (Twitter). Make it fun, shareable, and suitable for AI-art / sticker community.`;
