@@ -1389,42 +1389,131 @@ const TermsPage = ({ lang, onBack }) => {
 
 // 메인 하단 섹션 1: 이모티콘 제작이 처음인가요? (About AI Prompt Maker)
 const SectionAbout = ({ lang }) => {
+  const data = {
+    ko: {
+      title: '이모티콘 제작이 처음인가요? AI 프롬프트 메이커란?',
+      desc: '그림 실력이 없어도 사진 한 장 또는 태그 몇 개로 15종 이모티콘 시트를 1초 만에 기획합니다.',
+      cards: [
+        {
+          icon: '⚡',
+          bg: 'bg-[#FFFDF8] border-[#FFECA1]',
+          title: '1초 만에 15종 풀세트 자동 완성',
+          desc: '일상, 직장, 커플 등 80개 이상의 대화 테마에 맞춰 15가지 핵심 감정 액션과 글자 색상, 배치 구도를 자동으로 완벽 매핑합니다.'
+        },
+        {
+          icon: '🎭',
+          bg: 'bg-[#F8FAFC] border-slate-200',
+          title: '일관된 캐릭터 디자인 유지',
+          desc: '동일한 캐릭터의 얼굴 특징, 체형 비율(2.5등신 SD), 고유 색상이 15가지 컷 전체에 걸쳐 흔들리지 않도록 정밀 프롬프트 락킹 기술을 적용했습니다.'
+        },
+        {
+          icon: '⚡',
+          bg: 'bg-[#F0FDF4] border-emerald-200',
+          title: '3대 AI 엔진 맞춤 최적화',
+          desc: '한글 타이포에 강한 ChatGPT(DALL-E 3), 역동적 표정에 강한 Gemini(Imagen 3), 위트 있는 연출의 Grok 각각에 최적화된 프롬프트를 즉시 제공합니다.'
+        }
+      ]
+    },
+    ja: {
+      title: 'スタンプ作りは初めてですか？ AIプロンプトメーカーとは？',
+      desc: '絵を描くスキルがなくても、写真1枚やタグ選択だけで15種スタンプシートを1秒で企画できます。',
+      cards: [
+        {
+          icon: '⚡',
+          bg: 'bg-[#FFFDF8] border-[#FFECA1]',
+          title: '1秒で15種フルセット自動完成',
+          desc: '日常、仕事、カップルなど80種以上のテーマに合わせて、15の必須感情や文字色、構図を自動マッピングします。'
+        },
+        {
+          icon: '🎭',
+          bg: 'bg-[#F8FAFC] border-slate-200',
+          title: '一貫したキャラクターデザイン',
+          desc: '15カット全体で顔の特徴、2.5頭身SD比率、固有カラーがブレないプロンプト固定技術を適用しています。'
+        },
+        {
+          icon: '⚡',
+          bg: 'bg-[#F0FDF4] border-emerald-200',
+          title: '3大AIエンジンに最適化',
+          desc: '文字入れが得意なChatGPT、表情豊かなGemini、コミカルなGrokの特性に合わせた専用プロンプトを提供します。'
+        }
+      ]
+    },
+    zh: {
+      title: '第一次做表情包？ 什么是AI提示词生成器？',
+      desc: '即使零绘画基础，仅凭一张照片或几个标签，1秒即可构思15款完整表情包设计方案。',
+      cards: [
+        {
+          icon: '⚡',
+          bg: 'bg-[#FFFDF8] border-[#FFECA1]',
+          title: '1秒全套自动完成15款',
+          desc: '结合80+日常主题，自动匹配15种核心情绪动作、文字配色及排版构图。'
+        },
+        {
+          icon: '🎭',
+          bg: 'bg-[#F8FAFC] border-slate-200',
+          title: '保持角色设计高度一致',
+          desc: '精准锁定面部特征、2.5头身Q版比例与标志性色彩，确保15个镜头角色完全一致。'
+        },
+        {
+          icon: '⚡',
+          bg: 'bg-[#F0FDF4] border-emerald-200',
+          title: '深度适配3大AI引擎',
+          desc: '针对擅长文字排版的ChatGPT、生动表情的Gemini、幽默风格的Grok量身定制提示词。'
+        }
+      ]
+    },
+    en: {
+      title: 'New to Emoticon Design? What is AI Prompt Maker?',
+      desc: 'Plan 15-sticker emoticon sheets in 1 second using photos or simple tags, even with zero drawing skills.',
+      cards: [
+        {
+          icon: '⚡',
+          bg: 'bg-[#FFFDF8] border-[#FFECA1]',
+          title: '15-Sticker Set in 1 Second',
+          desc: 'Automatically maps 15 core emotions, typography colors, and layout compositions across 80+ themes.'
+        },
+        {
+          icon: '🎭',
+          bg: 'bg-[#F8FAFC] border-slate-200',
+          title: 'Consistent Character Design',
+          desc: 'Maintains character identity, 2.5-head SD proportions, and unique colors stably across all 15 cuts.'
+        },
+        {
+          icon: '⚡',
+          bg: 'bg-[#F0FDF4] border-emerald-200',
+          title: 'Optimized for 3 Major AI Engines',
+          desc: 'Instant tailored prompts for ChatGPT (Typography), Gemini (Vivid Poses), and Grok (Humorous Comic).'
+        }
+      ]
+    }
+  };
+
+  const cur = data[lang] || data['ko'];
+
   return (
     <section className="bg-white rounded-xl p-5 sm:p-7 border border-slate-200/90 shadow-xs flex flex-col gap-4">
       <div className="flex items-center gap-2.5">
         <span className="text-[24px]">🎨</span>
         <div>
           <h2 className="text-[18px] sm:text-[20px] font-black text-slate-900 tracking-tight">
-            {lang === 'ko' ? '이모티콘 제작이 처음인가요? AI 프롬프트 메이커란?' : 'New to Emoticon Design? What is AI Prompt Maker?'}
+            {cur.title}
           </h2>
           <p className="text-[12.5px] sm:text-[13.5px] text-slate-500 mt-0.5">
-            {lang === 'ko' ? '그림 실력이 없어도 사진 한 장 또는 태그 몇 개로 카카오톡·라인 스타일 15종 이모티콘 시트를 1초 만에 기획합니다.' : 'Generate 15-sticker emoticon sheets with AI in 1 second, even with zero drawing skills.'}
+            {cur.desc}
           </p>
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5 mt-1">
-        <div className="bg-[#FFFDF8] p-4 rounded-lg border border-[#FFECA1] flex flex-col gap-1.5">
-          <span className="text-[20px]">⚡</span>
-          <strong className="text-[14.5px] font-bold text-slate-900">1초 만에 15종 풀세트 자동 완성</strong>
-          <p className="text-[13px] text-slate-600 leading-relaxed">
-            일상, 직장, 커플 등 80개 이상의 대화 테마에 맞춰 15가지 핵심 감정 액션과 글자 색상, 배치 구도를 자동으로 완벽 매핑합니다.
-          </p>
-        </div>
-        <div className="bg-[#F8FAFC] p-4 rounded-lg border border-slate-200 flex flex-col gap-1.5">
-          <span className="text-[20px]">🎭</span>
-          <strong className="text-[14.5px] font-bold text-slate-900">일관된 캐릭터 디자인 유지</strong>
-          <p className="text-[13px] text-slate-600 leading-relaxed">
-            동일한 캐릭터의 얼굴 특징, 체형 비율(2.5등신 SD), 고유 색상이 15가지 컷 전체에 걸쳐 흔들리지 않도록 정밀 프롬프트 락킹 기술을 적용했습니다.
-          </p>
-        </div>
-        <div className="bg-[#F0FDF4] p-4 rounded-lg border border-emerald-200 flex flex-col gap-1.5">
-          <span className="text-[20px]">⚡</span>
-          <strong className="text-[14.5px] font-bold text-slate-900">3대 AI 엔진 맞춤 최적화</strong>
-          <p className="text-[13px] text-slate-600 leading-relaxed">
-            한글 타이포에 강한 ChatGPT(DALL-E 3), 역동적 표정에 강한 Gemini(Imagen 3), 위트 있는 연출의 Grok 각각에 최적화된 프롬프트를 즉시 제공합니다.
-          </p>
-        </div>
+        {cur.cards.map((c, idx) => (
+          <div key={idx} className={`${c.bg} p-4 rounded-lg border flex flex-col gap-1.5`}>
+            <span className="text-[20px]">{c.icon}</span>
+            <strong className="text-[14.5px] font-bold text-slate-900">{c.title}</strong>
+            <p className="text-[13px] text-slate-600 leading-relaxed">
+              {c.desc}
+            </p>
+          </div>
+        ))}
       </div>
     </section>
   );
@@ -1432,36 +1521,146 @@ const SectionAbout = ({ lang }) => {
 
 // 메인 하단 섹션 2: 3분 초간단 사용 가이드
 const SectionGuide = ({ lang }) => {
-  const steps = [
-    {
-      step: '01',
-      icon: '🎨',
-      title: '피사체 & 화풍 선택',
-      desc: '동물, 새, 해양생물, 곤충, 파충류, 인물 등 12개 카테고리에서 원하는 캐릭터와 화풍을 클릭하거나 사진을 준비하세요.',
-      badge: '캐릭터 설정'
+  const data = {
+    ko: {
+      title: '3분 완성! 초간단 이모티콘 제작 가이드',
+      desc: '초보자도 따라 할 수 있는 4단계 이모티콘 제작 프로세스입니다.',
+      steps: [
+        {
+          step: '01',
+          icon: '🎨',
+          badge: '캐릭터 설정',
+          title: '피사체 & 화풍 선택',
+          desc: '동물, 새, 해양생물, 곤충, 파충류, 인물 등 12개 카테고리에서 원하는 캐릭터와 화풍을 클릭하거나 사진을 준비하세요.'
+        },
+        {
+          step: '02',
+          icon: '💬',
+          badge: '테마 매핑',
+          title: '15종 대화 문구 세트 선택',
+          desc: '일상, 직장인 속마음, 집사/고양이, 커플 등 80종 이상의 테마 중 원하는 15종 문구 세트를 선택하세요.'
+        },
+        {
+          step: '03',
+          icon: '🚀',
+          badge: '원클릭 생성',
+          title: 'AI 프롬프트 복사 & 생성',
+          desc: '원하는 AI 모델(ChatGPT, Gemini, Grok) 버튼을 눌러 프롬프트를 복사하고 AI 채팅창에 붙여넣어 이미지를 만드세요.'
+        },
+        {
+          step: '04',
+          icon: '✨',
+          badge: '자유로운 활용',
+          title: '배경 투명화 & 실전 활용',
+          desc: '생성된 15종 시트에서 배경을 투명화(PNG)한 뒤, SNS 짤·프로필·디지털 다꾸로 쓰거나 캐릭터 작화 시안으로 완성하세요.'
+        }
+      ]
     },
-    {
-      step: '02',
-      icon: '💬',
-      title: '15종 대화 문구 세트 선택',
-      desc: '일상, 직장인 속마음, 집사/고양이, 커플 등 80종 이상의 테마 중 원하는 15종 문구 세트를 선택하세요.',
-      badge: '테마 매핑'
+    ja: {
+      title: '3分で完成！ 超簡単スタンプ作成ガイド',
+      desc: '初心者でもすぐできる4ステップのスタンプ制作プロセスです。',
+      steps: [
+        {
+          step: '01',
+          icon: '🎨',
+          badge: 'キャラ設定',
+          title: 'キャラクター・画風選択',
+          desc: '動物、鳥、海洋生物、虫、人物など12カテゴリからキャラクターと画風を選びます。'
+        },
+        {
+          step: '02',
+          icon: '💬',
+          badge: 'テーマ選択',
+          title: '15種セリフテーマ選択',
+          desc: '日常、仕事の本音、猫と執事、カップルなど80種以上のテーマから選択します。'
+        },
+        {
+          step: '03',
+          icon: '🚀',
+          badge: 'ワンクリック',
+          title: 'プロンプトコピー＆生成',
+          desc: '使いたいAIモデル（ChatGPT, Gemini, Grok）を選んでコピーし、AIチャットに貼り付けて生成します。'
+        },
+        {
+          step: '04',
+          icon: '✨',
+          badge: '自由な活用',
+          title: '背景透過＆実戦活用',
+          desc: '生成シートの背景を透過(PNG)し、トークルーム、SNSアイコン、手帳デコや作画下絵として活用します。'
+        }
+      ]
     },
-    {
-      step: '03',
-      icon: '🚀',
-      title: 'AI 프롬프트 복사 & 생성',
-      desc: '원하는 AI 모델(ChatGPT, Gemini, Grok) 버튼을 눌러 프롬프트를 복사하고 AI 채팅창에 붙여넣어 이미지를 만드세요.',
-      badge: '원클릭 생성'
+    zh: {
+      title: '3分钟搞定！ 超简单表情包制作指南',
+      desc: '新手也能轻松掌握的4步表情包制作全流程。',
+      steps: [
+        {
+          step: '01',
+          icon: '🎨',
+          badge: '设定角色',
+          title: '选择主体与画风',
+          desc: '从动物、鸟类、水产、昆虫、人物等12大类中选择角色和画风，或准备照片。'
+        },
+        {
+          step: '02',
+          icon: '💬',
+          badge: '匹配主题',
+          title: '选择15款对话文案',
+          desc: '从日常、职场心声、铲屎官、情侣等80+主题中选择15款文案组合。'
+        },
+        {
+          step: '03',
+          icon: '🚀',
+          badge: '一键生成',
+          title: '复制提示词并生成',
+          desc: '点击选择AI模型（ChatGPT, Gemini, Grok），一键复制提示词并发送至AI对话框。'
+        },
+        {
+          step: '04',
+          icon: '✨',
+          badge: '自由应用',
+          title: '背景抠图与实际应用',
+          desc: '一键去除背景保存为PNG，可用于聊天表情、社交头像、手账贴纸或二次画稿草图。'
+        }
+      ]
     },
-    {
-      step: '04',
-      icon: '✨',
-      title: '배경 투명화 & 실전 활용',
-      desc: '생성된 15종 시트에서 배경을 투명화(PNG)한 뒤, SNS 짤·프로필·디지털 다꾸로 쓰거나 캐릭터 작화 시안으로 완성하세요.',
-      badge: '자유로운 활용'
+    en: {
+      title: '3-Minute Quick Start Emoticon Guide',
+      desc: 'Simple 4-step process from prompt creation to sticker release.',
+      steps: [
+        {
+          step: '01',
+          icon: '🎨',
+          badge: 'Character',
+          title: 'Select Subject & Style',
+          desc: 'Choose your character and art style from 12 categories or prepare a photo.'
+        },
+        {
+          step: '02',
+          icon: '💬',
+          badge: 'Theme Mapping',
+          title: 'Choose 15-Dialogue Theme',
+          desc: 'Pick a 15-phrase set from 80+ themes like Daily, Workplace, Pet, or Couples.'
+        },
+        {
+          step: '03',
+          icon: '🚀',
+          badge: 'One-Click',
+          title: 'Copy Prompt & Generate',
+          desc: 'Click your preferred AI engine button (ChatGPT, Gemini, Grok), copy, and paste into AI chat.'
+        },
+        {
+          step: '04',
+          icon: '✨',
+          badge: 'Creative Usage',
+          title: 'Remove BG & Use Anywhere',
+          desc: 'Remove background to PNG and use as chat stickers, social avatars, digital planners, or art drafts.'
+        }
+      ]
     }
-  ];
+  };
+
+  const cur = data[lang] || data['ko'];
 
   return (
     <section className="bg-white rounded-xl p-5 sm:p-7 border border-slate-200/90 shadow-xs flex flex-col gap-4">
@@ -1469,16 +1668,16 @@ const SectionGuide = ({ lang }) => {
         <span className="text-[24px]">📖</span>
         <div>
           <h2 className="text-[18px] sm:text-[20px] font-black text-slate-900 tracking-tight">
-            {lang === 'ko' ? '3분 완성! 초간단 이모티콘 제작 가이드' : '3-Minute Quick Start Emoticon Guide'}
+            {cur.title}
           </h2>
           <p className="text-[12.5px] sm:text-[13.5px] text-slate-500 mt-0.5">
-            {lang === 'ko' ? '초보자도 따라 할 수 있는 4단계 이모티콘 제작 프로세스입니다.' : 'Simple 4-step process from prompt creation to sticker release.'}
+            {cur.desc}
           </p>
         </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 mt-1">
-        {steps.map((s, idx) => (
+        {cur.steps.map((s, idx) => (
           <div key={idx} className="bg-slate-50/80 hover:bg-amber-50/20 transition-colors p-4 sm:p-4.5 rounded-xl border border-slate-200/90 flex flex-col gap-2 relative shadow-2xs">
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-2">
@@ -1495,7 +1694,7 @@ const SectionGuide = ({ lang }) => {
             </div>
             <div className="flex items-center gap-2 mt-0.5">
               <span className="text-[16px]">{s.icon}</span>
-              <strong className="text-[14.5px] sm:text-[15px] font-extrabold text-slate-900 tracking-tight whitespace-nowrap">
+              <strong className="text-[14.5px] sm:text-[15px] font-extrabold text-slate-900 tracking-tight">
                 {s.title}
               </strong>
             </div>
@@ -1509,36 +1708,136 @@ const SectionGuide = ({ lang }) => {
   );
 };
 
-
 // 메인 하단 섹션 3: 완성도를 높이는 이모티콘 기획 5대 원칙
 const SectionPrinciples = ({ lang }) => {
-  const principles = [
-    {
-      num: '1',
-      title: '단순하고 직관적인 실루엣',
-      desc: '작은 모바일 채팅창 화면에서도 캐릭터가 한눈에 인식되도록 복잡한 장식보다는 단순하고 둥근 2~3등신 SD 비율을 유지하세요.'
+  const data = {
+    ko: {
+      title: '완성도를 200% 높이는 이모티콘 기획 5대 원칙',
+      desc: '캐릭터 컨셉 기획과 감정 표현의 퀄리티를 극대화하는 실전 노하우입니다.',
+      principles: [
+        {
+          num: '1',
+          title: '단순하고 직관적인 실루엣',
+          desc: '작은 모바일 채팅창 화면에서도 캐릭터가 한눈에 인식되도록 복잡한 장식보다는 단순하고 둥근 2~3등신 SD 비율을 유지하세요.'
+        },
+        {
+          num: '2',
+          title: '과장된 표정과 역동적인 동작',
+          desc: '밋밋한 표정보다는 눈이 커지거나 불타오르는 등 희로애락의 감정이 온몸으로 극대화되어 전달되어야 생동감이 넘칩니다.'
+        },
+        {
+          num: '3',
+          title: '15종 감정 밸런스 황금 비율',
+          desc: '긍정/환호, 일상 인사, 현실 공감, 분노/당황 등 일상 대화에서 자주 쓰이는 상황이 골고루 배분되어야 합니다.'
+        },
+        {
+          num: '4',
+          title: '텍스트 시인성과 글자 외곽선',
+          desc: '배경이 어둡거나 밝아도 문구가 또렷하게 읽히도록 두꺼운 화이트 외곽선(Stroke)을 두르고 글자 수는 2~6자 이내로 간결하게 기획하세요.'
+        },
+        {
+          num: '5',
+          title: '명확한 타겟 페르소나 컨셉',
+          desc: 'K-직장인, 자취생, 대학생, 육아맘, 반려인 등 명확한 타겟층이 공감할 수 있는 뚜렷한 정체성과 유머 코드를 부여하세요.'
+        }
+      ]
     },
-    {
-      num: '2',
-      title: '과장된 표정과 역동적인 동작',
-      desc: '밋밋한 표정보다는 눈이 커지거나 불타오르는 등 희로애락의 감정이 온몸으로 극대화되어 전달되어야 생동감이 넘칩니다.'
+    ja: {
+      title: 'クオリティを200%高めるスタンプ企画5大原則',
+      desc: 'キャラクター企画と感情表現の完成度を最大化する実戦ノウハウです。',
+      principles: [
+        {
+          num: '1',
+          title: 'シンプルで直感的なシルエット',
+          desc: '小さなスマホ画面でも一目で伝わるよう、複雑な装飾を控え2〜3頭身の丸みを帯びたSD比率を維持しましょう。'
+        },
+        {
+          num: '2',
+          title: '大げさな表情とダイナミックな動作',
+          desc: '控えめな表情よりも、目が大きくなったり全身で喜怒哀楽を爆発させることで躍動感が出ます。'
+        },
+        {
+          num: '3',
+          title: '15種の感情バランス黄金比',
+          desc: '挨拶、ポジティブ、共感、驚きなど日常トークで高頻度に使われるシチュエーションをバランスよく配分します。'
+        },
+        {
+          num: '4',
+          title: '文字の見やすさと白フチ加工',
+          desc: '背景色に左右されず文字が読めるよう太めの白フチをつけ、文字数は2〜6文字以内に抑えます。'
+        },
+        {
+          num: '5',
+          title: '明確なターゲットとコンセプト',
+          desc: '会社員、学生、ペット飼い主、主婦など特定のユーザー層が深く共感できる個性とユーモアを与えましょう。'
+        }
+      ]
     },
-    {
-      num: '3',
-      title: '15종 감정 밸런스 황금 비율',
-      desc: '긍정/환호 5종, 피로/현실공감 4종, 일상인사 4종, 분노/당황 2종 등 일상 대화에서 자주 쓰이는 상황이 골고루 배분되어야 합니다.'
+    zh: {
+      title: '提升200%质感的表情包策划5大黄金原则',
+      desc: '极大提升角色设计与情绪表现力的实用设计技巧。',
+      principles: [
+        {
+          num: '1',
+          title: '简洁直观的角色剪影',
+          desc: '在手机小屏幕上也能一眼看清，避免繁琐装饰，保持圆润可爱的2~3头身Q版比例。'
+        },
+        {
+          num: '2',
+          title: '夸张表情与动态肢体动作',
+          desc: '比起平淡表情，放大双眼、怒火中烧等将喜怒哀乐用全身表现出来更具感染力。'
+        },
+        {
+          num: '3',
+          title: '15款情绪黄金平衡配比',
+          desc: '将问候、夸奖、疲惫共鸣、震惊吐槽等高频聊天场景进行科学合理的配比。'
+        },
+        {
+          num: '4',
+          title: '文字清晰度与白色描边',
+          desc: '无论深色浅色背景都能看清，建议添加粗白描边，文字长度控制在2~6个字以内。'
+        },
+        {
+          num: '5',
+          title: '明确的用户画像与人设',
+          desc: '为打工人、学生党、铲屎官、宝妈等特定人群量身定制引发强烈共鸣的人设与笑点。'
+        }
+      ]
     },
-    {
-      num: '4',
-      title: '텍스트 시인성과 글자 외곽선',
-      desc: '배경이 어둡거나 밝아도 문구가 또렷하게 읽히도록 두꺼운 화이트 외곽선(Stroke)을 두르고 글자 수는 2~6자 이내로 간결하게 기획하세요.'
-    },
-    {
-      num: '5',
-      title: '명확한 타겟 페르소나 컨셉',
-      desc: 'K-직장인, 자취생, 대학생, 육아맘, 반려인 등 명확한 타겟층이 공감할 수 있는 뚜렷한 정체성과 유머 코드를 부여하세요.'
+    en: {
+      title: '5 Core Principles for High-Quality Emoticon Design',
+      desc: 'Essential design principles for creative character planning and expressive poses.',
+      principles: [
+        {
+          num: '1',
+          title: 'Simple & Intuitive Silhouette',
+          desc: 'Keep character shapes clean with a 2~3 head SD ratio so it stays instantly recognizable on small mobile screens.'
+        },
+        {
+          num: '2',
+          title: 'Exaggerated Expressions & Dynamic Poses',
+          desc: 'Maximize emotions with bold facial changes and full-body actions rather than subtle static poses.'
+        },
+        {
+          num: '3',
+          title: 'Balanced 15-Emotion Golden Ratio',
+          desc: 'Evenly distribute high-frequency daily situations: Greetings, Cheers, Empathy, and Comic Shock.'
+        },
+        {
+          num: '4',
+          title: 'Text Readability & White Outlines',
+          desc: 'Ensure text readability on any chat background by adding thick white strokes, keeping words to 2~6 characters.'
+        },
+        {
+          num: '5',
+          title: 'Distinct Persona & Concept',
+          desc: 'Infuse specific humor and identity that resonates with defined targets like workers, students, or pet lovers.'
+        }
+      ]
     }
-  ];
+  };
+
+  const cur = data[lang] || data['ko'];
 
   return (
     <section className="bg-white rounded-xl p-5 sm:p-7 border border-slate-200/90 shadow-xs flex flex-col gap-4">
@@ -1546,16 +1845,16 @@ const SectionPrinciples = ({ lang }) => {
         <span className="text-[24px]">🏆</span>
         <div>
           <h2 className="text-[18px] sm:text-[20px] font-black text-slate-900 tracking-tight">
-            {lang === 'ko' ? '완성도를 200% 높이는 이모티콘 기획 5대 원칙' : '5 Core Principles for High-Quality Emoticon Design'}
+            {cur.title}
           </h2>
           <p className="text-[12.5px] sm:text-[13.5px] text-slate-500 mt-0.5">
-            {lang === 'ko' ? '캐릭터 컨셉 기획과 감정 표현의 퀄리티를 극대화하는 실전 노하우입니다.' : 'Essential design principles for creative character planning and expressive poses.'}
+            {cur.desc}
           </p>
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5 mt-1">
-        {principles.map((p, idx) => (
+        {cur.principles.map((p, idx) => (
           <div key={idx} className="bg-gradient-to-br from-slate-50 to-amber-50/20 p-4 rounded-lg border border-slate-200/80 flex flex-col gap-1.5">
             <div className="flex items-center gap-2">
               <span className="w-6 h-6 rounded-full bg-amber-500 text-white font-black text-[12px] flex items-center justify-center shrink-0">
@@ -1575,35 +1874,178 @@ const SectionPrinciples = ({ lang }) => {
 
 // 메인 하단 섹션 4: 추천 이모티콘 15종 필수 감정 황금 조합
 const SectionEmotionFormula = ({ lang }) => {
-  const categories = [
-    {
-      group: '1. 대화 시작 & 긍정 리액션',
-      count: '5종',
-      icon: '🎉',
-      items: ['안녕!', '최고야!', '고마워요', '사랑해요', '오예!'],
-      cardStyle: 'bg-emerald-50/70 border-emerald-200/90 text-emerald-950',
-      badgeStyle: 'bg-emerald-500/15 text-emerald-800 border-emerald-300',
-      pillStyle: 'bg-white/95 text-emerald-900 border-emerald-200/90 shadow-2xs'
+  const content = {
+    ko: {
+      title: '추천 이모티콘 15종 필수 감정 황금 조합 (4개 카테고리)',
+      desc: '실제 메신저 채팅에서 매일 쓰이는 핵심 15개 컷을 4개 필수 감정 테마로 균형 있게 구성했습니다.',
+      categories: [
+        {
+          group: '1. 대화 시작 & 긍정 리액션',
+          count: '4종',
+          icon: '🎉',
+          items: ['안녕!', '최고야!', '고마워요', '사랑해요'],
+          cardStyle: 'bg-emerald-50/70 border-emerald-200/90 text-emerald-950',
+          badgeStyle: 'bg-emerald-500/15 text-emerald-800 border-emerald-300',
+          pillStyle: 'bg-white/95 text-emerald-900 border-emerald-200/90 shadow-2xs'
+        },
+        {
+          group: '2. 일상 대답 & 따뜻한 응원',
+          count: '4종',
+          icon: '💪',
+          items: ['오늘도 화이팅', '좋아요', '축하해요', '다 잘될 거야'],
+          cardStyle: 'bg-blue-50/70 border-blue-200/90 text-blue-950',
+          badgeStyle: 'bg-blue-500/15 text-blue-800 border-blue-300',
+          pillStyle: 'bg-white/95 text-blue-900 border-blue-200/90 shadow-2xs'
+        },
+        {
+          group: '3. 현실 공감 & 피로 회복',
+          count: '4종',
+          icon: '☕',
+          items: ['수고했어요', '네 (영혼 탈출)', '살려줘요', '잘자요 꿀잠'],
+          cardStyle: 'bg-amber-50/70 border-amber-200/90 text-amber-950',
+          badgeStyle: 'bg-amber-500/15 text-amber-800 border-amber-300',
+          pillStyle: 'bg-white/95 text-amber-900 border-amber-200/90 shadow-2xs'
+        },
+        {
+          group: '4. 당황 & 반전 재미',
+          count: '3종',
+          icon: '⚡',
+          items: ['헐 대박', '킹받네 (분노)', '오예! (환호)'],
+          cardStyle: 'bg-rose-50/70 border-rose-200/90 text-rose-950',
+          badgeStyle: 'bg-rose-500/15 text-rose-800 border-rose-300',
+          pillStyle: 'bg-white/95 text-rose-900 border-rose-200/90 shadow-2xs'
+        }
+      ]
     },
-    {
-      group: '2. 일상 소통 & 따뜻한 응원',
-      count: '5종',
-      icon: '💪',
-      items: ['오늘도 화이팅', '좋아요', '축하해요', '다 잘될 거야', '인정! (Good)'],
-      cardStyle: 'bg-blue-50/70 border-blue-200/90 text-blue-950',
-      badgeStyle: 'bg-blue-500/15 text-blue-800 border-blue-300',
-      pillStyle: 'bg-white/95 text-blue-900 border-blue-200/90 shadow-2xs'
+    ja: {
+      title: 'おすすめスタンプ15種 黄金の感情組み合わせ (4カテゴリ)',
+      desc: '日常会話で毎日使われる15の必須カットを4つの感情テーマにバランスよく構成しました。',
+      categories: [
+        {
+          group: '1. 挨拶・ポジティブリアクション',
+          count: '4種',
+          icon: '🎉',
+          items: ['こんにちは！', '最高！', 'ありがとう', '大好き'],
+          cardStyle: 'bg-emerald-50/70 border-emerald-200/90 text-emerald-950',
+          badgeStyle: 'bg-emerald-500/15 text-emerald-800 border-emerald-300',
+          pillStyle: 'bg-white/95 text-emerald-900 border-emerald-200/90 shadow-2xs'
+        },
+        {
+          group: '2. 日常の返事・応援',
+          count: '4種',
+          icon: '💪',
+          items: ['ファイト！', 'いいね！', 'おめでとう', '大丈夫だよ'],
+          cardStyle: 'bg-blue-50/70 border-blue-200/90 text-blue-950',
+          badgeStyle: 'bg-blue-500/15 text-blue-800 border-blue-300',
+          pillStyle: 'bg-white/95 text-blue-900 border-blue-200/90 shadow-2xs'
+        },
+        {
+          group: '3. 共感・お疲れモード',
+          count: '4種',
+          icon: '☕',
+          items: ['お疲れ様', 'はい(魂抜け)', '助けて', 'おやすみ'],
+          cardStyle: 'bg-amber-50/70 border-amber-200/90 text-amber-950',
+          badgeStyle: 'bg-amber-500/15 text-amber-800 border-amber-300',
+          pillStyle: 'bg-white/95 text-amber-900 border-amber-200/90 shadow-2xs'
+        },
+        {
+          group: '4. 驚き・リアクション',
+          count: '3種',
+          icon: '⚡',
+          items: ['まじで！', '激おこ', 'やったー！'],
+          cardStyle: 'bg-rose-50/70 border-rose-200/90 text-rose-950',
+          badgeStyle: 'bg-rose-500/15 text-rose-800 border-rose-300',
+          pillStyle: 'bg-white/95 text-rose-900 border-rose-200/90 shadow-2xs'
+        }
+      ]
     },
-    {
-      group: '3. 현실 공감 & 반전 재미',
-      count: '5종',
-      icon: '☕',
-      items: ['수고했어요', '네 (영혼 탈출)', '살려줘요', '헐 대박', '잘자요 꿀잠'],
-      cardStyle: 'bg-amber-50/70 border-amber-200/90 text-amber-950',
-      badgeStyle: 'bg-amber-500/15 text-amber-800 border-amber-300',
-      pillStyle: 'bg-white/95 text-amber-900 border-amber-200/90 shadow-2xs'
+    zh: {
+      title: '推荐表情包15款 黄金情绪搭配 (4大分类)',
+      desc: '精选日常聊天最高频使用的15个镜头，均衡分布于4大情绪主题。',
+      categories: [
+        {
+          group: '1. 问候与积极回复',
+          count: '4款',
+          icon: '🎉',
+          items: ['你好！', '太棒了！', '谢谢你', '超喜欢'],
+          cardStyle: 'bg-emerald-50/70 border-emerald-200/90 text-emerald-950',
+          badgeStyle: 'bg-emerald-500/15 text-emerald-800 border-emerald-300',
+          pillStyle: 'bg-white/95 text-emerald-900 border-emerald-200/90 shadow-2xs'
+        },
+        {
+          group: '2. 日常回复与暖心加油',
+          count: '4款',
+          icon: '💪',
+          items: ['今天也加油', '好的/赞', '恭喜恭喜', '一切都会好'],
+          cardStyle: 'bg-blue-50/70 border-blue-200/90 text-blue-950',
+          badgeStyle: 'bg-blue-500/15 text-blue-800 border-blue-300',
+          pillStyle: 'bg-white/95 text-blue-900 border-blue-200/90 shadow-2xs'
+        },
+        {
+          group: '3. 现实共鸣与疲惫治愈',
+          count: '4款',
+          icon: '☕',
+          items: ['辛苦啦', '好的(灵魂出窍)', '救救我', '晚安好梦'],
+          cardStyle: 'bg-amber-50/70 border-amber-200/90 text-amber-950',
+          badgeStyle: 'bg-amber-500/15 text-amber-800 border-amber-300',
+          pillStyle: 'bg-white/95 text-amber-900 border-amber-200/90 shadow-2xs'
+        },
+        {
+          group: '4. 震惊与趣味反转',
+          count: '3款',
+          icon: '⚡',
+          items: ['我的天！', '气炸了', '太爽了！'],
+          cardStyle: 'bg-rose-50/70 border-rose-200/90 text-rose-950',
+          badgeStyle: 'bg-rose-500/15 text-rose-800 border-rose-300',
+          pillStyle: 'bg-white/95 text-rose-900 border-rose-200/90 shadow-2xs'
+        }
+      ]
+    },
+    en: {
+      title: '15 Essential Emotion Formula (4 Categories)',
+      desc: 'Optimized 15-cut set structure divided evenly into 4 core daily messenger themes.',
+      categories: [
+        {
+          group: '1. Greetings & Positive Vibes',
+          count: '4 cuts',
+          icon: '🎉',
+          items: ['Hello!', 'Awesome!', 'Thank you', 'Love it'],
+          cardStyle: 'bg-emerald-50/70 border-emerald-200/90 text-emerald-950',
+          badgeStyle: 'bg-emerald-500/15 text-emerald-800 border-emerald-300',
+          pillStyle: 'bg-white/95 text-emerald-900 border-emerald-200/90 shadow-2xs'
+        },
+        {
+          group: '2. Daily Responses & Cheers',
+          count: '4 cuts',
+          icon: '💪',
+          items: ['Cheer up!', 'Sounds good', 'Congrats!', 'All is well'],
+          cardStyle: 'bg-blue-50/70 border-blue-200/90 text-blue-950',
+          badgeStyle: 'bg-blue-500/15 text-blue-800 border-blue-300',
+          pillStyle: 'bg-white/95 text-blue-900 border-blue-200/90 shadow-2xs'
+        },
+        {
+          group: '3. Empathy & Relaxation',
+          count: '4 cuts',
+          icon: '☕',
+          items: ['Good job', 'Yes (Exhausted)', 'Save me', 'Good night'],
+          cardStyle: 'bg-amber-50/70 border-amber-200/90 text-amber-950',
+          badgeStyle: 'bg-amber-500/15 text-amber-800 border-amber-300',
+          pillStyle: 'bg-white/95 text-amber-900 border-amber-200/90 shadow-2xs'
+        },
+        {
+          group: '4. Shock & Fun Reactions',
+          count: '3 cuts',
+          icon: '⚡',
+          items: ['OMG!', 'Furious!', 'Yay! (Cheer)'],
+          cardStyle: 'bg-rose-50/70 border-rose-200/90 text-rose-950',
+          badgeStyle: 'bg-rose-500/15 text-rose-800 border-rose-300',
+          pillStyle: 'bg-white/95 text-rose-900 border-rose-200/90 shadow-2xs'
+        }
+      ]
     }
-  ];
+  };
+
+  const cur = content[lang] || content['ko'];
 
   return (
     <section className="bg-white rounded-xl p-5 sm:p-7 border border-slate-200/90 shadow-xs flex flex-col gap-4">
@@ -1611,25 +2053,25 @@ const SectionEmotionFormula = ({ lang }) => {
         <span className="text-[24px]">✨</span>
         <div>
           <h2 className="text-[18px] sm:text-[20px] font-black text-slate-900 tracking-tight">
-            {lang === 'ko' ? '추천 이모티콘 15종 필수 감정 황금 조합 (5종 × 3세트)' : '15 Essential Emotion Formula for Daily Chat (5 × 3 Sets)'}
+            {cur.title}
           </h2>
           <p className="text-[12.5px] sm:text-[13.5px] text-slate-500 mt-0.5">
-            {lang === 'ko' ? '실제 메신저 채팅에서 매일 쓰이는 핵심 15개 컷을 5종씩 3개 황금 테마로 균형 있게 구성했습니다.' : 'Balanced 15-sticker set structure divided evenly into 3 core groups of 5.'}
+            {cur.desc}
           </p>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5 mt-1">
-        {categories.map((c, idx) => (
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 mt-1">
+        {cur.categories.map((c, idx) => (
           <div key={idx} className={`p-4 sm:p-4.5 rounded-xl border flex flex-col justify-between gap-3 ${c.cardStyle}`}>
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-1.5 min-w-0">
                 <span className="text-[16px] shrink-0">{c.icon}</span>
-                <span className="text-[13.5px] sm:text-[14px] font-extrabold tracking-tight truncate">
+                <span className="text-[13.5px] sm:text-[14.5px] font-extrabold tracking-tight">
                   {c.group}
                 </span>
               </div>
-              <span className={`text-[11px] font-black px-2.5 py-0.5 rounded-full border shrink-0 ${c.badgeStyle}`}>
+              <span className={`text-[11px] sm:text-[11.5px] font-black px-2.5 py-0.5 rounded-full border shrink-0 ${c.badgeStyle}`}>
                 {c.count}
               </span>
             </div>
@@ -1651,35 +2093,118 @@ const SectionEmotionFormula = ({ lang }) => {
   );
 };
 
-
-
 // 메인 하단 섹션 5: 자주 묻는 질문 (FAQ Accordion)
 const SectionFAQ = ({ lang }) => {
   const [openIdx, setOpenIdx] = useState(null);
 
-  const faqs = [
-    {
-      q: 'Q. AI로 생성한 이미지를 카카오톡 이모티콘 스튜디오에 바로 제출할 수 있나요?',
-      a: '아니오, 바로 제출할 수 없습니다! 현재 카카오톡 등 주요 메신저 플랫폼은 저작권 및 창작성 가이드라인에 따라 순수 AI 생성 이미지를 그대로 제출하는 것을 엄격히 제한하고 있습니다. 따라서 본 도구는 "캐릭터 컨셉 구상, 15종 감정 표현 시안, 대사와 포즈 기획용 레퍼런스"를 잡는 도구로 활용하셔야 합니다. 정식 이모티콘 작가로 데뷔하고자 하실 때는 AI가 잡아준 기발한 시안을 바탕으로 작가님이 직접 선을 따고 리디자인하여 제출하셔야 합니다.'
+  const data = {
+    ko: {
+      title: '자주 묻는 질문 (FAQ)',
+      desc: '이모티콘 제작 및 AI 프롬프트 활용에 대해 궁금한 점을 확인하세요.',
+      faqs: [
+        {
+          q: 'Q. AI로 생성한 이미지를 카카오톡 이모티콘 스튜디오에 바로 제출할 수 있나요?',
+          a: '아니오, 바로 제출할 수 없습니다! 현재 카카오톡 등 주요 메신저 플랫폼은 저작권 및 창작성 가이드라인에 따라 순수 AI 생성 이미지를 그대로 제출하는 것을 엄격히 제한하고 있습니다. 따라서 본 도구는 "캐릭터 컨셉 구상, 15종 감정 표현 시안, 대사와 포즈 기획용 레퍼런스"를 잡는 도구로 활용하셔야 합니다. 정식 이모티콘 작가로 데뷔하고자 하실 때는 AI가 잡아준 기발한 시안을 바탕으로 작가님이 직접 선을 따고 리디자인하여 제출하셔야 합니다.'
+        },
+        {
+          q: 'Q. 생성된 15종 이모티콘 시트는 어떻게 활용하면 되나요?',
+          a: '배경을 투명하게 제거(PNG)한 뒤, ① 카톡·라인 친구/가족 단톡방에서 나만의 커스텀 스티커 짤로 전송, ② 인스타그램, 블로그, X(트위터) 프로필 및 감정 아바타, ③ 굿노트·노션 등 디지털 다이어리 다꾸 스티커, ④ 디스코드 커스텀 이모지, ⑤ 개인 소장용 굿즈(키링, 스티커 인쇄) 등으로 무궁무진하게 활용하실 수 있습니다.'
+        },
+        {
+          q: 'Q. AI가 만든 15종 시트 이미지의 배경 투명화(누끼 따기)는 어떻게 하나요?',
+          a: '생성된 이미지를 스마트폰이나 PC에 저장한 뒤, 무료 배경 제거 웹사이트(예: remove.bg, Adobe Express Free Background Remover 등) 또는 스마트폰 기본 갤러리의 [누끼 따기(피사체 꾹 누르기)] 기능을 사용하시면 1초 만에 깔끔한 투명 PNG 파일로 변환할 수 있습니다.'
+        },
+        {
+          q: 'Q. ChatGPT, Gemini, Grok 중 어떤 AI 모델을 쓰는 게 가장 좋나요?',
+          a: '말풍선에 한글 문구가 정확하게 적혀야 할 때는 ChatGPT(DALL-E 3)를 강력 추천합니다. 글자 없이 생동감 넘치는 표정과 동작 중심의 캐릭터를 원하실 때는 Google Gemini(Imagen 3)를 추천하며, 유머러스하고 개성 있는 코믹 연출에는 Grok이 뛰어난 성능을 보입니다.'
+        },
+        {
+          q: 'Q. 프롬프트 메이커 이용 요금은 무료인가요?',
+          a: '네! 프롬프트 메이커의 모든 기능(피사체 조합, 화풍 설정, 80종 테마, 다국어 프롬프트 복사, 캡션 생성기)은 100% 완전 무료로 무제한 이용하실 수 있습니다.'
+        }
+      ]
     },
-    {
-      q: 'Q. 생성된 15종 이모티콘 시트는 어떻게 활용하면 되나요?',
-      a: '배경을 투명하게 제거(PNG)한 뒤, ① 카톡·라인 친구/가족 단톡방에서 나만의 커스텀 스티커 짤로 전송, ② 인스타그램, 블로그, X(트위터) 프로필 및 감정 아바타, ③ 굿노트·노션 등 디지털 다이어리 다꾸 스티커, ④ 디스코드 커스텀 이모지, ⑤ 개인 소장용 굿즈(키링, 스티커 인쇄) 등으로 무궁무진하게 활용하실 수 있습니다.'
+    ja: {
+      title: 'よくある質問 (FAQ)',
+      desc: 'スタンプ制作やAIプロンプトの活用に関する疑問にお答えします。',
+      faqs: [
+        {
+          q: 'Q. AIが生成した画像をそのままLINEスタンプ等に申請できますか？',
+          a: 'いいえ、そのままの申請はできません。主要メッセンジャー各社はAI生成物をそのまま申請することを制限しています。本ツールは「キャラクターの企画・15種のポーズ構図・セリフ案（リファレンス）」を作るツールとしてご活用ください。正式リリースを目指す場合は、AI案をもとに作家様ご自身で作画・リデザインして申請してください。'
+        },
+        {
+          q: 'Q. 生成された15種スタンプシートはどのように活用できますか？',
+          a: '背景を透過(PNG)した後、①LINE等のトークルームで自作スタンプ画像として送信、②SNSのアイコンやプロフィール画像、③GoodNotesやNotionの手帳デコシール、④Discordのカスタム絵文字、⑤個人用グッズ（キーホルダー、シール印刷）などに自由に活用できます。'
+        },
+        {
+          q: 'Q. AIが生成した画像の背景透過（切り抜き）はどうすればいいですか？',
+          a: '画像を保存後、無料の背景透過サイト（remove.bgやAdobe Express等）や、スマートフォンの写真アプリ（被写体を長押しで切り抜き機能）を使えば、1秒で綺麗な透過PNGが作成できます。'
+        },
+        {
+          q: 'Q. ChatGPT、Gemini、Grokのどれを使うのがおすすめですか？',
+          a: '吹き出しの文字描画を重視するならChatGPT(DALL-E 3)、文字なしで躍動感あるポーズならGemini(Imagen 3)、ユニークでコミカルな表情ならGrokがおすすめです。'
+        },
+        {
+          q: 'Q. プロンプトメーカーの利用は無料ですか？',
+          a: 'はい！全機能（被写体選択、画風、80種以上のテーマ、多言語プロンプトコピー機能）を完全無料で無制限にご利用いただけます。'
+        }
+      ]
     },
-    {
-      q: 'Q. AI가 만든 15종 시트 이미지의 배경 투명화(누끼 따기)는 어떻게 하나요?',
-      a: '생성된 이미지를 스마트폰이나 PC에 저장한 뒤, 무료 배경 제거 웹사이트(예: remove.bg, Adobe Express Free Background Remover 등) 또는 스마트폰 기본 갤러리의 [누끼 따기(피사체 꾹 누르기)] 기능을 사용하시면 1초 만에 깔끔한 투명 PNG 파일로 변환할 수 있습니다.'
+    zh: {
+      title: '常见问题解答 (FAQ)',
+      desc: '了解关于表情包制作与AI提示词应用的相关疑问。',
+      faqs: [
+        {
+          q: 'Q. 生成的AI图像可以直接提交给微信/LINE表情平台审核吗？',
+          a: '不建议直接提交！目前各大主流平台均对纯AI生成内容有严格审核限制。本工具定位为“角色设定、15款情绪分镜、动作文案构思（设计草图参考）”。若要正式上架，请以AI草图为灵感，由画师亲自勾线重绘提交。'
+        },
+        {
+          q: 'Q. 生成的15款表情包在日常中如何使用？',
+          a: '一键去除背景保存为PNG后，可①在聊天群中作为专属表情包发送，②用作小红书/微博/微信头像，③用于GoodNotes等电子手账贴纸，④作为Discord等社区自定义表情，⑤定制钥匙扣或个人实体贴纸。'
+        },
+        {
+          q: 'Q. 如何为AI生成的表情包去除背景（抠图）？',
+          a: '将生成的图片保存后，使用免费在线抠图工具（如remove.bg、Adobe Express等）或手机相册长按一键抠图功能，1秒即可转为透明PNG格式。'
+        },
+        {
+          q: 'Q. ChatGPT、Gemini、Grok哪个模型最好用？',
+          a: '如果需要精准生成带字气泡，推荐ChatGPT(DALL-E 3)；如果侧重于纯动作与丰富表情，推荐Gemini(Imagen 3)；若追求幽默恶搞画风，Grok表现更佳。'
+        },
+        {
+          q: 'Q. 本提示词生成器完全免费吗？',
+          a: '是的！本平台所有功能（主体组合、画风、80+主题、多语言提示词一键复制）均100%永久免费使用。'
+        }
+      ]
     },
-    {
-      q: 'Q. ChatGPT, Gemini, Grok 중 어떤 AI 모델을 쓰는 게 가장 좋나요?',
-      a: '말풍선에 한글 문구가 정확하게 적혀야 할 때는 ChatGPT(DALL-E 3)를 강력 추천합니다. 글자 없이 생동감 넘치는 표정과 동작 중심의 캐릭터를 원하실 때는 Google Gemini(Imagen 3)를 추천하며, 유머러스하고 개성 있는 코믹 연출에는 Grok이 뛰어난 성능을 보입니다.'
-    },
-    {
-      q: 'Q. 프롬프트 메이커 이용 요금은 무료인가요?',
-      a: '네! 프롬프트 메이커의 모든 기능(피사체 조합, 화풍 설정, 80종 테마, 다국어 프롬프트 복사, 캡션 생성기)은 100% 완전 무료로 무제한 이용하실 수 있습니다.'
+    en: {
+      title: 'Frequently Asked Questions (FAQ)',
+      desc: 'Find answers to common questions about emoticon creation and AI prompts.',
+      faqs: [
+        {
+          q: 'Q. Can I submit AI-generated images directly to official sticker stores?',
+          a: 'No, direct submission is restricted! Most major messaging platforms restrict purely AI-generated submissions. Use this tool for "character ideation, 15-cut emotion mapping, and pose/dialogue reference drafts". For official store releases, use the AI sheet as a creative guide and redraw/refine the final artwork.'
+        },
+        {
+          q: 'Q. How can I use the generated 15-sticker set?',
+          a: 'After removing the background (PNG), you can use them as ① custom chat image stickers for friends/family, ② social profile avatars (Instagram, X, Discord), ③ digital planner stickers (GoodNotes, Notion), ④ community emojis, or ⑤ personal merchandise (keychains, prints).'
+        },
+        {
+          q: 'Q. How do I remove the background of the 15-cut sheet?',
+          a: 'Save the image to your device, then use free online background removers (like remove.bg or Adobe Express) or smartphone gallery cutout tools (long-press subject) to get transparent PNGs in 1 second.'
+        },
+        {
+          q: 'Q. Which AI model (ChatGPT, Gemini, Grok) is best?',
+          a: 'ChatGPT (DALL-E 3) is best for rendering speech bubble text. Google Gemini (Imagen 3) excels at vivid expressions without text, and Grok shines at humorous comic sketches.'
+        },
+        {
+          q: 'Q. Is Prompt Maker free to use?',
+          a: 'Yes! All features (subject combinations, styles, 80+ themes, multilingual prompt copy) are 100% free with unlimited access.'
+        }
+      ]
     }
-  ];
+  };
 
+  const cur = data[lang] || data['ko'];
 
   const toggle = (idx) => {
     setOpenIdx(openIdx === idx ? null : idx);
@@ -1691,16 +2216,16 @@ const SectionFAQ = ({ lang }) => {
         <span className="text-[24px]">❓</span>
         <div>
           <h2 className="text-[18px] sm:text-[20px] font-black text-slate-900 tracking-tight">
-            {lang === 'ko' ? '자주 묻는 질문 (FAQ)' : 'Frequently Asked Questions (FAQ)'}
+            {cur.title}
           </h2>
           <p className="text-[12.5px] sm:text-[13.5px] text-slate-500 mt-0.5">
-            {lang === 'ko' ? '이모티콘 제작 및 AI 프롬프트 활용에 대해 궁금한 점을 확인하세요.' : 'Common questions about emoticon generation, licensing, and studio guidelines.'}
+            {cur.desc}
           </p>
         </div>
       </div>
 
       <div className="flex flex-col gap-2.5 mt-1">
-        {faqs.map((faq, idx) => (
+        {cur.faqs.map((faq, idx) => (
           <div key={idx} className="border border-slate-200 rounded-lg overflow-hidden transition-all">
             <button
               onClick={() => toggle(idx)}
