@@ -1274,12 +1274,23 @@ const PrivacyPage = ({ lang, onBack }) => {
 
             <section>
               <h2 className="text-[18px] font-bold text-slate-900 mb-2">5. 개인정보 보호책임자 및 문의처</h2>
-              <p>서비스의 개인정보 관리 및 문의 사항은 아래의 이메일로 접수해 주시면 신속하게 답변해 드립니다.</p>
-              <div className="bg-slate-50 p-4 rounded-lg border border-slate-200 mt-2">
-                <p className="text-[14px] text-slate-700">
-                  • <strong>서비스명:</strong> 프롬프트 메이커 (Prompt Maker)<br />
-                  • <strong>책임자 이메일:</strong> <span className="font-bold text-slate-900">ssaw7@naver.com</span>
-                </p>
+              <p>서비스의 개인정보 관리, 오류 제보 및 문의 사항은 아래의 온라인 문의 창구를 통해 접수해 주시면 신속하게 검토하여 처리해 드립니다.</p>
+              <div className="bg-slate-50 p-4 rounded-lg border border-slate-200 mt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                  <p className="text-[14px] text-slate-700">
+                    • <strong>서비스명:</strong> 프롬프트 메이커 (Prompt Maker)<br />
+                    • <strong>접수 창구:</strong> 1:1 온라인 고객 피드백 & 문의 폼
+                  </p>
+                </div>
+                <a
+                  href="https://forms.gle/Q2oG84fL4B9g2Jda7"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="interactive-control inline-flex items-center justify-center gap-1.5 px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white font-bold text-[13px] rounded-lg shadow-xs transition-all shrink-0 cursor-pointer"
+                >
+                  <span>📝 구글 폼 문의 접수</span>
+                  <span>↗</span>
+                </a>
               </div>
             </section>
           </div>
@@ -1357,7 +1368,7 @@ const TermsPage = ({ lang, onBack }) => {
             <section>
               <h2 className="text-[18px] font-bold text-slate-900 mb-2">제4조 (문의처)</h2>
               <p>
-                서비스 이용 관련 문의 사항 및 건의 사항은 이메일(<span className="font-bold text-slate-900">ssaw7@naver.com</span>)로 접수해 주시기 바랍니다.
+                서비스 이용 관련 문의 사항, 제휴 제안 및 건의 사항은 <a href="https://forms.gle/Q2oG84fL4B9g2Jda7" target="_blank" rel="noopener noreferrer" className="text-amber-700 underline font-bold">1:1 온라인 문의 폼(Google Forms)</a>을 통해 접수해 주시기 바랍니다.
               </p>
             </section>
           </div>
@@ -5675,10 +5686,13 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
             </button>
             <span className="text-slate-300">|</span>
             <a
-              href="mailto:ssaw7@naver.com"
-              className="interactive-control hover:text-amber-700 underline underline-offset-4 cursor-pointer transition-colors"
+              href="https://forms.gle/Q2oG84fL4B9g2Jda7"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="interactive-control hover:text-amber-700 underline underline-offset-4 cursor-pointer transition-colors flex items-center gap-1"
             >
-              {lang === 'ko' ? '제휴 및 문의' : lang === 'ja' ? 'お問い合わせ' : lang === 'zh' ? '联系我们' : 'Contact Us'}
+              <span>{lang === 'ko' ? '제휴 및 문의 (구글 폼)' : lang === 'ja' ? 'お問い合わせ' : lang === 'zh' ? '联系我们' : 'Contact Us'}</span>
+              <span className="text-[10px]">↗</span>
             </a>
           </div>
 
