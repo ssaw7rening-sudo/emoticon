@@ -1586,31 +1586,22 @@ const SectionEmotionFormula = ({ lang }) => {
       pillStyle: 'bg-white/95 text-emerald-900 border-emerald-200/90 shadow-2xs'
     },
     {
-      group: '2. 일상 대답 & 따뜻한 응원',
-      count: '4종',
+      group: '2. 일상 소통 & 따뜻한 응원',
+      count: '5종',
       icon: '💪',
-      items: ['오늘도 화이팅', '좋아요', '축하해요', '다 잘될 거야'],
+      items: ['오늘도 화이팅', '좋아요', '축하해요', '다 잘될 거야', '인정! (Good)'],
       cardStyle: 'bg-blue-50/70 border-blue-200/90 text-blue-950',
       badgeStyle: 'bg-blue-500/15 text-blue-800 border-blue-300',
       pillStyle: 'bg-white/95 text-blue-900 border-blue-200/90 shadow-2xs'
     },
     {
-      group: '3. 현실 공감 & 피로 회복',
-      count: '4종',
+      group: '3. 현실 공감 & 반전 재미',
+      count: '5종',
       icon: '☕',
-      items: ['수고했어요', '네 (영혼 탈출)', '살려줘요', '잘자요 꿀잠'],
+      items: ['수고했어요', '네 (영혼 탈출)', '살려줘요', '헐 대박', '잘자요 꿀잠'],
       cardStyle: 'bg-amber-50/70 border-amber-200/90 text-amber-950',
       badgeStyle: 'bg-amber-500/15 text-amber-800 border-amber-300',
       pillStyle: 'bg-white/95 text-amber-900 border-amber-200/90 shadow-2xs'
-    },
-    {
-      group: '4. 당황 & 반전 리액션',
-      count: '2종',
-      icon: '⚡',
-      items: ['헐 대박', '킹받네 (분노)'],
-      cardStyle: 'bg-rose-50/70 border-rose-200/90 text-rose-950',
-      badgeStyle: 'bg-rose-500/15 text-rose-800 border-rose-300',
-      pillStyle: 'bg-white/95 text-rose-900 border-rose-200/90 shadow-2xs'
     }
   ];
 
@@ -1620,25 +1611,25 @@ const SectionEmotionFormula = ({ lang }) => {
         <span className="text-[24px]">✨</span>
         <div>
           <h2 className="text-[18px] sm:text-[20px] font-black text-slate-900 tracking-tight">
-            {lang === 'ko' ? '추천 이모티콘 15종 필수 감정 황금 조합' : '15 Essential Emotion Formula for Daily Chat'}
+            {lang === 'ko' ? '추천 이모티콘 15종 필수 감정 황금 조합 (5종 × 3세트)' : '15 Essential Emotion Formula for Daily Chat (5 × 3 Sets)'}
           </h2>
           <p className="text-[12.5px] sm:text-[13.5px] text-slate-500 mt-0.5">
-            {lang === 'ko' ? '실제 메신저 채팅에서 매일 쓰이는 감정 빈도수를 분석하여 최적화된 15개 컷 구조입니다.' : 'Optimized 15-cut set structure based on daily messenger usage patterns.'}
+            {lang === 'ko' ? '실제 메신저 채팅에서 매일 쓰이는 핵심 15개 컷을 5종씩 3개 황금 테마로 균형 있게 구성했습니다.' : 'Balanced 15-sticker set structure divided evenly into 3 core groups of 5.'}
           </p>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 mt-1">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5 mt-1">
         {categories.map((c, idx) => (
-          <div key={idx} className={`p-4 sm:p-4.5 rounded-xl border flex flex-col justify-between gap-2.5 ${c.cardStyle}`}>
+          <div key={idx} className={`p-4 sm:p-4.5 rounded-xl border flex flex-col justify-between gap-3 ${c.cardStyle}`}>
             <div className="flex items-center justify-between gap-2">
-              <div className="flex items-center gap-1.5">
-                <span className="text-[16px]">{c.icon}</span>
-                <span className="text-[14px] sm:text-[14.5px] font-extrabold tracking-tight">
+              <div className="flex items-center gap-1.5 min-w-0">
+                <span className="text-[16px] shrink-0">{c.icon}</span>
+                <span className="text-[13.5px] sm:text-[14px] font-extrabold tracking-tight truncate">
                   {c.group}
                 </span>
               </div>
-              <span className={`text-[11.5px] font-black px-2.5 py-0.5 rounded-full border shrink-0 ${c.badgeStyle}`}>
+              <span className={`text-[11px] font-black px-2.5 py-0.5 rounded-full border shrink-0 ${c.badgeStyle}`}>
                 {c.count}
               </span>
             </div>
@@ -1659,6 +1650,7 @@ const SectionEmotionFormula = ({ lang }) => {
     </section>
   );
 };
+
 
 
 // 메인 하단 섹션 5: 자주 묻는 질문 (FAQ Accordion)
