@@ -2069,7 +2069,7 @@ const SectionEmotionFormula = ({ lang, onApplyFormula }) => {
   return (
     <section className="bg-white rounded-xl p-5 sm:p-7 border border-slate-200/90 shadow-xs flex flex-col gap-4 break-keep">
       <div className="flex items-center gap-2.5">
-        <span className="text-[24px]">✨</span>
+        <span className="text-[24px]">🎯</span>
         <div>
           <h2 className="text-[18px] sm:text-[20px] font-black text-slate-900 tracking-tight">
             {cur.title}
@@ -2112,7 +2112,11 @@ const SectionEmotionFormula = ({ lang, onApplyFormula }) => {
       {onApplyFormula && (
         <div className="mt-1 bg-gradient-to-r from-amber-50 via-amber-100/35 to-amber-50 p-3.5 sm:p-4 rounded-xl border border-amber-200/80 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-2xs break-keep">
           <div className="flex items-center gap-2 text-[12.5px] sm:text-[13px] text-amber-950 font-medium text-center sm:text-left break-keep leading-snug">
-            <span className="text-[16px] shrink-0">✨</span>
+            <span className="w-5 h-5 rounded-full bg-amber-500/20 text-amber-800 flex items-center justify-center shrink-0">
+              <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </span>
             <span className="break-keep">{cur.applyAllSub}</span>
           </div>
           <button
