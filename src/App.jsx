@@ -2112,7 +2112,7 @@ const SectionEmotionFormula = ({ lang, onApplyFormula }) => {
       {onApplyFormula && (
         <div className="mt-1 bg-gradient-to-r from-amber-50 via-amber-100/35 to-amber-50 p-3.5 sm:p-4 rounded-xl border border-amber-200/80 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-2xs break-keep">
           <div className="flex items-center gap-2 text-[12.5px] sm:text-[13px] text-amber-950 font-medium text-center sm:text-left break-keep leading-snug">
-            <span className="text-[16px] shrink-0">💡</span>
+            <span className="text-[16px] shrink-0">✨</span>
             <span className="break-keep">{cur.applyAllSub}</span>
           </div>
           <button
