@@ -1577,24 +1577,40 @@ const SectionPrinciples = ({ lang }) => {
 const SectionEmotionFormula = ({ lang }) => {
   const categories = [
     {
-      group: '1. 대화 시작 & 긍정 리액션 (5종)',
-      examples: '안녕!, 최고야!, 고마워요, 사랑해요, 오예!',
-      color: 'bg-emerald-50 text-emerald-900 border-emerald-200'
+      group: '1. 대화 시작 & 긍정 리액션',
+      count: '5종',
+      icon: '🎉',
+      items: ['안녕!', '최고야!', '고마워요', '사랑해요', '오예!'],
+      cardStyle: 'bg-emerald-50/70 border-emerald-200/90 text-emerald-950',
+      badgeStyle: 'bg-emerald-500/15 text-emerald-800 border-emerald-300',
+      pillStyle: 'bg-white/95 text-emerald-900 border-emerald-200/90 shadow-2xs'
     },
     {
-      group: '2. 일상 대답 & 응원 (4종)',
-      examples: '오늘도 화이팅, 좋아요, 축하해요, 다 잘될 거야',
-      color: 'bg-blue-50 text-blue-900 border-blue-200'
+      group: '2. 일상 대답 & 따뜻한 응원',
+      count: '4종',
+      icon: '💪',
+      items: ['오늘도 화이팅', '좋아요', '축하해요', '다 잘될 거야'],
+      cardStyle: 'bg-blue-50/70 border-blue-200/90 text-blue-950',
+      badgeStyle: 'bg-blue-500/15 text-blue-800 border-blue-300',
+      pillStyle: 'bg-white/95 text-blue-900 border-blue-200/90 shadow-2xs'
     },
     {
-      group: '3. 현실 공감 & 피로 (4종)',
-      examples: '수고했어요, 네(영혼 탈출), 살려줘요, 잘자요 꿀잠',
-      color: 'bg-amber-50 text-amber-900 border-amber-200'
+      group: '3. 현실 공감 & 피로 회복',
+      count: '4종',
+      icon: '☕',
+      items: ['수고했어요', '네 (영혼 탈출)', '살려줘요', '잘자요 꿀잠'],
+      cardStyle: 'bg-amber-50/70 border-amber-200/90 text-amber-950',
+      badgeStyle: 'bg-amber-500/15 text-amber-800 border-amber-300',
+      pillStyle: 'bg-white/95 text-amber-900 border-amber-200/90 shadow-2xs'
     },
     {
-      group: '4. 당황 & 감정 폭발 (2종)',
-      examples: '헐 대박, 킹받네(분노)',
-      color: 'bg-rose-50 text-rose-900 border-rose-200'
+      group: '4. 당황 & 반전 리액션',
+      count: '2종',
+      icon: '⚡',
+      items: ['헐 대박', '킹받네 (분노)'],
+      cardStyle: 'bg-rose-50/70 border-rose-200/90 text-rose-950',
+      badgeStyle: 'bg-rose-500/15 text-rose-800 border-rose-300',
+      pillStyle: 'bg-white/95 text-rose-900 border-rose-200/90 shadow-2xs'
     }
   ];
 
@@ -1612,19 +1628,38 @@ const SectionEmotionFormula = ({ lang }) => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-1">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 mt-1">
         {categories.map((c, idx) => (
-          <div key={idx} className={`p-4 rounded-lg border ${c.color} flex flex-col gap-1.5`}>
-            <span className="text-[13.5px] font-extrabold">{c.group}</span>
-            <p className="text-[12.5px] sm:text-[13px] font-medium opacity-90">
-              💡 대표 문구: <span className="font-bold">{c.examples}</span>
-            </p>
+          <div key={idx} className={`p-4 sm:p-4.5 rounded-xl border flex flex-col justify-between gap-2.5 ${c.cardStyle}`}>
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-1.5">
+                <span className="text-[16px]">{c.icon}</span>
+                <span className="text-[14px] sm:text-[14.5px] font-extrabold tracking-tight">
+                  {c.group}
+                </span>
+              </div>
+              <span className={`text-[11.5px] font-black px-2.5 py-0.5 rounded-full border shrink-0 ${c.badgeStyle}`}>
+                {c.count}
+              </span>
+            </div>
+
+            <div className="flex flex-wrap gap-1.5 mt-0.5">
+              {c.items.map((item, itemIdx) => (
+                <span
+                  key={itemIdx}
+                  className={`text-[12px] sm:text-[12.5px] font-bold px-2.5 py-1 rounded-lg border whitespace-nowrap leading-none ${c.pillStyle}`}
+                >
+                  {item}
+                </span>
+              ))}
+            </div>
           </div>
         ))}
       </div>
     </section>
   );
 };
+
 
 // 메인 하단 섹션 5: 자주 묻는 질문 (FAQ Accordion)
 const SectionFAQ = ({ lang }) => {
