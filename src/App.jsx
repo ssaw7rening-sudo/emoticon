@@ -2282,8 +2282,10 @@ const SectionFAQ = ({ lang }) => {
               className="interactive-control w-full px-4 py-3.5 text-left bg-slate-50/70 hover:bg-slate-100/80 flex items-center justify-between gap-3 font-bold text-[13.5px] sm:text-[14.5px] text-slate-900 cursor-pointer"
             >
               <span>{faq.q}</span>
-              <span className="text-slate-400 font-mono text-[16px] shrink-0">
-                {openIdx === idx ? '▲' : '▼'}
+              <span className={`w-6 h-6 rounded-full flex items-center justify-center bg-slate-100/80 text-slate-500 shrink-0 transition-transform duration-200 ${openIdx === idx ? 'rotate-180 bg-amber-100 text-amber-800' : ''}`}>
+                <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
               </span>
             </button>
             {openIdx === idx && (
