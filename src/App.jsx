@@ -5,7 +5,7 @@ import { Shuffle, CheckCircle2, Bot, Sparkles, Zap, Trash2, RotateCcw } from "lu
 const THEMES_KO = {
   '일상/인사 ①': ['ㅋㅋㅋㅋ', '안녕!', '오늘도 화이팅', '좋아요', '고마워요', '사랑해요', '최고!', '오예', '미안해요', '수고했어요', '축하해요', '대박', '헐', '감동', '잘자요'],
   '일상/인사 ②': ['잘 부탁드려요', '무슨 일이야?', '밥 먹었어?', '보고 싶다', '좋은 아침!', '심심해', '어디야?', '놀자!', '힘내!', '응원할게', '최고야!', '완벽해!', '기대돼!', '오늘도 수고했어', '다음에 봐!'],
-  '직장인 ①': ['출근 중', '퇴근할게요!', '먼저 퇴근합니다', '확인했습니다', '네, 알겠습니다', '월요병', '월급날!', '커피 수혈 중', '회의 중', '야근 중', '오늘도 고생했어', '불금이다!', '퇴사하고 싶다', '넵!', '살려줘…'],
+  '직장인 ①': ['출근 중', '퇴근할게요!', '먼저 퇴근합니다', '확인했습니다', '네', '알겠습니다', '월요병', '월급날!', '커피 수혈 중', '회의 중', '야근 중', '오늘도 고생했어', '불금이다!', '퇴사하고 싶다', '넵!', '살려줘…'],
   '직장인 ②': ['칼퇴 성공!', '확인 부탁드립니다', '잠시만요', '수고하셨습니다', '점심 뭐 먹지?', '일하기 싫다', '영혼 가출', '눈물 찔끔', '할 일이 태산', '답장이 늦었습니다', '수고하세요', '멘붕 상태', '주말만 기다려', '잠깐 쉬는 중', '연차 쓸게요'],
   '학생/학교 ①': ['등교 중', '시험 끝났다!', '망했다…', '끝나고 뭐해?', '과제 폭탄', '지각이다!', '밤샘 공부', '방학 언제 와?', '방학이다!', '자리 바꿔줘', '급식 뭐 나오지?', '교과서 빌려줘', '졸려…', 'A+ 가자!', '졸업 축하해!'],
   '학생/학교 ②': ['학식 먹으러 가자', '수업 중', '필기 좀 보여줘', '쉬는 시간!', '동아리 가는 중', '중간고사 기간', '재수강 각', '독서실 자리 잡음', '학교 가기 싫어', '집에 가고 싶다', '수학여행 기대돼', '체육대회 1등!', '야자 쨀까?', '공부 1도 안 함', '합격 기원!'],
@@ -83,6 +83,24 @@ const THEMES_KO = {
   '결혼/신혼부부 ②': ['여보 사랑해', '빨래 널어줘', '데이트 가자', '야식 콜?', '여보 삐졌어?', '찌개 끓였어', '기념일 축하해', '결혼 조하~', '음쓰 버려줘', '여보뿐이야', '안마해 줄게', '달달한 우리', '행복한 우리 집', '조심히 들어와', '여보 잘자요'],
   'MZ 신조어/단축어 ①': ['갓생 사는 중', '알잘딱깔센', '중꺾마!', '폼 미쳤다', '오히려 좋아', '억까 당함', '스불재...', '킹받네', '오운완!', '점메추 ㄱ?', '극락...', '내또출...', '주말순삭', '생존신고!', '기절각 zZ'],
   '학생/10대 유행어 ②': ['하교각!', '매점 ㄱ?', '벼락치기 중', '시험 망함', 'ㅇㅈ (인정)', 'ㄹㅇ 팩트', 'ㄱㄷ (기달)', 'ㄱㅊ (괜찮)', '나 지금 진지함', '학탈 성공', '배고파 기절', '숙제 했어?', '폰 압수...', '달려보자!', '내일 봐!'],
+  '새/반려조 ①': ['짹짹 좋은 아침', '깃털 뿜뿜', '해바라기씨 냠냠', '횃대에서 갸우뚱', '날아올라!', '짹! 화났음', '뽀뽀 쪽~', '모이 주세요', '새벽 기상 완료', '날개 활짝', '집사야 놀자', '짹짹짹 수다 중', '폭풍 날갯짓', '깃털 정리 중', '꿀잠 자요'],
+  '새/반려조 ②': ['짹짹짹!', '새장 탈출 성공', '주인 손가락 콕!', '부리 갈기 쓱쓱', '호기심 가득 눈빛', '날개 스트레칭', '새장 속 노래자랑', '안마해 줘', '모이통 털기', '새소리 알람', '윙크 발사', '바람을 가르며', '폭풍 애교', '집사 바라기', '오늘도 행복한 새'],
+  '수족관/해양생물 ①': ['물멍 힐링 중', '뻐끔뻐끔', '바닷속 쿨쿨', '파도 타기', '조개 속 콕!', '먹물 뿜뿜', '헤엄치는 중', '신선도 100%', '바다처럼 넓은 마음', '미끌미끌', '수족관 나들이', '낚이지 마라', '촉수 댄스', '월척이다!', '깊은 바다 굿밤'],
+  '수족관/해양생물 ②': ['산호초 탐험', '지느러미 펄럭', '거품 방울 퐁퐁', '바다거북 수영', '물속의 평화', '해파리 둥둥', '조개 속 진주', '숨 참기 1등', '바다 친구들 모여', '해류 타고 이동', '심해 탐사 완료', '물속에서 뒹굴', '어항 청소 완료', '시원한 물맛', '바다 굿나잇'],
+  '숲속/곤충 ①': ['꿀벌처럼 열일 중', '뽈뽈뽈 이동 중', '반짝반짝 반딧불', '나풀나풀 날아가', '달콤한 꿀맛', '나무 위에서 낮잠', '힘내라 영차!', '풀잎 위 힐링', '더듬이 레이더 가동', '숲속 탐험대', '이슬 한 모금', '동글동글 굴려라', '날개 파닥파닥', '숨바꼭질 중', '숲속 굿나잇'],
+  '숲속/곤충 ②': ['꿀단지 사수!', '꽃가루 퐁퐁', '영차영차 나르기', '자연 속 힐링', '낙엽 아래 휴식', '풀잎 침대 포근', '숲의 오케스트라', '아침 이슬 냠냠', '더듬이 인사', '나무 타기 명수', '꿀벌 댄스', '도토리 굴리기', '숲속 나들이', '자연과 하나됨', '달밤의 숲속'],
+  '파충류/우파루파 ①': ['우파루파 뻐끔', '개굴개굴 노래해', '카멜레온 변신!', '일광욕 즐기는 중', '도마뱀 꼬리 슉', '말랑말랑 아가미', '느긋하게 힐링', '풀잎 위에서 찰칵', '혀 낼름 냠냠', '우파루파 미소', '개구리 점프!', '동글동글 눈맞춤', '도롱뇽 헤엄', '따뜻한 바위 위', '꿀잠 자요 굿밤'],
+  '파충류/우파루파 ②': ['물속에서 둥둥', '개구리 합창', '벽 타기 성공!', '귀여운 아가미 펄럭', '느긋한 오후', '비 오는 날 신나', '카멜레온 은신술', '도마뱀 윙크', '조용한 힐링', '우파루파 하트', '연잎 우산 쓰고', '초록 숲 탐험', '아가미 살랑살랑', '바위 밑 휴식', '편안한 밤 되세요'],
+  '공룡/고생물 ①': ['크아앙! 공룡 출몰', '쿵쾅쿵쾅 발걸음', '고기 먹방 타임', '백악기 탐험 중', '공룡 파워!', '알 깨고 나왔어요', '초식공룡 냠냠', '익룡처럼 날아올라', '화석 발굴 완료', '티라노 포효!', '화산 폭발 도망쳐', '공룡 꼬리 치기', '아기 공룡 걸음마', '평화로운 쥐라기', '공룡 꿈꿔요'],
+  '공룡/고생물 ②': ['티라노 한입만', '브라키오 긴 목 힐링', '박치기 승부!', '화석이 될 것 같아', '공룡알 품는 중', '익룡 활공 중', '원시림 산책', '화석 발견 대박!', '트리케라 뿔 공격', '발자국 쿵쿵', '공룡 댄스 타임', '메머드 털 따뜻해', '빙하기 탈출!', '고생물 친구들', '쥐라기 굿밤'],
+  '군인/곰신 ①': ['충성! 전역 기원', '휴가 나왔다!', '전화 받아줘', '복귀 중 (눈물)', '인터넷 편지 보냈어', '오늘도 보고 싶어', '디데이 -100', 'PX 털어왔다!', '훈련 끝 뿌듯', '나라 지키는 중', '군화 신고 달린다', '기다려줘서 고마워', '칼각 잡는 중', '전역 축하해!', '꿀잠 자요 충성'],
+  '군인/곰신 ②': ['기상 나팔 빵빵', '점호 준비 완료', '군대리아 냠냠', '사격 만발 명사수', '행군 완주 성공', '꽃신 신겨줄게', '군번줄 목걸이', '동기사랑 나라사랑', '택배 보내줘', '면회 와줘!', '포상휴가 땄다!', '각개전투 완료', '곰신 1일차', '끝까지 기다릴게', '단결! 수고했습니다'],
+  'K-직장인 속마음 ①': ['네(영혼 가출)', '카톡 오타 죄송', '내일 연차 씁니다', '퇴사 마렵다', '회의 중 멍때리기', '시말서 각 ㅠㅠ', '월급이 로그아웃', '살려주세요...', '금융치료 완료', '보고서 뒤집어짐', '칼퇴 10초 전', '상사 눈치 보는 중', '커피로 생명 연장', '주말만 기다려', '집에 보내줘'],
+  'K-직장인 속마음 ②': ['영혼 없는 리액션', '출근 5분 전 멘붕', '탕비실 털러 감', '메일 잘못 보냄(식은땀)', '승진 축하 턱 내놔', '월요병 극복 불가', '회의실 감금 중', '야근 메이트 구함', '월급날만 버틴다', '넵 알겠습니다(무념)', '오늘 점심 뭐 먹지', '퇴사짤 저장 중', '금요일 밤 불타오름', '연차 결재 완료 만세', '내일 또 출근...'],
+  '집사/고양이 전용 ①': ['냥냥펀치!', '골골송 발사 중', '꾹꾹이 서비스', '츄르 대령해라', '궁디팡팡 해줘', '집사야 한심하다', '캣타워 정복 완료', '발톱 깎기 싫어!', '상자 속 쏙~', '꼬리 살랑살랑', '야옹~ 밥 줘', '그루밍 타임', '식빵 굽는 중', '집사 무릎 착석', '냥이 꿀잠'],
+  '집사/고양이 전용 ②': ['하찮은 집사 녀석', '사냥 놀이 시작', '사고 치고 당당', '캣닢 파티', '새벽 우다다 타임', '젤리 발바닥 도장', '문 열어라 집사야', '눈키스 깜빡깜빡', '간식 내놓아라', '레이저 잡기 실패', '털 뿜뿜 힐링', '높은 곳이 좋아', '삐진 고양이', '집사 사랑해 (츤데레)', '골골송 굿밤'],
+  '댕댕이/강아지 전용 ①': ['산책! 산책! 산책!', '꼬리 헬리콥터', '주인님 오셨다!(격환)', '간식 주면 뽀뽀', '공 던져줘!', '개껌 뜯는 중', '손! 코! 엎드려!', '귀 펄럭이며 질주', '배 뒤집고 애교', '목욕 싫어 으르렁', '침대 점령 완료', '코 킁킁 탐색', '말티즈 참지 않음', '포근한 낮잠', '주인님 사랑해요'],
+  '댕댕이/강아지 전용 ②': ['발바닥 꼬순내', '터그놀이 한판', '간식 가방 지킴이', '물놀이 첨벙첨벙', '사고 치고 눈치 봄', '산책 더 할래!', '댕댕이 뒹굴뒹굴', '빗질 얌전히 받음', '친구 멍멍이 만남', '주인바라기 멍멍', '하울링 아우~', '포근한 개 침대', '하이파이브!', '간식 냄새 포착', '댕댕이 굿나잇'],
 };
 
 const THEMES_EN = {
@@ -99,7 +117,7 @@ const THEMES_EN = {
   'Health/Fatigue ①': ['Exhausted to death', 'Headache', 'Gonna sleep early', 'Did you take meds?', 'Back hurts', 'Battery at 1%', 'Need healing', 'Going to clinic', 'Stay healthy!', 'Take vitamins', 'Need more coffee', 'Stiff shoulders', 'Blurry eyes', 'Caught a cold', 'No energy left…'],
   'Health/Fatigue ②': ['Fainting soon', 'Taking supplements', 'Whole body aches', 'Slept so well!', 'Stretching out', 'Breathing exercise', 'Want a massage', 'Proof of life', 'Don\'t push too hard', 'Immunity drop', 'Lying in bed', 'Built up fatigue', 'Warm cup of tea', 'Get well soon', 'Revived completely!'],
   'Humor/Memes ①': ['Whatever', 'So triggered', 'Clean & tidy', 'Got unfairly wrecked', 'Form is crazy', 'Actually better', 'Unbroken heart', 'Let\'s gooo~', 'Are you a T?', 'Baking bread', 'What in the world', 'Absolute legend', 'Inner dance party', 'Brain freeze', 'Is this right?'],
-  'Humor/Memes ②': ['Ascending to heaven', 'Wait, this works?', 'Too much to say', 'Living god life', 'Ask me anything', 'Fake news right?', 'Got fact checked', 'Why is this real?', 'Logical suspicion', 'Mental shattered', 'Fangirling hard', 'Grabbing popcorn', 'Funny but sad', 'Burst out laughing', 'Fact violence'],
+  'Humor/Memes ②': ['Ascending to heaven', 'Wait', 'this works?', 'Too much to say', 'Living god life', 'Ask me anything', 'Fake news right?', 'Got fact checked', 'Why is this real?', 'Logical suspicion', 'Mental shattered', 'Fangirling hard', 'Grabbing popcorn', 'Funny but sad', 'Burst out laughing', 'Fact violence'],
   'Emotions ①': ['So happy!', 'Touched to tears', 'So angry (fuming)', 'Waaaah (crying)', 'Surprise jump scare', 'Heart fluttering', 'Bored to death', 'Lonely…', 'Blushing (shy)', 'Scared to death', 'So frustrating', 'Annoyed!', 'Super confident', 'Feeling proud', 'Don\'t worry!'],
   'Emotions ②': ['Feeling so refreshed', 'Mental collapse', 'So hyped up yay~', 'Feeling hurt…', 'Feeling fantastic!', 'Relief (phew~)', 'Jealous explosion', 'Flustered (sweat drop)', 'Shock and horror', 'Mesmerized gaze', 'Deep in regret…', 'So unfair!', 'Heartwarming', 'Shocked out of mind', 'Overflowing with love'],
   'Couples/Romance ①': ['I miss you', 'What are you doing?', 'I love you ♥', 'Together forever', 'See you in dreams', 'Wanna hear your voice', 'Send me a selfie', 'Hold my hand?', 'Give me a hug', 'Lonely babe', 'Wanna see you soon', 'My darling', 'Good night sweet dreams', 'Fell for you again', 'Heart thump!'],
@@ -138,7 +156,7 @@ const THEMES_EN = {
   'Frugal/No Spend ②': ['Saved coffee money', 'Forced savings', 'Temptation resisted', 'Cart cleared', 'Debit card only', 'Raid the fridge', 'Dining out ban', 'Frugal Day 1', 'Account revived', 'Got freebies', 'Bonus to savings', 'Trash receipt', 'Spending fast', 'Future rich', 'Budget joy'],
   'Study/Career ①': ['Studying hard!', 'Library check-in', '10hr study', 'Wake up check', 'Stay focused', 'D-Day countdown', 'Ace the interview', 'Get hired!', 'Pass the exam', 'Due today', 'Taking notes', 'Crush tests', 'Beat sleepiness', 'Bright future', 'Study done!'],
   'Study/Career ②': ['Off to study cafe', 'Memorizing vocab', 'Top exam grade', 'Super motivated', 'Analyzing exams', 'Success story', 'Falling asleep', 'Reviewing mistakes', 'Study session on', 'Proof of study', 'Goal achieved!', 'Certificate earned', 'Never give up', 'Offer received', 'Good job today'],
-  'Solo Life/Home ①': ['Delivery arrived!', 'Solo dining', 'Solo drink (Cheers)', 'Empty fridge', 'Hanging laundry', 'Trash day', 'Bug alert! (Scream)', 'Craving home food', 'Clean room', 'Binge watching', 'Unboxing parcel', 'Lightbulb fixed', 'Home chef', 'Cozy sweet room', 'Lights out, gn'],
+  'Solo Life/Home ①': ['Delivery arrived!', 'Solo dining', 'Solo drink (Cheers)', 'Empty fridge', 'Hanging laundry', 'Trash day', 'Bug alert! (Scream)', 'Craving home food', 'Clean room', 'Binge watching', 'Unboxing parcel', 'Lightbulb fixed', 'Home chef', 'Cozy sweet room', 'Lights out', 'gn'],
   'Solo Life/Home ②': ['Grocery haul done', 'Air fryer cooking', 'Microwave meal', 'Dishes for later', 'Cozy home chill', 'Scented candle', 'Home cafe vibes', 'Delivery fee ouch', 'Weekend sleep-in', 'DIY interior', 'Windows locked', 'Late night ramen', 'My space is best', 'Safe and sound', 'Goodnight sweet room'],
   'Hangout/Cafe ①': ['5 mins away', 'Where are you?', 'Cafe time!', 'Iced coffee refill', 'Got a table', 'In line waiting', 'So delicious!', 'Room for dessert', 'Hurry over!', 'What to drink?', 'Let\'s head out', 'So full!', 'Photo time 📸', 'So much fun', 'See you soon'],
   'Hangout/Cafe ②': ['Where is our seat?', 'Browsing menu', 'Dessert is served', 'Great photo taken!', 'Endless chatting', 'Healing moment', 'Best coffee spot', 'One more cup?', 'Aesthetic cafe view', 'Snapshot time', 'Sugar rush boost', 'Next stop where?', 'Time flew by!', 'Heading home', 'Let\'s meet again'],
@@ -166,6 +184,24 @@ const THEMES_EN = {
   'Wedding/Newlyweds ②': ['Love you honey', 'Hang the laundry', 'Let\'s go on date', 'Late night snack?', 'Honey are you mad?', 'Made stew for you', 'Happy anniversary', 'Married life sweet', 'Take out food waste', 'Only you honey', 'Give you massage', 'Sweet couple us', 'Happy our sweet home', 'Come home safe', 'Good night honey'],
   'MZ Slang & Trending ①': ['Living God-life', 'Clean & Sensible', 'Unbroken Spirit!', 'Insane Form', 'Even Better!', 'Unfairly Wrecked', 'Self-made Chaos', 'So Annoying', 'Workout Done!', 'Lunch Pick?', 'Pure Bliss...', 'Work Again Tmrw', 'Weekend Vanished', 'Still Alive!', 'Passing Out zZ'],
   'Student & Teen Trends ②': ['Time to go home!', 'Snack run?', 'Cramming hard', 'Exam ruined', 'Agreed (Valid)', 'Real Facts', 'Wait a sec', 'It\'s all good', 'I\'m serious rn', 'Escaped academy', 'Starving to death', 'Did you do homework?', 'Phone confiscated', 'Let\'s go for it!', 'See you tmrw!'],
+  'Birds/Pet Birds ①': ['Chirp chirp good morning', 'Fluffing feathers', 'Yummy sunflower seeds', 'Head tilt on perch', 'Soar high!', 'Angry chirp!', 'Sweet kiss peck', 'Feed me please', 'Early riser awake', 'Spread wings wide', 'Play with me hooman', 'Chatty chirping', 'Flapping frenzy', 'Preening feathers', 'Sleepy birdie'],
+  'Birds/Pet Birds ②': ['Chirp chirp chirp!', 'Cage breakout success', 'Nibble human finger', 'Beak grinding scrape', 'Curious eyes wide', 'Wing stretch out', 'Singing contest in cage', 'Give me head scratch', 'Raid the seed bowl', 'Birdsong alarm clock', 'Birdie wink!', 'Cutting through wind', 'Max cuteness overload', 'Human lover birdie', 'Happy bird today'],
+  'Aquarium/Marine Life ①': ['Fish tank zen healing', 'Bubble bubble pop', 'Sleeping deep in ocean', 'Surfing the waves', 'Peeking in clam shell', 'Ink squirt boom!', 'Swimming freely', '100% fresh vibes', 'Ocean-wide deep heart', 'Slippery smooth', 'Aquarium trip fun', 'Don\'t take the bait!', 'Tentacle wave dance', 'Caught a huge fish!', 'Deep blue ocean goodnight'],
+  'Aquarium/Marine Life ②': ['Coral reef explorer', 'Flapping cute fins', 'Floating bubbly pop', 'Sea turtle gliding', 'Underwater calm peace', 'Jellyfish floating by', 'Pearl inside oyster', 'Breath holding champ', 'Sea buddies assemble', 'Riding ocean currents', 'Abyss mission cleared', 'Rolling underwater', 'Clean tank shiny', 'Refreshing cool water', 'Ocean night dreams'],
+  'Forest/Insects ①': ['Busy bee working hard', 'Crawling tiny steps', 'Twinkling firefly light', 'Fluttering butterfly fly', 'Sweet delicious nectar', 'Tree branch nap time', 'Heave-ho push hard!', 'Leaf zen relaxation', 'Antenna radar scan', 'Forest ranger squad', 'Sip of morning dew', 'Rolling ball round', 'Flapping tiny wings', 'Hide and seek play', 'Forest sweet dreams'],
+  'Forest/Insects ②': ['Guard the honey pot!', 'Pollen dust dancing', 'Heave-ho carrying food', 'Healing deep in nature', 'Resting under fallen leaves', 'Cozy green leaf bed', 'Forest orchestra chime', 'Morning dew breakfast', 'Antenna hello greeting', 'Tree climbing master', 'Wiggle honeybee dance', 'Rolling acorn round', 'Forest nature trip', 'One with wild nature', 'Moonlit forest night'],
+  'Reptiles/Axolotl ①': ['Axolotl bubble breath', 'Ribbit ribbit singing', 'Chameleon camouflaged!', 'Sunbathing on rock', 'Lizard tail flick', 'Soft squishy cute gills', 'Chill and relaxed vibes', 'Leaf top photo snap', 'Tongue zap tasty insect', 'Cute axolotl smile', 'Froggy high leap!', 'Round curious eye contact', 'Salamander swim', 'Warm stone basking', 'Sleep tight sweet night'],
+  'Reptiles/Axolotl ②': ['Floating in calm water', 'Frog chorus chime', 'Wall climb cleared!', 'Fluttering cute pink gills', 'Lazy cozy afternoon', 'Rainy day celebration', 'Stealth chameleon hide', 'Lizard sly wink', 'Quiet serene healing', 'Axolotl floating hearts', 'Lotus leaf umbrella', 'Green jungle explore', 'Gentle gill waving', 'Rock shelter rest', 'Cozy soothing night'],
+  'Dinosaurs/Prehistoric ①': ['Roar! Dino is here', 'Thud thud heavy steps', 'Meat feast mukbang time', 'Cretaceous expedition', 'Dinosaur mighty power!', 'Hatched from dino egg', 'Herbivore leafy snack', 'Soaring like pterosaur', 'Fossil dig complete', 'T-Rex mighty roar!', 'Volcano erupting run!', 'Tail whip swing attack', 'Baby dino first steps', 'Peaceful Jurassic park', 'Dinosaur dreamland'],
+  'Dinosaurs/Prehistoric ②': ['Just one bite for T-Rex', 'Brachio long neck zen', 'Headbutt challenge!', 'Feels like turning to fossil', 'Nesting cozy dino egg', 'Pterodactyl glide high', 'Primeval jungle walk', 'Found huge fossil jackpot!', 'Triceratops horn charge', 'Footsteps shaking ground', 'Dino dance party time', 'Fluffy mammoth warmth', 'Ice age great escape!', 'Prehistoric best friends', 'Jurassic sweet dreams'],
+  'Soldier/Military ①': ['Salute! Ready to serve', 'On vacation leave!', 'Please answer phone', 'Heading back to base', 'Wrote you a letter', 'Miss you every single day', 'D-Day countdown -100', 'PX snacks all bought!', 'Training finished proud', 'Guarding the homeland', 'Running in combat boots', 'Thank you for waiting', 'Crisp sharp uniform folds', 'Congrats on discharge!', 'Sleep tight salute'],
+  'Soldier/Military ②': ['Bugle wake-up call', 'Roll call ready set', 'Military burger yum', 'Sharpshooter full marks', 'March completed strong', 'Gift you flower shoes', 'Dog tag around neck', 'Comrade bond brotherhood', 'Send me care package', 'Come visit base please!', 'Won reward extra leave!', 'Combat drills cleared', 'Day 1 waiting lover', 'Waiting till the end', 'Unity! Great job today'],
+  'K-Worker Thoughts ①': ['Yes noted (soul left body)', 'Typo in chat so sorry', 'Taking PTO day off tomorrow', 'Wanna quit job today', 'Spacing out in meetings', 'Written apology mood ㅠㅠ', 'Paycheck just logged out', 'Someone please save me...', 'Financial therapy done', 'Report overturned rework', '10s before clock-out', 'Checking boss mood sneakily', 'Extending life with coffee', 'Waiting for weekend only', 'Please send me home'],
+  'K-Worker Thoughts ②': ['Lifeless reaction OK', '5 mins before work panic', 'Raiding pantry snack box', 'Sent email to wrong boss', 'Buy me promo celebration', 'Monday blues incurable', 'Trapped in meeting room', 'Looking for overtime buddy', 'Surviving for payday only', 'Understood (mind blank)', 'What to eat for lunch', 'Saving resignation memes', 'Friday night hype burns', 'PTO approved hooray!', 'Clocking in again tomorrow...'],
+  'Cat & Butler ①': ['Nyanya punch strike!', 'Purr engine humming loud', 'Kneading biscuit service', 'Bring me churu treat now', 'Butt pats please hooman', 'Pathetic human butler', 'Cat tower conquered!', 'Hate clipping my claws!', 'Jump inside cardboard box', 'Tail swishing side to side', 'Meow feed me right now', 'Grooming coat shiny', 'Baking loaf of cat bread', 'Sitting on hooman lap', 'Cozy sleepy cat nap'],
+  'Cat & Butler ②': ['Worthless human peasant', 'Hunting toy game start', 'Made mess and proud of it', 'Catnip wild party time', '3 AM zoomies frenzy', 'Jelly paw print stamped', 'Open the door hooman', 'Slow blinking eye kiss', 'Surrender tasty snacks', 'Failed catching laser dot', 'Fur flying healing time', 'High vantage point is best', 'Pouting grumpy kitty', 'I love hooman (tsundere)', 'Purring sweet dreams'],
+  'Dog & Owner ①': ['Walk! Walk! Walkies!', 'Helicopter wagging tail', 'Master is home! Welcome!', 'Kiss me get a treat', 'Throw the tennis ball!', 'Chewing on doggie bone', 'Paw! Nose! Lie down!', 'Ears flapping at full sprint', 'Belly up cuteness overload', 'Grr I hate taking a bath', 'Bed fully occupied', 'Sniff sniff detective nose', 'Maltese never backs down', 'Cozy fluffy afternoon nap', 'I love you master so much'],
+  'Dog & Owner ②': ['Savory paw scent cozy', 'Tug of war battle game', 'Snack bag royal guardian', 'Splish splash water fun', 'Guilty face after trouble', 'Wanna walk more please!', 'Doggie rolling on floor', 'Brushing fur peacefully', 'Met doggie best friend', 'Master stalker loyal pup', 'Awoo howling at the moon', 'Cozy doggie bed dream', 'High five with furry paw!', 'Snack scent detected beep', 'Good doggie goodnight'],
 };
 
 const THEMES_JA = {
@@ -206,8 +242,7 @@ const THEMES_JA = {
   '子育て/ベビー ①': ['すやすや睡眠中', 'ミルクタイム', 'オムツ替え完了', 'ハイハイできた！', '夜泣き対応中', '抱っこして〜', '離乳食モグモグ', '初めてのあんよ', 'ママ大好き', 'パパ大好き', '天使の寝顔', 'イヤイヤ期突入', 'おもちゃ散乱', '子育てファイト', 'すくすく育ってね'],
   '子育て/ベビー ②': ['ママって言った！', 'よちよち歩き', 'いないいないばあ', 'お昼寝チャンス！', '離乳食拒否…', '歯が生えてきた', '公園で遊ぼう', 'お風呂タイム', '絵本読み聞かせ', 'ぐずぐず期', '寝かしつけ成功！', '予防接種完了', '笑顔にキュン', '今日もワンオペ', '愛してるよ宝物'],
   'MBTI & ミーム ①': ['完全なるE型', '圧倒的I型', '計画通りのJ型', '即興アドリブP型', '論理的なT型', '共感のF型', '直感派N型', '現実派S型', 'MBTI教えて', 'それな〜！', '解釈一致すぎ', '脳内お花畑', 'メンタル無敵', '語彙力消失', '大優勝！'],
-  'MBTI & ミーム ②': ['I型の引きこもり', 'E型の陽キャ発動', 'T型のド正論パンチ', 'F型の涙腺崩壊', 'J型のスケジュール', 'P型の気まぐれ旅', '生粋のMBTIオタク', 'ミーム中毒', 'テンプレ通り', '尊すぎて無理', '分かりみが深すぎる', 'バズ確定', '全人類見て', '推しが神', 'はい天才']
-,
+  'MBTI & ミーム ②': ['I型の引きこもり', 'E型の陽キャ発動', 'T型のド正論パンチ', 'F型の涙腺崩壊', 'J型のスケジュール', 'P型の気まぐれ旅', '生粋のMBTIオタク', 'ミーム中毒', 'テンプレ通り', '尊すぎて無理', '分かりみが深すぎる', 'バズ確定', '全人類見て', '推しが神', 'はい天才'],
   '旅行/休暇 ①': ['空港へ向かう道（ワクワク）', '搭乗完了！', '休暇スタート！（連絡NG）', 'パスポート持った？', 'ホカンスで癒やされ中', '映え写真撮れた！', 'ご当地グルメ制覇', '両替完了！', 'パッキング中', 'ここは天国かな？', '海見に行こう！', '旅行中（返信遅れます）', 'お土産買っていくね', '帰りたくない…', '休暇ロス（現実に復帰）'],
   '旅行/休暇 ②': ['次どこ行く？', '免税店で爆買い', '飛行機の窓際席', 'ホテルチェックイン完了', '夜景見てリラックス', 'プールで水遊び', 'バックパックの旅へ', 'のんびりティータイム', '道に迷ったけど楽しい', 'チケット予約成功！', '飛行機遅延（ぐったり）', '写真撮って〜', '旅行写真連投中', 'また来ようね', '無事帰国完了！'],
   'お買い物/宅配 ①': ['置き配届いた（ワクワク）', '自腹購入レビュー！', 'カート内全品爆買い', 'これ絶対買うべき！', '売り切れ直前に購入完了', 'セールは見逃せない！', '衝動買いして後悔中', 'レシート見て気絶', '財布がすっからかん', '新しい服でお出かけ！', '開封の儀（至福）', 'コスパ最高すぎ', '散財してスッキリ', '買い物最高に楽しい', '来月の自分が払うはず'],
@@ -250,6 +285,25 @@ const THEMES_JA = {
   '結婚・新婚 ②': ['あなた大好き♥', '洗濯物干してね', 'デート行こう', '夜食食べる？', 'すねちゃった？', 'ご飯作ったよ', '記念日おめでとう', '結婚してよかった', 'ゴミ出しお願い', 'あなただけだよ', 'マッサージしてあげる', 'ラブラブな私たち', '幸せな我が家', '気をつけて帰ってね', 'おやすみなさい'],
   'MZ 流行語・略語 ①': ['充実ライフ中', '言わずとも完璧', '折れない心！', '神がかった調子', 'むしろ好都合', '理不尽な災難', '自業自得…', 'ムカつくな', '今日筋トレ完！', '昼飯何にする？', '至福の極楽…', '明日も出勤…', '週末が一瞬で消滅', '生存報告！', '気絶寸前 zZ'],
   '学生・10代 流行語 ②': ['下校の時間！', '購買行く？', '一夜漬け中', 'テスト爆死', 'それな (激同)', 'マジの真実', 'ちょい待ち', '大丈夫・平気', '今ガチで真剣', '塾から脱出成功', '腹減りすぎて気絶', '宿題やった？', 'スマホ没収…', '気合入れていこう！', 'また明日ね！'],
+  '鳥・小鳥 ①': ['チュンチュンおはよう', '羽毛もふもふ', 'ひまわりの種もぐもぐ', '止まり木で首かしげ', '大空へ飛び立て！', 'ピピッ！怒ったぞ', 'チュッとキス', 'ごはんちょうだい', '早起き完了！', '翼を大きく広げて', '飼い主さん遊ぼう', 'チュンチュンおしゃべり', 'バタバタ羽ばたき', '毛づくろい中', 'おやすみなさい'],
+  '鳥・小鳥 ②': ['ピピピッ！', '鳥かご脱出大成功', '飼い主の指をツンツン', 'くちばし研ぎスリスリ', '好奇心いっぱいな瞳', '翼のストレッチ', '鳥かごの歌自慢', 'なでなでして', 'エサ箱をガサゴソ', '小鳥のアラーム', 'ウインク発射！', '風を切って飛行', '全力の甘えん坊', '飼い主大好き', '今日も幸せな小鳥'],
+  '水族館・海洋生物 ①': ['水槽をぼーっと眺める', 'ぷくぷく泡ぶく', '深海でスヤスヤ', '波乗りサーフィン', '貝殻の中に隠れる！', 'スミ吹きプシュー！', 'スイスイ泳ぐよ', '鮮度100％！', '海のように広い心', 'ツルツルすべる', '水族館にお出かけ', 'エサに釣られないで', '触手ダンス', '大物が釣れた！', '深い海のおやすみ'],
+  '水族館・海洋生物 ②': ['サンゴ礁を探検', 'ヒレをパタパタ', '泡玉ぽんぽん', 'ウミガメと泳ぐ', '水中の穏やかな平和', 'クラゲぷかぷか', '貝の中の真珠', '息止めチャンピオン', '海の仲間大集合', '海流に乗って移動', '深海探査完了！', '水中でゴロゴロ', '水槽掃除ピカピカ', '冷たい水が美味しい', '海のおやすみ'],
+  '森の昆虫・小虫 ①': ['ミツバチのように働く', 'トコトコ移動中', 'ピカピカ光るホタル', 'ひらひら飛んでいく', '甘いハチミツの味', '木の上でお昼寝', 'よいしょ！頑張れ', '葉っぱの上で癒し', '触角レーダー作動', '森の探検隊', '朝露をごくり', 'ころころ転がして', '羽をパタパタ', 'かくれんぼ中', '森のおやすみなさい'],
+  '森の昆虫・小虫 ②': ['ハチミツ壺を死守！', '花粉ぽんぽん', 'えっほえっほ運ぶ', '自然の中の癒し', '落ち葉の下でひと休み', '葉っぱのふかふかベッド', '森のオーケストラ', '朝露のごちそう', '触角でこんにちは', '木登りの名人', 'ミツバチダンス', 'どんぐり転がし', '森へお出かけ', '自然とひとつに', '月夜の森'],
+  '爬虫類・ウーパールーパー ①': ['ウーパールーパーぷかぷか', 'ケロケロ大合唱', 'カメレオン変身！', '日向ぼっこ満喫中', 'トカゲのしっぽシュッ', 'ぷにぷにのエラ', 'のんびり癒しタイム', '葉っぱの上でパシャリ', '舌を伸ばしてパクッ', 'ウーパールーパーの笑顔', 'カエル大ジャンプ！', 'くりくりおめめ', 'サンショウウオ泳ぐ', '温かい岩の上', 'ぐっすりおやすみ'],
+  '爬虫類・ウーパールーパー ②': ['水中でぷかぷか', 'カエルのコーラス', '壁登り大成功！', 'かわいいピンクのエラ', 'のんびりした午後', '雨の日は大はしゃぎ', 'カメレオンの隠れ身術', 'トカゲのウインク', '静かな癒し空間', 'ウーパールーパーのハート', 'ハスの葉の傘', '緑の森を探検', 'エラをゆらゆら', '岩の下で休憩', '心地よい夜を'],
+  '恐竜・古生物 ①': ['ガオー！恐竜出現', 'ド스ンドスン足音', 'お肉爆食いタイム', '白亜紀を探検中', 'ダイナソーパワー！', '卵から生まれたよ', '草食恐竜もぐもぐ', '翼竜のように飛翔', '化石発掘完了！', 'ティラノサウルスの咆哮', '火山噴火だ逃げろ！', '恐竜のしっぽアタック', '赤ちゃん恐竜の一歩', '平和なジュラ紀', '恐竜の夢を見る'],
+  '恐竜・古生物 ②': ['ティラノ一口ちょうだい', 'ブラキオの長い首癒し', '頭突き勝負だ！', '化石になっちゃいそう', '恐竜の卵を温める', 'プテラノドン滑空', '原生林をお散歩', '巨大化石発見大金星！', 'トリケラの角攻撃', '足音がズシンズシン', '恐竜ダンスパーティー', 'マンモス毛皮あったか', '氷河期を脱出！', '古生物の仲間たち', 'ジュラ紀のおやすみ'],
+  '軍人・お見送り ①': ['忠誠！無事帰還を祈る', '休暇に出ました！', '電話に出てちょうだい', '部隊へ復帰中（涙）', '手紙を送ったよ', '今日も会いたいよ', '除隊まであと100日', '売店（PX）でお買い物', '訓練終了で誇らしい', '国を守っています', '軍靴を履いて走る', '待っててくれてありがとう', 'ピシッと敬礼！', '除隊おめでとう！', 'ぐっすりおやすみ忠誠'],
+  '軍人・お見送り ②': ['起床ラッパが鳴り響く', '点呼の準備完了', '軍隊バーガーもぐもぐ', '百発百中の名射手', '行軍完走大成功！', '花靴を履かせてあげる', '認識票のネックレス', '戦友愛・仲間愛', '小包を送ってね', '面会に来て！', '褒賞休暇ゲット！', '各個戦闘クリア', '待つ恋人1日目', '最後まで待ってるよ', '団結！お疲れ様でした'],
+  '社会人の本音 ①': ['はい（魂が抜けました）', 'チャット誤字ごめんなさい', '明日有休使います', '会社辞めたい…', '会議中に放心状態', '始末書コースかも（涙）', '給料が一瞬で消えた', '助けてください…', 'お金で心癒やされた', '企画書ボツでやり直し', '定時退社10秒前', '上司の顔色伺い中', 'コーヒーで延命', '週末だけが生きがい', 'お家に帰りたい'],
+  '社会人の本音 ②': ['魂ゼロのリアクション', '出勤5分前に絶望', '給湯室にお菓子狩り', 'メール誤送信で冷や汗', '昇進祝い奢ってよ', '月曜病は克服不可', '会議室に監禁中', '残業仲間募集中', '給料日だけを待つ', '承知しました（無心）', '今日のお昼何食べる？', '退職画像保存中', '金曜の夜は燃え上がる', '有休承認バンザイ！', '明日も出勤か…'],
+  '猫＆飼い主 ①': ['ニャンニャンパンチ！', 'ゴロゴロ音大放出', 'ふみふみマッサージ', 'ちゅ〜るを献上せよ', 'お尻トントンして', '情けない下僕め', 'キャットタワー制覇！', '爪切りは絶対イヤ！', 'ダンボールにすっぽり', 'しっぽフリフリ', 'ニャ〜ごはんちょうだい', '毛づくろいタイム', '香箱座り中', '飼い主の膝を占領', '猫のスヤスヤ睡眠'],
+  '猫＆飼い主 ②': ['ちっぽけな下僕め', '狩りごっこ開始！', 'いたずらしてドヤ顔', 'キャットニップ祭り', '深夜の大暴れタイム', '肉球スタンプぽん', 'ドア開けてよ下僕', 'ゆっくりまばたきキス', 'おやつを差し出せ', 'レーザー捕獲失敗', '抜け毛もふもふ癒し', '高い場所が最高', 'すねた猫ちゃん', '下僕大好き（ツンデレ）', 'ゴロゴロおやすみ'],
+  '犬＆飼い主 ①': ['散歩！散歩！お散歩！', 'しっぽヘリコプター', 'ご主人様おかえり！', 'おやつくれたらチュー', 'ボール投げて！', 'ガムをカミカミ', 'お手！おかわり！伏せ！', '耳をなびかせてダッシュ', 'お腹見せて甘えん坊', 'お風呂嫌いウーッ', 'ベッド完全占領', 'クンクン匂い嗅ぎ', 'マルチーズは負けない', 'ぽかぽかお昼寝', 'ご主人様大好き！'],
+  '犬＆飼い主 ②': ['肉球の香ばしい匂い', 'ロープ引っ張り合いっこ', 'おやつバッグ警備員', '水遊びパチャパチャ', 'いたずらして様子見', 'もっと散歩したい！', 'ワンちゃんゴロゴロ', 'ブラッシングおとなしく', 'ワンちゃん友達できた', '飼い主一筋ワンちゃん', '遠吠えワオーン', 'ふかふか犬用ベッド', 'ハイタッチ！', 'おやつの匂いを察知', 'ワンちゃんおやすみ'],
+  '군인・お見送り ②': ['起床ラッパが鳴り響く', '点呼の準備完了', '軍隊バーガーもぐもぐ', '百発百中の名射手', '行軍完走大成功！', '花靴を履かせてあげる', '認識票のネックレス', '戦友愛・仲間愛', '小包を送ってね', '面会に来て！', '褒賞休暇ゲット！', '各個戦闘クリア', '待つ恋人1日目', '最後まで待ってるよ', '団結！お疲れ様でした'],
 };
 
 const THEMES_ZH = {
@@ -290,8 +344,7 @@ const THEMES_ZH = {
   '育儿/萌宝 ①': ['香香甜甜睡觉中', '到喝奶喂奶时间啦', '换好干爽纸尿裤啦', '学会四脚爬行啦！', '半夜狂哭紧急哄娃', '伸出双手求抱抱〜', '辅食吃得津津有味', '迈出人生的第一步路', '最喜欢最爱妈妈了', '最喜欢最爱爸爸了', '像小天使一样的可爱睡颜', '正式进入叛逆小烦恼期', '满地都是扔乱的玩具', '今天也要育儿加油鸭', '健健康康快快长大哦'],
   '育儿/萌宝 ②': ['第一次开口叫妈妈了！', '摇摇晃晃蹒跚学步', '躲猫猫捉迷藏哇', '趁娃睡着偷得半日闲！', '把辅食推开拒绝吃…', '开始冒出第一颗小乳牙啦', '去小公园晒太阳玩耍', '舒服泡澡洗香香时间', '讲睡前童话绘本故事', '哼哼唧唧闹脾气小情绪', '成功把小神兽哄睡着了！', '预防针疫苗顺利接种完毕', '被天真无邪的笑容瞬间击中', '今天也是一个人独自带娃的一天', '深深爱着你我的无价之宝'],
   'MBTI & 梗 ①': ['纯正E人社交天花板', '资深I人社恐本恐', '万事按计划来的强迫症J人', '随性即兴发挥的自由P人', '逻辑严密莫得感情的理智T人', '共情能力爆棚的感性F人', '天马行空直觉流N人', '脚踏实地注重现实的S人', '报上你的MBTI暗号', '就是说啊太真实了〜！', '解读简直和我一模一样', '脑子装满了浪漫幻想花海', '内心强大精神状态极度稳定', '瞬间失去一切语言组织能力', '赢麻了直接封神！'],
-  'MBTI & 梗 ②': ['I人只想一个人闭关宅家', 'E人瞬间开启社交牛逼症', 'T人直击灵魂的事实大暴击', 'F人瞬间泪腺大崩溃泪目', 'J人精确到分钟的时间表', 'P人说走就走的即兴旅行', '如假包换的重度MBTI研究员', '重度网络流行梗上瘾患者', '完美符合一切刻板印象模板', '尊贵到难以用言语形容', '共鸣感深到骨髓深处了', '这条发言绝对要火遍全网', '全人类都给我过来看', '我的本命就是至高神明', '绝妙天才神操作']
-,
+  'MBTI & 梗 ②': ['I人只想一个人闭关宅家', 'E人瞬间开启社交牛逼症', 'T人直击灵魂的事实大暴击', 'F人瞬间泪腺大崩溃泪目', 'J人精确到分钟的时间表', 'P人说走就走的即兴旅行', '如假包换的重度MBTI研究员', '重度网络流行梗上瘾患者', '完美符合一切刻板印象模板', '尊贵到难以用言语形容', '共鸣感深到骨髓深处了', '这条发言绝对要火遍全网', '全人类都给我过来看', '我的本命就是至高神明', '绝妙天才神操作'],
   '旅行/度假 ①': ['奔向机场（超期待）', '登机完毕起飞！', '开启休假模式（请勿打扰）', '护照带齐了吗？', '在酒店躺平度假中', '拍到人生照片啦！', '打卡当地美食天堂', '换汇搞定！', '正在收拾行李箱', '这里简直是天堂吧', '一起去看海吧！', '旅行中（回复较慢）', '会给你带伴手礼的', '完全不想回家…', '假期综合症（回工位）'],
   '旅行/度假 ②': ['下一站去哪玩？', '免税店大扫货完毕', '飞机靠窗绝美景观', '酒店办理入住搞定', '看绝美夜景治愈中', '在游泳池欢快戏水', '背上行囊出发探险', '惬意悠闲下午茶', '迷路了但也超开心', '抢票成功万岁！', '航班延误（累瘫了）', '快帮我拍张大片', '疯狂连发旅行美照', '下次还要再来！', '平安落地回家啦！'],
   '购物/快递 ①': ['快递已送达通知（激动）', '纯自费入手测评！', '清空购物车大扫荡', '这个必须狠狠拿下', '库存告急火速下单', '折扣特惠绝不能错过', '冲动消费后开始后悔', '看到账单倒吸一口气', '钱包彻底空空（吃土）', '穿上新衣服出门！', '拆箱开箱时刻（超治愈）', '性价比爆棚神仙好物', '今天尽情买买买剁手', '花钱的感觉最爽快', '下个月的我自会偿还'],
@@ -334,64 +387,34 @@ const THEMES_ZH = {
   '结婚/新婚 ②': ['老公我爱你', '帮忙晒衣服呀', '去约会吧', '要吃夜宵吗？', '老公生气了吗？', '汤煮好啦', '纪念日快乐', '结婚真好呀', '帮忙扔下垃圾', '只有你最好', '给你捏捏肩', '甜甜蜜蜜的我们', '幸福小家', '路上注意安全', '老公晚安'],
   'MZ 网络流行语 ①': ['自律搞钱搞生活', '心领神会秒懂', '绝不服输的心！', '状态封神了', '反而是好事', '纯属被针对', '自作自受...', '太气人了吧', '今日打卡完成！', '午饭吃什么？', '极乐升天...', '明天又要上班...', '周末一眨眼没了', '生存打卡！', '原地倒头秒睡 zZ'],
   '学生/00后 流行语 ②': ['放学啦！', '小卖部走起？', '临时抱佛脚中', '考砸了凉凉', '狠狠认可了', '真实人间清醒', '等我一下', '没事不用慌', '我现在很认真', '补习班脱逃成功', '饿到晕厥', '作业写完了吗？', '手机被没收了...', '冲鸭干就完了！', '明天见啦！'],
-};
-
-const ART_STYLE_PROMPT_MAP_KO = {
-  '귀여운 2D 만화풍': '얇고 균일한 검정 외곽선, 플랫 컬러 채색에 부드러운 그라데이션 하이라이트, 둥글둥글한 형태 단순화',
-  '한국 웹툰 스타일': '깔끔한 벡터 라인, 인물 위주의 셀셰이딩, 파스텔 계열 배색과 부드러운 그림자 처리',
-  '손그림 낙서풍': '볼펜/색연필로 슥슥 그린 듯한 불규칙한 손떨림 선, 삐뚤빼뚤한 외곽선, 낙서장 여백에 그린 듯한 러프한 채색',
-  '부드러운 수채화풍': '외곽선 최소화, 물감이 번진 듯한 그라데이션 채색, 종이 질감이 살짝 비치는 파스텔 톤',
-  '색연필 동화책풍': '색연필 특유의 결이 보이는 채색, 부드러운 외곽선, 동화책 삽화 느낌의 따뜻한 색감',
-  '레트로 애니메이션풍': '90년대 셀 애니메이션 느낌의 두꺼운 외곽선, 채도 높은 플랫 컬러, 살짝 거친 셀 텍스처',
-  '깔끔한 미니멀 벡터': '극도로 단순화된 형태, 균일한 두께의 벡터 라인, 그림자 없는 플랫 컬러 2~3톤 배색',
-  '통통 튀는 팝아트풍': '굵고 대담한 외곽선, 원색 위주의 고채도 배색, 망점(halftone) 패턴 강조',
-  '굵은 선의 코믹북풍': '두꺼운 검정 잉크 외곽선, 강한 명암 대비, 망점 패턴 채색, 액션감 있는 선 표현',
-  '도트 픽셀 아트풍': '정사각형 픽셀 단위 각진 형태, 안티에일리어싱 없는 계단 현상 윤곽선, 제한된 색상 팔레트(8~16색)',
-  '종이 콜라주풍': '오려 붙인 종이 질감의 레이어드 형태, 살짝 어긋난 그림자, 손으로 자른 듯한 불규칙한 가장자리',
-  '빈티지 인쇄 만화풍': '살짝 바랜 색감, 인쇄 도트 패턴, 종이 질감의 미세한 노이즈, 얇고 거친 외곽선',
-  '흑백 만화 톤': '순수 흑백 잉크 드로잉, 스크린톤(회색 망점) 음영 처리, 외곽선 강조',
-  '일본 출판 만화풍': '정교한 G펜 흑백 잉크선, 만화 컷 스크린톤 음영, 섬세한 해칭 음영, 흑백 출판 만화책 펜화 질감 (exquisite G-pen black ink manga lineart, screentone shading, monochrome comic panel style)',
-  '3D 펠트/클레이 점토 인형풍': '부드러운 양모 펠트와 클레이 점토 질감, 스톱모션 애니메이션 입체 조형 (3D felt clay doll texture, stop-motion claymation aesthetic)',
-  '크레파스 낙서풍': '따뜻하고 거친 크레용/크레파스 손그림 텍스처, 아기자기한 동화책 낙서 감성 (crayon wax pastel doodle texture, playful storybook sketch)',
-  'Y2K 픽셀 스티커풍': '90년대 레트로 다이어리 꾸미기 스티커, 반짝이 글리터와 선명한 픽셀 그래픽 (Y2K retro glitter pixel art sticker)',
-  '열혈 배틀 만화풍': '두껍고 역동적인 외곽선, 강한 속도선/집중선 배경 효과, 고대비 명암과 진한 그림자',
-  '샤방샤방 순정만화풍': '가늘고 화려한 외곽선, 큰 눈과 반짝이는 하이라이트, 꽃/반짝임 배경 요소, 파스텔 그라데이션 채색',
-  '8090 레트로 애니풍': '80~90년대 일본 애니 셀화 느낌, 채도 높은 플랫 컬러, 두꺼운 외곽선과 단순한 그림자 블록',
-  '3D 반실사 애니 렌더링': '부드러운 3D 클레이/픽사풍 라이팅, 은은한 그림자와 하이라이트, 통통한 입체감 있는 형태',
-};
-
-const ART_STYLE_PROMPT_MAP_EN = {
-  'Cute 2D cartoon': 'Thin uniform black outline, flat color with soft gradient highlights, rounded form simplification',
-  'Korean webtoon style': 'Clean vector lines, character-focused cel shading, pastel color scheme with soft shadows',
-  'Hand-drawn doodle': 'Irregular hand-drawn lines like ballpoint or colored pencil, shaky outlines, rough color fill like margin doodles',
-  'Soft watercolor': 'Minimal outlines, water-bleed gradient coloring, pastel tones showing subtle paper texture',
-  'Colored-pencil storybook': 'Visible colored-pencil stroke texture, soft outlines, warm tones like a storybook illustration',
-  'Retro animation': 'Thick outlines like 90s cel animation, high-saturation flat colors, slightly grainy cel texture',
-  'Clean minimal vector': 'Extremely simplified shapes, uniform vector lines, shadowless flat colors with 2-3 tone palette',
-  'Vibrant pop art': 'Bold thick outlines, high-saturation primary colors, halftone dot pattern accents',
-  'Bold comic-book style': 'Thick black ink outlines, strong contrast shading, halftone dot coloring, energetic action linework',
-  'Pixel art': 'Blocky square pixel grid shapes, non-antialiased stepped outlines, limited 8-16 color palette',
-  'Paper collage': 'Layered cut-paper texture, slightly offset drop shadows, irregular hand-cut edges',
-  'Vintage print cartoon': 'Faded vintage colors, print dot matrix pattern, subtle paper noise texture, thin rough outlines',
-  '📖 Monochrome Manga Screentone': 'Pure monochrome black ink drawing, screentone halftone shading, emphasized outlines',
-  '💥 Shonen Battle Manga': 'Thick dynamic outlines, intense speed line & focus line background effects, high contrast with deep shadows',
-  '🌸 Shojo Romance Manga': 'Delicate decorative outlines, big sparkling eyes with highlights, flower & sparkle background accents, pastel gradient coloring',
-  '👾 Classic 80s Anime': '80s-90s Japanese anime cel aesthetic, high-saturation flat colors, thick outlines with simple shadow blocks',
-  '🎨 3D Semi-realistic Animated Film': 'Soft 3D clay/Pixar-style studio lighting, subtle soft shadows and highlights, plump 3D volumetric forms',
-};
-
-const getExpandedArtStyleText = (selectedArtStyle, isKo = false) => {
-  if (!selectedArtStyle) return '';
-  const map = isKo ? ART_STYLE_PROMPT_MAP_KO : ART_STYLE_PROMPT_MAP_EN;
-  const detail = map[selectedArtStyle];
-  if (detail) {
-    return `${selectedArtStyle} (${detail})`;
-  }
-  return selectedArtStyle;
+  '鸟类・宠物鸟 ①': ['叽叽喳喳早安', '羽毛蓬松松', '磕瓜子真香', '站杆上歪头杀', '展翅高飞！', '啾！生气啦', '么么哒亲亲', '求投喂饲料', '清晨早起完毕', '翅膀张开开', '铲屎官来玩嘛', '叽叽喳喳聊不停', '扑棱扑棱拍翅膀', '梳理羽毛中', '晚安做个好梦'],
+  '鸟类・宠物鸟 ②': ['啾啾啾！', '成功越狱鸟笼', '啄啄主人手指', '磨磨小嘴巴', '充满好奇的小眼神', '翅膀拉伸运动', '鸟笼歌王争霸', '快帮我挠头毛', '扫荡饲料盒', '鸟鸣闹钟响了', '眨眼发射电波', '迎风飞翔好帅', '暴风撒娇中', '最粘主人了', '今天也是快乐小鸟'],
+  '水族馆・海洋生物 ①': ['看鱼缸发呆治愈', '咕嘟咕嘟吐泡泡', '深海里呼呼大睡', '乘风破浪冲浪', '缩进贝壳里！', '喷射墨汁噗！', '自由自在游泳', '新鲜度100%！', '像大海一样宽广', '滑溜溜的好软', '去水族馆游玩', '别轻易上钩哦', '触手摇摆舞', '钓到大鱼啦！', '深海晚安好梦'],
+  '水族馆・海洋生物 ②': ['珊瑚礁探险', '鱼鳍拍拍', '泡泡飘飘', '海龟悠闲游泳', '水中的宁静世界', '水母漂浮中', '贝壳里的珍珠', '憋气第一名', '海洋伙伴大集合', '顺着洋流前行', '深海探索完成！', '在水里打滚', '鱼缸清洗得超亮', '清凉水花好爽', '大海晚安'],
+  '森林昆虫・小虫 ①': ['像蜜蜂一样打工', '慢吞吞爬行中', '闪闪发光的萤火虫', '翩翩起舞飞走', '甜甜的蜂蜜味', '树上午睡时间', '加油一二一！', '树叶上的慢生活', '触角雷达启动', '森林探险队', '喝一口清晨露水', '滚圆圆小球', '翅膀扇呀扇', '捉迷藏中', '森林晚安好梦'],
+  '森林昆虫・小虫 ②': ['死守蜂蜜罐！', '花粉扑哧扑哧', '嘿呦嘿呦搬运', '大自然中的治愈', '落叶下小憩', '树叶软床好舒服', '森林交响乐', '清晨露珠大餐', '触角碰碰问好', '爬树小能手', '小蜜蜂摇摆舞', '滚橡果大赛', '森林大出游', '与自然合二为一', '月夜森林'],
+  '爬行动物・六角恐龙 ①': ['六角恐龙吐泡泡', '呱呱呱大合唱', '变色龙变身！', '晒太阳日光浴', '蜥蜴尾巴摇摇', '粉嫩嫩的软腮', '悠闲治愈时光', '树叶上拍张照', '舌头一卷开饭', '六角恐龙微笑', '小青蛙大跳跃！', '大眼睛对视', '小蝾螈游泳', '趴在暖暖的石头上', '晚安睡个好觉'],
+  '爬行动物・六角恐龙 ②': ['在水里漂浮', '青蛙合唱团', '爬墙挑战大成功！', '可爱的粉鳃飘飘', '悠闲慵懒的午后', '下雨天好嗨皮', '变色龙隐身术', '小蜥蜴眨眨眼', '安静治愈时刻', '六角恐龙爱心', '荷叶当雨伞', '绿色森林大冒险', '鳃丝轻轻晃动', '岩石底下乘凉', '愿你今夜好梦'],
+  '恐龙・古生物 ①': ['嗷呜！恐龙出没', '咚咚咚沉重脚步', '大口吃肉肉时间', '白垩纪大探险', '恐龙超强力量！', '破壳而出的小恐龙', '植食恐龙吃草', '像翼龙一样翱翔', '化石挖掘大成功', '霸王龙暴风咆哮', '火山喷发快跑！', '恐龙甩尾攻击', '小恐龙学步中', '和平的侏罗纪', '梦见可爱恐龙'],
+  '恐龙・古生物 ②': ['霸王龙求分一口', '腕龙长脖子治愈', '铁头功对决！', '感觉自己要石化了', '孵化恐龙蛋中', '无齿翼龙高空滑翔', '原始森林散步', '挖到巨大化石发财啦！', '三角龙犄角冲刺', '大脚印咚咚响', '恐龙摇摆舞会', '猛犸象毛皮好暖', '逃离冰河世纪！', '史前好伙伴', '侏罗纪晚安'],
+  '军人・军恋 ①': ['敬礼！祈愿平安退伍', '放假出来啦！', '快接电话呀', '归队回营中（哭泣）', '寄了军营信件', '今天也超级想你', '倒计时-100天', '扫荡超市军人PX！', '训练结束好自豪', '保卫祖国中', '穿军靴奋力奔跑', '谢谢你一直等我', '豆腐块军被折好', '退伍大快乐！', '晚安睡个好觉敬礼'],
+  '军人・军恋 ②': ['起床号角吹响', '早晚点名准备好', '军营汉堡真香', '百发百中神枪手', '负重行军大完赛', '给你穿上花鞋子', '胸前挂着军牌', '战友情深似海', '快给我寄包裹', '快来军营探望我！', '拿到嘉奖假期啦！', '单兵战术演练通关', '军恋守候第一天', '会一直等你的', '团结！大家辛苦了'],
+  '打工人内心戏 ①': ['好的（灵魂出窍）', '群里打错字滑跪', '明天请年假了', '好想辞职啊...', '开会全程走神', '感觉要写检讨了ㅠㅠ', '工资光速退出了', '救救打工人吧...', '金钱治疗瞬间见效', '方案被推翻重做', '下班倒计时10秒', '偷瞄老板脸色中', '靠冰美式续命', '只盼着周末快来', '快放我回家吧'],
+  '打工人内心戏 ②': ['莫得感情的回复', '上班前5分钟崩溃', '洗劫茶水间零食', '邮件发错老板冷汗', '升职必须请客哦', '周一综合征没救了', '被困在会议室', '寻找加班同伴', '只为发薪日活着', '收到好的（无念无想）', '今天午饭吃什么', '疯狂保存辞职表情包', '周五晚上嗨起来', '年假审批通过万岁', '明天居然还要上班...'],
+  '猫咪＆铲屎官 ①': ['喵喵猫猫拳！', '呼噜呼噜发动中', '踩奶专业服务', '把冻干条呈上来', '快给本喵拍屁屁', '没用的愚蠢铲屎官', '猫爬架已登顶！', '坚决不剪指甲！', '钻进纸箱好舒服', '尾巴晃呀晃', '喵呜~快给饭饭', '日常舔毛理毛', '趴着烤猫面包', '稳坐铲屎官大腿', '猫猫呼呼大睡'],
+  '猫咪＆铲屎官 ②': ['卑微的小小下人', '捕猎游戏开黑', '闯祸后一脸理直气壮', '猫薄荷狂欢派对', '凌晨三点跑酷狂飙', '盖上肉垫爪印章', '铲屎的快开门', '缓慢眨眼爱的亲吻', '零食快快交出来', '抓红外光点失败', '漫天猫毛也是爱', '喜欢呆在高处', '气鼓鼓的小猫咪', '最喜欢铲屎官啦（傲娇）', '呼噜噜晚安好梦'],
+  '狗狗＆主人 ①': ['散步！散步！出去玩！', '螺旋桨摇尾巴', '主人回来啦！（狂喜）', '给零食就给亲亲', '快扔网球嘛！', '啃大骨头真香', '握手！碰鼻！趴下！', '耳朵飞扬狂奔中', '翻肚皮疯狂撒娇', '讨厌洗澡嗷呜', '大床完全占领', '鼻子嗅嗅到处闻', '马尔济斯绝不认输', '暖洋洋午后小憩', '最最爱主人了'],
+  '狗狗＆主人 ②': ['肉垫香香的味道', '拔河拔河大战', '零食袋忠诚守护者', '戏水扑腾好开心', '闯祸后小心看眼色', '还想继续散步嘛！', '小狗在地上打滚', '乖乖梳毛好舒服', '偶遇狗狗好朋友', '眼睛里全都是主人', '嗷呜~狼嚎时间', '软绵绵专属狗窝', '击掌Give me five！', '捕捉到零食香味', '小狗晚安好梦'],
 };
 
 const CHARACTER_TAGS_KO = {
-  '🐱 동물': ['시바견', '치즈냥', '포메라니안', '아기 펭귄', '똥실똥실 토끼', '장난꾸러기 원숭이', '햄스터', '다람쥐', '아기 곰', '사막여우', '쿼카', '아기 오리', '판다', '고슴도치', '알파카', '아기 돼지', '느릿느릿 나무늘보', '아기 코끼리', '귀여운 수달', '아기 물개', '웰시코기', '카피바라', '삐약삐약 병아리', '너구리', '아기 사자', '뱁새 (오목눈이)', '참지않는 말티즈', '동글동글 비숑', '골든리트리버', '삼색 고양이', '턱시도 고양이', '하프물범', '레서판다'],
+  '🐱 동물': ['시바견', '치즈냥', '포메라니안', '똥실똥실 토끼', '장난꾸러기 원숭이', '햄스터', '다람쥐', '아기 곰', '사막여우', '쿼카', '판다', '고슴도치', '알파카', '아기 돼지', '느릿느릿 나무늘보', '아기 코끼리', '웰시코기', '카피바라', '너구리', '아기 사자', '참지않는 말티즈', '동글동글 비숑', '골든리트리버', '삼색 고양이', '턱시도 고양이', '레서판다', '하얀 아기 양', '아기 사슴', '아기 호랑이', '캥거루'],
+  '🐦 새/조류': ['뱁새 (오목눈이)', '알록달록 앵무새', '토실토실 참새', '아기 펭귄', '아기 오리', '뒤뚱뒤뚱 갈매기', '동글동글 비둘기', '왕눈이 부엉이/올빼미', '화려한 플라밍고', '삐약삐약 병아리', '우아한 백조', '장난꾸러기 까마귀', '부리부리 투칸', '아기 타조', '파랑새', '아기 기러기'],
+  '🐟 어패류/해양생물': ['말랑말랑 문어', '귀여운 꼴뚜기/오징어', '동글동글 금붕어', '푸른 바다 고래', '아기 상어', '헤엄치는 돌고래', '투명한 해파리', '옆으로 걷는 꽃게', '방긋 웃는 바다거북', '진주 품은 조개/가리비', '가시 돋친 성게', '빵빵한 복어', '귀여운 수달', '아기 물개', '하프물범', '신비로운 해마', '동글 가오리', '아기 랍스터'],
+  '🐞 곤충/벌레': ['날개 펄럭이는 나비', '행운의 무당벌레', '부지런한 꿀벌', '늠름한 장수풍뎅이', '멋진 턱 사슴벌레', '초록 잠자리', '반짝반짝 반딧불이', '꿈틀꿈틀 아기 애벌레', '영차영차 일개미', '풀잎 위 사마귀', '노래하는 귀뚜라미', '동글이 달팽이', '알록달록 풍뎅이', '풀벌레 요정'],
+  '🦎 파충류/양서류': ['핑크빛 우파루파 (아홀로틀)', '동글이 청개구리', '눈 땡글한 게코도마뱀', '색깔 바뀌는 카멜레온', '아기 거북이', '말랑말랑 도롱뇽', '귀여운 아기 악어', '미소 짓는 뱀', '아기 이구아나'],
+  '🦖 공룡/고생물': ['아기 티라노사우루스', '순둥이 브라키오사우루스', '귀여운 트리케라톱스', '하늘 나는 프테라노돈', '아기 스테고사우루스', '털복숭이 아기 매머드', '아기 벨로시랩터', '아기 안킬로사우루스'],
+  '🧸 인형/문구/팬시': ['빈티지 테디베어 곰인형', '낡은 애착 토끼인형', '포스트잇 요정', '다이어리 다꾸 스티커', '말랑 젤리 키링', '연필깎이 꼬마', '알록달록 크레파스봇', '미니 스노우볼', '포근한 쿠션 인형'],
   '👦 인물': ['단발머리 소녀', '안경 쓴 모범생', '투블럭 남학생', '뽀글머리 아줌마', '수염 난 아저씨', '포니테일 체육생', '양갈래 소녀', '비니 쓴 힙스터', '젠틀한 신사', '사랑스러운 꼬마', '프로페셔널 커리어우먼', '온화한 백발 할머니', '지팡이 짚은 할아버지', '귀여운 유치원생/어린이', '친절한 선생님/교사', '행복한 신랑/신부', '달콤한 신혼부부', '선글라스 낀 래퍼', '카페 바리스타', '까까머리 군인', '헤드폰 낀 프로게이머', '근육질 헬스보이', '카메라 든 배낭여행객', '따뜻한 의사선생님', '정의로운 경찰관', '기타 치는 록스타', '스케이트보드 타는 소년', '화려한 K팝 아이돌', '푸근한 동네 아저씨', '유연한 필라테스 강사', '열정적인 건축가', '파리지앵 화가', '스피드 라이더', '화사한 꽃집 사장님', '열공 취업준비생', '피곤한 직장인', '달콤한 파티시에/제빵사', '만능 엔지니어/메카닉', '지혜로운 선비', '서부 카우보이', '카리스마 해적 선장', '화려한 마술사', '우아한 발레리나', '천하태평 백수', '괴짜 천재 과학자', '풋풋한 대학생 훈남', '우아한 공주님', '용맹한 기사', '열정 태권도 사범', '상냥한 항공 승무원', '카메라맨', '프로 등산러/산악인', '뉴스 아나운서', '공정한 판사', '용감한 소방관', '미슐랭 스타 셰프', '생기발랄 알바생', '부지런한 청년 농부', '순수한 숲속 소녀', '명랑한 중고등학생', '파도를 가르는 서퍼', '간절한 취업준비생', '신입사원', '영혼 털린 직장인', '초보 운전자', '헬창/운동 마니아'],
   '🦄 판타지/사물': ['유니콘', '아기 드래곤', '꼬마 마법사', '숲의 요정', '말랑말랑 모찌', '달콤한 마카롱', '딸기 케이크', '포동포동 만두', '꼬마 뱀파이어', '바다 인어공주', '용감한 꼬마 기사', '외계인', '아기 구미호', '귀여운 뿔 도깨비', '빛나는 천사', '장난꾸러기 아기 악마', '마법 양탄자', '솜사탕 구름', '신비로운 인어', '날개 달린 페가수스', '말하는 호박', '우주 비행사', '마법 빗자루', '젤리 괴물', '눈사람 요정'],
   '🤖 로봇/SF': ['아기 로봇', '사이버 냥이', '말랑 슬라임', '우주 햄스터', '아기 공룡', '픽셀 로봇', '꼬마 외계인', '메카 강아지', '네온 유령', '우주 비행 댕댕이', '사이버펑크 토끼', '홀로그램 유령', 'UFO 탄 외계인', '레트로 모니터봇', '미니 게임기봇', '배터리 충전봇', 'AI 안드로이드', '변신 메카 로봇'],
@@ -399,7 +422,7 @@ const CHARACTER_TAGS_KO = {
   '🌿 식물/자연': ['아기 선인장', '네잎클로버 요정', '동글이 버섯', '화분 아기', '해바라기 꼬마', '새싹 요정', '아기 단풍잎', '방울 토마토', '말랑 아보카도', '달콤 복숭아 요정', '매운맛 아기 고추', '민들레 홀씨', '뽀송 목화솜', '상큼 레몬 꼬마', '눈물 흘리는 양파', '동글동글 도토리', '빨간 사과 요정', '가을 꿀밤송이'],
   '👀 외형/특징': ['둥근 얼굴형', '크고 반짝이는 눈', '통통한 볼살', '짧고 통통한 팔다리', '작고 동그란 코', '발그레한 볼', '복슬복슬한 털', '말랑한 젤리 몸', '길고 쫑긋한 귀', '작은 송곳니', '주근깨', '한쪽 눈을 덮는 앞머리', '동그란 안경', '풍성한 꼬리', '작은 날개', '별 모양 눈동자', '하트 모양 볼무늬', '미니 SD 체형'],
   '✨ 성격/감정': ['장난기 많은', '시크하고 도도한', '순둥순둥 착한', '늘 피곤에 찌든', '애교가 넘치는', '화가 많은', '느긋한', '눈물 많은', '활발한', '소심한', '엉뚱한', '다정한', '항상 배고픈', '호기심 가득한', '매사에 진지한', '허세 가득한', '사랑에 빠진', '자신감 넘치는', '덜렁거리는', '게으른 뒹굴뒹굴', '열정 만수르', '겁이 많은', '새침떼기', '의욕 상실한', '돈을 좋아하는'],
-  '🖌️ 화풍': ['귀여운 2D 만화풍', '한국 웹툰 스타일', '손그림 낙서풍', '부드러운 수채화풍', '색연필 동화책풍', '레트로 애니메이션풍', '깔끔한 미니멀 벡터', '통통 튀는 팝아트풍', '굵은 선의 코믹북풍', '도트 픽셀 아트풍', '종이 콜라주풍', '빈티지 인쇄 만화풍', '흑백 만화 톤', '열혈 배틀 만화풍', '샤방샤방 순정만화풍', '8090 레트로 애니풍', '3D 반실사 애니 렌더링', '일본 출판 만화풍', '3D 펠트/클레이 점토 인형풍', '크레파스 낙서풍', 'Y2K 픽셀 스티커풍'],
+  '🖌️ 화풍': ['귀여운 2D 만화풍', '한국 웹툰 스타일', '손그림 낙서풍', '부드러운 수채화풍', '색연필 동화책풍', '레트로 애니메이션풍', '깔끔한 미니멀 벡터', '통통 튀는 팝아트풍', '굵은 선의 코믹북풍', '도트 픽셀 아트풍', '종이 콜라주풍', '빈티지 인쇄 만화풍', '흑백 만화 톤', '열혈 배틀 만화풍', '샤방샤방 순정만화풍', '8090 레트로 애니풍', '3D 반실사 애니 렌더링', '일본 출판 만화풍', '3D 펠트/클레이 점토 인형풍', '크레파스 낙서풍', 'Y2K 픽셀 스티커풍', 'B급 병맛/코믹 짤툰풍', '크레파스/오일파스텔 동화풍', '동양화/수묵담채화풍'],
   '👕 의상': ['의사 가운', '요리사 앞치마', '회사원 정장', '오버핏 후드티', '멜빵바지', '교복', '트레이닝복', '우비', '포근한 잠옷', '마법사 망토', '화려한 드레스', '스포티한 캡모자', '두꺼운 패딩', '가죽 자켓', '단정한 셔츠와 넥타이', '화사한 꽃무늬 원피스', '힙한 스트릿 패션', '전통 무술 도복', '따뜻한 니트 스웨터', '귀여운 동물 잠옷', '우주복', '탐험가 조끼와 모자', '수영복과 튜브', '클래식한 트렌치코트', '반짝이는 요정 날개', '왕관과 망토', '청바지와 흰 티', '명탐정 코트와 모자'],
   '🎒 소품/동작': ['스마트폰을 든', '커피잔을 든', '선글라스를 낀', '헤드폰을 낀', '노트북을 하는', '책을 읽는', '풍선을 든', '꽃다발을 안고 있는', '마이크를 잡고 노래하는', '게임패드를 쥐고 있는', '프라이팬을 들고 있는', '커다란 돋보기를 든', '스케치북에 그림 그리는', '마법 지팡이를 휘두르는', '장바구니를 들고 있는', '우산을 쓰고 있는', '팝콘을 먹고 있는', '청소기를 돌리는', '망원경으로 엿보는', '요가 매트에서 스트레칭하는', '스마트워치를 확인하는', '돈다발을 쥐고 있는', '아이스 아메리카노 텀블러를 든', '노트북을 두드리는', '치킨 닭다리를 뜯는', '소주/맥주잔을 부딪치는', '수액 링거 맞고 있는'],
   '🌏 글로벌/전통 문화': ['우아한 전통 궁중 한복 룩', '갓과 두루마기 모던 한복 룩', '화려한 K-POP 아이돌 의상', '태권도 검은띠 무도복', '전통 기모노 / 유카타', '아키하바라 메이드 코스프레', '사무라이 하카마 & 닌자 의상', '일본 청춘 세일러복 교복', '신사 무녀(미코) 의상', '신비로운 무협/선협 검객 도포', '화려한 전통 치파오 / 한푸', '이소룡풍 노란 트레이닝 무술복', '경극 가면 배우', '와일드 웨스트 카우보이', '런던 신사 트렌치코트 & 중절모', '사이버펑크 네온 스트릿웨어', '중세 유럽 기사 갑옷', '베레모와 바게트 든 파리지앵', '영국 왕실 근위병 (베어스킨 모자)', '스페인 플라멩코 무용수', '독일 옥토버페스트 레더호젠', '베네치아 가면무도회 귀족', '멕시코 마리아치 & 솜브레로', '망자의 날 슈가 스컬 분장', '브라질 삼바 카니발 댄서', '베트남 아오자이 & 논라 삿갓', '태국 전통 사바이 의상', '인도 전통 사리와 보석 (볼리우드)', '아라비안 나이트 터번 & 요술램프', '하와이안 알로하 셔츠 & 우쿨렐레'],
@@ -408,11 +431,17 @@ const CHARACTER_TAGS_KO = {
   '🎮 게임/E스포츠': ['RGB 게이밍 헤드셋 낀', '키보드 샷건 치며 분노', '랭크 승급하고 폭죽 터뜨리는', '트롤 팀원 보고 뒷목 잡는', '에너지 드링크 마시며 밤샘', 'VR 고글 쓰고 허공 휘젓는', '컨트롤러 쥐고 초집중 눈빛', '치킨이닭 1등 승리 세리머니', '와이파이 끊겨서 절망하는', '보스 레이드 파티 모집하는', '가챠 뽑기 대성공 환호', '가챠 폭망하고 바닥에 엎드림'],
   '💘 연애/커플': ['시밀러룩 맞춰 입은', '손잡고 꽁냥꽁냥 걷는', '삐져서 볼 부풀리고 등 돌린', '보고 싶어서 영상통화 캡처', '하트 뿅뿅 쿠션 껴안은', '꽃다발 뒤에 얼굴 숨긴', '기념일 케이크 촛불 후 부는', '어깨에 기대어 꿀잠 자는', '손하트 발사하며 애교 부리기', '연락 기다리며 스마트폰 멍하니 보기', '영화관에서 팝콘 같이 집다가 손 닿은', '비 오는 날 우산 기울여 씌워주는'],
   '💪 헬스/다이어트': ['프로틴 쉐이커 쉑쉑 흔드는', '무거운 덤벨 번쩍 든', '인바디 체지방률 보고 충격', '샐러드 씹으며 치킨 상상하기', '러닝머신 위에서 땀 뻘뻘', '체중계 올라가고 좌절 눈물', '오운완 거울 셀카 찰칵', '스쿼트 하다가 다리 후들거리는', '스트레칭 폼롤러 위에서 비명', '물 2리터 벌컥벌컥 마시는', '근육 펌핑 거울 보며 흐뭇', '치팅데이 피자 버거 폭풍 흡입'],
-  '🌈 배경/효과': ['반짝반짝 빛나는 효과', '하트 뿅뿅 날리는', '별빛이 내리는', '네온사인 번쩍이는', '만화적인 집중선', '벚꽃이 흩날리는', '불타오르는 이펙트', '땀방울이 튀는', '우울한 먹구름', '무지개빛 아우라', '펑 터지는 폭발', '어두운 그림자', '스포트라이트 조명', '눈보라가 치는', '번개가 치는', '뽀글뽀글 거품', '따뜻한 햇살', '음표가 떠다니는', '바람에 흩날리는', '물음표 둥둥 (?)', '느낌표 번쩍 (!)', '부들부들 떨림선', '충격 먹구름', '하트 눈빛 (반짝)']
+  '🌈 배경/효과': ['반짝반짝 빛나는 효과', '하트 뿅뿅 날리는', '별빛이 내리는', '네온사인 번쩍이는', '만화적인 집중선', '벚꽃이 흩날리는', '불타오르는 이펙트', '땀방울이 튀는', '우울한 먹구름', '무지개빛 아우라', '펑 터지는 폭발', '어두운 그림자', '스포트라이트 조명', '눈보라가 치는', '번개가 치는', '뽀글뽀글 거품', '따뜻한 햇살', '음표가 떠다니는', '바람에 흩날리는', '물음표 둥둥 (?)', '느낌표 번쩍 (!)', '부들부들 떨림선', '충격 먹구름', '하트 눈빛 (반짝)'],
 };
 
 const CHARACTER_TAGS_EN = {
-  '🐱 Animal': ['Shiba Inu', 'Orange Tabby Cat', 'Pomeranian', 'Baby Penguin', 'Chubby Bunny', 'Mischievous Monkey', 'Hamster', 'Squirrel', 'Baby Bear', 'Fennec Fox', 'Quokka', 'Baby Duck', 'Panda', 'Hedgehog', 'Alpaca', 'Piglet', 'Lazy Sloth', 'Baby Elephant', 'Cute Otter', 'Baby Seal', 'Welsh Corgi', 'Capybara', 'Baby Chick', 'Raccoon', 'Baby lion', 'Korean crow tit (Baepsae)', 'Feisty Maltese', 'Fluffy Bichon Frise', 'Golden Retriever', 'Calico cat', 'Tuxedo cat', 'Harp seal pup', 'Red panda'],
+  '🐱 Animal': ['Shiba Inu', 'Orange Tabby Cat', 'Pomeranian', 'Chubby Bunny', 'Mischievous Monkey', 'Hamster', 'Squirrel', 'Baby Bear', 'Fennec Fox', 'Quokka', 'Panda', 'Hedgehog', 'Alpaca', 'Piglet', 'Lazy Sloth', 'Baby Elephant', 'Welsh Corgi', 'Capybara', 'Raccoon', 'Baby lion', 'Feisty Maltese', 'Fluffy Bichon Frise', 'Golden Retriever', 'Calico cat', 'Tuxedo cat', 'Red panda', 'White lamb', 'Baby deer', 'Baby tiger', 'Kangaroo'],
+  '🐦 Bird': ['Korean crow tit (Baepsae)', 'Colorful parrot', 'Chubby sparrow', 'Baby penguin', 'Baby duck', 'Waddling seagull', 'Round pigeon', 'Big-eyed owl', 'Glamorous flamingo', 'Cute chick', 'Graceful swan', 'Playful crow', 'Toucan with big beak', 'Baby ostrich', 'Bluebird', 'Baby wild goose'],
+  '🐟 Marine Life': ['Soft squishy octopus', 'Cute squid/cuttlefish', 'Round goldfish', 'Blue ocean whale', 'Baby shark', 'Swimming dolphin', 'Transparent jellyfish', 'Side-walking crab', 'Smiling sea turtle', 'Pearl inside oyster/clam', 'Spiky sea urchin', 'Puffy blowfish', 'Cute otter', 'Baby seal', 'Harp seal pup', 'Mystical seahorse', 'Round stingray', 'Baby lobster'],
+  '🐞 Insect/Bug': ['Fluttering butterfly', 'Lucky ladybug', 'Busy honeybee', 'Mighty rhinoceros beetle', 'Stag beetle with jaws', 'Green dragonfly', 'Twinkling firefly', 'Wiggling caterpillar', 'Heave-ho worker ant', 'Praying mantis on leaf', 'Singing cricket', 'Round snail', 'Colorful scarab beetle', 'Forest bug fairy'],
+  '🦎 Reptile/Amphibian': ['Pink axolotl (Wooper)', 'Round tree frog', 'Big-eyed gecko lizard', 'Color-shifting chameleon', 'Baby turtle', 'Soft salamander', 'Cute baby crocodile', 'Smiling snake', 'Baby iguana'],
+  '🦖 Dinosaur': ['Baby T-Rex', 'Gentle Brachiosaurus', 'Cute Triceratops', 'Flying Pteranodon', 'Baby Stegosaurus', 'Fluffy baby mammoth', 'Baby Velociraptor', 'Baby Ankylosaurus'],
+  '🧸 Plushie/Stationery': ['Vintage teddy bear', 'Well-loved bunny plushie', 'Post-it memo fairy', 'Journal deco sticker', 'Squishy jelly keychain', 'Pencil sharpener kid', 'Colorful crayon bot', 'Mini snow globe', 'Cozy cushion doll'],
   '👦 Person': ['Bob cut girl', 'Nerdy student with glasses', 'Two-block cut boy', 'Permed middle-aged woman', 'Bearded uncle', 'Ponytail athlete', 'Pigtail girl', 'Beanie hipster', 'Gentleman in suit', 'Child in Hanbok', 'Career woman in suit', 'Gentle white-haired grandmother', 'Grandfather with cane', 'Cute kindergartener/child', 'Kind teacher/educator', 'Happy groom/bride', 'Sweet newlyweds', 'Rapper with shades', 'Barista with apron', 'Buzz cut soldier', 'Pro gamer with headset', 'Muscular gym bro', 'Backpacker with camera', 'Doctor in white coat', 'Courageous police officer', 'Rock star playing guitar', 'Skater boy', 'Glamorous K-Pop idol', 'Friendly neighborhood guy', 'Yoga instructor', 'Architect in hard hat', 'Parisian artist', 'Biker rider', 'Florist shop owner', 'Job seeker with backpack', 'Tired office worker', 'Baker in apron', 'Skillful mechanic', 'Scholar in traditional robe', 'Cowboy hat rancher', 'Pirate captain with eyepatch', 'Glamorous magician', 'Ballerina in tutu', 'Slacker in tracksuit', 'Scientist in lab coat', 'Handsome guy in tee and jeans', 'Princess in ballgown', 'Knight in shining armor', 'Taekwondo master', 'Flight attendant in uniform', 'Cameraman', 'Hiker in mountain gear', 'Announcer with microphone', 'Judge in legal robe', 'Firefighter in gear', 'Chef in toque', 'Part-timer in cap', 'Farmer in straw hat', 'Forest maiden in flower crown', 'Student eating tteokbokki', 'Surfer with surfboard', 'Hair roller job seeker', 'Rookie employee', 'Burnout office worker', 'Student beginner driver', 'Gym fitness enthusiast'],
   '🦄 Fantasy/Object': ['Unicorn', 'Baby dragon', 'Tiny wizard', 'Forest fairy', 'Soft mochi', 'Sweet macaron', 'Strawberry shortcake', 'Tiny Jelly Candy', 'Little vampire', 'Mermaid princess', 'Brave young knight', 'Alien buddy', 'Baby nine-tailed fox', 'Cute horned goblin', 'Shining angel', 'Mischievous little devil', 'Flying magic carpet', 'Cotton candy cloud', 'Mystical mermaid', 'Winged Pegasus', 'Talking pumpkin', 'Astronaut', 'Magic broomstick', 'Jelly monster', 'Snowman fairy'],
   '🤖 Robot/Sci-Fi': ['Baby robot', 'Cyber kitty', 'Jelly slime', 'Space hamster', 'Baby dino', 'Pixel bot', 'Tiny alien', 'Mecha pup', 'Neon ghost', 'Space dog astronaut', 'Cyberpunk bunny', 'Hologram ghost', 'UFO pilot alien', 'Retro monitor bot', 'Handheld game bot', 'Battery charging bot', 'AI android fairy', 'Transforming mecha'],
@@ -420,7 +449,7 @@ const CHARACTER_TAGS_EN = {
   '🌿 Plant/Nature': ['Baby cactus', 'Four-leaf clover fairy', 'Round mushroom', 'Plant pot baby', 'Sunflower buddy', 'Sprout fairy', 'Maple leaf', 'Cherry tomato', 'Cute avocado', 'Sweet peach fairy', 'Spicy chili baby', 'Dandelion fluff', 'Fluffy cotton fairy', 'Fresh lemon buddy', 'Crying onion', 'Cute acorn', 'Red apple fairy', 'Autumn chestnut'],
   '👀 Appearance': ['Round face shape', 'Large sparkling eyes', 'Chubby cheeks', 'Short chubby limbs', 'Small round nose', 'Rosy blushed cheeks', 'Fluffy soft fur', 'Soft squishy jelly body', 'Long perky ears', 'Tiny fangs', 'Cute freckles', 'Bangs covering one eye', 'Round glasses', 'Fluffy voluminous tail', 'Tiny fairy wings', 'Star-shaped pupils', 'Heart cheek pattern', 'Mini chibi SD body'],
   '✨ Trait/Emotion': ['Playful and cheeky', 'Chic and aloof', 'Gentle and kind', 'Perpetually exhausted', 'Full of cute charm', 'Hot-tempered', 'Laid-back and easygoing', 'Crybaby', 'Energetic and lively', 'Timid and shy', 'Goofy and quirky', 'Warm and sweet', 'Always hungry', 'Curious and inquisitive', 'Deadly serious', 'Pompous and showy', 'Deeply in love', 'Full of confidence', 'Clumsy butterfingers', 'Lazy couch potato', 'Overflowing with passion', 'Timid scaredy-cat', 'Prudish and sassy', 'Completely unmotivated', 'Money lover'],
-  '🖌️ Art Style': ['Cute 2D cartoon', 'Korean webtoon style', 'Hand-drawn doodle', 'Soft watercolor', 'Colored pencil storybook', 'Retro animation', 'Clean minimal vector', 'Vibrant pop art', 'Bold line comic book', 'Pixel art retro dot', 'Paper collage style', 'Vintage print comic', 'Monochrome manga tone', 'Hot-blooded battle manga', 'Sparkling shojo manga', '80s-90s retro anime', '3D Semi-realistic anime rendering', 'Japanese Manga Ink & Tone Style', '3D Felt & Claymation Doll Style', 'Crayon Wax Pastel Doodle Style', 'Y2K Retro Glitter Pixel Sticker Style'],
+  '🖌️ Art Style': ['Cute 2D cartoon', 'Korean webtoon style', 'Hand-drawn doodle', 'Soft watercolor', 'Colored pencil storybook', 'Retro animation', 'Clean minimal vector', 'Vibrant pop art', 'Bold line comic book', 'Pixel art retro dot', 'Paper collage style', 'Vintage print comic', 'Monochrome manga tone', 'Hot-blooded battle manga', 'Sparkling shojo manga', '80s-90s retro anime', '3D Semi-realistic anime rendering', 'Japanese Manga Ink & Tone Style', '3D Felt & Claymation Doll Style', 'Crayon Wax Pastel Doodle Style', 'Y2K Retro Glitter Pixel Sticker Style', 'Meme Webtoon Satirical Style', 'Crayon & Oil Pastel Storybook Style', 'Oriental Sumi-e Ink Wash Painting'],
   '👕 Outfit': ['Doctor coat', 'Chef apron', 'Business suit', 'Oversized hoodie', 'Overalls', 'School uniform', 'Tracksuit', 'Raincoat', 'Cozy pajamas', 'Wizard cape', 'Glamorous ballgown', 'Sporty baseball cap', 'Puffer jacket', 'Leather jacket', 'Shirt and tie', 'Floral dress', 'Hip streetwear', 'Martial arts uniform', 'Warm knit sweater', 'Animal onesie', 'Spacesuit', 'Explorer vest and hat', 'Swimwear and tube', 'Classic trench coat', 'Glittering fairy wings', 'Crown and royal cape', 'T-shirt and jeans', 'Detective coat and hat'],
   '🎒 Prop/Action': ['Holding smartphone', 'Holding coffee cup', 'Wearing sunglasses', 'Wearing headphones', 'Working on laptop', 'Reading a book', 'Holding a balloon', 'Holding flower bouquet', 'Singing into microphone', 'Holding game controller', 'Holding frying pan', 'Holding large magnifying glass', 'Drawing in sketchbook', 'Waving magic wand', 'Holding grocery basket', 'Holding an umbrella', 'Eating popcorn', 'Vacuuming floor', 'Peeking through binoculars', 'Stretching on yoga mat', 'Checking smartwatch', 'Holding stacks of cash', 'Holding iced Americano tumbler', 'Typing on laptop', 'Eating fried chicken drumstick', 'Clinking beer/soju glasses', 'Getting IV drip while exhausted'],
   '🌏 World Cultures': ['Traditional Hanbok Korean robe', 'Modern hip Hanbok with Gat hat', 'K-Pop idol stage outfit', 'Taekwondo Dobok martial uniform', 'Traditional Japanese Kimono / Yukata', 'Akihabara Maid cafe cosplay', 'Samurai swordsman / Ninja gear', 'Japanese sailor school uniform', 'Shrine maiden Miko robe', 'Wuxia martial arts silk robe', 'Traditional Cheongsam / Hanfu dress', 'Kung Fu martial artist yellow suit', 'Beijing opera mask performer', 'Wild West cowboy sheriff', 'London gentleman trench coat & fedora', 'Cyberpunk neon streetwear', 'Medieval knight armor & cape', 'Parisian with beret and baguette', 'British royal guard with bearskin cap', 'Spanish Flamenco dancer with rose', 'German Oktoberfest Lederhosen', 'Venetian masquerade noble outfit', 'Mexican Mariachi with Sombrero', 'Day of the Dead sugar skull', 'Brazilian Samba carnival dancer', 'Vietnamese Ao Dai & Non La hat', 'Traditional Thai Sabai silk dress', 'Indian Bollywood silk Saree', 'Arabian Nights turban & magic lamp', 'Hawaiian Aloha shirt & Ukulele'],
@@ -429,11 +458,17 @@ const CHARACTER_TAGS_EN = {
   '🎮 Gaming & Esports': ['Wearing RGB gaming headset', 'Raging and smashing keyboard', 'Confetti celebration on rank up', 'Holding neck in rage at troll teammates', 'All-nighter with energy drinks', 'Swinging arms in VR goggles', 'Laser focus holding controller', 'Winner winner chicken dinner ceremony', 'Despair when Wi-Fi disconnects', 'Recruiting for boss raid party', 'Cheering on gacha jackpot pull', 'Face down crying after failed gacha'],
   '💘 Romance & Couples': ['Wearing matching couple outfits', 'Holding hands walking sweetly', 'Pouting with puffed cheeks facing away', 'Taking screenshot on video call', 'Hugging glowing heart cushion', 'Hiding face behind flower bouquet', 'Blowing out anniversary cake candle', 'Sleeping sweetly on shoulder', 'Sending finger heart aegyo', 'Staring at phone waiting for text', 'Touching hands over cinema popcorn', 'Tilting umbrella to share in rain'],
   '💪 Fitness & Diet': ['Shaking protein shaker bottle', 'Lifting heavy dumbbell with pride', 'Shocked looking at InBody body fat scan', 'Chewing salad dreaming of fried chicken', 'Sweating profusely on treadmill', 'Crying in despair on weighing scale', 'Snapping gym mirror selfie (OOTD)', 'Legs shaking after heavy squats', 'Screaming on foam roller stretch', 'Gulping down 2L water bottle', 'Smiling admiring muscle pump in mirror', 'Devouring pizza and burgers on cheat day'],
-  '🌈 Effect/BG': ['Sparkling glittering effect', 'Hearts fluttering around', 'Starlight falling', 'Neon signs blinking', 'Comic action speed lines', 'Cherry blossom petals swirling', 'Blazing fire effect', 'Sweat drops splashing', 'Gloomy rain cloud', 'Rainbow aura', 'Boom explosion', 'Dark ominous shadow', 'Spotlight illumination', 'Blizzard snowstorm', 'Lightning flash', 'Bubbles floating', 'Warm gentle sunshine', 'Musical notes floating', 'Blowing in the wind', 'Floating question marks (?)', 'Sparking exclamation mark (!)', 'Shivering tremble lines', 'Shock dark cloud', 'Heart sparkle eyes']
+  '🌈 Effect/BG': ['Sparkling glittering effect', 'Hearts fluttering around', 'Starlight falling', 'Neon signs blinking', 'Comic action speed lines', 'Cherry blossom petals swirling', 'Blazing fire effect', 'Sweat drops splashing', 'Gloomy rain cloud', 'Rainbow aura', 'Boom explosion', 'Dark ominous shadow', 'Spotlight illumination', 'Blizzard snowstorm', 'Lightning flash', 'Bubbles floating', 'Warm gentle sunshine', 'Musical notes floating', 'Blowing in the wind', 'Floating question marks (?)', 'Sparking exclamation mark (!)', 'Shivering tremble lines', 'Shock dark cloud', 'Heart sparkle eyes'],
 };
 
 const CHARACTER_TAGS_JA = {
-  '🐱 動物': ['柴犬', '茶トラ猫', 'ポメラニアン', '赤ちゃんペンギン', 'まんまるウサギ', 'いたずら子猿', 'ハムスター', 'リス', '子グマ', 'フェネック', 'クアッカワラビー', '赤ちゃんアヒル', 'パンダ', 'ハリネズミ', 'アルパカ', '子ブタ', 'のんびりナマケモノ', '子象', 'かわいいカワウソ', '赤ちゃんアザラシ', 'コーギー', 'カピバラ', 'ひよこ', 'アライグマ', '赤ちゃんライオン', 'シマエナガ（ダルマエナガ）', '強気なマルチーズ', 'ふわもこビション・フリーゼ', 'ゴールデンレトリバー', '三毛猫', 'タキシード猫', 'タテゴトアザラシの赤ちゃん', 'レッサーパンダ'],
+  '🐱 動物': ['柴犬', '茶トラ猫', 'ポメラニアン', 'まんまるウサギ', 'いたずら子猿', 'ハムスター', 'リス', '子グマ', 'フェネック', 'クアッカワラビー', 'パンダ', 'ハリネズミ', 'アルパカ', '子ブタ', 'のんびりナマケモノ', '子象', 'コーギー', 'カピバラ', 'アライグマ', '赤ちゃんライオン', '強気なマルチーズ', 'ふわもこビション・フリーゼ', 'ゴールデンレトリバー', '三毛猫', 'タキシード猫', 'レッサーパンダ', '白い子羊', '子鹿', '赤ちゃんトラ', 'カンガルー'],
+  '🐦 鳥・野鳥': ['シマエナガ（ダルマエナガ）', 'カラフルなインコ', 'ふっくらスズメ', '赤ちゃんペンギン', '赤ちゃんアヒル', 'よちよちカモメ', 'まんまるハト', '大きな目のフクロウ', '華やかなフラミンゴ', 'ひよこ', '優雅な白鳥', 'いたずらカラス', 'オオハシ（トゥーカン）', '赤ちゃんダチョウ', '青い鳥', '子ガモ'],
+  '🐟 魚介・海洋生物': ['もちもちタコ', 'かわいいイカ・コウイカ', 'まんまる金魚', '青い海のクジラ', '赤ちゃんサメ', '泳ぐイルカ', '透明なクラゲ', '横歩きのカニ', '笑顔のウミガメ', '真珠を抱いた貝・ホタテ', 'トゲトゲのウニ', 'ぷくぷくフグ', 'かわいいカワウソ', '赤ちゃんアザラシ', 'タテゴトアザラシの赤ちゃん', '神秘的なタツノオトシゴ', 'まんまるエイ', '赤ちゃんロブスター'],
+  '🐞 昆虫・虫': ['羽ばたく蝶々', '幸運のてんとう虫', '働き者のミツバチ', '凛々しいカブトムシ', '立派なアゴのクワガタ', '緑のトンボ', 'ピカピカ光るホタル', 'もぞもぞ青虫・毛虫', 'せっせと働くアリ', 'カマキリ', '鳴くコオロギ', 'ころころカタツムリ', 'カラフルなコガネムシ', '森の小虫の妖精'],
+  '🦎 爬虫類・両生類': ['ピンクのウーパールーパー', 'まんまるアマガエル', '目がクリッとしたヤモリ', '色が変わるカメレオン', '子ガメ', 'ぷにぷにサンショウウオ', 'かわいい子ワニ', 'にっこりヘビ', '赤ちゃんイグアナ'],
+  '🦖 恐竜・古生物': ['赤ちゃんティラノサウルス', 'おっとりブラキオサウルス', 'かわいいトリケラトプス', '空飛ぶプテラノドン', 'ステゴサウルス', 'もふもふマンモス', 'ヴェロキラプトル', 'アンキロサウルス'],
+  '🧸 ぬいぐるみ・文具': ['ヴィンテージテディベア', '愛着のうさぎぬいぐるみ', 'ポストイットの妖精', '手帳デコシール', 'ぷにぷにゼリーキーホルダー', '鉛筆削り坊や', 'カラフルクレヨンボット', 'ミニスノードーム', 'ふかふかクッション人形'],
   '👦 人物': ['ボブヘアの少女', 'メガネの優等生', 'ツーブロックの男子', 'パーマ頭のおばちゃん', 'ヒゲのおじさん', 'ポニーテールの体育会系', 'ツインテールの少女', 'ビーニーのヒップスター', 'スーツの紳士', '韓服を着た子供', 'スーツのキャリアウーマン', '優しい白髪のおばあちゃん', '杖をついたおじいちゃん', 'かわいい幼稚園児・子供', '優しい先生・教員', '幸せな新郎・新婦', '仲良し新婚夫婦', 'サングラスのラッパー', 'エプロンのバリスタ', '丸刈りの軍人', 'ヘッドホンのプロゲーマー', 'マッチョなジム男子', 'カメラを持ったバックパッカー', '白衣の医師', '制服の警察官', 'ギターを弾くロックスター', 'スケボー少年', '華やかなK-POPアイドル', '気さくな近所のおじさん', 'ヨガインストラクター', 'ヘルメットの建築家', 'パリの画家', 'スピードライダー', '花屋の店長', 'バッグを背負った就活生', '疲れた会社員', 'エプロンのパン職人', '作業着の整備士', '伝統衣装の学者', 'カウボーイハットの牧童', '眼帯の海賊船長', '華やかなマジシャン', 'チュチュを着たダンサー', 'ジャージ姿のニート', '白衣の研究者', 'デニムに白Tの爽やか男子', '優雅なお姫様', '甲冑を着た騎士', '熱血テコンドー師範', '制服のスチュワーデス', 'カメラマン', '登山服の登山家', 'マイクを持つアナウンサー', '法服の裁判官', '防火服の消防士', 'コック帽のシェフ', 'キャップ帽のバイト', '麦わら帽子の農夫', '花冠の森の少女', '制服でトッポッキを食べる学生', '波乗りサーファー', 'カーラーを巻いた就活生', '新入社員', '魂が抜けた会社員', '初心者ドライバー', '筋トレ・フィットネスマニア'],
   '🦄 ファンタジー/モノ': ['ユニコーン', '赤ちゃんドラゴン', '小さな魔法使い', '森の妖精', 'もちもちお餅', '甘いマカロン', 'イチゴケーキ', 'ぷくぷく餃子', '小さな吸血鬼', '海の人魚姫', '勇敢な見習い騎士', '宇宙人', '九尾の狐', 'かわいい小鬼', '輝く天使', 'いたずら小悪魔', '空飛ぶ魔法の絨毯', '綿菓子雲', '神秘的な人魚', '翼のあるペガサス', 'おしゃべりカボチャ', '宇宙飛行士', '魔法のほうき', 'ゼリーモンスター', '雪だるまの妖精'],
   '🤖 ロボット/SF': ['赤ちゃんロボット', 'サイバーにゃんこ', 'ぷにぷにスライム', '宇宙ハムスター', '赤ちゃん恐竜', 'ピクセルロボ', '小さなエイリアン', 'メカわんこ', 'ネオンおばけ', '宇宙飛行わんこ', 'サイバーパンクうさぎ', 'ホログラムゴースト', 'UFOパイロット', 'レトロモニターロボ', 'ミニゲーム機キャラ', 'バッテリー充電ロボ', 'AIアンドロイド', '変形メカロボット'],
@@ -441,37 +476,43 @@ const CHARACTER_TAGS_JA = {
   '🌿 植物/自然': ['赤ちゃんサボテン', '四つ葉のクローバー妖精', 'ころころキノコ', '植木鉢の赤ちゃん', 'ひまわりちゃん', '新芽の妖精', 'もみじちゃん', 'プチトマト', 'アボカドちゃん', 'もも妖精', '激辛とうがらしちゃん', 'たんぽぽの綿毛', 'ふわふわコットン', 'レモン坊や', '泣き虫たまねぎ', 'ころころどんぐり', '赤りんご妖精', '秋のくり坊'],
   '👀 外見/特徴': ['丸顔', '大きくてキラキラした目', 'ぷっくりした頬', '短くて太い手足', '小さくて丸い鼻', 'ほんのり赤らんだ頬', 'もふもふの毛並み', 'ぷにぷにゼリー体型', '長くてぴんと立った耳', '小さな八重歯', 'そばかす', '片目を隠す前髪', '丸メガネ', 'ふさふさのしっぽ', '小さな羽', '星形の瞳', 'ハート型の頬模様', 'ミニSD体型'],
   '✨ 性格/感情': ['いたずら好き', 'ツンデレ・クール', 'おっとり優しい', 'いつもお疲れモード', '愛嬌たっぷり', '怒りっぽい', 'のんびり屋', '泣き虫', '活発・元気', '人見知り・内気', '天然・マイペース', '思いやりがある', 'いつも腹ペコ', '好奇心旺盛', '何事にも真面目', '見栄っ張り', '恋してる', '自信満々', 'おっちょこちょい', 'ぐうたら・ゴロゴロ', '情熱的・やる気満々', '怖がり・ビビリ', 'おすまし・気取り屋', 'やる気ゼロ', 'お金大好き'],
-  '🖌️ 画風': ['かわいい2Dアニメ風', '韓国ウェブトゥーン風', '手描き落書き風', 'やわらか水彩画風', '色鉛筆絵本風', 'レトロアニメ風', 'すっきりミニマルベクター', 'ポップアート風', '太線のコミック風', 'ドット絵ピクセルアート', 'ペーパーコラージュ風', 'ヴィンテージ印刷風', 'モノクロ漫画トーン', '熱血バトル漫画風', 'きらきら少女漫画風', '80-90年代レトロアニメ風', '3Dセミリアルアニメレンダリング', '日本の出版マンガ風（Gペン・スクリーントーン）', '3Dフェルト・粘土クレイ人形風', 'クレヨン落書きパステル風', 'Y2Kレトロキラキラピクセル風'],
+  '🖌️ 画風': ['かわいい2Dアニメ風', '韓国ウェブトゥーン風', '手描き落書き風', 'やわらか水彩画風', '色鉛筆絵本風', 'レトロアニメ風', 'すっきりミニマルベクター', 'ポップアート風', '太線のコミック風', 'ドット絵ピクセルアート', 'ペーパーコラージュ風', 'ヴィンテージ印刷風', 'モノクロ漫画トーン', '熱血バトル漫画風', 'きらきら少女漫画風', '80-90年代レトロアニメ風', '3Dセミリアルアニメレンダリング', '日本の出版マンガ風（Gペン・スクリーントーン）', '3Dフェルト・粘土クレイ人形風', 'クレヨン落書きパステル風', 'Y2Kレトロキラキラピクセル風', 'B級ギャグ・シュール落書き風', 'クレヨン・オイルパステル絵本風', '東洋画・水墨画風'],
   '👕 衣装': ['白衣', 'コックエプロン', 'ビジネススーツ', 'オーバーサイズパーカー', 'オーバーオール', '制服', 'ジャージ', 'レインコート', 'もこもこパジャマ', '魔法使いのマント', '華やかなドレス', 'スポーティなキャップ', 'ダウンジャケット', 'レザージャケット', 'シャツとネクタイ', '花柄ワンピース', 'ストリート系ファッション', '伝統武術の道着', 'あったかニットセーター', '動物の着ぐるみパジャマ', '宇宙服', '探検家のベストと帽子', '水着と浮き輪', 'トレンチコート', '妖精の羽', '王冠とマント', 'デニムと白T', '名探偵のコートと帽子'],
   '🎒 小道具/動作': ['スマホを持つ', 'コーヒーカップを持つ', 'サングラスをかける', 'ヘッドホンをつける', 'ノートパソコンを操作する', '本を読む', '風船を持つ', '花束を抱える', 'マイクで歌う', 'ゲームコントローラーを握る', 'フライパンを持つ', '大きな虫眼鏡を持つ', 'スケッチブックに絵を描く', '魔法の杖を振る', '買い物かごを持つ', '傘を差す', 'ポップコーンを食べる', '掃除機をかける', '望遠鏡を覗く', 'ヨガマットでストレッチする', 'スマートウォッチを見る', '札束を握っている', 'アイスコーヒーのタンブラーを持つ', 'ノートパソコンをカタカタ打つ', 'フライドチキンをかじる', 'ビール・お酒のグラスで乾杯', '点滴を打ってぐったり'],
   '🌏 世界の文化・伝統': ['伝統的な韓服（ハンボク）', 'モダンなヒップホップ韓服', 'K-POPアイドルステージ衣装', 'テコンドー黒帯道着', '伝統的な着物・浴衣', '秋葉原メイドコスプレ', '侍（サムライ）・忍者装束', '日本のセーラー服・学生服', '神社巫女（みこ）装束', '武侠・仙侠のシルク道袍', '華やかなチャイナドレス・漢服', 'カンフー武術家（黄色の道着）', '京劇の仮面役者', '西部劇カウボーイ・保安官', 'ロンドン紳士トレンチコート', 'サイバーパンクネオンストリート', '中世ヨーロッパ騎士の甲冑', 'パリジャンのベレー帽とバゲット', 'イギリス王室近衛兵（毛皮帽子）', 'スペイン情熱のフラメンコダンサー', 'ドイツのオクトーバーフェスト衣装', 'ベネチア仮面舞踏会衣装', 'メキシカンマリアッチ＆ソンブレロ', '死者の日シュガースカル仮装', 'ブラジルサンバカーニバルダンサー', 'ベトナムアオザイ＆ノンラー笠', 'タイ伝統サバイ衣装', 'インド伝統サリー＆ボリウッド', 'アラビアンナイトのターバン＆魔法のランプ', 'ハワイアンアロハシャツ＆ウクレレ'],
-  '🎬 映画・アニメ': ['魔法学校の制服と魔法の杖', '黒スーツとサングラスの秘密諜報員', 'ネオン光剣を持つ宇宙騎士', '星のステッキを持つ変身魔法少女', '革帽子とムチを持つ考古学者探検家', '三角帽子の海賊船長', '赤いマントのスーパーヒーロー', '漆黒のダークヒーロー', '革ジャンとサングラスのバイカー', '飛行士の帽子とゴーグル', '森の巨大な葉っぱの精霊', 'トレンチコートと虫眼鏡の名探偵', '宇宙ヘルメットをかぶった宇宙飛行士', 'ポンチョを着た西部劇のガンマン', '半面の白い仮面をつけた貴族', 'ドラゴン使いのバイキング戦士', 'タイムトラベラー', 'ゾンビアポカリプスの生存者'],
+  '🎬 映画・アニメ': ['魔法学校の制服と魔法の杖', '黒スーツとサングラスの秘密諜報員', 'ネオン光剣を持つ宇宙騎士', '星のステッキを持つ変身魔法少女', '革帽子とムチを持つ考古学者探検家', '三角帽子の海賊船长', '赤いマントのスーパーヒーロー', '漆黒のダークヒーロー', '革ジャンとサングラスのバイカー', '飛行士の帽子とゴーグル', '森の巨大な葉っぱの精霊', 'トレンチコートと虫眼鏡の名探偵', '宇宙ヘルメットをかぶった宇宙飛行士', 'ポンチョを着た西部劇のガンマン', '半面の白い仮面をつけた貴族', 'ドラゴン使いのバイキング戦士', 'タイムトラベラー', 'ゾンビアポカリプスの生存者'],
   '💼 会社員・オフィス': ['定時退社10秒前に時計を見る', '残業で目の下のクマがやばい', '給料日に通帳を見て感動の涙', '会議中に魂が抜けて放心状態', '退職届を胸に忍ばせる', 'コーヒー3杯一気飲み', 'モニターの陰に隠れる', '決裁書類を持って顔色を伺う', '満員電車に押しつぶされる', 'ランチメニュー選びで幸せ', '金曜の退勤で足取りが軽い', '月曜病でベッドと一体化'],
   '🎮 ゲーム・eスポーツ': ['RGBゲーミングヘッドセット装着', 'キーボード台パンでブチギレ', 'ランク昇格で紙吹雪クラッカー', 'トロール味方に頭を抱える', 'エナジードリンクで徹夜ゲーム', 'VRゴーグルで虚空を振り回す', 'コントローラー握り超集中', '1位ドン勝ビクトリーセレモニー', 'Wi-Fi切断で絶望する', 'ボス討伐レイドパーティ募集', 'ガチャ大当たりで大歓喜', 'ガチャ爆死で床に崩れ落ちる'],
   '💘 恋愛・カップル': ['ペアルックでお揃いコーデ', '手を繋いでイチャイチャ散歩', 'すねてほっぺを膨らませ背を向ける', '会いたくてビデオ通話スクショ', 'ハートクッションをぎゅっと抱きしめる', '花束の後ろに顔を隠す', '記念日ケーキのロウソクを吹き消す', '肩にもたれかかってぐっすり眠る', '指ハート発射で甘える', '返信を待ちながらスマホをぼんやり見つめる', '映画館でポップコーンを取り合い手が触れる', '雨の日に傘を傾けて入れてあげる'],
   '💪 フィットネス・筋トレ': ['プロテインシェイカーをシャカシャカ振る', '重いダンベルを力強く持ち上げる', '体組成計の体脂肪率を見て大ショック', 'サラダを食べながらチキンを妄想', 'ランニングマシンで汗だく', '体重計に乗って絶望の涙', 'ジムの鏡で筋トレ自撮りパシャリ', 'スクワットで足がプルプル震える', 'フォームローラーの上で悲鳴', '水2リットルを一気飲み', '筋肉のパンプアップを見て満足気', 'チートデイにピザとバーガーを爆食い'],
-  '🌈 エフェクト/背景': ['キラキラ光るエフェクト', 'ハートが飛び交う', '星が降る', 'ネオンサインが瞬く', '漫画的な集中線', '桜吹雪が舞う', '燃え上がる炎エフェクト', '汗が飛び散る', '憂鬱な暗雲', '虹色のオーラ', 'ドカンと爆発', '不気味な影', 'スポットライト照明', '吹雪が吹き荒れる', '雷が鳴り響く', 'ぷくぷく泡', '温かい日差し', '音符が漂う', '風に舞う', 'ふわふわ浮かぶはてな（？）', 'キラリと光るびっくりマーク（！）', 'ブルブル震える効果線', 'ショックの暗雲', '目がハート（キラキラ）']
+  '🌈 エフェクト/背景': ['キラキラ光るエフェクト', 'ハートが飛び交う', '星が降る', 'ネオンサインが瞬く', '漫画的な集中線', '桜吹雪が舞う', '燃え上がる炎エフェクト', '汗が飛び散る', '憂鬱な暗雲', '虹色のオーラ', 'ドカンと爆発', '不気味な影', 'スポットライト照明', '吹雪が吹き荒れる', '雷が鳴り響く', 'ぷくぷく泡', '温かい日差し', '音符が漂う', '風に舞う', 'ふわふわ浮かぶはてな（？）', 'キラリと光るびっくりマーク（！）', 'ブルブル震える効果線', 'ショックの暗雲', '目がハート（キラキラ）'],
 };
 
 const CHARACTER_TAGS_ZH = {
-  '🐱 动物': ['柴犬', '橘猫', '博美犬', '小企鹅', '圆滚滚小兔', '淘气小猴', '仓鼠', '松鼠', '小熊', '耳廓狐', '短尾矮袋鼠', '小鸭子', '大熊猫', '刺猬', '羊驼', '小猪', '树懒', '小象', '水獭', '海豹', '柯基', '水豚', '小鸡', '浣熊', '小狮子', '银喉长尾山雀（肥啾）', '脾气火爆马尔济斯', '圆滚滚比熊犬', '金毛寻回犬', '三花猫', '奶牛猫（燕尾服猫）', '海豹宝宝', '小熊猫'],
+  '🐱 动物': ['柴犬', '橘猫', '博美犬', '圆滚滚小兔', '淘气小猴', '仓鼠', '松鼠', '小熊', '耳廓狐', '短尾矮袋鼠', '大熊猫', '刺猬', '羊驼', '小猪', '树懒', '小象', '柯基', '水豚', '浣熊', '小狮子', '脾气火爆马尔济斯', '圆滚滚比熊犬', '金毛寻回犬', '三花猫', '奶牛猫（燕尾服猫）', '小熊猫', '白色小羊', '小鹿', '小老虎', '袋鼠'],
+  '🐦 鸟类': ['银喉长尾山雀（肥啾）', '五彩鹦鹉', '胖乎乎麻雀', '小企鹅', '小鸭子', '摇摇晃晃海鸥', '圆滚滚鸽子', '大眼睛猫头鹰', '华丽火烈鸟', '小鸡', '优雅白天鹅', '淘气乌鸦', '大嘴巨嘴鸟', '小鸵鸟', '青鸟', '小大雁'],
+  '🐟 水产・海洋生物': ['软软章鱼', '可爱小鱿鱼/乌贼', '圆滚滚金鱼', '蓝色大海鲸鱼', '鲨鱼宝宝', '游泳的海豚', '透明水母', '横着走的小螃蟹', '微笑海龟', '带珍珠的贝壳/扇贝', '刺头海胆', '圆滚滚河豚', '可爱水獭', '小海豹', '海豹宝宝', '神秘海马', '圆圆魔鬼鱼', '小龙虾'],
+  '🐞 昆虫・小虫': ['翩翩起舞的蝴蝶', '幸运七星瓢虫', '勤劳蜜蜂', '帅气独角仙', '大颚锹形虫', '绿色蜻蜓', '闪闪萤火虫', '蠕动小毛毛虫', '嘿呦嘿呦小蚂蚁', '叶片上的螳螂', '唱歌的蟋蟀', '圆滚滚蜗牛', '五彩金龟子', '草丛小虫精灵'],
+  '🦎 爬行・两栖类': ['粉色六角恐龙（美西螈）', '圆滚滚小青蛙', '大眼睛守宫蜥蜴', '变色龙', '小海龟', '软糯小蝾螈', '可爱小鳄鱼', '微笑小蛇', '小鬣蜥'],
+  '🦖 恐龙・古生物': ['霸王龙宝宝', '温顺腕龙', '可爱三角龙', '飞天翼龙', '剑龙宝宝', '毛茸茸小猛犸象', '迅猛龙宝宝', '甲龙宝宝'],
+  '🧸 玩偶・文具': ['复古泰迪熊', '依恋小兔玩偶', '便利贴精灵', '手帐装饰贴纸', 'Q弹果冻钥匙扣', '卷笔刀小人', '彩色蜡笔机器人', '迷你水晶雪花球', '软绵绵靠垫玩偶'],
   '👦 人物': ['短发少女', '戴眼镜的学霸', '寸头男生', '卷发大妈', '胡子大叔', '马尾体育生', '双马尾少女', '冷帽潮人', '西装绅士', '穿韩服的小朋友', '职场女强人', '慈祥的白发奶奶', '拄拐杖的爷爷', '小黄帽幼儿园生', '戴墨镜的Rapper', '咖啡馆咖啡师', '寸头士兵', '戴耳机的职业选手', '肌肉健身男', '带单反的背包客', '穿白大褂的医生', '穿制服的警察', '弹吉他的摇滚乐手', '滑板少年', '华丽K-POP爱豆', '热心邻居大叔', '瑜伽教练', '戴安全帽的建筑师', '巴黎画家', '机车骑手', '花店老板', '背书包的求职生', '疲惫打工人', '系围裙的面包师', '工装机修师', '传统学者', '牛仔帽牧童', '戴眼罩的海盗船长', '魔术师', '芭蕾舞者', '运动服无业青年', '穿白大褂的科学家', '白T牛仔裤帅哥', '穿礼服的小公主', '穿铠甲的骑士', '穿道服的跆拳道教练', '穿制服的空姐', '摄影师', '穿冲锋衣的登山客', '拿话筒的主持人', '穿法袍的法官', '穿防护服的消防员', '戴厨师帽的主厨', '戴棒球帽的店员', '草帽农夫', '戴花环的森林少女', '穿校服吃年糕的学生', '拿冲浪板的冲浪者', '戴卷发筒的求职生', '职场新人', '灵魂出窍打工人', '新手司机', '健身肌肉达人'],
   '🦄 幻想/物品': ['独角兽', '小飞龙', '小魔法师', '森林精灵', '软糯麻薯', '甜美马卡龙', '草莓蛋糕', '软萌小糖宝', '小吸血鬼', '美人鱼', '勇敢小骑士', '小外星人', '九尾狐', '可爱小妖怪', '闪耀天使', '淘气小恶魔', '飞天魔毯', '棉花糖云朵', '神秘人鱼', '飞马天马', '会说话的南瓜', '宇航员', '魔法扫帚', '果冻怪', '雪人精灵'],
   '🤖 机器人/科幻': ['小机器人', '赛博猫咪', 'Q弹史莱姆', '太空仓鼠', '小恐龙', '像素机器人', '外星小可爱', '机甲小狗', '霓虹幽灵', '太空宇航狗', '赛博朋克兔', '全息幽灵', 'UFO驾驶员', '复古显示器机器人', '迷你游戏机小怪', '充电机器人', 'AI仿生人', '变形机甲'],
-  '🍞 甜品/美食': ['会说话的鲷鱼烧', '吐司大叔', '马卡龙兔', '冰美式小幽灵', '胖嘟嘟小饺子', '草莓大福', '巧克力曲奇', '芝士热狗', 'Q弹布丁', '糖葫芦小精灵', '软糯辣炒年糕', '三角饭团', '拉丝披萨', '酥脆薯条', '溏心荷包蛋', '热气腾腾拉面', '甜筒冰淇淋', '章鱼小丸子', '甜心纸杯蛋糕', '小香肠人'],
-  '🌿 植物/自然': ['仙人掌宝宝', '四叶草精灵', '圆滚滚小蘑菇', '花盆小宝贝', '向日葵娃娃', '嫩芽小仙子', '红枫叶', '圣女果', '牛油果宝贝', '蜜桃小仙子', '爆辣小辣椒', '蒲公英绒毛', '蓬松棉花糖精灵', '柠檬小可爱', '流泪洋葱', '圆溜溜橡果', '红苹果小精灵', '秋日小栗子'],
-  '👀 外貌/特征': ['圆圆脸型', '大而闪亮的大眼睛', '肉嘟嘟脸颊', '短短胖胖的四肢', '小巧圆鼻子', '泛红的脸颊', '毛茸茸的毛发', 'Q弹果冻身材', '长长竖起的耳朵', '小虎牙', '雀斑', '遮住单眼的刘海', '圆圆眼镜', '蓬松大尾巴', '小翅膀', '星形瞳孔', '心形脸颊花纹', '迷你Q版SD体型'],
-  '✨ 性格/情感': ['爱恶作剧', '高冷傲娇', '温顺善良', '日常疲惫不堪', '撒娇精', '容易暴躁', '慢吞吞从容', '爱哭鬼', '活泼好动', '害羞胆小', '天然呆脱线', '温柔体贴', '总是很饿', '好奇心爆棚', '凡事极度认真', '爱面子装酷', '陷入热恋', '自信满满', '毛手毛脚', '懒散躺平', '热情爆棚', '胆小怕生', '小傲娇', '毫无干劲', '财迷爱钱'],
-  '🖌️ 画风': ['可爱2D动漫风', '韩国条漫Webtoon风', '手绘涂鸦风', '温柔水彩风', '彩铅童话绘本风', '复古动画风', '简约极简矢量风', '波普艺术风', '粗线条美漫风', '像素艺术风', '纸张拼贴风', '复古印刷风', '黑白漫画网点风', '热血战斗漫画风', '少女漫画闪亮风', '8090年代复古动画风', '3D半写实动漫渲染', '日系出版黑白漫画风（G笔网点纸）', '3D羊毛毡与黏土定格动画风', '蜡笔涂鸦童话绘本风', 'Y2K复古闪光像素贴纸风'],
-  '👕 服装': ['医生白大褂', '厨师围裙', '职场正装', '宽松连帽衫卫衣', '背带裤', '校服制服', '运动服', '雨衣', '毛茸茸睡衣', '魔法师斗篷', '华丽礼服裙', '运动鸭舌帽', '厚羽绒服', '皮夹克外套', '衬衫配领带', '碎花连衣裙', '街头潮牌穿搭', '传统武术道服', '温暖针织毛衣', '动物连体睡衣', '宇航服', '探险家马甲与帽子', '泳装与救生圈', '经典风衣', '闪亮精灵翅膀', '皇冠与披风', '白T配牛仔裤', '名侦探大衣与帽子'],
-  '🎒 道具/动作': ['拿着智能手机', '端着咖啡杯', '戴着墨镜', '戴着耳机', '敲笔记本电脑', '看书', '拿着气球', '抱着花束', '握着麦克风唱歌', '握着游戏手柄', '拿着平底锅', '拿着大放大镜', '在画板上画画', '挥动魔法棒', '提着购物篮', '打着雨伞', '吃爆米花', '吸尘器打扫', '用望远镜偷看', '瑜伽垫上拉伸', '看智能手表', '手握大把钞票', '手拿冰美式随行杯', '噼里啪啦敲笔记本电脑', '大口啃炸鸡腿', '举着啤酒杯干杯', '挂着吊瓶输液续命'],
-  '🌏 世界文化与传统': ['传统韩服与礼帽', '新潮改良韩服', 'K-POP偶像舞台华服', '跆拳道道服', '传统日式和服/浴衣', '秋叶原女仆Cosplay', '日本武士/忍者装束', '日系水手服校服', '神社巫女装束', '飘逸武侠/仙侠道袍', '华丽传统旗袍/汉服', '李小龙经典黄色功夫服', '京剧脸谱戏剧演员', '美国西部牛仔与警长', '伦敦绅士风衣与礼帽', '赛博朋克霓虹街头潮服', '中世纪欧洲骑士铠甲', '法式贝雷帽与法棍', '英国皇家卫队红制服与熊皮帽', '西班牙弗拉门戈红裙舞者', '德国慕尼黑啤酒节背带裤', '威尼斯面具舞会贵族服', '墨西哥大草帽流浪乐手', '亡灵节糖骷髅装扮', '巴西狂欢节羽毛桑巴舞者', '越南奥黛与斗笠', '泰国传统金丝纱笼', '印度宝莱坞华丽莎丽', '天方夜谭一千零一夜阿拉伯神灯', '夏威夷阿罗哈花衬衫与尤克里里'],
-  '🎬 电影与动漫': ['魔法学院制服与魔杖', '黑西装与墨镜特工', '手持霓虹光刃的宇宙骑士', '手握星光法杖的变身魔法少女', '头戴皮帽手持皮鞭的探险考古学家', '三角帽羽毛海盗船长', '红披风超级英雄', '漆黑面具暗夜英雄', '皮夹克与墨镜机车骑手', '飞行员皮帽与防风护目镜', '举着大树叶的森林巨兽精灵', '风衣与放大镜经典大侦探', '佩戴宇航头盔的星际宇航员', '披斗篷的西部荒野枪手', '佩戴半面白色面具的歌剧幽灵', '驯龙维京战士', '复古护目镜时空穿越者', '末日丧尸幸存者'],
-  '💼 打工人与职场': ['下班倒计时10秒盯钟表', '加班熬出浓浓黑眼圈', '发工资日看存折感动落泪', '开会时灵魂出窍发呆', '怀揣辞职信暗中观察', '连喝三杯咖啡续命', '偷偷躲在电脑显示器后', '拿着审批文件察言观色', '早高峰挤在满员地铁里', '挑选午餐菜单时满脸幸福', '周五下班步伐轻快如飞', '周一综合症与被窝合为一体'],
-  '🎮 游戏与电竞': ['戴着RGB电竞发光耳机', '愤怒怒砸键盘破防', '排位段位晋级放礼花', '遇到坑队友狂捏后颈破防', '狂灌能量饮料通宵开黑', '戴VR眼镜手舞足蹈', '握紧手柄眼神极度专注', '大吉大利今晚吃鸡胜利动作', '网络掉线断网瞬间绝望', '招募世界Boss开荒野队', '抽卡出金光欧皇大狂喜', '抽卡沉船大保底倒地不起'],
-  '💘 恋爱与情侣': ['穿着情侣同款穿搭', '牵着小手甜甜蜜蜜散步', '吃醋鼓起腮帮子背过身', '想你时视频通话截屏留念', '紧紧抱着爱心抱枕', '害羞躲在鲜花束后', '吹灭纪念日蛋糕蜡烛', '靠在肩膀上甜甜入睡', '比手指爱心撒娇卖萌', '傻傻盯着手机等信息', '电影院抓爆米花不小心触碰到手', '雨天撑伞把伞偏向对方'],
-  '💪 健身与塑形': ['疯狂摇晃蛋白粉摇摇杯', '霸气举起重沉沉的哑铃', '看到体脂率报告震惊石化', '嚼着减脂沙拉幻想着炸鸡', '在跑步机上大汗淋漓', '站上体重秤绝望流泪', '今日健身打卡对着镜子自拍', '深蹲到底双腿疯狂颤抖', '在泡沫轴拉伸痛到尖叫', '吨吨吨狂喝2升大水壶', '对着镜子欣赏肌肉充血满脸得意', '放纵日暴风吸入披萨汉堡炸鸡'],
-  '🌈 特效/背景': ['闪闪发光特效', '爱心四处飞散', '星光飘落', '霓虹灯闪烁', '漫画式集中线', '樱花瓣飘舞', '燃起火焰特效', '汗珠飞溅', '忧郁暗云', '彩虹色光晕', '砰然爆炸', '阴森黑影', '聚光灯照明', '暴风雪席卷', '电闪雷鸣', '啵啵冒气泡', '温暖阳光', '音符飘荡', '在风中飞舞', '飘浮问号（？）', '闪烁感叹号（！）', '瑟瑟发抖颤抖线', '大受打击雷雨乌云', '双眼冒爱心（闪亮）']
+  '🍞 甜品/美食': ['会说话的鲷鱼烧', '吐司大叔', '马卡龙小兔', '冰美式小幽灵', '胖嘟嘟小饺子', '草莓大福', '曲奇饼干', '芝士热狗棒', 'DuangDuang布丁', '糖葫芦仙子', '软糯炒年糕', '三角饭团', '拉丝披萨', '酥脆薯条', '太阳蛋', '热气腾腾拉面', '甜筒冰淇淋', '章鱼小丸子', '纸杯蛋糕', '小香肠'],
+  '🌿 植物/自然': ['小仙人掌', '四叶草精灵', '圆滚滚小蘑菇', '盆栽小宝', '小向日葵', '嫩芽仙子', '红枫叶', '圣女果', '牛油果宝', '蜜桃仙子', '火辣小尖椒', '蒲公英绒毛', '蓬松棉花糖', '柠檬小弟', '爱哭洋葱头', '圆圆小橡果', '红苹果小仙子', '秋天板栗头'],
+  '👀 外貌/特征': ['圆圆脸', '大而闪亮的眼睛', '肉嘟嘟脸颊', '短粗小手小脚', '小巧圆鼻子', '泛红的脸颊', '蓬松柔软毛发', 'Q弹果冻身材', '直立长耳朵', '可爱小虎牙', '雀斑', '遮单眼的刘海', '圆圆眼镜', '毛茸茸大尾巴', '小翅膀', '星星眼瞳孔', '爱心脸颊纹', '迷你SD身材'],
+  '✨ 性格/情绪': ['爱恶作剧', '高冷傲娇', '温顺善良', '日常被掏空', '撒娇精', '暴脾气', '慢吞吞', '爱哭鬼', '元气满满', '害羞内向', '古灵精怪', '温暖贴心', '干饭魂吃货', '好奇宝宝', '超级认真', '爱面子爱吹牛', '陷入爱河', '自信满满', '冒冒失失', '懒洋洋打滚', '满腔热血', '胆小鬼', '爱装清高', '毫无干劲', '守财奴'],
+  '🖌️ 画风': ['可爱2D卡通', '韩国条漫网漫风', '手绘涂鸦风', '柔和水彩风', '彩色铅笔绘本风', '复古动漫风', '简约扁平矢量', '活力波普艺术', '粗线条美漫风', '复古像素点阵', '剪纸拼贴风', '复古印刷漫画', '黑白漫画网点', '热血战斗漫画', '闪亮少女漫画', '8090复古动漫', '3D半写实动漫渲染', '日漫黑白G笔网点风', '3D毛毡粘土玩偶风', '蜡笔涂鸦粉彩风', 'Y2K千禧闪亮像素风', 'B级搞笑恶搞漫画风', '蜡笔油画棒童话风', '东方水墨国风'],
+  '👕 服饰': ['白大褂', '厨师围裙', '职场西装', '宽松大卫衣', '背带裤', '学生校服', '运动服', '小雨衣', '软绵绵睡衣', '魔法师斗篷', '华丽礼服裙', '运动棒球帽', '厚羽绒服', '皮夹克', '衬衫配领带', '碎花连衣裙', '潮酷街头风', '武道服', '暖和针织毛衣', '动物连体睡衣', '宇航服', '探险家马甲帽子', '泳衣配泳圈', '经典风衣', '闪亮仙女翅膀', '皇冠配斗篷', '白T配牛仔裤', '名侦探大衣帽子'],
+  '🎒 道具/动作': ['拿手机', '端咖啡杯', '戴墨镜', '戴头戴式耳机', '操作笔记本电脑', '看书', '拿气球', '抱花束', '握麦克风唱歌', '握游戏手柄', '拿平底锅', '拿大放大镜', '在画本上画画', '挥动魔法棒', '提菜篮子', '撑伞', '吃爆米花', '吸尘器打扫', '拿望远镜看', '在瑜伽垫上拉伸', '看智能手表', '拿一沓钞票', '拿冰美式随行杯', '敲笔记本键盘', '啃炸鸡腿', '碰啤酒杯干杯', '打点滴精疲力尽'],
+  '🌏 全球・传统文化': ['传统宫廷韩服', '潮流改良韩服配笠帽', 'K-POP舞台打歌服', '跆拳道黑带道服', '传统和服/浴衣', '秋叶原女仆装', '武士/忍者装束', '日系水手服学生装', '神社巫女服', '仙侠古风道袍', '华丽传统旗袍/汉服', '李小龙黄色功夫服', '京剧脸谱戏服', '狂野西部牛仔警长', '伦敦绅士风衣配礼帽', '赛博朋克霓虹街头装', '中世纪欧洲骑士铠甲', '法式贝雷帽配法棍', '英国皇家卫队熊皮帽', '西班牙弗拉门戈红裙', '德国啤酒节皮裤背带装', '威尼斯假面舞会华服', '墨西哥大草帽乐手服', '亡灵节糖骷髅装扮', '巴西桑巴狂欢舞裙', '越南奥黛配斗笠', '泰国传统纱丽丝绸服', '印度宝莱坞纱丽珠宝装', '一千零一夜头巾神灯装', '夏威夷风情衬衫配尤克里里'],
+  '🎬 影视・动漫': ['魔法学院校服配魔杖', '黑西装墨镜特工', '霓虹光剑太空骑士', '手握星光棒变身魔法少女', '皮帽皮鞭考古探险家', '三角帽海盗船长', '飘逸红披风超级英雄', '冷酷暗夜黑武士', '皮夹克墨镜机车骑士', '吉卜力风飞行帽护目镜', '森林巨叶龙猫精灵', '风衣放大镜经典名侦探', '宇航头盔星际领航员', '披风西部荒野枪手', '半张白色面具魅影', '驾驭飞龙维京勇士', '复古护目镜时间旅行者', '末日丧尸求生者'],
+  '💼 职场・办公': ['下班倒计时10秒看表', '熬夜加班黑眼圈', '发薪日看账单感动落泪', '会议室灵魂出窍发呆', '口袋揣着辞职信', '连灌3杯咖啡续命', '躲在电脑显示器后', '拿着审批单看老板眼色', '早高峰挤爆地铁', '挑选午餐菜单超幸福', '周五下班步伐轻快', '周一综合征粘在床上'],
+  '🎮 游戏・电竞': ['戴RGB电竞耳机', '狂砸键盘暴怒', '段位升级放彩花', '看坑货队友捂后颈', '喝能量饮料通宵', '戴VR眼镜隔空比划', '握手柄超专注眼神', '吃鸡第一名胜利狂欢', '断网绝望抓狂', '招募打Boss车队', '抽卡爆金光大狂欢', '抽卡沉船趴地大哭'],
+  '💘 恋爱・情侣': ['穿情侣装CP穿搭', '牵手甜蜜散步', '生气鼓脸背过身', '想你视频通话截屏', '紧抱爱心抱枕', '躲在花束后偷看', '吹灭纪念日蛋糕蜡烛', '靠在肩膀甜甜熟睡', '发射手指爱心撒娇', '盯着手机等回复', '电影院抓爆米花碰到手', '下雨天伞歪向对方'],
+  '💪 健身・减肥': ['用力摇蛋白粉摇摇杯', '举起重哑铃展示力量', '看体脂率报告大震惊', '嚼着沙拉幻想炸鸡', '跑步机上挥汗如雨', '站上体重秤绝望落泪', '对镜拍打卡照OOTD', '深蹲完双腿颤抖', '泡沫轴上痛苦尖叫', '吨吨吨狂喝2L水', '对镜欣赏肌肉充血', '放纵日暴风吸入披萨汉堡'],
+  '🌈 背景/特效': ['闪闪发光特效', '爱心四处飞舞', '星光洒落', '霓虹招牌闪烁', '漫画集中动作速度线', '樱花雨漫天飘落', '烈火燃烧特效', '汗珠四溅', '忧郁乌云小雨', '彩虹色光晕', '砰然大爆炸', '暗黑神秘阴影', '聚光灯焦点照明', '暴风雪席卷', '电闪雷鸣', '咕嘟咕嘟小气泡', '温暖柔和阳光', '音符悠扬飘浮', '随风飘舞', '问号飘浮（？）', '闪亮感叹号（！）', '瑟瑟发抖颤抖线', '大受打击黑线乌云', '爱心星星眼（闪烁）'],
 };
 
 const I18N = {
@@ -2282,15 +2323,17 @@ function App() {
   const [toastMessage, setToastMessage] = useState('');
 
   const getCategoryRuleBadge = (category) => {
-    const isArtStyle = category === '🖌️ 화풍' || category === '🖌️ Art Style';
+    const isArtStyle = ['🖌️ 화풍', '🖌️ Art Style', '🖌️ 画風', '🖌️ 画风'].includes(category);
     const isSubject = [
-      '🐱 동물', '👦 인물', '🦄 판타지/사물', '🤖 로봇/SF', '🍞 디저트/음식', '🌿 식물/자연',
-      '🐱 Animal', '👦 Person', '🦄 Fantasy/Object', '🤖 Robot/Sci-Fi', '🍞 Dessert/Food', '🌿 Plant/Nature'
+      '🐱 동물', '🐦 새/조류', '🐟 어패류/해양생물', '🐞 곤충/벌레', '🦎 파충류/양서류', '🦖 공룡/고생물', '🧸 인형/문구/팬시', '👦 인물', '🦄 판타지/사물', '🤖 로봇/SF', '🍞 디저트/음식', '🌿 식물/자연',
+      '🐱 Animal', '🐦 Bird', '🐟 Marine Life', '🐞 Insect/Bug', '🦎 Reptile/Amphibian', '🦖 Dinosaur', '🧸 Plushie/Stationery', '👦 Person', '🦄 Fantasy/Object', '🤖 Robot/Sci-Fi', '🍞 Dessert/Food', '🌿 Plant/Nature',
+      '🐱 動物', '🐦 鳥・野鳥', '🐟 魚介・海洋生物', '🐞 昆虫・虫', '🦎 爬虫類・両生類', '🦖 恐竜・古生物', '🧸 ぬいぐるみ・文具', '👦 人物', '🦄 ファンタジー/モノ', '🤖 ロボット/SF', '🍞 デザート/フード', '🌿 植物/自然',
+      '🐱 动物', '🐦 鸟类', '🐟 水产・海洋生物', '🐞 昆虫・小虫', '🦎 爬行・两栖类', '🦖 恐龙・古生物', '🧸 玩偶・文具', '👦 人物', '🦄 幻想/物品', '🤖 机器人/科幻', '🍞 甜品/美食', '🌿 植物/自然'
     ].includes(category);
 
-    if (isArtStyle) return lang === 'ko' ? '🎨 1개 선택' : '🎨 Single Select';
-    if (isSubject) return lang === 'ko' ? '👤 1종류 선택' : '👤 1 Subject';
-    return lang === 'ko' ? '✨ 다중 선택 가능' : '✨ Multi-Select';
+    if (isArtStyle) return lang === 'ko' ? '🎨 1개 선택' : (lang === 'ja' ? '🎨 1つ選択' : (lang === 'zh' ? '🎨 单选画风' : '🎨 Single Select'));
+    if (isSubject) return lang === 'ko' ? '👤 1종류 선택' : (lang === 'ja' ? '👤 1種類選択' : (lang === 'zh' ? '👤 单选主角' : '👤 1 Subject'));
+    return lang === 'ko' ? '✨ 다중 선택 가능' : (lang === 'ja' ? '✨ 複数選択可能' : (lang === 'zh' ? '✨ 可多选' : '✨ Multi-Select'));
   };
 
   const isTagSelected = (tag) => {
@@ -2399,13 +2442,29 @@ function App() {
   };
 
   const generateRandomCharacter = () => {
-    // 1. All 6 main subject categories (동물, 인물, 판타지, 로봇/SF, 디저트/음식, 식물/자연)
+    // 1. All 12 main subject categories (동물, 새, 해양, 곤충, 파충류, 공룡, 인형, 인물, 판타지, 로봇, 음식, 식물)
     const allSubjects = [
       // 🐱 동물
-      '뱁새 (오목눈이)', '참지않는 말티즈', '치즈냥', '똥실똥실 토끼', '동글동글 비숑', 
-      '골든리트리버', '쿼카', '시바견', '아기 펭귄', '햄스터', '카피바라', '레서판다',
-      '삼색 고양이', '하프물범', '사막여우', '아기 곰',
+      '시바견', '치즈냥', '똥실똥실 토끼', '참지않는 말티즈', '동글동글 비숑', '골든리트리버', '쿼카', '햄스터', '카피바라', '레서판다', '사막여우', '아기 곰',
       
+      // 🐦 새/조류
+      '뱁새 (오목눈이)', '알록달록 앵무새', '토실토실 참새', '아기 펭귄', '아기 오리', '뒤뚱뒤뚱 갈매기', '왕눈이 부엉이/올빼미', '화려한 플라밍고', '삐약삐약 병아리',
+
+      // 🐟 어패류/해양생물
+      '말랑말랑 문어', '귀여운 꼴뚜기/오징어', '동글동글 금붕어', '푸른 바다 고래', '아기 상어', '헤엄치는 돌고래', '투명한 해파리', '옆으로 걷는 꽃게', '방긋 웃는 바다거북', '귀여운 수달', '아기 물개',
+
+      // 🐞 곤충/벌레
+      '날개 펄럭이는 나비', '행운의 무당벌레', '부지런한 꿀벌', '늠름한 장수풍뎅이', '반짝반짝 반딧불이', '꿈틀꿈틀 아기 애벌레', '동글이 달팽이',
+
+      // 🦎 파충류/양서류
+      '핑크빛 우파루파 (아홀로틀)', '동글이 청개구리', '눈 땡글한 게코도마뱀', '색깔 바뀌는 카멜레온', '아기 거북이', '말랑말랑 도롱뇽',
+
+      // 🦖 공룡/고생물
+      '아기 티라노사우루스', '순둥이 브라키오사우루스', '귀여운 트리케라톱스', '하늘 나는 프테라노돈', '털복숭이 아기 매머드',
+
+      // 🧸 인형/문구/팬시
+      '빈티지 테디베어 곰인형', '낡은 애착 토끼인형', '포스트잇 요정', '다이어리 다꾸 스티커', '말랑 젤리 키링',
+
       // 👦 인물 / 직업
       '단발머리 소녀', '신입사원', '영혼 털린 직장인', '화려한 K팝 아이돌', '헤드폰 낀 프로게이머', 
       '초보 운전자', '안경 쓴 모범생', '투블럭 남학생', '귀여운 유치원생', '카페 바리스타',
@@ -2447,7 +2506,8 @@ function App() {
     const styles = [
       '귀여운 2D 만화풍', '일본 출판 만화풍', '3D 펠트/클레이 점토 인형풍', 
       '한국 웹툰 스타일', '크레파스 낙서풍', '흑백 만화 톤', '깔끔한 미니멀 벡터',
-      '통통 튀는 팝아트풍', '샤방샤방 순정만화풍', 'Y2K 픽셀 스티커풍'
+      '통통 튀는 팝아트풍', '샤방샤방 순정만화풍', 'Y2K 픽셀 스티커풍',
+      'B급 병맛/코믹 짤툰풍', '크레파스/오일파스텔 동화풍', '동양화/수묵담채화풍'
     ];
 
     // 5. 배경 / 효과
@@ -2475,25 +2535,33 @@ function App() {
 
   const appendTag = (tag) => {
     // 1. Identify categories
-    const isArtStyleCategory = activeTagCategory === '🖌️ 화풍' || activeTagCategory === '🖌️ Art Style';
+    const isArtStyleCategory = ['🖌️ 화풍', '🖌️ Art Style', '🖌️ 画風', '🖌️ 画风'].includes(activeTagCategory);
     const isSubjectCategory = [
-      '🐱 동물', '👦 인물', '🦄 판타지/사물', '🤖 로봇/SF', '🍞 디저트/음식', '🌿 식물/자연',
-      '🐱 Animal', '👦 Human', '🦄 Fantasy/Object', '🤖 Robot/SF', '🍞 Dessert/Food', '🌿 Plant/Nature'
+      '🐱 동물', '🐦 새/조류', '🐟 어패류/해양생물', '🐞 곤충/벌레', '🦎 파충류/양서류', '🦖 공룡/고생물', '🧸 인형/문구/팬시', '👦 인물', '🦄 판타지/사물', '🤖 로봇/SF', '🍞 디저트/음식', '🌿 식물/자연',
+      '🐱 Animal', '🐦 Bird', '🐟 Marine Life', '🐞 Insect/Bug', '🦎 Reptile/Amphibian', '🦖 Dinosaur', '🧸 Plushie/Stationery', '👦 Person', '🦄 Fantasy/Object', '🤖 Robot/Sci-Fi', '🍞 Dessert/Food', '🌿 Plant/Nature',
+      '🐱 動物', '🐦 鳥・野鳥', '🐟 魚介・海洋生物', '🐞 昆虫・虫', '🦎 爬虫類・両生類', '🦖 恐竜・古生物', '🧸 ぬいぐるみ・文具', '👦 人物', '🦄 ファンタジー/モノ', '🤖 ロボット/SF', '🍞 デザート/フード', '🌿 植物/自然',
+      '🐱 动物', '🐦 鸟类', '🐟 水产・海洋生物', '🐞 昆虫・小虫', '🦎 爬行・两栖类', '🦖 恐龙・古生物', '🧸 玩偶・文具', '👦 人物', '🦄 幻想/物品', '🤖 机器人/科幻', '🍞 甜品/美食', '🌿 植物/自然'
     ].includes(activeTagCategory);
 
-    // All subject tags for replacement logic (Safely handled)
-    const koSubjectKeys = ['🐱 동물', '👦 인물', '🦄 판타지/사물', '🤖 로봇/SF', '🍞 디저트/음식', '🌿 식물/자연'];
-    const enSubjectKeys = ['🐱 Animal', '👦 Person', '🦄 Fantasy/Object', '🤖 Robot/Sci-Fi', '🍞 Dessert/Food', '🌿 Plant/Nature'];
+    // All subject tags for replacement logic (Safely handled across all 4 languages)
+    const koSubjectKeys = ['🐱 동물', '🐦 새/조류', '🐟 어패류/해양생물', '🐞 곤충/벌레', '🦎 파충류/양서류', '🦖 공룡/고생물', '🧸 인형/문구/팬시', '👦 인물', '🦄 판타지/사물', '🤖 로봇/SF', '🍞 디저트/음식', '🌿 식물/자연'];
+    const enSubjectKeys = ['🐱 Animal', '🐦 Bird', '🐟 Marine Life', '🐞 Insect/Bug', '🦎 Reptile/Amphibian', '🦖 Dinosaur', '🧸 Plushie/Stationery', '👦 Person', '🦄 Fantasy/Object', '🤖 Robot/Sci-Fi', '🍞 Dessert/Food', '🌿 Plant/Nature'];
+    const jaSubjectKeys = ['🐱 動物', '🐦 鳥・野鳥', '🐟 魚介・海洋生物', '🐞 昆虫・虫', '🦎 爬虫類・両生類', '🦖 恐竜・古生物', '🧸 ぬいぐるみ・文具', '👦 人物', '🦄 ファンタジー/モノ', '🤖 ロボット/SF', '🍞 デザート/フード', '🌿 植物/自然'];
+    const zhSubjectKeys = ['🐱 动物', '🐦 鸟类', '🐟 水产・海洋生物', '🐞 昆虫・小虫', '🦎 爬行・两栖类', '🦖 恐龙・古生物', '🧸 玩偶・文具', '👦 人物', '🦄 幻想/物品', '🤖 机器人/科幻', '🍞 甜品/美食', '🌿 植物/自然'];
 
     const subjectTagList = [];
     koSubjectKeys.forEach(k => { if (CHARACTER_TAGS_KO[k]) subjectTagList.push(...CHARACTER_TAGS_KO[k]); });
     enSubjectKeys.forEach(k => { if (CHARACTER_TAGS_EN[k]) subjectTagList.push(...CHARACTER_TAGS_EN[k]); });
+    jaSubjectKeys.forEach(k => { if (CHARACTER_TAGS_JA[k]) subjectTagList.push(...CHARACTER_TAGS_JA[k]); });
+    zhSubjectKeys.forEach(k => { if (CHARACTER_TAGS_ZH[k]) subjectTagList.push(...CHARACTER_TAGS_ZH[k]); });
 
     const allSubjectTags = new Set(subjectTagList);
 
     const allArtStyles = new Set([
-      ...CHARACTER_TAGS_KO['🖌️ 화풍'],
-      ...CHARACTER_TAGS_EN['🖌️ Art Style'],
+      ...(CHARACTER_TAGS_KO['🖌️ 화풍'] || []),
+      ...(CHARACTER_TAGS_EN['🖌️ Art Style'] || []),
+      ...(CHARACTER_TAGS_JA['🖌️ 画風'] || []),
+      ...(CHARACTER_TAGS_ZH['🖌️ 画风'] || []),
     ]);
 
     setCharManual(prev => {
@@ -2581,7 +2649,211 @@ function App() {
     return emoticons.includes(batchPhrase) ? batchPhrase : (emoticons[0] || '안녕!');
   };
 
+  const getExpandedArtStyleText = (styleTag, isKo) => {
+    const styleMap = {
+      '귀여운 2D 만화풍': {
+        ko: '깔끔하고 둥글둥글한 외곽선과 화사한 셀 채색이 돋보이는 2D 카툰 스타일',
+        en: 'clean, bold, rounded 2D vector cartoon style with bright vibrant flat cell shading'
+      },
+      'Cute 2D cartoon': {
+        ko: '깔끔하고 둥글둥글한 외곽선과 화사한 셀 채색이 돋보이는 2D 카툰 스타일',
+        en: 'clean, bold, rounded 2D vector cartoon style with bright vibrant flat cell shading'
+      },
+      '한국 웹툰 스타일': {
+        ko: '감각적인 펜선과 생생한 표정 연출이 특징인 한국 웹툰/스마트툰 스타일',
+        en: 'Korean webtoon manhwa illustration style with expressive anime-inspired lineart and vivid digital coloring'
+      },
+      'Korean webtoon style': {
+        ko: '감각적인 펜선과 생생한 표정 연출이 특징인 한국 웹툰/스마트툰 스타일',
+        en: 'Korean webtoon manhwa illustration style with expressive anime-inspired lineart and vivid digital coloring'
+      },
+      'B급 병맛/코믹 짤툰풍': {
+        ko: '굵고 투박한 펜선과 과장된 표정, 킹받는 코믹한 매력의 B급 병맛 웹툰/짤툰 스타일',
+        en: 'hilarious satirical Korean meme webtoon style with bold unpolished ink lines, hyper-expressive comedic faces, and meme humor'
+      },
+      'Meme Webtoon Satirical Style': {
+        ko: '굵고 투박한 펜선과 과장된 표정, 킹받는 코믹한 매력의 B급 병맛 웹툰/짤툰 스타일',
+        en: 'hilarious satirical Korean meme webtoon style with bold unpolished ink lines, hyper-expressive comedic faces, and meme humor'
+      },
+      '손그림 낙서풍': {
+        ko: '삐뚤빼뚤 자연스러운 손맛과 아기자기한 감성의 핸드드로운 낙서 일러스트 스타일',
+        en: 'charming hand-drawn whimsical doodle illustration with organic imperfect pencil strokes and pastel fills'
+      },
+      'Hand-drawn doodle': {
+        ko: '삐뚤빼뚤 자연스러운 손맛과 아기자기한 감성의 핸드드로운 낙서 일러스트 스타일',
+        en: 'charming hand-drawn whimsical doodle illustration with organic imperfect pencil strokes and pastel fills'
+      },
+      '크레파스/오일파스텔 동화풍': {
+        ko: '부드러운 크레파스와 오일파스텔의 따뜻한 입자 질감이 살아있는 유아 그림책 동화 일러스트 스타일',
+        en: 'warm textured children\'s storybook illustration with authentic crayon and oil pastel grainy strokes and soft cozy blending'
+      },
+      'Crayon & Oil Pastel Storybook Style': {
+        ko: '부드러운 크레파스와 오일파스텔의 따뜻한 입자 질감이 살아있는 유아 그림책 동화 일러스트 스타일',
+        en: 'warm textured children\'s storybook illustration with authentic crayon and oil pastel grainy strokes and soft cozy blending'
+      },
+      '동양화/수묵담채화풍': {
+        ko: '먹선의 농담과 은은한 채색이 조화로운 전통 수묵담채화/동양화 일러스트 스타일',
+        en: 'traditional East Asian oriental ink wash painting (Sumi-e) with expressive brush strokes and subtle translucent watercolor gradients'
+      },
+      'Oriental Sumi-e Ink Wash Painting': {
+        ko: '먹선의 농담과 은은한 채색이 조화로운 전통 수묵담채화/동양화 일러스트 스타일',
+        en: 'traditional East Asian oriental ink wash painting (Sumi-e) with expressive brush strokes and subtle translucent watercolor gradients'
+      },
+      '부드러운 수채화풍': {
+        ko: '물방울의 맑고 투명한 번짐과 감성적인 색채가 돋보이는 프리미엄 수채화 일러스트',
+        en: 'delicate transparent watercolor wash illustration with soft bleeding edges and airy pastel tones'
+      },
+      'Soft watercolor': {
+        ko: '물방울의 맑고 투명한 번짐과 감성적인 색채가 돋보이는 프리미엄 수채화 일러스트',
+        en: 'delicate transparent watercolor wash illustration with soft bleeding edges and airy pastel tones'
+      },
+      '색연필 동화책풍': {
+        ko: '종이 결이 느껴지는 포근한 색연필 텍스처의 동화책 삽화 스타일',
+        en: 'warm cozy colored pencil fairy tale book illustration with visible paper tooth grain texture'
+      },
+      'Colored pencil storybook': {
+        ko: '종이 결이 느껴지는 포근한 색연필 텍스처의 동화책 삽화 스타일',
+        en: 'warm cozy colored pencil fairy tale book illustration with visible paper tooth grain texture'
+      },
+      '레트로 애니메이션풍': {
+        ko: '셀 애니메이션 특유의 따스한 색감과 레트로 빈티지 감성이 담긴 80-90년대 애니메이션 스타일',
+        en: 'nostalgic 80s-90s vintage cel animation look with warm retro color grading and soft film bloom'
+      },
+      'Retro animation': {
+        ko: '셀 애니메이션 특유의 따스한 색감과 레트로 빈티지 감성이 담긴 80-90년대 애니메이션 스타일',
+        en: 'nostalgic 80s-90s vintage cel animation look with warm retro color grading and soft film bloom'
+      },
+      '깔끔한 미니멀 벡터': {
+        ko: '군더더기 없는 미니멀한 기하학적 형태와 세련된 플랫 벡터 그래픽 디자인',
+        en: 'ultra-clean minimalist flat vector graphic design with geometric curves and precise solid color blocking'
+      },
+      'Clean minimal vector': {
+        ko: '군더더기 없는 미니멀한 기하학적 형태와 세련된 플랫 벡터 그래픽 디자인',
+        en: 'ultra-clean minimalist flat vector graphic design with geometric curves and precise solid color blocking'
+      },
+      '통통 튀는 팝아트풍': {
+        ko: '선명한 원색 대비와 다이내믹한 팝아트 그래픽 스타일',
+        en: 'high-contrast vibrant Pop Art graphic style with bold outlines and energetic color palettes'
+      },
+      'Vibrant pop art': {
+        ko: '선명한 원색 대비와 다이내믹한 팝아트 그래픽 스타일',
+        en: 'high-contrast vibrant Pop Art graphic style with bold outlines and energetic color palettes'
+      },
+      '굵은 선의 코믹북풍': {
+        ko: '강렬한 잉크 펜선과 역동적인 셰이딩이 특징인 클래식 코믹북 만화 스타일',
+        en: 'classic comic book print style with heavy dynamic black ink line weights and bold graphic shadows'
+      },
+      'Bold line comic book': {
+        ko: '강렬한 잉크 펜선과 역동적인 셰이딩이 특징인 클래식 코믹북 만화 스타일',
+        en: 'classic comic book print style with heavy dynamic black ink line weights and bold graphic shadows'
+      },
+      '도트 픽셀 아트풍': {
+        ko: '레트로 게임 감성의 정교한 16비트 도트 픽셀 아트 스티커 스타일',
+        en: 'charming 16-bit retro pixel art sprite sticker with clean crisp pixel grid edges'
+      },
+      'Pixel art retro dot': {
+        ko: '레트로 게임 감성의 정교한 16비트 도트 픽셀 아트 스티커 스타일',
+        en: 'charming 16-bit retro pixel art sprite sticker with clean crisp pixel grid edges'
+      },
+      '종이 콜라주풍': {
+        ko: '오려 붙인 색종이의 질감과 그림자 입체감이 살아있는 페이퍼 컷 콜라주 아트',
+        en: 'layered cut paper craft collage art with subtle drop shadows and realistic paper fiber textures'
+      },
+      'Paper collage style': {
+        ko: '오려 붙인 색종이의 질감과 그림자 입체감이 살아있는 페이퍼 컷 콜라주 아트',
+        en: 'layered cut paper craft collage art with subtle drop shadows and realistic paper fiber textures'
+      },
+      '빈티지 인쇄 만화풍': {
+        ko: '망점 하프톤과 미세한 오프셋 잉크 번짐이 돋보이는 레트로 빈티지 신문 만화 스타일',
+        en: 'vintage retro newsprint halftone comic print with authentic ink bleed and aged paper texture'
+      },
+      'Vintage print comic': {
+        ko: '망점 하프톤과 미세한 오프셋 잉크 번짐이 돋보이는 레트로 빈티지 신문 만화 스타일',
+        en: 'vintage retro newsprint halftone comic print with authentic ink bleed and aged paper texture'
+      },
+      '흑백 만화 톤': {
+        ko: '세련된 흑백 잉크 드로잉과 스크린톤 명암이 돋보이는 일본 출판 만화풍',
+        en: 'monochrome manga ink style with authentic screentone patterns and delicate cross-hatching'
+      },
+      'Monochrome manga tone': {
+        ko: '세련된 흑백 잉크 드로잉과 스크린톤 명암이 돋보이는 일본 출판 만화풍',
+        en: 'monochrome manga ink style with authentic screentone patterns and delicate cross-hatching'
+      },
+      '열혈 배틀 만화풍': {
+        ko: '박력 넘치는 거친 먹선 터치와 극적인 앵글의 소년만화 배틀 액션 스타일',
+        en: 'dynamic shonen battle manga style with high-energy brush strokes and dramatic tension'
+      },
+      'Hot-blooded battle manga': {
+        ko: '박력 넘치는 거친 먹선 터치와 극적인 앵글의 소년만화 배틀 액션 스타일',
+        en: 'dynamic shonen battle manga style with high-energy brush strokes and dramatic tension'
+      },
+      '샤방샤방 순정만화풍': {
+        ko: '섬세한 펜선과 반짝이는 눈동자, 화사한 톤이 가득한 순정만화 스타일',
+        en: 'sparkling classic shojo manga aesthetic with detailed shimmering eyes and soft floral screen tones'
+      },
+      'Sparkling shojo manga': {
+        ko: '섬세한 펜선과 반짝이는 눈동자, 화사한 톤이 가득한 순정만화 스타일',
+        en: 'sparkling classic shojo manga aesthetic with detailed shimmering eyes and soft floral screen tones'
+      },
+      '8090 레트로 애니풍': {
+        ko: '시티팝 감성의 80-90년대 셀 애니메이션 스타일',
+        en: 'vintage 80s-90s citypop aesthetic anime style with soft CRT glow and retro pastel anime palette'
+      },
+      '80s-90s retro anime': {
+        ko: '시티팝 감성의 80-90년대 셀 애니메이션 스타일',
+        en: 'vintage 80s-90s citypop aesthetic anime style with soft CRT glow and retro pastel anime palette'
+      },
+      '3D 반실사 애니 렌더링': {
+        ko: '디즈니·픽사 애니메이션 느낌의 부드러운 3D 렌더링과 입체 조명 스타일',
+        en: 'Pixar/Disney 3D animation rendering style with soft studio rim lighting and smooth subsurface scattering'
+      },
+      '3D Semi-realistic anime rendering': {
+        ko: '디즈니·픽사 애니메이션 느낌의 부드러운 3D 렌더링과 입체 조명 스타일',
+        en: 'Pixar/Disney 3D animation rendering style with soft studio rim lighting and smooth subsurface scattering'
+      },
+      '일본 출판 만화풍': {
+        ko: 'G펜 잉크선과 섬세한 스크린톤이 살아있는 고품질 일본 출판 만화 스타일',
+        en: 'authentic Japanese published manga style with precise G-pen inking and screentones'
+      },
+      'Japanese Manga Ink & Tone Style': {
+        ko: 'G펜 잉크선과 섬세한 스크린톤이 살아있는 고품질 일본 출판 만화 스타일',
+        en: 'authentic Japanese published manga style with precise G-pen inking and screentones'
+      },
+      '3D 펠트/클레이 점토 인형풍': {
+        ko: '포근한 양모 펠트와 말랑말랑한 클레이 점토 스톱모션 애니메이션 인형 스타일',
+        en: 'handcrafted 3D felt wool & claymation stop-motion miniature figurine style with tactile clay fingerprint textures and cozy studio macro lighting'
+      },
+      '3D Felt & Claymation Doll Style': {
+        ko: '포근한 양모 펠트와 말랑말랑한 클레이 점토 스톱모션 애니메이션 인형 스타일',
+        en: 'handcrafted 3D felt wool & claymation stop-motion miniature figurine style with tactile clay fingerprint textures and cozy studio macro lighting'
+      },
+      '크레파스 낙서풍': {
+        ko: '유아 그림책 느낌의 아기자기한 크레파스 왁스 질감 손그림 낙서풍',
+        en: 'playful wax crayon children\'s book doodle with organic waxy textures'
+      },
+      'Crayon Wax Pastel Doodle Style': {
+        ko: '유아 그림책 느낌의 아기자기한 크레파스 왁스 질감 손그림 낙서풍',
+        en: 'playful wax crayon children\'s book doodle with organic waxy textures'
+      },
+      'Y2K 픽셀 스티커풍': {
+        ko: '반짝이 글리터와 레트로 픽셀이 어우러진 2000년대 Y2K 다꾸 스티커 스타일',
+        en: 'Y2K retro aesthetic glitter sticker style with sparkling star emojis and pixel gloss highlights'
+      },
+      'Y2K Retro Glitter Pixel Sticker Style': {
+        ko: '반짝이 글리터와 레트로 픽셀이 어우러진 2000년대 Y2K 다꾸 스티커 스타일',
+        en: 'Y2K retro aesthetic glitter sticker style with sparkling star emojis and pixel gloss highlights'
+      }
+    };
+
+    const found = styleMap[styleTag];
+    if (found) {
+      return isKo ? found.ko : found.en;
+    }
+    return styleTag;
+  };
+
   const getSelectedArtStyle = () => {
+
     const artStyles = [
       ...CHARACTER_TAGS_KO['🖌️ 화풍'],
       ...CHARACTER_TAGS_EN['🖌️ Art Style'],
@@ -2625,26 +2897,51 @@ function App() {
   };
 
   const getSelectedCharacterRoles = () => {
-    const koCategories = Object.values(CHARACTER_TAGS_KO);
-    const enCategories = Object.values(CHARACTER_TAGS_EN);
     const selectedTagSet = new Set(
       charManual.split(',').map(value => value.trim()).filter(Boolean)
     );
-    const roleTags = index => [...koCategories[index], ...enCategories[index]];
-    const findSelected = indexes => indexes
-      .flatMap(index => roleTags(index))
-      .filter(tag => selectedTagSet.has(tag));
-    const recognizedTags = new Set([...koCategories.flat(), ...enCategories.flat()]);
+
+    const getTagsForKeys = (keys) => {
+      const result = [];
+      keys.forEach(k => {
+        if (CHARACTER_TAGS_KO[k]) result.push(...CHARACTER_TAGS_KO[k]);
+        if (CHARACTER_TAGS_EN[k]) result.push(...CHARACTER_TAGS_EN[k]);
+        if (CHARACTER_TAGS_JA[k]) result.push(...CHARACTER_TAGS_JA[k]);
+        if (CHARACTER_TAGS_ZH[k]) result.push(...CHARACTER_TAGS_ZH[k]);
+      });
+      return result.filter(tag => selectedTagSet.has(tag));
+    };
+
+    const subjectKeys = [
+      '🐱 동물', '🐦 새/조류', '🐟 어패류/해양생물', '🐞 곤충/벌레', '🦎 파충류/양서류', '🦖 공룡/고생물', '🧸 인형/문구/팬시', '👦 인물', '🦄 판타지/사물', '🤖 로봇/SF', '🍞 디저트/음식', '🌿 식물/자연',
+      '🐱 Animal', '🐦 Bird', '🐟 Marine Life', '🐞 Insect/Bug', '🦎 Reptile/Amphibian', '🦖 Dinosaur', '🧸 Plushie/Stationery', '👦 Person', '🦄 Fantasy/Object', '🤖 Robot/Sci-Fi', '🍞 Dessert/Food', '🌿 Plant/Nature',
+      '🐱 動物', '🐦 鳥・野鳥', '🐟 魚介・海洋生物', '🐞 昆虫・虫', '🦎 爬虫類・両生類', '🦖 恐竜・古生物', '🧸 ぬいぐるみ・文具', '👦 人物', '🦄 ファンタジー/モノ', '🤖 ロボット/SF', '🍞 デザート/フード', '🌿 植物/自然',
+      '🐱 动物', '🐦 鸟类', '🐟 水产・海洋生物', '🐞 昆虫・小虫', '🦎 爬行・两栖类', '🦖 恐龙・古生物', '🧸 玩偶・文具', '👦 人物', '🦄 幻想/物品', '🤖 机器人/科幻', '🍞 甜品/美食', '🌿 植物/自然'
+    ];
+
+    const appearanceKeys = ['👀 외형/특징', '👀 Appearance', '👀 外見/特徴', '👀 外貌/特征'];
+    const personalityKeys = ['✨ 성격/감정', '✨ Trait/Emotion', '✨ 性格/感情', '✨ 性格/情绪'];
+    const outfitKeys = ['👕 의상', '👕 Outfit', '👕 衣装', '👕 服饰', '🌏 글로벌/전통 문화', '🌏 World Cultures', '🌏 世界の文化・伝統', '🌏 全球・传统文化', '🎬 영화/애니메이션', '🎬 Cinema & Anime', '🎬 映画・アニメ', '🎬 影视・动漫'];
+    const propKeys = ['🎒 소품/동작', '🎒 Prop/Action', '🎒 小道具/動作', '🎒 道具/动作', '💼 직장인/오피스', '💼 Office & Work', '💼 会社員・オフィス', '💼 职场・办公', '🎮 게임/E스포츠', '🎮 Gaming & Esports', '🎮 ゲーム・eスポーツ', '🎮 游戏・电竞', '💘 연애/커플', '💘 Romance & Couples', '💘 恋爱・情侣', '💪 헬스/다이어트', '💪 Fitness & Diet', '💪 フィットネス・筋トレ', '💪 健身・减肥'];
+    const effectKeys = ['🌈 배경/효과', '🌈 Effect/BG', '🌈 エフェクト/背景', '🌈 背景/特效'];
+
+    const allRecognized = new Set([
+      ...Object.values(CHARACTER_TAGS_KO).flat(),
+      ...Object.values(CHARACTER_TAGS_EN).flat(),
+      ...Object.values(CHARACTER_TAGS_JA).flat(),
+      ...Object.values(CHARACTER_TAGS_ZH).flat()
+    ]);
+
     const additionalDescription = Array.from(selectedTagSet)
-      .filter(value => !recognizedTags.has(value))
+      .filter(value => !allRecognized.has(value))
       .join(', ');
-    const subjects = findSelected([0, 1, 2, 3, 4, 5]);
-    const appearances = findSelected([6]);
-    const personalities = findSelected([7]);
-    // index 8 = 화풍 → getSelectedArtStyle()에서 별도 처리
-    const outfits = findSelected([9]);
-    const props = findSelected([10]);
-    const effects = findSelected([11]);
+
+    const subjects = getTagsForKeys(subjectKeys);
+    const appearances = getTagsForKeys(appearanceKeys);
+    const personalities = getTagsForKeys(personalityKeys);
+    const outfits = getTagsForKeys(outfitKeys);
+    const props = getTagsForKeys(propKeys);
+    const effects = getTagsForKeys(effectKeys);
 
     return { subjects, appearances, personalities, outfits, props, effects, additionalDescription };
   };
