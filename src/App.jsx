@@ -3995,8 +3995,10 @@ function App() {
   const getSelectedArtStyle = () => {
 
     const artStyles = [
-      ...CHARACTER_TAGS_KO['🖌️ 화풍'],
-      ...CHARACTER_TAGS_EN['🖌️ Art Style'],
+      ...(CHARACTER_TAGS_KO['🖌️ 화풍'] || []),
+      ...(CHARACTER_TAGS_EN['🖌️ Art Style'] || []),
+      ...(CHARACTER_TAGS_JA['🖌️ 画風'] || []),
+      ...(CHARACTER_TAGS_ZH['🖌️ 画风'] || []),
     ];
     const selectedTagSet = new Set(
       charManual.split(',').map(value => value.trim()).filter(Boolean)
@@ -4247,7 +4249,7 @@ ${referenceInstruction}
 의상: ${character.outfit}
 
 [최우선 화풍]
-귀엽고 친근한 2.5등신 대두 SD/Chibi 마스코트 이모티콘 스타일, 깔끔한 외곽선, 조화로운 색감. 캐릭터 비율과 선, 질감, 색감을 동일하게 유지하세요.
+${artDirection}. 캐릭터 비율과 선, 질감, 색감을 동일하게 유지하세요.
 
 [장면]
 문구 맥락: "${targetPhrase}"
@@ -4338,7 +4340,7 @@ ${referenceInstruction}
 의상: ${character.outfit}
 
 [최우선 화풍]
-귀엽고 친근한 2.5등신 대두 SD/Chibi 마스코트 이모티콘 스타일, 깔끔한 외곽선, 조화로운 색감. 15개 셀 모두 같은 선, 질감, 색감과 2.5등신 캐릭터 비율을 적용하세요.
+${artDirection}. 15개 셀 모두 같은 선, 질감, 색감과 2.5등신 캐릭터 비율을 적용하세요.
 
 [패널 계획]
 각 문구에서 바로 이해할 수 있는 표정 하나와 서로 다른 전신 자세 하나를 구성하세요. 셀마다 보조 소품과 만화 효과는 각각 최대 하나만 사용하고 자세를 반복하지 마세요.
@@ -4472,6 +4474,7 @@ ${textExclusion} No grid lines, no cell division lines, no border lines between 
 - 의상 및 헤어 일관성: ${character.appearance}, ${character.outfit}. 15개 모든 셀에서 동일한 의상과 헤어스타일을 완벽히 일관되게 유지하세요.`
         : `[시각적 정체성 & 캐릭터 스타일]
 - 대상: ${character.subject}
+- 최우선 화풍: ${getGeminiStyleTags('ko')}
 - 외형 & 특징: ${character.appearance}
 - 의상: ${character.outfit}
 - 캐릭터 스타일: 2.5등신 치비 캐리커처, 선명한 이목구비와 입체감.`;
@@ -4770,6 +4773,7 @@ ${textExclusion}`;
 헤어 및 의상: ${character.appearance}, ${character.outfit}. 15개 스티커 전체에서 얼굴, 헤어, 피부, 의상을 완벽히 일관되게 유지하세요.`
         : `=== 캐릭터 정체성 ===
 - 대상: ${character.subject}
+- 최우선 화풍: ${getGeminiStyleTags('ko')}
 - 외형 및 특징: ${character.appearance}
 - 의상: ${character.outfit}
 - 화풍: 선명한 3-4px 벡터 선화, 2단계 셀 셰이딩, 3.5~4등신 캐리커처 비율.`;
