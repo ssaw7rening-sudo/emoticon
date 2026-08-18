@@ -1419,7 +1419,7 @@ const SectionAbout = ({ lang }) => {
           </p>
         </div>
         <div className="bg-[#F0FDF4] p-4 rounded-lg border border-emerald-200 flex flex-col gap-1.5">
-          <span className="text-[20px]">🤖</span>
+          <span className="text-[20px]">⚡</span>
           <strong className="text-[14.5px] font-bold text-slate-900">3대 AI 엔진 맞춤 최적화</strong>
           <p className="text-[13px] text-slate-600 leading-relaxed">
             한글 타이포에 강한 ChatGPT(DALL-E 3), 역동적 표정에 강한 Gemini(Imagen 3), 위트 있는 연출의 Grok 각각에 최적화된 프롬프트를 즉시 제공합니다.
@@ -1737,7 +1737,7 @@ const InfoSection = ({ t, lang }) => {
       {/* 탭 헤더 */}
       <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-3 bg-surface-container-lowest p-3 sm:p-4 rounded-md border border-outline-variant shadow-bubbly overflow-hidden">
         <h2 className="font-headline-sm text-headline-sm text-on-surface flex items-center gap-2 shrink-0">
-          <span>❓</span> {t.guideHeader}
+          <span>💡</span> {t.guideHeader}
         </h2>
 
         <div className="grid grid-cols-2 sm:grid-cols-4 lg:flex lg:items-center gap-1 sm:gap-1.5 bg-mint-soft p-1.5 rounded-lg border border-mint-border shadow-xs w-full lg:w-auto max-w-full">
@@ -1745,7 +1745,7 @@ const InfoSection = ({ t, lang }) => {
             onClick={() => setActiveTab('model')}
             className={`interactive-control px-2 sm:px-3 py-1.5 text-[12px] sm:text-[13px] font-bold rounded-md text-center transition-all cursor-pointer ${activeTab === 'model' ? 'bg-mint text-mint-strong shadow-xs border border-mint-border' : 'text-mint-strong hover:bg-mint-hover'}`}
           >
-            🤖 {lang === 'ko' ? 'AI 모델' : lang === 'ja' ? 'AIモデル' : lang === 'zh' ? 'AI模型' : 'AI Models'}
+            ✨ {lang === 'ko' ? 'AI 모델' : lang === 'ja' ? 'AIモデル' : lang === 'zh' ? 'AI模型' : 'AI Models'}
           </button>
           <button
             onClick={() => setActiveTab('bg')}
@@ -1763,7 +1763,7 @@ const InfoSection = ({ t, lang }) => {
             onClick={() => setActiveTab('template')}
             className={`interactive-control px-2 sm:px-3 py-1.5 text-[12px] sm:text-[13px] font-bold rounded-md text-center transition-all cursor-pointer ${activeTab === 'template' ? 'bg-mint text-mint-strong shadow-xs border border-mint-border' : 'text-mint-strong hover:bg-mint-hover'}`}
           >
-            💡 {lang === 'ko' ? '프롬프트 템플릿' : lang === 'ja' ? 'プロンプト構造' : lang === 'zh' ? '提示词结构' : 'Prompt Template'}
+            📜 {lang === 'ko' ? '프롬프트 템플릿' : lang === 'ja' ? 'プロンプト構造' : lang === 'zh' ? '提示词结构' : 'Prompt Template'}
           </button>
         </div>
       </div>
