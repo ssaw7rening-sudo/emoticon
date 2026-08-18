@@ -1202,6 +1202,471 @@ const GUIDE_TEXTS = {
   }
 };
 
+
+// ==========================================
+// 독립 페이지 및 메인 하단 고품질 정보 섹션 컴포넌트
+// ==========================================
+
+const PrivacyPage = ({ lang, onBack }) => {
+  return (
+    <div className="min-h-screen bg-[#FFFDF8] text-slate-800 pb-16 font-sans">
+      <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-[#E5E0D8] px-4 py-3 sm:px-6 shadow-2xs">
+        <div className="max-w-4xl mx-auto flex items-center justify-between">
+          <button
+            onClick={onBack}
+            className="interactive-control flex items-center gap-2 px-3 py-1.5 rounded-md bg-[#FFF8E7] hover:bg-[#FFECA1] text-[#7A4F00] font-bold text-[13.5px] border border-[#FFECA1] transition-all cursor-pointer"
+          >
+            ← {lang === 'ko' ? '메인으로 돌아가기' : lang === 'ja' ? 'メインに戻る' : lang === 'zh' ? '返回主页' : 'Back to Home'}
+          </button>
+          <span className="text-[14px] font-black text-slate-800 tracking-tight">
+            프롬프트 메이커 (Prompt Maker)
+          </span>
+        </div>
+      </header>
+
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 pt-8 pb-12">
+        <div className="bg-white rounded-xl p-6 sm:p-10 border border-slate-200/90 shadow-sm flex flex-col gap-6">
+          <div className="border-b border-slate-200 pb-5">
+            <h1 className="text-[24px] sm:text-[28px] font-black text-slate-900 tracking-tight">
+              {lang === 'ko' ? '개인정보처리방침' : lang === 'ja' ? 'プライバシーポリシー' : lang === 'zh' ? '隐私政策' : 'Privacy Policy'}
+            </h1>
+            <p className="text-[13px] text-slate-500 mt-1">
+              최종 수정일: 2025년 1월 1일 | 시행일자: 2025년 1월 1일
+            </p>
+          </div>
+
+          <div className="prose prose-slate max-w-none text-[14px] sm:text-[15px] leading-relaxed text-slate-700 space-y-6">
+            <section>
+              <h2 className="text-[18px] font-bold text-slate-900 mb-2">1. 총칙</h2>
+              <p>
+                '프롬프트 메이커'(이하 '서비스')는 이용자의 개인정보를 중요시하며, 「개인정보 보호법」, 「정보통신망 이용촉진 및 정보보호 등에 관한 법률」 및 글로벌 개인정보 보호 규정을 준수하고 있습니다. 본 방침은 이용자가 서비스를 이용할 때 어떠한 정보가 이용되며 개인정보 보호를 위해 어떠한 조치가 취해지고 있는지 알려드립니다.
+              </p>
+            </section>
+
+            <section>
+              <h2 className="text-[18px] font-bold text-slate-900 mb-2">2. 수집하는 개인정보의 항목 및 수집 방법</h2>
+              <p>서비스는 회원가입 없이 누구나 무료로 이용할 수 있는 공개 웹 유틸리티 도구로서, 이름, 전화번호, 주민등록번호 등의 민감한 개인식별정보를 직접 수집하거나 서버에 저장하지 않습니다.</p>
+              <ul className="list-disc pl-5 space-y-1.5 mt-2">
+                <li><strong>자동 수집 로그 정보:</strong> 서비스 이용 과정에서 접속 IP, 브라우저 종류, OS, 방문 일시, 서비스 이용 통계 등의 비식별 로그 정보가 자동 생성되어 수집될 수 있습니다.</li>
+                <li><strong>로컬 브라우징 설정:</strong> 사용자가 선택한 다국어(한국어, 영어, 일본어, 중국어) 설정 및 모드 옵션은 사용자의 웹 브라우저 로컬 저장소(LocalStorage)에만 저장되며 서버로 전송되지 않습니다.</li>
+                <li><strong>사용자 입력 프롬프트 및 사진:</strong> 사용자가 입력하는 텍스트나 첨부하는 사진 파일은 브라우저 메모리 상에서만 일시적으로 조합되며 서비스 서버에 저장되지 않습니다.</li>
+              </ul>
+            </section>
+
+            <section>
+              <h2 className="text-[18px] font-bold text-slate-900 mb-2">3. 구글 애드센스(Google AdSense) 및 제3자 쿠키(Cookie) 운영</h2>
+              <p>
+                서비스는 사이트 운영 및 무료 서비스 품질 유지를 위해 제3자 광고 사업자인 **Google Inc.(구글 애드센스)**의 광고 서비스를 이용하고 있습니다.
+              </p>
+              <ul className="list-disc pl-5 space-y-1.5 mt-2">
+                <li>Google을 포함한 제3자 공급업체는 쿠키(Cookie)를 사용하여 이용자가 본 서비스 또는 다른 웹사이트를 과거에 방문한 기록을 바탕으로 광고를 게재합니다.</li>
+                <li>Google의 광고 쿠키 사용으로 인해 Google 및 파트너 네트워크는 이용자가 사이트를 방문한 정보를 기반으로 맞춤형 광고를 제공할 수 있습니다.</li>
+                <li><strong>쿠키 설정 거부 및 맞춤 광고 해제:</strong> 이용자는 언제든지 맞춤형 광고 설정을 해제할 수 있습니다. <a href="https://www.google.com/settings/ads" target="_blank" rel="noopener noreferrer" className="text-amber-700 underline font-bold">Google 광고 설정 페이지</a>에 방문하거나, <a href="https://www.aboutads.info" target="_blank" rel="noopener noreferrer" className="text-amber-700 underline font-bold">www.aboutads.info</a>를 통해 제3자 공급업체의 맞춤형 광고 쿠키 사용을 차단할 수 있습니다.</li>
+              </ul>
+            </section>
+
+            <section>
+              <h2 className="text-[18px] font-bold text-slate-900 mb-2">4. 개인정보의 보유 및 파기</h2>
+              <p>
+                서비스는 원칙적으로 개인정보 수집 및 이용 목적이 달성된 후에는 해당 정보를 지체 없이 파기합니다. 웹로그 분석 도구를 통해 수집된 비식별 통계 데이터는 데이터 관리 규정에 따라 안전하게 관리된 후 자동 삭제됩니다.
+              </p>
+            </section>
+
+            <section>
+              <h2 className="text-[18px] font-bold text-slate-900 mb-2">5. 개인정보 보호책임자 및 문의처</h2>
+              <p>서비스의 개인정보 관리 및 문의 사항은 아래의 이메일로 접수해 주시면 신속하게 답변해 드립니다.</p>
+              <div className="bg-slate-50 p-4 rounded-lg border border-slate-200 mt-2">
+                <p className="text-[14px] text-slate-700">
+                  • <strong>서비스명:</strong> 프롬프트 메이커 (Prompt Maker)<br />
+                  • <strong>책임자 이메일:</strong> <span className="font-bold text-slate-900">ssaw7@naver.com</span>
+                </p>
+              </div>
+            </section>
+          </div>
+
+          <div className="pt-6 border-t border-slate-200 flex justify-center">
+            <button
+              onClick={onBack}
+              className="interactive-control px-6 py-2.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-bold text-[14px] shadow-sm transition-all cursor-pointer"
+            >
+              {lang === 'ko' ? '확인 및 메인으로 이동' : 'Confirm and Back to Main'}
+            </button>
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+};
+
+const TermsPage = ({ lang, onBack }) => {
+  return (
+    <div className="min-h-screen bg-[#FFFDF8] text-slate-800 pb-16 font-sans">
+      <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-[#E5E0D8] px-4 py-3 sm:px-6 shadow-2xs">
+        <div className="max-w-4xl mx-auto flex items-center justify-between">
+          <button
+            onClick={onBack}
+            className="interactive-control flex items-center gap-2 px-3 py-1.5 rounded-md bg-[#FFF8E7] hover:bg-[#FFECA1] text-[#7A4F00] font-bold text-[13.5px] border border-[#FFECA1] transition-all cursor-pointer"
+          >
+            ← {lang === 'ko' ? '메인으로 돌아가기' : lang === 'ja' ? 'メインに戻る' : lang === 'zh' ? '返回主页' : 'Back to Home'}
+          </button>
+          <span className="text-[14px] font-black text-slate-800 tracking-tight">
+            프롬프트 메이커 (Prompt Maker)
+          </span>
+        </div>
+      </header>
+
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 pt-8 pb-12">
+        <div className="bg-white rounded-xl p-6 sm:p-10 border border-slate-200/90 shadow-sm flex flex-col gap-6">
+          <div className="border-b border-slate-200 pb-5">
+            <h1 className="text-[24px] sm:text-[28px] font-black text-slate-900 tracking-tight">
+              {lang === 'ko' ? '서비스 이용약관' : lang === 'ja' ? '利用規約' : lang === 'zh' ? '服务条款' : 'Terms of Service'}
+            </h1>
+            <p className="text-[13px] text-slate-500 mt-1">
+              최종 수정일: 2025년 1월 1일 | 시행일자: 2025년 1월 1일
+            </p>
+          </div>
+
+          <div className="prose prose-slate max-w-none text-[14px] sm:text-[15px] leading-relaxed text-slate-700 space-y-6">
+            <section>
+              <h2 className="text-[18px] font-bold text-slate-900 mb-2">제1조 (목적)</h2>
+              <p>
+                본 약관은 '프롬프트 메이커'(이하 '서비스')가 제공하는 AI 이모티콘 프롬프트 자동 생성 및 관련 웹 도구 서비스의 이용조건 및 절차, 이용자와 서비스 간의 권리, 의무 및 책임사항을 규정함을 목적으로 합니다.
+              </p>
+            </section>
+
+            <section>
+              <h2 className="text-[18px] font-bold text-slate-900 mb-2">제2조 (서비스의 내용 및 특징)</h2>
+              <p>서비스가 제공하는 주요 기능은 다음과 같습니다.</p>
+              <ul className="list-disc pl-5 space-y-1.5 mt-2">
+                <li>ChatGPT(DALL-E 3), Google Gemini(Imagen 3), Grok 등의 생성형 AI 모델에 최적화된 15종 이모티콘 시트 생성 프롬프트 자동 완성 및 원클릭 복사.</li>
+                <li>피사체(동물, 조류, 해양생물, 곤충, 파충류, 공룡, 인물 등) 및 화풍, 15종 대화 문구 세트의 조합 도구 제공.</li>
+                <li>이모티콘 기획 가이드, 실전 제작 팁 및 플랫폼 제안 관련 정보 콘텐츠 제공.</li>
+              </ul>
+            </section>
+
+            <section>
+              <h2 className="text-[18px] font-bold text-slate-900 mb-2">제3조 (저작권 및 상업적 이용 면책)</h2>
+              <ul className="list-disc pl-5 space-y-1.5">
+                <li><strong>프롬프트의 자유 이용:</strong> 본 서비스에서 생성된 프롬프트 텍스트는 이용자가 자유롭게 복사하여 비상업적 또는 상업적 목적으로 활용할 수 있습니다.</li>
+                <li><strong>AI 생성 이미지의 권리:</strong> 이용자가 본 프롬프트를 통해 생성한 최종 이미지의 저작권 및 상업적 권리는 이용자가 사용하는 대상 AI 플랫폼(OpenAI, Google, xAI 등)의 이용약관 및 정책을 따릅니다.</li>
+                <li><strong>플랫폼 등록 심사:</strong> 카카오 이모티콘 스튜디오, 라인 크리에이터스 마켓 등 외부 플랫폼의 등록 승인 여부는 각 플랫폼의 심사 기준에 따르며, 본 서비스는 등록 승인을 보증하지 않습니다.</li>
+                <li><strong>공식 제휴 면책:</strong> 본 서비스는 카카오(Kakao), 라인(LINE), OpenAI, Google 등과 공식적으로 제휴된 서비스가 아닌 독립적인 프롬프트 보조 도구입니다.</li>
+              </ul>
+            </section>
+
+            <section>
+              <h2 className="text-[18px] font-bold text-slate-900 mb-2">제4조 (문의처)</h2>
+              <p>
+                서비스 이용 관련 문의 사항 및 건의 사항은 이메일(<span className="font-bold text-slate-900">ssaw7@naver.com</span>)로 접수해 주시기 바랍니다.
+              </p>
+            </section>
+          </div>
+
+          <div className="pt-6 border-t border-slate-200 flex justify-center">
+            <button
+              onClick={onBack}
+              className="interactive-control px-6 py-2.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-bold text-[14px] shadow-sm transition-all cursor-pointer"
+            >
+              {lang === 'ko' ? '확인 및 메인으로 이동' : 'Confirm and Back to Main'}
+            </button>
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+};
+
+// 메인 하단 섹션 1: 이모티콘 제작이 처음인가요? (About AI Prompt Maker)
+const SectionAbout = ({ lang }) => {
+  return (
+    <section className="bg-white rounded-xl p-5 sm:p-7 border border-slate-200/90 shadow-xs flex flex-col gap-4">
+      <div className="flex items-center gap-2.5">
+        <span className="text-[24px]">🎨</span>
+        <div>
+          <h2 className="text-[18px] sm:text-[20px] font-black text-slate-900 tracking-tight">
+            {lang === 'ko' ? '이모티콘 제작이 처음인가요? AI 프롬프트 메이커란?' : 'New to Emoticon Design? What is AI Prompt Maker?'}
+          </h2>
+          <p className="text-[12.5px] sm:text-[13.5px] text-slate-500 mt-0.5">
+            {lang === 'ko' ? '그림 실력이 없어도 사진 한 장 또는 태그 몇 개로 카카오톡·라인 스타일 15종 이모티콘 시트를 1초 만에 기획합니다.' : 'Generate 15-sticker emoticon sheets with AI in 1 second, even with zero drawing skills.'}
+          </p>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5 mt-1">
+        <div className="bg-[#FFFDF8] p-4 rounded-lg border border-[#FFECA1] flex flex-col gap-1.5">
+          <span className="text-[20px]">⚡</span>
+          <strong className="text-[14.5px] font-bold text-slate-900">1초 만에 15종 풀세트 자동 완성</strong>
+          <p className="text-[13px] text-slate-600 leading-relaxed">
+            일상, 직장, 커플 등 80개 이상의 대화 테마에 맞춰 15가지 핵심 감정 액션과 글자 색상, 배치 구도를 자동으로 완벽 매핑합니다.
+          </p>
+        </div>
+        <div className="bg-[#F8FAFC] p-4 rounded-lg border border-slate-200 flex flex-col gap-1.5">
+          <span className="text-[20px]">🎭</span>
+          <strong className="text-[14.5px] font-bold text-slate-900">일관된 캐릭터 디자인 유지</strong>
+          <p className="text-[13px] text-slate-600 leading-relaxed">
+            동일한 캐릭터의 얼굴 특징, 체형 비율(2.5등신 SD), 고유 색상이 15가지 컷 전체에 걸쳐 흔들리지 않도록 정밀 프롬프트 락킹 기술을 적용했습니다.
+          </p>
+        </div>
+        <div className="bg-[#F0FDF4] p-4 rounded-lg border border-emerald-200 flex flex-col gap-1.5">
+          <span className="text-[20px]">🤖</span>
+          <strong className="text-[14.5px] font-bold text-slate-900">3대 AI 엔진 맞춤 최적화</strong>
+          <p className="text-[13px] text-slate-600 leading-relaxed">
+            한글 타이포에 강한 ChatGPT(DALL-E 3), 역동적 표정에 강한 Gemini(Imagen 3), 위트 있는 연출의 Grok 각각에 최적화된 프롬프트를 즉시 제공합니다.
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+// 메인 하단 섹션 2: 3분 초간단 사용 가이드
+const SectionGuide = ({ lang }) => {
+  const steps = [
+    {
+      step: '01',
+      title: '피사체 & 화풍 선택',
+      desc: '동물, 새, 해양생물, 곤충, 파충류, 인물 등 12개 카테고리에서 원하는 캐릭터와 화풍을 클릭하거나 사진을 준비하세요.',
+      badge: '캐릭터 설정'
+    },
+    {
+      step: '02',
+      title: '15종 대화 문구 세트 선택',
+      desc: '일상, 직장인 속마음, 집사/고양이, 커플 등 80종 이상의 테마 중 원하는 15종 문구 세트를 선택하세요.',
+      badge: '테마 매핑'
+    },
+    {
+      step: '03',
+      title: 'AI 프롬프트 복사 & 생성',
+      desc: '원하는 AI 모델(ChatGPT, Gemini, Grok) 버튼을 눌러 프롬프트를 복사하고 AI 채팅창에 붙여넣어 이미지를 만드세요.',
+      badge: '원클릭 생성'
+    },
+    {
+      step: '04',
+      title: '배경 투명화 & 플랫폼 제안',
+      desc: '생성된 15종 시트에서 무료 누끼 툴로 배경을 투명화(PNG)한 뒤, 카카오톡 또는 라인 스튜디오에 제안하면 완성입니다.',
+      badge: '출시 및 활용'
+    }
+  ];
+
+  return (
+    <section className="bg-white rounded-xl p-5 sm:p-7 border border-slate-200/90 shadow-xs flex flex-col gap-4">
+      <div className="flex items-center gap-2.5">
+        <span className="text-[24px]">📖</span>
+        <div>
+          <h2 className="text-[18px] sm:text-[20px] font-black text-slate-900 tracking-tight">
+            {lang === 'ko' ? '3분 완성! 초간단 이모티콘 제작 가이드' : '3-Minute Quick Start Emoticon Guide'}
+          </h2>
+          <p className="text-[12.5px] sm:text-[13.5px] text-slate-500 mt-0.5">
+            {lang === 'ko' ? '초보자도 따라 할 수 있는 4단계 이모티콘 제작 프로세스입니다.' : 'Simple 4-step process from prompt creation to sticker release.'}
+          </p>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 mt-1">
+        {steps.map((s, idx) => (
+          <div key={idx} className="bg-slate-50/80 p-4 rounded-lg border border-slate-200 flex flex-col gap-2 relative">
+            <div className="flex items-center justify-between">
+              <span className="text-[22px] font-black text-amber-700 font-mono tracking-tighter">
+                STEP {s.step}
+              </span>
+              <span className="text-[11px] font-bold px-2 py-0.5 bg-white text-slate-700 rounded border border-slate-200">
+                {s.badge}
+              </span>
+            </div>
+            <strong className="text-[14.5px] font-bold text-slate-900">{s.title}</strong>
+            <p className="text-[12.5px] sm:text-[13px] text-slate-600 leading-relaxed">{s.desc}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+};
+
+// 메인 하단 섹션 3: 승인율을 높이는 이모티콘 기획 5대 원칙
+const SectionPrinciples = ({ lang }) => {
+  const principles = [
+    {
+      num: '1',
+      title: '단순하고 직관적인 실루엣',
+      desc: '작은 모바일 채팅창 화면에서도 캐릭터가 한눈에 인식되도록 복잡한 장식보다는 단순하고 둥근 2~3등신 SD 비율을 유지하세요.'
+    },
+    {
+      num: '2',
+      title: '과장된 표정과 역동적인 동작',
+      desc: '밋밋한 표정보다는 눈이 커지거나 불타오르는 등 희로애락의 감정이 온몸으로 극대화되어 전달되어야 사용자의 손이 갑니다.'
+    },
+    {
+      num: '3',
+      title: '15종 감정 밸런스 황금 비율',
+      desc: '긍정/환호 5종, 피로/현실공감 4종, 일상인사 4종, 분노/당황 2종 등 대화에서 자주 쓰이는 상황이 골고루 배분되어야 합니다.'
+    },
+    {
+      num: '4',
+      title: '텍스트 시인성과 글자 외곽선',
+      desc: '배경이 어둡거나 밝아도 문구가 또렷하게 읽히도록 두꺼운 화이트 외곽선(Stroke)을 두르고 글자 수는 2~6자 이내로 간결하게 기획하세요.'
+    },
+    {
+      num: '5',
+      title: '명확한 타겟 페르소나 컨셉',
+      desc: 'K-직장인, 자취생, 대학생, 육아맘, 반려인 등 명확한 타겟층이 공감할 수 있는 뚜렷한 정체성과 유머 코드를 부여하세요.'
+    }
+  ];
+
+  return (
+    <section className="bg-white rounded-xl p-5 sm:p-7 border border-slate-200/90 shadow-xs flex flex-col gap-4">
+      <div className="flex items-center gap-2.5">
+        <span className="text-[24px]">🏆</span>
+        <div>
+          <h2 className="text-[18px] sm:text-[20px] font-black text-slate-900 tracking-tight">
+            {lang === 'ko' ? '승인율을 200% 높이는 이모티콘 기획 5대 원칙' : '5 Core Principles for High-Acceptance Emoticon Design'}
+          </h2>
+          <p className="text-[12.5px] sm:text-[13.5px] text-slate-500 mt-0.5">
+            {lang === 'ko' ? '카카오 이모티콘 스튜디오 및 라인 크리에이터스 심사를 통과하는 핵심 비결입니다.' : 'Essential design principles verified by top marketplace creators.'}
+          </p>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5 mt-1">
+        {principles.map((p, idx) => (
+          <div key={idx} className="bg-gradient-to-br from-slate-50 to-amber-50/20 p-4 rounded-lg border border-slate-200/80 flex flex-col gap-1.5">
+            <div className="flex items-center gap-2">
+              <span className="w-6 h-6 rounded-full bg-amber-500 text-white font-black text-[12px] flex items-center justify-center shrink-0">
+                {p.num}
+              </span>
+              <strong className="text-[14.5px] font-bold text-slate-900">{p.title}</strong>
+            </div>
+            <p className="text-[12.5px] sm:text-[13px] text-slate-600 leading-relaxed pl-8">
+              {p.desc}
+            </p>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+};
+
+// 메인 하단 섹션 4: 추천 이모티콘 15종 필수 감정 황금 조합
+const SectionEmotionFormula = ({ lang }) => {
+  const categories = [
+    {
+      group: '1. 대화 시작 & 긍정 리액션 (5종)',
+      examples: '안녕!, 최고야!, 고마워요, 사랑해요, 오예!',
+      color: 'bg-emerald-50 text-emerald-900 border-emerald-200'
+    },
+    {
+      group: '2. 일상 대답 & 응원 (4종)',
+      examples: '오늘도 화이팅, 좋아요, 축하해요, 다 잘될 거야',
+      color: 'bg-blue-50 text-blue-900 border-blue-200'
+    },
+    {
+      group: '3. 현실 공감 & 피로 (4종)',
+      examples: '수고했어요, 네(영혼 탈출), 살려줘요, 잘자요 꿀잠',
+      color: 'bg-amber-50 text-amber-900 border-amber-200'
+    },
+    {
+      group: '4. 당황 & 감정 폭발 (2종)',
+      examples: '헐 대박, 킹받네(분노)',
+      color: 'bg-rose-50 text-rose-900 border-rose-200'
+    }
+  ];
+
+  return (
+    <section className="bg-white rounded-xl p-5 sm:p-7 border border-slate-200/90 shadow-xs flex flex-col gap-4">
+      <div className="flex items-center gap-2.5">
+        <span className="text-[24px]">✨</span>
+        <div>
+          <h2 className="text-[18px] sm:text-[20px] font-black text-slate-900 tracking-tight">
+            {lang === 'ko' ? '추천 이모티콘 15종 필수 감정 황금 조합' : '15 Essential Emotion Formula for Daily Chat'}
+          </h2>
+          <p className="text-[12.5px] sm:text-[13.5px] text-slate-500 mt-0.5">
+            {lang === 'ko' ? '실제 메신저 채팅에서 매일 쓰이는 감정 빈도수를 분석하여 최적화된 15개 컷 구조입니다.' : 'Optimized 15-cut set structure based on daily messenger usage patterns.'}
+          </p>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-1">
+        {categories.map((c, idx) => (
+          <div key={idx} className={`p-4 rounded-lg border ${c.color} flex flex-col gap-1.5`}>
+            <span className="text-[13.5px] font-extrabold">{c.group}</span>
+            <p className="text-[12.5px] sm:text-[13px] font-medium opacity-90">
+              💡 대표 문구: <span className="font-bold">{c.examples}</span>
+            </p>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+};
+
+// 메인 하단 섹션 5: 자주 묻는 질문 (FAQ Accordion)
+const SectionFAQ = ({ lang }) => {
+  const [openIdx, setOpenIdx] = useState(null);
+
+  const faqs = [
+    {
+      q: 'Q. 생성된 프롬프트와 이미지로 카카오톡 이모티콘 스튜디오에 제안할 수 있나요?',
+      a: '네, 가능합니다! 프롬프트 메이커에서 생성한 프롬프트는 자유롭게 상업적으로 활용할 수 있습니다. 단, 생성형 AI 이미지 제출 시 각 플랫폼(카카오, 라인 등)의 AI 생성물 가이드라인을 확인하시고, 손가락 뭉개짐이나 텍스트 오타 등을 그래픽 툴(포토샵, 클립스튜디오, 피그마 등)에서 깔끔하게 다듬은 후 제안하시면 승인율이 훨씬 높아집니다.'
+    },
+    {
+      q: 'Q. 카카오톡 이모티콘 스튜디오의 기본 제안 규격은 어떻게 되나요?',
+      a: '카카오톡 멈춰있는 이모티콘(스티커) 기준: 360 x 360 px 크기, 해상도 72 dpi, 투명 배경의 PNG 파일 포맷으로 총 32종(또는 24종)을 제출해야 합니다. 본 도구의 15종 프롬프트를 2개 세트로 조합하시면 30~32종의 풍성한 한 세트 제안서를 손쉽게 완성할 수 있습니다.'
+    },
+    {
+      q: 'Q. AI가 만든 15종 시트 이미지의 배경 투명화(누끼 따기)는 어떻게 하나요?',
+      a: '생성된 이미지를 저장한 뒤, 무료 배경 제거 웹사이트(예: remove.bg, Adobe Express Free Background Remover 등) 또는 포토샵의 [피사체 선택] 기능을 사용하시면 1초 만에 깔끔한 투명 PNG 파일로 변환할 수 있습니다.'
+    },
+    {
+      q: 'Q. ChatGPT, Gemini, Grok 중 어떤 AI 모델을 쓰는 게 가장 좋나요?',
+      a: '말풍선에 한글 문구가 정확하게 적혀야 할 때는 ChatGPT(DALL-E 3)를 강력 추천합니다. 글자 없이 생동감 넘치는 표정과 동작 중심의 캐릭터를 원하실 때는 Google Gemini(Imagen 3)를 추천하며, 유머러스하고 개성 있는 코믹 연출에는 Grok이 뛰어난 성능을 보입니다.'
+    },
+    {
+      q: 'Q. 프롬프트 메이커 이용 요금은 무료인가요?',
+      a: '네! 프롬프트 메이커의 모든 기능(피사체 조합, 화풍 설정, 80종 테마, 다국어 프롬프트 복사, 캡션 생성기)은 100% 완전 무료로 무제한 이용하실 수 있습니다.'
+    }
+  ];
+
+  const toggle = (idx) => {
+    setOpenIdx(openIdx === idx ? null : idx);
+  };
+
+  return (
+    <section className="bg-white rounded-xl p-5 sm:p-7 border border-slate-200/90 shadow-xs flex flex-col gap-4">
+      <div className="flex items-center gap-2.5">
+        <span className="text-[24px]">❓</span>
+        <div>
+          <h2 className="text-[18px] sm:text-[20px] font-black text-slate-900 tracking-tight">
+            {lang === 'ko' ? '자주 묻는 질문 (FAQ)' : 'Frequently Asked Questions (FAQ)'}
+          </h2>
+          <p className="text-[12.5px] sm:text-[13.5px] text-slate-500 mt-0.5">
+            {lang === 'ko' ? '이모티콘 제작 및 AI 프롬프트 활용에 대해 궁금한 점을 확인하세요.' : 'Common questions about emoticon generation, licensing, and studio guidelines.'}
+          </p>
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-2.5 mt-1">
+        {faqs.map((faq, idx) => (
+          <div key={idx} className="border border-slate-200 rounded-lg overflow-hidden transition-all">
+            <button
+              onClick={() => toggle(idx)}
+              className="interactive-control w-full px-4 py-3.5 text-left bg-slate-50/70 hover:bg-slate-100/80 flex items-center justify-between gap-3 font-bold text-[13.5px] sm:text-[14.5px] text-slate-900 cursor-pointer"
+            >
+              <span>{faq.q}</span>
+              <span className="text-slate-400 font-mono text-[16px] shrink-0">
+                {openIdx === idx ? '▲' : '▼'}
+              </span>
+            </button>
+            {openIdx === idx && (
+              <div className="p-4 bg-white text-[13px] sm:text-[13.5px] text-slate-700 leading-relaxed border-t border-slate-200">
+                {faq.a}
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+};
+
 const InfoSection = ({ t, lang }) => {
   const [activeTab, setActiveTab] = useState('model');
 
@@ -2271,6 +2736,32 @@ const getPhraseActionEn = (phrase) => {
 
 function App() {
   const [lang, setLang] = useState('ko');
+  const [currentPath, setCurrentPath] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const path = window.location.pathname.toLowerCase();
+      if (path === '/privacy' || path === '/terms') return path;
+    }
+    return '/';
+  });
+
+  useEffect(() => {
+    const handlePopState = () => {
+      const path = window.location.pathname.toLowerCase();
+      if (path === '/privacy' || path === '/terms') {
+        setCurrentPath(path);
+      } else {
+        setCurrentPath('/');
+      }
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
+  const navigateTo = (path) => {
+    window.history.pushState({}, '', path);
+    setCurrentPath(path);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   useEffect(() => {
     document.documentElement.lang = lang === 'zh' ? 'zh-CN' : lang === 'ja' ? 'ja' : lang === 'ko' ? 'ko' : 'en';
@@ -4023,6 +4514,14 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
   );
   const visiblePromptValidationError = promptValidationError;
 
+  if (currentPath === '/privacy') {
+    return <PrivacyPage lang={lang} onBack={() => navigateTo('/')} />;
+  }
+
+  if (currentPath === '/terms') {
+    return <TermsPage lang={lang} onBack={() => navigateTo('/')} />;
+  }
+
   return (
     <div className={`font-body-md text-body-md antialiased max-w-full w-full ${lang === 'zh' ? 'lang-zh' : ''}`}>
       {/* TopAppBar */}
@@ -5138,23 +5637,62 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
           </div>
         </div>
 
+        {/* 섹션 1: 이모티콘 제작이 처음인가요? */}
+        <SectionAbout lang={lang} />
+
+        {/* 섹션 2: 3분 초간단 사용 가이드 */}
+        <SectionGuide lang={lang} />
+
+        {/* 섹션 3: 승인율을 높이는 이모티콘 기획 5대 원칙 */}
+        <SectionPrinciples lang={lang} />
+
+        {/* 섹션 4: 추천 이모티콘 15종 필수 감정 황금 조합 */}
+        <SectionEmotionFormula lang={lang} />
+
+        {/* 섹션 5: AI 모델 비교 및 팁 */}
         <InfoSection t={t} lang={lang} />
+
+        {/* 섹션 6: 자주 묻는 질문 FAQ */}
+        <SectionFAQ lang={lang} />
       </main>
 
       {/* Footer */}
-      <footer className="mt-8 sm:mt-10 py-6 sm:py-7 bg-[#FAF9F6] border-t border-[#E5E0D8] text-center w-full">
-        <div className="max-w-3xl mx-auto px-6 flex flex-col gap-2">
-          <p className="text-[14px] text-[#8C7A6B] font-bold">
-            © {new Date().getFullYear()} Prompt Maker. All rights reserved.
+      <footer className="mt-8 sm:mt-10 py-7 sm:py-9 bg-[#FAF9F6] border-t border-[#E5E0D8] text-center w-full">
+        <div className="max-w-4xl mx-auto px-6 flex flex-col items-center gap-3">
+          <div className="flex items-center justify-center gap-4 flex-wrap text-[13px] font-bold text-slate-700">
+            <button
+              onClick={() => navigateTo('/privacy')}
+              className="interactive-control hover:text-amber-700 underline underline-offset-4 cursor-pointer transition-colors"
+            >
+              {lang === 'ko' ? '개인정보처리방침' : lang === 'ja' ? 'プライバシーポリシー' : lang === 'zh' ? '隐私政策' : 'Privacy Policy'}
+            </button>
+            <span className="text-slate-300">|</span>
+            <button
+              onClick={() => navigateTo('/terms')}
+              className="interactive-control hover:text-amber-700 underline underline-offset-4 cursor-pointer transition-colors"
+            >
+              {lang === 'ko' ? '서비스 이용약관' : lang === 'ja' ? '利用規約' : lang === 'zh' ? '服务条款' : 'Terms of Service'}
+            </button>
+            <span className="text-slate-300">|</span>
+            <a
+              href="mailto:ssaw7@naver.com"
+              className="interactive-control hover:text-amber-700 underline underline-offset-4 cursor-pointer transition-colors"
+            >
+              {lang === 'ko' ? '제휴 및 문의' : lang === 'ja' ? 'お問い合わせ' : lang === 'zh' ? '联系我们' : 'Contact Us'}
+            </a>
+          </div>
+
+          <p className="text-[13.5px] text-[#8C7A6B] font-bold mt-1">
+            © {new Date().getFullYear()} Prompt Maker (프롬프트 메이커). All rights reserved.
           </p>
-          <p className="text-[12px] text-[#A69B8F]">
+          <p className="text-[11.5px] text-[#A69B8F] leading-relaxed max-w-2xl">
             {lang === 'ko' 
-              ? '* 본 서비스는 카카오(Kakao) 및 라인(LINE)과 공식적인 관련이 없습니다.' 
+              ? '* 본 서비스는 AI 프롬프트 생성 보조 웹 유틸리티이며, 카카오(Kakao) 및 라인(LINE)과 공식적인 관련이 없습니다. 모든 생성물의 상업적 활용 및 등록 심사는 각 플랫폼의 운영 가이드라인을 준수합니다.' 
               : lang === 'ja'
-              ? '* 本サービスはLINEまたはKakaoTalkと公式に提携しているものではありません。'
+              ? '* 本サービスはAIプロンプト作成補助ツールであり、LINEまたはKakaoTalkと公式に提携しているものではありません。'
               : lang === 'zh'
-              ? '* 本服务非微信、LINE或KakaoTalk官方合作服务。'
-              : '* This service is not officially affiliated with Kakao or LINE.'}
+              ? '* 本服务为AI提示词辅助生成工具，非微信、LINE或KakaoTalk官方合作服务。'
+              : '* This service is an AI prompt utility and is not officially affiliated with Kakao or LINE.'}
           </p>
         </div>
       </footer>
