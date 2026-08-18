@@ -117,7 +117,7 @@ const THEMES_EN = {
   'Health/Fatigue ①': ['Exhausted to death', 'Headache', 'Gonna sleep early', 'Did you take meds?', 'Back hurts', 'Battery at 1%', 'Need healing', 'Going to clinic', 'Stay healthy!', 'Take vitamins', 'Need more coffee', 'Stiff shoulders', 'Blurry eyes', 'Caught a cold', 'No energy left…'],
   'Health/Fatigue ②': ['Fainting soon', 'Taking supplements', 'Whole body aches', 'Slept so well!', 'Stretching out', 'Breathing exercise', 'Want a massage', 'Proof of life', 'Don\'t push too hard', 'Immunity drop', 'Lying in bed', 'Built up fatigue', 'Warm cup of tea', 'Get well soon', 'Revived completely!'],
   'Humor/Memes ①': ['Whatever', 'So triggered', 'Clean & tidy', 'Got unfairly wrecked', 'Form is crazy', 'Actually better', 'Unbroken heart', 'Let\'s gooo~', 'Are you a T?', 'Baking bread', 'What in the world', 'Absolute legend', 'Inner dance party', 'Brain freeze', 'Is this right?'],
-  'Humor/Memes ②': ['Ascending to heaven', 'Wait', 'this works?', 'Too much to say', 'Living god life', 'Ask me anything', 'Fake news right?', 'Got fact checked', 'Why is this real?', 'Logical suspicion', 'Mental shattered', 'Fangirling hard', 'Grabbing popcorn', 'Funny but sad', 'Burst out laughing', 'Fact violence'],
+  'Humor/Memes ②': ['Ascending to heaven', 'Wait, this works?', 'Too much to say', 'Living god life', 'Ask me anything', 'Fake news right?', 'Got fact checked', 'Why is this real?', 'Logical suspicion', 'Mental shattered', 'Fangirling hard', 'Grabbing popcorn', 'Funny but sad', 'Burst out laughing', 'Fact violence'],
   'Emotions ①': ['So happy!', 'Touched to tears', 'So angry (fuming)', 'Waaaah (crying)', 'Surprise jump scare', 'Heart fluttering', 'Bored to death', 'Lonely…', 'Blushing (shy)', 'Scared to death', 'So frustrating', 'Annoyed!', 'Super confident', 'Feeling proud', 'Don\'t worry!'],
   'Emotions ②': ['Feeling so refreshed', 'Mental collapse', 'So hyped up yay~', 'Feeling hurt…', 'Feeling fantastic!', 'Relief (phew~)', 'Jealous explosion', 'Flustered (sweat drop)', 'Shock and horror', 'Mesmerized gaze', 'Deep in regret…', 'So unfair!', 'Heartwarming', 'Shocked out of mind', 'Overflowing with love'],
   'Couples/Romance ①': ['I miss you', 'What are you doing?', 'I love you ♥', 'Together forever', 'See you in dreams', 'Wanna hear your voice', 'Send me a selfie', 'Hold my hand?', 'Give me a hug', 'Lonely babe', 'Wanna see you soon', 'My darling', 'Good night sweet dreams', 'Fell for you again', 'Heart thump!'],
@@ -156,7 +156,7 @@ const THEMES_EN = {
   'Frugal/No Spend ②': ['Saved coffee money', 'Forced savings', 'Temptation resisted', 'Cart cleared', 'Debit card only', 'Raid the fridge', 'Dining out ban', 'Frugal Day 1', 'Account revived', 'Got freebies', 'Bonus to savings', 'Trash receipt', 'Spending fast', 'Future rich', 'Budget joy'],
   'Study/Career ①': ['Studying hard!', 'Library check-in', '10hr study', 'Wake up check', 'Stay focused', 'D-Day countdown', 'Ace the interview', 'Get hired!', 'Pass the exam', 'Due today', 'Taking notes', 'Crush tests', 'Beat sleepiness', 'Bright future', 'Study done!'],
   'Study/Career ②': ['Off to study cafe', 'Memorizing vocab', 'Top exam grade', 'Super motivated', 'Analyzing exams', 'Success story', 'Falling asleep', 'Reviewing mistakes', 'Study session on', 'Proof of study', 'Goal achieved!', 'Certificate earned', 'Never give up', 'Offer received', 'Good job today'],
-  'Solo Life/Home ①': ['Delivery arrived!', 'Solo dining', 'Solo drink (Cheers)', 'Empty fridge', 'Hanging laundry', 'Trash day', 'Bug alert! (Scream)', 'Craving home food', 'Clean room', 'Binge watching', 'Unboxing parcel', 'Lightbulb fixed', 'Home chef', 'Cozy sweet room', 'Lights out', 'gn'],
+  'Solo Life/Home ①': ['Delivery arrived!', 'Solo dining', 'Solo drink (Cheers)', 'Empty fridge', 'Hanging laundry', 'Trash day', 'Bug alert! (Scream)', 'Craving home food', 'Clean room', 'Binge watching', 'Unboxing parcel', 'Lightbulb fixed', 'Home chef', 'Cozy sweet room', 'Lights out, gn'],
   'Solo Life/Home ②': ['Grocery haul done', 'Air fryer cooking', 'Microwave meal', 'Dishes for later', 'Cozy home chill', 'Scented candle', 'Home cafe vibes', 'Delivery fee ouch', 'Weekend sleep-in', 'DIY interior', 'Windows locked', 'Late night ramen', 'My space is best', 'Safe and sound', 'Goodnight sweet room'],
   'Hangout/Cafe ①': ['5 mins away', 'Where are you?', 'Cafe time!', 'Iced coffee refill', 'Got a table', 'In line waiting', 'So delicious!', 'Room for dessert', 'Hurry over!', 'What to drink?', 'Let\'s head out', 'So full!', 'Photo time 📸', 'So much fun', 'See you soon'],
   'Hangout/Cafe ②': ['Where is our seat?', 'Browsing menu', 'Dessert is served', 'Great photo taken!', 'Endless chatting', 'Healing moment', 'Best coffee spot', 'One more cup?', 'Aesthetic cafe view', 'Snapshot time', 'Sugar rush boost', 'Next stop where?', 'Time flew by!', 'Heading home', 'Let\'s meet again'],
@@ -303,7 +303,6 @@ const THEMES_JA = {
   '猫＆飼い主 ②': ['ちっぽけな下僕め', '狩りごっこ開始！', 'いたずらしてドヤ顔', 'キャットニップ祭り', '深夜の大暴れタイム', '肉球スタンプぽん', 'ドア開けてよ下僕', 'ゆっくりまばたきキス', 'おやつを差し出せ', 'レーザー捕獲失敗', '抜け毛もふもふ癒し', '高い場所が最高', 'すねた猫ちゃん', '下僕大好き（ツンデレ）', 'ゴロゴロおやすみ'],
   '犬＆飼い主 ①': ['散歩！散歩！お散歩！', 'しっぽヘリコプター', 'ご主人様おかえり！', 'おやつくれたらチュー', 'ボール投げて！', 'ガムをカミカミ', 'お手！おかわり！伏せ！', '耳をなびかせてダッシュ', 'お腹見せて甘えん坊', 'お風呂嫌いウーッ', 'ベッド完全占領', 'クンクン匂い嗅ぎ', 'マルチーズは負けない', 'ぽかぽかお昼寝', 'ご主人様大好き！'],
   '犬＆飼い主 ②': ['肉球の香ばしい匂い', 'ロープ引っ張り合いっこ', 'おやつバッグ警備員', '水遊びパチャパチャ', 'いたずらして様子見', 'もっと散歩したい！', 'ワンちゃんゴロゴロ', 'ブラッシングおとなしく', 'ワンちゃん友達できた', '飼い主一筋ワンちゃん', '遠吠えワオーン', 'ふかふか犬用ベッド', 'ハイタッチ！', 'おやつの匂いを察知', 'ワンちゃんおやすみ'],
-  '군인・お見送り ②': ['起床ラッパが鳴り響く', '点呼の準備完了', '軍隊バーガーもぐもぐ', '百発百中の名射手', '行軍完走大成功！', '花靴を履かせてあげる', '認識票のネックレス', '戦友愛・仲間愛', '小包を送ってね', '面会に来て！', '褒賞休暇ゲット！', '各個戦闘クリア', '待つ恋人1日目', '最後まで待ってるよ', '団結！お疲れ様でした'],
 };
 
 const THEMES_ZH = {
@@ -3479,6 +3478,10 @@ function App() {
   const handleApplyEmotionFormula = (items, themeTitle) => {
     setEmoticons(items);
     setActiveTheme('custom');
+    if (items && items.length > 0) {
+      setIndividualPhrase(items[0]);
+      setBatchPhrase(items[0]);
+    }
     showToast(lang === 'ko' ? '✨ 추천 15종 문구가 이모티콘 문구 그리드에 적용되었습니다!' : lang === 'ja' ? '✨ おすすめ15種文言がグリッドに適用されました！' : lang === 'zh' ? '✨ 推荐15款文案已成功应用到网格！' : '✨ 15 phrases applied to the grid!');
     setTimeout(() => {
       const gridEl = document.getElementById('emoticon-phrase-grid');
@@ -3551,8 +3554,13 @@ function App() {
   const handleThemeSelect = (e) => {
     const themeName = e.target.value;
     if (currentThemes[themeName]) {
-      setEmoticons(currentThemes[themeName]);
+      const phrases = currentThemes[themeName];
+      setEmoticons(phrases);
       setActiveTheme(themeName);
+      if (phrases && phrases.length > 0) {
+        setIndividualPhrase(phrases[0]);
+        setBatchPhrase(phrases[0]);
+      }
     }
   };
 
