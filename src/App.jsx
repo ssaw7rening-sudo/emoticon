@@ -1435,24 +1435,28 @@ const SectionGuide = ({ lang }) => {
   const steps = [
     {
       step: '01',
+      icon: '🎨',
       title: '피사체 & 화풍 선택',
       desc: '동물, 새, 해양생물, 곤충, 파충류, 인물 등 12개 카테고리에서 원하는 캐릭터와 화풍을 클릭하거나 사진을 준비하세요.',
       badge: '캐릭터 설정'
     },
     {
       step: '02',
+      icon: '💬',
       title: '15종 대화 문구 세트 선택',
       desc: '일상, 직장인 속마음, 집사/고양이, 커플 등 80종 이상의 테마 중 원하는 15종 문구 세트를 선택하세요.',
       badge: '테마 매핑'
     },
     {
       step: '03',
+      icon: '🚀',
       title: 'AI 프롬프트 복사 & 생성',
       desc: '원하는 AI 모델(ChatGPT, Gemini, Grok) 버튼을 눌러 프롬프트를 복사하고 AI 채팅창에 붙여넣어 이미지를 만드세요.',
       badge: '원클릭 생성'
     },
     {
       step: '04',
+      icon: '✨',
       title: '배경 투명화 & 실전 활용',
       desc: '생성된 15종 시트에서 배경을 투명화(PNG)한 뒤, SNS 짤·프로필·디지털 다꾸로 쓰거나 캐릭터 작화 시안으로 완성하세요.',
       badge: '자유로운 활용'
@@ -1473,25 +1477,38 @@ const SectionGuide = ({ lang }) => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 mt-1">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 mt-1">
         {steps.map((s, idx) => (
-          <div key={idx} className="bg-slate-50/80 p-4 rounded-lg border border-slate-200 flex flex-col gap-2 relative">
-            <div className="flex items-center justify-between">
-              <span className="text-[22px] font-black text-amber-700 font-mono tracking-tighter">
-                STEP {s.step}
-              </span>
-              <span className="text-[11px] font-bold px-2 py-0.5 bg-white text-slate-700 rounded border border-slate-200">
+          <div key={idx} className="bg-slate-50/80 hover:bg-amber-50/20 transition-colors p-4 sm:p-4.5 rounded-xl border border-slate-200/90 flex flex-col gap-2 relative shadow-2xs">
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <span className="w-7 h-7 rounded-lg bg-amber-500/15 text-amber-900 border border-amber-500/30 flex items-center justify-center font-black text-[12px] font-mono shrink-0">
+                  {s.step}
+                </span>
+                <span className="text-[12px] font-black text-amber-900 tracking-tight uppercase whitespace-nowrap">
+                  STEP {s.step}
+                </span>
+              </div>
+              <span className="text-[11.5px] font-bold px-2.5 py-0.5 bg-white text-slate-700 rounded-full border border-slate-200 shadow-2xs shrink-0 whitespace-nowrap">
                 {s.badge}
               </span>
             </div>
-            <strong className="text-[14.5px] font-bold text-slate-900">{s.title}</strong>
-            <p className="text-[12.5px] sm:text-[13px] text-slate-600 leading-relaxed">{s.desc}</p>
+            <div className="flex items-center gap-2 mt-0.5">
+              <span className="text-[16px]">{s.icon}</span>
+              <strong className="text-[14.5px] sm:text-[15px] font-extrabold text-slate-900 tracking-tight whitespace-nowrap">
+                {s.title}
+              </strong>
+            </div>
+            <p className="text-[13px] text-slate-600 leading-relaxed pl-6 break-keep">
+              {s.desc}
+            </p>
           </div>
         ))}
       </div>
     </section>
   );
 };
+
 
 // 메인 하단 섹션 3: 완성도를 높이는 이모티콘 기획 5대 원칙
 const SectionPrinciples = ({ lang }) => {
