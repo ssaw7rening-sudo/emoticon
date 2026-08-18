@@ -5655,7 +5655,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
         {/* 섹션 2: 3분 초간단 사용 가이드 */}
         <SectionGuide lang={lang} />
 
-        {/* 섹션 3: 승인율을 높이는 이모티콘 기획 5대 원칙 */}
+        {/* 섹션 3: 완성도를 높이는 이모티콘 기획 5대 원칙 */}
         <SectionPrinciples lang={lang} />
 
         {/* 섹션 4: 추천 이모티콘 15종 필수 감정 황금 조합 */}

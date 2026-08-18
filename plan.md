@@ -11,7 +11,7 @@
 2. **메인 생성기 하단 6개 전문 정보 섹션 구축**:
    - 섹션 1: `이모티콘 제작이 처음인가요? (About AI Prompt Maker)`
    - 섹션 2: `3분 초간단 사용 가이드 (Step-by-Step Tutorial)`
-   - 섹션 3: `승인율을 높이는 이모티콘 기획 5대 원칙 (Pro Tips)`
+   - 섹션 3: `완성도를 높이는 이모티콘 기획 5대 원칙 (Pro Tips)`
    - 섹션 4: `추천 이모티콘 15종 필수 감정 황금 조합 (15 Core Emotion Formula)`
    - 섹션 5: `사진 & 반려동물로 나만의 캐릭터 만들기 (Photo Caricature Guide)`
    - 섹션 6: `자주 묻는 질문 아코디언 (FAQ & Studio Guidelines)`
