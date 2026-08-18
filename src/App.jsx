@@ -1873,11 +1873,15 @@ const SectionPrinciples = ({ lang }) => {
 };
 
 // 메인 하단 섹션 4: 추천 이모티콘 15종 필수 감정 황금 조합
-const SectionEmotionFormula = ({ lang }) => {
+const SectionEmotionFormula = ({ lang, onApplyFormula }) => {
   const content = {
     ko: {
       title: '추천 이모티콘 15종 필수 감정 황금 조합 (4개 카테고리)',
       desc: '실제 메신저 채팅에서 매일 쓰이는 핵심 15개 컷을 4개 필수 감정 테마로 균형 있게 구성했습니다.',
+      applyAllBtn: '✨ 15종 황금 조합 바로 적용하기',
+      applyAllSub: '클릭 시 위 15개 문구가 프롬프트 생성기에 즉시 자동 적용되며 상단으로 이동합니다.',
+      appliedToast: '✨ 추천 15종 황금 조합',
+      cardApplyBtn: '적용',
       categories: [
         {
           group: '1. 대화 시작 & 긍정 리액션',
@@ -1920,6 +1924,10 @@ const SectionEmotionFormula = ({ lang }) => {
     ja: {
       title: 'おすすめスタンプ15種 黄金の感情組み合わせ (4カテゴリ)',
       desc: '日常会話で毎日使われる15の必須カットを4つの感情テーマにバランスよく構成しました。',
+      applyAllBtn: '✨ この15種セットを今すぐ適用する',
+      applyAllSub: 'クリックすると上記15個のフレーズが生成ツールに即座に反映され上部にスクロールします。',
+      appliedToast: '✨ おすすめ15種黄金セット',
+      cardApplyBtn: '適用',
       categories: [
         {
           group: '1. 挨拶・ポジティブリアクション',
@@ -1962,6 +1970,10 @@ const SectionEmotionFormula = ({ lang }) => {
     zh: {
       title: '推荐表情包15款 黄金情绪搭配 (4大分类)',
       desc: '精选日常聊天最高频使用的15个镜头，均衡分布于4大情绪主题。',
+      applyAllBtn: '✨ 一键应用这15款黄金组合',
+      applyAllSub: '点击后上述15款文案将立即自动填入提示词生成器中并返回顶部。',
+      appliedToast: '✨ 推荐15款黄金组合',
+      cardApplyBtn: '应用',
       categories: [
         {
           group: '1. 问候与积极回复',
@@ -2004,6 +2016,10 @@ const SectionEmotionFormula = ({ lang }) => {
     en: {
       title: '15 Essential Emotion Formula (4 Categories)',
       desc: 'Optimized 15-cut set structure divided evenly into 4 core daily messenger themes.',
+      applyAllBtn: '✨ Apply This 15-Sticker Formula',
+      applyAllSub: 'Instantly applies all 15 dialogue phrases directly into the AI prompt generator and scrolls up.',
+      appliedToast: '✨ 15 Essential Emotion Formula',
+      cardApplyBtn: 'Apply',
       categories: [
         {
           group: '1. Greetings & Positive Vibes',
@@ -2046,19 +2062,38 @@ const SectionEmotionFormula = ({ lang }) => {
   };
 
   const cur = content[lang] || content['ko'];
+  const all15Items = cur.categories.flatMap(c => c.items);
+
+  const handleApply = () => {
+    if (onApplyFormula) {
+      onApplyFormula(all15Items, cur.appliedToast);
+    }
+  };
 
   return (
     <section className="bg-white rounded-xl p-5 sm:p-7 border border-slate-200/90 shadow-xs flex flex-col gap-4">
-      <div className="flex items-center gap-2.5">
-        <span className="text-[24px]">✨</span>
-        <div>
-          <h2 className="text-[18px] sm:text-[20px] font-black text-slate-900 tracking-tight">
-            {cur.title}
-          </h2>
-          <p className="text-[12.5px] sm:text-[13.5px] text-slate-500 mt-0.5">
-            {cur.desc}
-          </p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="flex items-center gap-2.5">
+          <span className="text-[24px]">✨</span>
+          <div>
+            <h2 className="text-[18px] sm:text-[20px] font-black text-slate-900 tracking-tight">
+              {cur.title}
+            </h2>
+            <p className="text-[12.5px] sm:text-[13.5px] text-slate-500 mt-0.5">
+              {cur.desc}
+            </p>
+          </div>
         </div>
+
+        {onApplyFormula && (
+          <button
+            onClick={handleApply}
+            className="interactive-control inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-black text-[13.5px] rounded-xl shadow-xs hover:shadow-md transition-all cursor-pointer shrink-0 active:scale-95"
+          >
+            <span>{cur.applyAllBtn}</span>
+            <span>➔</span>
+          </button>
+        )}
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 mt-1">
@@ -2089,9 +2124,24 @@ const SectionEmotionFormula = ({ lang }) => {
           </div>
         ))}
       </div>
+
+      {onApplyFormula && (
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-2 pt-2 border-t border-slate-100">
+          <span className="text-[12px] text-slate-500 font-medium">
+            💡 {cur.applyAllSub}
+          </span>
+          <button
+            onClick={handleApply}
+            className="interactive-control text-[13px] font-extrabold text-amber-700 hover:text-amber-900 underline underline-offset-4 cursor-pointer"
+          >
+            {cur.applyAllBtn} ➔
+          </button>
+        </div>
+      )}
     </section>
   );
 };
+
 
 // 메인 하단 섹션 5: 자주 묻는 질문 (FAQ Accordion)
 const SectionFAQ = ({ lang }) => {
@@ -3428,6 +3478,13 @@ function App() {
     setTimeout(() => {
       setToastMessage(prev => prev === msg ? '' : prev);
     }, 3000);
+  };
+
+  const handleApplyEmotionFormula = (items, themeTitle) => {
+    setEmoticons(items);
+    setActiveTheme('custom');
+    showToast(lang === 'ko' ? '✨ 추천 15종 황금 조합이 프롬프트 생성기에 적용되었습니다!' : lang === 'ja' ? '✨ おすすめ15種黄金セットが適用されました！' : lang === 'zh' ? '✨ 推荐15款黄金组合已成功应用！' : '✨ 15 Essential Emotion Formula applied!');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
   const [grokBackgroundMode, setGrokBackgroundMode] = useState('transparent');
 
@@ -6228,7 +6285,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
         <SectionPrinciples lang={lang} />
 
         {/* 섹션 4: 추천 이모티콘 15종 필수 감정 황금 조합 */}
-        <SectionEmotionFormula lang={lang} />
+        <SectionEmotionFormula lang={lang} onApplyFormula={handleApplyEmotionFormula} />
 
         {/* 섹션 5: AI 모델 비교 및 팁 */}
         <InfoSection t={t} lang={lang} />
