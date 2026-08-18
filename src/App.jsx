@@ -1491,7 +1491,7 @@ const SectionAbout = ({ lang }) => {
   const cur = data[lang] || data['ko'];
 
   return (
-    <section className="bg-white rounded-xl p-5 sm:p-7 border border-slate-200/90 shadow-xs flex flex-col gap-4">
+    <section className="bg-white rounded-xl p-5 sm:p-7 border border-slate-200/90 shadow-xs flex flex-col gap-4 break-keep">
       <div className="flex items-center gap-2.5">
         <span className="text-[24px]">🎨</span>
         <div>
@@ -1663,7 +1663,7 @@ const SectionGuide = ({ lang }) => {
   const cur = data[lang] || data['ko'];
 
   return (
-    <section className="bg-white rounded-xl p-5 sm:p-7 border border-slate-200/90 shadow-xs flex flex-col gap-4">
+    <section className="bg-white rounded-xl p-5 sm:p-7 border border-slate-200/90 shadow-xs flex flex-col gap-4 break-keep">
       <div className="flex items-center gap-2.5">
         <span className="text-[24px]">📖</span>
         <div>
@@ -1840,7 +1840,7 @@ const SectionPrinciples = ({ lang }) => {
   const cur = data[lang] || data['ko'];
 
   return (
-    <section className="bg-white rounded-xl p-5 sm:p-7 border border-slate-200/90 shadow-xs flex flex-col gap-4">
+    <section className="bg-white rounded-xl p-5 sm:p-7 border border-slate-200/90 shadow-xs flex flex-col gap-4 break-keep">
       <div className="flex items-center gap-2.5">
         <span className="text-[24px]">🏆</span>
         <div>
@@ -1878,8 +1878,8 @@ const SectionEmotionFormula = ({ lang, onApplyFormula }) => {
     ko: {
       title: '추천 이모티콘 15종 필수 감정 황금 조합',
       desc: '실제 메신저 채팅에서 매일 쓰이는 핵심 15개 컷을 4개 필수 감정 테마로 균형 있게 구성했습니다.',
-      applyAllBtn: '이 15종 조합 생성기에 적용하기',
-      applyAllSub: '위 15개 문구가 상단 프롬프트 생성기에 즉시 채워집니다.',
+      applyAllBtn: '이모티콘 문구 그리드에 적용하기',
+      applyAllSub: '위 15개 추천 문구가 상단 [이모티콘 문구 그리드]에 즉시 자동 적용됩니다.',
       appliedToast: '✨ 추천 15종 황금 조합',
       categories: [
         {
@@ -1923,8 +1923,8 @@ const SectionEmotionFormula = ({ lang, onApplyFormula }) => {
     ja: {
       title: 'おすすめスタンプ15種 黄金の感情組み合わせ',
       desc: '日常会話で毎日使われる15の必須カットを4つの感情テーマにバランスよく構成しました。',
-      applyAllBtn: 'この15種セットを生成器に適用',
-      applyAllSub: '上記の15フレーズが上部のプロンプト生成ツールに即座に反映されます。',
+      applyAllBtn: 'スタンプ文言グリッドに適用',
+      applyAllSub: '上記の15フレーズが上部の【スタンプ文言15種グリッド】に即座に反映されます。',
       appliedToast: '✨ おすすめ15種黄金セット',
       categories: [
         {
@@ -1968,8 +1968,8 @@ const SectionEmotionFormula = ({ lang, onApplyFormula }) => {
     zh: {
       title: '推荐表情包15款 黄金情绪搭配',
       desc: '精选日常聊天最高频使用的15个镜头，均衡分布于4大情绪主题。',
-      applyAllBtn: '应用这15款组合到生成器',
-      applyAllSub: '上述15款文案将立即自动填入上方的提示词生成器中。',
+      applyAllBtn: '应用到表情包文案网格',
+      applyAllSub: '上述15款文案将立即自动填入上方的【15款表情包文案网格】中。',
       appliedToast: '✨ 推荐15款黄金组合',
       categories: [
         {
@@ -2013,8 +2013,8 @@ const SectionEmotionFormula = ({ lang, onApplyFormula }) => {
     en: {
       title: '15 Essential Emotion Formula for Daily Chat',
       desc: 'Optimized 15-cut set structure divided evenly into 4 core daily messenger themes.',
-      applyAllBtn: 'Apply to Prompt Generator',
-      applyAllSub: 'Instantly applies all 15 dialogue phrases directly into the AI prompt generator above.',
+      applyAllBtn: 'Apply to Emoticon Phrase Grid',
+      applyAllSub: 'All 15 phrases will be instantly loaded into the 15-phrase grid above.',
       appliedToast: '✨ 15 Essential Emotion Formula',
       categories: [
         {
@@ -2067,7 +2067,7 @@ const SectionEmotionFormula = ({ lang, onApplyFormula }) => {
   };
 
   return (
-    <section className="bg-white rounded-xl p-5 sm:p-7 border border-slate-200/90 shadow-xs flex flex-col gap-4">
+    <section className="bg-white rounded-xl p-5 sm:p-7 border border-slate-200/90 shadow-xs flex flex-col gap-4 break-keep">
       <div className="flex items-center gap-2.5">
         <span className="text-[24px]">✨</span>
         <div>
@@ -2110,17 +2110,17 @@ const SectionEmotionFormula = ({ lang, onApplyFormula }) => {
       </div>
 
       {onApplyFormula && (
-        <div className="mt-1 bg-gradient-to-r from-amber-50 via-amber-100/30 to-amber-50 p-3.5 sm:p-4 rounded-xl border border-amber-200/80 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-2xs">
-          <div className="flex items-center gap-2 text-[12.5px] sm:text-[13px] text-amber-950 font-medium text-center sm:text-left">
-            <span className="text-[16px]">💡</span>
-            <span>{cur.applyAllSub}</span>
+        <div className="mt-1 bg-gradient-to-r from-amber-50 via-amber-100/35 to-amber-50 p-3.5 sm:p-4 rounded-xl border border-amber-200/80 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-2xs break-keep">
+          <div className="flex items-center gap-2 text-[12.5px] sm:text-[13px] text-amber-950 font-medium text-center sm:text-left break-keep leading-snug">
+            <span className="text-[16px] shrink-0">💡</span>
+            <span className="break-keep">{cur.applyAllSub}</span>
           </div>
           <button
             onClick={handleApply}
-            className="interactive-control px-4 py-2.5 bg-amber-600 hover:bg-amber-700 text-white font-extrabold text-[13px] rounded-lg shadow-xs transition-all flex items-center gap-2 shrink-0 active:scale-95 cursor-pointer whitespace-nowrap"
+            className="interactive-control px-4 py-2.5 bg-amber-600 hover:bg-amber-700 text-white font-extrabold text-[13px] rounded-lg shadow-xs transition-all flex items-center justify-center gap-2 shrink-0 active:scale-95 cursor-pointer whitespace-nowrap break-keep w-full sm:w-auto"
           >
             <span>{cur.applyAllBtn}</span>
-            <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <svg className="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <line x1="5" y1="12" x2="19" y2="12"></line>
               <polyline points="12 5 19 12 12 19"></polyline>
             </svg>
@@ -2251,7 +2251,7 @@ const SectionFAQ = ({ lang }) => {
   };
 
   return (
-    <section className="bg-white rounded-xl p-5 sm:p-7 border border-slate-200/90 shadow-xs flex flex-col gap-4">
+    <section className="bg-white rounded-xl p-5 sm:p-7 border border-slate-200/90 shadow-xs flex flex-col gap-4 break-keep">
       <div className="flex items-center gap-2.5">
         <span className="text-[24px]">❓</span>
         <div>
@@ -3475,8 +3475,15 @@ function App() {
   const handleApplyEmotionFormula = (items, themeTitle) => {
     setEmoticons(items);
     setActiveTheme('custom');
-    showToast(lang === 'ko' ? '✨ 추천 15종 황금 조합이 프롬프트 생성기에 적용되었습니다!' : lang === 'ja' ? '✨ おすすめ15種黄金セットが適用されました！' : lang === 'zh' ? '✨ 推荐15款黄金组合已成功应用！' : '✨ 15 Essential Emotion Formula applied!');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    showToast(lang === 'ko' ? '✨ 추천 15종 문구가 이모티콘 문구 그리드에 적용되었습니다!' : lang === 'ja' ? '✨ おすすめ15種文言がグリッドに適用されました！' : lang === 'zh' ? '✨ 推荐15款文案已成功应用到网格！' : '✨ 15 phrases applied to the grid!');
+    setTimeout(() => {
+      const gridEl = document.getElementById('emoticon-phrase-grid');
+      if (gridEl) {
+        gridEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }, 50);
   };
   const [grokBackgroundMode, setGrokBackgroundMode] = useState('transparent');
 
@@ -5574,7 +5581,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
         </section>
 
         {/* Section 2: Emoji Phrases */}
-        <section className="flex flex-col gap-md">
+        <section id="emoticon-phrase-grid" className="flex flex-col gap-md break-keep">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="flex flex-col gap-1">
               <h2 className="font-headline-sm text-headline-sm text-on-surface">{t.phrases}</h2>
