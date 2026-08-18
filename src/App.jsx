@@ -1876,12 +1876,11 @@ const SectionPrinciples = ({ lang }) => {
 const SectionEmotionFormula = ({ lang, onApplyFormula }) => {
   const content = {
     ko: {
-      title: '추천 이모티콘 15종 필수 감정 황금 조합 (4개 카테고리)',
+      title: '추천 이모티콘 15종 필수 감정 황금 조합',
       desc: '실제 메신저 채팅에서 매일 쓰이는 핵심 15개 컷을 4개 필수 감정 테마로 균형 있게 구성했습니다.',
-      applyAllBtn: '✨ 15종 황금 조합 바로 적용하기',
-      applyAllSub: '클릭 시 위 15개 문구가 프롬프트 생성기에 즉시 자동 적용되며 상단으로 이동합니다.',
+      applyAllBtn: '이 15종 조합 생성기에 적용하기',
+      applyAllSub: '위 15개 문구가 상단 프롬프트 생성기에 즉시 채워집니다.',
       appliedToast: '✨ 추천 15종 황금 조합',
-      cardApplyBtn: '적용',
       categories: [
         {
           group: '1. 대화 시작 & 긍정 리액션',
@@ -1922,12 +1921,11 @@ const SectionEmotionFormula = ({ lang, onApplyFormula }) => {
       ]
     },
     ja: {
-      title: 'おすすめスタンプ15種 黄金の感情組み合わせ (4カテゴリ)',
+      title: 'おすすめスタンプ15種 黄金の感情組み合わせ',
       desc: '日常会話で毎日使われる15の必須カットを4つの感情テーマにバランスよく構成しました。',
-      applyAllBtn: '✨ この15種セットを今すぐ適用する',
-      applyAllSub: 'クリックすると上記15個のフレーズが生成ツールに即座に反映され上部にスクロールします。',
+      applyAllBtn: 'この15種セットを生成器に適用',
+      applyAllSub: '上記の15フレーズが上部のプロンプト生成ツールに即座に反映されます。',
       appliedToast: '✨ おすすめ15種黄金セット',
-      cardApplyBtn: '適用',
       categories: [
         {
           group: '1. 挨拶・ポジティブリアクション',
@@ -1968,12 +1966,11 @@ const SectionEmotionFormula = ({ lang, onApplyFormula }) => {
       ]
     },
     zh: {
-      title: '推荐表情包15款 黄金情绪搭配 (4大分类)',
+      title: '推荐表情包15款 黄金情绪搭配',
       desc: '精选日常聊天最高频使用的15个镜头，均衡分布于4大情绪主题。',
-      applyAllBtn: '✨ 一键应用这15款黄金组合',
-      applyAllSub: '点击后上述15款文案将立即自动填入提示词生成器中并返回顶部。',
+      applyAllBtn: '应用这15款组合到生成器',
+      applyAllSub: '上述15款文案将立即自动填入上方的提示词生成器中。',
       appliedToast: '✨ 推荐15款黄金组合',
-      cardApplyBtn: '应用',
       categories: [
         {
           group: '1. 问候与积极回复',
@@ -2014,12 +2011,11 @@ const SectionEmotionFormula = ({ lang, onApplyFormula }) => {
       ]
     },
     en: {
-      title: '15 Essential Emotion Formula (4 Categories)',
+      title: '15 Essential Emotion Formula for Daily Chat',
       desc: 'Optimized 15-cut set structure divided evenly into 4 core daily messenger themes.',
-      applyAllBtn: '✨ Apply This 15-Sticker Formula',
-      applyAllSub: 'Instantly applies all 15 dialogue phrases directly into the AI prompt generator and scrolls up.',
+      applyAllBtn: 'Apply to Prompt Generator',
+      applyAllSub: 'Instantly applies all 15 dialogue phrases directly into the AI prompt generator above.',
       appliedToast: '✨ 15 Essential Emotion Formula',
-      cardApplyBtn: 'Apply',
       categories: [
         {
           group: '1. Greetings & Positive Vibes',
@@ -2072,28 +2068,16 @@ const SectionEmotionFormula = ({ lang, onApplyFormula }) => {
 
   return (
     <section className="bg-white rounded-xl p-5 sm:p-7 border border-slate-200/90 shadow-xs flex flex-col gap-4">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div className="flex items-center gap-2.5">
-          <span className="text-[24px]">✨</span>
-          <div>
-            <h2 className="text-[18px] sm:text-[20px] font-black text-slate-900 tracking-tight">
-              {cur.title}
-            </h2>
-            <p className="text-[12.5px] sm:text-[13.5px] text-slate-500 mt-0.5">
-              {cur.desc}
-            </p>
-          </div>
+      <div className="flex items-center gap-2.5">
+        <span className="text-[24px]">✨</span>
+        <div>
+          <h2 className="text-[18px] sm:text-[20px] font-black text-slate-900 tracking-tight">
+            {cur.title}
+          </h2>
+          <p className="text-[12.5px] sm:text-[13.5px] text-slate-500 mt-0.5">
+            {cur.desc}
+          </p>
         </div>
-
-        {onApplyFormula && (
-          <button
-            onClick={handleApply}
-            className="interactive-control inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-black text-[13.5px] rounded-xl shadow-xs hover:shadow-md transition-all cursor-pointer shrink-0 active:scale-95"
-          >
-            <span>{cur.applyAllBtn}</span>
-            <span>➔</span>
-          </button>
-        )}
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 mt-1">
@@ -2126,21 +2110,27 @@ const SectionEmotionFormula = ({ lang, onApplyFormula }) => {
       </div>
 
       {onApplyFormula && (
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-2 pt-2 border-t border-slate-100">
-          <span className="text-[12px] text-slate-500 font-medium">
-            💡 {cur.applyAllSub}
-          </span>
+        <div className="mt-1 bg-gradient-to-r from-amber-50 via-amber-100/30 to-amber-50 p-3.5 sm:p-4 rounded-xl border border-amber-200/80 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-2xs">
+          <div className="flex items-center gap-2 text-[12.5px] sm:text-[13px] text-amber-950 font-medium text-center sm:text-left">
+            <span className="text-[16px]">💡</span>
+            <span>{cur.applyAllSub}</span>
+          </div>
           <button
             onClick={handleApply}
-            className="interactive-control text-[13px] font-extrabold text-amber-700 hover:text-amber-900 underline underline-offset-4 cursor-pointer"
+            className="interactive-control px-4 py-2.5 bg-amber-600 hover:bg-amber-700 text-white font-extrabold text-[13px] rounded-lg shadow-xs transition-all flex items-center gap-2 shrink-0 active:scale-95 cursor-pointer whitespace-nowrap"
           >
-            {cur.applyAllBtn} ➔
+            <span>{cur.applyAllBtn}</span>
+            <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
           </button>
         </div>
       )}
     </section>
   );
 };
+
 
 
 // 메인 하단 섹션 5: 자주 묻는 질문 (FAQ Accordion)
