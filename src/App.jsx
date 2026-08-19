@@ -4053,6 +4053,156 @@ Do not follow the photo's photorealistic rendering. Apply the selected art style
       : 'cute, approachable, high-quality 2D messenger sticker illustration with clean outlines and harmonious colors';
   };
 
+  // --- [Adaptive Prompt Engine Helpers] ---
+  const getAdaptiveStyleDirectives = (styleTag, promptLang = lang) => {
+    const isKo = promptLang === 'ko';
+    const tag = (styleTag || '').toLowerCase();
+
+    // 1. Meme / Satirical / B-grade 짤툰
+    if (tag.includes('병맛') || tag.includes('짤툰') || tag.includes('meme') || tag.includes('satirical')) {
+      return {
+        category: 'meme',
+        instruction: isKo
+          ? '굵고 투박한 자유로운 펜선, 극도로 과장되고 킹받는 코믹 표정(썩소, 백안, 억울한 일그러짐, 콧구멍 확장), 과감한 신체 왜곡과 역동적인 코믹 액션을 전폭 허용하여 B급 웹툰/짤툰의 매력을 극대화하세요.'
+          : 'Bold expressive unpolished ink lines, hyper-exaggerated comedic facial expressions (smirks, blank white eyes, distorted comedic grimaces), and dynamic satirical cartoon gestures. Maximize the humor and meme energy.',
+        negativeExtra: isKo
+          ? '예쁘고 단정한 전형적인 미소녀 얼굴, 밋밋하고 평범한 표정, 과도한 미화 금지.'
+          : 'No generic pretty anime face, no bland mild expressions, no excessive beautification.',
+        typographyDirective: isKo
+          ? '투박하고 강렬한 손글씨 폰트 + 순백색 두꺼운 다이컷 외곽선.'
+          : 'Bold, punchy hand-lettered meme font with thick white die-cut contour.',
+      };
+    }
+
+    // 2. Monochrome / Manga / Screentone
+    if (tag.includes('흑백') || tag.includes('출판 만화') || tag.includes('monochrome') || tag.includes('manga tone')) {
+      return {
+        category: 'monochrome',
+        instruction: isKo
+          ? '선명한 흑백 잉크 펜선과 정교한 하프톤/스크린톤 음영을 적용하세요. 흑백 만화 특유의 강렬한 명암 대비와 섬세한 펜 터치를 유지하세요.'
+          : 'Sharp black ink lineart with refined screentone/halftone shading. Maintain high-contrast black-and-white manga aesthetics and detailed penwork.',
+        negativeExtra: isKo
+          ? '원색 컬러 채색 금지, 무지개색 글자 금지, 화려한 색면 금지.'
+          : 'No vibrant multi-color fills, no rainbow text, no saturated colored shading.',
+        typographyDirective: isKo
+          ? '흑백 만화 타이틀 스타일 먹선 텍스트 + 흰색 외곽선.'
+          : 'High-contrast monochrome manga lettering with white outline stroke.',
+      };
+    }
+
+    // 3. Oriental / Sumi-e
+    if (tag.includes('동양화') || tag.includes('수묵') || tag.includes('oriental') || tag.includes('sumi-e')) {
+      return {
+        category: 'oriental',
+        instruction: isKo
+          ? '전통 한지 질감 위에 먹선의 농담과 붓터치의 강약, 은은하고 투명한 담채 물감 번짐을 살린 동양화/수묵담채화 스타일을 적용하세요. 여백의 미를 조화롭게 살리세요.'
+          : 'Traditional East Asian Sumi-e ink wash style with varying brush pressure, translucent soft watercolor bleeding, and harmonious organic negative space.',
+        negativeExtra: isKo
+          ? '인위적인 디지털 네온 컬러, 딱딱한 벡터 외곽선 금지.'
+          : 'No synthetic digital neon colors, no rigid vector borders.',
+        typographyDirective: isKo
+          ? '자연스러운 먹글씨 캘리그라피 감성 텍스트 + 은은한 외곽선.'
+          : 'Organic brush calligraphy style lettering with subtle clean border.',
+      };
+    }
+
+    // 4. 3D / Clay / Felt
+    if (tag.includes('3d') || tag.includes('점토') || tag.includes('클레이') || tag.includes('펠트') || tag.includes('clay') || tag.includes('felt')) {
+      return {
+        category: '3d',
+        instruction: isKo
+          ? '부드러운 입체 조명과 실감 나는 재질감(점토 지문 질감 또는 보송보송한 양모펠트 텍스처)을 가진 3D 피규어/스톱모션 인형 스타일을 적용하세요.'
+          : 'Tactile 3D figurine / stop-motion clay puppet style with soft ambient lighting, tangible clay/wool felt texture, and smooth dimensional volume.',
+        negativeExtra: '',
+        typographyDirective: isKo
+          ? '통통한 볼륨감의 3D 엠보싱 스티커 텍스트 + 두꺼운 백색 테두리.'
+          : 'Chubby embossed dimensional sticker text with bold white border.',
+      };
+    }
+
+    // 5. Analog / Watercolor / Storybook
+    if (tag.includes('수채화') || tag.includes('색연필') || tag.includes('크레파스') || tag.includes('동화') || tag.includes('낙서') || tag.includes('watercolor') || tag.includes('pencil') || tag.includes('crayon')) {
+      return {
+        category: 'analog',
+        instruction: isKo
+          ? '포근한 종이 결(Paper texture)과 따뜻한 아날로그 화구(색연필, 오일파스텔, 수채화 물감 번짐)의 자연스러운 입자 질감을 극대화하세요.'
+          : 'Warm textured storybook illustration with visible paper grain, gentle colored pencil / oil pastel grain, or soft watercolor bleeding edges.',
+        negativeExtra: isKo
+          ? '차가운 디지털 벡터 느낌 금지, 기계적인 그라데이션 금지.'
+          : 'No cold sterile digital vector look, no mechanical gradients.',
+        typographyDirective: isKo
+          ? '아기자기한 손글씨 스티커 폰트 + 깨끗한 백색 다이컷 테두리.'
+          : 'Charming hand-drawn sticker lettering with crisp white die-cut contour.',
+      };
+    }
+
+    // 6. Retro / Pixel
+    if (tag.includes('도트') || tag.includes('픽셀') || tag.includes('pixel') || tag.includes('y2k')) {
+      return {
+        category: 'pixel',
+        instruction: isKo
+          ? '정교한 8-bit/16-bit 도트 그리드 픽셀아트 스타일과 레트로 감성의 컬러 팔레트를 일관되게 적용하세요.'
+          : 'Crisp 8-bit/16-bit grid pixel art style with cohesive retro color palette.',
+        negativeExtra: isKo
+          ? '부드러운 벡터 곡선, 안티에일리어싱 블러 금지.'
+          : 'No smooth vector curves, no blurry anti-aliasing.',
+        typographyDirective: isKo
+          ? '레트로 픽셀 도트 폰트 + 화이트 픽셀 외곽선.'
+          : 'Retro pixelated bitmap lettering with white pixel border.',
+      };
+    }
+
+    // Default: Clean 2D Pop Sticker
+    return {
+      category: 'cartoon',
+      instruction: isKo
+        ? '깔끔하고 둥글둥글한 외곽선과 화사한 원색 채색이 돋보이는 고품질 2D 카툰 스티커 스타일을 적용하세요.'
+        : 'High-quality 2D cartoon sticker style with clean rounded outlines and bright vibrant coloring.',
+      negativeExtra: '',
+      typographyDirective: isKo
+        ? '통통하고 읽기 쉬운 2D 볼드 팝아트 손글씨 스티커 폰트 + 두꺼운 순백색 다이컷 외곽선.'
+        : 'Bold, bubbly 2D pop-art sticker typography with a thick white die-cut outline stroke.',
+    };
+  };
+
+  const getSmartAnthropomorphicInstruction = (subjectText, promptLang = lang) => {
+    const isKo = promptLang === 'ko';
+    const text = (subjectText || '').toLowerCase();
+    const isAnimalOrCreature = /(고양이|냥|강아지|댕댕|개|곰|토끼|원숭이|햄스터|다람쥐|여우|쿼카|판다|고슴도치|알파카|돼지|늘보|코끼리|코기|비숑|리트리버|호랑이|사자|새|뱁새|앵무새|참새|펭귄|오리|문어|오징어|물고기|고래|상어|돌고래|해파리|꽃게|거북|수달|물개|해마|곤충|나비|벌|무당벌레|풍뎅이|사마귀|우파루파|도마뱀|개구리|악어|공룡|티라노|cat|dog|bear|rabbit|hamster|fox|panda|duck|penguin|octopus|fish|whale|shark|seal|bee|dino)/i.test(text);
+    const isFoodOrObject = /(붕어빵|식빵|마카롱|케이크|만두|쿠키|핫도그|푸딩|탕후루|떡볶이|삼각김밥|피자|라면|아이스크림|타코야끼|선인장|버섯|인형|로봇|슬라임|ghost|bread|cake|macaron|cookie|dumpling|pizza|ramen|robot|slime)/i.test(text);
+
+    if (isAnimalOrCreature) {
+      return isKo
+        ? '동물/생물 캐릭터가 상황을 표현할 때 자연스러운 2족 보행 자세와 앙증맞은 손으로 소품을 쥐고 행동하는 귀여운 의인화(Anthropomorphic Mascot)를 적용하세요.'
+        : 'Naturally anthropomorphize the animal/creature mascot with an expressive upright posture and cute little paws/hands that skillfully hold and interact with props.';
+    }
+    if (isFoodOrObject) {
+      return isKo
+        ? '사물/음식 캐릭터에 앙증맞은 팔다리와 생동감 넘치는 눈코입 표정을 부여하여 살아 움직이는 마스코트(Living Object Mascot)로 자연스럽게 연출하세요.'
+        : 'Give the food/object mascot cute little arms, legs, and lively facial expressions to bring it to life as an animated living mascot.';
+    }
+    return '';
+  };
+
+  const getThemeSignatureProps = (themeName, promptLang = lang) => {
+    const isKo = promptLang === 'ko';
+    const t = (themeName || '').toLowerCase();
+
+    if (t.includes('골프')) return isKo ? '골프채, 골프공, 홀컵, 썬캡' : 'golf club, golf ball, hole cup, sun visor';
+    if (t.includes('낚시')) return isKo ? '낚싯대, 찌, 펄떡이는 물고기, 낚시통' : 'fishing rod, bobber, jumping fish, tackle box';
+    if (t.includes('군인') || t.includes('곰신')) return isKo ? '베레모/군모, 군번줄, 편지 봉투, 배낭' : 'military beret/cap, dog tags, letter, backpack';
+    if (t.includes('캠핑')) return isKo ? '텐트, 모닥불, 마시멜로 꼬치, 캠핑 의자' : 'tent, campfire, marshmallow skewer, camp chair';
+    if (t.includes('싸이클') || t.includes('라이딩')) return isKo ? '라이딩 헬멧, 고글, 자전거 핸들, 물통' : 'cycling helmet, sports goggles, bike handlebars, water bottle';
+    if (t.includes('집사') || t.includes('고양이')) return isKo ? '츄르 간식, 깃털 장난감, 캔 사료, 캣닢' : 'cat treats, feather wand, canned food, catnip';
+    if (t.includes('댕댕이') || t.includes('강아지')) return isKo ? '개껌, 테니스공, 산책 목줄, 사료 그릇' : 'dog bone, tennis ball, leash, food bowl';
+    if (t.includes('헬스') || t.includes('오운완')) return isKo ? '아령, 바벨, 프로틴 쉐이커, 땀수건' : 'dumbbell, barbell, shaker bottle, sweat towel';
+    if (t.includes('카페') || t.includes('커피')) return isKo ? '테이크아웃 커피잔, 디저트 포크, 머그잔' : 'takeout coffee cup, dessert fork, mug';
+    if (t.includes('공룡')) return isKo ? '화석, 원시 나뭇잎, 뼈다귀' : 'fossil, prehistoric leaf, bone';
+    if (t.includes('우파루파') || t.includes('파충류')) return isKo ? '수초, 연잎 우산, 물방울' : 'waterweed, lotus leaf, water bubbles';
+    if (t.includes('조류') || t.includes('새')) return isKo ? '나뭇가지, 모이통, 해바라기씨' : 'tree branch, bird feeder, sunflower seed';
+    return '';
+  };
+
   const getSelectedCharacterRoles = () => {
     const selectedTagSet = new Set(
       charManual.split(',').map(value => value.trim()).filter(Boolean)
@@ -4126,11 +4276,13 @@ Do not follow the photo's photorealistic rendering. Apply the selected art style
       style: '첨부 사진 속 대상의 핵심 식별 특징(얼굴형, 눈매, 헤어스타일 또는 털 무늬, 피부톤, 대표 아이템)만 유지하고, 선택한 화풍의 조형 언어를 우선 적용하여 비율, 표정, 형태, 채색을 적극 변환 (사진에 없는 악세사리 임의 추가 금지)',
     }[photoReferenceMode];
 
+    const anthropomorphicGuide = getSmartAnthropomorphicInstruction(subjectParts.join(' '), isKo ? 'ko' : 'en');
     return {
-      subject: subjectParts.join(', ') || (isKo ? '귀여운 오리지널 캐릭터' : 'a cute original character'),
+      subject: subjectParts.join(', ') || (isKo ? '오리지널 마스코트 캐릭터' : 'original mascot character'),
       appearance: [
         ...(characterSource === 'photo' ? [isKo ? photoAppearanceKo : photoAppearanceEn] : []),
         ...appearances,
+        ...(anthropomorphicGuide ? [anthropomorphicGuide] : []),
       ].join(', ') || (isKo ? '깔끔하고 명확한 캐릭터 실루엣 유지' : 'use a simple, recognizable silhouette and keep it unchanged'),
       personality: personalities.join(', ') || (isKo ? '친근하고 표정이 풍부한' : 'friendly and expressive'),
       outfit: outfits.join(', ') || (characterSource === 'photo'
@@ -4234,9 +4386,13 @@ Do not follow the photo's photorealistic rendering. Apply the selected art style
       : ''}${getReferenceImageInstruction(lang)}`;
     const selectedArtStyle = getSelectedArtStyle();
     const expandedArtStyle = getExpandedArtStyleText(selectedArtStyle, lang === 'ko');
-    const artDirection = expandedArtStyle || (lang === 'ko'
-      ? '귀엽고 친근한 고품질 2D 메신저 이모티콘 스타일, 깔끔한 외곽선, 조화로운 색감'
-      : 'cute, approachable, high-quality 2D messenger sticker style with clean outlines and harmonious colors');
+    const styleDirectives = character.styleDirectives || getAdaptiveStyleDirectives(selectedArtStyle, lang === 'ko' ? 'ko' : 'en');
+    const themeProps = getThemeSignatureProps(activeTheme, lang === 'ko' ? 'ko' : 'en');
+    const artDirection = expandedArtStyle
+      ? `${expandedArtStyle}. ${styleDirectives.instruction}`
+      : (lang === 'ko'
+        ? '귀엽고 친근한 고품질 2D 메신저 이모티콘 스타일, 깔끔한 외곽선, 조화로운 색감'
+        : 'cute, approachable, high-quality 2D messenger sticker style with clean outlines and harmonious colors');
 
     if (generationMode === 'individual' || hasPhraseOverride) {
       if (lang === 'ko') {
@@ -4428,6 +4584,7 @@ ${textExclusion} No grid lines, no cell division lines, no border lines between 
   const generateGeminiPrompt = (phraseOverride = null) => {
     const isKorean = lang === 'ko';
     const character = getGeminiCharacterDetails(isKorean ? 'ko' : 'en');
+    const themeProps = getThemeSignatureProps(activeTheme, isKorean ? 'ko' : 'en');
     const hasPhraseOverride = phraseOverride !== null;
     const targetPhrase = generationMode === 'individual'
       ? getSelectedPhrase()
@@ -4517,7 +4674,7 @@ ${referenceInstructionKo}
 ${textPolicyKo}
 
 [포즈 & 문구]
-- 감정 / 동작: "${targetPhrase}" — ${getPhraseActionKo(targetPhrase)}. 최소 소품: ${character.props}, ${character.effects}.
+- 감정 / 동작: "${targetPhrase}" — ${getPhraseActionKo(targetPhrase)}. 최소 소품: ${character.props}${themeProps ? `, ${themeProps}` : ''}, ${character.effects}.
 
 [제외 조건 (Negative Directives)]
 ${textExclusionKo}`;
@@ -4723,11 +4880,13 @@ ${textExclusion}`;
       style: '핵심 식별 특징(얼굴형, 눈매, 헤어스타일 또는 털 무늬, 피부톤, 대표 아이템)만 유지하고, 선택한 화풍의 조형 언어를 우선 적용하여 비율, 표정, 형태, 채색을 적극 변환 (사진에 없는 악세사리 임의 추가 금지)',
     }[photoReferenceMode];
 
+    const anthropomorphicGuide = getSmartAnthropomorphicInstruction(subjectParts.join(' '), isKo ? 'ko' : 'en');
     return {
-      subject: subjectParts.join(', ') || (isKo ? '귀여운 오리지널 캐릭터' : 'a cute original character'),
+      subject: subjectParts.join(', ') || (isKo ? '오리지널 마스코트 캐릭터' : 'original mascot character'),
       appearance: [
         ...(characterSource === 'photo' ? [isKo ? photoAppearanceKo : photoAppearanceEn] : []),
         ...appearances,
+        ...(anthropomorphicGuide ? [anthropomorphicGuide] : []),
       ].join(', ') || (isKo ? '단순하고 알아보기 쉬운 실루엣을 정한 뒤 그대로 유지' : 'simple, recognizable silhouette kept unchanged'),
       personality: personalities.join(', ') || (isKo ? '친근하고 표정이 풍부한' : 'friendly and expressive'),
       outfit: outfits.join(', ') || (characterSource === 'photo'
@@ -4742,6 +4901,7 @@ ${textExclusion}`;
   const generateGrokPrompt = (phraseOverride = null) => {
     const isKorean = lang === 'ko';
     const character = getGrokCharacterDetails(isKorean ? 'ko' : 'en');
+    const themeProps = getThemeSignatureProps(activeTheme, isKorean ? 'ko' : 'en');
     const hasPhraseOverride = phraseOverride !== null;
     const targetPhrase = generationMode === 'individual'
       ? getSelectedPhrase()
@@ -4772,8 +4932,7 @@ ${textExclusion}`;
 - 대상: ${character.subject}
 - 최우선 화풍: ${getGeminiStyleTags('ko')}
 - 외형 및 특징: ${character.appearance}
-- 의상: ${character.outfit}
-- 화풍: 선명한 3-4px 벡터 선화, 2단계 셀 셰이딩.`;
+- 의상: ${character.outfit}`;
 
       if (generationMode === 'individual' || hasPhraseOverride) {
         const textPolicyKo = grokTextMode === 'text'
@@ -4861,8 +5020,7 @@ ${panelPlanKo}
 - Subject: ${character.subject}
 - Art Style: ${getGeminiStyleTags('en')}
 - Appearance & Features: ${character.appearance}
-- Outfit: ${character.outfit}
-- Linework & Shading: Clean 3-4px vector linework, flat 2-tone cel shading.`;
+- Outfit: ${character.outfit}`;
 
     if (generationMode === 'individual' || hasPhraseOverride) {
       const textPolicy = grokTextMode === 'text'
