@@ -3438,6 +3438,8 @@ function App() {
   const [geminiBackgroundMode, setGeminiBackgroundMode] = useState('transparent');
   const [grokTextMode, setGrokTextMode] = useState('visual');
   const [toastMessage, setToastMessage] = useState('');
+  const [showPhotoTips, setShowPhotoTips] = useState(false);
+  const [showDetailedGuide, setShowDetailedGuide] = useState(false);
 
   const getCategoryRuleBadge = (category) => {
     const isArtStyle = ['🖌️ 화풍', '🖌️ Art Style', '🖌️ 画風', '🖌️ 画风'].includes(category);
@@ -6339,11 +6341,12 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
           </div>
         </section>
 
-        <div className="bg-[#FFF5E6] text-[#8C3D18] p-4 sm:p-5 md:p-6 rounded-md border border-[#FDE0B5] flex gap-3 md:gap-4 items-start shadow-sm mt-2 relative overflow-hidden">
-          <div className="absolute -right-4 -top-6 text-[#FCD3A1] opacity-40 text-[120px] sm:text-[140px] transform -rotate-12 select-none pointer-events-none drop-shadow-sm">📸</div>
-          <span className="text-[20px] sm:text-[22px] drop-shadow-sm leading-none mt-0.5 relative z-10">📸</span>
+        {/* 사진 꿀팁 컴팩트 아코디언 카드 */}
+        <div className="bg-[#FFF5E6] text-[#8C3D18] p-3.5 sm:p-5 md:p-6 rounded-md border border-[#FDE0B5] flex gap-3 md:gap-4 items-start shadow-sm mt-2 relative overflow-hidden">
+          <div className="absolute -right-4 -top-6 text-[#FCD3A1] opacity-40 text-[100px] sm:text-[140px] transform -rotate-12 select-none pointer-events-none drop-shadow-sm">📸</div>
+          <span className="text-[18px] sm:text-[22px] drop-shadow-sm leading-none mt-0.5 relative z-10">📸</span>
           <div className="relative z-10 flex-1 min-w-0">
-            <strong className="font-black block mb-1.5 sm:mb-2 text-[15px] sm:text-[17px] tracking-tight text-[#C2410C]">
+            <strong className="font-black block mb-1 sm:mb-1.5 text-[14px] sm:text-[16.5px] tracking-tight text-[#C2410C]">
               {lang === 'ko' 
                 ? '✨ 초강력 꿀팁: 사진 첨부로 세상에 하나뿐인 이모티콘 만들기!' 
                 : lang === 'ja'
@@ -6352,145 +6355,116 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                 ? '✨ 超实用技巧: 附带照片制作独一无二的表情包！'
                 : '✨ Pro Tip: Make Emojis from Photos!'}
             </strong>
-            <span className="text-[13px] sm:text-[14.5px] leading-relaxed opacity-90 [word-break:break-word] block font-medium mb-3 sm:mb-4 pr-4 sm:pr-16 text-[#8C3D18]">
+            <span className="text-[12.5px] sm:text-[14px] leading-relaxed opacity-90 [word-break:break-word] block font-medium text-[#8C3D18]">
               {lang === 'ko' 
-                ? '이 프롬프트를 복사해서 AI(ChatGPT, Gemini, Grok)에 붙여넣을 때, 본인이나 우리 아이, 반려동물의 사진을 함께 첨부해 보세요. 대상을 똑닮은 완벽한 커스텀 이모티콘 시트가 만들어집니다!' 
+                ? '프롬프트를 복사하여 AI(ChatGPT, Gemini, Grok)에 붙여넣을 때 본인이나 반려동물 사진을 함께 첨부하면 대상의 개성을 살린 커스텀 이모티콘이 완성됩니다!' 
                 : lang === 'ja'
-                ? 'このプロンプトをコピーしてAI(ChatGPT, Gemini, Grok)に貼り付ける際、ご自身や子ども、ペットの写真も一緒に添付してみてください。そっくりなカスタムスタンプシートが作れます！'
+                ? 'プロンプトをAI(ChatGPT, Gemini, Grok)に貼り付ける際、写真も一緒に添付するとオリジナルスタンプが作れます！'
                 : lang === 'zh'
-                ? '将此提示词复制粘贴给AI (ChatGPT, Gemini, Grok) 时，可以同时发送您自己、孩子或宠物的照片。AI将完美还原特征，生成独一无二的专属表情包！'
-                : 'When pasting this prompt into AI (ChatGPT, Gemini, or Grok), attach a photo of yourself, your child, or your pet. It will generate a custom emoji sheet!'}
+                ? '将提示词粘贴给AI (ChatGPT, Gemini, Grok) 时，同时发送照片即可生成专属表情包！'
+                : 'When pasting into AI (ChatGPT, Gemini, Grok), attach a photo of yourself or your pet to create custom emojis!'}
             </span>
-            <div className="bg-white/60 rounded-md p-3 sm:p-4 border border-[#FCD3A1]/60 shadow-sm flex flex-col gap-1.5 sm:gap-2 w-full">
-              <strong className="text-[#C2410C] text-[13.5px] sm:text-[14.5px] flex items-center gap-1.5 font-bold">
-                <span className="text-[15px] sm:text-[16px]">📌</span> 
-                {lang === 'ko' 
-                  ? 'LLM 첨부 사진 권장 규칙' 
-                  : lang === 'ja'
-                  ? 'LLM添付写真の推奨ルール'
-                  : lang === 'zh'
-                  ? 'LLM照片上传建议'
-                  : 'Recommended Photo Specs'}
-              </strong>
-              <ul className="list-disc pl-4 sm:pl-5 opacity-90 text-[#9A3412] font-medium flex flex-col gap-1 sm:gap-1.5 mt-0.5 sm:mt-1 text-[12.5px] sm:text-[13.5px] marker:text-[#C2410C] [word-break:break-word]">
-                <li>
-                  {lang === 'ko' 
-                    ? '크기/비율: 제한 없음 (일반적인 스마트폰 사진 포맷 가능)' 
-                    : lang === 'ja'
-                    ? 'サイズ/比率: 制限なし (標準的なスマホ写真フォーマット可能)'
-                    : lang === 'zh'
-                    ? '尺寸/比例: 不限（标准手机照片格式均可）'
-                    : 'Size/Ratio: Any standard photo format'}
-                </li>
-                <li>
-                  {lang === 'ko' 
-                    ? '권장: 이목구비, 헤어스타일, 모색 등 특징이 선명한 정면 사진 1장' 
-                    : lang === 'ja'
-                    ? '推奨: 目鼻立ち、ヘアスタイル、毛色などの特徴が鮮明な正面写真1枚'
-                    : lang === 'zh'
-                    ? '建议: 正面清晰照片1张（五官、发型、毛色等特征明显）'
-                    : 'Recommended: Clear front-facing photo showing distinct features'}
-                </li>
-                <li>
-                  {lang === 'ko' 
-                    ? '주의: 인물이 너무 작거나 흔들리고 어두운 사진은 피해주세요.' 
-                    : lang === 'ja'
-                    ? '注意: 人物が小さすぎる、ブレている、暗すぎる写真は避けてください。'
-                    : lang === 'zh'
-                    ? '注意: 请避免人物太小、模糊或过暗的照片。'
-                    : 'Avoid: Blurry, dark, or zoomed-out photos'}
-                </li>
-                <li>
-                  {lang === 'ko' 
-                    ? '💡 실물 싱크로율 100% 꿀팁: 15종 시트는 포즈/구도 초안용으로 사용하고, 최종 완성품은 [📋 15종 개별 분할] 모드에서 1장씩 생성하기 (AI가 오직 1명의 이목구비에만 100% 집중하여 사진과 똑같이 생성됨)' 
-                    : lang === 'ja'
-                    ? '💡 再現度100%のコツ: 全体シートは構図案として使い、仕上げは[15種個別分割]で1枚ずつ生成（AIが1人の顔に100%集中して写真そっくりに生成）'
-                    : lang === 'zh'
-                    ? '💡 100%还原技巧: 整页作为姿态草稿，最终成品使用[15种单张拆分]模式逐张生成（AI将100%专注于单张面部，精准还原特征）'
-                    : '💡 100% Likeness Tip: Use Full Sheet as a pose draft, then generate final stickers one by one with [Batch Split] (AI focuses 100% on a single face for accurate likeness).'}
-                </li>
-              </ul>
-            </div>
 
-            <div className="bg-white/60 rounded-md p-3 sm:p-4 border border-[#FCD3A1]/60 shadow-sm flex flex-col gap-1.5 sm:gap-2 w-full mt-2 sm:mt-3">
-              <strong className="text-[#C2410C] text-[13.5px] sm:text-[14.5px] flex items-center gap-1.5 font-bold">
-                <span className="text-[15px] sm:text-[16px]">🎯</span> 
-                {lang === 'ko' 
-                  ? '이모티콘 200% 실전 활용 아이디어' 
-                  : lang === 'ja'
-                  ? 'スタンプの200%実践活用アイデア'
-                  : lang === 'zh'
-                  ? '表情包200%实用场景推荐'
-                  : 'Creative Ways to Use Your Emojis'}
-              </strong>
-              <ul className="list-disc pl-4 sm:pl-5 opacity-90 text-[#9A3412] font-medium flex flex-col gap-1 sm:gap-1.5 mt-0.5 sm:mt-1 text-[12.5px] sm:text-[13.5px] marker:text-[#C2410C] [word-break:break-word]">
-                <li>
-                  {lang === 'ko' 
-                    ? 'SNS 프로필 & 스토리: 내 얼굴이나 반려동물 캐릭터로 인스타, X, 유튜브 프로필 및 감정 아바타로 활용' 
-                    : lang === 'ja'
-                    ? 'SNSアイコン＆ストーリー: 自分やペットのキャラでInstagram、X、LINEのアイコンやリアクションに'
-                    : lang === 'zh'
-                    ? '社交头像与动态贴纸: 将自己或宠物的卡通形象用于微信、小红书、微博头像及动态表情'
-                    : 'SNS Profiles & Avatars: Use custom characters as profile icons or story stickers on Instagram, X, or YouTube.'}
-                </li>
-                <li>
-                  {lang === 'ko' 
-                    ? '메신저 톡방 감정 짤: 배경 투명화 후 스마트폰 앨범에 저장해 친구·가족 톡방에서 개성 넘치는 리액션 짤로 전송' 
-                    : lang === 'ja'
-                    ? 'メッセンジャートークのリアクション: 背景透過してスマホに保存し、LINE等のトークルームで特製スタンプとして送信'
-                    : lang === 'zh'
-                    ? '群聊斗图专属表情: 抠图透明化后保存至手机相册，在聊天群中一键发送专属趣味表情'
-                    : 'Messenger Chat Reactions: Save transparent PNGs to your phone gallery and send unique personalized reaction stickers in chats.'}
-                </li>
-                <li>
-                  {lang === 'ko' 
-                    ? '블로그 포스팅 & 디지털 다꾸: 네이버 블로그 글 중간 포인트 스티커, 굿노트·노션 다이어리 스탬프로 장식' 
-                    : lang === 'ja'
-                    ? 'ブログ＆デジタル手帳の装飾: ブログ記事のアクセントやGoodNotes・Notionの手帳デコレーションスタンプに'
-                    : lang === 'zh'
-                    ? '博客插图与电子手帐: 用于博客文章点缀、GoodNotes、Notion 电子手帐及日程标记'
-                    : 'Blog & Digital Planner Decor: Decorate blog posts, GoodNotes journals, or Notion pages with custom sticker stamps.'}
-                </li>
-                <li>
-                  {lang === 'ko' 
-                    ? '어린이집·유치원·학교 선생님 스탬프: 알림장, 숙제 검사, 칭찬 스티커판, 학생 피드백용 "참 잘했어요!" 맞춤형 교육 스탬프로 활용' 
-                    : lang === 'ja'
-                    ? '保育園・幼稚園・学校の先生スタンプ: 連絡帳、宿題チェック、ご褒美シール、生徒へのフィードバック用特製スタンプに'
-                    : lang === 'zh'
-                    ? '幼儿园/学校教师评语印章: 用于家校联系本、作业批改、表扬贴纸、学生反馈的个性化教师印章'
-                    : 'Teacher & Classroom Stamps: Perfect for homework check stamps, reward sticker charts, student feedback, and digital classrooms.'}
-                </li>
-                <li>
-                  {lang === 'ko' 
-                    ? '커플·신혼부부 추억 이모티콘: 둘만의 커플 사진으로 시크릿 메신저 짤, 모바일 청첩장 스티커, 포토북 및 기념일 굿즈 제작' 
-                    : lang === 'ja'
-                    ? 'カップル・新婚夫婦の記念スタンプ: 二人の写真でカップル専用スタンプ、結婚式の招待状、フォトブックや記念日グッズに'
-                    : lang === 'zh'
-                    ? '情侣与新婚夫妇专属表情: 用情侣合照制作二人专属聊天表情包、电子请柬、纪念日相册与周边文创'
-                    : 'Couple & Wedding Memories: Transform couple photos into private messenger stickers, wedding invitations, photobooks, and anniversary gifts.'}
-                </li>
-              </ul>
-            </div>
+            {/* 접기/펼치기 토글 버튼 */}
+            <button
+              type="button"
+              onClick={() => setShowPhotoTips(prev => !prev)}
+              className="interactive-control mt-2.5 flex items-center justify-between w-full py-1.5 px-3 rounded-md bg-white/90 hover:bg-white text-[#C2410C] font-bold text-[12px] sm:text-[13px] border border-[#FCD3A1] shadow-2xs transition-colors"
+            >
+              <span className="flex items-center gap-1">
+                <span>{showPhotoTips ? '▲' : '▼'}</span>
+                <span>{showPhotoTips 
+                  ? (lang === 'ko' ? '사진 권장 규칙 & 200% 활용법 접기' : 'Hide Details') 
+                  : (lang === 'ko' ? '📌 사진 권장 규칙 & 🎯 200% 활용 아이디어 펼치기' : 'Show Photo Specs & Creative Tips')}</span>
+              </span>
+              <span className="text-[11px] text-amber-700 underline font-semibold">
+                {showPhotoTips ? (lang === 'ko' ? '간략히' : 'Less') : (lang === 'ko' ? '자세히 보기' : 'More')}
+              </span>
+            </button>
+
+            {/* 펼쳐졌을 때만 표시되는 상세 블록 */}
+            {showPhotoTips && (
+              <div className="flex flex-col gap-2.5 mt-2.5">
+                <div className="bg-white/80 rounded-md p-3 sm:p-4 border border-[#FCD3A1]/70 shadow-sm flex flex-col gap-1.5 w-full">
+                  <strong className="text-[#C2410C] text-[13px] sm:text-[14px] flex items-center gap-1.5 font-bold">
+                    <span className="text-[14px]">📌</span> 
+                    {lang === 'ko' ? 'LLM 첨부 사진 권장 규칙' : lang === 'ja' ? 'LLM添付写真の推奨ルール' : lang === 'zh' ? 'LLM照片上传建议' : 'Recommended Photo Specs'}
+                  </strong>
+                  <ul className="list-disc pl-4 opacity-90 text-[#9A3412] font-medium flex flex-col gap-1 text-[12px] sm:text-[13px] marker:text-[#C2410C] [word-break:break-word]">
+                    <li>{lang === 'ko' ? '크기/비율: 제한 없음 (일반적인 스마트폰 사진 포맷 가능)' : 'Size/Ratio: Any standard smartphone photo format'}</li>
+                    <li>{lang === 'ko' ? '권장: 이목구비, 헤어스타일, 모색 등 특징이 선명한 정면 사진 1장' : 'Recommended: Clear front-facing photo showing distinct features'}</li>
+                    <li>{lang === 'ko' ? '주의: 인물이 너무 작거나 흔들리고 어두운 사진은 피해주세요.' : 'Avoid: Blurry, dark, or zoomed-out photos'}</li>
+                    <li>{lang === 'ko' ? '💡 실물 싱크로율 100% 꿀팁: 15종 시트는 포즈/구도 초안용으로 사용하고, 최종 완성품은 [📋 15종 개별 분할] 모드에서 1장씩 생성하기 (AI가 오직 1명의 이목구비에만 100% 집중하여 사진과 똑같이 생성됨)' : '💡 Likeness Tip: Use Sheet as pose draft, then generate final stickers one by one with [Batch Split].'}</li>
+                  </ul>
+                </div>
+
+                <div className="bg-white/80 rounded-md p-3 sm:p-4 border border-[#FCD3A1]/70 shadow-sm flex flex-col gap-1.5 w-full">
+                  <strong className="text-[#C2410C] text-[13px] sm:text-[14px] flex items-center gap-1.5 font-bold">
+                    <span className="text-[14px]">🎯</span> 
+                    {lang === 'ko' ? '이모티콘 200% 실전 활용 아이디어' : lang === 'ja' ? 'スタンプの200%実践活用アイデア' : lang === 'zh' ? '表情包200%实用场景推荐' : 'Creative Ways to Use Your Emojis'}
+                  </strong>
+                  <ul className="list-disc pl-4 opacity-90 text-[#9A3412] font-medium flex flex-col gap-1 text-[12px] sm:text-[13px] marker:text-[#C2410C] [word-break:break-word]">
+                    <li>{lang === 'ko' ? 'SNS 프로필 & 스토리: 인스타, X, 유튜브 프로필 및 감정 아바타로 활용' : 'SNS Profiles & Avatars: Use custom characters as profile icons.'}</li>
+                    <li>{lang === 'ko' ? '메신저 톡방 감정 짤: 배경 투명화 후 앨범에 저장해 친구·가족 톡방에서 개성 넘치는 리액션 짤로 전송' : 'Messenger Reactions: Send custom transparent stickers in chats.'}</li>
+                    <li>{lang === 'ko' ? '블로그 & 다꾸: 네이버 블로그 스티커, 굿노트·노션 다이어리 스탬프로 장식' : 'Blog & Planner Decor: Decorate blogs or digital planners.'}</li>
+                    <li>{lang === 'ko' ? '선생님 칭찬 스탬프: 알림장, 칭찬 스티커판 맞춤형 교육 스탬프로 활용' : 'Teacher Stamps: Perfect for reward charts and student feedback.'}</li>
+                    <li>{lang === 'ko' ? '커플·신혼부부 추억: 모바일 청첩장, 기념일 굿즈 및 포토북 제작' : 'Couple Memories: Make anniversary gifts, photo books, and digital wedding stickers.'}</li>
+                  </ul>
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
-        {/* 섹션 1: 이모티콘 제작이 처음인가요? */}
-        <SectionAbout lang={lang} />
+        {/* 하단 가이드 & 15종 황금 조합 & FAQ 통합 아코디언 토글 */}
+        <div className="flex flex-col gap-3 mt-3">
+          <button
+            type="button"
+            onClick={() => setShowDetailedGuide(prev => !prev)}
+            className="interactive-control w-full py-3 px-3.5 sm:px-5 rounded-lg bg-gradient-to-r from-[#FFF8EE] to-[#FFF1DE] border-2 border-amber-300 hover:border-amber-400 text-amber-950 font-black text-[13.5px] sm:text-[15px] shadow-sm flex items-center justify-between transition-all"
+          >
+            <span className="flex items-center gap-2 text-left">
+              <span className="text-[16px] sm:text-[18px]">📚</span>
+              <span>
+                {lang === 'ko' 
+                  ? '이모티콘 제작 가이드 & 15종 황금조합 & FAQ' 
+                  : lang === 'ja'
+                  ? '制作ガイド・15種黄金比・FAQ'
+                  : lang === 'zh'
+                  ? '制作指南・15种黄金组合・FAQ'
+                  : 'Creation Guide, 15-Formula & FAQ'}
+              </span>
+            </span>
+            <span className="text-[11.5px] sm:text-[12.5px] font-bold text-amber-800 bg-amber-200/80 hover:bg-amber-300 px-2.5 py-1 rounded-full shrink-0 flex items-center gap-1 transition-colors">
+              {showDetailedGuide 
+                ? (lang === 'ko' ? '가이드 접기 ▲' : 'Fold ▲') 
+                : (lang === 'ko' ? '전체 보기 (6개 섹션) ▼' : 'View (6 Sections) ▼')}
+            </span>
+          </button>
 
-        {/* 섹션 2: 3분 초간단 사용 가이드 */}
-        <SectionGuide lang={lang} />
+          {/* 펼쳐졌을 때만 렌더링되는 6대 상세 섹션 */}
+          {showDetailedGuide && (
+            <div className="flex flex-col gap-4 sm:gap-5 mt-1">
+              {/* 섹션 1: 이모티콘 제작이 처음인가요? */}
+              <SectionAbout lang={lang} />
 
-        {/* 섹션 3: 완성도를 높이는 이모티콘 기획 5대 원칙 */}
-        <SectionPrinciples lang={lang} />
+              {/* 섹션 2: 3분 초간단 사용 가이드 */}
+              <SectionGuide lang={lang} />
 
-        {/* 섹션 4: 추천 이모티콘 15종 필수 감정 황금 조합 */}
-        <SectionEmotionFormula lang={lang} onApplyFormula={handleApplyEmotionFormula} />
+              {/* 섹션 3: 완성도를 높이는 이모티콘 기획 5대 원칙 */}
+              <SectionPrinciples lang={lang} />
 
-        {/* 섹션 5: AI 모델 비교 및 팁 */}
-        <InfoSection t={t} lang={lang} />
+              {/* 섹션 4: 추천 이모티콘 15종 필수 감정 황금 조합 */}
+              <SectionEmotionFormula lang={lang} onApplyFormula={handleApplyEmotionFormula} />
 
-        {/* 섹션 6: 자주 묻는 질문 FAQ */}
-        <SectionFAQ lang={lang} />
+              {/* 섹션 5: AI 모델 비교 및 팁 */}
+              <InfoSection t={t} lang={lang} />
+
+              {/* 섹션 6: 자주 묻는 질문 FAQ */}
+              <SectionFAQ lang={lang} />
+            </div>
+          )}
+        </div>
       </main>
 
       {/* Footer */}
