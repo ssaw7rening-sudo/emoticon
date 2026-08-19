@@ -4640,10 +4640,12 @@ ${textExclusion} No grid lines, no cell division lines, no border lines between 
 
     if (isKorean) {
       const referenceInstructionKo = characterSource === 'photo'
-        ? `[시각적 정체성 & 사진 반영 규칙 (${getPhotoModeLabel('ko')})]
-- 참고 사진 지침: ${getReferenceImageInstruction('ko')}
+        ? `[시각적 정체성 & 사진 기반 인물 캐리커처 (${getPhotoModeLabel('ko')})]
+- 캐릭터 스타일: 2.5등신 치비/버블헤드 캐리커처 (참고 사진의 실제 얼굴을 직접 반영한 고화질 실사풍 얼굴).
+- 얼굴 정확도 (최우선 순위): 참고 사진 속 실제 인물의 눈매, 쌍꺼풀/무쌍 구조, 콧대, 미소선, 얼굴 윤곽, 피부 결, 실제 조명 느낌을 극도로 정밀하게 유지하세요. 단순한 2D 플랫 선화로 뭉개지 말고, 실제 사람의 얼굴 입체감과 자연스러운 피부톤을 온전히 살리세요.
+- 사진 반영 지침: ${getReferenceImageInstruction('ko')}
 - 최우선 화풍: ${getGeminiStyleTags('ko')}
-- 의상 및 외형 일관성: ${character.appearance}, ${character.outfit}. 15개 모든 셀에서 동일한 의상과 헤어스타일을 완벽히 일관되게 유지하세요.`
+- 의상 및 헤어 일관성: ${character.appearance}, ${character.outfit}. 15개 모든 셀에서 동일한 의상과 헤어스타일을 완벽히 일관되게 유지하세요.`
         : `[시각적 정체성 & 캐릭터 스타일]
 - 대상: ${character.subject}
 - 최우선 화풍: ${getGeminiStyleTags('ko')}
@@ -4746,8 +4748,10 @@ ${textExclusionKo}`;
 
     // English Version
     const referenceInstruction = characterSource === 'photo'
-      ? `[Visual Identity & Photo Reference Policy (${getPhotoModeLabel('en')})]
-- Photo Reference Instruction: ${getReferenceImageInstruction('en')}
+      ? `[Visual Identity & Photo Reference Caricature (${getPhotoModeLabel('en')})]
+- Character Style: 2.5-head Chibi/Bobblehead Caricature featuring a realistic, high-fidelity face directly from the reference photo (${getPhotoModeLabel('en')}).
+- Facial Accuracy (Highest Priority): Maintain exact likeness of the reference photo's actual eyes, eyelid shape, nose, smile lines, facial contour, skin texture, and realistic lighting. DO NOT flatten into generic 2D line art. Keep real human facial depth and skin tone.
+- Reference Photo Policy: ${getReferenceImageInstruction('en')}
 - Art Style (Highest Priority): ${getGeminiStyleTags('en')}
 - Consistent Outfits: ${character.appearance}, ${character.outfit} across all 15 cells.`
       : `[Visual Identity & Realistic Chibi Style]
@@ -4924,10 +4928,32 @@ ${textExclusion}`;
 
     if (isKorean) {
       const referenceInstructionKo = characterSource === 'photo'
-        ? `=== 최우선 순위: 사진 기반 캐릭터 정체성 (${getPhotoModeLabel('ko')}) ===
-- 참고 사진 지침: ${getReferenceImageInstruction('ko')}
-- 최우선 화풍: ${getGeminiStyleTags('ko')}
-- 헤어 및 의상: ${character.appearance}, ${character.outfit}. 15개 스티커 전체에서 얼굴, 헤어, 피부, 의상을 완벽히 일관되게 유지하세요.`
+        ? `=== 최우선 순위: 인물 얼굴 정체성 및 실사 극대화 (${getPhotoModeLabel('ko')}) ===
+캐릭터는 첨부된 참조 사진 속 인물의 실제 얼굴을 극도로 정밀하게 2D 캐리커처화해야 합니다.
+얼굴은 사진 속 실제 인물임을 즉시 알아볼 수 있어야 합니다.
+
+다음 특징들을 최고 정밀도로 고정하고 임의로 변형하지 마세요:
+- 실제 눈 크기와 모양 (자연스러운 크기 유지, 과도하게 키우지 말 것), 선명한 쌍꺼풀/무쌍 구조, 고유한 눈매 표정
+- 실제 콧대 높이, 코 폭 및 코끝 모양
+- 실제 입술 모양, 두께 및 자연스러운 미소선
+- 실제 턱선, 광대뼈 구조, 턱끝 및 전체 얼굴 비율
+- 실제 피부톤과 자연스러운 피부 결
+- 실제 헤어스타일: 기장, 가르마, 볼륨, 흐름 및 머릿결
+
+엄격 금지 사항 (Anti-Anime & Anti-Averaging):
+- 흔한 양산형 애니메이션 얼굴, 모에 페이스, 인형 얼굴 절대 금지
+- 정체성을 잃어버리는 과도하게 큰 눈, 단순화된 이목구비, 아기 얼굴 금지
+- 전형적인 예쁜 애니 미소녀로의 평균화, 과장된 비율 금지
+- 더 어려 보이거나 귀엽게 보이려고 실제 얼굴 골격 구조를 임의 변경 금지
+
+화풍 및 렌더링 지침:
+${getGeminiStyleTags('ko')}
+실제 사진 속 얼굴의 모든 고유한 랜드마크와 비율을 온전히 보존하면서 깔끔한 2D 형태로 변환하세요. 선명하고 균일한 검정 벡터 선화(3-4px), 평면적인 2단계 셀 셰이딩 적용. 얼굴 부분에 한해서만 입체감과 인물 유사도를 유지하기 위한 미세하고 부드러운 음영 허용.
+
+사진 반영 세부 규칙:
+${getReferenceImageInstruction('ko')}
+
+헤어 및 의상 일관성: ${character.appearance}, ${character.outfit}. 15개 스티커 전체에서 얼굴, 헤어, 피부, 의상을 완벽히 일관되게 유지하세요.`
         : `=== 캐릭터 정체성 ===
 - 대상: ${character.subject}
 - 최우선 화풍: ${getGeminiStyleTags('ko')}
@@ -5012,10 +5038,31 @@ ${panelPlanKo}
 
     // English Version (Matches exact user specification)
     const referenceInstruction = characterSource === 'photo'
-      ? `=== HIGHEST PRIORITY: PHOTO-BASED CHARACTER IDENTITY (${getPhotoModeLabel('en')}) ===
-- Reference Photo Policy: ${getReferenceImageInstruction('en')}
-- Art Style (Highest Priority): ${getGeminiStyleTags('en')}
-- Outfits & Appearance: ${character.appearance}, ${character.outfit}. Perfect consistency of face, hair, skin, and outfit across all 15 stickers.`
+      ? `=== HIGHEST PRIORITY: EXACT FACE IDENTITY (${getPhotoModeLabel('en')}) ===
+The character must be an extremely accurate realistic 2D caricature of the specific person in the reference photo. The face must be instantly recognizable as the same real person.
+
+Lock these features with maximum precision and do not alter them:
+- Exact eye shape and size (natural, not enlarged), clear double eyelids, authentic eye expression
+- Exact nose bridge height, width, and tip shape
+- Exact lip shape, thickness, and natural smile lines
+- Exact jawline, cheekbone structure, chin, and overall facial proportions
+- Exact skin tone and subtle natural skin texture
+- Exact hairstyle: length, parting, volume, flow, and strands as in the reference
+
+STRICTLY FORBIDDEN (Anti-Anime & Anti-Averaging):
+- Any anime face, chibi face, moe face, doll face
+- Oversized eyes, simplified features, cute stylization that loses identity
+- Generic pretty anime girl, exaggerated proportions, baby face
+- Changing the facial structure to look younger or cuter
+
+Style & Rendering Definition:
+${getGeminiStyleTags('en')}
+Translate the real photographic face into clean 2D form while preserving all unique facial landmarks and proportions. Sharp uniform black vector linework (3-4px), flat two-tone cel shading. Minimal soft shading on the face only to retain volume and likeness.
+
+Photo Reference Policy:
+${getReferenceImageInstruction('en')}
+
+Consistency: ${character.appearance}, ${character.outfit}. Perfect consistency of face, hair, skin, and outfit across all 15 stickers.`
       : `=== HIGHEST PRIORITY: CHARACTER IDENTITY ===
 - Subject: ${character.subject}
 - Art Style: ${getGeminiStyleTags('en')}
