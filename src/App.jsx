@@ -4875,24 +4875,22 @@ ${textExclusion}`;
     ];
 
     const photoAppearanceEn = {
-      balanced: 'preserve the subject\'s key identifying features (facial shape, eye direction, nose, mouth, hairstyle or fur pattern, skin/coat tone) so they are recognizable, while naturally stylizing to match the selected art style. Allow proportional simplification and expression exaggeration (no unrequested accessories)',
-      likeness: 'consistently maintain the subject\'s facial shape, eye characteristics, nose, lips, jawline, hairstyle, skin tone or fur color so the subject remains easily identifiable. Apply the art style primarily through linework, coloring, and expression rendering (no unrequested accessories)',
-      style: 'maintain only the subject\'s core identifying traits (facial shape, eye direction, hairstyle or fur pattern, skin/coat tone) while actively applying the selected art style\'s visual language to proportions, expressions, form, and coloring (no unrequested accessories)',
+      exact: 'realistically reproduce actual face proportions, facial structure, eye shape, nose, lips, jawline, hairstyle, and skin tone matching reference photo so the person is immediately recognizable; do not add unrequested accessories',
+      features: 'do NOT match actual face; instead extract signature points (hairstyle, glasses if any, outfit, body type, vibe) and design a stylish new 2D character avatar; do not add unrequested accessories',
+      characterize: 'use general impression as loose reference and transform into an ultra-cute 2.5-head SD/Chibi mascot with big round head, chubby body, and huge sparkling eyes',
     }[photoReferenceMode];
 
     const photoAppearanceKo = {
-      balanced: '첨부 사진 속 대상의 핵심 식별 특징(얼굴형, 눈매, 코, 입, 헤어스타일 또는 털 무늬, 피부톤 또는 털 색상)을 알아볼 수 있도록 유지하되, 선택된 화풍에 맞게 자연스럽게 스타일화. 비율 단순화와 표정 과장 허용 (사진에 없는 악세사리 임의 추가 금지)',
-      likeness: '스타일화 후에도 첨부 사진 속 대상임을 쉽게 알아볼 수 있도록 얼굴형, 눈매, 코, 입술, 턱선, 헤어스타일, 피부톤 또는 털 색상을 일관되게 유지. 선택된 화풍은 선, 채색, 표정 연출 중심으로 적용 (사진에 없는 악세사리 임의 추가 금지)',
-      style: '핵심 식별 특징(얼굴형, 눈매, 헤어스타일 또는 털 무늬, 피부톤, 대표 아이템)만 유지하고, 선택한 화풍의 조형 언어를 우선 적용하여 비율, 표정, 형태, 채색을 적극 변환 (사진에 없는 악세사리 임의 추가 금지)',
+      exact: '참고 사진 인물의 실제 얼굴 비율, 이목구비 구조, 눈매, 코, 입술, 턱선, 헤어스타일, 피부톤을 95% 이상 리얼하게 재현하여 본인임을 즉시 알아볼 수 있게 함 (사진에 없는 악세사리 임의 추가 금지)',
+      features: '얼굴 자체를 닮게 그릴 필요 없음; 헤어스타일, 안경 유무, 의상, 체형, 전체 분위기 등 시그니처 포인트만 추출하여 스타일리시한 새 캐릭터로 디자인 (사진에 없는 악세사리 임의 추가 금지)',
+      characterize: '전체적인 인상(헤어 색상, 분위기)만 살짝 참고하고 2.5등신 커다란 머리와 동글동글한 몸체의 극도로 귀여운 SD/Chibi 마스코트로 완전 변환',
     }[photoReferenceMode];
 
-    const anthropomorphicGuide = getSmartAnthropomorphicInstruction(subjectParts.join(' '), isKo ? 'ko' : 'en');
     return {
-      subject: subjectParts.join(', ') || (isKo ? '오리지널 마스코트 캐릭터' : 'original mascot character'),
+      subject: subjectParts.join(', ') || (isKo ? '귀여운 오리지널 캐릭터' : 'a cute original character'),
       appearance: [
         ...(characterSource === 'photo' ? [isKo ? photoAppearanceKo : photoAppearanceEn] : []),
         ...appearances,
-        ...(anthropomorphicGuide ? [anthropomorphicGuide] : []),
       ].join(', ') || (isKo ? '단순하고 알아보기 쉬운 실루엣을 정한 뒤 그대로 유지' : 'simple, recognizable silhouette kept unchanged'),
       personality: personalities.join(', ') || (isKo ? '친근하고 표정이 풍부한' : 'friendly and expressive'),
       outfit: outfits.join(', ') || (characterSource === 'photo'
@@ -4907,7 +4905,6 @@ ${textExclusion}`;
   const generateGrokPrompt = (phraseOverride = null) => {
     const isKorean = lang === 'ko';
     const character = getGrokCharacterDetails(isKorean ? 'ko' : 'en');
-    const themeProps = getThemeSignatureProps(activeTheme, isKorean ? 'ko' : 'en');
     const hasPhraseOverride = phraseOverride !== null;
     const targetPhrase = generationMode === 'individual'
       ? getSelectedPhrase()
@@ -4930,8 +4927,8 @@ ${textExclusion}`;
 
     if (isKorean) {
       const referenceInstructionKo = characterSource === 'photo'
-        ? `=== 최우선 순위: 인물 얼굴 정체성 및 실사 극대화 (${getPhotoModeLabel('ko')}) ===
-캐릭터는 첨부된 참조 사진 속 인물의 실제 얼굴을 극도로 정밀하게 2D 캐리커처화해야 합니다.
+        ? `=== 최우선 순위: 인물 얼굴 정체성 및 실사 극대화 (EXACT FACE IDENTITY) ===
+캐릭터는 첨부된 참조 사진 속 인물의 실제 얼굴을 극도로 정밀하게 2D 캐리커처화해야 합니다 (${getPhotoModeLabel('ko')}).
 얼굴은 사진 속 실제 인물임을 즉시 알아볼 수 있어야 합니다.
 
 다음 특징들을 최고 정밀도로 고정하고 임의로 변형하지 마세요:
@@ -4948,19 +4945,17 @@ ${textExclusion}`;
 - 전형적인 예쁜 애니 미소녀로의 평균화, 과장된 비율 금지
 - 더 어려 보이거나 귀엽게 보이려고 실제 얼굴 골격 구조를 임의 변경 금지
 
-화풍 및 렌더링 지침:
-${getGeminiStyleTags('ko')}
-실제 사진 속 얼굴의 모든 고유한 랜드마크와 비율을 온전히 보존하면서 깔끔한 2D 형태로 변환하세요. 선명하고 균일한 검정 벡터 선화(3-4px), 평면적인 2단계 셀 셰이딩 적용. 얼굴 부분에 한해서만 입체감과 인물 유사도를 유지하기 위한 미세하고 부드러운 음영 허용.
+화풍 정의 (엄격 준수):
+실사 2D 캐리커처 일러스트레이션. 실제 사진 속 얼굴의 모든 고유한 랜드마크와 비율을 온전히 보존하면서 깔끔한 2D 형태로 변환하세요. 선명하고 균일한 검정 벡터 선화(3-4px). 평면적인 2단계 셀 셰이딩만 적용. 얼굴 부분에 한해서만 입체감과 인물 유사도를 유지하기 위한 미세하고 부드러운 음영 허용. 제한된 플랫 컬러 팔레트. 그라데이션, 에어브러시, 3D 렌더링, 수채화, 발광 효과 금지.
 
-사진 반영 세부 규칙:
-${getReferenceImageInstruction('ko')}
-
-헤어 및 의상 일관성: ${character.appearance}, ${character.outfit}. 15개 스티커 전체에서 얼굴, 헤어, 피부, 의상을 완벽히 일관되게 유지하세요.`
+체형 비율: 자연스러운 3.5~4등신. 몸체가 약간 스타일화되더라도 얼굴은 절대 단순화하지 말고 디테일과 충실도를 유지하세요.
+헤어 및 의상: ${character.appearance}, ${character.outfit}. 15개 스티커 전체에서 얼굴, 헤어, 피부, 의상을 완벽히 일관되게 유지하세요.`
         : `=== 캐릭터 정체성 ===
 - 대상: ${character.subject}
 - 최우선 화풍: ${getGeminiStyleTags('ko')}
 - 외형 및 특징: ${character.appearance}
-- 의상: ${character.outfit}`;
+- 의상: ${character.outfit}
+- 화풍: 선명한 3-4px 벡터 선화, 2단계 셀 셰이딩, 3.5~4등신 캐리커처 비율.`;
 
       if (generationMode === 'individual' || hasPhraseOverride) {
         const textPolicyKo = grokTextMode === 'text'
@@ -5040,8 +5035,8 @@ ${panelPlanKo}
 
     // English Version (Matches exact user specification)
     const referenceInstruction = characterSource === 'photo'
-      ? `=== HIGHEST PRIORITY: EXACT FACE IDENTITY (${getPhotoModeLabel('en')}) ===
-The character must be an extremely accurate realistic 2D caricature of the specific person in the reference photo. The face must be instantly recognizable as the same real person.
+      ? `=== HIGHEST PRIORITY: EXACT FACE IDENTITY ===
+The character must be an extremely accurate realistic 2D caricature of the specific person in the reference photo (${getPhotoModeLabel('en')}). The face must be instantly recognizable as the same real person.
 
 Lock these features with maximum precision and do not alter them:
 - Exact eye shape and size (natural, not enlarged), clear double eyelids, authentic eye expression
@@ -5051,25 +5046,23 @@ Lock these features with maximum precision and do not alter them:
 - Exact skin tone and subtle natural skin texture
 - Exact hairstyle: length, parting, volume, flow, and strands as in the reference
 
-STRICTLY FORBIDDEN (Anti-Anime & Anti-Averaging):
+STRICTLY FORBIDDEN:
 - Any anime face, chibi face, moe face, doll face
 - Oversized eyes, simplified features, cute stylization that loses identity
 - Generic pretty anime girl, exaggerated proportions, baby face
 - Changing the facial structure to look younger or cuter
 
-Style & Rendering Definition:
-${getGeminiStyleTags('en')}
-Translate the real photographic face into clean 2D form while preserving all unique facial landmarks and proportions. Sharp uniform black vector linework (3-4px), flat two-tone cel shading. Minimal soft shading on the face only to retain volume and likeness.
+Style definition (follow exactly):
+Realistic 2D caricature illustration. Translate the real photographic face into clean 2D form while preserving all unique facial landmarks and proportions. Sharp uniform black vector linework (3-4px). Flat two-tone cel shading only. Very minimal soft shading on the face only to retain volume and likeness. Limited flat color palette. No gradients, no airbrush, no 3D rendering, no watercolor, no soft glow.
 
-Photo Reference Policy:
-${getReferenceImageInstruction('en')}
+Body proportions: natural mild 3.5–4 heads tall. Face must stay detailed and faithful — do not simplify the face even if the body is slightly stylized. ${character.outfit}. Perfect consistency of face, hair, skin, and outfit across all 15 stickers.
 
-Consistency: ${character.appearance}, ${character.outfit}. Perfect consistency of face, hair, skin, and outfit across all 15 stickers.`
+Each sticker has a thick, clean, sharp white die-cut outline around the full silhouette.`
       : `=== HIGHEST PRIORITY: CHARACTER IDENTITY ===
 - Subject: ${character.subject}
-- Art Style: ${getGeminiStyleTags('en')}
 - Appearance & Features: ${character.appearance}
-- Outfit: ${character.outfit}`;
+- Outfit: ${character.outfit}
+- Body proportions: natural mild 3.5–4 heads tall. Clean 3-4px vector linework, flat 2-tone cel shading.`;
 
     if (generationMode === 'individual' || hasPhraseOverride) {
       const textPolicy = grokTextMode === 'text'
