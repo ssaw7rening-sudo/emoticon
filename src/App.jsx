@@ -530,9 +530,9 @@ const I18N = {
     directBadge: '✏️ 직접 캐릭터 설정',
     photoBadge: '📷 사진 참고 모드',
     photoMethod: '사진 반영 방식',
-    photoExact: '최대한 닮게',
-    photoFeatures: '특징만 반영',
-    photoCharacterize: '귀엽게 캐릭터화',
+    photoBalanced: '⭐ 균형 추천',
+    photoLikeness: '닮음 우선',
+    photoStyle: '화풍 우선',
     photoAttachGuide: '프롬프트를 복사한 뒤 AI 대화창(ChatGPT, Gemini, Grok)에 참고할 사진도 함께 첨부해 주세요.',
     photoActive: '참고 이미지 사용',
     phrases: '이모티콘 문구 그리드',
@@ -620,9 +620,9 @@ const I18N = {
     directBadge: '✏️ Manual Character Setup',
     photoBadge: '📷 Photo Reference Mode',
     photoMethod: 'Photo reference style',
-    photoExact: 'Match closely',
-    photoFeatures: 'Keep key features',
-    photoCharacterize: 'Cute character version',
+    photoBalanced: '⭐ Balanced',
+    photoLikeness: 'Likeness First',
+    photoStyle: 'Style First',
     photoAttachGuide: 'After copying the prompt, attach the reference photo in the AI chat (ChatGPT, Gemini, or Grok) as well.',
     photoActive: 'Reference image enabled',
     phrases: 'Phrase Grid',
@@ -708,9 +708,9 @@ const I18N = {
     directBadge: '✏️ 直接キャラクター設定',
     photoBadge: '📷 写真参照モード',
     photoMethod: '写真参照スタイル',
-    photoExact: '写真そのまま再現',
-    photoFeatures: '特徴だけ抽出 (3D)',
-    photoCharacterize: '可愛くSDキャラ化',
+    photoBalanced: '⭐ バランス推奨',
+    photoLikeness: '似顔絵優先',
+    photoStyle: '画風優先',
     photoAttachGuide: 'プロンプトコピー後、AIチャットにも写真を添付してください。',
     photoActive: '参照画像有効中',
     phrases: 'フレーズ選択 (15種)',
@@ -798,9 +798,9 @@ const I18N = {
     directBadge: '✏️ 手动角色描述',
     photoBadge: '📷 照片参考模式',
     photoMethod: '照片参考风格',
-    photoExact: '高还原度写真',
-    photoFeatures: '提取特征 (3D)',
-    photoCharacterize: 'Q版SD卡通化',
+    photoBalanced: '⭐ 推荐平衡',
+    photoLikeness: '还原优先',
+    photoStyle: '画风优先',
     photoAttachGuide: '复制提示词后，请在AI聊天框中同时发送参考照片。',
     photoActive: '参考图片已启用',
     phrases: '表情短语网格 (15种)',
@@ -3420,7 +3420,7 @@ function App() {
   
   const [charManual, setCharManual] = useState('');
   const [characterSource, setCharacterSource] = useState('direct');
-  const [photoReferenceMode, setPhotoReferenceMode] = useState('exact');
+  const [photoReferenceMode, setPhotoReferenceMode] = useState('balanced');
   const [activeTagCategory, setActiveTagCategory] = useState(categoryKeys[0]);
   
   const [emoticons, setEmoticons] = useState(currentThemes[themeKeys[0]]);
@@ -3669,7 +3669,7 @@ function App() {
 
   const clearTags = () => {
     setCharacterSource('direct');
-    setPhotoReferenceMode('characterize');
+    setPhotoReferenceMode('balanced');
     setCharManual('');
   };
 
@@ -3751,9 +3751,9 @@ function App() {
   };
 
   const getPhotoModeLabel = (labelLanguage = lang) => ({
-    exact: I18N[labelLanguage].photoExact,
-    features: I18N[labelLanguage].photoFeatures,
-    characterize: I18N[labelLanguage].photoCharacterize,
+    balanced: I18N[labelLanguage].photoBalanced,
+    likeness: I18N[labelLanguage].photoLikeness,
+    style: I18N[labelLanguage].photoStyle,
   }[photoReferenceMode]);
 
   const getReferenceImageInstruction = (promptLanguage = lang) => {
@@ -3764,24 +3764,39 @@ function App() {
     }
 
     const modeInstructions = {
-      exact: {
-        ko: '사진 속 대상의 실제 얼굴 비율, 이목구비(눈 크기·모양, 코, 입술, 턱선), 헤어스타일, 피부톤을 95% 이상 사실적으로 재현한 2.5등신 대두 SD/Chibi 마스코트 캐리커처 스티커로 그려주세요. 한눈에 "이 사람이다"라고 알아볼 수 있을 정도로 얼굴 유사도를 높게 유지하되, 전체 체형은 머리가 크고 앙증맞은 2.5등신 SD 마스코트로 표현하고, 외곽선과 채색은 깔끔한 2D 스티커로 마무리하세요.',
-        en: 'Draw a 2.5-head SD/Chibi mascot caricature sticker that realistically reproduces the subject\'s actual face proportions, facial features (eye size and shape, nose, lips, jawline), hairstyle, and skin tone with 95%+ high resemblance. Keep the face recognizable as the real person while rendering the full body in a cute 2.5-head SD chibi mascot proportion with clean 2D sticker linework.',
+      balanced: {
+        ko: `이 프롬프트와 함께 첨부한 사진을 캐릭터의 정체성 기준 이미지로 사용해주세요.
+첨부 사진 속 대상임을 한눈에 알아볼 수 있도록 얼굴형, 눈매 방향과 간격, 코와 입의 특징, 헤어스타일 또는 털 무늬, 피부톤 또는 털 색상을 유지하세요.
+단, 선택된 화풍에 맞게 얼굴과 신체는 자연스럽게 스타일화하고, 비율 단순화와 표정 과장은 허용합니다.
+핵심 식별 특징은 유지하되 화풍에 맞게 자연스럽게 재해석하세요. 실사 질감보다 캐릭터 표현의 안정성과 통일감을 우선하세요.`,
+        en: `Use the photo attached with this prompt as the character's identity reference image.
+Maintain the subject's facial shape, eye direction and spacing, nose and mouth characteristics, hairstyle or fur pattern, and skin tone or fur color so the subject is immediately recognizable.
+However, naturally stylize the face and body to match the selected art style. Simplification of proportions and exaggeration of expressions are allowed.
+Preserve key identifying features while naturally reinterpreting them for the art style. Prioritize character rendering stability and consistency over photorealistic texture.`,
       },
-      features: {
-        ko: '사진 속 대상의 얼굴 자체를 닮게 그릴 필요는 없습니다. 대신 헤어스타일, 안경 유무, 의상, 체형, 전체적인 분위기 등 시그니처 포인트만 추출하여 스타일리시한 2D 캐릭터 아바타로 새롭게 디자인해주세요.',
-        en: 'You do NOT need to match the subject\'s actual face. Instead, extract only their signature points — hairstyle, glasses (if any), outfit, body type, and overall vibe — and design a stylish 2D character avatar around those key traits.',
+      likeness: {
+        ko: `이 프롬프트와 함께 첨부한 사진을 최우선 정체성 참고 이미지로 사용해주세요.
+스타일화 이후에도 첨부 사진 속 대상임을 쉽게 알아볼 수 있도록 얼굴형, 눈매, 코, 입술 또는 입 모양, 턱선, 헤어스타일, 피부톤 또는 털 색상, 대표 의상 특징을 일관되게 유지하세요.
+과도한 변형은 피하고, 선택된 화풍은 선, 채색, 질감, 표정 연출, 움직임 표현을 중심으로 적용하세요.
+한눈에 동일 인물임을 알아볼 수 있도록 유지하세요. 형태 과장은 허용하되 정체성 특징의 손실은 최소화하세요.`,
+        en: `Use the photo attached with this prompt as the highest-priority identity reference image.
+Even after stylization, maintain the subject's facial shape, eye characteristics, nose, lip or mouth shape, jawline, hairstyle, skin tone or fur color, and signature outfit features consistently so the subject is easily recognizable.
+Avoid excessive distortion. Apply the selected art style primarily through linework, coloring, texture, expression rendering, and movement portrayal.
+The subject must be instantly recognizable as the same person. Allow form exaggeration but minimize loss of identity features.`,
       },
-      characterize: {
-        ko: '사진 속 대상의 전체적인 인상(헤어 색상, 분위기)만 살짝 참고하고, 나머지는 2.5등신의 커다란 머리, 동글동글한 몸, 반짝이는 큰 눈을 가진 극도로 귀여운 SD/Chibi 마스코트 캐릭터로 완전히 새롭게 변환해주세요.',
-        en: 'Use only the subject\'s general impression (hair color, overall vibe) as a loose reference. Transform everything else into an ultra-cute SD/Chibi mascot with a 2.5-head ratio, big round head, chubby body, and huge sparkling eyes.',
+      style: {
+        ko: `이 프롬프트와 함께 첨부한 사진은 캐릭터의 인물 정체성 참고용으로 사용해주세요.
+첨부 사진 속 대상의 핵심 식별 특징인 얼굴형, 눈매 방향, 헤어스타일 또는 털 무늬, 피부톤 또는 털 색상, 대표 아이템은 유지하세요.
+단, 선택한 화풍의 조형 언어를 우선하여 얼굴과 신체 비율, 표정, 형태 단순화, 동작 과장, 선 처리, 채색 방식을 적극적으로 적용하세요.
+사진의 실사적 렌더링 방식은 따르지 말고, 선택된 화풍의 표현 방식을 강하게 적용하세요. 캐릭터성이 먼저 느껴지되, 자세히 보면 첨부 사진 속 대상임을 알아볼 수 있게 만드세요.`,
+        en: `Use the photo attached with this prompt as a character identity reference only.
+Maintain the subject's key identifying features: facial shape, eye direction, hairstyle or fur pattern, skin tone or fur color, and signature items.
+However, prioritize the selected art style's visual language — actively apply its approach to facial and body proportions, expressions, form simplification, movement exaggeration, linework, and coloring method.
+Do not follow the photo's photorealistic rendering. Apply the selected art style's expression method strongly. The character's stylistic identity should be felt first, while on closer inspection the subject from the photo should still be recognizable.`,
       },
     };
     const promptLang = promptLanguage === 'ko' ? 'ko' : 'en';
-    const intro = promptLang === 'ko'
-      ? '이 프롬프트를 사용할 때 AI 채팅에 함께 첨부한 사진을 최우선 참고 이미지로 사용해주세요.'
-      : 'Use the photo attached in the AI chat as the primary visual reference.';
-    return `${intro}\n${modeInstructions[photoReferenceMode][promptLang]}`;
+    return modeInstructions[photoReferenceMode][promptLang];
   };
 
   const getSelectedPhrase = () => {
@@ -4019,19 +4034,19 @@ function App() {
         : `${expanded}; treat this selected art style as the highest-priority visual direction for linework, coloring, and texture`;
     }
     if (characterSource === 'photo') {
-      if (photoReferenceMode === 'exact') {
+      if (photoReferenceMode === 'likeness') {
         return isKo
-          ? '참고 사진의 실제 이목구비와 비율을 정밀하게 반영한 사실적 캐리커처 2D 스티커 화풍'
-          : 'Caricature-style 2D sticker with realistic facial proportions and features closely matching the reference photo, finished with clean 2D sticker outlines and coloring';
+          ? '첨부 사진의 핵심 식별 특징을 일관되게 유지하면서 깔끔한 2D 스티커로 스타일화한 캐리커처 화풍'
+          : 'Caricature-style 2D sticker that consistently preserves the key identifying features from the reference photo with clean sticker linework';
       }
-      if (photoReferenceMode === 'features') {
+      if (photoReferenceMode === 'style') {
         return isKo
-          ? '참고 사진의 대표 시그니처 특징(헤어, 안경, 의상)만 추출한 세련된 2D 벡터 캐릭터 화풍'
-          : 'Stylish 2D character avatar sticker built around the signature points (hairstyle, glasses, outfit, vibe) from the reference photo; the face itself is a new generic cute design';
+          ? '사진은 인물 식별 기준으로만 참고하고, 선택한 화풍의 조형 언어를 최우선으로 적용한 캐릭터 스티커 화풍'
+          : 'Character sticker style that uses the photo only for identity reference while prioritizing the selected art style\'s visual language';
       }
       return isKo
-        ? '2.5등신 커다란 머리와 동글동글한 몸체를 가진 극도로 귀여운 SD/Chibi 마스코트 스티커 화풍'
-        : 'Ultra-cute 2.5-head SD/Chibi mascot sticker only loosely inspired by the reference photo\'s general impression';
+        ? '사진 속 대상의 핵심 특징을 자연스럽게 유지하면서 선택 화풍에 맞게 스타일화한 균형 잡힌 스티커 화풍'
+        : 'Balanced sticker style that naturally preserves the subject\'s key features while stylizing to match the selected art direction';
     }
     return isKo
       ? '귀엽고 친근한 고품질 2D 메신저 이모티콘 일러스트 화풍 (깔끔한 윤곽선과 조화로운 셀 셰이딩 채색)'
@@ -4100,15 +4115,15 @@ function App() {
     ];
 
     const photoAppearanceEn = {
-      exact: 'precisely preserve the subject\'s (person or pet) actual eye angle, eye size, nose/snout, mouth, jawline/face contours, hairstyle or fur patterns/spots, and skin/coat colors with 95%+ high resemblance so they are instantly recognized, stylized in a cute 2.5-head SD/Chibi caricature mascot body without generic template blurring (no unrequested accessories)',
-      features: 'do NOT match the exact face; extract signature traits (hairstyle or breed silhouette, glasses/collar/scarf if any, outfit or fur tones, body type, signature vibe) and build a stylish 2D SD/Chibi mascot character (no unrequested accessories)',
-      characterize: 'use only the general impression (hair or fur color, vibe) as a loose reference and transform into an ultra-cute 2.5-head SD/Chibi mascot with a big round head, chubby body, and sparkling eyes',
+      balanced: 'preserve the subject\'s key identifying features (facial shape, eye direction, nose, mouth, hairstyle or fur pattern, skin/coat tone) so they are recognizable, while naturally stylizing the face and body to match the selected art style. Allow proportional simplification and expression exaggeration (no unrequested accessories)',
+      likeness: 'consistently maintain the subject\'s facial shape, eye characteristics, nose, lips, jawline, hairstyle, skin tone or fur color so the subject remains easily identifiable even after stylization. Apply the art style primarily through linework, coloring, and expression rendering (no unrequested accessories)',
+      style: 'maintain only the subject\'s core identifying traits (facial shape, eye direction, hairstyle or fur pattern, skin/coat tone, signature items) while actively applying the selected art style\'s visual language to proportions, expressions, form simplification, and coloring (no unrequested accessories)',
     }[photoReferenceMode];
 
     const photoAppearanceKo = {
-      exact: '스타일화하더라도 참고 사진 인물의 실제 눈매 각도, 눈 크기 비율, 콧대, 입술 두께, 턱선, 헤어스타일, 피부톤을 절대 변형하지 말고 95% 이상 동일하게 유지하되, 머리가 크고 앙증맞은 2.5등신 SD/Chibi 마스코트 체형 적용 (사진에 없는 악세사리 임의 추가 금지)',
-      features: '이목구비 자체를 닮게 그릴 필요 없이, 사진에서 상징적인 특징(헤어스타일/품종 실루엣, 안경/목줄/스카프, 의상/털 배색, 분위기)만 추출하여 머리가 크고 앙증맞은 2D SD/Chibi 마스코트 캐릭터로 디자인 (사진에 없는 악세사리 임의 추가 금지)',
-      characterize: '전체적인 인상(헤어/털 색상, 분위기)만 가볍게 참고하고, 큰 동그란 머리와 앙증맞고 통통한 몸체, 반짝이는 눈을 가진 극도로 귀여운 2.5등신 SD/Chibi 마스코트 캐릭터로 완전 변환',
+      balanced: '첨부 사진 속 대상의 핵심 식별 특징(얼굴형, 눈매, 코, 입, 헤어스타일 또는 털 무늬, 피부톤 또는 털 색상)을 알아볼 수 있도록 유지하되, 선택된 화풍에 맞게 얼굴과 신체를 자연스럽게 스타일화. 비율 단순화와 표정 과장 허용 (사진에 없는 악세사리 임의 추가 금지)',
+      likeness: '스타일화 후에도 첨부 사진 속 대상임을 쉽게 알아볼 수 있도록 얼굴형, 눈매, 코, 입술, 턱선, 헤어스타일, 피부톤 또는 털 색상을 일관되게 유지. 선택된 화풍은 선, 채색, 표정 연출 중심으로 적용 (사진에 없는 악세사리 임의 추가 금지)',
+      style: '첨부 사진 속 대상의 핵심 식별 특징(얼굴형, 눈매, 헤어스타일 또는 털 무늬, 피부톤, 대표 아이템)만 유지하고, 선택한 화풍의 조형 언어를 우선 적용하여 비율, 표정, 형태, 채색을 적극 변환 (사진에 없는 악세사리 임의 추가 금지)',
     }[photoReferenceMode];
 
     return {
@@ -4139,15 +4154,15 @@ function App() {
     ];
 
     const photoAppearanceEn = {
-      exact: 'precisely preserve the subject\'s (person or pet) actual eye angle, eye size, nose/snout, mouth, jawline/face contours, hairstyle or fur patterns/spots, and skin/coat colors with 95%+ high resemblance so they are instantly recognized, stylized in a cute 2.5-head SD/Chibi caricature mascot body without generic template blurring (no unrequested accessories)',
-      features: 'do NOT match the exact face; extract signature traits (hairstyle or breed silhouette, glasses/collar/scarf if any, outfit or fur tones, body type, signature vibe) and build a stylish 2D SD/Chibi mascot character (no unrequested accessories)',
-      characterize: 'use only the general impression (hair or fur color, vibe) as a loose reference and transform into an ultra-cute 2.5-head SD/Chibi mascot with a big round head, chubby body, and sparkling eyes',
+      balanced: 'preserve the subject\'s key identifying features (facial shape, eye direction, nose, mouth, hairstyle or fur pattern, skin/coat tone) so they are recognizable, while naturally stylizing the face and body to match the selected art style. Allow proportional simplification and expression exaggeration (no unrequested accessories)',
+      likeness: 'consistently maintain the subject\'s facial shape, eye characteristics, nose, lips, jawline, hairstyle, skin tone or fur color so the subject remains easily identifiable even after stylization. Apply the art style primarily through linework, coloring, and expression rendering (no unrequested accessories)',
+      style: 'maintain only the subject\'s core identifying traits (facial shape, eye direction, hairstyle or fur pattern, skin/coat tone, signature items) while actively applying the selected art style\'s visual language to proportions, expressions, form simplification, and coloring (no unrequested accessories)',
     }[photoReferenceMode];
 
     const photoAppearanceKo = {
-      exact: '스타일화하더라도 참고 사진 인물의 실제 눈매 각도, 눈 크기 비율, 콧대, 입술 두께, 턱선, 헤어스타일, 피부톤을 절대 변형하지 말고 95% 이상 동일하게 유지하되, 머리가 크고 앙증맞은 2.5등신 SD/Chibi 마스코트 체형 적용 (사진에 없는 악세사리 임의 추가 금지)',
-      features: '이목구비 자체를 닮게 그릴 필요 없이, 사진에서 상징적인 특징(헤어스타일/품종 실루엣, 안경/목줄/스카프, 의상/털 배색, 분위기)만 추출하여 머리가 크고 앙증맞은 2D SD/Chibi 마스코트 캐릭터로 디자인 (사진에 없는 악세사리 임의 추가 금지)',
-      characterize: '전체적인 인상(헤어/털 색상, 분위기)만 가볍게 참고하고, 큰 동그란 머리와 앙증맞고 통통한 몸체, 반짝이는 눈을 가진 극도로 귀여운 2.5등신 SD/Chibi 마스코트 캐릭터로 완전 변환',
+      balanced: '첨부 사진 속 대상의 핵심 식별 특징(얼굴형, 눈매, 코, 입, 헤어스타일 또는 털 무늬, 피부톤 또는 털 색상)을 알아볼 수 있도록 유지하되, 선택된 화풍에 맞게 얼굴과 신체를 자연스럽게 스타일화. 비율 단순화와 표정 과장 허용 (사진에 없는 악세사리 임의 추가 금지)',
+      likeness: '스타일화 후에도 첨부 사진 속 대상임을 쉽게 알아볼 수 있도록 얼굴형, 눈매, 코, 입술, 턱선, 헤어스타일, 피부톤 또는 털 색상을 일관되게 유지. 선택된 화풍은 선, 채색, 표정 연출 중심으로 적용 (사진에 없는 악세사리 임의 추가 금지)',
+      style: '첨부 사진 속 대상의 핵심 식별 특징(얼굴형, 눈매, 헤어스타일 또는 털 무늬, 피부톤, 대표 아이템)만 유지하고, 선택한 화풍의 조형 언어를 우선 적용하여 비율, 표정, 형태, 채색을 적극 변환 (사진에 없는 악세사리 임의 추가 금지)',
     }[photoReferenceMode];
 
     return {
@@ -4268,7 +4283,7 @@ ${getGptBackgroundInstruction()}
 ${textPolicy}
 
 [제외 조건]
-${textExclusion} 워터마크, 프레임, 중복 캐릭터, 추가 팔다리, 잘린 신체, 복잡한 풍경과 실사 배경 금지.`;
+${textExclusion} 워터마크, 프레임, 중복 캐릭터, 추가 팔다리, 잘린 신체, 복잡한 풍경과 실사 배경 금지.${selectedArtStyle.includes('3D') ? '' : ' 3D 텍스처, 3D 렌더링 금지.'}`;
       } else {
         const textPolicy = gptTextMode === 'text'
           ? `[VIBRANT POP-ART STICKER TYPOGRAPHY DIRECTIVE]
@@ -4310,7 +4325,7 @@ If a previous sheet or character image exists in this chat, preserve its face, b
 ${textPolicy}
 
 [EXCLUDE]
-${textExclusion} No watermark, frame, duplicate character, extra limbs, cropped body, 3D textures, realistic shading, glossy gradients, complex scenery, or photorealistic background.`;
+${textExclusion} No watermark, frame, duplicate character, extra limbs, cropped body, complex scenery, or photorealistic background.${selectedArtStyle.includes('3D') ? '' : ' No 3D textures, realistic shading, or glossy gradients.'}`;
       }
     }
 
@@ -4340,7 +4355,7 @@ ${referenceInstruction}
 의상: ${character.outfit}
 
 [최우선 화풍]
-${artDirection}. 15개 셀 모두 같은 선, 질감, 색감과 2.5등신 캐릭터 비율을 적용하세요.
+${artDirection}. 15개 셀 모두 같은 선, 질감, 색감과 캐릭터 비율을 일관되게 적용하세요.
 
 [패널 계획]
 각 문구에서 바로 이해할 수 있는 표정 하나와 서로 다른 전신 자세 하나를 구성하세요. 셀마다 보조 소품과 만화 효과는 각각 최대 하나만 사용하고 자세를 반복하지 마세요.
@@ -4386,7 +4401,7 @@ Personality: ${character.personality}
 Outfit: ${character.outfit}
 
 [ART DIRECTION — HIGHEST PRIORITY]
-${artDirection}. Apply identical linework, texture, color treatment, and character proportions to all 15 cells.
+${artDirection}. Apply identical linework, texture, color treatment, and character proportions consistently to all 15 cells.
 
 [PANEL PLAN]
 For every phrase, render an exaggerated, highly expressive comic facial expression (wide joyous open-mouth laugh, dramatic anime tear streams, jaw-dropped shock, sparkling cute eyes, determined fist pump) with dynamic changes in eyes, eyebrows, and mouth.
@@ -4468,10 +4483,10 @@ ${textExclusion} No grid lines, no cell division lines, no border lines between 
 
     if (isKorean) {
       const referenceInstructionKo = characterSource === 'photo'
-        ? `[시각적 정체성 & 실사 캐리커처 스타일]
-- 캐릭터 스타일: 2.5등신 치비/버블헤드 캐리커처 (참고 사진의 실제 얼굴을 직접 반영한 고화질 실사풍 얼굴).
-- 얼굴 정확도 (최우선 순위): 참고 사진 속 실제 인물의 눈매, 쌍꺼풀/무쌍 구조, 코, 미소선, 얼굴 윤곽, 피부 결, 실제 조명 느낌을 95% 이상 극도로 정밀하게 유지하세요. 단순한 2D 플랫 선화로 뭉개지 말고, 실제 사람의 얼굴 입체감과 자연스러운 피부톤을 온전히 살리세요.
-- 의상 및 헤어 일관성: ${character.appearance}, ${character.outfit}. 15개 모든 셀에서 동일한 의상과 헤어스타일을 완벽히 일관되게 유지하세요.`
+        ? `[시각적 정체성 & 사진 반영 규칙 (${getPhotoModeLabel('ko')})]
+- 참고 사진 지침: ${getReferenceImageInstruction('ko')}
+- 최우선 화풍: ${getGeminiStyleTags('ko')}
+- 의상 및 외형 일관성: ${character.appearance}, ${character.outfit}. 15개 모든 셀에서 동일한 의상과 헤어스타일을 완벽히 일관되게 유지하세요.`
         : `[시각적 정체성 & 캐릭터 스타일]
 - 대상: ${character.subject}
 - 최우선 화풍: ${getGeminiStyleTags('ko')}
@@ -4574,12 +4589,13 @@ ${textExclusionKo}`;
 
     // English Version
     const referenceInstruction = characterSource === 'photo'
-      ? `[Visual Identity & Realistic Chibi Style]
-- Character Style: 2.5-head Chibi/Bobblehead Caricature featuring a realistic, high-fidelity face directly from the reference photo (${getPhotoModeLabel('en')}).
-- Facial Accuracy (Highest Priority): Maintain 95%+ exact likeness of the reference photo's actual eyes, eyelid shape, nose, smile lines, facial contour, skin texture, and realistic lighting. DO NOT flatten into 2D line art. Keep real human facial depth and skin tone.
+      ? `[Visual Identity & Photo Reference Policy (${getPhotoModeLabel('en')})]
+- Photo Reference Instruction: ${getReferenceImageInstruction('en')}
+- Art Style (Highest Priority): ${getGeminiStyleTags('en')}
 - Consistent Outfits: ${character.appearance}, ${character.outfit} across all 15 cells.`
       : `[Visual Identity & Realistic Chibi Style]
 - Subject: ${character.subject}
+- Art Style: ${getGeminiStyleTags('en')}
 - Appearance & Features: ${character.appearance}
 - Outfit: ${character.outfit}
 - Character Style: 2.5-head Chibi caricature featuring realistic facial structure and depth.`;
@@ -4696,15 +4712,15 @@ ${textExclusion}`;
     ];
 
     const photoAppearanceEn = {
-      exact: 'realistically reproduce actual face proportions, facial structure, eye shape, nose, lips, jawline, hairstyle, and skin tone matching reference photo so the person is immediately recognizable; do not add unrequested accessories',
-      features: 'do NOT match actual face; instead extract signature points (hairstyle, glasses if any, outfit, body type, vibe) and design a stylish new 2D character avatar; do not add unrequested accessories',
-      characterize: 'use general impression as loose reference and transform into an ultra-cute 2.5-head SD/Chibi mascot with big round head, chubby body, and huge sparkling eyes',
+      balanced: 'preserve the subject\'s key identifying features (facial shape, eye direction, nose, mouth, hairstyle or fur pattern, skin/coat tone) so they are recognizable, while naturally stylizing to match the selected art style. Allow proportional simplification and expression exaggeration (no unrequested accessories)',
+      likeness: 'consistently maintain the subject\'s facial shape, eye characteristics, nose, lips, jawline, hairstyle, skin tone or fur color so the subject remains easily identifiable. Apply the art style primarily through linework, coloring, and expression rendering (no unrequested accessories)',
+      style: 'maintain only the subject\'s core identifying traits (facial shape, eye direction, hairstyle or fur pattern, skin/coat tone) while actively applying the selected art style\'s visual language to proportions, expressions, form, and coloring (no unrequested accessories)',
     }[photoReferenceMode];
 
     const photoAppearanceKo = {
-      exact: '참고 사진 인물의 실제 얼굴 비율, 이목구비 구조, 눈매, 코, 입술, 턱선, 헤어스타일, 피부톤을 95% 이상 리얼하게 재현하여 본인임을 즉시 알아볼 수 있게 함 (사진에 없는 악세사리 임의 추가 금지)',
-      features: '얼굴 자체를 닮게 그릴 필요 없음; 헤어스타일, 안경 유무, 의상, 체형, 전체 분위기 등 시그니처 포인트만 추출하여 스타일리시한 새 캐릭터로 디자인 (사진에 없는 악세사리 임의 추가 금지)',
-      characterize: '전체적인 인상(헤어 색상, 분위기)만 살짝 참고하고 2.5등신 커다란 머리와 동글동글한 몸체의 극도로 귀여운 SD/Chibi 마스코트로 완전 변환',
+      balanced: '첨부 사진 속 대상의 핵심 식별 특징(얼굴형, 눈매, 코, 입, 헤어스타일 또는 털 무늬, 피부톤 또는 털 색상)을 알아볼 수 있도록 유지하되, 선택된 화풍에 맞게 자연스럽게 스타일화. 비율 단순화와 표정 과장 허용 (사진에 없는 악세사리 임의 추가 금지)',
+      likeness: '스타일화 후에도 첨부 사진 속 대상임을 쉽게 알아볼 수 있도록 얼굴형, 눈매, 코, 입술, 턱선, 헤어스타일, 피부톤 또는 털 색상을 일관되게 유지. 선택된 화풍은 선, 채색, 표정 연출 중심으로 적용 (사진에 없는 악세사리 임의 추가 금지)',
+      style: '핵심 식별 특징(얼굴형, 눈매, 헤어스타일 또는 털 무늬, 피부톤, 대표 아이템)만 유지하고, 선택한 화풍의 조형 언어를 우선 적용하여 비율, 표정, 형태, 채색을 적극 변환 (사진에 없는 악세사리 임의 추가 금지)',
     }[photoReferenceMode];
 
     return {
@@ -4748,35 +4764,16 @@ ${textExclusion}`;
 
     if (isKorean) {
       const referenceInstructionKo = characterSource === 'photo'
-        ? `=== 최우선 순위: 인물 얼굴 정체성 및 실사 극대화 (EXACT FACE IDENTITY) ===
-캐릭터는 첨부된 참조 사진 속 인물의 실제 얼굴을 극도로 정밀하게 2D 캐리커처화해야 합니다 (${getPhotoModeLabel('ko')}).
-얼굴은 사진 속 실제 인물임을 즉시 알아볼 수 있어야 합니다.
-
-다음 특징들을 최고 정밀도로 고정하고 임의로 변형하지 마세요:
-- 실제 눈 크기와 모양 (자연스러운 크기 유지, 과도하게 키우지 말 것), 선명한 쌍꺼풀/무쌍 구조, 고유한 눈매 표정
-- 실제 콧대 높이, 코 폭 및 코끝 모양
-- 실제 입술 모양, 두께 및 자연스러운 미소선
-- 실제 턱선, 광대뼈 구조, 턱끝 및 전체 얼굴 비율
-- 실제 피부톤과 자연스러운 피부 결
-- 실제 헤어스타일: 기장, 가르마, 볼륨, 흐름 및 머릿결
-
-엄격 금지 사항 (Anti-Anime & Anti-Averaging):
-- 흔한 양산형 애니메이션 얼굴, 모에 페이스, 인형 얼굴 절대 금지
-- 정체성을 잃어버리는 과도하게 큰 눈, 단순화된 이목구비, 아기 얼굴 금지
-- 전형적인 예쁜 애니 미소녀로의 평균화, 과장된 비율 금지
-- 더 어려 보이거나 귀엽게 보이려고 실제 얼굴 골격 구조를 임의 변경 금지
-
-화풍 정의 (엄격 준수):
-실사 2D 캐리커처 일러스트레이션. 실제 사진 속 얼굴의 모든 고유한 랜드마크와 비율을 온전히 보존하면서 깔끔한 2D 형태로 변환하세요. 선명하고 균일한 검정 벡터 선화(3-4px). 평면적인 2단계 셀 셰이딩만 적용. 얼굴 부분에 한해서만 입체감과 인물 유사도를 유지하기 위한 미세하고 부드러운 음영 허용. 제한된 플랫 컬러 팔레트. 그라데이션, 에어브러시, 3D 렌더링, 수채화, 발광 효과 금지.
-
-체형 비율: 자연스러운 3.5~4등신. 몸체가 약간 스타일화되더라도 얼굴은 절대 단순화하지 말고 디테일과 충실도를 유지하세요.
-헤어 및 의상: ${character.appearance}, ${character.outfit}. 15개 스티커 전체에서 얼굴, 헤어, 피부, 의상을 완벽히 일관되게 유지하세요.`
+        ? `=== 최우선 순위: 사진 기반 캐릭터 정체성 (${getPhotoModeLabel('ko')}) ===
+- 참고 사진 지침: ${getReferenceImageInstruction('ko')}
+- 최우선 화풍: ${getGeminiStyleTags('ko')}
+- 헤어 및 의상: ${character.appearance}, ${character.outfit}. 15개 스티커 전체에서 얼굴, 헤어, 피부, 의상을 완벽히 일관되게 유지하세요.`
         : `=== 캐릭터 정체성 ===
 - 대상: ${character.subject}
 - 최우선 화풍: ${getGeminiStyleTags('ko')}
 - 외형 및 특징: ${character.appearance}
 - 의상: ${character.outfit}
-- 화풍: 선명한 3-4px 벡터 선화, 2단계 셀 셰이딩, 3.5~4등신 캐리커처 비율.`;
+- 화풍: 선명한 3-4px 벡터 선화, 2단계 셀 셰이딩.`;
 
       if (generationMode === 'individual' || hasPhraseOverride) {
         const textPolicyKo = grokTextMode === 'text'
@@ -4856,34 +4853,16 @@ ${panelPlanKo}
 
     // English Version (Matches exact user specification)
     const referenceInstruction = characterSource === 'photo'
-      ? `=== HIGHEST PRIORITY: EXACT FACE IDENTITY ===
-The character must be an extremely accurate realistic 2D caricature of the specific person in the reference photo (${getPhotoModeLabel('en')}). The face must be instantly recognizable as the same real person.
-
-Lock these features with maximum precision and do not alter them:
-- Exact eye shape and size (natural, not enlarged), clear double eyelids, authentic eye expression
-- Exact nose bridge height, width, and tip shape
-- Exact lip shape, thickness, and natural smile lines
-- Exact jawline, cheekbone structure, chin, and overall facial proportions
-- Exact skin tone and subtle natural skin texture
-- Exact hairstyle: length, parting, volume, flow, and strands as in the reference
-
-STRICTLY FORBIDDEN:
-- Any anime face, chibi face, moe face, doll face
-- Oversized eyes, simplified features, cute stylization that loses identity
-- Generic pretty anime girl, exaggerated proportions, baby face
-- Changing the facial structure to look younger or cuter
-
-Style definition (follow exactly):
-Realistic 2D caricature illustration. Translate the real photographic face into clean 2D form while preserving all unique facial landmarks and proportions. Sharp uniform black vector linework (3-4px). Flat two-tone cel shading only. Very minimal soft shading on the face only to retain volume and likeness. Limited flat color palette. No gradients, no airbrush, no 3D rendering, no watercolor, no soft glow.
-
-Body proportions: natural mild 3.5–4 heads tall. Face must stay detailed and faithful — do not simplify the face even if the body is slightly stylized. ${character.outfit}. Perfect consistency of face, hair, skin, and outfit across all 15 stickers.
-
-Each sticker has a thick, clean, sharp white die-cut outline around the full silhouette.`
+      ? `=== HIGHEST PRIORITY: PHOTO-BASED CHARACTER IDENTITY (${getPhotoModeLabel('en')}) ===
+- Reference Photo Policy: ${getReferenceImageInstruction('en')}
+- Art Style (Highest Priority): ${getGeminiStyleTags('en')}
+- Outfits & Appearance: ${character.appearance}, ${character.outfit}. Perfect consistency of face, hair, skin, and outfit across all 15 stickers.`
       : `=== HIGHEST PRIORITY: CHARACTER IDENTITY ===
 - Subject: ${character.subject}
+- Art Style: ${getGeminiStyleTags('en')}
 - Appearance & Features: ${character.appearance}
 - Outfit: ${character.outfit}
-- Body proportions: natural mild 3.5–4 heads tall. Clean 3-4px vector linework, flat 2-tone cel shading.`;
+- Linework & Shading: Clean 3-4px vector linework, flat 2-tone cel shading.`;
 
     if (generationMode === 'individual' || hasPhraseOverride) {
       const textPolicy = grokTextMode === 'text'
@@ -5374,9 +5353,9 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-2" role="group" aria-label={t.photoMethod}>
                     {[
-                      ['exact', t.photoExact],
-                      ['features', t.photoFeatures],
-                      ['characterize', t.photoCharacterize],
+                      ['balanced', t.photoBalanced],
+                      ['likeness', t.photoLikeness],
+                      ['style', t.photoStyle],
                     ].map(([mode, label]) => (
                       <button
                         key={mode}
