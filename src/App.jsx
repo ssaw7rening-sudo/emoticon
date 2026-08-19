@@ -5374,11 +5374,15 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
           <div className="flex items-center gap-1 sm:gap-2 shrink-0">
             <button 
               onClick={() => {
-                const el = document.getElementById('guide-section');
-                if (el) {
-                  const y = el.getBoundingClientRect().top + window.scrollY - 80;
-                  window.scrollTo({ top: y, behavior: 'smooth' });
-                }
+                setShowPhotoTips(true);
+                setShowDetailedGuide(true);
+                setTimeout(() => {
+                  const el = document.getElementById('photo-tips-card') || document.getElementById('guide-section');
+                  if (el) {
+                    const y = el.getBoundingClientRect().top + window.scrollY - 70;
+                    window.scrollTo({ top: y, behavior: 'smooth' });
+                  }
+                }, 80);
               }}
               className="interactive-control flex items-center gap-1 min-h-9 px-2 sm:px-3 py-1 rounded-full bg-[#FFF4E5] border border-[#FFE8CC] text-[#8A4B00] text-[12px] sm:text-[13px] font-bold hover:bg-[#FFE8CC] shadow-sm whitespace-nowrap shrink-0"
             >
@@ -6342,7 +6346,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
         </section>
 
         {/* 사진 꿀팁 컴팩트 아코디언 카드 */}
-        <div className="bg-[#FFF5E6] text-[#8C3D18] p-3.5 sm:p-5 md:p-6 rounded-md border border-[#FDE0B5] flex gap-3 md:gap-4 items-start shadow-sm mt-2 relative overflow-hidden">
+        <div id="photo-tips-card" className="bg-[#FFF5E6] text-[#8C3D18] p-3.5 sm:p-5 md:p-6 rounded-md border border-[#FDE0B5] flex gap-3 md:gap-4 items-start shadow-sm mt-2 relative overflow-hidden scroll-mt-20">
           <div className="absolute -right-4 -top-6 text-[#FCD3A1] opacity-40 text-[100px] sm:text-[140px] transform -rotate-12 select-none pointer-events-none drop-shadow-sm">📸</div>
           <span className="text-[18px] sm:text-[22px] drop-shadow-sm leading-none mt-0.5 relative z-10">📸</span>
           <div className="relative z-10 flex-1 min-w-0">
