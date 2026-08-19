@@ -6383,37 +6383,35 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
               </span>
             </button>
 
-            {/* 펼쳐졌을 때만 표시되는 상세 블록 */}
-            {showPhotoTips && (
-              <div className="flex flex-col gap-2.5 mt-2.5">
-                <div className="bg-white/80 rounded-md p-3 sm:p-4 border border-[#FCD3A1]/70 shadow-sm flex flex-col gap-1.5 w-full">
-                  <strong className="text-[#C2410C] text-[13px] sm:text-[14px] flex items-center gap-1.5 font-bold">
-                    <span className="text-[14px]">📌</span> 
-                    {lang === 'ko' ? 'LLM 첨부 사진 권장 규칙' : lang === 'ja' ? 'LLM添付写真の推奨ルール' : lang === 'zh' ? 'LLM照片上传建议' : 'Recommended Photo Specs'}
-                  </strong>
-                  <ul className="list-disc pl-4 opacity-90 text-[#9A3412] font-medium flex flex-col gap-1 text-[12px] sm:text-[13px] marker:text-[#C2410C] [word-break:break-word]">
-                    <li>{lang === 'ko' ? '크기/비율: 제한 없음 (일반적인 스마트폰 사진 포맷 가능)' : 'Size/Ratio: Any standard smartphone photo format'}</li>
-                    <li>{lang === 'ko' ? '권장: 이목구비, 헤어스타일, 모색 등 특징이 선명한 정면 사진 1장' : 'Recommended: Clear front-facing photo showing distinct features'}</li>
-                    <li>{lang === 'ko' ? '주의: 인물이 너무 작거나 흔들리고 어두운 사진은 피해주세요.' : 'Avoid: Blurry, dark, or zoomed-out photos'}</li>
-                    <li>{lang === 'ko' ? '💡 실물 싱크로율 100% 꿀팁: 15종 시트는 포즈/구도 초안용으로 사용하고, 최종 완성품은 [📋 15종 개별 분할] 모드에서 1장씩 생성하기 (AI가 오직 1명의 이목구비에만 100% 집중하여 사진과 똑같이 생성됨)' : '💡 Likeness Tip: Use Sheet as pose draft, then generate final stickers one by one with [Batch Split].'}</li>
-                  </ul>
-                </div>
-
-                <div className="bg-white/80 rounded-md p-3 sm:p-4 border border-[#FCD3A1]/70 shadow-sm flex flex-col gap-1.5 w-full">
-                  <strong className="text-[#C2410C] text-[13px] sm:text-[14px] flex items-center gap-1.5 font-bold">
-                    <span className="text-[14px]">🎯</span> 
-                    {lang === 'ko' ? '이모티콘 200% 실전 활용 아이디어' : lang === 'ja' ? 'スタンプの200%実践活用アイデア' : lang === 'zh' ? '表情包200%实用场景推荐' : 'Creative Ways to Use Your Emojis'}
-                  </strong>
-                  <ul className="list-disc pl-4 opacity-90 text-[#9A3412] font-medium flex flex-col gap-1 text-[12px] sm:text-[13px] marker:text-[#C2410C] [word-break:break-word]">
-                    <li>{lang === 'ko' ? 'SNS 프로필 & 스토리: 인스타, X, 유튜브 프로필 및 감정 아바타로 활용' : 'SNS Profiles & Avatars: Use custom characters as profile icons.'}</li>
-                    <li>{lang === 'ko' ? '메신저 톡방 감정 짤: 배경 투명화 후 앨범에 저장해 친구·가족 톡방에서 개성 넘치는 리액션 짤로 전송' : 'Messenger Reactions: Send custom transparent stickers in chats.'}</li>
-                    <li>{lang === 'ko' ? '블로그 & 다꾸: 네이버 블로그 스티커, 굿노트·노션 다이어리 스탬프로 장식' : 'Blog & Planner Decor: Decorate blogs or digital planners.'}</li>
-                    <li>{lang === 'ko' ? '선생님 칭찬 스탬프: 알림장, 칭찬 스티커판 맞춤형 교육 스탬프로 활용' : 'Teacher Stamps: Perfect for reward charts and student feedback.'}</li>
-                    <li>{lang === 'ko' ? '커플·신혼부부 추억: 모바일 청첩장, 기념일 굿즈 및 포토북 제작' : 'Couple Memories: Make anniversary gifts, photo books, and digital wedding stickers.'}</li>
-                  </ul>
-                </div>
+            {/* 상세 블록 (SEO/AdSense 크롤러를 위해 DOM 유지 후 CSS로 토글) */}
+            <div className={`flex flex-col gap-2.5 mt-2.5 ${showPhotoTips ? 'block' : 'hidden'}`}>
+              <div className="bg-white/80 rounded-md p-3 sm:p-4 border border-[#FCD3A1]/70 shadow-sm flex flex-col gap-1.5 w-full">
+                <strong className="text-[#C2410C] text-[13px] sm:text-[14px] flex items-center gap-1.5 font-bold">
+                  <span className="text-[14px]">📌</span> 
+                  {lang === 'ko' ? 'LLM 첨부 사진 권장 규칙' : lang === 'ja' ? 'LLM添付写真の推奨ルール' : lang === 'zh' ? 'LLM照片上传建议' : 'Recommended Photo Specs'}
+                </strong>
+                <ul className="list-disc pl-4 opacity-90 text-[#9A3412] font-medium flex flex-col gap-1 text-[12px] sm:text-[13px] marker:text-[#C2410C] [word-break:break-word]">
+                  <li>{lang === 'ko' ? '크기/비율: 제한 없음 (일반적인 스마트폰 사진 포맷 가능)' : 'Size/Ratio: Any standard smartphone photo format'}</li>
+                  <li>{lang === 'ko' ? '권장: 이목구비, 헤어스타일, 모색 등 특징이 선명한 정면 사진 1장' : 'Recommended: Clear front-facing photo showing distinct features'}</li>
+                  <li>{lang === 'ko' ? '주의: 인물이 너무 작거나 흔들리고 어두운 사진은 피해주세요.' : 'Avoid: Blurry, dark, or zoomed-out photos'}</li>
+                  <li>{lang === 'ko' ? '💡 실물 싱크로율 100% 꿀팁: 15종 시트는 포즈/구도 초안용으로 사용하고, 최종 완성품은 [📋 15종 개별 분할] 모드에서 1장씩 생성하기 (AI가 오직 1명의 이목구비에만 100% 집중하여 사진과 똑같이 생성됨)' : '💡 Likeness Tip: Use Sheet as pose draft, then generate final stickers one by one with [Batch Split].'}</li>
+                </ul>
               </div>
-            )}
+
+              <div className="bg-white/80 rounded-md p-3 sm:p-4 border border-[#FCD3A1]/70 shadow-sm flex flex-col gap-1.5 w-full">
+                <strong className="text-[#C2410C] text-[13px] sm:text-[14px] flex items-center gap-1.5 font-bold">
+                  <span className="text-[14px]">🎯</span> 
+                  {lang === 'ko' ? '이모티콘 200% 실전 활용 아이디어' : lang === 'ja' ? 'スタンプの200%実践活用アイデア' : lang === 'zh' ? '表情包200%实用场景推荐' : 'Creative Ways to Use Your Emojis'}
+                </strong>
+                <ul className="list-disc pl-4 opacity-90 text-[#9A3412] font-medium flex flex-col gap-1 text-[12px] sm:text-[13px] marker:text-[#C2410C] [word-break:break-word]">
+                  <li>{lang === 'ko' ? 'SNS 프로필 & 스토리: 인스타, X, 유튜브 프로필 및 감정 아바타로 활용' : 'SNS Profiles & Avatars: Use custom characters as profile icons.'}</li>
+                  <li>{lang === 'ko' ? '메신저 톡방 감정 짤: 배경 투명화 후 앨범에 저장해 친구·가족 톡방에서 개성 넘치는 리액션 짤로 전송' : 'Messenger Reactions: Send custom transparent stickers in chats.'}</li>
+                  <li>{lang === 'ko' ? '블로그 & 다꾸: 네이버 블로그 스티커, 굿노트·노션 다이어리 스탬프로 장식' : 'Blog & Planner Decor: Decorate blogs or digital planners.'}</li>
+                  <li>{lang === 'ko' ? '선생님 칭찬 스탬프: 알림장, 칭찬 스티커판 맞춤형 교육 스탬프로 활용' : 'Teacher Stamps: Perfect for reward charts and student feedback.'}</li>
+                  <li>{lang === 'ko' ? '커플·신혼부부 추억: 모바일 청첩장, 기념일 굿즈 및 포토북 제작' : 'Couple Memories: Make anniversary gifts, photo books, and digital wedding stickers.'}</li>
+                </ul>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -6443,11 +6441,10 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
             </span>
           </button>
 
-          {/* 펼쳐졌을 때만 렌더링되는 6대 상세 섹션 */}
-          {showDetailedGuide && (
-            <div className="flex flex-col gap-4 sm:gap-5 mt-1">
-              {/* 섹션 1: 이모티콘 제작이 처음인가요? */}
-              <SectionAbout lang={lang} />
+          {/* 6대 상세 섹션 (SEO/AdSense 크롤러를 위해 DOM 유지 후 CSS로 토글) */}
+          <div className={`flex flex-col gap-4 sm:gap-5 mt-1 ${showDetailedGuide ? 'block' : 'hidden'}`}>
+            {/* 섹션 1: 이모티콘 제작이 처음인가요? */}
+            <SectionAbout lang={lang} />
 
               {/* 섹션 2: 3분 초간단 사용 가이드 */}
               <SectionGuide lang={lang} />
@@ -6464,7 +6461,6 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
               {/* 섹션 6: 자주 묻는 질문 FAQ */}
               <SectionFAQ lang={lang} />
             </div>
-          )}
         </div>
       </main>
 
