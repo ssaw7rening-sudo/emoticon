@@ -3357,7 +3357,80 @@ const getPhraseActionKo = (phrase) => {
 
 const getPhraseActionEn = (phrase) => {
   const p = (phrase || '').trim();
-  return PHRASE_ACTION_MAP_EN[p] || `unique expressive full-body posture matching ${p}`;
+  if (!p) return 'expressive dynamic full-body pose';
+
+  if (PHRASE_ACTION_MAP_EN[p]) return PHRASE_ACTION_MAP_EN[p];
+
+  if (PHRASE_ACTION_MAP_KO[p]) {
+    const match = PHRASE_ACTION_MAP_KO[p].match(/\((.*?)\)/);
+    if (match && match[1]) return match[1].trim();
+  }
+
+  // Multilingual keyword intelligence for all 98 themes (KO, JA, ZH, EN)
+  const lower = p.toLowerCase();
+
+  // 1. Laughter / Joy / Fun
+  if (/ㅋ|ㅎ|웃|하하|호호|w|笑|草|hah|lol|lmao|joy|fun|funny/i.test(p)) {
+    return 'bent over clutching stomach, bursting into joyful laughter on floor';
+  }
+  // 2. Greeting / Hello / Wave / Arrival
+  if (/안녕|반가|하이|출근|왔|hey|hi|hello|wave|greet|おはよう|こんにちは|初めまして|你好|早|嗨/i.test(p)) {
+    return 'standing cheerfully, one hand in pocket and other hand waving high in warm greeting';
+  }
+  // 3. Cheering / Fighting / Determination
+  if (/화이팅|파이팅|힘내|영차|할수있|fight|cheer|go|win|ファイト|頑張|応援|加油|干杯/i.test(p)) {
+    return 'raising one fist high with a determined wink and energetic fighting-spirit pose';
+  }
+  // 4. Good / Thumbs Up / OK / Approval / Agree
+  if (/좋아|최고|오예|대박|굿|짱|따봉|good|great|best|nice|like|thumb|いいね|最高|すばらしい|好|赞|棒/i.test(p)) {
+    return 'giving an enthusiastic thumbs-up with a bright confident smile';
+  }
+  // 5. Gratitude / Thanks / Bow
+  if (/감사|고마|땡큐|수고|thank|appreciate|grateful|ありがとう|感謝|お疲れ|谢谢|多谢/i.test(p)) {
+    return 'bowing politely at a respectful angle with hands together in sincere gratitude';
+  }
+  // 6. Love / Heart / Affection
+  if (/사랑|하트|알랍|chu|love|heart|hug|kiss|好き|愛|キュン|爱|喜欢|抱/i.test(p)) {
+    return 'sitting warmly hugging a pink heart pillow with a tender joyful smile';
+  }
+  // 7. Apology / Sorry / Embarrassment / Sweat
+  if (/미안|죄송|사과|먄|sorry|apologize|oops|ごめん|すみません|申し訳|抱歉|对不起|不好意思/i.test(p)) {
+    return 'bowing apologetically with hands clasped in front and small sweat-drop icons';
+  }
+  // 8. Celebration / Party / Birthday / Congratulation
+  if (/축하|생일|파티|경사|congrat|party|bday|birthday|祝|おめでとう|诞|庆/i.test(p)) {
+    return 'shooting a party popper with colorful confetti ribbons bursting in celebration';
+  }
+  // 9. Shock / Surprise / Astonishment
+  if (/헐|대박|깜짝|실화|shock|omg|wow|what|びっくり|えっ|マジ|惊|天哪|哇/i.test(p)) {
+    return 'holding head with both hands, eyes and mouth wide open in shocked amazement';
+  }
+  // 10. Emotion / Tears / Crying / Touched
+  if (/감동|눈물|ㅠㅠ|ㅜㅜ|흑|엉엉|cry|tear|touch|泣|感動|涙|哭|流泪|感动/i.test(p)) {
+    return 'kneeling with hands clasped to chest, emotionally moved with a single sparkling tear';
+  }
+  // 11. Sleep / Tired / Good Night / Rest
+  if (/잘자|굿나잇|졸려|피곤|휴식|퇴근|sleep|night|tired|bed|zz|おやすみ|眠|寝|晚安|困|睡|累/i.test(p)) {
+    return 'curled up peacefully hugging a soft pillow sleeping with small zZ floaters';
+  }
+  // 12. Food / Hungry / Eating / Delicious
+  if (/배고|밥|먹|맛|치킨|피자|야식|food|eat|hungry|yum|yummy|飯|腹|美味|吃|饿|美味|餐/i.test(p)) {
+    return 'holding delicious food items with mouth watering and eyes sparkling in delight';
+  }
+  // 13. Money / Stocks / Wealth / Success
+  if (/돈|머니|주식|코인|수익|떡상|익절|money|cash|rich|profit|coin|stock|金|富|株|钱|赚|涨/i.test(p)) {
+    return 'holding a fan of banknotes excitedly jumping with golden coins floating around';
+  }
+  // 14. Anger / Rage / Frustration
+  if (/화나|빡|분노|짜증|열받|angry|rage|mad|fume|怒|プンプン|气|怒|烦/i.test(p)) {
+    return 'fists clenched with cartoon fire fumes and steam puffing out in comic anger';
+  }
+  // 15. Sports / Fitness / Health
+  if (/운동|헬스|런|골프|축구|gym|workout|fitness|golf|run|筋トレ|走|运动|健身/i.test(p)) {
+    return 'energetic active sport pose holding matching athletic gear and cheering';
+  }
+
+  return `expressive character pose representing ${p} with dynamic body gesture and supporting visual props`;
 };
 
 function App() {
@@ -4905,6 +4978,7 @@ ${textExclusion}`;
   const generateGrokPrompt = (phraseOverride = null) => {
     const isKorean = lang === 'ko';
     const character = getGrokCharacterDetails('en');
+    const themeProps = getThemeSignatureProps(activeTheme, 'en');
     const hasPhraseOverride = phraseOverride !== null;
     const targetPhrase = generationMode === 'individual'
       ? getSelectedPhrase()
@@ -4916,15 +4990,25 @@ ${textExclusion}`;
       chroma: 'solid bright lime-green #00FF00 chroma key background for easy cutout. No green bleed on character outlines.',
     }[grokBackgroundMode] || 'pure solid white (#FFFFFF) background only. No gradients, no patterns, no gray tones, no checkerboard.';
 
+    const formatStickerLine = (phrase, number) => {
+      const action = getPhraseActionEn(phrase);
+      const trimmed = (phrase || '').trim();
+      if (grokTextMode === 'text' && trimmed) {
+        return `${number}. Character ${action}, accompanied by bold 2D sticker lettering "${trimmed}" in thick pure white die-cut outline.`;
+      }
+      return `${number}. Character ${action}.`;
+    };
+
     // 3행 × 5열 (5개씩 3행 분할) 명시적 구조화
-    const row1 = emoticons.slice(0, 5).map((phrase, idx) => `${idx + 1}. Character ${getPhraseActionEn(phrase)}`).join('\n');
-    const row2 = emoticons.slice(5, 10).map((phrase, idx) => `${idx + 6}. Character ${getPhraseActionEn(phrase)}`).join('\n');
-    const row3 = emoticons.slice(10, 15).map((phrase, idx) => `${idx + 11}. Character ${getPhraseActionEn(phrase)}`).join('\n');
+    const row1 = emoticons.slice(0, 5).map((p, idx) => formatStickerLine(p, idx + 1)).join('\n');
+    const row2 = emoticons.slice(5, 10).map((p, idx) => formatStickerLine(p, idx + 6)).join('\n');
+    const row3 = emoticons.slice(10, 15).map((p, idx) => formatStickerLine(p, idx + 11)).join('\n');
 
     const charDetailsList = [
       character.subject,
       character.appearance,
       character.outfit,
+      themeProps ? `theme signature elements: ${themeProps}` : '',
     ].filter(Boolean).join(', ');
 
     const characterIdentity = characterSource === 'photo'
@@ -4933,8 +5017,21 @@ A single recurring character based on the attached reference photo: [${charDetai
       : `CHARACTER IDENTITY (apply identically to all 15 stickers):
 A single recurring mascot character: ${charDetailsList}. Perfect consistency of character design, features, hair, skin, and outfit across every single sticker.`;
 
+    const textRuleBlock = grokTextMode === 'text'
+      ? `\nTEXT TYPOGRAPHY RULES:
+- For each sticker, render the exact designated phrase in clean, bold 2D pop-art handwritten font.
+- Every text character must have a thick, crisp pure white die-cut stroke around it.
+- Text appears only once per sticker, positioned clearly above or beside the character.
+- Absolutely NO speech bubbles, quotation marks, or meaningless random gibberish.`
+      : `\nTEXT POLICY:
+- Pure graphic stickers with NO text, NO letters, NO numbers, and NO speech bubbles. Focus 100% on expressive body language and facial acting.`;
+
     if (generationMode === 'individual' || hasPhraseOverride) {
       const singleAction = getPhraseActionEn(targetPhrase);
+      const singleTextLine = grokTextMode === 'text' && targetPhrase
+        ? `Character ${singleAction}, accompanied by bold 2D sticker lettering "${targetPhrase}" with a thick white die-cut stroke.`
+        : `Character ${singleAction}.`;
+
       const singleIdentity = characterSource === 'photo'
         ? `CHARACTER IDENTITY:
 A single character based on the attached reference photo: [${charDetailsList}]. Use this description together with the attached reference photo to preserve the exact facial identity — same eye shape/size, same eyelid structure, same nose bridge and tip shape, same lip shape and smile line, same jawline/cheekbones/chin, same skin tone, same hairstyle, and same outfit style.`
@@ -4944,9 +5041,10 @@ A single character: ${charDetailsList}.`;
       return `Create one high-resolution square sticker on a ${bgInstruction}
 
 ACTION & POSE:
-Character ${singleAction}. Minimal supporting props/effects: ${character.props}, ${character.effects}.
+${singleTextLine} Minimal supporting props/effects: ${character.props}, ${character.effects}.
 
 ${singleIdentity}
+${textRuleBlock}
 
 ART STYLE: Realistic semi-caricature 2D illustration that keeps the person's real facial landmarks and proportions instantly recognizable — not a generic anime or moe face, not an oversized-eye doll face, not a baby-face averaging. Clean, uniform black vector line art (3-4px). The body, hair, and clothing are rendered in flat two-tone cel shading with a limited flat color palette. The face alone may carry slightly softer, subtle shading for volume and likeness, while remaining clean and flat overall. No gradients, no airbrush, no 3D render, no watercolor, no glow effects.
 
@@ -4954,7 +5052,7 @@ BODY PROPORTIONS: Natural stylized 3.5–4 head-length ratio. The body may be si
 
 DIE-CUT BORDER: The sticker has a thick, crisp, clean white outline tracing the full character silhouette. Since the border and background are both white, add a very faint, subtle contact shadow along the outline edge so the sticker shape is still clearly distinguishable from the background, without changing the outline color from white and without introducing visible gray tones.
 
-STRICT AVOID LIST: no text, no letters, no numbers, no speech bubbles, no quotation marks, no watermark, no grid lines, no frame, no extra or missing limbs, no generic anime face.
+STRICT AVOID LIST: ${grokTextMode === 'text' ? 'random gibberish letters, speech bubbles, ' : 'no text, no letters, no numbers, no speech bubbles, '}no quotation marks, no watermark, no grid lines, no frame, no extra or missing limbs, no generic anime face.
 
 FINAL CHECK before finishing: one single high-quality sticker matching the reference photo on pure background.
 
@@ -4976,6 +5074,7 @@ Row 3 (5 stickers, left to right):
 ${row3}
 
 ${characterIdentity}
+${textRuleBlock}
 
 ART STYLE: Realistic semi-caricature 2D illustration that keeps the person's real facial landmarks and proportions instantly recognizable — not a generic anime or moe face, not an oversized-eye doll face, not a baby-face averaging. Clean, uniform black vector line art (3-4px). The body, hair, and clothing are rendered in flat two-tone cel shading with a limited flat color palette. The face alone may carry slightly softer, subtle shading for volume and likeness, while remaining clean and flat overall. No gradients, no airbrush, no 3D render, no watercolor, no glow effects.
 
@@ -4985,7 +5084,7 @@ DIE-CUT BORDER: Each sticker has a thick, crisp, clean white outline tracing the
 
 POSE VARIETY: At least 6 distinct body positions across the sheet — lying down, sitting, standing, jumping, kneeling, and curled up/crouching. Mix full-body and upper-body compositions naturally.
 
-STRICT AVOID LIST: no text, no letters, no numbers, no speech bubbles, no quotation marks, no sticker numbering, no watermark, no grid lines, no cell borders, no outer frame, no crop marks, no extra or missing limbs, no inconsistent face/hair/outfit between the 15 stickers, no generic anime face.
+STRICT AVOID LIST: ${grokTextMode === 'text' ? 'random gibberish letters, speech bubbles, ' : 'no text, no letters, no numbers, no speech bubbles, '}no quotation marks, no sticker numbering, no watermark, no grid lines, no cell borders, no outer frame, no crop marks, no extra or missing limbs, no inconsistent face/hair/outfit between the 15 stickers, no generic anime face.
 
 FINAL CHECK before finishing: exactly 15 stickers in a 3×5 grid (5 per row, 3 rows), one consistent recognizable character throughout matching the reference photo, pure white background only.
 
