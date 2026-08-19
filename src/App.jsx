@@ -4994,9 +4994,9 @@ ${textExclusion}`;
       const action = getPhraseActionEn(phrase);
       const trimmed = (phrase || '').trim();
       if (grokTextMode === 'text' && trimmed) {
-        return `${number}. Character ${action}, accompanied by bold 2D sticker lettering "${trimmed}" in thick pure white die-cut outline.`;
+        return `${number}. ${action} + “${trimmed}”`;
       }
-      return `${number}. Character ${action}.`;
+      return `${number}. ${action}`;
     };
 
     // 3행 × 5열 (5개씩 3행 분할) 명시적 구조화
@@ -5004,57 +5004,64 @@ ${textExclusion}`;
     const row2 = emoticons.slice(5, 10).map((p, idx) => formatStickerLine(p, idx + 6)).join('\n');
     const row3 = emoticons.slice(10, 15).map((p, idx) => formatStickerLine(p, idx + 11)).join('\n');
 
-    const charDetailsList = [
-      character.subject,
-      character.appearance,
-      character.outfit,
-      themeProps ? `theme signature elements: ${themeProps}` : '',
-    ].filter(Boolean).join(', ');
+    const charSubject = character.subject || 'a real person';
+    const charAppearance = character.appearance || 'natural facial features matching reference photo';
+    const charOutfit = character.outfit || 'outfit matching reference photo';
+    const themePart = themeProps ? ` (${themeProps})` : '';
 
     const characterIdentity = characterSource === 'photo'
-      ? `CHARACTER IDENTITY (apply identically to all 15 stickers):
-A single recurring character based on the attached reference photo: [${charDetailsList}]. Use this description together with the attached reference photo to preserve the exact facial identity — same eye shape/size, same eyelid structure, same nose bridge and tip shape, same lip shape and smile line, same jawline/cheekbones/chin, same skin tone, same hairstyle (length, part, volume, flow), and same outfit style across every single sticker.`
-      : `CHARACTER IDENTITY (apply identically to all 15 stickers):
-A single recurring mascot character: ${charDetailsList}. Perfect consistency of character design, features, hair, skin, and outfit across every single sticker.`;
+      ? `CHARACTER IDENTITY (CRITICAL – must be identical in all 15 stickers):
+Base the character 100% on the attached reference photo${themePart}.
+- Exact same face: jawline, cheekbones, chin shape, nose bridge and tip, lip thickness and natural smile line matching the photo.
+- Exact same eyes: eye shape, eyelid structure, eye distance, eye expression matching the photo.
+- Exact same hair: hairstyle, length, part, volume, and natural flow matching the photo.
+- Exact same skin tone and subtle facial features (${charAppearance}). No beauty filter, no generic anime eyes, no large sparkly eyes, no baby face.
+- Exact same outfit: ${charOutfit}.
+The face must remain instantly recognizable as the same real person in the photo across every sticker. Do NOT turn him into a generic anime/moe character.`
+      : `CHARACTER IDENTITY (CRITICAL – must be identical in all 15 stickers):
+Recurring mascot character: ${charSubject}${themePart}.
+- Key features: ${charAppearance}.
+- Outfit & Props: ${charOutfit}.
+Perfect consistency of character design, features, colors, and outfit across every sticker.`;
 
-    const textRuleBlock = grokTextMode === 'text'
-      ? `\nTEXT TYPOGRAPHY RULES:
-- For each sticker, render the exact designated phrase in clean, bold 2D pop-art handwritten font.
-- Every text character must have a thick, crisp pure white die-cut stroke around it.
-- Text appears only once per sticker, positioned clearly above or beside the character.
-- Absolutely NO speech bubbles, quotation marks, or meaningless random gibberish.`
-      : `\nTEXT POLICY:
-- Pure graphic stickers with NO text, NO letters, NO numbers, and NO speech bubbles. Focus 100% on expressive body language and facial acting.`;
+    const textSection = grokTextMode === 'text'
+      ? `\nTEXT: Bold 2D pop-art handwritten sticker font with thick pure white die-cut outline. Text only once per sticker, clearly above or beside the character. No speech bubbles, no extra quotation marks.`
+      : `\nTEXT POLICY: Pure graphic stickers with NO text, NO letters, NO numbers, and NO speech bubbles. Focus 100% on expressive body language and facial acting.`;
 
     if (generationMode === 'individual' || hasPhraseOverride) {
       const singleAction = getPhraseActionEn(targetPhrase);
-      const singleTextLine = grokTextMode === 'text' && targetPhrase
-        ? `Character ${singleAction}, accompanied by bold 2D sticker lettering "${targetPhrase}" with a thick white die-cut stroke.`
-        : `Character ${singleAction}.`;
+      const singleLine = grokTextMode === 'text' && targetPhrase
+        ? `${singleAction} + “${targetPhrase}”`
+        : `${singleAction}`;
 
       const singleIdentity = characterSource === 'photo'
-        ? `CHARACTER IDENTITY:
-A single character based on the attached reference photo: [${charDetailsList}]. Use this description together with the attached reference photo to preserve the exact facial identity — same eye shape/size, same eyelid structure, same nose bridge and tip shape, same lip shape and smile line, same jawline/cheekbones/chin, same skin tone, same hairstyle, and same outfit style.`
+        ? `CHARACTER IDENTITY (CRITICAL):
+Base the character 100% on the attached reference photo${themePart}.
+- Exact same face, eyes, hairstyle, skin tone, and outfit (${charAppearance}, ${charOutfit}).
+- Face must remain instantly recognizable as the real person in the photo. No generic anime/moe face.`
         : `CHARACTER IDENTITY:
-A single character: ${charDetailsList}.`;
+Character: ${charSubject}, ${charAppearance}, ${charOutfit}${themePart}.`;
 
-      return `Create one high-resolution square sticker on a ${bgInstruction}
+      return `Create one square, high-resolution sticker on a ${bgInstruction}
 
 ACTION & POSE:
-${singleTextLine} Minimal supporting props/effects: ${character.props}, ${character.effects}.
+${singleLine}
 
 ${singleIdentity}
-${textRuleBlock}
+${textSection}
 
-ART STYLE: Realistic semi-caricature 2D illustration that keeps the person's real facial landmarks and proportions instantly recognizable — not a generic anime or moe face, not an oversized-eye doll face, not a baby-face averaging. Clean, uniform black vector line art (3-4px). The body, hair, and clothing are rendered in flat two-tone cel shading with a limited flat color palette. The face alone may carry slightly softer, subtle shading for volume and likeness, while remaining clean and flat overall. No gradients, no airbrush, no 3D render, no watercolor, no glow effects.
+ART STYLE:
+Realistic semi-caricature 2D illustration with strong likeness to the reference photo.
+Clean uniform black vector line art (3-4px).
+Flat two-tone cel shading for body, hair, and clothes.
+Slightly softer shading only on the face to preserve volume and real likeness.
+No gradients, no airbrush, no 3D, no watercolor, no glow.
 
-BODY PROPORTIONS: Natural stylized 3.5–4 head-length ratio. The body may be simplified, but the face must retain full detail and likeness — never simplified or averaged.
+BODY PROPORTIONS: Natural stylized 3.5–4 head ratio. Face stays fully detailed and photo-accurate; body can be slightly simplified.
 
-DIE-CUT BORDER: The sticker has a thick, crisp, clean white outline tracing the full character silhouette. Since the border and background are both white, add a very faint, subtle contact shadow along the outline edge so the sticker shape is still clearly distinguishable from the background, without changing the outline color from white and without introducing visible gray tones.
+DIE-CUT: Thick clean white outline around full character silhouette + very faint subtle contact shadow so the sticker is visible on white background.
 
-STRICT AVOID LIST: ${grokTextMode === 'text' ? 'random gibberish letters, speech bubbles, ' : 'no text, no letters, no numbers, no speech bubbles, '}no quotation marks, no watermark, no grid lines, no frame, no extra or missing limbs, no generic anime face.
-
-FINAL CHECK before finishing: one single high-quality sticker matching the reference photo on pure background.
+STRICT RULES: Exactly 1 single sticker. Perfect face consistency with the reference photo. Pure white background only. No extra limbs, no generic anime face.
 
 [Optional X-ready output request]
 After generating the sticker, also prepare a short, engaging Korean caption + English hashtags that can be directly copied and posted on X (Twitter).`;
@@ -5062,31 +5069,33 @@ After generating the sticker, also prepare a short, engaging Korean caption + En
 
     return `Create one square, high-resolution sticker sheet on a ${bgInstruction}
 
-LAYOUT: Exactly 15 individual die-cut stickers arranged in a precise 3-row by 5-column grid (5 stickers per row, 3 rows total, 15 in total), evenly and naturally spaced, floating freely within the white margins. Do not draw grid lines, cell borders, numbers, frames, or crop marks.
-
-Row 1 (5 stickers, left to right):
-${row1}
-
-Row 2 (5 stickers, left to right):
-${row2}
-
-Row 3 (5 stickers, left to right):
-${row3}
+LAYOUT: Exactly 15 individual die-cut stickers arranged in a precise 3-row by 5-column grid (5 stickers per row, 3 rows total), evenly spaced, floating freely. No grid lines, borders, numbers, frames, or crop marks.
 
 ${characterIdentity}
-${textRuleBlock}
 
-ART STYLE: Realistic semi-caricature 2D illustration that keeps the person's real facial landmarks and proportions instantly recognizable — not a generic anime or moe face, not an oversized-eye doll face, not a baby-face averaging. Clean, uniform black vector line art (3-4px). The body, hair, and clothing are rendered in flat two-tone cel shading with a limited flat color palette. The face alone may carry slightly softer, subtle shading for volume and likeness, while remaining clean and flat overall. No gradients, no airbrush, no 3D render, no watercolor, no glow effects.
+ART STYLE:
+Realistic semi-caricature 2D illustration with strong likeness to the reference photo.
+Clean uniform black vector line art (3-4px).
+Flat two-tone cel shading for body, hair, and clothes.
+Slightly softer shading only on the face to preserve volume and real likeness.
+No gradients, no airbrush, no 3D, no watercolor, no glow.
 
-BODY PROPORTIONS: Natural stylized 3.5–4 head-length ratio. The body may be simplified, but the face must retain full detail and likeness — never simplified or averaged.
+BODY PROPORTIONS: Natural stylized 3.5–4 head ratio. Face stays fully detailed and photo-accurate; body can be slightly simplified.
+${textSection}
+DIE-CUT: Thick clean white outline around each full character silhouette + very faint subtle contact shadow so the sticker is visible on white background.
 
-DIE-CUT BORDER: Each sticker has a thick, crisp, clean white outline tracing the full character silhouette. Since the border and background are both white, add a very faint, subtle contact shadow along the outline edge so the sticker shape is still clearly distinguishable from the background, without changing the outline color from white and without introducing visible gray tones.
+Row 1:
+${row1}
 
-POSE VARIETY: At least 6 distinct body positions across the sheet — lying down, sitting, standing, jumping, kneeling, and curled up/crouching. Mix full-body and upper-body compositions naturally.
+Row 2:
+${row2}
 
-STRICT AVOID LIST: ${grokTextMode === 'text' ? 'random gibberish letters, speech bubbles, ' : 'no text, no letters, no numbers, no speech bubbles, '}no quotation marks, no sticker numbering, no watermark, no grid lines, no cell borders, no outer frame, no crop marks, no extra or missing limbs, no inconsistent face/hair/outfit between the 15 stickers, no generic anime face.
+Row 3:
+${row3}
 
-FINAL CHECK before finishing: exactly 15 stickers in a 3×5 grid (5 per row, 3 rows), one consistent recognizable character throughout matching the reference photo, pure white background only.
+POSE VARIETY: Include lying, sitting, standing, jumping, bowing, and crouching poses. Mix full-body and upper-body.
+
+STRICT RULES: Exactly 15 stickers in 3×5 grid. Perfect face consistency with the reference photo. Pure white background only. No extra limbs, no inconsistent hair/outfit, no generic anime face.
 
 [Optional X-ready output request]
 After generating the sticker sheet, also prepare a short, engaging Korean caption + English hashtags that can be directly copied and posted on X (Twitter).`;
