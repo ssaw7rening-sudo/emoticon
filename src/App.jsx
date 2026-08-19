@@ -5588,7 +5588,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                         : 'Supports photos of single persons, couples, pets/animals, or objects. All selected themes and tags combine 100% into the prompt.'}
                     </p>
                     <div className="bg-amber-50/80 p-2.5 rounded-md text-[12.5px] text-amber-850 font-normal border border-amber-200/70 leading-normal flex flex-col gap-1">
-                      <span>✨ {lang === 'ko' ? '커플/웨딩 사진 + [결혼/신혼부부] 테마 → 둘만의 사랑스러운 2.5등신 커플 메신저 이모티콘 완성!' : 'Couple photo + [Wedding/Newlyweds] theme → Adorable 2.5-head couple sticker pack!'}</span>
+                      <span>✨ {lang === 'ko' ? '커플/웨딩 사진 + [결혼/신혼부부] 테마 → 둘만의 특별한 커스텀 커플 메신저 이모티콘 완성!' : 'Couple photo + [Wedding/Newlyweds] theme → Custom personalized couple sticker pack!'}</span>
                       <span>✨ {lang === 'ko' ? '선생님 사진 + [선생님/교사] 테마 → 학생들에게 찍어줄 세상에 하나뿐인 "참 잘했어요!" 얼굴 스탬프 완성!' : 'Teacher photo + [Teacher/Educator] theme → Personalized teacher praise & evaluation stamp!'}</span>
                     </div>
                   </div>
