@@ -6369,16 +6369,13 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
             <button
               type="button"
               onClick={() => setShowPhotoTips(prev => !prev)}
-              className="interactive-control mt-2.5 flex items-center justify-between w-full py-1.5 px-3 rounded-md bg-white/90 hover:bg-white text-[#C2410C] font-bold text-[12px] sm:text-[13px] border border-[#FCD3A1] shadow-2xs transition-colors"
+              className="interactive-control mt-3 flex items-center justify-center gap-1.5 w-full py-2 px-3 rounded-lg bg-white/95 hover:bg-white text-[#C2410C] font-extrabold text-[12.5px] sm:text-[13.5px] border border-[#FCD3A1] shadow-xs hover:border-[#F97316]/50 transition-all text-center"
             >
-              <span className="flex items-center gap-1">
-                <span>{showPhotoTips ? '▲' : '▼'}</span>
-                <span>{showPhotoTips 
-                  ? (lang === 'ko' ? '사진 권장 규칙 & 200% 활용법 접기' : 'Hide Details') 
-                  : (lang === 'ko' ? '📌 사진 권장 규칙 & 🎯 200% 활용 아이디어 펼치기' : 'Show Photo Specs & Creative Tips')}</span>
-              </span>
-              <span className="text-[11px] text-amber-700 underline font-semibold">
-                {showPhotoTips ? (lang === 'ko' ? '간략히' : 'Less') : (lang === 'ko' ? '자세히 보기' : 'More')}
+              <span>{showPhotoTips ? '▲' : '💡'}</span>
+              <span>
+                {showPhotoTips
+                  ? (lang === 'ko' ? '사진 권장 규칙 & 활용 팁 접기' : lang === 'ja' ? '詳細を閉じる' : lang === 'zh' ? '收起建议' : 'Hide Photo Specs & Tips')
+                  : (lang === 'ko' ? '사진 권장 규칙 & 200% 활용 팁 보기 ▼' : lang === 'ja' ? '写真の推奨ルール・活用法を見る ▼' : lang === 'zh' ? '查看照片上传建议与技巧 ▼' : 'View Photo Specs & Creative Tips ▼')}
               </span>
             </button>
 
@@ -6421,23 +6418,23 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
           <button
             type="button"
             onClick={() => setShowDetailedGuide(prev => !prev)}
-            className="interactive-control w-full py-3 px-3.5 sm:px-5 rounded-lg bg-gradient-to-r from-[#FFF8EE] to-[#FFF1DE] border-2 border-amber-300 hover:border-amber-400 text-amber-950 font-black text-[13.5px] sm:text-[15px] shadow-sm flex items-center justify-between transition-all"
+            className="interactive-control w-full py-3 px-3.5 sm:px-5 rounded-lg bg-gradient-to-r from-[#FFF8EE] to-[#FFF1DE] border-2 border-amber-300 hover:border-amber-400 text-amber-950 font-black text-[13.5px] sm:text-[15px] shadow-sm flex items-center justify-between gap-2 transition-all"
           >
-            <span className="flex items-center gap-2 text-left">
-              <span className="text-[16px] sm:text-[18px]">📚</span>
-              <span>
+            <span className="flex items-center gap-1.5 sm:gap-2 text-left min-w-0">
+              <span className="text-[16px] sm:text-[18px] shrink-0">📚</span>
+              <span className="truncate">
                 {lang === 'ko' 
-                  ? '이모티콘 제작 가이드 & 15종 황금조합 & FAQ' 
+                  ? '이모티콘 제작 가이드 & FAQ' 
                   : lang === 'ja'
-                  ? '制作ガイド・15種黄金比・FAQ'
+                  ? '制作ガイド・黄金比・FAQ'
                   : lang === 'zh'
-                  ? '制作指南・15种黄金组合・FAQ'
-                  : 'Creation Guide, 15-Formula & FAQ'}
+                  ? '制作指南・黄金组合・FAQ'
+                  : 'Creation Guide & FAQ'}
               </span>
             </span>
-            <span className="text-[11.5px] sm:text-[12.5px] font-bold text-amber-800 bg-amber-200/80 hover:bg-amber-300 px-2.5 py-1 rounded-full shrink-0 flex items-center gap-1 transition-colors">
+            <span className="text-[11px] sm:text-[12.5px] font-bold text-amber-800 bg-amber-200/80 hover:bg-amber-300 px-2.5 py-1 rounded-full shrink-0 flex items-center gap-1 transition-colors whitespace-nowrap">
               {showDetailedGuide 
-                ? (lang === 'ko' ? '가이드 접기 ▲' : 'Fold ▲') 
+                ? (lang === 'ko' ? '접기 ▲' : 'Fold ▲') 
                 : (lang === 'ko' ? '전체 보기 (6개 섹션) ▼' : 'View (6 Sections) ▼')}
             </span>
           </button>
