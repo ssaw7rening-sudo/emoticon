@@ -2513,30 +2513,30 @@ const InfoSection = ({ t, lang }) => {
                 <ul className="text-[13px] sm:text-[14px] leading-relaxed text-secondary-strong flex flex-col gap-2 mt-1 break-keep">
                   {lang === 'ko' && (
                     <>
-                      <li>• 🎯 <strong className="text-on-surface">특징:</strong> Flux.1 엔진 기반으로 자연어 지시 이해 및 2D 선화(Linework) 표현력이 우수합니다.</li>
-                      <li>• 💬 <strong className="text-on-surface">예시:</strong> 흰색 스티커 테두리(Die-cut)와 깔끔한 메신저 스티커 느낌을 연출하고 싶을 때 적합합니다.</li>
-                      <li>• 🎨 <strong className="text-on-surface">장점:</strong> 이미지 글자 표현 및 3x5 그리드 레이아웃 배치를 유연하게 반영합니다.</li>
+                      <li>• 🎯 <strong className="text-on-surface">특징:</strong> xAI Grok Imagine(Quality Mode) 기반으로 자연어 맥락 이해와 선명한 2D 선화 및 미세 접촉 그림자(Contact Shadow) 스티커 질감이 탁월합니다.</li>
+                      <li>• 📸 <strong className="text-on-surface">사진 참고 원리:</strong> 사진 속 인물의 핵심 시그니처(헤어스타일, 안경, 턱선, 의상)를 시각적으로 읽어낸 뒤 프롬프트 지시어와 결합해 2D 스티커로 스타일화합니다.</li>
+                      <li>• 💡 <strong className="text-on-surface">실물 싱크로율 꿀팁:</strong> 15종 시트는 포즈 초안용으로 쓰고, 얼굴 싱크로율을 극대화하려면 <strong>[📋 15종 개별 분할]</strong> 모드에서 1장씩 생성하세요! 생성 후 대화창에서 <em>"사진 속 눈매와 헤어를 더 닮게 보정해줘"</em>라고 연속 수정(Multi-turn)할 수 있습니다.</li>
                     </>
                   )}
                   {lang === 'ja' && (
                     <>
-                      <li>• 🎯 <strong className="text-on-surface">特徴:</strong> Flux.1エンジン搭載で、自然言語理解と鮮明な2D線画表現が優れています。</li>
-                      <li>• 💬 <strong className="text-on-surface">例:</strong> 白フチのステッカー加工やメッセンジャースタンプ風の仕上げに最適です。</li>
-                      <li>• 🎨 <strong className="text-on-surface">長所:</strong> テキスト描画と3x5グリッドレイアウトの配置に柔軟に対応します。</li>
+                      <li>• 🎯 <strong className="text-on-surface">特徴:</strong> xAI Grok Imagine搭載で、自然言語理解と鮮明な2D線画・白フチステッカー表現が優れています。</li>
+                      <li>• 📸 <strong className="text-on-surface">写真参照:</strong> 写真の特徴（髪型・メガネ・輪郭）を抽出し、プロンプトと融合してスタンプ化します。</li>
+                      <li>• 💡 <strong className="text-on-surface">そっくり度UP:</strong> 最終仕上げは[個別分割]モードが最も高精度です。チャットでの追加修正も可能です。</li>
                     </>
                   )}
                   {lang === 'zh' && (
                     <>
-                      <li>• 🎯 <strong className="text-on-surface">特点:</strong> 基于Flux.1引擎，自然语言理解与2D线条表现极其出色。</li>
-                      <li>• 💬 <strong className="text-on-surface">示例:</strong> 强烈推荐制作带白色剪裁边框的高清矢量贴纸。</li>
-                      <li>• 🎨 <strong className="text-on-surface">优势:</strong> 灵活支持文字渲染与3x5网格布局排布。</li>
+                      <li>• 🎯 <strong className="text-on-surface">特点:</strong> 搭载xAI Grok Imagine引擎，自然语言理解与高清2D线条、白色剪裁贴纸质感极其出色。</li>
+                      <li>• 📸 <strong className="text-on-surface">照片参考:</strong> 自动提取照片特征（发型、眼镜、脸型）并与提示词深度结合生成。</li>
+                      <li>• 💡 <strong className="text-on-surface">高还原技巧:</strong> 追求最高相似度时，建议在[单张分割]模式下逐张生成，并可在对话中追问微调。</li>
                     </>
                   )}
                   {lang !== 'ko' && lang !== 'ja' && lang !== 'zh' && (
                     <>
-                      <li>• 🎯 <strong className="text-on-surface">Feature:</strong> Powered by Flux.1 for crisp 2D linework and strong prompt fidelity.</li>
-                      <li>• 💬 <strong className="text-on-surface">Usage:</strong> Perfect for clean stickers with die-cut white outlines.</li>
-                      <li>• 🎨 <strong className="text-on-surface">Strength:</strong> Excellent control over text rendering and 3x5 layout structure.</li>
+                      <li>• 🎯 <strong className="text-on-surface">Feature:</strong> Powered by xAI Grok Imagine for crisp 2D linework and subtle contact-shadow sticker finishes.</li>
+                      <li>• 📸 <strong className="text-on-surface">Photo Reference:</strong> Extracts key identity signatures (hair, glasses, jawline) and fuses with natural language prompts.</li>
+                      <li>• 💡 <strong className="text-on-surface">Likeness Tip:</strong> Use [Batch Split] for maximum facial likeness and leverage multi-turn chat editing for refinement.</li>
                     </>
                   )}
                 </ul>
