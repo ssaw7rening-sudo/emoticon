@@ -3492,7 +3492,7 @@ function App() {
   const categoryKeys = Object.keys(currentTags);
   
   const [charManual, setCharManual] = useState('');
-  const [characterSource, setCharacterSource] = useState('direct');
+  const [characterSource, setCharacterSource] = useState('photo');
   const [photoReferenceMode, setPhotoReferenceMode] = useState('balanced');
   const [activeTagCategory, setActiveTagCategory] = useState(categoryKeys[0]);
   
