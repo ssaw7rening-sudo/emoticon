@@ -5442,6 +5442,23 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
           <p className="z-10 text-[13px] sm:text-[15px] md:text-[17px] leading-relaxed max-w-2xl mx-auto font-bold bg-white/40 p-3.5 sm:p-5 rounded-md backdrop-blur-md border border-white/60 shadow-sm whitespace-pre-wrap [word-break:keep-all] w-full">
             {t.guide1A}
           </p>
+
+          {/* JocoHunt Weekly Top 3 Winner Badge */}
+          <div className="z-10 mt-1 flex justify-center">
+            <a
+              href="https://jocohunt.com/p/190i6ehg"
+              target="_blank"
+              rel="noopener noreferrer"
+              title="조코헌트 주간 1등 Top 3 위너"
+              className="inline-block transform hover:scale-105 transition-all duration-300 drop-shadow-sm hover:drop-shadow-md"
+            >
+              <img
+                src="https://jocohunt.com/images/badges/weekly-light.svg"
+                alt="조코헌트 주간 1등 Top 3 위너"
+                className="w-[200px] sm:w-[240px] h-auto"
+              />
+            </a>
+          </div>
         </section>
 
         {/* Section 1: Character Setup */}
@@ -6454,6 +6471,22 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
       {/* Footer */}
       <footer className="mt-8 sm:mt-10 py-7 sm:py-9 bg-[#FAF9F6] border-t border-[#E5E0D8] text-center w-full">
         <div className="max-w-4xl mx-auto px-6 flex flex-col items-center gap-3">
+          {/* JocoHunt Weekly Top 3 Winner Badge */}
+          <div className="mb-2 flex justify-center">
+            <a
+              href="https://jocohunt.com/p/190i6ehg"
+              target="_blank"
+              rel="noopener noreferrer"
+              title="조코헌트 주간 1등 Top 3 위너"
+              className="inline-block transform hover:scale-105 transition-all duration-300 drop-shadow-xs hover:drop-shadow-sm"
+            >
+              <img
+                src="https://jocohunt.com/images/badges/weekly-light.svg"
+                alt="조코헌트 주간 1등 Top 3 위너"
+                className="w-[180px] sm:w-[220px] h-auto"
+              />
+            </a>
+          </div>
           <div className="flex items-center justify-center gap-4 flex-wrap text-[13px] font-bold text-slate-700">
             <button
               onClick={() => navigateTo('/privacy')}
