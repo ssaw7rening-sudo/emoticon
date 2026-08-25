@@ -5722,6 +5722,13 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                     </p>
                     <div className="bg-amber-50/80 p-2.5 rounded-md text-[12.5px] text-amber-850 font-normal border border-amber-200/70 leading-normal flex flex-col gap-1.5">
                       <span>✨ {lang === 'ko' 
+                        ? '개인 셀카/프로필 사진 + [일상/직장인] 테마 → 카톡·인스타·슬랙(Slack) 프로필 및 나만의 2D 캐리커처 15종 리액션 짤 완성!' 
+                        : lang === 'ja' 
+                        ? '自撮り/プロフィール写真 + [日常/仕事]テーマ → LINE・SNS・Slack用アイコン＆自分そっくりの15種リアクション画像完成！' 
+                        : lang === 'zh' 
+                        ? '个人自拍/头像照片 + [日常/职场] 主题 → 打造微信/小红书/工作头像及专属15格真人卡通表情包！' 
+                        : 'Selfie/Profile photo + [Daily/Office] theme → Custom 2D caricature avatar for KakaoTalk, Instagram, and Slack profile!'}</span>
+                      <span>✨ {lang === 'ko' 
                         ? '아이 얼굴 사진 + [유아/학생] 테마 → 우리 아이 얼굴이 담긴 어린이집·유치원 방수 네임스티커 & 알림장 스티커 완성!' 
                         : lang === 'ja' 
                         ? 'お子様の顔写真 + [幼児・児童]テーマ → 保育園・幼稚園の名前シール＆お名前スタンプ完成！' 
@@ -6635,6 +6642,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                   {lang === 'ko' ? '이모티콘 200% 실전 활용 아이디어' : lang === 'ja' ? 'スタンプの200%実践活用アイデア' : lang === 'zh' ? '表情包200%实用场景推荐' : 'Creative Ways to Use Your Emojis'}
                 </strong>
                 <ul className="list-disc pl-4 opacity-90 text-[#9A3412] font-medium flex flex-col gap-1 text-[12px] sm:text-[13px] marker:text-[#C2410C] [word-break:break-word]">
+                  <li>{lang === 'ko' ? '개인 SNS & 메신저 프로필 사진: 내 얼굴 셀카 한 장으로 카카오톡 프사, 인스타그램·X(트위터) 아바타, 슬랙/노션 사내 프로필용 고퀄리티 2D 캐리커처 이미지 완성' : lang === 'ja' ? 'SNS・メッセンジャーのプロフィール写真: 自撮り写真1枚でLINE・X・Slack用の高品質2Dアバターを作成' : lang === 'zh' ? '个人社交平台及办公头像: 用个人自拍生成微信、小红书、钉钉/飞书专属高品质2D卡通形象头像' : 'Personal SNS & Avatar: Create custom 2D caricature avatars for KakaoTalk, Instagram, X, and Slack profiles from a single selfie.'}</li>
                   <li>{lang === 'ko' ? 'SNS 프로필 & 스토리: 인스타, X, 유튜브 프로필 및 감정 아바타로 활용' : 'SNS Profiles & Avatars: Use custom characters as profile icons.'}</li>
                   <li>{lang === 'ko' ? '메신저 톡방 감정 짤: 배경 투명화 후 앨범에 저장해 친구·가족 톡방에서 개성 넘치는 리액션 짤로 전송' : 'Messenger Reactions: Send custom transparent stickers in chats.'}</li>
                   <li>{lang === 'ko' ? '블로그 & 다꾸: 네이버 블로그 스티커, 굿노트·노션 다이어리 스탬프로 장식' : 'Blog & Planner Decor: Decorate blogs or digital planners.'}</li>
