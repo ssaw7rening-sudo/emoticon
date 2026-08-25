@@ -5,7 +5,7 @@ import { Shuffle, CheckCircle2, Bot, Sparkles, Zap, Trash2, RotateCcw } from "lu
 const THEMES_KO = {
   '일상/인사 ①': ['ㅋㅋㅋㅋ', '안녕!', '오늘도 화이팅', '좋아요', '고마워요', '사랑해요', '최고!', '오예', '미안해요', '수고했어요', '축하해요', '대박', '헐', '감동', '잘자요'],
   '일상/인사 ②': ['잘 부탁드려요', '무슨 일이야?', '밥 먹었어?', '보고 싶다', '좋은 아침!', '심심해', '어디야?', '놀자!', '힘내!', '응원할게', '최고야!', '완벽해!', '기대돼!', '오늘도 수고했어', '다음에 봐!'],
-  '직장인 ①': ['출근 중', '퇴근할게요!', '먼저 퇴근합니다', '확인했습니다', '네', '알겠습니다', '월요병', '월급날!', '커피 수혈 중', '회의 중', '야근 중', '오늘도 고생했어', '불금이다!', '퇴사하고 싶다', '넵!', '살려줘…'],
+  '직장인 ①': ['출근 중', '퇴근할게요!', '먼저 퇴근합니다', '확인했습니다', '알겠습니다', '월요병', '월급날!', '커피 수혈 중', '회의 중', '야근 중', '오늘도 고생했어', '불금이다!', '퇴사하고 싶다', '넵!', '살려줘…'],
   '직장인 ②': ['칼퇴 성공!', '확인 부탁드립니다', '잠시만요', '수고하셨습니다', '점심 뭐 먹지?', '일하기 싫다', '영혼 가출', '눈물 찔끔', '할 일이 태산', '답장이 늦었습니다', '수고하세요', '멘붕 상태', '주말만 기다려', '잠깐 쉬는 중', '연차 쓸게요'],
   '학생/학교 ①': ['등교 중', '시험 끝났다!', '망했다…', '끝나고 뭐해?', '과제 폭탄', '지각이다!', '밤샘 공부', '방학 언제 와?', '방학이다!', '자리 바꿔줘', '급식 뭐 나오지?', '교과서 빌려줘', '졸려…', 'A+ 가자!', '졸업 축하해!'],
   '학생/학교 ②': ['학식 먹으러 가자', '수업 중', '필기 좀 보여줘', '쉬는 시간!', '동아리 가는 중', '중간고사 기간', '재수강 각', '독서실 자리 잡음', '학교 가기 싫어', '집에 가고 싶다', '수학여행 기대돼', '체육대회 1등!', '야자 쨀까?', '공부 1도 안 함', '합격 기원!'],
@@ -101,6 +101,18 @@ const THEMES_KO = {
   '집사/고양이 전용 ②': ['하찮은 집사 녀석', '사냥 놀이 시작', '사고 치고 당당', '캣닢 파티', '새벽 우다다 타임', '젤리 발바닥 도장', '문 열어라 집사야', '눈키스 깜빡깜빡', '간식 내놓아라', '레이저 잡기 실패', '털 뿜뿜 힐링', '높은 곳이 좋아', '삐진 고양이', '집사 사랑해 (츤데레)', '골골송 굿밤'],
   '댕댕이/강아지 전용 ①': ['산책! 산책! 산책!', '꼬리 헬리콥터', '주인님 오셨다!(격환)', '간식 주면 뽀뽀', '공 던져줘!', '개껌 뜯는 중', '손! 코! 엎드려!', '귀 펄럭이며 질주', '배 뒤집고 애교', '목욕 싫어 으르렁', '침대 점령 완료', '코 킁킁 탐색', '말티즈 참지 않음', '포근한 낮잠', '주인님 사랑해요'],
   '댕댕이/강아지 전용 ②': ['발바닥 꼬순내', '터그놀이 한판', '간식 가방 지킴이', '물놀이 첨벙첨벙', '사고 치고 눈치 봄', '산책 더 할래!', '댕댕이 뒹굴뒹굴', '빗질 얌전히 받음', '친구 멍멍이 만남', '주인바라기 멍멍', '하울링 아우~', '포근한 개 침대', '하이파이브!', '간식 냄새 포착', '댕댕이 굿나잇'],
+  '웨딩/청첩장 ①': ['저희 결혼합니다!', '청첩장 드려요', '꼭 와주세요!', '신랑 입장!', '신부 입장!', '평생 행복할게요', '축하해 주셔서 감사합니다', '웨딩사진 나왔어요', '드레스 골라줘', '다이어트 성공!', '신혼여행 떠나요', '예쁘게 잘 살게요', '프로포즈 받았어요 ♥', '식장에서 만나요', '사랑의 서약'],
+  '웨딩/청첩장 ②': ['품절남/품절녀 완료', '축의금 챙겨갈게!', '결혼 축하해 ♥', '세상 제일 예쁜 신부', '멋진 신랑 든든해', '행복한 결혼식', '부케 받았어요!', '꽃길만 걷자', '인생 제2막 시작', '눈물 찔끔 감동', '하객 여러분 감사해요', '웨딩 반지 반짝', '신혼집 집들이 와', '찰떡궁합 부부', '영원히 사랑해'],
+  '할로윈/코스튬 ①': ['트릭 오어 트릿!', '사탕 안 주면 장난칠 거야', '할로윈 파티 시작!', '오늘 분장 어때?', '호박등 켰어요', '오싹오싹 무서워', '유령 출몰 주의', '마녀의 물약 냠냠', '사탕 바구니 가득', '박쥐 날아간다', '코스튬 1등!', '달콤한 사탕 줄게', '해피 할로윈!', '으스스한 밤', '파티 즐기자!'],
+  '할로윈/코스튬 ②': ['사탕 털러 간다!', '으악 깜짝이야!', '유령 댄스 파티', '호박 파이 굽는 중', '마녀 모자 장착', '분장 퀄리티 대박', '사탕 교환하자', '할로윈 나이트', '오싹한 분위기 최고', '드라큘라 변신', '빗자루 타고 날아가', '사탕 주세요 냠', '몬스터 친구들 모여', '해피 할로윈 데이', '내년에 또 만나!'],
+  '수능/합격기원 ①': ['수능 대박 기원!', '정답만 콕 찍어라', '붙는다 무조건!', '수험생 화이팅', '찹쌀떡처럼 착 붙어라', '노력은 배신하지 않아', '실력 발휘 제대로!', '재수 없다 합격이다', '마킹 실수 금지', '끝까지 집중!', '수능 끝나고 놀자', '원하는 대학 합격!', '너의 꿈을 응원해', '수고했어 정말로', '합격증 들고 와!'],
+  '수능/합격기원 ②': ['수능 만점 가자!', '수험표 챙겼지?', '찰떡같이 합격', '수능 한파 이겨내자', '긴장 풀고 평소대로', '정답이 쏙쏙 보인다', '빛나는 너의 미래', '수능 끝나면 자유다', '간절히 기도할게', '자랑스러운 수험생', '수능 대박 축하', '합격길만 걷자', '모든 노력이 결실을', '오늘의 주인공은 너야', '자신을 믿어봐!'],
+  '크리스마스/연말 ①': ['메리 크리스마스!', '산타 할아버지 선물 주세요', '루돌프 출동!', '화이트 크리스마스', '트리 꾸미는 중', '올 한 해도 수고했어', '연말 파티 가자', '소원이 이루어지길', '따뜻한 연말 보내세요', '케이크 촛불 후~', '종소리 울려라', '선물 교환 타임', '해피 뉴 이어!', '사랑 가득한 성탄절', '굿바이 올해!'],
+  '크리스마스/연말 ②': ['해피 홀리데이!', '산타 모자 썼어요', '눈사람 만들자', '징글벨 징글벨', '캐롤 들으며 힐링', '따뜻한 뱅쇼 한잔', '올해 마무리 잘하자', '크리스마스 이브 설렘', '선물 언박싱 감동', '반짝이는 전구 트리', '연말 결산 파티', '소중한 사람과 함께', '루돌프 코가 반짝', '내년에도 행복하자', '성탄 축하드려요'],
+  '봄벚꽃/피크닉 ①': ['벚꽃 보러 가자!', '봄바람 솔솔~', '피크닉 도시락 쌌어', '인생샷 건졌다', '꽃길만 걷자', '돗자리 펴자', '따스한 봄 햇살', '설레는 봄날', '벚꽃 잎 흩날림', '샌드위치 냠냠', '봄나들이 출발!', '힐링 그 자체', '꽃향기 가득', '봄 타는 중', '오늘 날씨 예술!'],
+  '봄벚꽃/피크닉 ②': ['벚꽃 엔딩 낭만', '꽃구경 자리 잡았어', '봄 소풍 가자', '딸기 디저트 냠냠', '봄맞이 대청소', '화사한 원피스 입고', '따스한 봄비', '개나리 활짝', '피크닉 감성 충전', '봄날의 드라이브', '꽃놀이 인증샷', '마음이 몽글몽글', '봄이 그렇게 좋냐', '봄바람 휘날리며', '행복한 봄날 보내세요'],
+  '명절·설날·추석 ①': ['새해 복 많이 받으세요!', '풍성한 한가위 보내세요', '보름달 보고 소원 빌기', '송편 냠냠', '떡국 먹고 한 살 추가', '세뱃돈 주세요!', '고향 가는 길', '맛있는 명절 음식', '부모님 효도할게요', '안전 운전하세요', '가족과 함께 행복하게', '용돈 보내드렸어요', '명절 스트레스 날려!', '오랜만에 반가워요', '건강하고 행복하세요'],
+  '명절·설날·추석 ②': ['즐거운 명절 보내세요', '한복 곱게 차려입고', '윷놀이 한판 하자!', '보름달처럼 밝은 한 해', '온 가족 모여 하하호호', '맛있는 전 부치는 중', '귀경길 정체 ㅠㅠ', '부모님 건강하세요', '명절 선물 도착', '복이 넝쿨째 굴러온다', '따뜻한 고향의 정', '차례 정성껏 지내기', '풍요로운 명절', '올 한 해도 건강하게', '행복 가득한 연휴!'],
 };
 
 const THEMES_EN = {
@@ -202,6 +214,18 @@ const THEMES_EN = {
   'Cat & Butler ②': ['Worthless human peasant', 'Hunting toy game start', 'Made mess and proud of it', 'Catnip wild party time', '3 AM zoomies frenzy', 'Jelly paw print stamped', 'Open the door hooman', 'Slow blinking eye kiss', 'Surrender tasty snacks', 'Failed catching laser dot', 'Fur flying healing time', 'High vantage point is best', 'Pouting grumpy kitty', 'I love hooman (tsundere)', 'Purring sweet dreams'],
   'Dog & Owner ①': ['Walk! Walk! Walkies!', 'Helicopter wagging tail', 'Master is home! Welcome!', 'Kiss me get a treat', 'Throw the tennis ball!', 'Chewing on doggie bone', 'Paw! Nose! Lie down!', 'Ears flapping at full sprint', 'Belly up cuteness overload', 'Grr I hate taking a bath', 'Bed fully occupied', 'Sniff sniff detective nose', 'Maltese never backs down', 'Cozy fluffy afternoon nap', 'I love you master so much'],
   'Dog & Owner ②': ['Savory paw scent cozy', 'Tug of war battle game', 'Snack bag royal guardian', 'Splish splash water fun', 'Guilty face after trouble', 'Wanna walk more please!', 'Doggie rolling on floor', 'Brushing fur peacefully', 'Met doggie best friend', 'Master stalker loyal pup', 'Awoo howling at the moon', 'Cozy doggie bed dream', 'High five with furry paw!', 'Snack scent detected beep', 'Good doggie goodnight'],
+  'Wedding/Invitation ①': ['We Are Getting Married!', 'Here is our invitation', 'Please come celebrate!', 'Groom entering', 'Bride entering', 'Happily ever after', 'Thank you for celebrating', 'Wedding photos are out', 'Help pick my dress', 'Wedding diet success!', 'Off to honeymoon', 'Living happily', 'I said YES! ♥', 'See you at the altar', 'Vows of eternal love'],
+  'Wedding/Invitation ②': ['Officially married!', 'Got your gift ready', 'Congratulations! ♥', 'Most gorgeous bride', 'Handsome groom', 'Joyful wedding day', 'Caught the bouquet!', 'Walk on flower path', 'New chapter begins', 'Tears of joy', 'Thanks to all guests', 'Sparkling wedding ring', 'Housewarming soon', 'Match made in heaven', 'Love you forever'],
+  'Halloween/Costume ①': ['Trick or Treat!', 'Give me candy or else', 'Halloween party on!', 'How is my costume?', 'Jack-o-lantern lit', 'Spooky scary vibes', 'Ghost alert!', 'Drinking witch potion', 'Basket full of candy', 'Bats flying', 'Best costume award!', 'Sweet candies for you', 'Happy Halloween!', 'Chilly spooky night', 'Let the party begin!'],
+  'Halloween/Costume ②': ['Candy hunting time!', 'Boo! Gotcha!', 'Ghost dance party', 'Baking pumpkin pie', 'Witch hat equipped', 'High quality costume', 'Let us trade candies', 'Halloween night', 'Spooktacular vibe', 'Dracula transformation', 'Flying on broom', 'Candy please nom', 'Monsters assemble', 'Happy Halloween day', 'See you next year!'],
+  'Exam/Victory ①': ['Ace your exam!', 'Pick only the right answers', 'You got this 100%!', 'Cheering for all students', 'Stick like sweet rice cake', 'Hard work never betrays', 'Show your true power!', 'Passed with top scores', 'Double-check your marks', 'Full focus till the end', 'Party after exams', 'Accepted to dream college!', 'Rooting for your dreams', 'So proud of you', 'Bring home the diploma!'],
+  'Exam/Victory ②': ['Aiming for 100%!', 'Got your exam ticket?', 'Passed with flying colors', 'Beat the exam chill', 'Relax and do your best', 'Answers are crystal clear', 'Bright future ahead', 'Freedom after exams', 'Praying for you', 'Proud test taker', 'Congrats on exam win', 'Only success ahead', 'Hard work pays off', 'You are today star', 'Believe in yourself!'],
+  'Christmas/Year-End ①': ['Merry Christmas!', 'Dear Santa, gifts please', 'Rudolph on the way!', 'White Christmas', 'Decorating the tree', 'Great job this year', 'Year-end party time', 'May wishes come true', 'Warm holiday season', 'Candle on the cake', 'Jingle bells ringing', 'Gift exchange time', 'Happy New Year!', 'Christmas full of love', 'Goodbye this year!'],
+  'Christmas/Year-End ②': ['Happy Holidays!', 'Wearing Santa hat', 'Let us build a snowman', 'Jingle bell rock', 'Healing with carols', 'Warm mulled wine', 'Finishing the year well', 'Christmas Eve hype', 'Unboxing presents', 'Sparkling tree lights', 'Year-end wrap party', 'With precious people', 'Rudolph glowing nose', 'Joyful next year', 'Merry Christmas wishes'],
+  'Spring Blossom/Picnic ①': ['Let us see cherry blossoms!', 'Gentle spring breeze', 'Packed a picnic box', 'Best photo of my life', 'Walk on flower paths', 'Unfolding the mat', 'Warm spring sunshine', 'Heartfluttering spring', 'Cherry petals falling', 'Yummy sandwiches', 'Off on spring outing!', 'Pure healing vibe', 'Fragrant blossom scent', 'Spring fever feeling', 'Picture-perfect weather!'],
+  'Spring Blossom/Picnic ②': ['Cherry blossom romance', 'Got a picnic spot', 'Spring excursion time', 'Strawberry dessert nom', 'Spring cleaning done', 'Wearing floral dress', 'Gentle spring rain', 'Forsythia in full bloom', 'Picnic vibe recharge', 'Springtime drive', 'Blossom photo proof', 'Warm fuzzy feeling', 'Spring is in the air', 'Spring breeze blowing', 'Have a happy spring!'],
+  'Holidays/Family ①': ['Happy New Year / Chuseok!', 'Abundant harvest blessing', 'Wishing upon full moon', 'Yummy holiday treats', 'Rice cake soup time', 'New year lucky money!', 'Heading home road', 'Delicious feast dishes', 'Filial love for parents', 'Drive safely on road', 'Joy with beloved family', 'Sent some pocket money', 'No more holiday stress!', 'So glad to see you', 'Stay healthy and joyful!'],
+  'Holidays/Family ②': ['Have a wonderful holiday', 'Wearing traditional attire', 'Let us play board games', 'Bright year like full moon', 'Whole family laughing', 'Frying savory pancakes', 'Highway traffic jam', 'Stay healthy parents', 'Holiday gift package', 'Endless good fortune', 'Warm hometown warmth', 'Memorial rite with love', 'Bountiful festive mood', 'Healthy whole year', 'Happy holiday break!'],
 };
 
 const THEMES_JA = {
@@ -303,6 +327,18 @@ const THEMES_JA = {
   '猫＆飼い主 ②': ['ちっぽけな下僕め', '狩りごっこ開始！', 'いたずらしてドヤ顔', 'キャットニップ祭り', '深夜の大暴れタイム', '肉球スタンプぽん', 'ドア開けてよ下僕', 'ゆっくりまばたきキス', 'おやつを差し出せ', 'レーザー捕獲失敗', '抜け毛もふもふ癒し', '高い場所が最高', 'すねた猫ちゃん', '下僕大好き（ツンデレ）', 'ゴロゴロおやすみ'],
   '犬＆飼い主 ①': ['散歩！散歩！お散歩！', 'しっぽヘリコプター', 'ご主人様おかえり！', 'おやつくれたらチュー', 'ボール投げて！', 'ガムをカミカミ', 'お手！おかわり！伏せ！', '耳をなびかせてダッシュ', 'お腹見せて甘えん坊', 'お風呂嫌いウーッ', 'ベッド完全占領', 'クンクン匂い嗅ぎ', 'マルチーズは負けない', 'ぽかぽかお昼寝', 'ご主人様大好き！'],
   '犬＆飼い主 ②': ['肉球の香ばしい匂い', 'ロープ引っ張り合いっこ', 'おやつバッグ警備員', '水遊びパチャパチャ', 'いたずらして様子見', 'もっと散歩したい！', 'ワンちゃんゴロゴロ', 'ブラッシングおとなしく', 'ワンちゃん友達できた', '飼い主一筋ワンちゃん', '遠吠えワオーン', 'ふかふか犬用ベッド', 'ハイタッチ！', 'おやつの匂いを察知', 'ワンちゃんおやすみ'],
+  '結婚・ウェディング ①': ['結婚します！', '招待状をお送りします', 'ぜひ来てください！', '新郎入場！', '新婦入場！', 'ずっと幸せに', 'お祝いありがとう', '前撮り写真できました', 'ドレス選んで', 'ダイエット成功！', 'ハネムーン出発', '仲良く暮らします', 'プロポーズ成功 ♥', '式場で会いましょう', '愛の誓い'],
+  '結婚・ウェディング ②': ['既婚者になりました！', 'お祝い包んできたよ', '結婚おめでとう ♥', '世界一の花嫁', '頼もしい新郎', '幸せな結婚式', 'ブーケトスキャッチ！', '花道を歩もう', '人生第2章開幕', '感動の涙ポロリ', 'ご参列感謝します', '指輪キラリ', '新居に遊びに来てね', 'お似合いの2人', '永遠に愛してる'],
+  'ハロウィン・仮装 ①': ['トリック・オア・トリート！', 'お菓子くれないと悪戯しちゃうぞ', 'ハロウィン開宴！', '今日の仮装どう？', 'ジャックオーランタン点灯', 'ゾクゾク怖い〜', 'お化け出没注意', '魔女の特製ポーション', 'キャンディいっぱい', 'コウモリ飛んでる', '仮装大賞決定！', 'お菓子どうぞ', 'ハッピーハロウィン！', '不気味な夜', 'パーティー楽しもう！'],
+  'ハロウィン・仮装 ②': ['お菓子集め出発！', 'うわっビックリ！', 'オバケダンスパーティー', 'パンプキンパイ焼き上がり', '魔女帽子装着', 'ハイクオリティ仮装', 'お菓子交換しよう', 'ハロウィンナイト', 'ホラー感最高', 'ドラキュラ変身', 'ほうきで飛行', 'お菓子ちょうだいモグ', 'モンスター大集合', 'ハッピーハロウィンデイ', 'また来年ね！'],
+  '合格祈願・受験 ①': ['絶対合格！', '正解を狙い撃ち', '絶対受かる！', '受験生ファイト', '志望校にピタッと合格', '努力は裏切らない', '実力を発揮して！', 'サクラサク合格通知', 'マークミス注意', '最後まで集中！', '終わったら遊ぼう', '第一志望合格！', '夢を応援してるよ', '本当にお疲れ様', '合格通知ゲット！'],
+  '合格祈願・受験 ②': ['満点目指してゴー！', '受験票持った？', 'モチモチ大願成就', '寒さに負けるな', 'リラックスしていつも通り', '正解が見える見える', '輝く未来へ', '終われば自由だ！', '心から祈ってるよ', '誇らしい受験生', '大勝利おめでとう', '合格ロードを進もう', '努力の花が咲く', '今日の主役は君だ', '自分を信じて！'],
+  'クリスマス・年末 ①': ['メリークリスマス！', 'サンタさんプレゼントちょうだい', 'トナカイ出動！', 'ホワイトクリスマス', 'ツリー飾り付け中', '今年もお疲れ様', '忘年会・年末パーティー', '願いが叶いますように', '暖かい年末を', 'ケーキのロウソクふ〜', 'ジングルベル鳴る', 'プレゼント交換タイム', 'ハッピーニューイヤー！', '愛あふれる聖夜', 'さようなら今年！'],
+  'クリスマス・年末 ②': ['ハッピーホリデー！', 'サンタ帽かぶったよ', '雪だるま作ろう', 'ジングルベルロック', 'キャロルで癒やし', '温かいホットワイン', '良い年末を過ごそう', 'クリスマスイブのワクワク', 'プレゼント開封の感動', 'キラめくツリー電飾', '年忘れパーティー', '大切な人と一緒に', 'ピカピカ赤鼻トナカイ', '来年もよろしくね', '聖夜のお祝い申し上げます'],
+  'お花見・ピクニック ①': ['お花見行こう！', '春風そよそよ', 'お弁当作ってきたよ', '映え写真撮れた！', '花道を歩こう', 'レジャーシート敷こう', '暖かい春の陽射し', '心躍る春', '桜舞い散る', 'サンドイッチ美味しい', '春のお出かけ出発！', '最高の癒やし', 'お花のいい香り', '春を感じる', '今日の天気最高！'],
+  'お花見・ピクニック ②': ['桜吹雪のロマン', 'お花見スポット確保', '春の遠足行こう', 'いちごスイーツモグモグ', '春の大掃除完了', '春ワンピ着て', '暖かい春の恵みの雨', 'レンギョウ満開', 'ピクニック気分満喫', '春ドライブ', 'お花見記念写真', '心がポカポカ', '春爛漫の季節', '春風に乗って', '素敵な春をお過ごしください'],
+  '祝日・お正月・お盆 ①': ['あけましておめでとう！', 'お盆休み楽しんでね', '満月に願いを込めて', '美味しいごちそう', 'お雑煮食べて1歳プラス', 'お年玉ちょうだい！', '帰省ラッシュ中', '美味しい郷土料理', '親孝行します', '安全運転でね', '家族みんなで幸せに', 'お小遣い送ったよ', 'リフレッシュ完了！', '久しぶり嬉しい', '健康で幸せにね'],
+  '祝日・お正月・お盆 ②': ['良い連休を！', '晴れ着を着て', 'かるた・福笑いしよう', '満月のように明るい年', '家族みんなで大笑い', '美味しいおせち料理', 'Uターンラッシュ中', 'ご両親お元気で', 'お歳暮・お中元届いたよ', '福が舞い込む', '温かい故郷のぬくもり', 'ご先祖様に感謝', '実り豊かな祝日', '今年も元気いっぱいに', '幸せいっぱいの休暇を！'],
 };
 
 const THEMES_ZH = {
@@ -404,6 +440,18 @@ const THEMES_ZH = {
   '猫咪＆铲屎官 ②': ['卑微的小小下人', '捕猎游戏开黑', '闯祸后一脸理直气壮', '猫薄荷狂欢派对', '凌晨三点跑酷狂飙', '盖上肉垫爪印章', '铲屎的快开门', '缓慢眨眼爱的亲吻', '零食快快交出来', '抓红外光点失败', '漫天猫毛也是爱', '喜欢呆在高处', '气鼓鼓的小猫咪', '最喜欢铲屎官啦（傲娇）', '呼噜噜晚安好梦'],
   '狗狗＆主人 ①': ['散步！散步！出去玩！', '螺旋桨摇尾巴', '主人回来啦！（狂喜）', '给零食就给亲亲', '快扔网球嘛！', '啃大骨头真香', '握手！碰鼻！趴下！', '耳朵飞扬狂奔中', '翻肚皮疯狂撒娇', '讨厌洗澡嗷呜', '大床完全占领', '鼻子嗅嗅到处闻', '马尔济斯绝不认输', '暖洋洋午后小憩', '最最爱主人了'],
   '狗狗＆主人 ②': ['肉垫香香的味道', '拔河拔河大战', '零食袋忠诚守护者', '戏水扑腾好开心', '闯祸后小心看眼色', '还想继续散步嘛！', '小狗在地上打滚', '乖乖梳毛好舒服', '偶遇狗狗好朋友', '眼睛里全都是主人', '嗷呜~狼嚎时间', '软绵绵专属狗窝', '击掌Give me five！', '捕捉到零食香味', '小狗晚安好梦'],
+  '婚礼与请帖 ①': ['我们要结婚啦！', '为您送上请帖', '一定要来哦！', '新郎入场！', '新娘入场！', '白头偕老幸福永远', '感谢各位的祝福', '婚纱照出炉啦', '帮我挑挑婚纱', '备婚瘦身成功！', '蜜月旅行出发', '会幸福生活的', '求婚成功啦 ♥', '现场见哦', '爱的誓言'],
+  '婚礼与请帖 ②': ['正式结为夫妻！', '备好份子钱啦', '新婚大喜 ♥', '全场最美新娘', '帅气新郎超可靠', '超幸福的婚礼', '抢到捧花啦！', '走在鲜花路上', '人生第二阶段开启', '感动得热泪盈眶', '感谢各位来宾', '钻戒闪闪发光', '来新房温居玩呀', '天生一对超登对', '永远深爱彼此'],
+  '万圣节奇幻 ①': ['不给糖就捣蛋！', '不给糖就要恶作剧啦', '万圣狂欢开启！', '今天这身装扮如何？', '南瓜灯点亮啦', '惊险刺激超带感', '幽灵出没请注意', '女巫魔法药水咕嘟嘟', '糖果篮装满啦', '小蝙蝠起飞', '最佳装扮大奖！', '给你甜甜的糖果', '万圣节快乐！', '神秘奇妙夜', '尽情享受派对！'],
+  '万圣节奇幻 ②': ['收割糖果出发！', '哇吓你一跳！', '幽灵热舞派对', '烘焙南瓜派中', '戴上女巫尖顶帽', '神级妆造超惊艳', '来交换糖果吧', '万圣奇妙夜', '恐怖氛围感拉满', '德古拉伯爵变身', '骑扫帚起飞', '请给我糖果吃', '怪物联盟大集结', '万圣节快乐呀', '明年万圣再见！'],
+  '逢考必过/冲刺 ①': ['高考/期末必胜！', '单选多选全选对', '必定上岸！', '考生们加油冲', '像定胜糕一样稳稳录取', '努力绝不辜负', '实力完全爆发！', '逢考必过大吉', '仔细涂卡别马虎', '全神贯注到最后', '考完好好放飞', '喜提心仪大学！', '为你的梦想加油', '真的辛苦了', '带上录取通知书！'],
+  '逢考必过/冲刺 ②': ['目标满分冲冲冲！', '准考证带齐了吗？', '稳稳高分录取', '战胜考场严寒', '放轻松正常发挥', '正确答案历历在目', '奔向璀璨未来', '考完就彻底自由啦', '虔诚为你祈福', '超棒的考生', '大捷凯旋归来', '一路踏上录取坦途', '辛勤汗水开花结果', '今天主角就是你', '相信你自己！'],
+  '圣诞与新年 ①': ['圣诞快乐！', '圣诞老人快送礼物来', '驯鹿出发啦！', '白色浪漫圣诞', '装扮圣诞树中', '这一年辛苦啦', '跨年狂欢聚会', '愿望全部实现', '祝您度过温暖年末', '蛋糕蜡烛呼~', '清脆铃儿响叮当', '礼物交换时刻', '新年快乐！', '充满爱的圣诞节', '告别今年！'],
+  '圣诞与新年 ②': ['节日快乐！', '戴好圣诞老人帽', '一起来堆雪人吧', '铃儿响叮当摇滚', '听圣诞颂歌治愈心灵', '来一杯热红酒', '圆满收尾这一年', '平安夜的怦然心动', '拆礼物超惊喜感动', '闪亮圣诞彩灯串', '年终复盘欢聚会', '与挚爱之人相伴', '红鼻子驯鹿闪亮登场', '明年也要幸福哦', '祝您圣夜吉祥'],
+  '春日赏樱/野餐 ①': ['一起去赏樱花吧！', '春风拂面好惬意', '带了野餐便当哦', '拍到人生照片啦', '走在鲜花盛开的路上', '铺好野餐垫', '温暖柔和春光', '令人心动的春日', '漫天樱花飘落', '大口吃三明治', '春游踏青出发！', '治愈满满', '满园花香扑鼻', '感受春日气息', '今天天气绝了！'],
+  '春日赏樱/野餐 ②': ['樱花雨的浪漫', '占到绝佳赏樱位', '春日春游走起', '草莓甜点大口吃', '春日大扫除搞定', '换上浪漫春日长裙', '润物细无声春雨', '连翘花迎春绽放', '野餐氛围感拉满', '春风得意自驾游', '赏花打卡认证照', '心里暖洋洋软绵绵', '春光无限好', '春风吹拂心荡漾', '祝您春日愉快！'],
+  '传统佳节/团圆 ①': ['祝您新年大吉！', '中秋团圆快乐', '对着圆月许个愿', '美味过节佳肴', '吃年糕长一岁啦', '恭喜发财红包拿来！', '回家团聚的路上', '超赞的节日大餐', '好好孝敬父母', '一路平安顺风', '全家幸福安康', '给长辈发红包啦', '假期彻底放松！', '好久不见倍感亲切', '健康长寿幸福！'],
+  '传统佳节/团圆 ②': ['祝您节日愉快', '换上典雅传统服饰', '阖家玩投壶猜谜', '如满月般明亮的一年', '全家人欢声笑语', '煎炸节日特色点心', '返程路上注意安全', '祝长辈福寿安康', '节日暖心礼盒送达', '福气滚滚进家门', '温馨浓郁故乡情', '虔诚感恩先辈福泽', '富足圆满的佳节', '这一年都要健健康康', '假期天天好心情！'],
 };
 
 const CHARACTER_TAGS_KO = {
