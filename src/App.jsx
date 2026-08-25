@@ -3735,6 +3735,49 @@ function App() {
     });
   };
 
+  // Real-time Dynamic Golden Combos Auto-Ranking & Seasonal Sorting Engine
+  const [comboStats, setComboStats] = useState(() => {
+    try {
+      const saved = localStorage.getItem('combo_usage_stats');
+      if (saved) return JSON.parse(saved);
+    } catch (e) {}
+    return {
+      'daycare-name-tag': 150,
+      'gym-fitness-dog': 120,
+      'office-worker-cat': 110,
+      'wedding-invitation': 105,
+      'christmas-party': 100,
+      'exam-csat-pass': 95,
+      'spring-cherry-blossom': 90,
+      'summer-vacation-sea': 85,
+      'holiday-chuseok-seollal': 80,
+      'halloween-costume': 75,
+      'cafe-barista-rabbit': 70,
+      'pro-gamer-panther': 65,
+    };
+  });
+
+  const recordComboUsage = (comboId, weight = 2) => {
+    if (!comboId) return;
+    setComboStats(prev => {
+      const next = { ...prev, [comboId]: (prev[comboId] || 0) + weight };
+      try {
+        localStorage.setItem('combo_usage_stats', JSON.stringify(next));
+      } catch (e) {}
+      return next;
+    });
+  };
+
+  // Compute live auto-ranked Golden Combos list (User usage + Real-world Current Month Seasonal Boost)
+  const currentMonth = new Date().getMonth() + 1; // 1 ~ 12
+  const sortedGoldenCombos = [...ALL_GOLDEN_COMBOS].sort((a, b) => {
+    const isSeasonA = (a.seasonMonths || []).includes(currentMonth) ? 100 : 0;
+    const isSeasonB = (b.seasonMonths || []).includes(currentMonth) ? 100 : 0;
+    const scoreA = (comboStats[a.id] || 0) + isSeasonA;
+    const scoreB = (comboStats[b.id] || 0) + isSeasonB;
+    return scoreB - scoreA;
+  });
+
   const sortedThemeKeys = [...themeKeys].sort((a, b) => {
     const scoreA = themeStats[a] || 0;
     const scoreB = themeStats[b] || 0;
@@ -3812,13 +3855,16 @@ function App() {
       activeGoldenComboId
     });
 
-    // 2. Select theme
-    const themeName = themeKeys[combo.themeIdx] || themeKeys[0];
-    if (currentThemes[themeName]) {
-      setEmoticons(currentThemes[themeName]);
-      setActiveTheme(themeName);
-      setSelectedTopTheme(themeName);
-      recordThemeUsage(themeName, 2);
+    // 2. Select theme (by exact name in current language or fallback)
+    const targetThemeName = currentThemes[combo.themeName] 
+      ? combo.themeName 
+      : (themeKeys.find(k => k.includes(combo.themeName.split('/')[0])) || themeKeys[0]);
+
+    if (currentThemes[targetThemeName]) {
+      setEmoticons(currentThemes[targetThemeName]);
+      setActiveTheme(targetThemeName);
+      setSelectedTopTheme(targetThemeName);
+      recordThemeUsage(targetThemeName, 2);
     }
 
     // 3. Set tags & photo mode
@@ -3829,6 +3875,7 @@ function App() {
       setPhotoReferenceMode(combo.photoMode);
     }
     setActiveGoldenComboId(combo.id);
+    recordComboUsage(combo.id, 3); // Real-time popularity boost
 
     const titleText = combo.title[lang] || combo.title.ko;
     showToast(
@@ -5847,7 +5894,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
 
           {/* Golden Combos Horizontal Scroll Carousel (Generous padding to prevent border/ring clipping) */}
           <div className="flex gap-3 overflow-x-auto py-2.5 px-1 -mx-1 no-scrollbar scroll-smooth overscroll-contain">
-            {GOLDEN_COMBOS.map((combo) => {
+            {sortedGoldenCombos.map((combo) => {
               const isSelected = activeGoldenComboId === combo.id;
               const titleText = combo.title[lang] || combo.title.ko;
               const descText = combo.desc[lang] || combo.desc.ko;
@@ -5886,7 +5933,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                   {/* Bottom Row: Theme Badge + Action Status */}
                   <div className="mt-auto flex items-center justify-between pt-1.5 border-t border-amber-200/70 text-[10.5px] font-bold text-amber-800 w-full">
                     <span className="bg-amber-100 text-amber-900 px-2 py-0.5 rounded-md font-extrabold truncate max-w-[130px] whitespace-nowrap">
-                      🏷️ {themeKeys[combo.themeIdx] || '추천 테마'}
+                      🏷️ {combo.themeName}
                     </span>
                     <span className={`font-black text-[11px] shrink-0 whitespace-nowrap ${isSelected ? 'text-amber-800' : 'text-[#C2410C]'}`}>
                       {isSelected ? '✓ 셋팅완료' : '원클릭 🚀'}
