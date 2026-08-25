@@ -3433,6 +3433,22 @@ const getPhraseActionEn = (phrase) => {
   return `expressive character pose representing ${p} with dynamic body gesture and supporting visual props`;
 };
 
+// Google Analytics 4 (GA4) / GTM Real-time Event Tracking Helper
+const trackEvent = (eventName, params = {}) => {
+  try {
+    if (typeof window !== 'undefined') {
+      if (window.gtag) {
+        window.gtag('event', eventName, params);
+      }
+      if (window.dataLayer) {
+        window.dataLayer.push({ event: eventName, ...params });
+      }
+    }
+  } catch (e) {
+    // silently ignore tracking errors
+  }
+};
+
 function App() {
   const [lang, setLang] = useState('ko');
   const [currentPath, setCurrentPath] = useState(() => {
@@ -5274,6 +5290,17 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
   const launchAiCompanion = (type, selectedPhraseOverride = null) => {
     const phraseOverride = selectedPhraseOverride ?? (generationMode === 'batch' ? getSelectedPhrase() : null);
     if (getPromptValidationError(phraseOverride)) return;
+
+    // GA4 Real-time Tracking
+    trackEvent('launch_ai_companion', {
+      ai_model: type,
+      theme_name: activeTheme,
+      art_style: getSelectedArtStyle('en') || 'default',
+      generation_mode: generationMode,
+      character_source: characterSource,
+      photo_mode: photoReferenceMode,
+      lang: lang
+    });
     
     const textToCopy = type === 'gpt'
       ? generateGptPrompt(phraseOverride)
@@ -5325,6 +5352,18 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
   const copyToClipboard = (type, selectedPhraseOverride = null, copyKey = type) => {
     const phraseOverride = selectedPhraseOverride ?? (generationMode === 'batch' ? getSelectedPhrase() : null);
     if (getPromptValidationError(phraseOverride)) return;
+
+    // GA4 Real-time Tracking
+    trackEvent('copy_prompt', {
+      ai_model: type,
+      theme_name: activeTheme,
+      art_style: getSelectedArtStyle('en') || 'default',
+      generation_mode: generationMode,
+      character_source: characterSource,
+      photo_mode: photoReferenceMode,
+      lang: lang
+    });
+
     const textToCopy = type === 'gpt'
       ? generateGptPrompt(phraseOverride)
       : type === 'gemini'
@@ -5811,9 +5850,14 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                 className="px-3 py-1.5 text-[14px] font-bold rounded-full border border-mint-border bg-surface-container-lowest text-on-surface cursor-pointer focus:outline-none focus:ring-2 focus:ring-mint"
               >
                 <option value="" disabled>{t.themeSelect}</option>
-                {themeKeys.map((theme, idx) => (
-                  <option key={theme} value={theme}>{`${idx + 1}. ${theme}`}</option>
-                ))}
+                {themeKeys.map((theme, idx) => {
+                  const isTopPopular = idx < 5;
+                  const isRecommended = idx >= 5 && idx < 12;
+                  const badge = isTopPopular ? '🔥 [인기] ' : isRecommended ? '👑 [추천] ' : '';
+                  return (
+                    <option key={theme} value={theme}>{`${idx + 1}. ${badge}${theme}`}</option>
+                  );
+                })}
               </select>
               
               <button 
