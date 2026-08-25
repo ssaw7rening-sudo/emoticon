@@ -3692,6 +3692,14 @@ function App() {
     setActiveTheme('custom');
   };
 
+  const selectPopularTheme = (themeName) => {
+    if (!themeName || !currentThemes[themeName]) return;
+    setEmoticons(currentThemes[themeName]);
+    setActiveTheme(themeName);
+    recordThemeUsage(themeName, 1);
+    trackEvent('select_theme_top5', { theme_name: themeName, lang });
+  };
+
   const handleThemeSelect = (e) => {
     const themeName = e.target.value;
     if (currentThemes[themeName]) {
@@ -5964,33 +5972,30 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
 
           {/* Real-time Popular TOP 5 Quick Select Chips */}
           <div className="bg-[#FFF8EE] p-2.5 sm:p-3 rounded-lg border border-[#FCD3A1] flex flex-col sm:flex-row sm:items-center gap-2 shadow-2xs">
-            <div className="flex items-center gap-1.5 shrink-0 text-[12.5px] sm:text-[13px] font-extrabold text-[#9A3412]">
+            <div className="flex items-center gap-1.5 shrink-0 text-[12.5px] sm:text-[13px] font-extrabold text-[#9A3412] select-none">
               <span className="text-[14px]">🔥</span>
               <span>{lang === 'ko' ? '실시간 인기 TOP 5' : lang === 'ja' ? 'リアルタイム人気TOP 5' : lang === 'zh' ? '实时热门 TOP 5' : 'Real-time TOP 5'}:</span>
             </div>
-            <div className="flex items-center gap-1.5 flex-wrap flex-1">
+            <div className="flex items-center gap-1.5 flex-wrap flex-1" role="group" aria-label="Popular Themes TOP 5">
               {sortedThemeKeys.slice(0, 5).map((theme, idx) => {
                 const isCurrent = activeTheme === theme;
                 const shortTitle = theme.split('(')[0].replace(/^[0-9]+\.\s*/, '').trim();
+                const rankLabel = lang === 'ko' ? `${idx + 1}위` : lang === 'ja' ? `${idx + 1}位` : lang === 'zh' ? `第${idx + 1}` : `#${idx + 1}`;
                 return (
                   <button
-                    key={theme}
+                    key={`${theme}-${idx}`}
                     type="button"
-                    onClick={() => {
-                      if (currentThemes[theme]) {
-                        setEmoticons(currentThemes[theme]);
-                        setActiveTheme(theme);
-                        recordThemeUsage(theme, 1);
-                        trackEvent('select_theme_top5', { theme_name: theme, rank: idx + 1, lang });
-                      }
-                    }}
-                    className={`interactive-control px-2.5 py-1 rounded-full text-[12px] font-bold transition-all flex items-center gap-1 cursor-pointer border ${
+                    aria-pressed={isCurrent}
+                    onClick={() => selectPopularTheme(theme)}
+                    className={`interactive-control touch-manipulation px-3 py-1.5 rounded-full text-[12px] sm:text-[12.5px] font-bold transition-all flex items-center gap-1.5 cursor-pointer border select-none active:scale-95 ${
                       isCurrent
-                        ? 'bg-[#C2410C] text-white border-[#9A3412] shadow-xs scale-105'
-                        : 'bg-white text-[#9A3412] border-[#FCD3A1] hover:bg-[#FFF1DE]'
+                        ? 'bg-[#C2410C] text-white border-[#9A3412] shadow-sm ring-2 ring-[#C2410C]/30 font-black'
+                        : 'bg-white text-[#9A3412] border-[#FCD3A1] hover:bg-[#FFF1DE] hover:border-[#E89E5F] shadow-2xs'
                     }`}
                   >
-                    <span className="text-[11px] opacity-80 font-black">{idx + 1}위</span>
+                    <span className={`text-[11px] font-black px-1.5 py-0.2 rounded-full ${isCurrent ? 'bg-white/20 text-white' : 'bg-[#FFF0DD] text-[#C2410C]'}`}>
+                      {rankLabel}
+                    </span>
                     <span>{shortTitle}</span>
                   </button>
                 );
