@@ -3449,6 +3449,185 @@ const trackEvent = (eventName, params = {}) => {
   }
 };
 
+// 🌟 Real-time Golden Combos Presets (Curated 1-Click Instant Setups)
+const GOLDEN_COMBOS = [
+  {
+    id: 'daycare-name-tag',
+    icon: '🍼',
+    themeIdx: 34, // 육아/베이비 ①
+    characterSource: 'photo',
+    photoMode: 'balanced',
+    title: {
+      ko: '어린이집 네임스티커',
+      ja: '保育園お名前シール',
+      zh: '幼儿园姓名贴',
+      en: 'Daycare Name Label'
+    },
+    desc: {
+      ko: '아이 사진 + 방수 이름표 & 키즈노트 알림장',
+      ja: 'お子様写真＋連絡帳・防水名前シール',
+      zh: '宝宝照片＋防水姓名贴与家园联系册',
+      en: 'Child photo + Waterproof name tag'
+    },
+    tags: {
+      ko: '아이 얼굴, 귀여운 2D 캐릭터, 이름표 라벨, 방수 스티커, 밝고 사랑스러운',
+      ja: 'お子様の顔, かわいい2Dキャラ, お名前シール, 防水ステッカー, 明るく愛らしい',
+      zh: '孩子照片, 可爱2D卡通角色, 姓名贴纸, 防水标签, 明亮活泼',
+      en: 'Child face, Cute 2D character, Name tag label, Waterproof sticker, Bright and lovely'
+    }
+  },
+  {
+    id: 'gym-fitness-dog',
+    icon: '🏋️',
+    themeIdx: 46, // 헬스/오운완 ①
+    characterSource: 'photo',
+    photoMode: 'likeness',
+    title: {
+      ko: '득근득근 헬스 댕댕이',
+      ja: '筋トレ柴犬ジム',
+      zh: '健身柴犬汪汪',
+      en: 'Gym Fitness Dog'
+    },
+    desc: {
+      ko: '3D 렌더링 + 시바견 + 헬스나시 & 덤벨',
+      ja: '3Dレンダリング＋柴犬＋ジムウェア',
+      zh: '3D质感＋柴犬＋健身背心与哑铃',
+      en: '3D Render + Shiba Inu + Workout Tank'
+    },
+    tags: {
+      ko: '3D 렌더링, 시바견 강아지, 헬스 나시티, 덤벨 아령, 근육질의 열정적인',
+      ja: '3Dレンダリング, 柴犬, ジム用タンクトップ, ダンベル, 情熱的な筋肉質',
+      zh: '3D渲染, 柴犬小狗, 健身背心, 哑铃, 充满活力的肌肉风',
+      en: '3D rendering, Shiba Inu dog, Workout tank top, Dumbbells, Passionate fitness vibe'
+    }
+  },
+  {
+    id: 'office-worker-cat',
+    icon: '💼',
+    themeIdx: 2, // 직장인 ①
+    characterSource: 'photo',
+    photoMode: 'balanced',
+    title: {
+      ko: '칼퇴 기원 직장인 고양이',
+      ja: '定時退勤ねこ社員',
+      zh: '准点下班打工猫',
+      en: 'Office Worker Cat'
+    },
+    desc: {
+      ko: '2D 플랫 + 치즈냥이 + 셔츠/넥타이 + 노트북',
+      ja: '2Dフラット＋茶トラ猫＋ワイシャツ・ネクタイ',
+      zh: '2D扁平＋橘猫＋衬衫领带＋笔记本',
+      en: '2D Flat + Tabby Cat + Shirt & Tie'
+    },
+    tags: {
+      ko: '2D 플랫 카툰, 치즈 고양이, 셔츠와 넥타이, 노트북, 피곤하지만 귀여운',
+      ja: '2Dフラットカートゥーン, 茶トラ猫, ワイシャツとネクタイ, ノートPC, 疲れているが可愛い',
+      zh: '2D扁平卡通, 橘猫, 衬衫与领带, 笔记本电脑, 疲惫但可爱',
+      en: '2D flat cartoon, Ginger tabby cat, Shirt and necktie, Laptop, Tired yet cute office worker'
+    }
+  },
+  {
+    id: 'cafe-barista-rabbit',
+    icon: '☕',
+    themeIdx: 54, // 약속/카페투어 ①
+    characterSource: 'photo',
+    photoMode: 'style',
+    title: {
+      ko: '감성 카페 바리스타 토끼',
+      ja: 'カフェうさぎ店員',
+      zh: '治愈系咖啡兔兔',
+      en: 'Cafe Barista Bunny'
+    },
+    desc: {
+      ko: '파스텔 수채화 + 흰 토끼 + 앞치마 + 커피잔',
+      ja: '水彩パステル＋白うさぎ＋エプロン＋珈琲',
+      zh: '水彩画风＋小白兔＋咖啡围裙＋热咖啡',
+      en: 'Pastel Watercolor + White Bunny + Apron'
+    },
+    tags: {
+      ko: '파스텔 수채화, 하얀 토끼, 갈색 바리스타 앞치마, 따뜻한 커피잔, 감성적인',
+      ja: 'パステル水彩, 白うさぎ, ブラウンエプロン, 温かいコーヒーカップ, 心温まる感性',
+      zh: '柔和水彩, 小白兔, 咖啡师棕色围裙, 冒热气的咖啡杯, 治愈温馨',
+      en: 'Pastel watercolor, White bunny rabbit, Brown barista apron, Hot coffee mug, Cozy emotional vibe'
+    }
+  },
+  {
+    id: 'sweet-couple-wedding',
+    icon: '💖',
+    themeIdx: 16, // 커플/연애 ①
+    characterSource: 'photo',
+    photoMode: 'balanced',
+    title: {
+      ko: '꽁냥꽁냥 신혼 커플룩',
+      ja: 'ラブラブお揃いカップル',
+      zh: '甜蜜情侣装连击',
+      en: 'Sweet Couple Match'
+    },
+    desc: {
+      ko: '커플 사진 + 시밀러룩 + 하트 뿅뿅',
+      ja: 'カップル写真＋シミラールック＋ハート',
+      zh: '情侣合照＋同色系情侣装＋心动连连',
+      en: 'Couple Photo + Matching Outfit + Hearts'
+    },
+    tags: {
+      ko: '커플 사진, 베이지 시밀러룩, 분홍빛 볼터치, 핑크 하트 이펙트, 달달하고 다정한',
+      ja: 'カップル写真, ベージュシミラールック, ピンクのチーク, ハートエフェクト, 甘く優しい雰囲気',
+      zh: '情侣照片, 米色同款情侣装, 粉嫩腮红, 飘动爱心特效, 甜美温馨',
+      en: 'Couple photo, Beige matching outfit, Pink blush cheeks, Floating hearts effect, Sweet romantic mood'
+    }
+  },
+  {
+    id: 'pro-gamer-panther',
+    icon: '🎮',
+    themeIdx: 8, // 게임/게이머 ①
+    characterSource: 'photo',
+    photoMode: 'likeness',
+    title: {
+      ko: '불꽃 카리스마 프로게이머',
+      ja: 'ネオンプロゲーマー',
+      zh: '电竞高能头号玩家',
+      en: 'Pro Gamer Ace'
+    },
+    desc: {
+      ko: '네온 사이버펑크 + 흑표범 + RGB 헤드셋',
+      ja: 'ネオンサイバー＋黒ヒョウ＋ヘッドセット',
+      zh: '赛博朋克＋黑豹＋RGB发光电竞耳机',
+      en: 'Cyberpunk Neon + Panther + Gaming Headset'
+    },
+    tags: {
+      ko: '네온 사이버펑크, 날렵한 흑표범, RGB 게이밍 헤드셋, 후드 집업, 승부욕 넘치는',
+      ja: 'ネオンサイバーパンク, 黒ヒョウ, ゲーミングヘッドセット, パーカー, 勝負師の眼差し',
+      zh: '霓虹赛博朋克, 帅气黑豹, 发光电竞耳机, 连帽卫衣, 胜负欲爆棚',
+      en: 'Neon cyberpunk, Sleek black panther, RGB gaming headset, Hoodie jacket, Competitive energetic look'
+    }
+  },
+  {
+    id: 'study-exam-bear',
+    icon: '🎓',
+    themeIdx: 50, // 스터디/취준 ①
+    characterSource: 'photo',
+    photoMode: 'balanced',
+    title: {
+      ko: '합격 기원 열공 곰돌이',
+      ja: '合格祈願ガリ勉くま',
+      zh: '逢考必过学霸小熊',
+      en: 'Study Master Bear'
+    },
+    desc: {
+      ko: '볼드 라인아트 + 안경 곰 + 두꺼운 전공책',
+      ja: 'ボールドライン＋丸メガネくま＋専門書',
+      zh: '粗线条手绘＋圆框眼镜熊＋厚重教材',
+      en: 'Bold Line Art + Glasses Bear + Textbooks'
+    },
+    tags: {
+      ko: '깔끔한 볼드 라인아트, 동글 안경 쓴 갈색 곰, 회색 후드티, 두꺼운 전공 서적, 열공 모드',
+      ja: 'すっきりボールドライン, 丸メガネの茶ぐま, グレーパーカー, 分厚い専門書, 猛勉強中',
+      zh: '清晰粗轮廓线条, 戴圆框眼镜的棕熊, 灰色连帽衫, 厚重专业教材, 沉浸学习模式',
+      en: 'Clean bold line art, Round glasses brown bear, Grey hoodie, Thick textbook, Deep study focus'
+    }
+  }
+];
+
 function App() {
   const [lang, setLang] = useState('ko');
   const [currentPath, setCurrentPath] = useState(() => {
