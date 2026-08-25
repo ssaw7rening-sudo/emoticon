@@ -5930,39 +5930,43 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                 )}
               </div>
 
-              {/* Scrollable Tag Chips Container (Spacious 330px Height on Mobile) */}
-              <div className="p-3.5 flex flex-wrap gap-2 bg-surface-container-lowest max-h-[330px] sm:max-h-[360px] overflow-y-auto overscroll-contain">
-                {currentTags[activeTagCategory]?.map(tag => {
-                  const selected = isTagSelected(tag);
-                  return (
-                    <button
-                      key={tag}
-                      type="button"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        appendTag(tag);
-                      }}
-                      aria-pressed={selected}
-                      className={`interactive-control min-h-[38px] px-3.5 py-1.5 rounded-full text-[13px] font-bold transition-all flex items-center gap-1.5 cursor-pointer select-none ${
-                        selected
-                          ? 'bg-mint-strong text-white border-2 border-[#1E453B] shadow-md scale-105 ring-2 ring-mint-strong/40 font-black'
-                          : 'bg-white text-on-surface hover:bg-mint-soft hover:text-mint-strong border border-outline-variant hover:border-mint-border shadow-xs'
-                      }`}
-                    >
-                      {selected ? (
-                        <>
-                          <span className="bg-white text-mint-strong text-[10px] px-1.5 py-0.5 rounded-full font-extrabold shrink-0 shadow-xs">✓ ON</span>
-                          <span className="font-extrabold">{tag}</span>
-                        </>
-                      ) : (
-                        <>
-                          <span className="text-on-surface-variant text-[11px] font-bold shrink-0">+</span>
-                          <span>{tag}</span>
-                        </>
-                      )}
-                    </button>
-                  );
-                })}
+              {/* Scrollable Tag Chips Container (Smooth Inertial Scroll + Slim Scrollbar + Bottom Fade Indicator) */}
+              <div className="relative">
+                <div className="p-3.5 pb-6 flex flex-wrap gap-2 bg-surface-container-lowest max-h-[330px] sm:max-h-[360px] overflow-y-auto overscroll-contain scroll-smooth [scrollbar-width:thin] [scrollbar-color:#A6E3D0_transparent] [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-[#A6E3D0] [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-mint-strong">
+                  {currentTags[activeTagCategory]?.map(tag => {
+                    const selected = isTagSelected(tag);
+                    return (
+                      <button
+                        key={tag}
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          appendTag(tag);
+                        }}
+                        aria-pressed={selected}
+                        className={`interactive-control touch-manipulation min-h-[38px] px-3.5 py-1.5 rounded-full text-[13px] font-bold transition-all flex items-center gap-1.5 cursor-pointer select-none active:scale-95 ${
+                          selected
+                            ? 'bg-mint-strong text-white border-2 border-[#1E453B] shadow-md scale-105 ring-2 ring-mint-strong/40 font-black'
+                            : 'bg-white text-on-surface hover:bg-mint-soft hover:text-mint-strong border border-outline-variant hover:border-mint-border shadow-xs'
+                        }`}
+                      >
+                        {selected ? (
+                          <>
+                            <span className="bg-white text-mint-strong text-[10px] px-1.5 py-0.5 rounded-full font-extrabold shrink-0 shadow-xs">✓ ON</span>
+                            <span className="font-extrabold">{tag}</span>
+                          </>
+                        ) : (
+                          <>
+                            <span className="text-on-surface-variant text-[11px] font-bold shrink-0">+</span>
+                            <span>{tag}</span>
+                          </>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+                {/* Bottom Fade Gradient Indicator */}
+                <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-6 bg-gradient-to-t from-white/90 via-white/50 to-transparent rounded-b-md" />
               </div>
             </div>
           </div>
