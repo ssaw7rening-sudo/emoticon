@@ -5986,8 +5986,10 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
               {sortedThemeKeys.slice(0, 5).map((theme, idx) => {
                 const isCurrent = activeTheme === theme;
                 const shortTitle = theme.split('(')[0].replace(/^[0-9]+\.\s*/, '').trim();
-                const rankLabel = lang === 'ko' ? `${idx + 1}위` : lang === 'ja' ? `${idx + 1}位` : lang === 'zh' ? `第${idx + 1}` : `#${idx + 1}`;
-                const isFifth = idx === 4;
+                const isFirst = idx === 0;
+                const rankLabel = isFirst
+                  ? (lang === 'ko' ? '👑 1위 (TOP 1)' : lang === 'ja' ? '👑 1位 (TOP 1)' : lang === 'zh' ? '👑 榜首第1' : '👑 #1 (TOP 1)')
+                  : (lang === 'ko' ? `${idx + 1}위` : lang === 'ja' ? `${idx + 1}位` : lang === 'zh' ? `第${idx + 1}` : `#${idx + 1}`);
 
                 return (
                   <button
@@ -5996,14 +5998,24 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                     aria-pressed={isCurrent}
                     onClick={() => selectPopularTheme(theme)}
                     className={`interactive-control touch-manipulation w-full h-[40px] px-2.5 rounded-lg text-[12px] sm:text-[12.5px] font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer border select-none active:scale-95 ${
-                      isFifth ? 'col-span-2 sm:col-span-1' : ''
+                      isFirst 
+                        ? 'col-span-2 sm:col-span-1 bg-gradient-to-r from-amber-50 to-orange-50/70 border-amber-300 font-extrabold shadow-xs' 
+                        : ''
                     } ${
                       isCurrent
-                        ? 'bg-[#C2410C] text-white border-[#9A3412] shadow-sm ring-2 ring-[#C2410C]/30 font-black'
+                        ? '!bg-[#C2410C] !text-white !border-[#9A3412] shadow-sm ring-2 ring-[#C2410C]/30 font-black'
+                        : isFirst
+                        ? 'text-[#9A3412] hover:bg-amber-100/60'
                         : 'bg-white text-[#9A3412] border-[#FCD3A1] hover:bg-[#FFF1DE] hover:border-[#E89E5F] shadow-2xs'
                     }`}
                   >
-                    <span className={`text-[11px] font-black px-1.5 py-0.5 rounded-md shrink-0 ${isCurrent ? 'bg-white/20 text-white' : 'bg-[#FFF0DD] text-[#C2410C]'}`}>
+                    <span className={`text-[11px] font-black px-2 py-0.5 rounded-md shrink-0 ${
+                      isCurrent 
+                        ? 'bg-white/20 text-white' 
+                        : isFirst
+                        ? 'bg-amber-200 text-amber-950 font-black shadow-2xs'
+                        : 'bg-[#FFF0DD] text-[#C2410C]'
+                    }`}>
                       {rankLabel}
                     </span>
                     <span className="truncate">{shortTitle}</span>
