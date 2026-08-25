@@ -3449,14 +3449,15 @@ const trackEvent = (eventName, params = {}) => {
   }
 };
 
-// 🌟 Real-time Golden Combos Presets (Curated 1-Click Instant Setups)
-const GOLDEN_COMBOS = [
+// 🌟 Real-time Golden Combos Presets with Seasonal Intelligence & Auto-Ranking
+const ALL_GOLDEN_COMBOS = [
   {
     id: 'daycare-name-tag',
     icon: '🍼',
-    themeIdx: 34, // 육아/베이비 ①
+    themeName: '어린이/유치원 ①',
     characterSource: 'photo',
     photoMode: 'balanced',
+    seasonMonths: [2, 3, 4],
     title: {
       ko: '어린이집 네임스티커',
       ja: '保育園お名前シール',
@@ -3477,11 +3478,194 @@ const GOLDEN_COMBOS = [
     }
   },
   {
-    id: 'gym-fitness-dog',
-    icon: '🏋️',
-    themeIdx: 46, // 헬스/오운완 ①
+    id: 'christmas-party',
+    icon: '🎄',
+    themeName: '생일/파티 ①',
+    characterSource: 'photo',
+    photoMode: 'style',
+    seasonMonths: [11, 12],
+    title: {
+      ko: '크리스마스 & 연말 파티',
+      ja: 'クリスマス＆年末パーティー',
+      zh: '圣诞与新年跨年派对',
+      en: 'Christmas & Year-End'
+    },
+    desc: {
+      ko: '산타 모자 + 루돌프 코 + 반짝반짝 트리 조명',
+      ja: 'サンタ帽＋トナカイの鼻＋キラキラツリー',
+      zh: '圣诞帽＋麋鹿红鼻子＋发光圣诞树',
+      en: 'Santa Hat + Rudolph Nose + Xmas Tree'
+    },
+    tags: {
+      ko: '크리스마스 산타 모자, 빨간 루돌프 코, 따뜻한 털 목도리, 반짝이는 트리 조명, 축제 분위기',
+      ja: 'サンタクロース帽子, 赤いトナカイの鼻, 暖かいマフラー, 輝くツリーライト, クリスマス感',
+      zh: '圣诞老人帽子, 红鼻头驯鹿, 温暖红围巾, 闪烁圣诞树彩灯, 欢快节日氛围',
+      en: 'Christmas Santa hat, Red Rudolph nose, Warm knitted scarf, Twinkling Xmas tree lights, Festive joy'
+    }
+  },
+  {
+    id: 'wedding-invitation',
+    icon: '💍',
+    themeName: '결혼/신혼부부 ①',
+    characterSource: 'photo',
+    photoMode: 'balanced',
+    seasonMonths: [4, 5, 9, 10],
+    title: {
+      ko: '웨딩 & 모바일 청첩장',
+      ja: '結婚式＆ウェディング',
+      zh: '婚礼与电子请帖',
+      en: 'Wedding & Newlyweds'
+    },
+    desc: {
+      ko: '턱시도/웨딩드레스 + 화관 + 로맨틱 꽃잎',
+      ja: 'タキシード/ドレス＋花冠＋ロマンチック',
+      zh: '新郎礼服/婚纱＋花环＋浪漫花瓣',
+      en: 'Tuxedo & Wedding Dress + Flower Crown'
+    },
+    tags: {
+      ko: '웨딩드레스와 턱시도, 화사한 부케 꽃다발, 순백의 레이스 베일, 로맨틱 파스텔톤, 축복받는',
+      ja: 'ウェディングドレスとタキシード, 華やかなブーケ, 純白のレースベール, パステル調, 祝福',
+      zh: '婚纱与礼服, 鲜花捧花, 纯白蕾丝头纱, 浪漫柔美色调, 幸福美满',
+      en: 'Wedding dress and tuxedo, Fresh bouquet, White lace veil, Romantic pastel tone, Blessed wedding vibe'
+    }
+  },
+  {
+    id: 'exam-csat-pass',
+    icon: '💯',
+    themeName: '스터디/취준 ①',
     characterSource: 'photo',
     photoMode: 'likeness',
+    seasonMonths: [10, 11, 12],
+    title: {
+      ko: '수능 대박 & 시험 합격',
+      ja: '合格祈願＆受験大成功',
+      zh: '逢考必过＆金榜题名',
+      en: 'Exam Ace & CSAT Win'
+    },
+    desc: {
+      ko: '합격 붉은 머리띠 + 찹쌀떡 & 정답 포크',
+      ja: '合格ハチマキ＋大福餅＋正解フォーク',
+      zh: '必胜红色头带＋逢考必过大吉符',
+      en: 'Victory Headband + Sticky Rice Cake'
+    },
+    tags: {
+      ko: '필승 붉은 머리띠, 정답만 콕 찍는 포크, 쫀득한 찹쌀떡, 불타는 투지, 수능 대박 기원',
+      ja: '必勝の赤いハチマキ, 正解フォーク, モチモチ合格大福, 燃える闘志, 合格祈願',
+      zh: '必胜红色头带, 抓重点必对叉子, 糯叽叽及格糕, 充满斗志, 逢考必过',
+      en: 'Victory red headband, Sharp answer fork, Lucky rice cake, Burning fighting spirit, Exam success'
+    }
+  },
+  {
+    id: 'spring-cherry-blossom',
+    icon: '🌸',
+    themeName: '계절/날씨 ①',
+    characterSource: 'photo',
+    photoMode: 'style',
+    seasonMonths: [3, 4],
+    title: {
+      ko: '봄 벚꽃 & 감성 피크닉',
+      ja: '春のお花見＆ピクニック',
+      zh: '春日樱花与野餐露营',
+      en: 'Spring Blossom Picnic'
+    },
+    desc: {
+      ko: '흩날리는 벚꽃잎 + 피크닉 바구니 + 화사함',
+      ja: '舞い散る桜の花びら＋ピクニックバスケット',
+      zh: '浪漫漫天樱花＋野餐篮＋春暖花开',
+      en: 'Falling Cherry Petals + Picnic Basket'
+    },
+    tags: {
+      ko: '분홍빛 벚꽃잎 흩날림, 피크닉 돗자리와 샌드위치 바구니, 봄 햇살, 화사하고 산뜻한 파스텔',
+      ja: '舞い散るピンクの桜, ピクニックシート, 春の陽光, 爽やかなパステルカラー',
+      zh: '粉嫩樱花飘落, 野餐垫与三明治野餐篮, 温暖春日阳光, 明亮清新',
+      en: 'Fluttering pink cherry blossoms, Picnic basket, Gentle spring sunlight, Fresh pastel palette'
+    }
+  },
+  {
+    id: 'summer-vacation-sea',
+    icon: '🏖️',
+    themeName: '여행/휴가 ①',
+    characterSource: 'photo',
+    photoMode: 'likeness',
+    seasonMonths: [6, 7, 8],
+    title: {
+      ko: '여름휴가 & 시원한 바캉스',
+      ja: '夏休み＆青い海のバカンス',
+      zh: '清凉夏日海岛度假',
+      en: 'Summer Ocean Vacation'
+    },
+    desc: {
+      ko: '물안경/선글라스 + 플라밍고 튜브 & 하와이안 셔츠',
+      ja: 'サングラス＋フラミンゴ浮き輪＋アロハシャツ',
+      zh: '太阳镜＋火烈鸟泳圈＋夏威夷花衬衫',
+      en: 'Sunglasses + Flamingo Tube + Aloha Shirt'
+    },
+    tags: {
+      ko: '시원한 선글라스, 하와이안 트로피컬 셔츠, 핑크 플라밍고 튜브, 청량한 에메랄드 파도, 시원한',
+      ja: '涼しげなサングラス, アロハシャツ, フラミンゴ浮き輪, エメラルドの波, 爽快感',
+      zh: '酷炫太阳镜, 热带花衬衫, 粉色火烈鸟泳圈, 清澈碧蓝海水, 清凉爽朗',
+      en: 'Cool sunglasses, Hawaiian tropical shirt, Flamingo swim tube, Refreshing turquoise ocean waves'
+    }
+  },
+  {
+    id: 'holiday-chuseok-seollal',
+    icon: '🌕',
+    themeName: '가족/부모님 ①',
+    characterSource: 'photo',
+    photoMode: 'balanced',
+    seasonMonths: [1, 2, 9],
+    title: {
+      ko: '명절·설날·추석 & 효도',
+      ja: 'お正月・お盆・祝日',
+      zh: '中秋与春节团圆感恩',
+      en: 'Holiday Reunion Feast'
+    },
+    desc: {
+      ko: '고운 한복 + 복주머니/송편 & 부모님 효도',
+      ja: '上品な和服/韓服＋福袋＋お祝い',
+      zh: '典雅传统服饰＋福袋/月饼＋阖家欢乐',
+      en: 'Traditional Hanbok + Fortune Pouch'
+    },
+    tags: {
+      ko: '단아한 전통 한복, 황금 복주머니, 둥근 보름달, 정갈하고 따뜻한 명절 분위기, 효도하는',
+      ja: '上品な伝統韓服, 金色の福袋, 満月, 心温まる祝日ムード, 礼儀正しい',
+      zh: '典雅传统汉服, 金色福袋, 皎洁圆月, 温馨团圆佳节氛围, 孝敬长辈',
+      en: 'Elegant traditional Hanbok, Golden fortune pouch, Full moon, Warm traditional holiday vibe'
+    }
+  },
+  {
+    id: 'halloween-costume',
+    icon: '🎃',
+    themeName: '오타쿠/덕질 ①',
+    characterSource: 'photo',
+    photoMode: 'style',
+    seasonMonths: [9, 10],
+    title: {
+      ko: '할로윈 코스튬 파티',
+      ja: 'ハロウィンコスプレ祭',
+      zh: '万圣节奇幻变装派对',
+      en: 'Halloween Costume Party'
+    },
+    desc: {
+      ko: '호박 모자 + 마법사 망토 & 박쥐 사탕 바구니',
+      ja: 'カボチャ帽子＋魔法使いマント＋キャンディ',
+      zh: '南瓜礼帽＋魔法披风＋恶作剧糖果',
+      en: 'Pumpkin Hat + Wizard Cape + Candy Basket'
+    },
+    tags: {
+      ko: '주황색 호박 모자, 검은 마법사 망토, 박쥐 날개, 호박 사탕 바구니, 장난기 넘치는 할로윈',
+      ja: 'オレンジのカボチャ帽子, 黒い魔法使いマント, コウモリの羽, ハロウィンキャンディ, 遊び心',
+      zh: '橙色南瓜帽, 黑色巫师斗篷, 小蝙蝠翅膀, 南瓜糖果篮, 搞怪狂欢万圣节',
+      en: 'Orange pumpkin hat, Black wizard cape, Bat wings, Jack-o-lantern candy bucket, Playful spooky vibe'
+    }
+  },
+  {
+    id: 'gym-fitness-dog',
+    icon: '🏋️',
+    themeName: '헬스/오운완 ①',
+    characterSource: 'photo',
+    photoMode: 'likeness',
+    seasonMonths: [1, 2, 5, 6, 7],
     title: {
       ko: '득근득근 헬스 댕댕이',
       ja: '筋トレ柴犬ジム',
@@ -3504,9 +3688,10 @@ const GOLDEN_COMBOS = [
   {
     id: 'office-worker-cat',
     icon: '💼',
-    themeIdx: 2, // 직장인 ①
+    themeName: '직장인 ①',
     characterSource: 'photo',
     photoMode: 'balanced',
+    seasonMonths: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
     title: {
       ko: '칼퇴 기원 직장인 고양이',
       ja: '定時退勤ねこ社員',
@@ -3529,9 +3714,10 @@ const GOLDEN_COMBOS = [
   {
     id: 'cafe-barista-rabbit',
     icon: '☕',
-    themeIdx: 54, // 약속/카페투어 ①
+    themeName: '약속/카페투어 ①',
     characterSource: 'photo',
     photoMode: 'style',
+    seasonMonths: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
     title: {
       ko: '감성 카페 바리스타 토끼',
       ja: 'カフェうさぎ店員',
@@ -3552,36 +3738,12 @@ const GOLDEN_COMBOS = [
     }
   },
   {
-    id: 'sweet-couple-wedding',
-    icon: '💖',
-    themeIdx: 16, // 커플/연애 ①
-    characterSource: 'photo',
-    photoMode: 'balanced',
-    title: {
-      ko: '꽁냥꽁냥 신혼 커플룩',
-      ja: 'ラブラブお揃いカップル',
-      zh: '甜蜜情侣装连击',
-      en: 'Sweet Couple Match'
-    },
-    desc: {
-      ko: '커플 사진 + 시밀러룩 + 하트 뿅뿅',
-      ja: 'カップル写真＋シミラールック＋ハート',
-      zh: '情侣合照＋同色系情侣装＋心动连连',
-      en: 'Couple Photo + Matching Outfit + Hearts'
-    },
-    tags: {
-      ko: '커플 사진, 베이지 시밀러룩, 분홍빛 볼터치, 핑크 하트 이펙트, 달달하고 다정한',
-      ja: 'カップル写真, ベージュシミラールック, ピンクのチーク, ハートエフェクト, 甘く優しい雰囲気',
-      zh: '情侣照片, 米色同款情侣装, 粉嫩腮红, 飘动爱心特效, 甜美温馨',
-      en: 'Couple photo, Beige matching outfit, Pink blush cheeks, Floating hearts effect, Sweet romantic mood'
-    }
-  },
-  {
     id: 'pro-gamer-panther',
     icon: '🎮',
-    themeIdx: 8, // 게임/게이머 ①
+    themeName: '게임/게이머 ①',
     characterSource: 'photo',
     photoMode: 'likeness',
+    seasonMonths: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
     title: {
       ko: '불꽃 카리스마 프로게이머',
       ja: 'ネオンプロゲーマー',
@@ -3600,33 +3762,11 @@ const GOLDEN_COMBOS = [
       zh: '霓虹赛博朋克, 帅气黑豹, 发光电竞耳机, 连帽卫衣, 胜负欲爆棚',
       en: 'Neon cyberpunk, Sleek black panther, RGB gaming headset, Hoodie jacket, Competitive energetic look'
     }
-  },
-  {
-    id: 'study-exam-bear',
-    icon: '🎓',
-    themeIdx: 50, // 스터디/취준 ①
-    characterSource: 'photo',
-    photoMode: 'balanced',
-    title: {
-      ko: '합격 기원 열공 곰돌이',
-      ja: '合格祈願ガリ勉くま',
-      zh: '逢考必过学霸小熊',
-      en: 'Study Master Bear'
-    },
-    desc: {
-      ko: '볼드 라인아트 + 안경 곰 + 두꺼운 전공책',
-      ja: 'ボールドライン＋丸メガネくま＋専門書',
-      zh: '粗线条手绘＋圆框眼镜熊＋厚重教材',
-      en: 'Bold Line Art + Glasses Bear + Textbooks'
-    },
-    tags: {
-      ko: '깔끔한 볼드 라인아트, 동글 안경 쓴 갈색 곰, 회색 후드티, 두꺼운 전공 서적, 열공 모드',
-      ja: 'すっきりボールドライン, 丸メガネの茶ぐま, グレーパーカー, 分厚い専門書, 猛勉強中',
-      zh: '清晰粗轮廓线条, 戴圆框眼镜的棕熊, 灰色连帽衫, 厚重专业教材, 沉浸学习模式',
-      en: 'Clean bold line art, Round glasses brown bear, Grey hoodie, Thick textbook, Deep study focus'
-    }
   }
 ];
+
+// Alias for safety
+const GOLDEN_COMBOS = ALL_GOLDEN_COMBOS;
 
 function App() {
   const [lang, setLang] = useState('ko');
