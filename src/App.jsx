@@ -6314,34 +6314,23 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
               </div>
             </div>
 
-            {/* Real-time Sync Indicator */}
-            <div className="mb-2 flex items-center justify-between bg-mint-soft/80 border border-mint-border rounded-lg px-3 py-2 text-[12px] font-bold text-mint-strong">
-              <span className="flex items-center gap-1.5">
-                ⚡ {lang === 'ko' 
-                  ? '태그 클릭 시 입력 상자 & AI 프롬프트 100% 실시간 자동 동기화' 
-                  : lang === 'ja' 
-                  ? 'タグクリック時に入力欄＆AIプロンプトが100%リアルタイム自動同期' 
-                  : lang === 'zh' 
-                  ? '点击标签时输入框与AI提示词100%实时自动同步' 
-                  : 'Real-time auto-sync to Textbox & Prompts'}
-              </span>
-              <span className="text-[11px] text-mint-strong/80">
-                {lang === 'ko' 
-                  ? '태그 재클릭 시 ON/OFF 토글' 
-                  : lang === 'ja' 
-                  ? '再クリックでON/OFF切り替え' 
-                  : lang === 'zh' 
-                  ? '再次点击可切换开启/关闭' 
-                  : 'Click again to toggle ON/OFF'}
-              </span>
+            {/* Character Prompt Direct Input Textarea */}
+            <div className="flex flex-col gap-1.5 mt-1">
+              <div className="flex items-center justify-between px-1 text-[12px] font-bold text-mint-strong">
+                <span className="flex items-center gap-1">
+                  ✏️ {lang === 'ko' ? '캐릭터 상세 설명 & 태그 자동 반영' : lang === 'ja' ? 'キャラクター詳細＆タグ自動反映' : lang === 'zh' ? '角色详细描述与标签自动同步' : 'Character Prompt & Active Tags'}
+                </span>
+                <span className="text-[11px] text-mint-strong/80 font-normal">
+                  {lang === 'ko' ? '직접 수정 및 타이핑 가능' : 'Editable directly'}
+                </span>
+              </div>
+              <textarea 
+                className="w-full bg-white border-2 border-mint-border rounded-md p-3.5 sm:p-4 text-on-surface font-medium focus:font-bold placeholder:text-slate-400 placeholder:font-normal placeholder:opacity-75 focus:placeholder:opacity-40 focus:outline-none focus:ring-4 focus:ring-mint focus:border-mint-border resize-y min-h-[90px] shadow-sm scroll-smooth [scrollbar-width:thin] [scrollbar-color:#A6E3D0_transparent] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-[#A6E3D0] [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-mint-strong" 
+                placeholder={t.placeholder}
+                value={charManual}
+                onChange={(e) => setCharManual(e.target.value)}
+              />
             </div>
-
-            <textarea 
-              className="w-full bg-white border-2 border-mint-border rounded-md p-3.5 sm:p-4 text-on-surface font-medium focus:font-bold placeholder:text-slate-400 placeholder:font-normal placeholder:opacity-75 focus:placeholder:opacity-40 focus:outline-none focus:ring-4 focus:ring-mint focus:border-mint-border resize-y min-h-[100px] shadow-sm scroll-smooth [scrollbar-width:thin] [scrollbar-color:#A6E3D0_transparent] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-[#A6E3D0] [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-mint-strong" 
-              placeholder={t.placeholder}
-              value={charManual}
-              onChange={(e) => setCharManual(e.target.value)}
-            />
 
             {!charManual.trim() && (
               <div className="mt-3 bg-mint-soft border border-mint-border rounded-md p-3 sm:p-3.5 flex items-start gap-2.5 text-[13px] text-mint-strong">
@@ -6366,15 +6355,18 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
             {/* Tag Category Selection Rules Info Card & Real-time AI Quality Gauge */}
             <div className="mt-md bg-surface-container-highest rounded-md overflow-hidden border border-mint-border">
               <div className="bg-[#E2F5EE] px-3.5 py-2.5 border-b border-mint-border flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-[13px] font-bold text-mint-strong">
-                <span className="flex items-center gap-1.5 flex-wrap">
-                  📌 {lang === 'ko' ? '태그 선택 규칙:' : 'Tag Rules:'}
-                  <span className="bg-white/90 px-2.5 py-0.5 rounded text-[12px] border border-mint-border">
-                    {lang === 'ko' ? '화풍/피사체: 대표 1개 선택' : 'Art/Subject: 1 Main Select'}
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <span>📌 {lang === 'ko' ? '태그 선택 규칙:' : 'Tag Rules:'}</span>
+                  <span className="bg-white/90 px-2 py-0.5 rounded text-[11.5px] border border-mint-border font-bold">
+                    {lang === 'ko' ? '화풍/피사체: 1개' : 'Art: 1'}
                   </span>
-                  <span className="bg-white/90 px-2.5 py-0.5 rounded text-[12px] border border-mint-border">
-                    {lang === 'ko' ? '의상/소품/성격/효과: 여러 개 다중 선택 가능' : 'Outfit/Props/Effects: Multi-Select'}
+                  <span className="bg-white/90 px-2 py-0.5 rounded text-[11.5px] border border-mint-border font-bold">
+                    {lang === 'ko' ? '의상/소품/성격: 다중 선택' : 'Props/Outfits: Multi'}
                   </span>
-                </span>
+                  <span className="text-[11px] text-mint-strong/80 font-normal">
+                    (⚡ {lang === 'ko' ? '클릭 시 자동 동기화 / 재클릭 시 해제' : 'Auto-sync on click / Toggle off'})
+                  </span>
+                </div>
                 <span className="bg-[#C5F2E3] text-[#184F43] border border-[#A6E3D0] px-3 py-0.5 rounded-full text-[12px] font-extrabold shadow-xs shrink-0 self-start sm:self-auto">
                   {getCategoryRuleBadge(activeTagCategory)}
                 </span>
