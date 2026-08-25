@@ -5811,7 +5811,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
             </div>
 
             <textarea 
-              className="w-full bg-white border-2 border-mint-border rounded-md p-3.5 sm:p-4 text-on-surface font-bold placeholder:text-on-surface-variant focus:outline-none focus:ring-4 focus:ring-mint focus:border-mint-border resize-y min-h-[100px] shadow-sm" 
+              className="w-full bg-white border-2 border-mint-border rounded-md p-3.5 sm:p-4 text-on-surface font-medium focus:font-bold placeholder:text-slate-400 placeholder:font-normal placeholder:opacity-75 focus:placeholder:opacity-40 focus:outline-none focus:ring-4 focus:ring-mint focus:border-mint-border resize-y min-h-[100px] shadow-sm" 
               placeholder={t.placeholder}
               value={charManual}
               onChange={(e) => setCharManual(e.target.value)}
