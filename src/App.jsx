@@ -5813,16 +5813,16 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
 
         {/* 🌟 Section 0: One-Click Golden Combos Showcase (Instant 1-Second Setup) */}
         <section className="bg-gradient-to-br from-amber-50/90 via-orange-50/70 to-emerald-50/80 rounded-xl p-3.5 sm:p-5 border-2 border-amber-300/80 shadow-sm flex flex-col gap-2.5">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 sm:gap-2">
-            <div className="flex items-center justify-between gap-2 w-full sm:w-auto">
-              <div className="flex items-center gap-2">
-                <span className="bg-amber-400 text-amber-950 text-[11px] font-black px-2.5 py-0.5 rounded-full shadow-2xs">
+          <div className="flex flex-col gap-1.5 sm:gap-2">
+            <div className="flex items-center justify-between gap-2 w-full">
+              <div className="flex items-center gap-1.5 min-w-0">
+                <span className="bg-amber-400 text-amber-950 text-[10.5px] font-black px-2 py-0.5 rounded-full shadow-2xs shrink-0 leading-none">
                   HOT
                 </span>
-                <h2 className="text-[15px] sm:text-[17px] font-black text-amber-950 flex items-center gap-1.5">
+                <h2 className="text-[14px] sm:text-[16px] font-black text-amber-950 flex items-center gap-1 truncate whitespace-nowrap">
                   <span>🌟</span>
                   <span>
-                    {lang === 'ko' ? '원클릭 실시간 황금 조합 리스트' : lang === 'ja' ? 'ワンクリック黄金セット一覧' : lang === 'zh' ? '一键实时热门黄金组合' : 'One-Click Golden Combos'}
+                    {lang === 'ko' ? '원클릭 인기 황금 조합' : lang === 'ja' ? 'ワンクリック黄金セット' : lang === 'zh' ? '一键热门黄金组合' : 'One-Click Golden Combos'}
                   </span>
                 </h2>
               </div>
@@ -5831,27 +5831,16 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                 <button
                   type="button"
                   onClick={undoGoldenCombo}
-                  className="sm:hidden interactive-control text-[11px] font-extrabold text-amber-900 bg-white border border-amber-300 px-2.5 py-1 rounded-full shadow-2xs hover:bg-amber-100 flex items-center gap-1 cursor-pointer whitespace-nowrap shrink-0 active:scale-95"
+                  className="interactive-control text-[11px] sm:text-[11.5px] font-extrabold text-amber-900 bg-white border border-amber-300 px-2.5 py-1 rounded-full shadow-2xs hover:bg-amber-100 flex items-center gap-1 cursor-pointer whitespace-nowrap shrink-0 active:scale-95"
                 >
                   <RotateCcw size={11} /> {lang === 'ko' ? '되돌리기' : lang === 'ja' ? '元に戻す' : lang === 'zh' ? '撤销' : 'Undo'}
                 </button>
               )}
             </div>
             
-            <div className="flex items-center justify-between sm:justify-end gap-2">
-              <span className="text-[11.5px] font-bold text-amber-800/90 leading-tight">
-                {lang === 'ko' ? '👇 원하는 세트를 누르면 1초 만에 전체 자동 세팅됩니다' : lang === 'ja' ? '👇 クリック1秒で全体自動セット' : lang === 'zh' ? '👇 点击卡片1秒全自动配置' : '👇 Click any card to auto-apply all settings'}
-              </span>
-              {previousComboBackup && (
-                <button
-                  type="button"
-                  onClick={undoGoldenCombo}
-                  className="hidden sm:inline-flex interactive-control text-[11.5px] font-extrabold text-amber-900 bg-white border border-amber-300 px-3 py-1 rounded-full shadow-2xs hover:bg-amber-100 items-center gap-1 cursor-pointer whitespace-nowrap shrink-0 active:scale-95"
-                >
-                  <RotateCcw size={12} /> {lang === 'ko' ? '이전 설정 되돌리기' : lang === 'ja' ? '元に戻す' : lang === 'zh' ? '撤销还原' : 'Undo'}
-                </button>
-              )}
-            </div>
+            <p className="text-[11px] sm:text-[11.5px] font-bold text-amber-800/90 leading-tight truncate whitespace-nowrap w-full">
+              {lang === 'ko' ? '👇 원하는 세트 터치 시 1초 만에 전체 자동 세팅!' : lang === 'ja' ? '👇 タップ1秒で全体自動セット！' : lang === 'zh' ? '👇 点击卡片1秒全自动配置！' : '👇 Tap any card to auto-apply all settings!'}
+            </p>
           </div>
 
           {/* Golden Combos Horizontal Scroll Carousel (Generous padding to prevent border/ring clipping) */}
