@@ -5813,8 +5813,8 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
 
         {/* 🌟 Section 0: One-Click Golden Combos Showcase (Instant 1-Second Setup) */}
         <section className="bg-gradient-to-br from-amber-50/90 via-orange-50/70 to-emerald-50/80 rounded-xl p-3.5 sm:p-5 border-2 border-amber-300/80 shadow-sm flex flex-col gap-2.5">
-          <div className="flex flex-col gap-1.5 sm:gap-2">
-            <div className="flex items-center justify-between gap-2 w-full">
+          <div className="flex flex-col gap-1.5">
+            <div className="h-[30px] flex items-center justify-between gap-2 w-full">
               <div className="flex items-center gap-1.5 min-w-0">
                 <span className="bg-amber-400 text-amber-950 text-[10.5px] font-black px-2 py-0.5 rounded-full shadow-2xs shrink-0 leading-none">
                   HOT
@@ -5827,14 +5827,16 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                 </h2>
               </div>
 
-              {previousComboBackup && (
+              {previousComboBackup ? (
                 <button
                   type="button"
                   onClick={undoGoldenCombo}
-                  className="interactive-control text-[11px] sm:text-[11.5px] font-extrabold text-amber-900 bg-white border border-amber-300 px-2.5 py-1 rounded-full shadow-2xs hover:bg-amber-100 flex items-center gap-1 cursor-pointer whitespace-nowrap shrink-0 active:scale-95"
+                  className="interactive-control h-[26px] text-[11px] font-extrabold text-amber-900 bg-white border border-amber-300 px-2.5 rounded-full shadow-2xs hover:bg-amber-100 flex items-center gap-1 cursor-pointer whitespace-nowrap shrink-0 active:scale-95 animate-in fade-in duration-150"
                 >
                   <RotateCcw size={11} /> {lang === 'ko' ? '되돌리기' : lang === 'ja' ? '元に戻す' : lang === 'zh' ? '撤销' : 'Undo'}
                 </button>
+              ) : (
+                <div className="h-[26px]" />
               )}
             </div>
             
