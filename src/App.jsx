@@ -5146,19 +5146,27 @@ Exactly 15 stickers in a 3×5 grid, one consistent recognizable character matchi
 After generating the sticker sheet, also prepare a short, engaging Korean caption + English hashtags that can be directly copied and posted on X (Twitter).`;
   };
 
-    const copySocialCaption = (mode = 'ko') => {
-    const text = mode === 'ko'
-      ? `나만의 얼굴 그대로 담은 실사 캐리커처 스티커 시트 완성! 🎨✨\n웃음, 인사, 감동, 잘자까지 15가지 감정과 포즈를 한 장에 담아봤어요.\n카톡·라인 이모티콘으로 바로 써도 딱일 것 같아요 😆💛\n\n👉 무료 AI 프롬프트 생성기: https://emoticon-beige.vercel.app/\n\n#카카오톡스티커 #라인스티커 #AI스티커 #이모티콘 #GrokArt`
-      : `Just made my own 15-piece caricature sticker sheet with Grok AI ✨\nBased on a real photo — same face, same vibe, full 15 emotion set!\n\n👉 Free AI Prompt Maker: https://emoticon-beige.vercel.app/\n\n#KakaoTalkSticker #LINESticker #AIArt #CustomEmoticon #StickerSheet #GrokArt`;
+  const copySocialCaption = (mode = 'ko') => {
+    const captions = {
+      ko: `나만의 얼굴 그대로 담은 실사 캐리커처 스티커 시트 완성! 🎨✨\n웃음, 인사, 감동, 잘자까지 15가지 감정과 포즈를 한 장에 담아봤어요.\n카톡·라인 이모티콘으로 바로 써도 딱일 것 같아요 😆💛\n\n👉 무료 AI 프롬프트 생성기: https://emoticon-beige.vercel.app/\n\n#카카오톡스티커 #라인스티커 #AI스티커 #이모티콘 #GrokArt #프롬프트메이커`,
+      ja: `写真そっくりの15種オリジナルスタンプシートが完成！🎨✨\n笑顔、挨拶、感動、おやすみまで15種類の表情とポーズを1枚にまとめました。\nLINEスタンプにもぴったり😆💛\n\n👉 無料AIプロンプト作成ツール: https://emoticon-beige.vercel.app/\n\n#LINEスタンプ #AIスタンプ #AIイラスト #GrokArt #PromptMaker`,
+      zh: `根据真人照片生成的15格专属表情包贴纸完成！🎨✨\n大笑、打招呼、感动、晚安等15种丰富表情和动作一网打尽。\n微信/LINE表情包即刻可用😆💛\n\n👉 免费AI提示词生成工具: https://emoticon-beige.vercel.app/\n\n#微信表情包 #LINE贴纸 #AI表情包 #AI绘画 #GrokArt #PromptMaker`,
+      en: `Just made my own 15-piece caricature sticker sheet with Grok AI ✨\nBased on a real photo — same face, same vibe, full 15 emotion set!\n\n👉 Free AI Prompt Maker: https://emoticon-beige.vercel.app/\n\n#KakaoTalkSticker #LINESticker #AIArt #CustomEmoticon #StickerSheet #GrokArt`,
+    };
+    const text = captions[mode] || captions.en;
     navigator.clipboard.writeText(text);
     setCopiedType(`social_${mode}`);
     setTimeout(() => setCopiedType(null), 2500);
   };
 
-  const shareOnTwitter = (mode = 'ko') => {
-    const text = mode === 'ko'
-      ? `나만의 카톡/라인 스티커 15장 완성! 💕\n참고 사진 그대로 닮은 캐릭터로 감정 표현 풀세트 만들었어요 ✨\nㅋㅋㅋㅋ부터 잘자요까지 다 있음 ㅋㅋ\n\n👉 무료 AI 프롬프트 생성기: https://emoticon-beige.vercel.app/\n\n#카카오톡스티커 #라인스티커 #AI스티커 #이모티콘 #프롬프트메이커`
-      : `Just made my own 15-piece KakaoTalk/LINE sticker sheet with AI ✨\nBased on a real photo — same face, same vibe, full emotion set!\n\n👉 Free AI Prompt Maker: https://emoticon-beige.vercel.app/\n\n#KakaoTalkSticker #LINESticker #AIArt #CustomEmoticon #StickerSheet #PromptMaker`;
+  const shareOnTwitter = (mode = lang) => {
+    const tweets = {
+      ko: `나만의 카톡/라인 스티커 15장 완성! 💕\n참고 사진 그대로 닮은 캐릭터로 감정 표현 풀세트 만들었어요 ✨\nㅋㅋㅋㅋ부터 잘자요까지 다 있음 ㅋㅋ\n\n👉 무료 AI 프롬프트 생성기: https://emoticon-beige.vercel.app/\n\n#카카오톡스티커 #라인스티커 #AI스티커 #이모티콘 #프롬프트메이커`,
+      ja: `自分そっくりのLINE/メッセンジャースタンプ15種が完成！💕\n写真の特徴をそのまま活かした感情豊かなスタンプシート✨\n\n👉 無料AIプロンプト作成: https://emoticon-beige.vercel.app/\n\n#LINEスタンプ #AIスタンプ #AIイラスト #GrokArt`,
+      zh: `制作了15张专属表情包贴纸！💕\n完美还原照片特征，涵盖大笑到晚安的日常情绪全套表情✨\n\n👉 免费AI提示词生成工具: https://emoticon-beige.vercel.app/\n\n#微信表情包 #LINE贴纸 #AI表情包 #GrokArt`,
+      en: `Just made my own 15-piece KakaoTalk/LINE sticker sheet with AI ✨\nBased on a real photo — same face, same vibe, full emotion set!\n\n👉 Free AI Prompt Maker: https://emoticon-beige.vercel.app/\n\n#KakaoTalkSticker #LINESticker #AIArt #CustomEmoticon #StickerSheet #PromptMaker`,
+    };
+    const text = tweets[mode] || tweets.en;
     const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
     window.open(url, '_blank', 'noopener,noreferrer');
   };
@@ -6387,25 +6395,43 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
             <div className="flex items-center justify-between gap-2 flex-wrap">
               <span className="text-[13px] sm:text-[14px] font-extrabold text-slate-900 flex items-center gap-2">
                 <span className="bg-[#1D9BF0] text-white text-[11px] font-black px-1.5 py-0.5 rounded flex items-center justify-center leading-none">𝕏</span>
-                <span>{lang === 'ko' ? '트위터(X) SNS 홍보·자랑 캡션' : 'Twitter (X) Share Caption'}</span>
+                <span>{lang === 'ko' 
+                  ? '트위터(X) SNS 홍보·자랑 캡션' 
+                  : lang === 'ja' 
+                  ? 'X (Twitter) SNS共有・紹介キャプション' 
+                  : lang === 'zh' 
+                  ? 'X (Twitter) 社交媒体宣传文案' 
+                  : 'Twitter (X) Share Caption'}</span>
               </span>
               <span className="text-[11px] font-bold text-sky-700 bg-sky-50 px-2.5 py-0.5 rounded-full border border-sky-200">
-                ✨ {lang === 'ko' ? '원클릭 복사 & 바로 트윗' : '1-Click Copy & Tweet'}
+                ✨ {lang === 'ko' 
+                  ? '원클릭 복사 & 바로 트윗' 
+                  : lang === 'ja' 
+                  ? 'ワンクリックコピー＆投稿' 
+                  : lang === 'zh' 
+                  ? '一键复制并直接发推' 
+                  : '1-Click Copy & Tweet'}
               </span>
             </div>
             <p className="text-[12.5px] sm:text-[13px] text-slate-600 leading-relaxed font-normal">
               {lang === 'ko'
                 ? 'AI에서 생성한 완성 이미지를 저장한 뒤, SNS에 올릴 때 바로 붙여넣어 사용할 수 있는 사이트 링크 & 홍보 캡션 & 해시태그입니다. (트윗 창에서 저장한 사진을 첨부해 주세요!)'
+                : lang === 'ja'
+                ? 'AIで生成した完成画像を保存後、SNSに投稿する際にそのまま使える紹介文、サイトリンク、ハッシュタグです。(ツイート画面で保存した画像を添付してください！)'
+                : lang === 'zh'
+                ? '保存AI生成的图片后，在社交平台上发布时可直接粘贴使用的文案、网站链接和热门标签。(发帖时请附带保存好的图片！)'
                 : 'Engaging, copy-ready caption, site link, and trending hashtags to showcase your generated sticker sheet on social media (X, Instagram, etc.). Attach your saved image in the tweet composer!'}
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mt-1">
               <button
                 type="button"
-                onClick={() => copySocialCaption('ko')}
+                onClick={() => copySocialCaption(lang)}
                 className="interactive-control min-h-[38px] rounded-md bg-white hover:bg-slate-50 border border-slate-300 text-slate-800 font-bold text-[12.5px] sm:text-[13px] flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs transition-colors"
               >
-                {copiedType === 'social_ko' ? <CheckCircle2 size={15} className="text-[#2D7D64]" /> : <span>📋</span>}
-                <span>{copiedType === 'social_ko' ? (lang === 'ko' ? '✓ 한글 캡션 복사됨!' : '✓ Korean Copied!') : (lang === 'ko' ? '한글 캡션 복사' : 'Copy KO Caption')}</span>
+                {copiedType === `social_${lang}` ? <CheckCircle2 size={15} className="text-[#2D7D64]" /> : <span>📋</span>}
+                <span>{copiedType === `social_${lang}` 
+                  ? (lang === 'ko' ? '✓ 한글 캡션 복사됨!' : lang === 'ja' ? '✓ 日本語コピー完了！' : lang === 'zh' ? '✓ 中文文案已复制！' : '✓ English Copied!') 
+                  : (lang === 'ko' ? '한글 캡션 복사' : lang === 'ja' ? '日本語キャプション' : lang === 'zh' ? '复制中文文案' : 'Copy English Caption')}</span>
               </button>
               <button
                 type="button"
@@ -6413,15 +6439,17 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                 className="interactive-control min-h-[38px] rounded-md bg-white hover:bg-slate-50 border border-slate-300 text-slate-800 font-bold text-[12.5px] sm:text-[13px] flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs transition-colors"
               >
                 {copiedType === 'social_en' ? <CheckCircle2 size={15} className="text-[#2D7D64]" /> : <span>📋</span>}
-                <span>{copiedType === 'social_en' ? (lang === 'ko' ? '✓ 영문 캡션 복사됨!' : '✓ English Copied!') : (lang === 'ko' ? '영문 캡션 복사' : 'Copy EN Caption')}</span>
+                <span>{copiedType === 'social_en' 
+                  ? (lang === 'ko' ? '✓ 영문 캡션 복사됨!' : lang === 'ja' ? '✓ 英語コピー完了！' : lang === 'zh' ? '✓ 英文文案已复制！' : '✓ English Copied!') 
+                  : (lang === 'ko' ? '영문(EN) 캡션 복사' : lang === 'ja' ? '英語(EN)キャプション' : lang === 'zh' ? '复制英文(EN)文案' : 'Copy EN Caption')}</span>
               </button>
               <button
                 type="button"
-                onClick={() => shareOnTwitter(lang === 'ko' ? 'ko' : 'en')}
+                onClick={() => shareOnTwitter(lang)}
                 className="interactive-control min-h-[38px] rounded-md bg-[#1D9BF0] hover:bg-[#1A8CD8] text-white font-extrabold text-[12.5px] sm:text-[13px] flex items-center justify-center gap-1.5 cursor-pointer shadow-sm hover:brightness-105 transition-all"
               >
                 <span className="text-[13px] font-black">𝕏</span>
-                <span>{lang === 'ko' ? '바로 트윗하기' : 'Tweet Now'}</span>
+                <span>{lang === 'ko' ? '바로 트윗하기' : lang === 'ja' ? 'Xで投稿する' : lang === 'zh' ? '立即发推 (Tweet)' : 'Tweet Now'}</span>
               </button>
             </div>
           </div>
