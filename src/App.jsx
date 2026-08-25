@@ -3507,6 +3507,7 @@ function App() {
   const themeKeys = Object.keys(currentThemes);
   const categoryKeys = Object.keys(currentTags);
   
+  const [selectedTopTheme, setSelectedTopTheme] = useState(null);
   const [themeStats, setThemeStats] = useState(() => {
     try {
       const saved = localStorage.getItem('theme_usage_stats');
@@ -5984,7 +5985,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
             
             <div className="grid grid-cols-2 sm:grid-cols-5 gap-1.5 sm:gap-2 w-full" role="group" aria-label="Popular Themes TOP 5">
               {sortedThemeKeys.slice(0, 5).map((theme, idx) => {
-                const isCurrent = activeTheme === theme;
+                const isCurrent = selectedTopTheme === theme;
                 const shortTitle = theme.split('(')[0].replace(/^[0-9]+\.\s*/, '').trim();
                 const isFirst = idx === 0;
                 const rankLabel = isFirst
