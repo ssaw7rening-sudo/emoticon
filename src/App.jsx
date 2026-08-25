@@ -6728,10 +6728,9 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                 setShowPartnershipModal(true);
                 trackEvent('open_partnership_guide', { lang });
               }}
-              className="interactive-control hover:text-amber-700 underline underline-offset-4 cursor-pointer transition-colors flex items-center gap-1 font-bold text-slate-700"
+              className="interactive-control hover:text-amber-700 underline underline-offset-4 cursor-pointer transition-colors font-bold text-slate-700"
             >
-              <span>{lang === 'ko' ? '광고 배너 및 제휴 문의' : lang === 'ja' ? '広告・バナー掲載・提携' : lang === 'zh' ? '广告投放・横幅合作与咨询' : 'Ad Banner & Partnerships'}</span>
-              <span className="text-[10px] bg-amber-100 text-amber-900 px-1.5 py-0.2 rounded-full font-bold">AD / 제휴</span>
+              {lang === 'ko' ? '광고 및 제휴 문의' : lang === 'ja' ? '広告・提携のお問い合わせ' : lang === 'zh' ? '广告与商务合作' : 'Advertising & Inquiries'}
             </button>
           </div>
 
@@ -6757,27 +6756,27 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
           onClick={() => setShowPartnershipModal(false)}
         >
           <div 
-            className="bg-white rounded-2xl max-w-xl w-full border-2 border-[#FCD3A1] shadow-2xl overflow-hidden flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-200"
+            className="bg-white rounded-2xl max-w-xl w-full border border-slate-300 shadow-2xl overflow-hidden flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-200"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Header */}
-            <div className="bg-gradient-to-r from-[#FFF8EE] to-[#FFF1DE] px-5 py-4 border-b border-[#FCD3A1] flex items-center justify-between">
+            <div className="bg-[#FAF9F6] px-5 py-4 border-b border-slate-200 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <span className="text-[20px]">📢</span>
-                <h3 className="font-extrabold text-[16px] sm:text-[17px] text-[#782806]">
+                <h3 className="font-extrabold text-[16px] sm:text-[17px] text-slate-900">
                   {lang === 'ko' 
-                    ? '스폰서 배너 광고 및 굿즈/판촉물 제휴 안내' 
+                    ? '광고 배너 게재 및 제휴 안내' 
                     : lang === 'ja' 
-                    ? 'スポンサー広告バナー掲載・グッズ連携案内' 
+                    ? '広告バナー掲載・提携のご案内' 
                     : lang === 'zh' 
-                    ? '赞助横幅广告投放与周边定制合作指南' 
-                    : 'Sponsor Ad Banner & Merch Partnerships'}
+                    ? '广告横幅投放与合作指南' 
+                    : 'Advertising Banners & Partnerships'}
                 </h3>
               </div>
               <button
                 type="button"
                 onClick={() => setShowPartnershipModal(false)}
-                className="w-8 h-8 rounded-full bg-white/80 hover:bg-white text-slate-500 hover:text-slate-800 flex items-center justify-center font-bold text-[18px] border border-slate-200 transition-colors cursor-pointer"
+                className="w-8 h-8 rounded-full bg-white hover:bg-slate-100 text-slate-500 hover:text-slate-800 flex items-center justify-center font-bold text-[18px] border border-slate-200 transition-colors cursor-pointer"
                 title={lang === 'ko' ? '닫기' : 'Close'}
               >
                 ×
@@ -6786,64 +6785,59 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
 
             {/* Modal Body */}
             <div className="p-5 sm:p-6 overflow-y-auto flex flex-col gap-4 text-left">
-              {/* Highlight Target Box */}
-              <div className="bg-[#FFF9F2] p-4 rounded-xl border border-[#FCD3A1]/80 flex flex-col gap-2">
-                <div className="flex items-center justify-between gap-2 flex-wrap">
-                  <span className="text-[11px] font-bold text-[#C2410C] bg-[#FFE8CC] px-2.5 py-0.5 rounded-full border border-[#FCD3A1]">
-                    {lang === 'ko' ? '🎯 타겟 전환율 100% 최적화' : 'High Conversion Target'}
-                  </span>
-                  <span className="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-                    {lang === 'ko' ? '✨ 배너 슬롯 선착순 모집' : 'Ad Slots Open'}
-                  </span>
-                </div>
-                <p className="text-[13.5px] sm:text-[14px] text-[#8C3D18] leading-relaxed font-normal break-keep">
+              {/* Service Context Box */}
+              <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 flex flex-col gap-1.5">
+                <span className="text-[11px] font-bold text-slate-700 bg-slate-200/80 px-2.5 py-0.5 rounded-full self-start">
+                  {lang === 'ko' ? '안내' : 'Information'}
+                </span>
+                <p className="text-[13px] sm:text-[13.5px] text-slate-700 leading-relaxed font-normal break-keep">
                   {lang === 'ko'
-                    ? '프롬프트 메이커 방문자는 고화질 캐릭터 이모티콘을 직접 생성한 직후, 실물 굿즈(키링, 스티커, 아크릴 스탠드, 티셔츠, 텀블러 등)를 인쇄·제작하려는 구매 의도가 가장 높은 핵심 타겟층입니다.'
+                    ? '프롬프트 메이커는 사용자가 캐릭터 이모티콘을 생성하는 웹 도구입니다. 굿즈 제작 플랫폼, 판촉물 및 인쇄 제작 업체, 디자인 도구 등 관련 서비스의 사이트 내 배너 광고 게재 및 제휴 문의를 받고 있습니다.'
                     : lang === 'ja'
-                    ? '当サービスの利用者は、キャラクター画像を生成した直後で「オリジナルグッズ（アクキー、シール、Tシャツ等）を印刷・制作したい」購買意欲が極めて高いコアターゲット層です。'
+                    ? '当サービスは、ユーザーがオリジナルキャラクターやスタンプを作成するWebツールです。グッズ制作サービスや印刷・ノベルティ業者様のバナー広告掲載・提携のお問い合わせを受け付けております。'
                     : lang === 'zh'
-                    ? '本站用户在生成专属高画质角色后，具有极高的实物周边（钥匙扣、贴纸、亚克力立牌、文化衫等）定制与印刷消费意向，是周边衍生品商家的精准目标受众。'
-                    : 'Our audience creates custom characters and has an immediate intent to order custom stickers, acrylic keyrings, apparel, and corporate merch.'}
+                    ? '本站为用户提供原创角色及表情包生成服务。现面向周边定制平台、印刷及礼品供应商承接横幅广告投放与商务合作咨询。'
+                    : 'Prompt Maker is a web utility for creating character stickers. We welcome advertising banners and partnerships from custom merch platforms, print shops, and promotional product manufacturers.'}
                 </p>
               </div>
 
-              {/* Advertising Banner Products */}
+              {/* Advertising Options */}
               <div className="flex flex-col gap-2.5">
                 <span className="text-[13px] font-extrabold text-slate-800 flex items-center gap-1.5">
                   <span>📌</span>
-                  <span>{lang === 'ko' ? '제휴 광고 배너 및 입점 상품' : lang === 'ja' ? '掲載可能な広告バナー・提携メニュー' : lang === 'zh' ? '可投放广告位与合作形式' : 'Advertising & Sponsorship Options'}</span>
+                  <span>{lang === 'ko' ? '광고 및 제휴 분야' : lang === 'ja' ? '広告・提携メニュー' : lang === 'zh' ? '广告位与合作形式' : 'Advertising & Partnership Areas'}</span>
                 </span>
                 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[12.5px] text-[#9A3412] font-semibold">
-                  <div className="bg-amber-50/70 p-3 rounded-lg border border-amber-200/80 flex items-start gap-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[12px] sm:text-[12.5px] text-slate-700 font-semibold">
+                  <div className="bg-white p-3 rounded-lg border border-slate-200 flex items-start gap-2 shadow-2xs">
                     <span className="text-[16px] shrink-0">🖼️</span>
                     <div>
-                      <strong className="block text-slate-900 text-[12.5px]">{lang === 'ko' ? '메인 & 결과창 상단 배너' : 'Hero & Result Banners'}</strong>
-                      <span className="text-[11.5px] opacity-90 font-normal">{lang === 'ko' ? '프롬프트 생성 화면 및 결과창에 독점 스폰서 배너 게재' : 'Exclusive banner placement on generator & result screens'}</span>
+                      <strong className="block text-slate-900">{lang === 'ko' ? '사이트 배너 광고' : 'Website Banners'}</strong>
+                      <span className="text-[11.5px] text-slate-500 font-normal">{lang === 'ko' ? '메인 화면 및 생성 결과 영역 배너 게재' : 'Banner placement on main & result screens'}</span>
                     </div>
                   </div>
                   
-                  <div className="bg-amber-50/70 p-3 rounded-lg border border-amber-200/80 flex items-start gap-2">
+                  <div className="bg-white p-3 rounded-lg border border-slate-200 flex items-start gap-2 shadow-2xs">
                     <span className="text-[16px] shrink-0">🎁</span>
                     <div>
-                      <strong className="block text-slate-900 text-[12.5px]">{lang === 'ko' ? '굿즈 제작사 원클릭 바로가기' : '1-Click Merch Order Link'}</strong>
-                      <span className="text-[11.5px] opacity-90 font-normal">{lang === 'ko' ? '"내 캐릭터로 굿즈 만들기" 파트너사 쇼핑몰 링크 연계' : 'Direct CTA button linked to partner merch store'}</span>
+                      <strong className="block text-slate-900">{lang === 'ko' ? '굿즈·인쇄 업체 연계' : 'Merch & Print Links'}</strong>
+                      <span className="text-[11.5px] text-slate-500 font-normal">{lang === 'ko' ? '실물 굿즈(키링, 스티커, 티셔츠 등) 제작사 링크' : 'Links for custom keyrings, stickers, apparel, etc.'}</span>
                     </div>
                   </div>
 
-                  <div className="bg-amber-50/70 p-3 rounded-lg border border-amber-200/80 flex items-start gap-2">
+                  <div className="bg-white p-3 rounded-lg border border-slate-200 flex items-start gap-2 shadow-2xs">
                     <span className="text-[16px] shrink-0">🏢</span>
                     <div>
-                      <strong className="block text-slate-900 text-[12.5px]">{lang === 'ko' ? '판촉물·인쇄 업체 전용 섹션' : 'Promotional Merch Section'}</strong>
-                      <span className="text-[11.5px] opacity-90 font-normal">{lang === 'ko' ? '기업 판촉물, 단체 굿즈 인쇄 전문 제작사 스폰서십' : 'Dedicated sponsorship for custom print & promo suppliers'}</span>
+                      <strong className="block text-slate-900">{lang === 'ko' ? '기업 판촉물 안내' : 'Corporate Promotional Merch'}</strong>
+                      <span className="text-[11.5px] text-slate-500 font-normal">{lang === 'ko' ? '기업 판촉물 및 홍보물 인쇄 제작 안내' : 'Promotional printing & corporate mascot campaigns'}</span>
                     </div>
                   </div>
 
-                  <div className="bg-amber-50/70 p-3 rounded-lg border border-amber-200/80 flex items-start gap-2">
-                    <span className="text-[16px] shrink-0">📊</span>
+                  <div className="bg-white p-3 rounded-lg border border-slate-200 flex items-start gap-2 shadow-2xs">
+                    <span className="text-[16px] shrink-0">💡</span>
                     <div>
-                      <strong className="block text-slate-900 text-[12.5px]">{lang === 'ko' ? '실시간 GA4 성과 리포트' : 'GA4 Analytics Report'}</strong>
-                      <span className="text-[11.5px] opacity-90 font-normal">{lang === 'ko' ? '배너 클릭 수 및 노출 성과 투명한 데이터 제공' : 'Transparent impressions and CTR analytics reports'}</span>
+                      <strong className="block text-slate-900">{lang === 'ko' ? '기타 파트너십' : 'Other Partnerships'}</strong>
+                      <span className="text-[11.5px] text-slate-500 font-normal">{lang === 'ko' ? '브랜드 협업 및 서비스 연계 제휴' : 'Brand collaborations and marketing integrations'}</span>
                     </div>
                   </div>
                 </div>
@@ -6852,12 +6846,12 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
               {/* Inquiry Notice */}
               <div className="bg-slate-50 p-3 rounded-lg border border-slate-200 text-[12px] text-slate-600 leading-relaxed">
                 {lang === 'ko' 
-                  ? '💡 구글 폼으로 원하시는 배너 위치, 광고 기간, 업체 정보를 남겨주시면 담당자가 24시간 이내에 광고 단가표 및 상세 안내서를 회신드립니다.' 
+                  ? '💡 구글 폼으로 원하시는 배너 형태, 희망 기간, 업체 정보를 남겨주시면 확인 후 이메일로 상세 안내를 회신해 드립니다.' 
                   : lang === 'ja' 
-                  ? '💡 フォームよりご希望の広告掲載期間や媒体情報をご記入いただければ、24時間以内に媒体資料とお見積もりをお送りいたします。' 
+                  ? '💡 フォームよりご希望の広告掲載期間や媒体情報をご記入いただければ、確認後メールにてご連絡いたします。' 
                   : lang === 'zh' 
-                  ? '💡 请在表单中留下您的广告需求与联系方式，我们将在24小时内发送详细刊例价与合作方案。' 
-                  : '💡 Submit your inquiry with desired ad slots and duration. We will send back our rate card within 24 hours.'}
+                  ? '💡 请在表单中留下您的广告需求与联系方式，我们将在收到信息后通过邮件与您联系。' 
+                  : '💡 Please submit your desired ad slots, duration, and business details via Google Forms. We will reply via email.'}
               </div>
             </div>
 
@@ -6880,7 +6874,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                 }}
                 className="px-5 py-2 rounded-lg bg-[#C2410C] hover:bg-[#9A3412] text-white font-extrabold text-[13px] flex items-center gap-1.5 shadow-sm transition-all cursor-pointer"
               >
-                <span>{lang === 'ko' ? '광고 배너 및 제휴 제안하기' : lang === 'ja' ? '広告・提携の提案を送る' : lang === 'zh' ? '提交广告投放及合作意向' : 'Submit Ad Proposal'}</span>
+                <span>{lang === 'ko' ? '광고 및 제휴 문의하기' : lang === 'ja' ? 'お問い合わせフォームへ' : lang === 'zh' ? '前往填写咨询表单' : 'Inquire via Form'}</span>
                 <span className="text-[11px]">↗</span>
               </a>
             </div>
