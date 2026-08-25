@@ -5945,30 +5945,56 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
               <select 
                 value={currentThemes[activeTheme] ? activeTheme : ''} 
                 onChange={handleThemeSelect}
-                className="px-3 py-1.5 text-[14px] font-bold rounded-full border border-mint-border bg-surface-container-lowest text-on-surface cursor-pointer focus:outline-none focus:ring-2 focus:ring-mint"
+                className="px-3 py-1.5 text-[14px] font-bold rounded-full border border-mint-border bg-surface-container-lowest text-on-surface cursor-pointer focus:outline-none focus:ring-2 focus:ring-mint max-w-[200px] sm:max-w-none truncate"
               >
                 <option value="" disabled>{t.themeSelect}</option>
-                {sortedThemeKeys.map((theme, idx) => {
-                  const rank = idx + 1;
-                  const badge = rank <= 3 
-                    ? (lang === 'ko' ? `🔥 [인기 ${rank}위] ` : lang === 'ja' ? `🔥 [人気 ${rank}位] ` : lang === 'zh' ? `🔥 [热门第${rank}名] ` : `🔥 [Top ${rank}] `)
-                    : rank <= 6
-                    ? (lang === 'ko' ? '🔥 [인기] ' : lang === 'ja' ? '🔥 [人気] ' : lang === 'zh' ? '🔥 [热门] ' : '🔥 [Popular] ')
-                    : rank <= 12
-                    ? (lang === 'ko' ? '👑 [추천] ' : lang === 'ja' ? '👑 [おすすめ] ' : lang === 'zh' ? '👑 [推荐] ' : '👑 [Best] ')
-                    : '';
-                  return (
-                    <option key={theme} value={theme}>{`${rank}. ${badge}${theme}`}</option>
-                  );
-                })}
+                {themeKeys.map((theme, idx) => (
+                  <option key={theme} value={theme}>{`${idx + 1}. ${theme}`}</option>
+                ))}
               </select>
               
               <button 
                 onClick={shuffleEmoticons}
-                className="interactive-control flex items-center gap-1 min-h-10 px-3 py-1.5 text-[14px] font-bold rounded-full bg-mint text-mint-strong hover:bg-mint-hover border border-mint-border"
+                className="interactive-control flex items-center gap-1 min-h-10 px-3 py-1.5 text-[14px] font-bold rounded-full bg-mint text-mint-strong hover:bg-mint-hover border border-mint-border shrink-0"
               >
                 <Shuffle size={14} /> {t.randomMix}
               </button>
+            </div>
+          </div>
+
+          {/* Real-time Popular TOP 5 Quick Select Chips */}
+          <div className="bg-[#FFF8EE] p-2.5 sm:p-3 rounded-lg border border-[#FCD3A1] flex flex-col sm:flex-row sm:items-center gap-2 shadow-2xs">
+            <div className="flex items-center gap-1.5 shrink-0 text-[12.5px] sm:text-[13px] font-extrabold text-[#9A3412]">
+              <span className="text-[14px]">🔥</span>
+              <span>{lang === 'ko' ? '실시간 인기 TOP 5' : lang === 'ja' ? 'リアルタイム人気TOP 5' : lang === 'zh' ? '实时热门 TOP 5' : 'Real-time TOP 5'}:</span>
+            </div>
+            <div className="flex items-center gap-1.5 flex-wrap flex-1">
+              {sortedThemeKeys.slice(0, 5).map((theme, idx) => {
+                const isCurrent = activeTheme === theme;
+                const shortTitle = theme.split('(')[0].replace(/^[0-9]+\.\s*/, '').trim();
+                return (
+                  <button
+                    key={theme}
+                    type="button"
+                    onClick={() => {
+                      if (currentThemes[theme]) {
+                        setEmoticons(currentThemes[theme]);
+                        setActiveTheme(theme);
+                        recordThemeUsage(theme, 1);
+                        trackEvent('select_theme_top5', { theme_name: theme, rank: idx + 1, lang });
+                      }
+                    }}
+                    className={`interactive-control px-2.5 py-1 rounded-full text-[12px] font-bold transition-all flex items-center gap-1 cursor-pointer border ${
+                      isCurrent
+                        ? 'bg-[#C2410C] text-white border-[#9A3412] shadow-xs scale-105'
+                        : 'bg-white text-[#9A3412] border-[#FCD3A1] hover:bg-[#FFF1DE]'
+                    }`}
+                  >
+                    <span className="text-[11px] opacity-80 font-black">{idx + 1}위</span>
+                    <span>{shortTitle}</span>
+                  </button>
+                );
+              })}
             </div>
           </div>
 
