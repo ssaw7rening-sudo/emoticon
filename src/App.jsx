@@ -3497,12 +3497,12 @@ const trackEvent = (eventName, params = {}) => {
   }
 };
 
-// 🌟 Real-time Golden Combos Presets with Seasonal Intelligence & Auto-Ranking
+// 🌟 Real-time Golden Combos Presets with Seasonal Intelligence & Auto-Ranking (4-Language Parity)
 const ALL_GOLDEN_COMBOS = [
   {
     id: 'daycare-name-tag',
     icon: '🍼',
-    themeName: '어린이/유치원 ①',
+    themeIdx: 72, // 어린이/유치원 ① (Kids/Kindergarten ①)
     characterSource: 'photo',
     photoMode: 'balanced',
     seasonMonths: [2, 3, 4],
@@ -3528,7 +3528,7 @@ const ALL_GOLDEN_COMBOS = [
   {
     id: 'christmas-party',
     icon: '🎄',
-    themeName: '크리스마스/연말 ①',
+    themeIdx: 104, // 크리스마스/연말 ① (Christmas/Year-End ①)
     characterSource: 'photo',
     photoMode: 'style',
     seasonMonths: [11, 12],
@@ -3554,7 +3554,7 @@ const ALL_GOLDEN_COMBOS = [
   {
     id: 'wedding-invitation',
     icon: '💍',
-    themeName: '웨딩/청첩장 ①',
+    themeIdx: 98, // 웨딩/청첩장 ① (Wedding/Invitation ①)
     characterSource: 'photo',
     photoMode: 'balanced',
     seasonMonths: [4, 5, 9, 10],
@@ -3580,7 +3580,7 @@ const ALL_GOLDEN_COMBOS = [
   {
     id: 'exam-csat-pass',
     icon: '💯',
-    themeName: '수능/합격기원 ①',
+    themeIdx: 102, // 수능/합격기원 ① (Exam/Victory ①)
     characterSource: 'photo',
     photoMode: 'likeness',
     seasonMonths: [10, 11, 12],
@@ -3606,7 +3606,7 @@ const ALL_GOLDEN_COMBOS = [
   {
     id: 'spring-cherry-blossom',
     icon: '🌸',
-    themeName: '봄벚꽃/피크닉 ①',
+    themeIdx: 106, // 봄벚꽃/피크닉 ① (Spring Blossom/Picnic ①)
     characterSource: 'photo',
     photoMode: 'style',
     seasonMonths: [3, 4],
@@ -3632,7 +3632,7 @@ const ALL_GOLDEN_COMBOS = [
   {
     id: 'summer-vacation-sea',
     icon: '🏖️',
-    themeName: '여행/휴가 ①',
+    themeIdx: 38, // 여행/휴가 ① (Travel/Vacation ①)
     characterSource: 'photo',
     photoMode: 'likeness',
     seasonMonths: [6, 7, 8],
@@ -3658,7 +3658,7 @@ const ALL_GOLDEN_COMBOS = [
   {
     id: 'holiday-chuseok-seollal',
     icon: '🌕',
-    themeName: '명절·설날·추석 ①',
+    themeIdx: 108, // 명절·설날·추석 ① (Holidays/Family ①)
     characterSource: 'photo',
     photoMode: 'balanced',
     seasonMonths: [1, 2, 9],
@@ -3684,7 +3684,7 @@ const ALL_GOLDEN_COMBOS = [
   {
     id: 'halloween-costume',
     icon: '🎃',
-    themeName: '할로윈/코스튬 ①',
+    themeIdx: 100, // 할로윈/코스튬 ① (Halloween/Costume ①)
     characterSource: 'photo',
     photoMode: 'style',
     seasonMonths: [9, 10],
@@ -3710,7 +3710,7 @@ const ALL_GOLDEN_COMBOS = [
   {
     id: 'gym-fitness-dog',
     icon: '🏋️',
-    themeName: '헬스/오운완 ①',
+    themeIdx: 46, // 헬스/오운완 ① (Fitness/Gym ①)
     characterSource: 'photo',
     photoMode: 'likeness',
     seasonMonths: [1, 2, 5, 6, 7],
@@ -3736,7 +3736,7 @@ const ALL_GOLDEN_COMBOS = [
   {
     id: 'office-worker-cat',
     icon: '💼',
-    themeName: '직장인 ①',
+    themeIdx: 2, // 직장인 ① (Office Life ①)
     characterSource: 'photo',
     photoMode: 'balanced',
     seasonMonths: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
@@ -3762,7 +3762,7 @@ const ALL_GOLDEN_COMBOS = [
   {
     id: 'cafe-barista-rabbit',
     icon: '☕',
-    themeName: '약속/카페투어 ①',
+    themeIdx: 54, // 약속/카페투어 ① (Hangout/Cafe ①)
     characterSource: 'photo',
     photoMode: 'style',
     seasonMonths: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
@@ -3788,7 +3788,7 @@ const ALL_GOLDEN_COMBOS = [
   {
     id: 'pro-gamer-panther',
     icon: '🎮',
-    themeName: '게임/게이머 ①',
+    themeIdx: 8, // 게임/게이머 ① (Gaming/Gamer ①)
     characterSource: 'photo',
     photoMode: 'likeness',
     seasonMonths: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
@@ -4043,10 +4043,10 @@ function App() {
       activeGoldenComboId
     });
 
-    // 2. Select theme (by exact name in current language or fallback)
-    const targetThemeName = currentThemes[combo.themeName] 
-      ? combo.themeName 
-      : (themeKeys.find(k => k.includes(combo.themeName.split('/')[0])) || themeKeys[0]);
+    // 2. Select theme by exact index (100% 4-Language Parity in KO, EN, JA, ZH)
+    const targetThemeName = (combo.themeIdx !== undefined && themeKeys[combo.themeIdx])
+      ? themeKeys[combo.themeIdx]
+      : (currentThemes[combo.themeName] ? combo.themeName : themeKeys[0]);
 
     if (currentThemes[targetThemeName]) {
       setEmoticons(currentThemes[targetThemeName]);
@@ -4055,7 +4055,7 @@ function App() {
       recordThemeUsage(targetThemeName, 2);
     }
 
-    // 3. Set tags & photo mode
+    // 3. Set tags & photo mode in current language
     const comboTag = combo.tags[lang] || combo.tags['ko'];
     setCharManual(comboTag);
     setCharacterSource(combo.characterSource || 'photo');
@@ -6302,7 +6302,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                       {/* Bottom Row: Theme Badge + Action Status */}
                       <div className="mt-auto flex items-center justify-between pt-1.5 border-t border-amber-200/70 text-[10.5px] font-bold text-amber-800 w-full">
                         <span className="bg-amber-100 text-amber-900 px-2 py-0.5 rounded-md font-extrabold truncate max-w-[125px] whitespace-nowrap">
-                          🏷️ {combo.themeName}
+                          🏷️ {themeKeys[combo.themeIdx] || combo.themeName}
                         </span>
                         <span className={`font-black text-[11px] shrink-0 whitespace-nowrap ${isSelected ? 'text-amber-800' : 'text-[#C2410C]'}`}>
                           {isSelected ? '✓ 셋팅완료' : '원클릭 🚀'}
