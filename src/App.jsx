@@ -3507,6 +3507,56 @@ function App() {
   const themeKeys = Object.keys(currentThemes);
   const categoryKeys = Object.keys(currentTags);
   
+  const [themeStats, setThemeStats] = useState(() => {
+    try {
+      const saved = localStorage.getItem('theme_usage_stats');
+      if (saved) return JSON.parse(saved);
+    } catch (e) {}
+    return {
+      '일상 (기본 대화)': 120,
+      '직장인 (회사 생활)': 110,
+      '헬스 & 다이어트': 95,
+      '주식 & 재테크': 90,
+      '골프 & 라운딩': 85,
+      '연애 & 커플': 80,
+      '먹방 & 야식': 75,
+      '낚시 & 손맛': 70,
+      '귀여운 동물 (강아지/고양이)': 65,
+      '학생 & 시험/공부': 60,
+      '캠핑 & 아웃도어': 55,
+      '축하 & 생일/파티': 50,
+      // Global keys
+      'Daily Chat': 120,
+      'Office & Work': 110,
+      'Fitness & Diet': 95,
+      'Investing & Stocks': 90,
+      'Golf': 85,
+      '日常 (基本会話)': 120,
+      '会社員・仕事': 110,
+      '筋トレ・ダイエット': 95,
+      '日常 (基本对话)': 120,
+      '职场人・工作': 110,
+      '健身・减肥': 95,
+    };
+  });
+
+  const recordThemeUsage = (themeName, weight = 1) => {
+    if (!themeName || themeName === 'custom') return;
+    setThemeStats(prev => {
+      const next = { ...prev, [themeName]: (prev[themeName] || 0) + weight };
+      try {
+        localStorage.setItem('theme_usage_stats', JSON.stringify(next));
+      } catch (e) {}
+      return next;
+    });
+  };
+
+  const sortedThemeKeys = [...themeKeys].sort((a, b) => {
+    const scoreA = themeStats[a] || 0;
+    const scoreB = themeStats[b] || 0;
+    return scoreB - scoreA;
+  });
+
   const [charManual, setCharManual] = useState('');
   const [characterSource, setCharacterSource] = useState('photo');
   const [photoReferenceMode, setPhotoReferenceMode] = useState('balanced');
@@ -5299,6 +5349,9 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
     const phraseOverride = selectedPhraseOverride ?? (generationMode === 'batch' ? getSelectedPhrase() : null);
     if (getPromptValidationError(phraseOverride)) return;
 
+    // Record theme usage score (+3 for launch action)
+    recordThemeUsage(activeTheme, 3);
+
     // GA4 Real-time Tracking
     trackEvent('launch_ai_companion', {
       ai_model: type,
@@ -5360,6 +5413,9 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
   const copyToClipboard = (type, selectedPhraseOverride = null, copyKey = type) => {
     const phraseOverride = selectedPhraseOverride ?? (generationMode === 'batch' ? getSelectedPhrase() : null);
     if (getPromptValidationError(phraseOverride)) return;
+
+    // Record theme usage score (+3 for copy action)
+    recordThemeUsage(activeTheme, 3);
 
     // GA4 Real-time Tracking
     trackEvent('copy_prompt', {
@@ -5892,12 +5948,17 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                 className="px-3 py-1.5 text-[14px] font-bold rounded-full border border-mint-border bg-surface-container-lowest text-on-surface cursor-pointer focus:outline-none focus:ring-2 focus:ring-mint"
               >
                 <option value="" disabled>{t.themeSelect}</option>
-                {themeKeys.map((theme, idx) => {
-                  const isTopPopular = idx < 5;
-                  const isRecommended = idx >= 5 && idx < 12;
-                  const badge = isTopPopular ? '🔥 [인기] ' : isRecommended ? '👑 [추천] ' : '';
+                {sortedThemeKeys.map((theme, idx) => {
+                  const rank = idx + 1;
+                  const badge = rank <= 3 
+                    ? (lang === 'ko' ? `🔥 [인기 ${rank}위] ` : lang === 'ja' ? `🔥 [人気 ${rank}位] ` : lang === 'zh' ? `🔥 [热门第${rank}名] ` : `🔥 [Top ${rank}] `)
+                    : rank <= 6
+                    ? (lang === 'ko' ? '🔥 [인기] ' : lang === 'ja' ? '🔥 [人気] ' : lang === 'zh' ? '🔥 [热门] ' : '🔥 [Popular] ')
+                    : rank <= 12
+                    ? (lang === 'ko' ? '👑 [추천] ' : lang === 'ja' ? '👑 [おすすめ] ' : lang === 'zh' ? '👑 [推荐] ' : '👑 [Best] ')
+                    : '';
                   return (
-                    <option key={theme} value={theme}>{`${idx + 1}. ${badge}${theme}`}</option>
+                    <option key={theme} value={theme}>{`${rank}. ${badge}${theme}`}</option>
                   );
                 })}
               </select>
