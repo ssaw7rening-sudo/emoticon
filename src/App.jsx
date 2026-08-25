@@ -3819,8 +3819,6 @@ function App() {
   };
 
   const clearTags = () => {
-    setCharacterSource('direct');
-    setPhotoReferenceMode('balanced');
     setCharManual('');
   };
 
