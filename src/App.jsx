@@ -5776,7 +5776,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
             </div>
 
             <textarea 
-              className="w-full bg-white border-2 border-mint-border rounded-md p-3.5 sm:p-4 text-on-surface font-medium focus:font-bold placeholder:text-slate-400 placeholder:font-normal placeholder:opacity-75 focus:placeholder:opacity-40 focus:outline-none focus:ring-4 focus:ring-mint focus:border-mint-border resize-y min-h-[100px] shadow-sm" 
+              className="w-full bg-white border-2 border-mint-border rounded-md p-3.5 sm:p-4 text-on-surface font-medium focus:font-bold placeholder:text-slate-400 placeholder:font-normal placeholder:opacity-75 focus:placeholder:opacity-40 focus:outline-none focus:ring-4 focus:ring-mint focus:border-mint-border resize-y min-h-[100px] shadow-sm scroll-smooth [scrollbar-width:thin] [scrollbar-color:#A6E3D0_transparent] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-[#A6E3D0] [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-mint-strong" 
               placeholder={t.placeholder}
               value={charManual}
               onChange={(e) => setCharManual(e.target.value)}
@@ -6437,7 +6437,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
           )}
           <div className="bg-surface-container-lowest rounded-md p-3.5 sm:p-md shadow-[#B8E3D2] border border-outline-variant">
             <textarea 
-              className="w-full bg-white border-2 border-outline-variant rounded-md p-4 text-on-surface font-normal focus:outline-none resize-y min-h-[200px] shadow-sm" 
+              className="w-full bg-white border-2 border-outline-variant rounded-md p-4 text-on-surface font-normal focus:outline-none resize-y min-h-[200px] max-h-[460px] shadow-sm scroll-smooth [scrollbar-width:thin] [scrollbar-color:#FCD3A1_transparent] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-[#FCD3A1] [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-[#E8C66A]" 
               readOnly
               value={getPreviewPrompt()}
             />
