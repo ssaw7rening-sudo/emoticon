@@ -6689,9 +6689,72 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
 
       {/* Footer */}
       <footer className="mt-8 sm:mt-10 py-7 sm:py-9 bg-[#FAF9F6] border-t border-[#E5E0D8] text-center w-full">
-        <div className="max-w-4xl mx-auto px-6 flex flex-col items-center gap-3">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 flex flex-col items-center gap-4">
+          
+          {/* B2B Partnership & Custom Merch Cooperation Card */}
+          <div className="w-full max-w-2xl bg-[#FFF9F0] border-2 border-[#FCD3A1] rounded-xl p-4 sm:p-5 text-left shadow-xs flex flex-col gap-3">
+            <div className="flex items-center justify-between gap-2 flex-wrap border-b border-[#FCD3A1]/70 pb-2.5">
+              <span className="text-[14px] sm:text-[15px] font-extrabold text-[#782806] flex items-center gap-2">
+                <span className="text-[17px]">🤝</span>
+                <span>{lang === 'ko' 
+                  ? '비즈니스 제휴 및 굿즈·판촉물 협력 안내' 
+                  : lang === 'ja' 
+                  ? 'ビジネス提携・グッズ/ノベルティ制作連携' 
+                  : lang === 'zh' 
+                  ? '商务合作・周边衍生品及促销礼品合作指南' 
+                  : 'Business Partnership & Custom Merch'}</span>
+              </span>
+              <span className="text-[11px] font-bold text-[#C2410C] bg-[#FFE8CC] px-2.5 py-0.5 rounded-full border border-[#FCD3A1]">
+                {lang === 'ko' ? 'B2B / 제휴 환영' : 'Partnership'}
+              </span>
+            </div>
+
+            <p className="text-[12.5px] sm:text-[13px] text-[#8C3D18] leading-relaxed font-normal break-keep">
+              {lang === 'ko'
+                ? '프롬프트 메이커에서 생성된 고화질 캐릭터 이모티콘을 활용한 실물 굿즈(키링, 아크릴 스탠드, 스티커팩, 텀블러, 티셔츠 등) 제작 연계, 기업 판촉물/홍보물 커스텀 제작, 또는 AI 캐릭터 솔루션 B2B 제휴를 적극 환영합니다.'
+                : lang === 'ja'
+                ? '当サービスで生成された高画質キャラクターを活用したオリジナルグッズ（アクリルキーホルダー、ステッカー、Tシャツ、タンブラーなど）の製造・販売連携や、企業のノベルティ・販促物制作のビジネス提携を歓迎します。'
+                : lang === 'zh'
+                ? '欢迎各类周边衍生品制造商（亚克力钥匙扣、贴纸包、文化衫、马克杯等）、企业定制促销礼品印刷商以及AI角色解决方案的商务合作与B2B对接。'
+                : 'We welcome partnerships with custom merchandise manufacturers (keyrings, sticker packs, apparel, acrylic stands), corporate promotional product printers, and B2B character IP collaborations.'}
+            </p>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[12px] text-[#9A3412] font-semibold bg-white/80 p-3 rounded-lg border border-[#FCD3A1]/60">
+              <div className="flex items-center gap-1.5">
+                <span className="text-amber-600">🎁</span>
+                <span>{lang === 'ko' ? '굿즈·판촉물·인쇄 제작사 제휴' : lang === 'ja' ? 'グッズ・印刷・ノベルティ業者連携' : lang === 'zh' ? '周边礼品・印刷制造商合作' : 'Custom Merch & Print Partners'}</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="text-amber-600">🏢</span>
+                <span>{lang === 'ko' ? '기업/브랜드 맞춤형 캐릭터 이모티콘 기획' : lang === 'ja' ? '企業・ブランド向けスタンプ制作支援' : lang === 'zh' ? '企业/品牌专属表情包定制' : 'Corporate Custom Mascot Projects'}</span>
+              </div>
+            </div>
+
+            <div className="pt-1 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+              <span className="text-[11.5px] text-[#A65828]">
+                {lang === 'ko' 
+                  ? '* 구글 폼으로 제안서를 남겨주시면 24시간 이내에 검토 후 회신드립니다.' 
+                  : lang === 'ja' 
+                  ? '* フォームよりご連絡いただければ、24時間以内に折り返しご連絡いたします。' 
+                  : lang === 'zh' 
+                  ? '* 填写表单后，我们将在24小时内与您取得联系并沟通合作方案。' 
+                  : '* Submit your proposal via Google Forms and we will get back to you within 24 hours.'}
+              </span>
+              <a
+                href="https://forms.gle/Q2oG84fL4B9g2Jda7"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => trackEvent('click_partnership_form', { lang })}
+                className="interactive-control px-4 py-2 rounded-lg bg-[#C2410C] hover:bg-[#9A3412] text-white font-extrabold text-[12.5px] sm:text-[13px] flex items-center justify-center gap-1.5 shadow-sm transition-all shrink-0 cursor-pointer"
+              >
+                <span>{lang === 'ko' ? '제휴 및 협력 문의하기' : lang === 'ja' ? '提携・協業のお問い合わせ' : lang === 'zh' ? '提交合作意向' : 'Inquire Partnership'}</span>
+                <span className="text-[11px]">↗</span>
+              </a>
+            </div>
+          </div>
+
           {/* JocoHunt Weekly Top 3 Winner Badge */}
-          <div className="mb-2 flex justify-center">
+          <div className="my-1 flex justify-center">
             <a
               href="https://jocohunt.com/p/190i6ehg"
               target="_blank"
@@ -6706,6 +6769,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
               />
             </a>
           </div>
+          
           <div className="flex items-center justify-center gap-4 flex-wrap text-[13px] font-bold text-slate-700">
             <button
               onClick={() => navigateTo('/privacy')}
