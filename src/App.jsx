@@ -5720,21 +5720,28 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                         ? '支持个人、情侣、全家福照片，以及宠物猫狗和物品照片，与所选的主题及标签100%完美结合。'
                         : 'Supports photos of single persons, couples, pets/animals, or objects. All selected themes and tags combine 100% into the prompt.'}
                     </p>
-                    <div className="bg-amber-50/80 p-2.5 rounded-md text-[12.5px] text-amber-850 font-normal border border-amber-200/70 leading-normal flex flex-col gap-1">
+                    <div className="bg-amber-50/80 p-2.5 rounded-md text-[12.5px] text-amber-850 font-normal border border-amber-200/70 leading-normal flex flex-col gap-1.5">
                       <span>✨ {lang === 'ko' 
-                        ? '커플/웨딩 사진 + [결혼/신혼부부] 테마 → 둘만의 특별한 커스텀 커플 메신저 이모티콘 완성!' 
+                        ? '아이 얼굴 사진 + [유아/학생] 테마 → 우리 아이 얼굴이 담긴 어린이집·유치원 방수 네임스티커 & 알림장 스티커 완성!' 
                         : lang === 'ja' 
-                        ? 'カップル/ウェディング写真 + [結婚・新婚]テーマ → 2人だけの特別なカスタムスタンプ完成！' 
+                        ? 'お子様の顔写真 + [幼児・児童]テーマ → 保育園・幼稚園の名前シール＆お名前スタンプ完成！' 
                         : lang === 'zh' 
-                        ? '情侣/婚纱照 + [结婚/新婚] 主题 → 打造独一无二的情侣专属表情包！' 
-                        : 'Couple photo + [Wedding/Newlyweds] theme → Custom personalized couple sticker pack!'}</span>
+                        ? '孩子照片 + [幼儿/学生] 主题 → 制作专属的幼儿园防水姓名贴纸与家园共育表情包！' 
+                        : 'Child photo + [Kids/School] theme → Personalized daycare/kindergarten name stickers & daily report stamps!'}</span>
                       <span>✨ {lang === 'ko' 
-                        ? '선생님 사진 + [선생님/교사] 테마 → 학생들에게 찍어줄 세상에 하나뿐인 "참 잘했어요!" 얼굴 스탬프 완성!' 
+                        ? '어린이집/유치원 선생님 사진 + [선생님/교사] 테마 → 키즈노트 알림장 및 원아 칭찬용 세상에 하나뿐인 얼굴 스탬프 완성!' 
                         : lang === 'ja' 
-                        ? '先生の写真 + [教師・先生]テーマ → 生徒に送る世界に一つだけの「大変よくできました！」顔スタンプ完成！' 
+                        ? '保育士・先生の写真 + [教師・先生]テーマ → 連絡帳やご褒美スタンプに使える世界に一つの顔スタンプ完成！' 
                         : lang === 'zh' 
-                        ? '老师照片 + [教师/老师] 主题 → 给学生发送独一无二的“真棒！”专属表扬印章！' 
-                        : 'Teacher photo + [Teacher/Educator] theme → Personalized teacher praise & evaluation stamp!'}</span>
+                        ? '幼师/老师照片 + [教师/老师] 主题 → 制作家园联系册与幼儿专属“真棒”表扬印章！' 
+                        : 'Teacher photo + [Teacher/Educator] theme → Personalized praise & daily report sticker pack for students!'}</span>
+                      <span>✨ {lang === 'ko' 
+                        ? '커플/웨딩/가족 사진 + [일상/가족] 테마 → 우리 가족·커플만의 특별한 메신저 이모티콘 완성!' 
+                        : lang === 'ja' 
+                        ? 'カップル/家族写真 + [日常・家族]テーマ → 家族・2人だけの特別なカスタムスタンプ完成！' 
+                        : lang === 'zh' 
+                        ? '情侣/全家福照片 + [日常/家庭] 主题 → 打造独一无二的专属家庭/情侣表情包！' 
+                        : 'Couple/Family photo + [Daily/Family] theme → Custom personalized messenger sticker pack!'}</span>
                     </div>
                   </div>
                 </div>
@@ -6631,6 +6638,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                   <li>{lang === 'ko' ? 'SNS 프로필 & 스토리: 인스타, X, 유튜브 프로필 및 감정 아바타로 활용' : 'SNS Profiles & Avatars: Use custom characters as profile icons.'}</li>
                   <li>{lang === 'ko' ? '메신저 톡방 감정 짤: 배경 투명화 후 앨범에 저장해 친구·가족 톡방에서 개성 넘치는 리액션 짤로 전송' : 'Messenger Reactions: Send custom transparent stickers in chats.'}</li>
                   <li>{lang === 'ko' ? '블로그 & 다꾸: 네이버 블로그 스티커, 굿노트·노션 다이어리 스탬프로 장식' : 'Blog & Planner Decor: Decorate blogs or digital planners.'}</li>
+                  <li>{lang === 'ko' ? '어린이집·유치원 알림장 & 네임스티커: 아이 얼굴 사진으로 식판/학용품 방수 네임스티커 라벨 및 키즈노트 알림장 전용 캐릭터 스티커 제작' : lang === 'ja' ? '保育園・幼稚園の連絡帳＆お名前シール: お子様の顔写真で防水お名前シールや連絡帳スタンプを作成' : lang === 'zh' ? '幼儿园家园联系册与姓名贴纸: 用宝宝照片制作防水姓名贴与专属互动表情包' : 'Daycare & Kindergarten Name Labels: Make waterproof name stickers and daily report emojis from child photos.'}</li>
                   <li>{lang === 'ko' ? '선생님 칭찬 스탬프: 알림장, 칭찬 스티커판 맞춤형 교육 스탬프로 활용' : 'Teacher Stamps: Perfect for reward charts and student feedback.'}</li>
                   <li>{lang === 'ko' ? '커플·신혼부부 추억: 모바일 청첩장, 기념일 굿즈 및 포토북 제작' : 'Couple Memories: Make anniversary gifts, photo books, and digital wedding stickers.'}</li>
                 </ul>
