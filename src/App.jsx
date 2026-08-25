@@ -5599,10 +5599,10 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                 <div className="rounded-lg border-2 border-amber-300 bg-amber-50/90 p-4 flex flex-col gap-3 shadow-sm">
                   <div className="flex items-center justify-between gap-2">
                     <span className="text-[13px] sm:text-[14px] font-bold text-amber-950 flex items-center gap-1.5 shrink-0 whitespace-nowrap">
-                      📸 {lang === 'ko' ? '참고 사진 + 태그 연동' : 'Photo + Tag Synergy'}
+                      📸 {lang === 'ko' ? '참고 사진 + 태그 연동' : lang === 'ja' ? '参照写真 + タグ連動' : lang === 'zh' ? '参考照片 + 标签联动' : 'Photo + Tag Synergy'}
                     </span>
                     <span className="text-[11px] sm:text-[12px] font-bold text-amber-800 bg-amber-200/90 px-2 py-0.5 rounded-full shrink-0 whitespace-nowrap">
-                      ✨ {lang === 'ko' ? '사진 기반 융합' : 'Photo Active'}
+                      ✨ {lang === 'ko' ? '사진 기반 융합' : lang === 'ja' ? '写真ベース融合' : lang === 'zh' ? '照片深度融合' : 'Photo Active'}
                     </span>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-2" role="group" aria-label={t.photoMethod}>
@@ -5629,16 +5629,38 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                   </div>
                   <div className="text-[14px] leading-relaxed text-amber-900 bg-white/90 p-3.5 rounded-lg border border-amber-200 flex flex-col gap-2 shadow-2xs font-normal">
                     <p className="font-bold flex items-center gap-1.5 text-[14px] text-amber-900">
-                      💡 {lang === 'ko' ? '사진 참고 모드 (인물 / 동물 / 사물 자유 결합)' : 'Photo Reference Mode (Person / Animal / Object)'}
+                      💡 {lang === 'ko' 
+                        ? '사진 참고 모드 (인물 / 동물 / 사물 자유 결합)' 
+                        : lang === 'ja' 
+                        ? '写真参照モード (人物 / 動物 / アイテム自由連携)' 
+                        : lang === 'zh' 
+                        ? '照片参考模式 (人物 / 宠物动物 / 物品自由结合)' 
+                        : 'Photo Reference Mode (Person / Animal / Object)'}
                     </p>
                     <p className="text-[13px] text-amber-800 leading-normal font-normal">
                       {lang === 'ko'
                         ? '단독 인물·커플·가족 사진뿐만 아니라 반려견/반려묘(동물), 캐릭터/사물 사진도 모두 가능하며 선택하신 테마 및 태그와 100% 융합됩니다.'
+                        : lang === 'ja'
+                        ? '単独・カップル・家族写真はもちろん、ペット(犬・猫)やアイテム写真もすべて対応。選択したテーマやタグと100%融合します。'
+                        : lang === 'zh'
+                        ? '支持个人、情侣、全家福照片，以及宠物猫狗和物品照片，与所选的主题及标签100%完美结合。'
                         : 'Supports photos of single persons, couples, pets/animals, or objects. All selected themes and tags combine 100% into the prompt.'}
                     </p>
                     <div className="bg-amber-50/80 p-2.5 rounded-md text-[12.5px] text-amber-850 font-normal border border-amber-200/70 leading-normal flex flex-col gap-1">
-                      <span>✨ {lang === 'ko' ? '커플/웨딩 사진 + [결혼/신혼부부] 테마 → 둘만의 특별한 커스텀 커플 메신저 이모티콘 완성!' : 'Couple photo + [Wedding/Newlyweds] theme → Custom personalized couple sticker pack!'}</span>
-                      <span>✨ {lang === 'ko' ? '선생님 사진 + [선생님/교사] 테마 → 학생들에게 찍어줄 세상에 하나뿐인 "참 잘했어요!" 얼굴 스탬프 완성!' : 'Teacher photo + [Teacher/Educator] theme → Personalized teacher praise & evaluation stamp!'}</span>
+                      <span>✨ {lang === 'ko' 
+                        ? '커플/웨딩 사진 + [결혼/신혼부부] 테마 → 둘만의 특별한 커스텀 커플 메신저 이모티콘 완성!' 
+                        : lang === 'ja' 
+                        ? 'カップル/ウェディング写真 + [結婚・新婚]テーマ → 2人だけの特別なカスタムスタンプ完成！' 
+                        : lang === 'zh' 
+                        ? '情侣/婚纱照 + [结婚/新婚] 主题 → 打造独一无二的情侣专属表情包！' 
+                        : 'Couple photo + [Wedding/Newlyweds] theme → Custom personalized couple sticker pack!'}</span>
+                      <span>✨ {lang === 'ko' 
+                        ? '선생님 사진 + [선생님/교사] 테마 → 학생들에게 찍어줄 세상에 하나뿐인 "참 잘했어요!" 얼굴 스탬프 완성!' 
+                        : lang === 'ja' 
+                        ? '先生の写真 + [教師・先生]テーマ → 生徒に送る世界に一つだけの「大変よくできました！」顔スタンプ完成！' 
+                        : lang === 'zh' 
+                        ? '老师照片 + [教师/老师] 主题 → 给学生发送独一无二的“真棒！”专属表扬印章！' 
+                        : 'Teacher photo + [Teacher/Educator] theme → Personalized teacher praise & evaluation stamp!'}</span>
                     </div>
                   </div>
                 </div>
@@ -5649,10 +5671,22 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
             <div className="mb-3 flex flex-col gap-2">
               <div className="flex items-center justify-between bg-mint-soft/80 border border-mint-border rounded-lg px-3 py-2 text-[12px] font-bold text-mint-strong">
                 <span className="flex items-center gap-1.5">
-                  ⚡ {lang === 'ko' ? '버튼 클릭 시 입력 상자 & AI 프롬프트 100% 실시간 자동 동기화' : 'Real-time auto-sync to Textbox & Prompts'}
+                  ⚡ {lang === 'ko' 
+                    ? '버튼 클릭 시 입력 상자 & AI 프롬프트 100% 실시간 자동 동기화' 
+                    : lang === 'ja' 
+                    ? 'ボタンクリック時に入力欄＆AIプロンプトが100%リアルタイム自動同期' 
+                    : lang === 'zh' 
+                    ? '点击按钮时输入框与AI提示词100%实时自动同步' 
+                    : 'Real-time auto-sync to Textbox & Prompts'}
                 </span>
                 <span className="text-[11px] text-mint-strong/80">
-                  {lang === 'ko' ? '태그 재클릭 시 ON/OFF 토글' : 'Click again to toggle ON/OFF'}
+                  {lang === 'ko' 
+                    ? '태그 재클릭 시 ON/OFF 토글' 
+                    : lang === 'ja' 
+                    ? '再クリックでON/OFF切り替え' 
+                    : lang === 'zh' 
+                    ? '再次点击可切换开启/关闭' 
+                    : 'Click again to toggle ON/OFF'}
                 </span>
               </div>
 
