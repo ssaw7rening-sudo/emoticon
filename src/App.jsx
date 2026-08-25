@@ -3508,6 +3508,65 @@ function App() {
   const categoryKeys = Object.keys(currentTags);
   
   const [showPartnershipModal, setShowPartnershipModal] = useState(false);
+  const [activeGoldenComboId, setActiveGoldenComboId] = useState(null);
+  const [previousComboBackup, setPreviousComboBackup] = useState(null);
+
+  const applyGoldenCombo = (combo) => {
+    // 1. Backup current state for Undo
+    setPreviousComboBackup({
+      charManual,
+      characterSource,
+      photoReferenceMode,
+      activeTheme,
+      emoticons: [...emoticons],
+      selectedTopTheme,
+      activeGoldenComboId
+    });
+
+    // 2. Select theme
+    const themeName = themeKeys[combo.themeIdx] || themeKeys[0];
+    if (currentThemes[themeName]) {
+      setEmoticons(currentThemes[themeName]);
+      setActiveTheme(themeName);
+      setSelectedTopTheme(themeName);
+      recordThemeUsage(themeName, 2);
+    }
+
+    // 3. Set tags & photo mode
+    const comboTag = combo.tags[lang] || combo.tags['ko'];
+    setCharManual(comboTag);
+    setCharacterSource(combo.characterSource || 'photo');
+    if (combo.photoMode) {
+      setPhotoReferenceMode(combo.photoMode);
+    }
+    setActiveGoldenComboId(combo.id);
+
+    showToast(
+      lang === 'ko'
+        ? `🌟 [${combo.title.ko}] 황금 조합이 1초 만에 자동 세팅되었습니다!`
+        : lang === 'ja'
+        ? `🌟 [${combo.title.ja}] 黄金セットを自動適用しました！`
+        : lang === 'zh'
+        ? `🌟 [${combo.title.zh}] 黄金组合已自动一键应用！`
+        : `🌟 [${combo.title.en}] Golden Combo applied instantly!`
+    );
+
+    trackEvent('apply_golden_combo', { combo_id: combo.id, lang });
+  };
+
+  const undoGoldenCombo = () => {
+    if (!previousComboBackup) return;
+    setCharManual(previousComboBackup.charManual);
+    setCharacterSource(previousComboBackup.characterSource);
+    setPhotoReferenceMode(previousComboBackup.photoReferenceMode);
+    setActiveTheme(previousComboBackup.activeTheme);
+    setEmoticons(previousComboBackup.emoticons);
+    setSelectedTopTheme(previousComboBackup.selectedTopTheme);
+    setActiveGoldenComboId(previousComboBackup.activeGoldenComboId);
+    setPreviousComboBackup(null);
+    showToast(lang === 'ko' ? '↩️ 이전 작업 설정으로 되돌렸습니다.' : '↩️ Restored previous settings.');
+  };
+
   const [selectedTopTheme, setSelectedTopTheme] = useState(null);
   const [themeStats, setThemeStats] = useState(() => {
     try {
@@ -5569,6 +5628,86 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                 className="w-[200px] sm:w-[240px] h-auto"
               />
             </a>
+          </div>
+        </section>
+
+        {/* 🌟 Section 0: One-Click Golden Combos Showcase (Instant 1-Second Setup) */}
+        <section className="bg-gradient-to-br from-amber-50/90 via-orange-50/70 to-emerald-50/80 rounded-xl p-3.5 sm:p-5 border-2 border-amber-300/80 shadow-sm flex flex-col gap-3">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div className="flex items-center gap-2">
+              <span className="bg-amber-400 text-amber-950 text-[11px] font-black px-2.5 py-0.5 rounded-full shadow-2xs">
+                HOT
+              </span>
+              <h2 className="text-[15px] sm:text-[17px] font-black text-amber-950 flex items-center gap-1.5">
+                <span>🌟</span>
+                <span>
+                  {lang === 'ko' ? '원클릭 실시간 황금 조합 리스트' : lang === 'ja' ? 'ワンクリック黄金セット一覧' : lang === 'zh' ? '一键实时热门黄金组合' : 'One-Click Golden Combos'}
+                </span>
+              </h2>
+            </div>
+            
+            <div className="flex items-center gap-2">
+              {previousComboBackup && (
+                <button
+                  type="button"
+                  onClick={undoGoldenCombo}
+                  className="interactive-control text-[11.5px] sm:text-[12px] font-extrabold text-amber-850 hover:text-amber-950 bg-white/90 border border-amber-300 px-2.5 py-1 rounded-full shadow-2xs hover:bg-amber-100 flex items-center gap-1 cursor-pointer transition-all active:scale-95"
+                >
+                  <RotateCcw size={12} /> {lang === 'ko' ? '이전 설정 되돌리기' : lang === 'ja' ? '元に戻す' : lang === 'zh' ? '撤销还原' : 'Undo'}
+                </button>
+              )}
+              <span className="text-[11.5px] font-bold text-amber-800/90">
+                {lang === 'ko' ? '👇 원하는 세트를 누르면 1초 만에 전체 자동 세팅됩니다' : lang === 'ja' ? '👇 クリック1秒で全体自動セット' : lang === 'zh' ? '👇 点击卡片1秒全自动配置' : '👇 Click any card to auto-apply all settings'}
+              </span>
+            </div>
+          </div>
+
+          {/* Golden Combos Horizontal Scroll Carousel */}
+          <div className="flex gap-2.5 overflow-x-auto pb-2 pt-1 no-scrollbar scroll-smooth">
+            {GOLDEN_COMBOS.map((combo) => {
+              const isSelected = activeGoldenComboId === combo.id;
+              const titleText = combo.title[lang] || combo.title.ko;
+              const descText = combo.desc[lang] || combo.desc.ko;
+
+              return (
+                <button
+                  key={combo.id}
+                  type="button"
+                  onClick={() => applyGoldenCombo(combo)}
+                  className={`interactive-control touch-manipulation flex flex-col text-left p-3 rounded-xl min-w-[210px] sm:min-w-[230px] max-w-[250px] shrink-0 border transition-all duration-200 cursor-pointer select-none active:scale-95 shadow-xs relative overflow-hidden ${
+                    isSelected
+                      ? 'bg-gradient-to-b from-[#FFFBEB] to-[#FEF3C7] border-2 border-amber-500 shadow-md ring-2 ring-amber-400/50 scale-[1.02]'
+                      : 'bg-white hover:bg-amber-50/50 border-amber-200/80 hover:border-amber-300'
+                  }`}
+                >
+                  {isSelected && (
+                    <div className="absolute top-2 right-2 bg-amber-500 text-white text-[9.5px] font-black px-1.5 py-0.5 rounded-full shadow-2xs flex items-center gap-0.5 animate-pulse">
+                      <CheckCircle2 size={10} /> {lang === 'ko' ? '적용중' : 'Active'}
+                    </div>
+                  )}
+
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <span className="text-[24px] sm:text-[26px] leading-none drop-shadow-2xs">{combo.icon}</span>
+                    <strong className="text-[13px] sm:text-[14px] font-black text-slate-900 leading-snug line-clamp-1">
+                      {titleText}
+                    </strong>
+                  </div>
+
+                  <p className="text-[11px] sm:text-[11.5px] font-medium text-slate-600 leading-tight mb-2 line-clamp-2">
+                    {descText}
+                  </p>
+
+                  <div className="mt-auto flex items-center justify-between pt-1 border-t border-amber-100 text-[10.5px] font-bold text-amber-800">
+                    <span className="bg-amber-100/90 text-amber-900 px-2 py-0.5 rounded-md font-extrabold truncate max-w-[140px]">
+                      🏷️ {themeKeys[combo.themeIdx] || '추천 테마'}
+                    </span>
+                    <span className="text-[#C2410C] font-black text-[11px]">
+                      {isSelected ? '✓ 셋팅됨' : '원클릭 🚀'}
+                    </span>
+                  </div>
+                </button>
+              );
+            })}
           </div>
         </section>
 
