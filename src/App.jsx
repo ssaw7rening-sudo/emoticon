@@ -5971,32 +5971,42 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
           </div>
 
           {/* Real-time Popular TOP 5 Quick Select Chips */}
-          <div className="bg-[#FFF8EE] p-2.5 sm:p-3 rounded-lg border border-[#FCD3A1] flex flex-col sm:flex-row sm:items-center gap-2 shadow-2xs">
-            <div className="flex items-center gap-1.5 shrink-0 text-[12.5px] sm:text-[13px] font-extrabold text-[#9A3412] select-none">
-              <span className="text-[14px]">🔥</span>
-              <span>{lang === 'ko' ? '실시간 인기 TOP 5' : lang === 'ja' ? 'リアルタイム人気TOP 5' : lang === 'zh' ? '实时热门 TOP 5' : 'Real-time TOP 5'}:</span>
+          <div className="bg-[#FFF8EE] p-3 sm:p-3.5 rounded-lg border border-[#FCD3A1] flex flex-col gap-2.5 shadow-2xs">
+            <div className="flex items-center justify-between gap-2 select-none">
+              <div className="flex items-center gap-1.5 text-[13px] sm:text-[13.5px] font-extrabold text-[#9A3412]">
+                <span className="text-[15px]">🔥</span>
+                <span>{lang === 'ko' ? '실시간 인기 TOP 5 테마' : lang === 'ja' ? 'リアルタイム人気TOP 5' : lang === 'zh' ? '实时热门 TOP 5' : 'Real-time Popular TOP 5'}</span>
+              </div>
+              <span className="text-[11px] font-bold text-[#C2410C] bg-[#FFE8CC] px-2 py-0.5 rounded-full border border-[#FCD3A1]">
+                ⚡ {lang === 'ko' ? '원클릭 전환' : '1-Click'}
+              </span>
             </div>
-            <div className="flex items-center gap-1.5 flex-wrap flex-1" role="group" aria-label="Popular Themes TOP 5">
+            
+            <div className="grid grid-cols-2 sm:grid-cols-5 gap-1.5 sm:gap-2 w-full" role="group" aria-label="Popular Themes TOP 5">
               {sortedThemeKeys.slice(0, 5).map((theme, idx) => {
                 const isCurrent = activeTheme === theme;
                 const shortTitle = theme.split('(')[0].replace(/^[0-9]+\.\s*/, '').trim();
                 const rankLabel = lang === 'ko' ? `${idx + 1}위` : lang === 'ja' ? `${idx + 1}位` : lang === 'zh' ? `第${idx + 1}` : `#${idx + 1}`;
+                const isFifth = idx === 4;
+
                 return (
                   <button
                     key={`${theme}-${idx}`}
                     type="button"
                     aria-pressed={isCurrent}
                     onClick={() => selectPopularTheme(theme)}
-                    className={`interactive-control touch-manipulation px-3 py-1.5 rounded-full text-[12px] sm:text-[12.5px] font-bold transition-all flex items-center gap-1.5 cursor-pointer border select-none active:scale-95 ${
+                    className={`interactive-control touch-manipulation w-full h-[40px] px-2.5 rounded-lg text-[12px] sm:text-[12.5px] font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer border select-none active:scale-95 ${
+                      isFifth ? 'col-span-2 sm:col-span-1' : ''
+                    } ${
                       isCurrent
                         ? 'bg-[#C2410C] text-white border-[#9A3412] shadow-sm ring-2 ring-[#C2410C]/30 font-black'
                         : 'bg-white text-[#9A3412] border-[#FCD3A1] hover:bg-[#FFF1DE] hover:border-[#E89E5F] shadow-2xs'
                     }`}
                   >
-                    <span className={`text-[11px] font-black px-1.5 py-0.2 rounded-full ${isCurrent ? 'bg-white/20 text-white' : 'bg-[#FFF0DD] text-[#C2410C]'}`}>
+                    <span className={`text-[11px] font-black px-1.5 py-0.5 rounded-md shrink-0 ${isCurrent ? 'bg-white/20 text-white' : 'bg-[#FFF0DD] text-[#C2410C]'}`}>
                       {rankLabel}
                     </span>
-                    <span>{shortTitle}</span>
+                    <span className="truncate">{shortTitle}</span>
                   </button>
                 );
               })}
