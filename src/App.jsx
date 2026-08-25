@@ -5991,31 +5991,29 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                   ? (lang === 'ko' ? '👑 1위 (TOP 1)' : lang === 'ja' ? '👑 1位 (TOP 1)' : lang === 'zh' ? '👑 榜首第1' : '👑 #1 (TOP 1)')
                   : (lang === 'ko' ? `${idx + 1}위` : lang === 'ja' ? `${idx + 1}位` : lang === 'zh' ? `第${idx + 1}` : `#${idx + 1}`);
 
+                const styleClasses = isCurrent
+                  ? 'bg-[#C2410C] text-white border-[#9A3412] shadow-sm ring-2 ring-[#C2410C]/40 font-black'
+                  : isFirst
+                  ? 'bg-amber-100/80 hover:bg-amber-200/70 border-2 border-amber-300 text-amber-950 font-black shadow-2xs'
+                  : 'bg-white text-[#9A3412] border-[#FCD3A1] hover:bg-[#FFF1DE] hover:border-[#E89E5F] shadow-2xs font-bold';
+
+                const badgeClasses = isCurrent
+                  ? 'bg-amber-300 text-amber-950 font-black shadow-2xs'
+                  : isFirst
+                  ? 'bg-amber-200 text-amber-950 font-black shadow-2xs'
+                  : 'bg-[#FFF0DD] text-[#C2410C] font-black';
+
                 return (
                   <button
                     key={`${theme}-${idx}`}
                     type="button"
                     aria-pressed={isCurrent}
                     onClick={() => selectPopularTheme(theme)}
-                    className={`interactive-control touch-manipulation w-full h-[40px] px-2.5 rounded-lg text-[12px] sm:text-[12.5px] font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer border select-none active:scale-95 ${
-                      isFirst 
-                        ? 'col-span-2 sm:col-span-1 bg-gradient-to-r from-amber-50 to-orange-50/70 border-amber-300 font-extrabold shadow-xs' 
-                        : ''
-                    } ${
-                      isCurrent
-                        ? '!bg-[#C2410C] !text-white !border-[#9A3412] shadow-sm ring-2 ring-[#C2410C]/30 font-black'
-                        : isFirst
-                        ? 'text-[#9A3412] hover:bg-amber-100/60'
-                        : 'bg-white text-[#9A3412] border-[#FCD3A1] hover:bg-[#FFF1DE] hover:border-[#E89E5F] shadow-2xs'
-                    }`}
+                    className={`interactive-control touch-manipulation w-full h-[40px] px-2.5 rounded-lg text-[12px] sm:text-[12.5px] transition-all flex items-center justify-center gap-1.5 cursor-pointer border select-none active:scale-95 ${
+                      isFirst ? 'col-span-2 sm:col-span-1' : ''
+                    } ${styleClasses}`}
                   >
-                    <span className={`text-[11px] font-black px-2 py-0.5 rounded-md shrink-0 ${
-                      isCurrent 
-                        ? 'bg-white/20 text-white' 
-                        : isFirst
-                        ? 'bg-amber-200 text-amber-950 font-black shadow-2xs'
-                        : 'bg-[#FFF0DD] text-[#C2410C]'
-                    }`}>
+                    <span className={`text-[11px] px-2 py-0.5 rounded-md shrink-0 ${badgeClasses}`}>
                       {rankLabel}
                     </span>
                     <span className="truncate">{shortTitle}</span>
