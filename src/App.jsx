@@ -5930,8 +5930,8 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                 )}
               </div>
 
-              {/* Scrollable Tag Chips Container (Comfortable Height on Mobile) */}
-              <div className="p-3.5 flex flex-wrap gap-2 bg-surface-container-lowest max-h-[220px] sm:max-h-[280px] overflow-y-auto overscroll-contain">
+              {/* Scrollable Tag Chips Container (Spacious 330px Height on Mobile) */}
+              <div className="p-3.5 flex flex-wrap gap-2 bg-surface-container-lowest max-h-[330px] sm:max-h-[360px] overflow-y-auto overscroll-contain">
                 {currentTags[activeTagCategory]?.map(tag => {
                   const selected = isTagSelected(tag);
                   return (
