@@ -3480,7 +3480,7 @@ const ALL_GOLDEN_COMBOS = [
   {
     id: 'christmas-party',
     icon: '🎄',
-    themeName: '크리스마스 & 연말 파티',
+    themeName: '크리스마스/연말 ①',
     characterSource: 'photo',
     photoMode: 'style',
     seasonMonths: [11, 12],
@@ -3506,7 +3506,7 @@ const ALL_GOLDEN_COMBOS = [
   {
     id: 'wedding-invitation',
     icon: '💍',
-    themeName: '웨딩 & 모바일 청첩장',
+    themeName: '웨딩/청첩장 ①',
     characterSource: 'photo',
     photoMode: 'balanced',
     seasonMonths: [4, 5, 9, 10],
@@ -3532,7 +3532,7 @@ const ALL_GOLDEN_COMBOS = [
   {
     id: 'exam-csat-pass',
     icon: '💯',
-    themeName: '수능 대박 & 시험 합격',
+    themeName: '수능/합격기원 ①',
     characterSource: 'photo',
     photoMode: 'likeness',
     seasonMonths: [10, 11, 12],
@@ -3558,7 +3558,7 @@ const ALL_GOLDEN_COMBOS = [
   {
     id: 'spring-cherry-blossom',
     icon: '🌸',
-    themeName: '봄 벚꽃 & 감성 피크닉',
+    themeName: '봄벚꽃/피크닉 ①',
     characterSource: 'photo',
     photoMode: 'style',
     seasonMonths: [3, 4],
@@ -3610,7 +3610,7 @@ const ALL_GOLDEN_COMBOS = [
   {
     id: 'holiday-chuseok-seollal',
     icon: '🌕',
-    themeName: '명절·설날·추석 & 효도',
+    themeName: '명절·설날·추석 ①',
     characterSource: 'photo',
     photoMode: 'balanced',
     seasonMonths: [1, 2, 9],
@@ -3636,7 +3636,7 @@ const ALL_GOLDEN_COMBOS = [
   {
     id: 'halloween-costume',
     icon: '🎃',
-    themeName: '할로윈 & 코스튬 파티',
+    themeName: '할로윈/코스튬 ①',
     characterSource: 'photo',
     photoMode: 'style',
     seasonMonths: [9, 10],
