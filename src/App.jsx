@@ -6032,7 +6032,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                 type="text" 
                 value={text}
                 onChange={(e) => handleEmoticonChange(idx, e.target.value)}
-                className={`interactive-control w-full h-[48px] bg-mint-soft rounded-full px-1.5 sm:px-3 text-center text-mint-strong text-[12px] sm:text-[14px] font-bold tracking-tight placeholder:text-on-secondary-container focus:outline-none focus:ring-2 focus:ring-mint-strong border border-mint-border text-ellipsis overflow-hidden whitespace-nowrap ${
+                className={`interactive-control w-full h-[46px] sm:h-[48px] bg-[#F2F9F5] hover:bg-[#EBF6EF] focus:bg-white rounded-full px-1.5 sm:px-3 text-center text-[#2D6A4F]/80 focus:text-slate-900 text-[12px] sm:text-[13.5px] font-semibold focus:font-bold tracking-tight placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-mint-strong border border-[#D1EBE1] focus:border-mint-strong transition-all text-ellipsis overflow-hidden whitespace-nowrap ${
                   idx === emoticons.length - 1
                     ? 'col-span-2 max-w-[calc(50%_-_6px)] justify-self-center sm:col-span-1 sm:max-w-none'
                     : ''
