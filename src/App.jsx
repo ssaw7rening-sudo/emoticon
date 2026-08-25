@@ -5755,66 +5755,26 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
               )}
             </div>
 
-                        {/* Selected Tags Summary Bar & Real-time Sync Indicator */}
-            <div className="mb-3 flex flex-col gap-2">
-              <div className="flex items-center justify-between bg-mint-soft/80 border border-mint-border rounded-lg px-3 py-2 text-[12px] font-bold text-mint-strong">
-                <span className="flex items-center gap-1.5">
-                  ⚡ {lang === 'ko' 
-                    ? '버튼 클릭 시 입력 상자 & AI 프롬프트 100% 실시간 자동 동기화' 
-                    : lang === 'ja' 
-                    ? 'ボタンクリック時に入力欄＆AIプロンプトが100%リアルタイム自動同期' 
-                    : lang === 'zh' 
-                    ? '点击按钮时输入框与AI提示词100%实时自动同步' 
-                    : 'Real-time auto-sync to Textbox & Prompts'}
-                </span>
-                <span className="text-[11px] text-mint-strong/80">
-                  {lang === 'ko' 
-                    ? '태그 재클릭 시 ON/OFF 토글' 
-                    : lang === 'ja' 
-                    ? '再クリックでON/OFF切り替え' 
-                    : lang === 'zh' 
-                    ? '再次点击可切换开启/关闭' 
-                    : 'Click again to toggle ON/OFF'}
-                </span>
-              </div>
-
-              {charManual.trim() && (
-                <div className="bg-[#EAF8F3] border border-mint-border rounded-lg p-3 flex flex-col gap-2 shadow-xs">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[13px] font-bold text-mint-strong flex items-center gap-1.5">
-                      🏷️ {lang === 'ko' ? '현재 적용된 캐릭터 태그' : 'Active Character Tags'}
-                      <span className="bg-mint-strong text-white text-[11px] px-2 py-0.5 rounded-full font-bold">
-                        {charManual.split(',').map(v => v.trim()).filter(Boolean).length}개
-                      </span>
-                    </span>
-                    <button 
-                      type="button"
-                      onClick={clearTags} 
-                      className="text-[12px] font-bold text-error hover:underline flex items-center gap-0.5"
-                    >
-                      <Trash2 size={12} /> {lang === 'ko' ? '전체 초기화' : 'Clear All'}
-                    </button>
-                  </div>
-                  <div className="flex flex-wrap gap-1.5">
-                    {charManual.split(',').map(v => v.trim()).filter(Boolean).map(tag => (
-                      <span 
-                        key={tag} 
-                        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white text-mint-strong border border-mint-border text-[12px] font-bold shadow-xs"
-                      >
-                        ✓ {tag}
-                        <button 
-                          type="button"
-                          onClick={() => removeSelectedTag(tag)} 
-                          className="hover:text-error text-slate-400 font-bold text-[14px] leading-none"
-                          title={lang === 'ko' ? '삭제' : 'Remove'}
-                        >
-                          ×
-                        </button>
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
+                        {/* Real-time Sync Indicator */}
+            <div className="mb-2 flex items-center justify-between bg-mint-soft/80 border border-mint-border rounded-lg px-3 py-2 text-[12px] font-bold text-mint-strong">
+              <span className="flex items-center gap-1.5">
+                ⚡ {lang === 'ko' 
+                  ? '태그 클릭 시 입력 상자 & AI 프롬프트 100% 실시간 자동 동기화' 
+                  : lang === 'ja' 
+                  ? 'タグクリック時に入力欄＆AIプロンプトが100%リアルタイム自動同期' 
+                  : lang === 'zh' 
+                  ? '点击标签时输入框与AI提示词100%实时自动同步' 
+                  : 'Real-time auto-sync to Textbox & Prompts'}
+              </span>
+              <span className="text-[11px] text-mint-strong/80">
+                {lang === 'ko' 
+                  ? '태그 재클릭 시 ON/OFF 토글' 
+                  : lang === 'ja' 
+                  ? '再クリックでON/OFF切り替え' 
+                  : lang === 'zh' 
+                  ? '再次点击可切换开启/关闭' 
+                  : 'Click again to toggle ON/OFF'}
+              </span>
             </div>
 
             <textarea 
@@ -5898,23 +5858,76 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                 );
               })()}
 
-              <div className="no-scrollbar flex flex-wrap bg-[#EAF8F3] px-2 border-b border-mint-border">
-                {categoryKeys.map(category => (
-                  <button
-                    key={category}
-                    type="button"
-                    onClick={() => setActiveTagCategory(category)}
-                    className={`whitespace-nowrap px-3 py-2 text-[13px] font-bold transition-colors flex items-center gap-1 ${
-                      activeTagCategory === category 
-                        ? 'text-mint-strong border-b-2 border-mint-strong bg-white/50' 
-                        : 'text-mint-strong hover:bg-mint-hover border-b-2 border-transparent'
-                    }`}
-                  >
-                    <span>{category}</span>
-                  </button>
-                ))}
+              <div className="no-scrollbar flex flex-wrap bg-[#EAF8F3] px-2 border-b border-mint-border sticky top-0 z-10">
+                {categoryKeys.map(category => {
+                  const catTags = currentTags[category] || [];
+                  const selectedCount = catTags.filter(t => isTagSelected(t)).length;
+                  const isActive = activeTagCategory === category;
+
+                  return (
+                    <button
+                      key={category}
+                      type="button"
+                      onClick={() => setActiveTagCategory(category)}
+                      className={`whitespace-nowrap px-3 py-2.5 text-[13px] font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                        isActive 
+                          ? 'text-mint-strong border-b-2 border-mint-strong bg-white/90 font-black shadow-2xs' 
+                          : 'text-mint-strong/80 hover:text-mint-strong hover:bg-mint-hover/50 border-b-2 border-transparent'
+                      }`}
+                    >
+                      <span>{category}</span>
+                      {selectedCount > 0 && (
+                        <span className="bg-mint-strong text-white text-[10.5px] px-1.5 py-0.2 rounded-full font-black leading-none shadow-2xs">
+                          {selectedCount}
+                        </span>
+                      )}
+                    </button>
+                  );
+                })}
               </div>
-              <div className="p-3 flex flex-wrap gap-2 bg-surface-container-lowest min-h-[80px]">
+
+              {/* Integrated Active Character Tags Bar directly inside Tag Screen */}
+              {charManual.trim() && (
+                <div className="bg-[#F0FDF8] border-b border-mint-border px-3.5 py-2.5 flex flex-col gap-2 shadow-2xs animate-in fade-in duration-200">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-[12.5px] font-extrabold text-mint-strong flex items-center gap-1.5">
+                      <span>🏷️</span>
+                      <span>{lang === 'ko' ? '현재 적용된 태그 목록' : lang === 'ja' ? '選択中のタグ一覧' : lang === 'zh' ? '当前已选标签列表' : 'Active Selected Tags'}:</span>
+                      <span className="bg-mint-strong text-white text-[11px] px-2 py-0.2 rounded-full font-black">
+                        {charManual.split(',').map(v => v.trim()).filter(Boolean).length}개
+                      </span>
+                    </span>
+                    <button 
+                      type="button"
+                      onClick={clearTags} 
+                      className="text-[11.5px] font-bold text-red-600 hover:text-red-700 hover:underline flex items-center gap-1 cursor-pointer"
+                    >
+                      <Trash2 size={12} /> {lang === 'ko' ? '태그 전체 초기화' : lang === 'ja' ? 'すべて解除' : lang === 'zh' ? '清空全部' : 'Clear All'}
+                    </button>
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {charManual.split(',').map(v => v.trim()).filter(Boolean).map(tag => (
+                      <span 
+                        key={tag} 
+                        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white text-mint-strong border border-mint-border text-[12px] font-extrabold shadow-2xs hover:border-mint-strong transition-all"
+                      >
+                        <span className="text-[#2D7D64] font-black">✓</span>
+                        <span>{tag}</span>
+                        <button 
+                          type="button"
+                          onClick={() => removeSelectedTag(tag)} 
+                          className="hover:text-red-600 text-slate-400 hover:bg-slate-100 rounded-full w-4 h-4 flex items-center justify-center font-black text-[13px] leading-none transition-colors cursor-pointer ml-0.5"
+                          title={lang === 'ko' ? '삭제' : 'Remove'}
+                        >
+                          ×
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div className="p-3.5 flex flex-wrap gap-2 bg-surface-container-lowest min-h-[80px]">
                 {currentTags[activeTagCategory]?.map(tag => {
                   const selected = isTagSelected(tag);
                   return (
