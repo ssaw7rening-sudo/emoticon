@@ -5866,35 +5866,39 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                   key={combo.id}
                   type="button"
                   onClick={() => applyGoldenCombo(combo)}
-                  className={`interactive-control touch-manipulation flex flex-col text-left p-3.5 rounded-xl min-w-[215px] sm:min-w-[235px] max-w-[255px] shrink-0 border-2 transition-all duration-200 cursor-pointer select-none active:scale-95 relative ${
+                  className={`interactive-control touch-manipulation flex flex-col text-left p-3 rounded-xl w-[225px] sm:w-[245px] shrink-0 border-2 transition-all duration-200 cursor-pointer select-none active:scale-95 ${
                     isSelected
                       ? 'bg-gradient-to-b from-[#FFFBEB] to-[#FEF3C7] border-amber-500 shadow-md ring-2 ring-amber-400/60'
                       : 'bg-white hover:bg-amber-50/50 border-amber-200/80 hover:border-amber-300 shadow-xs'
                   }`}
                 >
-                  {isSelected && (
-                    <div className="absolute top-2.5 right-2.5 bg-amber-500 text-white text-[9.5px] font-black px-2 py-0.5 rounded-full shadow-2xs flex items-center gap-0.5 animate-pulse">
-                      <CheckCircle2 size={10} /> {lang === 'ko' ? '적용중' : 'Active'}
+                  {/* Top Row: Icon + Title + Status Badge */}
+                  <div className="flex items-center justify-between gap-1.5 mb-1 w-full">
+                    <div className="flex items-center gap-1.5 min-w-0 flex-1">
+                      <span className="text-[20px] sm:text-[22px] leading-none shrink-0">{combo.icon}</span>
+                      <strong className="text-[13px] sm:text-[13.5px] font-black text-slate-900 leading-tight truncate whitespace-nowrap">
+                        {titleText}
+                      </strong>
                     </div>
-                  )}
-
-                  <div className="flex items-center gap-2 mb-1.5">
-                    <span className="text-[24px] sm:text-[26px] leading-none drop-shadow-2xs">{combo.icon}</span>
-                    <strong className="text-[13px] sm:text-[14px] font-black text-slate-900 leading-snug line-clamp-1 pr-12">
-                      {titleText}
-                    </strong>
+                    {isSelected && (
+                      <span className="bg-amber-500 text-white text-[9.5px] font-black px-1.5 py-0.5 rounded-full shrink-0 flex items-center gap-0.5 animate-pulse shadow-2xs">
+                        <CheckCircle2 size={9} /> {lang === 'ko' ? '적용' : 'ON'}
+                      </span>
+                    )}
                   </div>
 
-                  <p className="text-[11px] sm:text-[11.5px] font-medium text-slate-600 leading-tight mb-2.5 line-clamp-2">
+                  {/* Middle Row: Crisp 1-line Description */}
+                  <p className="text-[11px] font-medium text-slate-600 leading-normal mb-2 truncate whitespace-nowrap w-full">
                     {descText}
                   </p>
 
-                  <div className="mt-auto flex items-center justify-between pt-1.5 border-t border-amber-200/60 text-[10.5px] font-bold text-amber-800">
-                    <span className="bg-amber-100 text-amber-900 px-2 py-0.5 rounded-md font-extrabold truncate max-w-[140px]">
+                  {/* Bottom Row: Theme Badge + Action Status */}
+                  <div className="mt-auto flex items-center justify-between pt-1.5 border-t border-amber-200/70 text-[10.5px] font-bold text-amber-800 w-full">
+                    <span className="bg-amber-100 text-amber-900 px-2 py-0.5 rounded-md font-extrabold truncate max-w-[130px] whitespace-nowrap">
                       🏷️ {themeKeys[combo.themeIdx] || '추천 테마'}
                     </span>
-                    <span className="text-[#C2410C] font-black text-[11.5px]">
-                      {isSelected ? '✓ 셋팅됨' : '원클릭 🚀'}
+                    <span className={`font-black text-[11px] shrink-0 whitespace-nowrap ${isSelected ? 'text-amber-800' : 'text-[#C2410C]'}`}>
+                      {isSelected ? '✓ 셋팅완료' : '원클릭 🚀'}
                     </span>
                   </div>
                 </button>
