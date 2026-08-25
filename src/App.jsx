@@ -3511,62 +3511,6 @@ function App() {
   const [activeGoldenComboId, setActiveGoldenComboId] = useState(null);
   const [previousComboBackup, setPreviousComboBackup] = useState(null);
 
-  const applyGoldenCombo = (combo) => {
-    // 1. Backup current state for Undo
-    setPreviousComboBackup({
-      charManual,
-      characterSource,
-      photoReferenceMode,
-      activeTheme,
-      emoticons: [...emoticons],
-      selectedTopTheme,
-      activeGoldenComboId
-    });
-
-    // 2. Select theme
-    const themeName = themeKeys[combo.themeIdx] || themeKeys[0];
-    if (currentThemes[themeName]) {
-      setEmoticons(currentThemes[themeName]);
-      setActiveTheme(themeName);
-      setSelectedTopTheme(themeName);
-      recordThemeUsage(themeName, 2);
-    }
-
-    // 3. Set tags & photo mode
-    const comboTag = combo.tags[lang] || combo.tags['ko'];
-    setCharManual(comboTag);
-    setCharacterSource(combo.characterSource || 'photo');
-    if (combo.photoMode) {
-      setPhotoReferenceMode(combo.photoMode);
-    }
-    setActiveGoldenComboId(combo.id);
-
-    showToast(
-      lang === 'ko'
-        ? `🌟 [${combo.title.ko}] 황금 조합이 1초 만에 자동 세팅되었습니다!`
-        : lang === 'ja'
-        ? `🌟 [${combo.title.ja}] 黄金セットを自動適用しました！`
-        : lang === 'zh'
-        ? `🌟 [${combo.title.zh}] 黄金组合已自动一键应用！`
-        : `🌟 [${combo.title.en}] Golden Combo applied instantly!`
-    );
-
-    trackEvent('apply_golden_combo', { combo_id: combo.id, lang });
-  };
-
-  const undoGoldenCombo = () => {
-    if (!previousComboBackup) return;
-    setCharManual(previousComboBackup.charManual);
-    setCharacterSource(previousComboBackup.characterSource);
-    setPhotoReferenceMode(previousComboBackup.photoReferenceMode);
-    setActiveTheme(previousComboBackup.activeTheme);
-    setEmoticons(previousComboBackup.emoticons);
-    setSelectedTopTheme(previousComboBackup.selectedTopTheme);
-    setActiveGoldenComboId(previousComboBackup.activeGoldenComboId);
-    setPreviousComboBackup(null);
-    showToast(lang === 'ko' ? '↩️ 이전 작업 설정으로 되돌렸습니다.' : '↩️ Restored previous settings.');
-  };
-
   const [selectedTopTheme, setSelectedTopTheme] = useState(null);
   const [themeStats, setThemeStats] = useState(() => {
     try {
@@ -3675,6 +3619,63 @@ function App() {
     setTimeout(() => {
       setToastMessage(prev => prev === msg ? '' : prev);
     }, 3000);
+  };
+
+  const applyGoldenCombo = (combo) => {
+    // 1. Backup current state for Undo
+    setPreviousComboBackup({
+      charManual,
+      characterSource,
+      photoReferenceMode,
+      activeTheme,
+      emoticons: [...emoticons],
+      selectedTopTheme,
+      activeGoldenComboId
+    });
+
+    // 2. Select theme
+    const themeName = themeKeys[combo.themeIdx] || themeKeys[0];
+    if (currentThemes[themeName]) {
+      setEmoticons(currentThemes[themeName]);
+      setActiveTheme(themeName);
+      setSelectedTopTheme(themeName);
+      recordThemeUsage(themeName, 2);
+    }
+
+    // 3. Set tags & photo mode
+    const comboTag = combo.tags[lang] || combo.tags['ko'];
+    setCharManual(comboTag);
+    setCharacterSource(combo.characterSource || 'photo');
+    if (combo.photoMode) {
+      setPhotoReferenceMode(combo.photoMode);
+    }
+    setActiveGoldenComboId(combo.id);
+
+    const titleText = combo.title[lang] || combo.title.ko;
+    showToast(
+      lang === 'ko'
+        ? `🌟 [${titleText}] 황금 조합이 1초 만에 자동 세팅되었습니다!`
+        : lang === 'ja'
+        ? `🌟 [${titleText}] 黄金セットを自動適用しました！`
+        : lang === 'zh'
+        ? `🌟 [${titleText}] 黄金组合已自动一键应用！`
+        : `🌟 [${titleText}] Golden Combo applied instantly!`
+    );
+
+    trackEvent('apply_golden_combo', { combo_id: combo.id, lang });
+  };
+
+  const undoGoldenCombo = () => {
+    if (!previousComboBackup) return;
+    setCharManual(previousComboBackup.charManual);
+    setCharacterSource(previousComboBackup.characterSource);
+    setPhotoReferenceMode(previousComboBackup.photoReferenceMode);
+    setActiveTheme(previousComboBackup.activeTheme);
+    setEmoticons(previousComboBackup.emoticons);
+    setSelectedTopTheme(previousComboBackup.selectedTopTheme);
+    setActiveGoldenComboId(previousComboBackup.activeGoldenComboId);
+    setPreviousComboBackup(null);
+    showToast(lang === 'ko' ? '↩️ 이전 작업 설정으로 되돌렸습니다.' : '↩️ Restored previous settings.');
   };
 
   const handleApplyEmotionFormula = (items, themeTitle) => {
