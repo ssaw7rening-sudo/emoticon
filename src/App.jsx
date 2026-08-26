@@ -5130,10 +5130,9 @@ Do not follow the photo's photorealistic rendering. Apply the selected art style
 
     if (generationMode === 'individual' || hasPhraseOverride) {
       if (lang === 'ko') {
-        const targetAction = getPhraseActionKo(targetPhrase);
         const textPolicy = gptTextMode === 'text'
           ? `[앱 타이포그래피 합성용 무문자 원화 — 최우선]
-아래 장면 설명은 표정과 자세를 설계하는 의미 정보로만 사용하세요. 이미지에는 문구를 직접 그리지 마세요.
+지정된 문구 "${targetPhrase}"는 표정과 자세를 설계하는 의미 정보로 사용하되, 이미지에는 문구를 직접 그리지 마세요.
 캐릭터 머리 위 또는 옆에 앱이 실제 폰트로 문구를 합성할 수 있는 깨끗한 안전 여백을 충분히 확보하세요.
 한글, 영문, 숫자, 자모, 문장부호, 가짜 글자, 말풍선 문자, 로고와 워터마크를 절대로 생성하지 마세요.`
           : `문구 "${targetPhrase}"는 장면을 정하는 참고 맥락으로만 사용하세요. 이미지에는 글자, 숫자, 타이포그래피를 그리지 마세요.`;
@@ -5157,8 +5156,9 @@ ${referenceInstruction}
 ${artDirection}. 캐릭터 비율과 선, 질감, 색감을 동일하게 유지하세요.
 
 [장면]
-장면 설명: ${targetAction}.
-이 상황을 바로 이해할 수 있는 표정 하나와 명확한 전신 자세 하나를 구성하세요. 보조 소품과 만화 효과는 각각 최대 하나만 사용하세요.
+문구 맥락: "${targetPhrase}"
+장면 설명: ${getPhraseActionKo(targetPhrase)}.
+이 문구와 상황을 바로 이해할 수 있는 표정 하나와 명확한 전신 자세 하나를 구성하세요. 보조 소품과 만화 효과는 각각 최대 하나만 사용하세요.
 설정에서 선택한 소품 또는 행동: ${character.props}.
 설정에서 선택한 시각 효과: ${character.effects}.
 
@@ -5220,10 +5220,10 @@ ${textExclusion} No watermark, frame, duplicate character, extra limbs, cropped 
     }
 
     if (lang === 'ko') {
-      const panelPlan = emoticons.map((phrase, index) => `${Math.floor(index / 5) + 1}행 ${index % 5 + 1}열: ${getPhraseActionKo(phrase.trim())}. 상단에 앱 문구 합성용 투명 여백 확보.`).join('\n');
+      const panelPlan = emoticons.map((phrase, index) => `${Math.floor(index / 5) + 1}행 ${index % 5 + 1}열: 문구 맥락 "${phrase.trim()}". ${getPhraseActionKo(phrase.trim())}. 상단에 앱 문구 합성용 투명 여백 확보.`).join('\n');
       const textPolicy = gptTextMode === 'text'
         ? `[앱 타이포그래피 합성용 무문자 원화 — 최우선]
-아래 15개 장면 설명은 각 셀의 표정과 행동을 설계하는 의미 정보로만 사용하세요. 이미지에는 문구를 직접 그리지 마세요.
+아래 15개 문구 원문은 각 셀의 표정과 행동을 설계하는 의미 정보로 사용하되, 이미지에는 문구를 직접 그리지 마세요.
 각 셀의 캐릭터 머리 위 또는 옆에 해당 문구 길이에 맞는 깨끗한 안전 여백을 확보하세요. 긴 문구는 앱에서 두 줄로 합성할 수 있도록 더 넓은 공간을 남기세요.
 한글, 영문, 숫자, 자모, 문장부호, 가짜 글자, 말풍선 문자, 로고와 워터마크를 절대로 생성하지 마세요.
 최종 결과는 문자가 전혀 없는 캐릭터 시트 원화여야 합니다.`
