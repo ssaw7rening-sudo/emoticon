@@ -5003,33 +5003,59 @@ Do not follow the photo's photorealistic rendering. Apply the selected art style
       .map((phrase) => (phrase || '').trim())
       .filter(Boolean);
 
+    const initials = ['ㄱ', 'ㄲ', 'ㄴ', 'ㄷ', 'ㄸ', 'ㄹ', 'ㅁ', 'ㅂ', 'ㅃ', 'ㅅ', 'ㅆ', 'ㅇ', 'ㅈ', 'ㅉ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ'];
+    const medials = ['ㅏ', 'ㅐ', 'ㅑ', 'ㅒ', 'ㅓ', 'ㅔ', 'ㅕ', 'ㅖ', 'ㅗ', 'ㅘ', 'ㅙ', 'ㅚ', 'ㅛ', 'ㅜ', 'ㅝ', 'ㅞ', 'ㅟ', 'ㅠ', 'ㅡ', 'ㅢ', 'ㅣ'];
+    const finals = ['', 'ㄱ', 'ㄲ', 'ㄳ', 'ㄴ', 'ㄵ', 'ㄶ', 'ㄷ', 'ㄹ', 'ㄺ', 'ㄻ', 'ㄼ', 'ㄽ', 'ㄾ', 'ㄿ', 'ㅀ', 'ㅁ', 'ㅂ', 'ㅄ', 'ㅅ', 'ㅆ', 'ㅇ', 'ㅈ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ'];
+
+    const decomposeSyllable = (char) => {
+      const code = char.charCodeAt(0);
+      if (code < 0xAC00 || code > 0xD7A3) return null;
+      const index = code - 0xAC00;
+      const initial = initials[Math.floor(index / 588)];
+      const medial = medials[Math.floor((index % 588) / 28)];
+      const final = finals[index % 28];
+      return { initial, medial, final };
+    };
+
     const hasRiskyGlyph = (text) => [...text].some((char) => {
       if (/[ㅌㄹㅗㅜㅏㅓ]/.test(char)) return true;
-      const code = char.charCodeAt(0);
-      if (code < 0xAC00 || code > 0xD7A3) return false;
-      const syllableIndex = code - 0xAC00;
-      const medialIndex = Math.floor((syllableIndex % 588) / 28);
-      const finalIndex = syllableIndex % 28;
-      return [0, 4, 8, 13].includes(medialIndex) || [8, 25].includes(finalIndex);
+      const parts = decomposeSyllable(char);
+      return parts ? /[ㅗㅜㅏㅓ]/.test(parts.medial) || /[ㅌㄹ]/.test(parts.final) : false;
     });
 
-    const riskyPhrases = phraseList.filter(hasRiskyGlyph);
-    if (!riskyPhrases.length) return '';
+    const riskyWords = [...new Set(
+      phraseList
+        .flatMap((phrase) => phrase.match(/[가-힣]+/g) || [])
+        .filter(hasRiskyGlyph)
+    )];
+    if (!riskyWords.length) return '';
 
-    const phraseLines = riskyPhrases.map((phrase) => `- "${phrase}"`).join('\n');
-    return `[한글 정자형 손글씨 자모 보호 — 최우선]
-다음 문구에는 손글씨에서 혼동되기 쉬운 ㅌ·ㄹ·ㅗ·ㅜ·ㅏ·ㅓ가 포함되어 있습니다.
-${phraseLines}
+    const lockLines = riskyWords.map((word) => {
+      const detail = [...word]
+        .map((char) => {
+          const parts = decomposeSyllable(char);
+          if (!parts || (!/[ㅗㅜㅏㅓ]/.test(parts.medial) && !/[ㅌㄹ]/.test(parts.final))) return null;
+          return `${char}=${parts.initial}+${parts.medial}${parts.final ? `+받침 ${parts.final}` : ''}`;
+        })
+        .filter(Boolean)
+        .join(', ');
+      return `- ${word} = ${[...word].join('·')} / ${detail}`;
+    }).join('\n');
+
+    return `[한글 손글씨 철자 잠금 — 최우선]
+아래 정보는 철자 검수용입니다. 가운데점(·), 등호, 더하기 기호와 자모 설명은 이미지에 절대로 표시하지 말고 최종 문구만 원문 그대로 적으세요.
+${lockLines}
 
 - 귀엽고 따뜻한 손글씨 느낌은 유지하되, 흘림체나 이어 쓰는 필기체가 아닌 반듯한 정자형 손글씨로 표현하세요.
-- 손으로 쓴 자연스러운 크기 차이와 둥근 획 끝은 유지하되, 초성·중성·종성의 핵심 획은 서로 뭉치거나 연결하지 마세요.
+- 손글씨의 자연스러움은 문구 전체의 크기, 색상, 기울기와 배치로 표현하고, 개별 한글 음절 내부의 초성·중성·종성은 회전·압축·연결·생략하지 마세요.
 - ㅗ의 짧은 세로획은 가로획 위쪽, ㅜ는 아래쪽을 정확히 향하게 하세요.
 - ㅏ의 짧은 가로획은 세로획 오른쪽, ㅓ는 왼쪽을 정확히 향하게 하세요.
 - ㅌ은 가운데 가로획과 바깥 골격을 명확히 분리하고, ㄹ의 연속적으로 꺾이는 형태로 바꾸지 마세요.
 - ㄹ은 고유의 단계적으로 꺾이는 획을 유지하고 ㅌ처럼 단순화하지 마세요.
-- 장식과 손글씨 질감은 글자 외곽에만 적용하고, 내부 핵심 획의 방향·개수·위치를 변형하지 마세요.
-- 흰색 스티커 외곽선이 글자 내부의 짧은 획과 받침을 덮거나 합치지 않도록 충분한 내부 간격을 확보하세요.
-- 렌더링 전후에 위 문구를 원문과 음절 단위로 대조하고, 자모 방향이나 받침이 다르면 해당 글자만 정확히 고치세요.`;
+- 하트·별·반짝이·그림자와 장식선은 글자 주변에만 배치하고 자음·모음·받침 위에 겹치지 마세요.
+- 흰색 스티커 외곽선은 글자 바깥쪽에만 적용하고, 내부 획 사이의 공간이나 짧은 모음 획과 받침을 덮거나 합치지 마세요.
+- 긴 문구는 단어 사이에서만 최대 두 줄로 나누고, 한글 단어나 음절 내부에서는 줄을 바꾸지 마세요.
+- 렌더링 직전에 원문과 철자 잠금 정보를 음절 단위로 대조하고, 최종 이미지에는 각 문구를 정확히 한 번만 표시하세요.`;
   };
 
   const generateGptPrompt = (phraseOverride = null) => {
