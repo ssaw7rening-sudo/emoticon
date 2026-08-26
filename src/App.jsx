@@ -4053,13 +4053,29 @@ function App() {
   };
 
   const applyGoldenCombo = (combo) => {
+    if (activeGoldenComboId === combo.id) {
+      const alreadyAppliedMessage = lang === 'ko'
+        ? '✓ 이미 적용된 황금 조합입니다.'
+        : lang === 'ja'
+        ? '✓ この黄金セットは適用済みです。'
+        : lang === 'zh'
+        ? '✓ 此黄金组合已应用。'
+        : '✓ This Golden Combo is already applied.';
+      showToast(alreadyAppliedMessage);
+      return;
+    }
+
     // 1. Backup current state for Undo
     setPreviousComboBackup({
+      lang,
       charManual,
       characterSource,
       photoReferenceMode,
       activeTheme,
+      activeThemeIndex: themeKeys.indexOf(activeTheme),
       emoticons: [...emoticons],
+      individualPhrase,
+      batchPhrase,
       selectedTopTheme,
       activeGoldenComboId
     });
@@ -4070,8 +4086,11 @@ function App() {
       : (currentThemes[combo.themeName] ? combo.themeName : themeKeys[0]);
 
     if (currentThemes[targetThemeName]) {
-      setEmoticons(currentThemes[targetThemeName]);
+      const targetPhrases = currentThemes[targetThemeName];
+      setEmoticons(targetPhrases);
       setActiveTheme(targetThemeName);
+      setIndividualPhrase(targetPhrases[0] || '');
+      setBatchPhrase(targetPhrases[0] || '');
       setSelectedTopTheme(targetThemeName);
       recordThemeUsage(targetThemeName, 2);
     }
@@ -4102,15 +4121,32 @@ function App() {
 
   const undoGoldenCombo = () => {
     if (!previousComboBackup) return;
+    const isSameLanguage = previousComboBackup.lang === lang;
+    const mappedTheme = previousComboBackup.activeTheme === 'custom'
+      ? 'custom'
+      : (isSameLanguage
+        ? previousComboBackup.activeTheme
+        : themeKeys[previousComboBackup.activeThemeIndex] || themeKeys[0]);
+    const restoredPhrases = isSameLanguage || mappedTheme === 'custom'
+      ? previousComboBackup.emoticons
+      : (currentThemes[mappedTheme] || currentThemes[themeKeys[0]]);
+
     setCharManual(previousComboBackup.charManual);
     setCharacterSource(previousComboBackup.characterSource);
     setPhotoReferenceMode(previousComboBackup.photoReferenceMode);
-    setActiveTheme(previousComboBackup.activeTheme);
-    setEmoticons(previousComboBackup.emoticons);
+    setActiveTheme(mappedTheme);
+    setEmoticons(restoredPhrases);
+    setIndividualPhrase(isSameLanguage ? previousComboBackup.individualPhrase : (restoredPhrases[0] || ''));
+    setBatchPhrase(isSameLanguage ? previousComboBackup.batchPhrase : (restoredPhrases[0] || ''));
     setSelectedTopTheme(previousComboBackup.selectedTopTheme);
     setActiveGoldenComboId(previousComboBackup.activeGoldenComboId);
     setPreviousComboBackup(null);
-    showToast(lang === 'ko' ? '↩️ 이전 작업 설정으로 되돌렸습니다.' : '↩️ Restored previous settings.');
+    showToast(
+      lang === 'ko' ? '↩️ 이전 작업 설정으로 되돌렸습니다.'
+      : lang === 'ja' ? '↩️ 以前の設定に戻しました。'
+      : lang === 'zh' ? '↩️ 已恢复之前的设置。'
+      : '↩️ Restored previous settings.'
+    );
   };
 
   const handleApplyEmotionFormula = (items, themeTitle) => {
@@ -6410,7 +6446,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                         </div>
                         {isSelected && (
                           <span className="bg-amber-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full shrink-0 flex items-center gap-0.5 animate-pulse shadow-2xs">
-                            <CheckCircle2 size={9} /> {lang === 'ko' ? '적용' : 'ON'}
+                            <CheckCircle2 size={9} /> {lang === 'ko' ? '적용' : lang === 'ja' ? '適用済み' : lang === 'zh' ? '已应用' : 'APPLIED'}
                           </span>
                         )}
                       </div>
@@ -6426,7 +6462,9 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                           🏷️ {themeKeys[combo.themeIdx] || combo.themeName}
                         </span>
                         <span className={`font-black text-[11px] shrink-0 whitespace-nowrap ${isSelected ? 'text-amber-800' : 'text-[#C2410C]'}`}>
-                          {isSelected ? '✓ 셋팅완료' : '원클릭 🚀'}
+                          {isSelected
+                            ? (lang === 'ko' ? '✓ 설정 완료' : lang === 'ja' ? '✓ 適用済み' : lang === 'zh' ? '✓ 已应用' : '✓ Applied')
+                            : (lang === 'ko' ? '원클릭 적용' : lang === 'ja' ? 'ワンクリック適用' : lang === 'zh' ? '一键应用' : 'Apply Now')}
                         </span>
                       </div>
                     </button>
