@@ -7287,7 +7287,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
           <div className="bg-[#EAF8F3] p-3 rounded-lg border border-mint-border flex items-center justify-between text-[12.5px] font-bold text-mint-strong">
             <span className="flex items-center gap-1.5">
               🚀 {lang === 'ko' 
-                ? '원클릭 1초 실행: 버튼 클릭 시 클립보드 자동 복사 + AI 사이트가 즉시 열립니다!' 
+                ? '버튼을 누르면 프롬프트가 자동으로 복사되고 AI 사이트가 바로 열립니다.'
                 : lang === 'ja'
                 ? 'ワンクリック分割起動: プロンプトが自動コピーされ、右側にAI画面が開きます！'
                 : lang === 'zh'
