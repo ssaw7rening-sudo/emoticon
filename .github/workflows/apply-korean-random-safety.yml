@@ -18,19 +18,15 @@ jobs:
       - name: Patch Korean random phrase selection
         shell: python
         run: |
+          import re
           from pathlib import Path
 
           path = Path("src/App.jsx")
           source = path.read_text(encoding="utf-8")
 
-          old_shuffle = '''  const shuffleEmoticons = () => {
-            const ALL_PHRASES = Array.from(new Set(Object.values(currentThemes).flat()));
-            const shuffled = [...ALL_PHRASES].sort(() => 0.5 - Math.random());
-            setEmoticons(shuffled.slice(0, 15));
-            setActiveTheme('custom');
-          };'''.replace("          ", "")
+          pattern = re.compile(r"  const shuffleEmoticons = \(\) => \{\n.*?\n  \};", re.S)
 
-          new_shuffle = '''  const getKoreanRandomRenderRisk = (phrase) => {
+          replacement = '''  const getKoreanRandomRenderRisk = (phrase) => {
             let risk = 0;
             let hangulCount = 0;
             const complexFinals = new Set([3, 5, 6, 9, 10, 11, 12, 13, 14, 15, 18]);
@@ -46,10 +42,10 @@ jobs:
               // 받침 ㅌ은 이미지 생성에서 ㄹ 등으로 오인되기 쉬워 랜덤 후보에서 제외합니다.
               if (finalConsonant === 25) risk += 100;
 
-              // 겹받침은 작은 이모티콘 글자에서 획이 뭉개질 수 있어 우선순위를 낮춥니다.
+              // 겹받침은 작은 이모티콘 글자에서 획이 뭉개질 수 있어 출현 확률을 낮춥니다.
               if (complexFinals.has(finalConsonant)) risk += 5;
 
-              // ㅗ/ㅜ + ㄹ 받침(올/울 계열)은 강하게 감점합니다.
+              // ㅗ/ㅜ + ㄹ 받침(올/울 계열)은 형태가 뭉개지기 쉬워 강하게 감점합니다.
               if (finalConsonant === 8 && (vowel === 8 || vowel === 13)) risk += 3;
               else if (vowel === 8 || vowel === 13) risk += 0.2;
             }
@@ -60,10 +56,10 @@ jobs:
             return risk;
           };
 
-          const getSafeRandomPhrases = (phrases, count = 15, targetLang = lang) => {
+          const getSafeRandomPhrases = (phrases, count = 15) => {
             const uniquePhrases = Array.from(new Set(phrases));
 
-            if (targetLang !== 'ko') {
+            if (lang !== 'ko') {
               return [...uniquePhrases].sort(() => 0.5 - Math.random()).slice(0, count);
             }
 
@@ -85,30 +81,16 @@ jobs:
 
           const shuffleEmoticons = () => {
             const ALL_PHRASES = Array.from(new Set(Object.values(currentThemes).flat()));
-            const nextPhrases = getSafeRandomPhrases(ALL_PHRASES, 15, lang);
+            const nextPhrases = getSafeRandomPhrases(ALL_PHRASES, 15);
             setEmoticons(nextPhrases);
             setIndividualPhrase(nextPhrases[0] || '');
             setBatchPhrase(nextPhrases[0] || '');
             setActiveTheme('custom');
-          };'''.replace("          ", "")
+          };'''
 
-          if old_shuffle not in source:
-            raise SystemExit("Target shuffleEmoticons block was not found; no changes made.")
-
-          source = source.replace(old_shuffle, new_shuffle, 1)
-
-          old_fallback = '''        const allNew = Array.from(new Set(Object.values(newThemes).flat()));
-            const shuffled = [...allNew].sort(() => 0.5 - Math.random());
-            setEmoticons(shuffled.slice(0, 15));'''.replace("          ", "")
-
-          new_fallback = '''        const allNew = Array.from(new Set(Object.values(newThemes).flat()));
-            const nextPhrases = getSafeRandomPhrases(allNew, 15, newLang);
-            setEmoticons(nextPhrases);
-            setIndividualPhrase(nextPhrases[0] || '');
-            setBatchPhrase(nextPhrases[0] || '');'''.replace("          ", "")
-
-          if old_fallback in source and "newLang" in source:
-            source = source.replace(old_fallback, new_fallback, 1)
+          source, replacements = pattern.subn(replacement, source, count=1)
+          if replacements != 1:
+            raise SystemExit(f"Expected one shuffleEmoticons block, replaced {replacements}.")
 
           path.write_text(source, encoding="utf-8")
 
