@@ -3996,6 +3996,24 @@ function App() {
   const [showDetailedGuide, setShowDetailedGuide] = useState(false);
   const [showThemePicker, setShowThemePicker] = useState(false);
   const [themeSearch, setThemeSearch] = useState('');
+  const [themePickerViewportHeight, setThemePickerViewportHeight] = useState(null);
+
+  useEffect(() => {
+    if (!showThemePicker) return undefined;
+    const viewport = window.visualViewport;
+    const updateViewportHeight = () => {
+      setThemePickerViewportHeight(Math.round(viewport?.height || window.innerHeight));
+    };
+    updateViewportHeight();
+    viewport?.addEventListener('resize', updateViewportHeight);
+    viewport?.addEventListener('scroll', updateViewportHeight);
+    window.addEventListener('resize', updateViewportHeight);
+    return () => {
+      viewport?.removeEventListener('resize', updateViewportHeight);
+      viewport?.removeEventListener('scroll', updateViewportHeight);
+      window.removeEventListener('resize', updateViewportHeight);
+    };
+  }, [showThemePicker]);
 
   const getCategoryRuleBadge = (category) => {
     const isArtStyle = ['🖌️ 화풍', '🖌️ Art Style', '🖌️ 画風', '🖌️ 画风'].includes(category);
@@ -6636,7 +6654,10 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
 
           {showThemePicker && (
             <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center bg-slate-950/50 p-0 sm:p-4" role="dialog" aria-modal="true" aria-label={t.themeSelect} onMouseDown={(event) => { if (event.target === event.currentTarget) setShowThemePicker(false); }}>
-              <div className="w-full sm:max-w-2xl max-h-[88dvh] overflow-hidden rounded-t-2xl sm:rounded-2xl bg-white shadow-2xl flex flex-col">
+              <div
+                className="w-full sm:max-w-2xl overflow-hidden rounded-t-2xl sm:rounded-2xl bg-white shadow-2xl flex flex-col"
+                style={{ maxHeight: `${Math.min(720, Math.max(280, (themePickerViewportHeight || 720) - 8))}px` }}
+              >
                 <div className="flex items-center justify-between gap-3 border-b border-outline-variant px-4 py-3.5 sm:px-5">
                   <div>
                     <strong className="block text-[18px] font-black text-on-surface">🎨 {t.themeSelect}</strong>
@@ -6649,7 +6670,6 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                   <label className="relative block">
                     <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-[16px]">🔍</span>
                     <input
-                      autoFocus
                       type="search"
                       value={themeSearch}
                       onChange={(event) => setThemeSearch(event.target.value)}
@@ -6659,7 +6679,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                   </label>
                 </div>
 
-                <div className="overflow-y-auto overscroll-contain p-4 sm:p-5 flex flex-col gap-4">
+                <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain p-4 sm:p-5 flex flex-col gap-4 [scrollbar-width:thin]">
                   {!normalizedThemeSearch && (
                     <div className="flex flex-col gap-2">
                       <span className="text-[12px] font-black text-on-surface-variant">{lang === 'ko' ? '최근·추천 테마' : 'Recent & recommended'}</span>
