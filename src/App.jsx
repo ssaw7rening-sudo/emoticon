@@ -1,5 +1,5 @@
 // AI 이모티콘 프롬프트 메이커 메인 애플리케이션
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Shuffle, CheckCircle2, Bot, Sparkles, Zap, Trash2, RotateCcw } from "lucide-react";
 
 const THEMES_KO = {
@@ -3877,6 +3877,7 @@ function App() {
   const [showPartnershipModal, setShowPartnershipModal] = useState(false);
   const [activeGoldenComboId, setActiveGoldenComboId] = useState(null);
   const [previousComboBackup, setPreviousComboBackup] = useState(null);
+  const goldenComboScrollRef = useRef(null);
 
   const [selectedTopTheme, setSelectedTopTheme] = useState(null);
   const [themeStats, setThemeStats] = useState(() => {
@@ -6443,14 +6444,39 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                   )}
                 </div>
                 
-                <p className="text-[12px] font-bold text-amber-800/90 leading-tight truncate whitespace-nowrap w-full">
-                  {lang === 'ko' ? '👇 원하는 세트 터치 시 1초 만에 전체 자동 세팅!' : lang === 'ja' ? '👇 タップ1秒で全体自動セット！' : lang === 'zh' ? '👇 点击卡片1秒全自动配置！' : '👇 Tap any card to auto-apply all settings!'}
-                </p>
+                <div className="flex items-center justify-between gap-2 w-full">
+                  <p className="min-w-0 text-[12px] font-bold text-amber-800/90 leading-tight truncate whitespace-nowrap">
+                    {lang === 'ko' ? '옆으로 밀어 더 보기 → 원하는 세트를 터치하세요' : lang === 'ja' ? '横にスワイプして表示 → セットをタップ' : lang === 'zh' ? '左右滑动查看更多 → 点击想要的组合' : 'Swipe sideways for more → Tap a combo'}
+                  </p>
+                  <div className="hidden sm:flex items-center gap-1 shrink-0" aria-label={lang === 'ko' ? '황금 조합 좌우 이동' : 'Golden combo navigation'}>
+                    <button
+                      type="button"
+                      onClick={() => goldenComboScrollRef.current?.scrollBy({ left: -245, behavior: 'smooth' })}
+                      className="interactive-control flex h-7 w-7 items-center justify-center rounded-full border border-amber-300 bg-white text-[17px] font-black text-amber-900 hover:bg-amber-100"
+                      aria-label={lang === 'ko' ? '이전 조합 보기' : 'Previous combos'}
+                    >
+                      ‹
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => goldenComboScrollRef.current?.scrollBy({ left: 245, behavior: 'smooth' })}
+                      className="interactive-control flex h-7 w-7 items-center justify-center rounded-full border border-amber-300 bg-white text-[17px] font-black text-amber-900 hover:bg-amber-100"
+                      aria-label={lang === 'ko' ? '다음 조합 보기' : 'Next combos'}
+                    >
+                      ›
+                    </button>
+                  </div>
+                </div>
               </div>
 
               {/* Golden Combos Horizontal Scroll Carousel */}
-              <div className="flex gap-2.5 overflow-x-auto py-1 px-0.5 no-scrollbar scroll-smooth overscroll-contain">
-                {sortedGoldenCombos.map((combo) => {
+              <div className="relative -mr-3 sm:-mr-4">
+                <div
+                  ref={goldenComboScrollRef}
+                  className="flex gap-2.5 overflow-x-auto py-1 pl-0.5 pr-10 no-scrollbar scroll-smooth overscroll-x-contain touch-pan-x touch-pan-y"
+                  aria-label={lang === 'ko' ? '좌우로 스크롤하는 인기 황금 조합 목록' : 'Horizontally scrollable golden combo list'}
+                >
+                  {sortedGoldenCombos.map((combo) => {
                   const isSelected = activeGoldenComboId === combo.id;
                   const titleText = combo.title[lang] || combo.title.ko;
                   const descText = combo.desc[lang] || combo.desc.ko;
@@ -6498,8 +6524,12 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                         </span>
                       </div>
                     </button>
-                  );
-                })}
+                    );
+                  })}
+                </div>
+                <div className="pointer-events-none absolute inset-y-0 right-0 w-10 rounded-r-xl bg-gradient-to-l from-[#F7FAF4] via-[#F7FAF4]/80 to-transparent" aria-hidden="true">
+                  <span className="absolute right-1 top-1/2 -translate-y-1/2 text-[20px] font-black text-amber-700/75 motion-safe:animate-pulse">›</span>
+                </div>
               </div>
             </div>
 
