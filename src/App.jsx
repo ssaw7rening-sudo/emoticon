@@ -630,12 +630,12 @@ const I18N = {
     geminiFinalStage: '② 기준 이미지로 생성',
     geminiReferenceTip: '먼저 문구 없는 기준 캐릭터를 만든 뒤, 마음에 드는 결과 이미지를 저장하세요.',
     geminiFinalTip: 'Gemini는 표정과 행동 중심 생성에 강합니다. 텍스트가 깨질 경우 [글자 미포함] 모드로 생성 후 편집 앱에서 글자를 추가하시면 더욱 깔끔합니다.',
-    gptRepairTitle: 'ChatGPT 이미지 결과 보정',
-    geminiRepairTitle: 'Gemini 이미지 결과 보정',
-    repairHelp: '💡 사용법: AI가 만든 이미지에 결함이 생겼을 때 버튼을 눌러 복사한 뒤, AI 대화창에 그대로 붙여넣어(Ctrl+V) 전송하세요.',
-    geminiRepairIdentity: '캐릭터가 달라졌어요',
-    geminiRepairCrop: '몸이 잘렸어요',
-    geminiRepairText: '문구가 틀렸어요',
+    gptRepairTitle: 'ChatGPT에서 다시 수정하기',
+    geminiRepairTitle: 'Gemini에서 다시 수정하기',
+    repairHelp: '수정할 이미지를 같은 AI 채팅에 첨부한 뒤, 아래 버튼으로 복사한 수정 요청을 붙여넣으세요. 글자 오류는 완벽한 수정을 보장하지 않습니다.',
+    geminiRepairIdentity: '얼굴·캐릭터',
+    geminiRepairCrop: '이미지 결함',
+    geminiRepairText: '글자 오류',
     geminiWorkflowTip: 'Gemini 팁: 시트 전체는 캐릭터와 구도 초안용으로 사용하고, 최종 이미지는 15종 개별 분할로 한 장씩 만드는 것을 권장합니다.',
     grokTextMode: 'Grok 이미지 글자',
     grokNoText: '글자 없이',
@@ -645,7 +645,7 @@ const I18N = {
     grokSolid: '단색 배경',
     grokChroma: '크로마키',
     grokWorkflowTip: 'Grok 팁: Grok은 Flux.1 엔진 기반으로 고화질 스티커 렌더링에 우수합니다. 글자 수정이 필요할 경우 [글자 미포함] 모드로 생성해 보세요.',
-    grokRepairTitle: 'Grok 이미지 결과 보정',
+    grokRepairTitle: 'Grok에서 다시 수정하기',
     emptyPhraseError: '비어 있는 문구가 있습니다. 모든 문구를 입력해 주세요.',
     duplicatePhraseError: '중복된 문구가 있습니다. 서로 다른 문구로 수정해 주세요.',
     guide3Q: '✂️ 배경(누끼)은 어떻게 쉽게 지우나요?',
@@ -718,12 +718,12 @@ const I18N = {
     geminiFinalStage: '② Generate from reference',
     geminiReferenceTip: 'First create a text-free base character, then save the result you like.',
     geminiFinalTip: 'Gemini excels at expression and pose generation. If text breaks, try generating in [Text-Free] mode and add lettering with an editing tool for cleaner results.',
-    gptRepairTitle: 'ChatGPT Image Repair Prompts',
-    geminiRepairTitle: 'Gemini Image Repair Prompts',
-    repairHelp: '💡 How to use: Click a button to copy the prompt, then paste (Ctrl+V) into the active AI chat to fix defects.',
-    geminiRepairIdentity: 'Character changed',
-    geminiRepairCrop: 'Body was cropped',
-    geminiRepairText: 'Phrase is wrong',
+    gptRepairTitle: 'Edit Again in ChatGPT',
+    geminiRepairTitle: 'Edit Again in Gemini',
+    repairHelp: 'Attach the image to the same AI chat, then paste the correction request copied below. Text corrections are not guaranteed to be perfect.',
+    geminiRepairIdentity: 'Character',
+    geminiRepairCrop: 'Image defects',
+    geminiRepairText: 'Text errors',
     geminiWorkflowTip: 'Gemini tip: Use the full sheet as a character and layout draft, then generate final images one at a time with Batch Split.',
     grokTextMode: 'Grok image text',
     grokNoText: 'No text',
@@ -733,7 +733,7 @@ const I18N = {
     grokSolid: 'Solid color',
     grokChroma: 'Chroma key',
     grokWorkflowTip: 'Grok tip: Grok powered by Flux.1 excels at sticker renders. If text stutters, switch to [Text-Free] mode and overlay text later.',
-    grokRepairTitle: 'Grok image repair prompts',
+    grokRepairTitle: 'Edit Again in Grok',
     emptyPhraseError: 'One or more phrases are empty. Please fill in every phrase.',
     duplicatePhraseError: 'Duplicate phrases found. Please use a different phrase for each sticker.',
     guide3Q: '✂️ How do I remove the background?',
@@ -808,12 +808,12 @@ const I18N = {
     geminiFinalStage: '② 基準画像から生成',
     geminiReferenceTip: 'まず文字なしの基準キャラクターを作成し、お気に入りの結果を保存してください。',
     geminiFinalTip: 'Geminiは表情やポーズの表現が得意です。シート全体で試作後、15種個別分割で1枚ずつ生成するのがおすすめです。',
-    gptRepairTitle: 'ChatGPT 画像結果補正',
-    geminiRepairTitle: 'Gemini 画像結果補正',
-    repairHelp: '💡 使い方: AIが生成した画像に問題がある場合、ボタンを押してコピーし、AIチャットに貼り付けて(Ctrl+V)送信してください。',
-    geminiRepairIdentity: 'キャラが変わった',
-    geminiRepairCrop: '体が切れた',
-    geminiRepairText: '文字が違う',
+    gptRepairTitle: 'ChatGPTで再修正',
+    geminiRepairTitle: 'Geminiで再修正',
+    repairHelp: '修正する画像を同じAIチャットに添付し、下のボタンでコピーした修正依頼を貼り付けてください。文字修正は完全性を保証できません。',
+    geminiRepairIdentity: '顔・キャラ',
+    geminiRepairCrop: '画像の不具合',
+    geminiRepairText: '文字の誤り',
     geminiWorkflowTip: 'Geminiヒント: シート全体は構図の試作として使い、最終画像は15종個別分割で1枚ずつ生成することをおすすめします。',
     grokTextMode: 'Grok画像文字',
     grokNoText: '文字なし',
@@ -823,7 +823,7 @@ const I18N = {
     grokSolid: '単色背景',
     grokChroma: 'クロマキー',
     grokWorkflowTip: 'Grokヒント: GrokはFlux.1エンジンを搭載し、自然なテキストとステッカーの質感を正確に表現します。',
-    grokRepairTitle: 'Grok 画像結果補正',
+    grokRepairTitle: 'Grokで再修正',
     emptyPhraseError: '空のフレーズがあります。すべてのフレーズを入力してください。',
     duplicatePhraseError: '重複したフレーズがあります。それぞれ異なるフレーズを入力してください。',
     guide3Q: '✂️ 背景（透過）の簡単な消し方は？',
@@ -898,12 +898,12 @@ const I18N = {
     geminiFinalStage: '② 基于基准图生成',
     geminiReferenceTip: '请先制作不带文字的基准角色，并保存满意的图片。',
     geminiFinalTip: 'Gemini擅长生成丰富的表情与动作。建议将整页作为草稿，再使用单张拆分逐张生成。',
-    gptRepairTitle: 'ChatGPT 图像结果修正',
-    geminiRepairTitle: 'Gemini 图像结果修正',
-    repairHelp: '💡 使用方法：若AI生成图出现瑕疵，点击复制修正提示词并粘贴发送至同一AI对话框(Ctrl+V)即可修复。',
-    geminiRepairIdentity: '角色变形了',
-    geminiRepairCrop: '身体被裁剪了',
-    geminiRepairText: '文字出错了',
+    gptRepairTitle: '在ChatGPT中再次修改',
+    geminiRepairTitle: '在Gemini中再次修改',
+    repairHelp: '请将待修改图片上传到同一个AI对话，再粘贴下方按钮复制的修改要求。文字修正无法保证完全准确。',
+    geminiRepairIdentity: '面部与角色',
+    geminiRepairCrop: '图像缺陷',
+    geminiRepairText: '文字错误',
     geminiWorkflowTip: 'Gemini提示：建议将整页作为构图草稿，最终成品使用单张拆分模式逐一生成。',
     grokTextMode: 'Grok文字模式',
     grokNoText: '纯图无字',
@@ -913,7 +913,7 @@ const I18N = {
     grokSolid: '单色背景',
     grokChroma: '抠图绿幕',
     grokWorkflowTip: 'Grok提示：Grok基于Flux.1引擎，擅长精准的自然语言指令与矢量贴纸质感。',
-    grokRepairTitle: 'Grok 图像结果修正',
+    grokRepairTitle: '在Grok中再次修改',
     emptyPhraseError: '存在空白短语，请填写所有短语。',
     duplicatePhraseError: '存在重复短语，请修改为不同的短语。',
     guide3Q: '✂️ 如何轻松去除背景（抠图）？',
@@ -5898,9 +5898,9 @@ After generating the sticker sheet, also prepare a short, engaging Korean captio
 
         crop: `${modelTag}
 [긴급 구도 수정: 카메라 줌아웃 및 전신 여백 확보]
-직전 이미지에서 캐릭터의 머리나 발끝이 프레임에 잘렸습니다!
+직전 이미지의 잘린 신체, 추가 팔다리, 겹친 셀, 깨진 배경과 불필요한 요소를 모두 수정하세요.
 카메라 시점을 뒤로 30% 줌아웃(Zoom Out)하여 캐릭터 크기를 줄여주세요.
-머리끝(귀/모자 포함)부터 발끝까지 전신이 화면 한가운데에 완벽하게 쏙 들어오고, 상하좌우에 최소 20%의 여백이 남도록 구도를 완전히 재배치해서 다시 그려주세요.`,
+머리끝(귀/모자 포함)부터 발끝까지 전신이 화면 한가운데에 완벽하게 들어오고, 상하좌우에 최소 20%의 여백이 남도록 재배치하세요. 정상적인 팔다리 수와 깨끗한 배경을 유지하세요.`,
 
         text: `${modelTag}
 [긴급 텍스트 수정: 기존 오타 지우고 한글 재인쇄]
@@ -5921,9 +5921,9 @@ After generating the sticker sheet, also prepare a short, engaging Korean captio
 
         crop: `${modelTag}
 [緊急修正: カメラのズームアウトと全身の余白確保]
-直前の画像でキャラクターの頭や足先が見切れてしまいました！
+直前の画像の見切れた身体、余分な手足、重なったセル、壊れた背景、不要な要素をすべて修正してください。
 カメラを30%ズームアウトしてキャラクターサイズを調整してください。
-頭（耳/帽子含む）から足先まで全身が中央に完全に収まり、四方に最低20%の余白ができるように構図を再配置して描き直してください。`,
+頭（耳/帽子含む）から足先まで全身が中央に完全に収まり、四方に最低20%の余白ができるように再配置し、正常な手足の数ときれいな背景を維持してください。`,
 
         text: `${modelTag}
 [緊急修正: 誤字を消去してテキストを正確に再印字]
@@ -5944,9 +5944,9 @@ After generating the sticker sheet, also prepare a short, engaging Korean captio
 
         crop: `${modelTag}
 [紧急修正: 镜头拉远并确保全身完整及边距]
-上一张图片中角色的头部或脚部被边缘裁剪了！
+请修复上一张图片中被裁切的身体、多余肢体、单元格重叠、异常背景及无关元素。
 请将镜头向后拉远(Zoom Out) 30%以缩小角色比例。
-确保从头顶（包括耳朵/帽子）到脚尖的全身完整显示在画面正中央，且四周保留至少20%的充足白色边距。`,
+确保全身完整显示在画面正中央，四周保留至少20%的边距，并保持正常的肢体数量与干净背景。`,
 
         text: `${modelTag}
 [紧急修正: 清除错别字并准确重印文本]
@@ -5966,9 +5966,9 @@ Fix any facial distortion and return one crisp, corrected image with distinct ch
 
       crop: `${modelTag}
 [URGENT COMPOSITION FIX — ZOOM OUT & FULL BODY MARGINS]
-In the previous image, parts of the character (head/feet) were cropped or touching the edges!
+Fix every cropped body part, extra limb, overlapping cell, broken background, and unwanted element in the previous image.
 ZOOM OUT the camera by 30% to shrink the character inside the frame.
-Ensure the ENTIRE full body from head to toe is 100% visible inside the canvas with at least 20% clear margin on all four sides. No clipping allowed!`,
+Keep the entire body centered with at least 20% clear margin on all sides, a normal number of limbs, and a clean background.`,
 
       text: `${modelTag}
 [URGENT TEXT FIX — ERASE & REPRINT EXACT TEXT]
@@ -7095,7 +7095,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                   <span className="text-[13px] font-bold text-[#795B16]">{t.gptRepairTitle}</span>
                   <span className="text-[13px] font-medium text-[#8A661C] leading-relaxed break-keep">{t.repairHelp}</span>
                 </div>
-                <div className="grid grid-cols-1 min-[430px]:grid-cols-3 gap-2">
+                <div className={`grid gap-2 ${gptTextMode === 'text' ? 'grid-cols-3' : 'grid-cols-2'}`}>
                   {[
                     ['identity', t.geminiRepairIdentity],
                     ['crop', t.geminiRepairCrop],
@@ -7105,7 +7105,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                       key={repairType}
                       type="button"
                       onClick={() => copyRepairPrompt(repairType, gptTextMode, 'gpt-repair', 'gpt')}
-                      className="interactive-control min-h-10 rounded-[8px] border border-[#E9DFC5] bg-white px-3 py-2 text-[13px] font-bold text-[#795B16] hover:bg-[#FFF3D8] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E8C66A]"
+                      className="interactive-control min-h-11 rounded-[8px] border border-[#E9DFC5] bg-white px-1.5 sm:px-3 py-2 text-[12px] sm:text-[13px] font-bold text-[#795B16] hover:bg-[#FFF3D8] overflow-hidden text-ellipsis whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E8C66A]"
                     >
                       {copiedType === `gpt-repair-${repairType}` ? '✓ ' : ''}{label}
                     </button>
@@ -7169,7 +7169,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                   <span className="text-[13px] font-bold text-[#795B16]">{t.geminiRepairTitle}</span>
                   <span className="text-[13px] font-medium text-[#8A661C] leading-relaxed break-keep">{t.repairHelp}</span>
                 </div>
-                <div className="grid grid-cols-1 min-[430px]:grid-cols-3 gap-2">
+                <div className={`grid gap-2 ${geminiTextMode === 'text' ? 'grid-cols-3' : 'grid-cols-2'}`}>
                   {[
                     ['identity', t.geminiRepairIdentity],
                     ['crop', t.geminiRepairCrop],
@@ -7179,7 +7179,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                       key={repairType}
                       type="button"
                       onClick={() => copyRepairPrompt(repairType, geminiTextMode, 'gemini-repair', 'gemini')}
-                      className="interactive-control min-h-10 rounded-[8px] border border-[#E9DFC5] bg-white px-3 py-2 text-[13px] font-bold text-[#795B16] hover:bg-[#FFF3D8] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E8C66A]"
+                      className="interactive-control min-h-11 rounded-[8px] border border-[#E9DFC5] bg-white px-1.5 sm:px-3 py-2 text-[12px] sm:text-[13px] font-bold text-[#795B16] hover:bg-[#FFF3D8] overflow-hidden text-ellipsis whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E8C66A]"
                     >
                       {copiedType === `gemini-repair-${repairType}` ? '✓ ' : ''}{label}
                     </button>
@@ -7243,7 +7243,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                   <span className="text-[13px] font-bold text-[#795B16]">{t.grokRepairTitle}</span>
                   <span className="text-[13px] font-medium text-[#8A661C] leading-relaxed break-keep">{t.repairHelp}</span>
                 </div>
-                <div className="grid grid-cols-1 min-[430px]:grid-cols-3 gap-2">
+                <div className={`grid gap-2 ${grokTextMode === 'text' ? 'grid-cols-3' : 'grid-cols-2'}`}>
                   {[
                     ['identity', t.geminiRepairIdentity],
                     ['crop', t.geminiRepairCrop],
@@ -7253,7 +7253,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                       key={repairType}
                       type="button"
                       onClick={() => copyRepairPrompt(repairType, grokTextMode, 'grok-repair', 'grok')}
-                      className="interactive-control min-h-10 rounded-[8px] border border-[#E9DFC5] bg-white px-3 py-2 text-[13px] font-bold text-[#795B16] hover:bg-[#FFF3D8] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E8C66A]"
+                      className="interactive-control min-h-11 rounded-[8px] border border-[#E9DFC5] bg-white px-1.5 sm:px-3 py-2 text-[12px] sm:text-[13px] font-bold text-[#795B16] hover:bg-[#FFF3D8] overflow-hidden text-ellipsis whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E8C66A]"
                     >
                       {copiedType === `grok-repair-${repairType}` ? '✓ ' : ''}{label}
                     </button>
