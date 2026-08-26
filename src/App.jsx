@@ -4998,6 +4998,40 @@ Do not follow the photo's photorealistic rendering. Apply the selected art style
     return '';
   };
 
+  const getKoreanGlyphProtection = (phrases) => {
+    const phraseList = (Array.isArray(phrases) ? phrases : [phrases])
+      .map((phrase) => (phrase || '').trim())
+      .filter(Boolean);
+
+    const hasRiskyGlyph = (text) => [...text].some((char) => {
+      if (/[ㅌㄹㅗㅜㅏㅓ]/.test(char)) return true;
+      const code = char.charCodeAt(0);
+      if (code < 0xAC00 || code > 0xD7A3) return false;
+      const syllableIndex = code - 0xAC00;
+      const medialIndex = Math.floor((syllableIndex % 588) / 28);
+      const finalIndex = syllableIndex % 28;
+      return [0, 4, 8, 13].includes(medialIndex) || [8, 25].includes(finalIndex);
+    });
+
+    const riskyPhrases = phraseList.filter(hasRiskyGlyph);
+    if (!riskyPhrases.length) return '';
+
+    const phraseLines = riskyPhrases.map((phrase) => `- "${phrase}"`).join('\n');
+    return `[한글 정자형 손글씨 자모 보호 — 최우선]
+다음 문구에는 손글씨에서 혼동되기 쉬운 ㅌ·ㄹ·ㅗ·ㅜ·ㅏ·ㅓ가 포함되어 있습니다.
+${phraseLines}
+
+- 귀엽고 따뜻한 손글씨 느낌은 유지하되, 흘림체나 이어 쓰는 필기체가 아닌 반듯한 정자형 손글씨로 표현하세요.
+- 손으로 쓴 자연스러운 크기 차이와 둥근 획 끝은 유지하되, 초성·중성·종성의 핵심 획은 서로 뭉치거나 연결하지 마세요.
+- ㅗ의 짧은 세로획은 가로획 위쪽, ㅜ는 아래쪽을 정확히 향하게 하세요.
+- ㅏ의 짧은 가로획은 세로획 오른쪽, ㅓ는 왼쪽을 정확히 향하게 하세요.
+- ㅌ은 가운데 가로획과 바깥 골격을 명확히 분리하고, ㄹ의 연속적으로 꺾이는 형태로 바꾸지 마세요.
+- ㄹ은 고유의 단계적으로 꺾이는 획을 유지하고 ㅌ처럼 단순화하지 마세요.
+- 장식과 손글씨 질감은 글자 외곽에만 적용하고, 내부 핵심 획의 방향·개수·위치를 변형하지 마세요.
+- 흰색 스티커 외곽선이 글자 내부의 짧은 획과 받침을 덮거나 합치지 않도록 충분한 내부 간격을 확보하세요.
+- 렌더링 전후에 위 문구를 원문과 음절 단위로 대조하고, 자모 방향이나 받침이 다르면 해당 글자만 정확히 고치세요.`;
+  };
+
   const generateGptPrompt = (phraseOverride = null) => {
     const character = getGptCharacterDetails();
     const hasPhraseOverride = phraseOverride !== null;
@@ -5019,12 +5053,14 @@ Do not follow the photo's photorealistic rendering. Apply the selected art style
 
     if (generationMode === 'individual' || hasPhraseOverride) {
       if (lang === 'ko') {
+        const glyphProtection = getKoreanGlyphProtection(targetPhrase);
         const textPolicy = gptTextMode === 'text'
           ? `[고품질 한글 타이포그래피 및 감정 포인트 효과 지침]
-1. 지정된 문구 "${targetPhrase}"를 캐릭터 옆이나 머리 위에 읽기 쉬운 2D 볼드 팝아트 손글씨 스티커 폰트로 정확히 한 번만 적으세요.
+1. 지정된 문구 "${targetPhrase}"를 캐릭터 옆이나 머리 위에 읽기 쉬운 2D 볼드 팝아트 정자형 손글씨 스티커 폰트로 정확히 한 번만 적으세요. 고딕체처럼 기계적으로 표현하지 말고, 손으로 쓴 따뜻하고 자연스러운 느낌을 유지하세요.
 2. 모든 글자에 또렷하고 두꺼운 순백색 스티커 테두리(White Die-Cut Outline Stroke)를 둘러 선명하게 돋보이게 렌더링하세요.
 3. 문구의 감정에 맞춰 아기자기한 포인트 효과(하트💕, 황금왕관👑, 따봉👍, 폭죽🎉, 꽃다발💐, 땀방울💦, 반짝이✨, zZ 등)를 글자 주변에 자연스럽게 결합하세요.
-4. 텍스트 상자(박스), 말풍선, 괄호 (), 대괄호 [], 따옴표 "", 스티커 번호는 절대로 넣지 마세요.`
+4. 텍스트 상자(박스), 말풍선, 괄호 (), 대괄호 [], 따옴표 "", 스티커 번호는 절대로 넣지 마세요.
+${glyphProtection}`
           : `문구 "${targetPhrase}"는 장면을 정하는 참고 맥락으로만 사용하세요. 이미지에는 글자, 숫자, 타이포그래피를 그리지 마세요.`;
         const textExclusion = gptTextMode === 'text'
           ? '추가 문구, 틀린 철자, 임의의 글자, 숫자, 따옴표와 텍스트 박스 금지.'
@@ -5110,12 +5146,14 @@ ${textExclusion} No watermark, frame, duplicate character, extra limbs, cropped 
 
     if (lang === 'ko') {
       const panelPlan = emoticons.map((phrase, index) => `${Math.floor(index / 5) + 1}행 ${index % 5 + 1}열: "${phrase.trim()}"`).join('\n');
+      const glyphProtection = getKoreanGlyphProtection(emoticons);
       const textPolicy = gptTextMode === 'text'
         ? `[고품질 한글 타이포그래피 및 감정 포인트 효과 지침]
-1. 각 셀에 지정된 문구를 캐릭터 옆이나 머리 위에 읽기 쉬운 2D 볼드 팝아트 손글씨 스티커 폰트로 정확히 한 번만 적으세요.
+1. 각 셀에 지정된 문구를 캐릭터 옆이나 머리 위에 읽기 쉬운 2D 볼드 팝아트 정자형 손글씨 스티커 폰트로 정확히 한 번만 적으세요. 고딕체처럼 기계적으로 표현하지 말고, 손으로 쓴 따뜻하고 자연스러운 느낌을 유지하세요.
 2. 모든 글자에 또렷하고 두꺼운 순백색 스티커 테두리(White Die-Cut Outline Stroke)를 둘러 선명하게 돋보이게 렌더링하세요.
 3. 각 문구의 감정에 맞춰 아기자기한 포인트 효과(하트💕, 황금왕관👑, 따봉👍, 폭죽🎉, 꽃다발💐, 땀방울💦, 반짝이✨, zZ 등)를 글자 주변에 자연스럽게 결합하세요.
-4. 텍스트 상자(박스), 말풍선, 괄호 (), 대괄호 [], 따옴표 "", 스티커 번호는 절대로 넣지 마세요.`
+4. 텍스트 상자(박스), 말풍선, 괄호 (), 대괄호 [], 따옴표 "", 스티커 번호는 절대로 넣지 마세요.
+${glyphProtection}`
         : '각 문구는 해당 셀의 표정, 자세와 행동을 정하는 맥락으로만 사용하세요. 이미지에는 문구나 다른 글자를 그리지 마세요.';
       const textExclusion = gptTextMode === 'text'
         ? '추가 문구, 틀린 철자, 임의의 글자, 셀 번호, 따옴표와 텍스트 박스 금지.'
