@@ -1,5 +1,5 @@
 // AI 이모티콘 프롬프트 메이커 메인 애플리케이션
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { Shuffle, CheckCircle2, Bot, Sparkles, Zap, Trash2, RotateCcw } from "lucide-react";
 
 const THEMES_KO = {
@@ -599,7 +599,7 @@ const I18N = {
     guide1Q: '🤔 AI 이모티콘 프롬프트 메이커란?',
     guide1A: '키워드만 찍으면 15종 이모티콘 프롬프트 1초 완성!\n카톡 톡방 짤, SNS 프로필, 블로그 스티커로 나만의 감정을 자유롭게 표현해 보세요.\n원하는 캐릭터와 상황을 고르면 ChatGPT·Gemini·Grok 맞춤형 프롬프트가 즉시 생성됩니다.',
     guide2Q: '💡 ChatGPT vs Gemini 어떤 것을 써야 할까요?',
-    guide2A: '각 AI 이미지 생성 기능의 장점이 다르므로 목적에 맞게 골라 쓰세요!\n\n🟢 ChatGPT 추천: "캐릭터 시트 원화 제작"\n• 문구 없는 캐릭터·표정·동작 시트를 먼저 생성하세요.\n• 정확한 문구는 앱의 실제 한글 폰트 합성 기능으로 넣으면 오타를 방지할 수 있습니다.\n\n🔵 Gemini 이미지 생성 추천: "표정과 행동 중심의 이모티콘"\n• 캐릭터의 표정, 몸짓과 시각 효과로 상황을 표현할 때 활용하기 좋습니다.\n• 시트 전체는 초안으로 만들고, 최종 결과는 15종 개별 분할에서 한 장씩 생성하면 캐릭터 일관성을 관리하기 쉽습니다.',
+    guide2A: '각 AI 이미지 생성 기능의 장점이 다르므로 목적에 맞게 골라 쓰세요!\n\n🟢 ChatGPT 추천: "이미지 안에 정확한 대사가 필요한 경우"\n• 문구를 포함한 이모티콘 시안을 만들 때 활용하기 좋습니다.\n• 문구가 길거나 중요한 경우 생성 후 철자를 꼭 확인하세요.\n\n🔵 Gemini 이미지 생성 추천: "표정과 행동 중심의 이모티콘"\n• 캐릭터의 표정, 몸짓과 시각 효과로 상황을 표현할 때 활용하기 좋습니다.\n• 시트 전체는 초안으로 만들고, 최종 결과는 15종 개별 분할에서 한 장씩 생성하면 캐릭터 일관성을 관리하기 쉽습니다.\n• 필요하면 Gemini용 글자 설정에서 문구 포함을 선택할 수 있습니다.',
     modeSheet: '📱 시트 전체 (15종)',
     modeIndividual: '🖼️ 자유 개별 (1종)',
     modeBatch: '📋 15종 개별 분할',
@@ -611,13 +611,13 @@ const I18N = {
     selectedPhrase: '선택 문구',
     copiedPrompt: '프롬프트 복사 완료',
     gptTextMode: 'ChatGPT 이미지 글자',
-    gptIncludeText: '앱에서 문구 합성',
-    gptNoText: '무문자 원화만',
+    gptIncludeText: '문구 포함',
+    gptNoText: '글자 없이',
     gptBackgroundMode: 'ChatGPT 배경',
     gptTransparent: '투명 배경',
     gptSolid: '단색 배경',
     gptChroma: '크로마키',
-    gptWorkflowTip: 'ChatGPT에서는 무문자 시트를 만든 뒤 아래 실제 한글 폰트 합성 기능을 사용하세요. 이미지 AI가 문자를 그리지 않아 오타를 막을 수 있습니다.',
+    gptWorkflowTip: 'ChatGPT 팁: 문구 정확도가 중요하면 시트 전체로 초안을 만든 뒤 15종 개별 분할에서 한 장씩 생성해 확인하세요.',
     geminiTextMode: 'Gemini 이미지 글자',
     geminiNoText: '글자 없이',
     geminiIncludeText: '문구 포함',
@@ -687,7 +687,7 @@ const I18N = {
     guide1Q: '🤔 What is AI Emoji Prompt Maker?',
     guide1A: 'Have a sticker idea but are not sure how to describe it to AI?\nChoose a character concept and phrases, and this utility will automatically build ready-to-use sticker prompts for ChatGPT, Gemini, and Grok.',
     guide2Q: '💡 ChatGPT vs Gemini: Which one to use?',
-    guide2A: 'Use ChatGPT to create an artwork-only character sheet, then add exact captions with the app’s real-font compositor. Use Gemini for expression- and action-focused stickers.',
+    guide2A: 'Use ChatGPT when text inside the image is important. Use Gemini image generation for expression- and action-focused stickers. Treat a full sheet as a draft, then generate final stickers one at a time with Batch Split for easier consistency control.',
     modeSheet: '📱 Full Sheet (15x)',
     modeIndividual: '🖼️ Single Free (1x)',
     modeBatch: '📋 Batch Split (15x)',
@@ -699,13 +699,13 @@ const I18N = {
     selectedPhrase: 'Selected phrase',
     copiedPrompt: 'Prompt copied',
     gptTextMode: 'Text in ChatGPT image',
-    gptIncludeText: 'Add text in app',
-    gptNoText: 'Artwork only',
+    gptIncludeText: 'Include phrase',
+    gptNoText: 'No text',
     gptBackgroundMode: 'ChatGPT background',
     gptTransparent: 'Transparent',
     gptSolid: 'Solid color',
     gptChroma: 'Chroma key',
-    gptWorkflowTip: 'Generate an artwork-only sheet in ChatGPT, then use the real-font compositor below for exact captions.',
+    gptWorkflowTip: 'ChatGPT tip: If exact text matters, use the full sheet as a draft, then generate and verify each final sticker with Batch Split.',
     geminiTextMode: 'Text in Gemini image',
     geminiNoText: 'No text',
     geminiIncludeText: 'Include phrase',
@@ -789,13 +789,13 @@ const I18N = {
     selectedPhrase: '選択中のフレーズ',
     copiedPrompt: 'プロンプトをコピーしました',
     gptTextMode: 'ChatGPT画像文字',
-    gptIncludeText: 'アプリで文字合成',
-    gptNoText: '文字なし原画',
+    gptIncludeText: '文字あり',
+    gptNoText: '文字なし',
     gptBackgroundMode: 'ChatGPT背景',
     gptTransparent: '透過背景',
     gptSolid: '単色背景',
     gptChroma: 'クロマキー',
-    gptWorkflowTip: 'ChatGPTでは文字なしシートを作成し、下の実フォント合成機能で正確な文言を追加してください。',
+    gptWorkflowTip: 'ChatGPTヒント: 文字の精度が重要な場合、シート全体で試作後、15種個別分割で1枚ずつ確認してください。',
     geminiTextMode: 'Gemini画像文字',
     geminiNoText: '文字なし',
     geminiIncludeText: '文字あり',
@@ -879,13 +879,13 @@ const I18N = {
     selectedPhrase: '已选短语',
     copiedPrompt: '提示词已复制',
     gptTextMode: 'ChatGPT文字模式',
-    gptIncludeText: '在应用中合成文字',
-    gptNoText: '仅无字原图',
+    gptIncludeText: '包含文字',
+    gptNoText: '纯图无字',
     gptBackgroundMode: 'ChatGPT背景',
     gptTransparent: '透明背景',
     gptSolid: '单色背景',
     gptChroma: '抠图绿幕',
-    gptWorkflowTip: '请先用ChatGPT生成无字图片，再使用下方真实字体合成功能准确添加文案。',
+    gptWorkflowTip: 'ChatGPT提示：如果文字精准度很重要，建议先生成整页草图，再用拆分模式逐张生成校验。',
     geminiTextMode: 'Gemini文字模式',
     geminiNoText: '纯图无字',
     geminiIncludeText: '包含文字',
@@ -3994,117 +3994,6 @@ function App() {
   const [toastMessage, setToastMessage] = useState('');
   const [showPhotoTips, setShowPhotoTips] = useState(false);
   const [showDetailedGuide, setShowDetailedGuide] = useState(false);
-  const typographyCanvasRef = useRef(null);
-  const typographyImageRef = useRef(null);
-  const [typographyReady, setTypographyReady] = useState(false);
-  const [typographyFileName, setTypographyFileName] = useState('');
-  const [typographyColor, setTypographyColor] = useState('#7C3AED');
-
-  const splitCaptionLines = (ctx, text, maxWidth) => {
-    const words = text.trim().split(/\s+/).filter(Boolean);
-    if (words.length <= 1) return [text.trim()];
-
-    const lines = [];
-    let current = '';
-    words.forEach((word) => {
-      const next = current ? `${current} ${word}` : word;
-      if (current && ctx.measureText(next).width > maxWidth && lines.length === 0) {
-        lines.push(current);
-        current = word;
-      } else {
-        current = next;
-      }
-    });
-    if (current) lines.push(current);
-    return lines.slice(0, 2);
-  };
-
-  const renderTypographySheet = () => {
-    const canvas = typographyCanvasRef.current;
-    const image = typographyImageRef.current;
-    if (!canvas || !image) return;
-
-    canvas.width = image.naturalWidth;
-    canvas.height = image.naturalHeight;
-    const ctx = canvas.getContext('2d');
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
-
-    const cellWidth = canvas.width / 5;
-    const cellHeight = canvas.height / 3;
-    const fontStack = '"Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", system-ui, sans-serif';
-
-    emoticons.slice(0, 15).forEach((message, index) => {
-      const row = Math.floor(index / 5);
-      const column = index % 5;
-      const length = [...message.trim()].length;
-      let fontSize = cellWidth * (length <= 7 ? 0.115 : length <= 12 ? 0.09 : 0.075);
-      const maxWidth = cellWidth * 0.88;
-      ctx.font = `900 ${fontSize}px ${fontStack}`;
-
-      let lines = splitCaptionLines(ctx, message, maxWidth);
-      while (lines.some((line) => ctx.measureText(line).width > maxWidth) && fontSize > cellWidth * 0.055) {
-        fontSize -= 1;
-        ctx.font = `900 ${fontSize}px ${fontStack}`;
-        lines = splitCaptionLines(ctx, message, maxWidth);
-      }
-
-      const centerX = column * cellWidth + cellWidth / 2;
-      const lineHeight = fontSize * 1.08;
-      const startY = row * cellHeight + cellHeight * 0.09 + fontSize;
-      const strokeWidth = Math.max(4, fontSize * 0.2);
-
-      ctx.save();
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.lineJoin = 'round';
-      ctx.miterLimit = 2;
-      ctx.shadowColor = 'rgba(20, 12, 32, 0.55)';
-      ctx.shadowBlur = Math.max(3, fontSize * 0.12);
-      ctx.shadowOffsetY = Math.max(2, fontSize * 0.07);
-      ctx.strokeStyle = '#FFFFFF';
-      ctx.lineWidth = strokeWidth;
-      ctx.fillStyle = typographyColor;
-
-      lines.forEach((line, lineIndex) => {
-        const y = startY + lineIndex * lineHeight;
-        ctx.strokeText(line, centerX, y, maxWidth);
-        ctx.fillText(line, centerX, y, maxWidth);
-      });
-      ctx.restore();
-    });
-
-    setTypographyReady(true);
-  };
-
-  const handleTypographyUpload = (event) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      const image = new Image();
-      image.onload = () => {
-        typographyImageRef.current = image;
-        setTypographyFileName(file.name);
-        renderTypographySheet();
-      };
-      image.src = reader.result;
-    };
-    reader.readAsDataURL(file);
-  };
-
-  const downloadTypographySheet = () => {
-    const canvas = typographyCanvasRef.current;
-    if (!canvas || !typographyReady) return;
-    canvas.toBlob((blob) => {
-      if (!blob) return;
-      const link = document.createElement('a');
-      link.href = URL.createObjectURL(blob);
-      link.download = 'emoticon-sheet-with-korean-text.png';
-      link.click();
-      URL.revokeObjectURL(link.href);
-    }, 'image/png');
-  };
 
   const getCategoryRuleBadge = (category) => {
     const isArtStyle = ['🖌️ 화풍', '🖌️ Art Style', '🖌️ 画風', '🖌️ 画风'].includes(category);
@@ -5131,13 +5020,14 @@ Do not follow the photo's photorealistic rendering. Apply the selected art style
     if (generationMode === 'individual' || hasPhraseOverride) {
       if (lang === 'ko') {
         const textPolicy = gptTextMode === 'text'
-          ? `[앱 타이포그래피 합성용 무문자 원화 — 최우선]
-지정된 문구 "${targetPhrase}"는 표정과 자세를 설계하는 의미 정보로 사용하되, 이미지에는 문구를 직접 그리지 마세요.
-캐릭터 머리 위 또는 옆에 앱이 실제 폰트로 문구를 합성할 수 있는 깨끗한 안전 여백을 충분히 확보하세요.
-한글, 영문, 숫자, 자모, 문장부호, 가짜 글자, 말풍선 문자, 로고와 워터마크를 절대로 생성하지 마세요.`
+          ? `[고품질 한글 타이포그래피 및 감정 포인트 효과 지침]
+1. 지정된 문구 "${targetPhrase}"를 캐릭터 옆이나 머리 위에 읽기 쉬운 2D 볼드 팝아트 손글씨 스티커 폰트로 정확히 한 번만 적으세요.
+2. 모든 글자에 또렷하고 두꺼운 순백색 스티커 테두리(White Die-Cut Outline Stroke)를 둘러 선명하게 돋보이게 렌더링하세요.
+3. 문구의 감정에 맞춰 아기자기한 포인트 효과(하트💕, 황금왕관👑, 따봉👍, 폭죽🎉, 꽃다발💐, 땀방울💦, 반짝이✨, zZ 등)를 글자 주변에 자연스럽게 결합하세요.
+4. 텍스트 상자(박스), 말풍선, 괄호 (), 대괄호 [], 따옴표 "", 스티커 번호는 절대로 넣지 마세요.`
           : `문구 "${targetPhrase}"는 장면을 정하는 참고 맥락으로만 사용하세요. 이미지에는 글자, 숫자, 타이포그래피를 그리지 마세요.`;
         const textExclusion = gptTextMode === 'text'
-          ? '모든 문자, 가짜 글자, 추가 문구, 숫자, 따옴표와 텍스트 박스 금지.'
+          ? '추가 문구, 틀린 철자, 임의의 글자, 숫자, 따옴표와 텍스트 박스 금지.'
           : '글자, 숫자, 타이포그래피와 의미 없는 기호 금지.';
 
         return `[목표]
@@ -5157,8 +5047,7 @@ ${artDirection}. 캐릭터 비율과 선, 질감, 색감을 동일하게 유지�
 
 [장면]
 문구 맥락: "${targetPhrase}"
-장면 설명: ${getPhraseActionKo(targetPhrase)}.
-이 문구와 상황을 바로 이해할 수 있는 표정 하나와 명확한 전신 자세 하나를 구성하세요. 보조 소품과 만화 효과는 각각 최대 하나만 사용하세요.
+이 문구에서 바로 이해할 수 있는 표정 하나와 명확한 전신 자세 하나를 구성하세요. 보조 소품과 만화 효과는 각각 최대 하나만 사용하세요.
 설정에서 선택한 소품 또는 행동: ${character.props}.
 설정에서 선택한 시각 효과: ${character.effects}.
 
@@ -5220,16 +5109,16 @@ ${textExclusion} No watermark, frame, duplicate character, extra limbs, cropped 
     }
 
     if (lang === 'ko') {
-      const panelPlan = emoticons.map((phrase, index) => `${Math.floor(index / 5) + 1}행 ${index % 5 + 1}열: 문구 맥락 "${phrase.trim()}". ${getPhraseActionKo(phrase.trim())}. 상단에 앱 문구 합성용 투명 여백 확보.`).join('\n');
+      const panelPlan = emoticons.map((phrase, index) => `${Math.floor(index / 5) + 1}행 ${index % 5 + 1}열: "${phrase.trim()}"`).join('\n');
       const textPolicy = gptTextMode === 'text'
-        ? `[앱 타이포그래피 합성용 무문자 원화 — 최우선]
-아래 15개 문구 원문은 각 셀의 표정과 행동을 설계하는 의미 정보로 사용하되, 이미지에는 문구를 직접 그리지 마세요.
-각 셀의 캐릭터 머리 위 또는 옆에 해당 문구 길이에 맞는 깨끗한 안전 여백을 확보하세요. 긴 문구는 앱에서 두 줄로 합성할 수 있도록 더 넓은 공간을 남기세요.
-한글, 영문, 숫자, 자모, 문장부호, 가짜 글자, 말풍선 문자, 로고와 워터마크를 절대로 생성하지 마세요.
-최종 결과는 문자가 전혀 없는 캐릭터 시트 원화여야 합니다.`
+        ? `[고품질 한글 타이포그래피 및 감정 포인트 효과 지침]
+1. 각 셀에 지정된 문구를 캐릭터 옆이나 머리 위에 읽기 쉬운 2D 볼드 팝아트 손글씨 스티커 폰트로 정확히 한 번만 적으세요.
+2. 모든 글자에 또렷하고 두꺼운 순백색 스티커 테두리(White Die-Cut Outline Stroke)를 둘러 선명하게 돋보이게 렌더링하세요.
+3. 각 문구의 감정에 맞춰 아기자기한 포인트 효과(하트💕, 황금왕관👑, 따봉👍, 폭죽🎉, 꽃다발💐, 땀방울💦, 반짝이✨, zZ 등)를 글자 주변에 자연스럽게 결합하세요.
+4. 텍스트 상자(박스), 말풍선, 괄호 (), 대괄호 [], 따옴표 "", 스티커 번호는 절대로 넣지 마세요.`
         : '각 문구는 해당 셀의 표정, 자세와 행동을 정하는 맥락으로만 사용하세요. 이미지에는 문구나 다른 글자를 그리지 마세요.';
       const textExclusion = gptTextMode === 'text'
-        ? '모든 문자, 가짜 글자, 추가 문구, 숫자, 셀 번호, 따옴표와 텍스트 박스 금지.'
+        ? '추가 문구, 틀린 철자, 임의의 글자, 셀 번호, 따옴표와 텍스트 박스 금지.'
         : '글자, 숫자, 타이포그래피, 셀 번호와 의미 없는 기호 금지.';
 
       return `[목표]
@@ -6927,6 +6816,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                   {[
                     ['identity', t.geminiRepairIdentity],
                     ['crop', t.geminiRepairCrop],
+                    ...(gptTextMode === 'text' ? [['text', t.geminiRepairText]] : []),
                   ].map(([repairType, label]) => (
                     <button
                       key={repairType}
@@ -6940,79 +6830,6 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                 </div>
               </div>
               <p className="text-[13px] leading-relaxed text-[#795B16]">💡 {t.gptWorkflowTip}</p>
-              {gptTextMode === 'text' && generationMode === 'sheet' && (
-                <div className="mt-1 rounded-lg border border-[#E8C66A] bg-white p-3 sm:p-4 flex flex-col gap-3">
-                  <div>
-                    <strong className="block text-[14px] text-[#5A461B]">
-                      {lang === 'ko' ? '✍️ 실제 한글 폰트 합성' : lang === 'ja' ? '✍️ 実フォント文字合成' : lang === 'zh' ? '✍️ 使用真实字体合成文字' : '✍️ Real-font caption compositor'}
-                    </strong>
-                    <p className="mt-1 text-[12px] sm:text-[13px] leading-relaxed text-[#795B16]">
-                      {lang === 'ko'
-                        ? 'ChatGPT에서 만든 무문자 5×3 시트를 올리면 현재 문구 15개를 브라우저가 실제 폰트로 정확하게 합성합니다.'
-                        : lang === 'ja'
-                        ? 'ChatGPTで作成した文字なし5×3シートをアップロードすると、現在の15文言を実フォントで合成します。'
-                        : lang === 'zh'
-                        ? '上传ChatGPT生成的无字5×3表情图，浏览器会用真实字体准确合成当前15条文案。'
-                        : 'Upload the text-free 5×3 sheet from ChatGPT. The browser will render all 15 captions with real font glyphs.'}
-                    </p>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-2 items-end">
-                    <label className="flex flex-col gap-1.5 text-[12px] font-bold text-[#795B16]">
-                      <span>{lang === 'ko' ? '무문자 시트 선택' : lang === 'ja' ? '文字なしシートを選択' : lang === 'zh' ? '选择无字图片' : 'Choose artwork-only sheet'}</span>
-                      <input
-                        type="file"
-                        accept="image/png,image/jpeg,image/webp"
-                        onChange={handleTypographyUpload}
-                        className="block w-full rounded-md border border-[#E9DFC5] bg-[#FFFDF7] px-3 py-2 text-[12px] text-slate-700 file:mr-3 file:rounded-md file:border-0 file:bg-[#FFE8B5] file:px-3 file:py-1.5 file:font-bold file:text-[#5A461B]"
-                      />
-                    </label>
-                    <label className="flex items-center gap-2 rounded-md border border-[#E9DFC5] bg-[#FFFDF7] px-3 py-2 text-[12px] font-bold text-[#795B16]">
-                      <span>{lang === 'ko' ? '글자색' : lang === 'ja' ? '文字色' : lang === 'zh' ? '文字颜色' : 'Text color'}</span>
-                      <input
-                        type="color"
-                        value={typographyColor}
-                        onChange={(event) => setTypographyColor(event.target.value)}
-                        className="h-8 w-10 cursor-pointer rounded border-0 bg-transparent p-0"
-                      />
-                    </label>
-                  </div>
-
-                  {typographyFileName && (
-                    <span className="text-[11px] font-medium text-slate-500 truncate">{typographyFileName}</span>
-                  )}
-
-                  <canvas
-                    ref={typographyCanvasRef}
-                    className={`w-full h-auto rounded-md border border-[#E9DFC5] bg-[linear-gradient(45deg,#f3f4f6_25%,transparent_25%),linear-gradient(-45deg,#f3f4f6_25%,transparent_25%),linear-gradient(45deg,transparent_75%,#f3f4f6_75%),linear-gradient(-45deg,transparent_75%,#f3f4f6_75%)] bg-[length:20px_20px] bg-[position:0_0,0_10px,10px_-10px,-10px_0px] ${typographyReady ? 'block' : 'hidden'}`}
-                    aria-label={lang === 'ko' ? '한글 문구 합성 결과 미리보기' : 'Caption composite preview'}
-                  />
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    <button
-                      type="button"
-                      onClick={renderTypographySheet}
-                      disabled={!typographyImageRef.current}
-                      className="min-h-11 rounded-md border border-[#E8C66A] bg-[#FFF7DF] px-4 py-2 text-[13px] font-bold text-[#5A461B] hover:bg-[#FFE8B5] disabled:cursor-not-allowed disabled:opacity-40"
-                    >
-                      {lang === 'ko' ? '🔄 현재 문구 다시 적용' : lang === 'ja' ? '🔄 現在の文言を再適用' : lang === 'zh' ? '🔄 重新应用当前文案' : '🔄 Reapply current captions'}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={downloadTypographySheet}
-                      disabled={!typographyReady}
-                      className="min-h-11 rounded-md bg-[#7C3AED] px-4 py-2 text-[13px] font-bold text-white hover:bg-[#6D28D9] disabled:cursor-not-allowed disabled:opacity-40"
-                    >
-                      {lang === 'ko' ? '⬇️ 문구 포함 PNG 다운로드' : lang === 'ja' ? '⬇️ 文字入りPNGを保存' : lang === 'zh' ? '⬇️ 下载带文字PNG' : '⬇️ Download captioned PNG'}
-                    </button>
-                  </div>
-                  <p className="text-[11px] leading-relaxed text-slate-500">
-                    {lang === 'ko'
-                      ? '문구는 이미지 AI가 그리지 않고 기기 폰트로 렌더링됩니다. 따라서 붙는다·끝까지 같은 받침도 원문 그대로 유지됩니다.'
-                      : 'Captions are rendered by the browser font engine, not painted by the image model.'}
-                  </p>
-                </div>
-              )}
             </div>
           )}
           {previewMode === 'gemini' && (
