@@ -5113,27 +5113,27 @@ Do not follow the photo's photorealistic rendering. Apply the selected art style
         .map((char) => {
           const parts = decomposeSyllable(char);
           if (!parts || (!/[ㅗㅜㅏㅓ]/.test(parts.medial) && !/[ㅌㄹ]/.test(parts.final))) return null;
-          return `${char}=${parts.initial}+${parts.medial}${parts.final ? `+받침 ${parts.final}` : ''}`;
+          return `${char}=${parts.initial}+${parts.medial}${parts.final ? `+final consonant ${parts.final}` : ''}`;
         })
         .filter(Boolean)
         .join(', ');
       return `- ${word} = ${[...word].join('·')} / ${detail}`;
     }).join('\n');
 
-    return `[한글 손글씨 철자 잠금 — 최우선]
-아래 정보는 철자 검수용입니다. 가운데점(·), 등호, 더하기 기호와 자모 설명은 이미지에 절대로 표시하지 말고 최종 문구만 원문 그대로 적으세요.
+    return `[KOREAN HANDWRITING GLYPH LOCK — HIGHEST PRIORITY]
+The information below is for spelling verification only. Never render the middle dots, equals signs, plus signs, or Jamo explanations. Render only the original final phrases exactly as supplied.
 ${lockLines}
 
-- 귀엽고 따뜻한 손글씨 느낌은 유지하되, 흘림체나 이어 쓰는 필기체가 아닌 반듯한 정자형 손글씨로 표현하세요.
-- 손글씨의 자연스러움은 문구 전체의 크기, 색상, 기울기와 배치로 표현하고, 개별 한글 음절 내부의 초성·중성·종성은 회전·압축·연결·생략하지 마세요.
-- ㅗ의 짧은 세로획은 가로획 위쪽, ㅜ는 아래쪽을 정확히 향하게 하세요.
-- ㅏ의 짧은 가로획은 세로획 오른쪽, ㅓ는 왼쪽을 정확히 향하게 하세요.
-- ㅌ은 가운데 가로획과 바깥 골격을 명확히 분리하고, ㄹ의 연속적으로 꺾이는 형태로 바꾸지 마세요.
-- ㄹ은 고유의 단계적으로 꺾이는 획을 유지하고 ㅌ처럼 단순화하지 마세요.
-- 하트·별·반짝이·그림자와 장식선은 글자 주변에만 배치하고 자음·모음·받침 위에 겹치지 마세요.
-- 흰색 스티커 외곽선은 글자 바깥쪽에만 적용하고, 내부 획 사이의 공간이나 짧은 모음 획과 받침을 덮거나 합치지 마세요.
-- 긴 문구는 단어 사이에서만 최대 두 줄로 나누고, 한글 단어나 음절 내부에서는 줄을 바꾸지 마세요.
-- 렌더링 직전에 원문과 철자 잠금 정보를 음절 단위로 대조하고, 최종 이미지에는 각 문구를 정확히 한 번만 표시하세요.`;
+- Preserve a cute, warm handwritten feeling, but use neat, clearly separated print-style handwriting rather than cursive or connected writing.
+- Express the handmade quality through the phrase's overall size, color, tilt, and placement. Never rotate, compress, connect, merge, or omit the initial, medial, or final components inside an individual Hangul syllable.
+- For ㅗ, the short vertical stroke must point upward from the horizontal stroke. For ㅜ, it must point downward.
+- For ㅏ, the short horizontal stroke must extend to the right of the vertical stroke. For ㅓ, it must extend to the left.
+- Draw ㅌ with its middle horizontal stroke clearly separated from its outer structure. Never transform or simplify ㅌ into the stepped continuous shape of ㄹ.
+- Preserve ㄹ as its own stepped turning structure. Never simplify ㄹ into ㅌ.
+- Keep hearts, stars, sparkles, shadows, and decorative lines around the lettering only. Never overlap them with consonants, vowels, or final consonants.
+- Apply the white sticker outline outside each complete glyph only. Never fill or merge the internal spaces, short vowel strokes, or final consonants.
+- Break long phrases into no more than two lines and only at spaces between words. Never break inside a Korean word or syllable.
+- Immediately before rendering, compare every visible syllable against the immutable source phrase and the glyph-lock data. Render each phrase exactly once.`;
   };
 
   const generateGptPrompt = (phraseOverride = null) => {
@@ -5159,11 +5159,13 @@ ${lockLines}
       if (lang === 'ko') {
         const glyphProtection = getKoreanGlyphProtection(targetPhrase);
         const textPolicy = gptTextMode === 'text'
-          ? `[고품질 한글 타이포그래피 및 감정 포인트 효과 지침]
-1. 지정된 문구 "${targetPhrase}"를 캐릭터 옆이나 머리 위에 읽기 쉬운 2D 볼드 팝아트 정자형 손글씨 스티커 폰트로 정확히 한 번만 적으세요. 고딕체처럼 기계적으로 표현하지 말고, 손으로 쓴 따뜻하고 자연스러운 느낌을 유지하세요.
-2. 모든 글자에 또렷하고 두꺼운 순백색 스티커 테두리(White Die-Cut Outline Stroke)를 둘러 선명하게 돋보이게 렌더링하세요.
-3. 문구의 감정에 맞춰 아기자기한 포인트 효과(하트💕, 황금왕관👑, 따봉👍, 폭죽🎉, 꽃다발💐, 땀방울💦, 반짝이✨, zZ 등)를 글자 주변에 자연스럽게 결합하세요.
-4. 텍스트 상자(박스), 말풍선, 괄호 (), 대괄호 [], 따옴표 "", 스티커 번호는 절대로 넣지 마세요.
+          ? `[HIGH-PRECISION KOREAN HANDWRITTEN STICKER TYPOGRAPHY]
+Immutable source phrase: "${targetPhrase}"
+1. Copy the immutable Korean source phrase exactly once, character for character. Do not translate, paraphrase, respell, omit, duplicate, merge, or invent any character.
+2. Place it beside or above the character in readable, bold 2D pop-art sticker lettering with neat print-style Korean handwriting. Keep it warm and naturally hand-drawn; do not replace it with a mechanical Gothic/sans-serif typeface and do not use connected cursive strokes.
+3. Add a crisp, thick pure-white die-cut outline outside the complete lettering and a subtle shadow without covering internal Hangul strokes.
+4. Add at most one small emotion-matching accent near the phrase, such as a heart, crown, thumbs-up, confetti, bouquet, sweat drop, sparkle, or zZ. It must not touch or obscure any glyph.
+5. Never add a text box, speech bubble, parentheses, brackets, quotation marks, sticker number, or additional text.
 ${glyphProtection}`
           : `문구 "${targetPhrase}"는 장면을 정하는 참고 맥락으로만 사용하세요. 이미지에는 글자, 숫자, 타이포그래피를 그리지 마세요.`;
         const textExclusion = gptTextMode === 'text'
@@ -5252,11 +5254,13 @@ ${textExclusion} No watermark, frame, duplicate character, extra limbs, cropped 
       const panelPlan = emoticons.map((phrase, index) => `${Math.floor(index / 5) + 1}행 ${index % 5 + 1}열: "${phrase.trim()}"`).join('\n');
       const glyphProtection = getKoreanGlyphProtection(emoticons);
       const textPolicy = gptTextMode === 'text'
-        ? `[고품질 한글 타이포그래피 및 감정 포인트 효과 지침]
-1. 각 셀에 지정된 문구를 캐릭터 옆이나 머리 위에 읽기 쉬운 2D 볼드 팝아트 정자형 손글씨 스티커 폰트로 정확히 한 번만 적으세요. 고딕체처럼 기계적으로 표현하지 말고, 손으로 쓴 따뜻하고 자연스러운 느낌을 유지하세요.
-2. 모든 글자에 또렷하고 두꺼운 순백색 스티커 테두리(White Die-Cut Outline Stroke)를 둘러 선명하게 돋보이게 렌더링하세요.
-3. 각 문구의 감정에 맞춰 아기자기한 포인트 효과(하트💕, 황금왕관👑, 따봉👍, 폭죽🎉, 꽃다발💐, 땀방울💦, 반짝이✨, zZ 등)를 글자 주변에 자연스럽게 결합하세요.
-4. 텍스트 상자(박스), 말풍선, 괄호 (), 대괄호 [], 따옴표 "", 스티커 번호는 절대로 넣지 마세요.
+        ? `[HIGH-PRECISION KOREAN HANDWRITTEN STICKER TYPOGRAPHY]
+The Korean phrases listed in the panel plan are immutable source text.
+1. Copy the assigned source phrase into its matching cell exactly once, character for character. Do not translate, paraphrase, respell, omit, duplicate, merge, or invent any character.
+2. Place each phrase beside or above its character in readable, bold 2D pop-art sticker lettering with neat print-style Korean handwriting. Keep it warm and naturally hand-drawn; do not replace it with a mechanical Gothic/sans-serif typeface and do not use connected cursive strokes.
+3. Add a crisp, thick pure-white die-cut outline outside the complete lettering and a subtle shadow without covering internal Hangul strokes.
+4. Use at most one small emotion-matching accent per phrase, such as a heart, crown, thumbs-up, confetti, bouquet, sweat drop, sparkle, or zZ. It must not touch or obscure any glyph.
+5. Never add text boxes, speech bubbles, parentheses, brackets, quotation marks, sticker numbers, or additional text.
 ${glyphProtection}`
         : '각 문구는 해당 셀의 표정, 자세와 행동을 정하는 맥락으로만 사용하세요. 이미지에는 문구나 다른 글자를 그리지 마세요.';
       const textExclusion = gptTextMode === 'text'
