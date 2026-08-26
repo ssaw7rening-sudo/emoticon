@@ -6703,7 +6703,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
 
         {/* Section 2: Emoji Phrases */}
         <section id="emoticon-phrase-grid" className="flex flex-col gap-md break-keep">
-          <div className="rounded-xl border-2 border-[#55A98E] bg-linear-to-br from-[#F1FFF9] to-white p-3.5 sm:p-4 shadow-bubbly flex flex-col gap-3">
+          <div className="rounded-xl border border-[#B9DDD0] bg-linear-to-br from-[#F7FCFA] to-white p-3.5 sm:p-4 shadow-bubbly flex flex-col gap-3">
             <div className="flex items-start justify-between gap-3">
               <div className="flex flex-col gap-1">
                 <h2 className="text-[18px] sm:text-[20px] font-black text-on-surface">{lang === 'ko' ? '이모티콘 문구 테마 선택' : t.phrases}</h2>
@@ -6719,7 +6719,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
             <button
               type="button"
               onClick={() => setShowThemePicker(true)}
-              className="interactive-control touch-manipulation w-full min-h-[66px] rounded-xl border-2 border-[#2F7D68] bg-white px-4 py-3 text-left shadow-sm hover:bg-[#F4FFF9] focus:outline-none focus-visible:ring-4 focus-visible:ring-mint/60"
+              className="interactive-control touch-manipulation w-full min-h-[66px] rounded-xl border border-[#A8D2C3] bg-white px-4 py-3 text-left shadow-sm hover:bg-[#F7FCFA] focus:outline-none focus-visible:ring-4 focus-visible:ring-mint/40"
             >
               <span className="flex items-center justify-between gap-3">
                 <span className="min-w-0">
@@ -6728,17 +6728,17 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                     {activeTheme === 'custom' ? (t.customTheme || '✏️ Custom Theme') : activeTheme}
                   </strong>
                 </span>
-                <span className="inline-flex min-h-10 items-center rounded-lg bg-mint-strong px-3 text-[13px] font-black text-white shrink-0">
+                <span className="inline-flex min-h-10 items-center rounded-lg border border-[#A8D2C3] bg-[#E3F4ED] px-3 text-[13px] font-black text-[#286C58] shrink-0">
                   {lang === 'ko' ? '변경 ›' : 'Change ›'}
                 </span>
               </span>
             </button>
 
             <div className="flex items-center gap-2 overflow-x-auto no-scrollbar" aria-label={lang === 'ko' ? '추천 테마' : 'Recommended themes'}>
-              <span className="text-[11px] font-black text-[#9A3412] shrink-0">🔥 {lang === 'ko' ? '추천' : 'Popular'}</span>
+              <span className="text-[11px] font-black text-[#8A6048] shrink-0">🔥 {lang === 'ko' ? '추천' : 'Popular'}</span>
               {sortedThemeKeys.slice(0, 3).map((theme) => (
-                <button key={theme} type="button" onClick={() => selectPopularTheme(theme)} className={`touch-manipulation min-h-9 max-w-[180px] truncate rounded-full border px-3 text-[12px] font-bold shrink-0 ${activeTheme === theme ? 'bg-[#C2410C] border-[#9A3412] text-white' : 'bg-[#FFF8EE] border-[#FCD3A1] text-[#9A3412]'}`}>
-                  {theme}
+                <button key={theme} type="button" onClick={() => selectPopularTheme(theme)} className={`touch-manipulation min-h-9 max-w-[180px] truncate rounded-full border px-3 text-[12px] font-bold shrink-0 ${activeTheme === theme ? 'bg-[#FFF0E3] border-[#E9B88E] text-[#9A4B22]' : 'bg-white border-[#E8D8CA] text-[#7A5A46]'}`}>
+                  {activeTheme === theme ? '✓ ' : ''}{theme}
                 </button>
               ))}
             </div>
