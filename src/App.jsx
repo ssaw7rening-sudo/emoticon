@@ -6944,15 +6944,6 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
             </p>
           )}
 
-          {characterSource === 'photo' && (
-            <div className="flex flex-wrap items-center gap-2 px-1" aria-live="polite">
-              <span className="inline-flex min-h-9 items-center rounded-full bg-mint-soft px-4 py-1.5 text-[13px] font-bold text-mint-strong border border-mint-border">
-                📷 {t.photoActive}
-              </span>
-              <strong className="text-[13px] text-on-surface-variant">{getPhotoModeLabel()}</strong>
-            </div>
-          )}
-
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-3">
             <h2 className="font-headline-sm text-headline-sm text-on-surface [word-break:break-word]">{t.previewTitle}</h2>
             <div className="flex w-full sm:w-auto bg-mint-soft rounded-full p-1 border border-mint-border shadow-sm">
