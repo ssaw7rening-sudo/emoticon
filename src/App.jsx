@@ -4258,12 +4258,67 @@ function App() {
     showToast(lang === 'ko' ? `✓ ${themeName} 테마가 적용되었습니다.` : `✓ ${themeName} applied.`);
   };
 
-  const shuffleEmoticons = () => {
-    const ALL_PHRASES = Array.from(new Set(Object.values(currentThemes).flat()));
-    const shuffled = [...ALL_PHRASES].sort(() => 0.5 - Math.random());
-    setEmoticons(shuffled.slice(0, 15));
-    setActiveTheme('custom');
-  };
+  const getKoreanRandomRenderRisk = (phrase) => {
+  let risk = 0;
+  let hangulCount = 0;
+  const complexFinals = new Set([3, 5, 6, 9, 10, 11, 12, 13, 14, 15, 18]);
+
+  for (const char of phrase) {
+    const syllable = char.charCodeAt(0) - 0xAC00;
+    if (syllable < 0 || syllable > 11171) continue;
+
+    hangulCount += 1;
+    const finalConsonant = syllable % 28;
+    const vowel = Math.floor(syllable / 28) % 21;
+
+    // 받침 ㅌ은 이미지 생성에서 ㄹ 등으로 오인되기 쉬워 랜덤 후보에서 제외합니다.
+    if (finalConsonant === 25) risk += 100;
+
+    // 겹받침은 작은 이모티콘 글자에서 획이 뭉개질 수 있어 출현 확률을 낮춥니다.
+    if (complexFinals.has(finalConsonant)) risk += 5;
+
+    // ㅗ/ㅜ + ㄹ 받침(올/울 계열)은 형태가 뭉개지기 쉬워 강하게 감점합니다.
+    if (finalConsonant === 8 && (vowel === 8 || vowel === 13)) risk += 3;
+    else if (vowel === 8 || vowel === 13) risk += 0.2;
+  }
+
+  // 긴 문구는 작은 시트에서 글자 정확도가 떨어지므로 조금씩 감점합니다.
+  if (hangulCount > 6) risk += (hangulCount - 6) * 0.5;
+
+  return risk;
+};
+
+const getSafeRandomPhrases = (phrases, count = 15) => {
+  const uniquePhrases = Array.from(new Set(phrases));
+
+  if (lang !== 'ko') {
+    return [...uniquePhrases].sort(() => 0.5 - Math.random()).slice(0, count);
+  }
+
+  return uniquePhrases
+    .map((phrase) => {
+      const risk = getKoreanRandomRenderRisk(phrase);
+      const weight = risk >= 100 ? 0 : risk >= 5 ? 0.15 : risk >= 3 ? 0.35 : risk >= 1 ? 0.65 : 1;
+      return {
+        phrase,
+        weight,
+        randomKey: weight === 0 ? -1 : Math.pow(Math.random(), 1 / weight),
+      };
+    })
+    .filter(({ weight }) => weight > 0)
+    .sort((a, b) => b.randomKey - a.randomKey)
+    .slice(0, count)
+    .map(({ phrase }) => phrase);
+};
+
+const shuffleEmoticons = () => {
+  const ALL_PHRASES = Array.from(new Set(Object.values(currentThemes).flat()));
+  const nextPhrases = getSafeRandomPhrases(ALL_PHRASES, 15);
+  setEmoticons(nextPhrases);
+  setIndividualPhrase(nextPhrases[0] || '');
+  setBatchPhrase(nextPhrases[0] || '');
+  setActiveTheme('custom');
+};
 
   const handleGenerationModeChange = (mode) => {
     setGenerationMode(mode);
