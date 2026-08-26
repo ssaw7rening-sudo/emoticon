@@ -3878,6 +3878,7 @@ function App() {
   const [activeGoldenComboId, setActiveGoldenComboId] = useState(null);
   const [previousComboBackup, setPreviousComboBackup] = useState(null);
   const goldenComboScrollRef = useRef(null);
+  const [goldenComboScrollCues, setGoldenComboScrollCues] = useState({ left: false, right: true });
 
   const [selectedTopTheme, setSelectedTopTheme] = useState(null);
   const [themeStats, setThemeStats] = useState(() => {
@@ -3999,6 +4000,24 @@ function App() {
   const [themeSearch, setThemeSearch] = useState('');
   const [themePickerViewportHeight, setThemePickerViewportHeight] = useState(null);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
+
+  useEffect(() => {
+    const updateGoldenComboScrollCues = () => {
+      const element = goldenComboScrollRef.current;
+      if (!element) return;
+      const maxScrollLeft = Math.max(0, element.scrollWidth - element.clientWidth);
+      setGoldenComboScrollCues({
+        left: element.scrollLeft > 8,
+        right: element.scrollLeft < maxScrollLeft - 8,
+      });
+    };
+    const frame = window.requestAnimationFrame(updateGoldenComboScrollCues);
+    window.addEventListener('resize', updateGoldenComboScrollCues);
+    return () => {
+      window.cancelAnimationFrame(frame);
+      window.removeEventListener('resize', updateGoldenComboScrollCues);
+    };
+  }, [lang]);
 
   useEffect(() => {
     if (!showThemePicker) return undefined;
@@ -6452,7 +6471,8 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                     <button
                       type="button"
                       onClick={() => goldenComboScrollRef.current?.scrollBy({ left: -245, behavior: 'smooth' })}
-                      className="interactive-control flex h-7 w-7 items-center justify-center rounded-full border border-amber-300 bg-white text-[17px] font-black text-amber-900 hover:bg-amber-100"
+                      disabled={!goldenComboScrollCues.left}
+                      className="interactive-control flex h-7 w-7 items-center justify-center rounded-full border border-amber-300 bg-white text-[17px] font-black text-amber-900 hover:bg-amber-100 disabled:cursor-default disabled:opacity-35"
                       aria-label={lang === 'ko' ? '이전 조합 보기' : 'Previous combos'}
                     >
                       ‹
@@ -6460,7 +6480,8 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                     <button
                       type="button"
                       onClick={() => goldenComboScrollRef.current?.scrollBy({ left: 245, behavior: 'smooth' })}
-                      className="interactive-control flex h-7 w-7 items-center justify-center rounded-full border border-amber-300 bg-white text-[17px] font-black text-amber-900 hover:bg-amber-100"
+                      disabled={!goldenComboScrollCues.right}
+                      className="interactive-control flex h-7 w-7 items-center justify-center rounded-full border border-amber-300 bg-white text-[17px] font-black text-amber-900 hover:bg-amber-100 disabled:cursor-default disabled:opacity-35"
                       aria-label={lang === 'ko' ? '다음 조합 보기' : 'Next combos'}
                     >
                       ›
@@ -6473,6 +6494,14 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
               <div className="relative -mr-3 sm:-mr-4">
                 <div
                   ref={goldenComboScrollRef}
+                  onScroll={(event) => {
+                    const element = event.currentTarget;
+                    const maxScrollLeft = Math.max(0, element.scrollWidth - element.clientWidth);
+                    setGoldenComboScrollCues({
+                      left: element.scrollLeft > 8,
+                      right: element.scrollLeft < maxScrollLeft - 8,
+                    });
+                  }}
                   className="flex gap-2.5 overflow-x-auto py-1 pl-0.5 pr-10 no-scrollbar scroll-smooth overscroll-x-contain touch-pan-x touch-pan-y"
                   aria-label={lang === 'ko' ? '좌우로 스크롤하는 인기 황금 조합 목록' : 'Horizontally scrollable golden combo list'}
                 >
@@ -6527,8 +6556,11 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                     );
                   })}
                 </div>
-                <div className="pointer-events-none absolute inset-y-0 right-0 w-10 rounded-r-xl bg-gradient-to-l from-[#F7FAF4] via-[#F7FAF4]/80 to-transparent" aria-hidden="true">
-                  <span className="absolute right-1 top-1/2 -translate-y-1/2 text-[20px] font-black text-amber-700/75 motion-safe:animate-pulse">›</span>
+                <div className={`pointer-events-none absolute inset-y-0 left-0 w-10 rounded-l-xl bg-gradient-to-r from-[#F7FAF4] via-[#F7FAF4]/80 to-transparent transition-opacity ${goldenComboScrollCues.left ? 'opacity-100' : 'opacity-30'}`} aria-hidden="true">
+                  <span className="absolute left-1 top-1/2 -translate-y-1/2 text-[20px] font-black text-amber-700/75">‹</span>
+                </div>
+                <div className={`pointer-events-none absolute inset-y-0 right-0 w-10 rounded-r-xl bg-gradient-to-l from-[#F7FAF4] via-[#F7FAF4]/80 to-transparent transition-opacity ${goldenComboScrollCues.right ? 'opacity-100' : 'opacity-30'}`} aria-hidden="true">
+                  <span className={`absolute right-1 top-1/2 -translate-y-1/2 text-[20px] font-black text-amber-700/75 ${goldenComboScrollCues.right ? 'motion-safe:animate-pulse' : ''}`}>›</span>
                 </div>
               </div>
             </div>
