@@ -109,6 +109,35 @@
   font-family: 'Paperlogy', -apple-system, BlinkMacSystemFont, sans-serif !important;
 }
 
+/* Give the phrase-theme title and help copy the full mobile width. The random
+   button previously squeezed this sentence into a narrow side column. */
+@media (max-width: 639px) {
+  #emoticon-phrase-grid > div:first-child > div:first-child {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  #emoticon-phrase-grid > div:first-child > div:first-child > div {
+    min-width: 0;
+    width: 100%;
+  }
+
+  #emoticon-phrase-grid > div:first-child > div:first-child > button {
+    width: 100%;
+  }
+}
+
+#emoticon-phrase-grid > div:first-child > div:first-child h2,
+#emoticon-phrase-grid > div:first-child > div:first-child p {
+  text-wrap: pretty;
+  overflow-wrap: break-word;
+}
+
+.lang-ko #emoticon-phrase-grid > div:first-child > div:first-child h2,
+.lang-ko #emoticon-phrase-grid > div:first-child > div:first-child p {
+  word-break: keep-all !important;
+}
+
 @layer utilities {
   .shadow-diffused {
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
