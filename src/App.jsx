@@ -6869,7 +6869,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                       <span className="text-[12px] font-black text-on-surface-variant">{lang === 'ko' ? '최근·추천 테마' : 'Recent & recommended'}</span>
                       <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                         {recentThemeKeys.map((theme) => (
-                          <button key={`recent-${theme}`} type="button" onClick={() => selectPopularTheme(theme)} className={`touch-manipulation min-h-11 rounded-lg border px-3 py-2 text-[12px] sm:text-[13px] font-bold text-left truncate ${activeTheme === theme ? 'bg-mint-strong text-white border-[#1E453B] ring-2 ring-mint/50' : 'bg-mint-soft text-mint-strong border-mint-border hover:bg-mint-hover'}`}>
+                          <button key={`recent-${theme}`} type="button" onClick={() => selectPopularTheme(theme)} className={`touch-manipulation min-h-11 rounded-lg border px-3 py-2 text-[14px] sm:text-[14.5px] font-bold text-left truncate ${activeTheme === theme ? 'bg-mint-strong text-white border-[#1E453B] ring-2 ring-mint/50' : 'bg-[#EEF8F4] text-[#285E50] border-[#B9DDD0] hover:bg-[#E3F4ED]'}`}>
                             {activeTheme === theme ? '✓ ' : ''}{theme}
                           </button>
                         ))}
@@ -6885,9 +6885,9 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                     {filteredThemeKeys.length > 0 ? (
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         {filteredThemeKeys.map((theme, index) => (
-                          <button key={theme} type="button" onClick={() => selectPopularTheme(theme)} className={`touch-manipulation min-h-12 rounded-xl border px-3.5 py-2.5 text-left flex items-center gap-3 ${activeTheme === theme ? 'bg-[#E3F8EF] border-2 border-mint-strong text-mint-strong' : 'bg-white border-outline-variant text-on-surface hover:border-mint-border hover:bg-[#F7FFFB]'}`}>
+                          <button key={theme} type="button" onClick={() => selectPopularTheme(theme)} className={`touch-manipulation min-h-12 rounded-xl border px-3.5 py-2.5 text-left flex items-center gap-3 ${activeTheme === theme ? 'bg-[#DDF3EA] border-2 border-mint-strong text-mint-strong' : 'bg-[#F7FCFA] border-[#C6E7DA] text-[#285E50] hover:border-[#9FD5C4] hover:bg-[#EEF8F4]'}`}>
                             <span className={`flex h-7 min-w-7 items-center justify-center rounded-md text-[11px] font-black ${activeTheme === theme ? 'bg-mint-strong text-white' : 'bg-slate-100 text-slate-500'}`}>{index + 1}</span>
-                            <span className="min-w-0 flex-1 truncate text-[13px] sm:text-[14px] font-bold">{theme}</span>
+                            <span className="min-w-0 flex-1 truncate text-[14px] sm:text-[15px] font-bold">{theme}</span>
                             {activeTheme === theme && <span className="text-[15px] font-black">✓</span>}
                           </button>
                         ))}
