@@ -41,6 +41,19 @@
     overflow-wrap: break-word;
   }
 
+  p,
+  li,
+  dd {
+    text-wrap: pretty;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    text-wrap: balance;
+  }
+
   @media (max-width: 640px) {
     input,
     textarea,
@@ -52,6 +65,32 @@
   .brand-logo {
     font-family: 'Paperlogy', -apple-system, BlinkMacSystemFont, sans-serif !important;
   }
+}
+
+.lang-ko p,
+.lang-ko li,
+.lang-ko dd,
+.lang-ko .sentence-flow {
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
+.lang-en p,
+.lang-en li,
+.lang-en dd {
+  word-break: normal;
+  overflow-wrap: break-word;
+}
+
+.lang-ja p,
+.lang-ja li,
+.lang-ja dd,
+.lang-zh p,
+.lang-zh li,
+.lang-zh dd {
+  word-break: normal;
+  line-break: strict;
+  overflow-wrap: anywhere;
 }
 
 .lang-zh,
