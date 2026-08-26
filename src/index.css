@@ -41,6 +41,14 @@
     overflow-wrap: break-word;
   }
 
+  @media (max-width: 640px) {
+    input,
+    textarea,
+    select {
+      font-size: 16px !important;
+    }
+  }
+
   .brand-logo {
     font-family: 'Paperlogy', -apple-system, BlinkMacSystemFont, sans-serif !important;
   }
