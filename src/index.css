@@ -113,17 +113,31 @@
    button previously squeezed this sentence into a narrow side column. */
 @media (max-width: 639px) {
   #emoticon-phrase-grid > div:first-child > div:first-child {
-    flex-direction: column;
-    align-items: stretch;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    column-gap: 0.75rem;
+    row-gap: 0.25rem;
   }
 
   #emoticon-phrase-grid > div:first-child > div:first-child > div {
-    min-width: 0;
-    width: 100%;
+    display: contents;
+  }
+
+  #emoticon-phrase-grid > div:first-child > div:first-child h2 {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  #emoticon-phrase-grid > div:first-child > div:first-child p {
+    grid-column: 1 / -1;
+    grid-row: 2;
   }
 
   #emoticon-phrase-grid > div:first-child > div:first-child > button {
-    width: 100%;
+    grid-column: 2;
+    grid-row: 1;
+    width: auto;
   }
 }
 
