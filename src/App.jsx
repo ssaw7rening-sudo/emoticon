@@ -6118,7 +6118,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                   }
                 }, 80);
               }}
-              className="interactive-control flex items-center gap-1 min-h-9 px-2 sm:px-3 py-1 rounded-full bg-[#FFF4E5] border border-[#FFE8CC] text-[#8A4B00] text-[12px] sm:text-[13px] font-bold hover:bg-[#FFE8CC] shadow-sm whitespace-nowrap shrink-0"
+              className="interactive-control flex items-center gap-1 min-h-9 px-2 sm:px-3 py-1 rounded-full bg-[#FFF4E5] border border-[#FFE8CC] text-[#8A4B00] text-[13px] font-bold hover:bg-[#FFE8CC] shadow-sm whitespace-nowrap shrink-0"
             >
               <span className="text-[13px] sm:text-[14px]">💡</span>
               <span>{lang === 'ko' ? '꿀팁' : lang === 'ja' ? 'ガイド' : lang === 'zh' ? '指南' : 'Guide'}</span>
@@ -6135,7 +6135,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                   type="button"
                   aria-pressed={lang === code}
                   onClick={() => changeLanguage(code)}
-                  className={`brand-logo interactive-control w-8 sm:w-9 h-7 sm:h-8 flex items-center justify-center text-[11px] sm:text-[12px] font-extrabold rounded-full transition-all ${
+                  className={`brand-logo interactive-control w-8 sm:w-9 h-7 sm:h-8 flex items-center justify-center text-[12px] font-extrabold rounded-full transition-all ${
                     lang === code
                       ? 'bg-mint text-mint-strong shadow-xs border border-mint-border'
                       : 'text-on-surface-variant hover:bg-mint-soft'
@@ -6226,12 +6226,12 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                 <strong className="text-[13px] sm:text-[14px] font-black text-[#244E43]">
                   {lang === 'ko' ? '현재 설정 요약' : lang === 'ja' ? '現在の設定概要' : lang === 'zh' ? '当前设置摘要' : 'Current Settings'}
                 </strong>
-                <span className="inline-flex items-center rounded-full border border-[#B9DDD0] bg-white px-2 py-0.5 text-[10.5px] font-bold text-[#397562] whitespace-nowrap">
+                <span className="inline-flex items-center rounded-full border border-[#B9DDD0] bg-white px-2 py-0.5 text-[11.5px] font-bold text-[#397562] whitespace-nowrap shrink-0">
                   ✓ {lang === 'ko' ? '프롬프트에 자동 반영 중' : lang === 'ja' ? 'プロンプトに自動反映中' : lang === 'zh' ? '正自动应用到提示词' : 'Auto-applied to prompt'}
                 </span>
               </div>
 
-              <dl className="grid grid-cols-[74px_minmax(0,1fr)] gap-x-2 gap-y-2 text-[12px] sm:text-[12.5px]">
+              <dl className="grid grid-cols-[78px_minmax(0,1fr)] gap-x-2 gap-y-2 text-[13px] sm:text-[13.5px]">
                 <dt className="font-bold text-[#668078]">{lang === 'ko' ? '캐릭터 기준' : lang === 'ja' ? 'キャラ基準' : lang === 'zh' ? '角色来源' : 'Character'}</dt>
                 <dd className="font-bold text-[#244E43]">
                   {characterSource === 'photo'
@@ -6253,16 +6253,16 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                   {activeTagList.length > 0 ? (
                     <div className="flex flex-wrap gap-1" title={charManual}>
                       {activeTagList.map((tag, index) => (
-                        <span key={`summary-${tag}-${index}`} className="max-w-full truncate rounded-full border border-[#C9E3DA] bg-white px-2 py-0.5 text-[10.5px] font-bold text-[#397562]">{tag}</span>
+                        <span key={`summary-${tag}-${index}`} className="max-w-full truncate rounded-full border border-[#C9E3DA] bg-white px-2 py-0.5 text-[12px] font-bold text-[#397562] whitespace-nowrap">{tag}</span>
                       ))}
-                      <span className="self-center text-[10.5px] font-bold text-[#668078]">
+                      <span className="self-center text-[12px] font-bold text-[#668078] whitespace-nowrap">
                         {lang === 'ko' ? `총 ${activeTagList.length}개 반영` : lang === 'ja' ? `全${activeTagList.length}個を反映` : lang === 'zh' ? `共应用${activeTagList.length}个` : `${activeTagList.length} applied`}
                       </span>
                     </div>
                   ) : (
                     <div className="flex flex-col gap-0.5">
                       <span className="font-bold text-[#49675E]">{lang === 'ko' ? '아직 선택하지 않았어요' : lang === 'ja' ? 'まだ選択されていません' : lang === 'zh' ? '尚未选择' : 'None selected yet'}</span>
-                      <span className="text-[10.5px] font-medium text-[#789087]">{lang === 'ko' ? '아래에서 원하는 특징을 선택해 주세요.' : lang === 'ja' ? '下から希望の特徴を選択してください。' : lang === 'zh' ? '请在下方选择想要的特征。' : 'Choose the features you want below.'}</span>
+                      <span className="text-[12px] leading-relaxed font-medium text-[#789087] break-keep">{lang === 'ko' ? '아래에서 원하는 특징을 선택해 주세요.' : lang === 'ja' ? '下から希望の特徴を選択してください。' : lang === 'zh' ? '请在下方选择想要的特征。' : 'Choose the features you want below.'}</span>
                     </div>
                   )}
                 </dd>
@@ -6272,7 +6272,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
           
           <div className="bg-surface-container-lowest rounded-md p-3.5 sm:p-md shadow-bubbly border border-outline-variant">
             <div className="mb-md flex flex-col gap-3">
-              <span className="px-1 text-[13px] font-bold text-on-surface-variant">{t.characterSource}</span>
+              <span className="px-1 text-[14px] font-bold text-on-surface-variant">{t.characterSource}</span>
               <div className="grid grid-cols-3 gap-2" role="group" aria-label={t.characterSource}>
                 {[
                   ['direct', t.directSource],
@@ -6291,7 +6291,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                         }
                       }
                     }}
-                    className={`interactive-control min-h-11 rounded-[8px] border px-2 sm:px-3 py-2 text-[13px] sm:text-[14px] font-bold text-center transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-mint-strong focus-visible:ring-offset-2 cursor-pointer ${
+                    className={`interactive-control min-h-11 rounded-[8px] border px-1.5 sm:px-3 py-2 text-[14px] font-bold text-center overflow-hidden text-ellipsis whitespace-nowrap transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-mint-strong focus-visible:ring-offset-2 cursor-pointer ${
                       characterSource === source
                         ? 'bg-mint text-mint-strong border-mint-border shadow-sm ring-1 ring-mint-border'
                         : 'bg-white text-on-surface border-outline-variant hover:bg-mint-soft'
@@ -6311,7 +6311,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                         <div className="text-[14px] font-extrabold text-amber-950">
                           {lang === 'ko' ? 'AI 추천 황금 조합 캐릭터' : lang === 'ja' ? 'AIおすすめ黄金組み合わせ' : lang === 'zh' ? 'AI推荐黄金组合角色' : 'AI-Curated Golden Combination'}
                         </div>
-                        <div className="text-[12px] text-amber-800 font-medium">
+                        <div className="text-[13px] leading-relaxed text-amber-800 font-medium">
                           {lang === 'ko' ? '버튼을 누를 때마다 개성 넘치는 완성형 캐릭터 조합이 즉시 자동 세팅됩니다.' : lang === 'ja' ? 'ボタンを押すたびにユニークな組み合わせが即座に自動生成されます。' : lang === 'zh' ? '每次点击都会立即自动生成充满个性的完整角色组合。' : 'A complete unique character combo is generated instantly with each roll.'}
                         </div>
                       </div>
@@ -6370,7 +6370,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                         ? '照片参考模式 (人物 / 宠物动物 / 物品自由结合)' 
                         : 'Photo Reference Mode (Person / Animal / Object)'}
                     </p>
-                    <p className="text-[13px] text-amber-800 leading-normal font-normal">
+                    <p className="text-[14px] text-amber-800 leading-relaxed font-normal">
                       {lang === 'ko'
                         ? '단독 인물·커플·가족 사진뿐만 아니라 반려견/반려묘(동물), 캐릭터/사물 사진도 모두 가능하며 선택하신 테마 및 태그와 100% 융합됩니다.'
                         : lang === 'ja'
@@ -6379,7 +6379,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                         ? '支持个人、情侣、全家福照片，以及宠物猫狗和物品照片，与所选的主题及标签100%完美结合。'
                         : 'Supports photos of single persons, couples, pets/animals, or objects. All selected themes and tags combine 100% into the prompt.'}
                     </p>
-                    <div className="bg-amber-50/80 p-2.5 rounded-md text-[12.5px] text-amber-850 font-normal border border-amber-200/70 leading-normal flex flex-col gap-1.5">
+                    <div className="bg-amber-50/80 p-2.5 rounded-md text-[13.5px] text-amber-850 font-normal border border-amber-200/70 leading-relaxed flex flex-col gap-1.5">
                       <span>✨ {lang === 'ko' 
                         ? '개인 셀카/프로필 사진 + [일상/직장인] 테마 → 카톡·인스타·슬랙(Slack) 프로필 및 나만의 2D 캐리커처 15종 리액션 짤 완성!' 
                         : lang === 'ja' 
@@ -6443,7 +6443,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                   )}
                 </div>
                 
-                <p className="text-[11px] font-bold text-amber-800/90 leading-tight truncate whitespace-nowrap w-full">
+                <p className="text-[12px] font-bold text-amber-800/90 leading-tight truncate whitespace-nowrap w-full">
                   {lang === 'ko' ? '👇 원하는 세트 터치 시 1초 만에 전체 자동 세팅!' : lang === 'ja' ? '👇 タップ1秒で全体自動セット！' : lang === 'zh' ? '👇 点击卡片1秒全自动配置！' : '👇 Tap any card to auto-apply all settings!'}
                 </p>
               </div>
@@ -6482,12 +6482,12 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                       </div>
 
                       {/* Middle Row: Crisp 1-line Description */}
-                      <p className="text-[10.5px] sm:text-[11px] font-medium text-slate-600 leading-normal mb-2 truncate whitespace-nowrap w-full">
+                      <p className="text-[12px] font-medium text-slate-600 leading-normal mb-2 truncate whitespace-nowrap w-full">
                         {descText}
                       </p>
 
                       {/* Bottom Row: Theme Badge + Action Status */}
-                      <div className="mt-auto flex items-center justify-between pt-1.5 border-t border-amber-200/70 text-[10.5px] font-bold text-amber-800 w-full">
+                      <div className="mt-auto flex items-center justify-between pt-1.5 border-t border-amber-200/70 text-[11.5px] font-bold text-amber-800 w-full">
                         <span className="bg-amber-100 text-amber-900 px-2 py-0.5 rounded-md font-extrabold truncate max-w-[125px] whitespace-nowrap">
                           🏷️ {themeKeys[combo.themeIdx] || combo.themeName}
                         </span>
@@ -6505,11 +6505,11 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
 
             {/* Character Prompt Direct Input Textarea */}
             <div className="flex flex-col gap-1.5 mt-1">
-              <div className="flex items-center justify-between px-1 text-[12px] font-bold text-mint-strong">
+              <div className="flex items-center justify-between px-1 text-[13px] font-bold text-mint-strong">
                 <span className="flex items-center gap-1">
                   ✏️ {lang === 'ko' ? '캐릭터 상세 설명 & 태그 자동 반영' : lang === 'ja' ? 'キャラクター詳細＆タグ自動反映' : lang === 'zh' ? '角色详细描述与标签自动同步' : 'Character Prompt & Active Tags'}
                 </span>
-                <span className="text-[11px] text-mint-strong/80 font-normal">
+                <span className="text-[12px] text-mint-strong/80 font-normal whitespace-nowrap">
                   {lang === 'ko' ? '직접 수정 및 타이핑 가능' : 'Editable directly'}
                 </span>
               </div>
@@ -6552,7 +6552,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                   <span className="bg-white/90 px-2 py-0.5 rounded text-[11.5px] border border-mint-border font-bold">
                     {lang === 'ko' ? '의상/소품/성격: 다중 선택' : 'Props/Outfits: Multi'}
                   </span>
-                  <span className="text-[11px] text-mint-strong/80 font-normal">
+                  <span className="text-[12px] text-mint-strong/80 font-normal">
                     (⚡ {lang === 'ko' ? '클릭 시 자동 동기화 / 재클릭 시 해제' : 'Auto-sync on click / Toggle off'})
                   </span>
                 </div>
@@ -6584,7 +6584,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                         {lang === 'ko' ? `선택 태그: ${tagCount}개` : `Tags: ${tagCount}`}
                       </span>
                     </div>
-                    <p className="text-[11.5px] sm:text-[12px] font-medium leading-relaxed break-keep flex-1">
+                    <p className="text-[13px] font-medium leading-relaxed break-keep flex-1">
                       {isOptimal 
                         ? (lang === 'ko' ? 'AI 가중치가 가장 선명하게 집중되는 3~5개 황금 비율 상태입니다! (사진급 일관성)' : 'Golden Ratio! AI attention is 100% focused for crisp sticker quality.')
                         : isTooMany 
@@ -6632,7 +6632,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                 {charManual.trim() && (
                   <div className="bg-[#F0FDF8] border-b border-mint-border px-3.5 py-2 flex flex-col gap-1.5 shadow-xs animate-in fade-in duration-200">
                     <div className="flex items-center justify-between gap-2">
-                      <span className="text-[12px] sm:text-[12.5px] font-extrabold text-mint-strong flex items-center gap-1.5">
+                      <span className="text-[13px] font-extrabold text-mint-strong flex items-center gap-1.5">
                         <span>🏷️</span>
                         <span>{lang === 'ko' ? '적용된 태그' : lang === 'ja' ? '選択中のタグ' : lang === 'zh' ? '已选标签' : 'Active Tags'}:</span>
                         <span className="bg-mint-strong text-white text-[10.5px] px-1.5 py-0.2 rounded-full font-black">
@@ -6642,7 +6642,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                       <button 
                         type="button"
                         onClick={clearSelectedTags}
-                        className="text-[11px] font-bold text-red-600 hover:text-red-700 hover:underline flex items-center gap-1 cursor-pointer"
+                        className="text-[12px] font-bold text-red-600 hover:text-red-700 hover:underline flex items-center gap-1 cursor-pointer whitespace-nowrap"
                       >
                         <Trash2 size={11} /> {lang === 'ko' ? '선택 태그 지우기' : lang === 'ja' ? 'タグを解除' : lang === 'zh' ? '清除标签' : 'Clear Tags'}
                       </button>
@@ -6651,7 +6651,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                       {charManual.split(',').map(v => v.trim()).filter(Boolean).map(tag => (
                         <span 
                           key={tag} 
-                          className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-white text-mint-strong border border-mint-border text-[11.5px] font-extrabold shadow-2xs hover:border-mint-strong transition-all"
+                          className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-white text-mint-strong border border-mint-border text-[12.5px] font-extrabold shadow-2xs hover:border-mint-strong transition-all whitespace-nowrap"
                         >
                           <span className="text-[#2D7D64] font-black">✓</span>
                           <span>{tag}</span>
@@ -6737,11 +6737,11 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
             <div className="flex items-start justify-between gap-3">
               <div className="flex flex-col gap-1">
                 <h2 className="text-[18px] sm:text-[20px] font-black text-on-surface">{lang === 'ko' ? '이모티콘 문구 테마 선택' : t.phrases}</h2>
-                <p className="text-[12px] sm:text-[13px] font-medium text-on-surface-variant">
+                <p className="text-[13.5px] leading-relaxed font-medium text-on-surface-variant">
                   {lang === 'ko' ? '원하는 상황을 선택하면 15개 문구가 한 번에 변경됩니다.' : 'Choose a situation to update all 15 phrases.'}
                 </p>
               </div>
-              <button onClick={shuffleEmoticons} className="interactive-control min-h-10 px-3 rounded-lg bg-white text-mint-strong border border-mint-border text-[12px] sm:text-[13px] font-bold shrink-0">
+              <button onClick={shuffleEmoticons} className="interactive-control min-h-10 px-3 rounded-lg bg-white text-mint-strong border border-mint-border text-[13px] font-bold shrink-0 whitespace-nowrap">
                 <Shuffle size={14} className="inline mr-1" />{t.randomMix}
               </button>
             </div>
@@ -6753,7 +6753,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
             >
               <span className="flex items-center justify-between gap-3">
                 <span className="min-w-0">
-                  <span className="block text-[11px] font-bold text-mint-strong mb-0.5">🎨 {t.activeThemeLabel || 'Active Theme'}</span>
+                  <span className="block text-[12px] font-bold text-mint-strong mb-0.5">🎨 {t.activeThemeLabel || 'Active Theme'}</span>
                   <strong className="block truncate text-[16px] sm:text-[18px] font-black text-on-surface">
                     {activeTheme === 'custom' ? (t.customTheme || '✏️ Custom Theme') : activeTheme}
                   </strong>
@@ -6765,9 +6765,9 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
             </button>
 
             <div className="flex items-center gap-2 overflow-x-auto no-scrollbar" aria-label={lang === 'ko' ? '추천 테마' : 'Recommended themes'}>
-              <span className="text-[11px] font-black text-[#8A6048] shrink-0">🔥 {lang === 'ko' ? '추천' : 'Popular'}</span>
+              <span className="text-[12px] font-black text-[#8A6048] shrink-0 whitespace-nowrap">🔥 {lang === 'ko' ? '추천' : 'Popular'}</span>
               {sortedThemeKeys.slice(0, 3).map((theme) => (
-                <button key={theme} type="button" onClick={() => selectPopularTheme(theme)} className={`touch-manipulation min-h-9 max-w-[180px] truncate rounded-full border px-3 text-[12px] font-bold shrink-0 ${activeTheme === theme ? 'bg-[#FFF0E3] border-[#E9B88E] text-[#9A4B22]' : 'bg-white border-[#E8D8CA] text-[#7A5A46]'}`}>
+                <button key={theme} type="button" onClick={() => selectPopularTheme(theme)} className={`touch-manipulation min-h-9 max-w-[180px] truncate rounded-full border px-3 text-[13px] font-bold shrink-0 whitespace-nowrap ${activeTheme === theme ? 'bg-[#FFF0E3] border-[#E9B88E] text-[#9A4B22]' : 'bg-white border-[#E8D8CA] text-[#7A5A46]'}`}>
                   {activeTheme === theme ? '✓ ' : ''}{theme}
                 </button>
               ))}
@@ -6851,7 +6851,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                   type="text"
                   value={text}
                   onChange={(e) => handleEmoticonChange(idx, e.target.value)}
-                  className="interactive-control w-full h-[48px] sm:h-[50px] bg-[#F4FBF7] hover:bg-[#ECF8F1] focus:bg-white rounded-full pl-9 pr-3 text-left text-[#214F40] focus:text-slate-900 text-[12px] sm:text-[13.5px] font-bold tracking-tight placeholder:text-slate-400 focus:outline-none focus:ring-3 focus:ring-mint/50 border-2 border-[#B8DDCF] focus:border-mint-strong transition-all text-ellipsis overflow-hidden whitespace-nowrap"
+                  className="interactive-control w-full h-[50px] bg-[#F4FBF7] hover:bg-[#ECF8F1] focus:bg-white rounded-full pl-9 pr-3 text-left text-[#214F40] focus:text-slate-900 text-[14px] font-bold tracking-tight placeholder:text-slate-400 focus:outline-none focus:ring-3 focus:ring-mint/50 border-2 border-[#B8DDCF] focus:border-mint-strong transition-all text-ellipsis overflow-hidden whitespace-nowrap"
                   placeholder={`Phrase ${idx + 1}`}
                 />
               </label>
@@ -6993,7 +6993,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                       type="button"
                       aria-pressed={gptTextMode === mode}
                       onClick={() => setGptTextMode(mode)}
-                      className={`interactive-control min-h-10 rounded-[8px] border px-2 sm:px-3 py-2 text-[12px] sm:text-[13px] font-bold text-center focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E8C66A] ${
+                      className={`interactive-control min-h-10 rounded-[8px] border px-2 sm:px-3 py-2 text-[13px] font-bold text-center whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E8C66A] ${
                         gptTextMode === mode
                           ? 'bg-[#FFE8B5] text-[#5A461B] border-[#E8C66A] shadow-sm'
                           : 'bg-white text-on-surface border-[#E9DFC5] hover:bg-[#FFF3D8]'
@@ -7017,7 +7017,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                       type="button"
                       aria-pressed={gptBackgroundMode === mode}
                       onClick={() => setGptBackgroundMode(mode)}
-                      className={`interactive-control min-h-10 rounded-[8px] border px-1 sm:px-2 py-2 text-[11px] xs:text-[12px] sm:text-[13px] font-bold text-center text-ellipsis overflow-hidden whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E8C66A] ${
+                      className={`interactive-control min-h-10 rounded-[8px] border px-1 sm:px-2 py-2 text-[12px] sm:text-[13px] font-bold text-center text-ellipsis overflow-hidden whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E8C66A] ${
                         gptBackgroundMode === mode
                           ? 'bg-[#FFE8B5] text-[#5A461B] border-[#E8C66A] shadow-sm'
                           : 'bg-white text-on-surface border-[#E9DFC5] hover:bg-[#FFF3D8]'
@@ -7031,7 +7031,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
               <div className="flex flex-col gap-2 border-t border-[#E9DFC5] pt-3">
                 <div className="flex flex-col gap-0.5">
                   <span className="text-[13px] font-bold text-[#795B16]">{t.gptRepairTitle}</span>
-                  <span className="text-[12px] font-medium text-[#8A661C] leading-snug">{t.repairHelp}</span>
+                  <span className="text-[13px] font-medium text-[#8A661C] leading-relaxed break-keep">{t.repairHelp}</span>
                 </div>
                 <div className="grid grid-cols-1 min-[430px]:grid-cols-3 gap-2">
                   {[
@@ -7067,7 +7067,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                       type="button"
                       aria-pressed={geminiTextMode === mode}
                       onClick={() => setGeminiTextMode(mode)}
-                      className={`interactive-control min-h-10 rounded-[8px] border px-2 sm:px-3 py-2 text-[12px] sm:text-[13px] font-bold text-center focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E8C66A] ${
+                      className={`interactive-control min-h-10 rounded-[8px] border px-2 sm:px-3 py-2 text-[13px] font-bold text-center whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E8C66A] ${
                         geminiTextMode === mode
                           ? 'bg-[#FFE8B5] text-[#5A461B] border-[#E8C66A] shadow-sm'
                           : 'bg-white text-[#795B16] border-[#E9DFC5] hover:bg-[#FFF3D8]'
@@ -7091,7 +7091,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                       type="button"
                       aria-pressed={geminiBackgroundMode === mode}
                       onClick={() => setGeminiBackgroundMode(mode)}
-                      className={`interactive-control min-h-10 rounded-[8px] border px-1 sm:px-2 py-2 text-[11px] xs:text-[12px] sm:text-[13px] font-bold text-center text-ellipsis overflow-hidden whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E8C66A] ${
+                      className={`interactive-control min-h-10 rounded-[8px] border px-1 sm:px-2 py-2 text-[12px] sm:text-[13px] font-bold text-center text-ellipsis overflow-hidden whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E8C66A] ${
                         geminiBackgroundMode === mode
                           ? 'bg-[#FFE8B5] text-[#5A461B] border-[#E8C66A] shadow-sm'
                           : 'bg-white text-[#795B16] border-[#E9DFC5] hover:bg-[#FFF3D8]'
@@ -7105,7 +7105,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
               <div className="flex flex-col gap-2 border-t border-[#E9DFC5] pt-3">
                 <div className="flex flex-col gap-0.5">
                   <span className="text-[13px] font-bold text-[#795B16]">{t.geminiRepairTitle}</span>
-                  <span className="text-[12px] font-medium text-[#8A661C] leading-snug">{t.repairHelp}</span>
+                  <span className="text-[13px] font-medium text-[#8A661C] leading-relaxed break-keep">{t.repairHelp}</span>
                 </div>
                 <div className="grid grid-cols-1 min-[430px]:grid-cols-3 gap-2">
                   {[
@@ -7141,7 +7141,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                       type="button"
                       aria-pressed={grokTextMode === mode}
                       onClick={() => setGrokTextMode(mode)}
-                      className={`interactive-control min-h-10 rounded-[8px] border px-2 sm:px-3 py-2 text-[12px] sm:text-[13px] font-bold text-center focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E8C66A] ${
+                      className={`interactive-control min-h-10 rounded-[8px] border px-2 sm:px-3 py-2 text-[13px] font-bold text-center whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E8C66A] ${
                         grokTextMode === mode
                           ? 'bg-[#FFE8B5] text-[#5A461B] border-[#E8C66A] shadow-sm'
                           : 'bg-white text-[#795B16] border-[#E9DFC5] hover:bg-[#FFF3D8]'
@@ -7165,7 +7165,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                       type="button"
                       aria-pressed={grokBackgroundMode === mode}
                       onClick={() => setGrokBackgroundMode(mode)}
-                      className={`interactive-control min-h-10 rounded-[8px] border px-1 sm:px-2 py-2 text-[11px] xs:text-[12px] sm:text-[13px] font-bold text-center text-ellipsis overflow-hidden whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E8C66A] ${
+                      className={`interactive-control min-h-10 rounded-[8px] border px-1 sm:px-2 py-2 text-[12px] sm:text-[13px] font-bold text-center text-ellipsis overflow-hidden whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E8C66A] ${
                         grokBackgroundMode === mode
                           ? 'bg-[#FFE8B5] text-[#5A461B] border-[#E8C66A] shadow-sm'
                           : 'bg-white text-[#795B16] border-[#E9DFC5] hover:bg-[#FFF3D8]'
@@ -7179,7 +7179,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
               <div className="flex flex-col gap-2 border-t border-[#E9DFC5] pt-3">
                 <div className="flex flex-col gap-0.5">
                   <span className="text-[13px] font-bold text-[#795B16]">{t.grokRepairTitle}</span>
-                  <span className="text-[12px] font-medium text-[#8A661C] leading-snug">{t.repairHelp}</span>
+                  <span className="text-[13px] font-medium text-[#8A661C] leading-relaxed break-keep">{t.repairHelp}</span>
                 </div>
                 <div className="grid grid-cols-1 min-[430px]:grid-cols-3 gap-2">
                   {[
@@ -7255,7 +7255,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                 {copiedType === 'gpt' ? <CheckCircle2 size={16} className="text-[#2D7D64]" /> : <CheckCircle2 size={16} className="text-[#7A4F00]" />}
                 <span>{copiedType === 'gpt' ? (lang === 'ko' ? '✓ 복사 완료!' : lang === 'ja' ? '✓ コピー完了！' : lang === 'zh' ? '✓ 复制成功！' : '✓ Copied!') : (lang === 'ko' ? '📋 프롬프트만 복사' : lang === 'ja' ? '📋 プロンプトのみコピー' : lang === 'zh' ? '📋 仅复制提示词' : '📋 Copy Prompt')}</span>
               </button>
-              <p className="text-[11px] text-slate-500 text-center">
+              <p className="text-[12px] leading-relaxed text-slate-500 text-center break-keep">
                 {lang === 'ko' ? '✨ 자동 텍스트 전달 + 클립보드 복사' : lang === 'ja' ? '✨ 自動入力 + クリップボードコピー' : lang === 'zh' ? '✨ 自动传递文本 + 剪贴板复制' : '✨ Auto text passing + clipboard copy'}
               </p>
             </div>
@@ -7280,7 +7280,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                 {copiedType === 'gemini' ? <CheckCircle2 size={16} className="text-[#D97706]" /> : <CheckCircle2 size={16} className="text-[#7A4F00]" />}
                 <span>{copiedType === 'gemini' ? (lang === 'ko' ? '✓ 복사 완료!' : lang === 'ja' ? '✓ コピー完了！' : lang === 'zh' ? '✓ 复制成功！' : '✓ Copied!') : (lang === 'ko' ? '📋 프롬프트만 복사' : lang === 'ja' ? '📋 プロンプトのみコピー' : lang === 'zh' ? '📋 仅复制提示词' : '📋 Copy Prompt')}</span>
               </button>
-              <p className="text-[11px] text-amber-700 font-medium text-center">
+              <p className="text-[12px] leading-relaxed text-amber-700 font-medium text-center break-keep">
                 {lang === 'ko' ? '📋 복사 완료! 창 열리면 [Ctrl+V] 누르세요' : lang === 'ja' ? '📋 コピー完了！画面が開いたら [Ctrl+V]' : lang === 'zh' ? '📋 复制成功！打开窗口后按 [Ctrl+V]' : '📋 Copied! Press [Ctrl+V] in Gemini'}
               </p>
             </div>
@@ -7305,7 +7305,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                 {copiedType === 'grok' ? <CheckCircle2 size={16} className="text-[#7C3AED]" /> : <CheckCircle2 size={16} className="text-[#7A4F00]" />}
                 <span>{copiedType === 'grok' ? (lang === 'ko' ? '✓ 복사 완료!' : lang === 'ja' ? '✓ コピー完了！' : lang === 'zh' ? '✓ 复制成功！' : '✓ Copied!') : (lang === 'ko' ? '📋 프롬프트만 복사' : lang === 'ja' ? '📋 プロンプトのみコピー' : lang === 'zh' ? '📋 仅复制提示词' : '📋 Copy Prompt')}</span>
               </button>
-              <p className="text-[11px] text-purple-700 font-medium text-center">
+              <p className="text-[12px] leading-relaxed text-purple-700 font-medium text-center break-keep">
                 {lang === 'ko' ? '📋 복사 완료! 창 열리면 [Ctrl+V] 누르세요' : lang === 'ja' ? '📋 コピー完了！画面が開いたら [Ctrl+V]' : lang === 'zh' ? '📋 复制成功！打开窗口后按 [Ctrl+V]' : '📋 Copied! Press [Ctrl+V] in Grok'}
               </p>
             </div>
@@ -7334,7 +7334,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                   : '1-Click Copy & Tweet'}
               </span>
             </div>
-            <p className="text-[12.5px] sm:text-[13px] text-slate-600 leading-relaxed font-normal">
+            <p className="text-[14px] text-slate-600 leading-relaxed font-normal break-keep">
               {lang === 'ko'
                 ? 'AI에서 생성한 완성 이미지를 저장한 뒤, SNS에 올릴 때 바로 붙여넣어 사용할 수 있는 사이트 링크 & 홍보 캡션 & 해시태그입니다. (트윗 창에서 저장한 사진을 첨부해 주세요!)'
                 : lang === 'ja'
@@ -7546,7 +7546,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
           <p className="text-[13.5px] text-[#8C7A6B] font-bold mt-1">
             © {new Date().getFullYear()} Prompt Maker (프롬프트 메이커). All rights reserved.
           </p>
-          <p className="text-[11.5px] text-[#A69B8F] leading-relaxed max-w-2xl">
+          <p className="text-[12.5px] text-[#A69B8F] leading-relaxed max-w-2xl break-keep">
             {lang === 'ko' 
               ? '* 본 서비스는 AI 프롬프트 생성 보조 웹 유틸리티이며, 카카오(Kakao) 및 라인(LINE)과 공식적인 관련이 없습니다. 모든 생성물의 상업적 활용 및 등록 심사는 각 플랫폼의 운영 가이드라인을 준수합니다.' 
               : lang === 'ja'
