@@ -6111,7 +6111,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
   }
 
   return (
-    <div className={`font-body-md text-body-md antialiased max-w-full w-full ${lang === 'zh' ? 'lang-zh' : ''}`}>
+    <div className={`font-body-md text-body-md antialiased max-w-full w-full lang-${lang}`}>
       {toastMessage && (
         <div role="status" aria-live="polite" className="fixed left-1/2 top-16 z-[150] -translate-x-1/2 rounded-full border border-mint-border bg-[#184F43] px-4 py-2.5 text-[13px] font-bold text-white shadow-lg whitespace-nowrap max-w-[calc(100vw_-_24px)] overflow-hidden text-ellipsis">
           {toastMessage}
@@ -6282,7 +6282,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                   ) : (
                     <div className="flex flex-col gap-0.5">
                       <span className="font-bold text-[#49675E]">{lang === 'ko' ? '아직 선택하지 않았어요' : lang === 'ja' ? 'まだ選択されていません' : lang === 'zh' ? '尚未选择' : 'None selected yet'}</span>
-                      <span className="text-[12px] leading-relaxed font-medium text-[#789087] break-keep">{lang === 'ko' ? '아래에서 원하는 특징을 선택해 주세요.' : lang === 'ja' ? '下から希望の特徴を選択してください。' : lang === 'zh' ? '请在下方选择想要的特征。' : 'Choose the features you want below.'}</span>
+                      <span className="sentence-flow text-[12px] leading-relaxed font-medium text-[#789087]">{lang === 'ko' ? '아래에서 원하는 특징을 선택해 주세요.' : lang === 'ja' ? '下から希望の特徴を選択してください。' : lang === 'zh' ? '请在下方选择想要的特征。' : 'Choose the features you want below.'}</span>
                     </div>
                   )}
                 </dd>
@@ -7093,7 +7093,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
               <div className="flex flex-col gap-2 border-t border-[#E9DFC5] pt-3">
                 <div className="flex flex-col gap-0.5">
                   <span className="text-[13px] font-bold text-[#795B16]">{t.gptRepairTitle}</span>
-                  <span className="text-[13px] font-medium text-[#8A661C] leading-relaxed break-keep">{t.repairHelp}</span>
+                  <span className="sentence-flow text-[13px] font-medium text-[#8A661C] leading-relaxed">{t.repairHelp}</span>
                 </div>
                 <div className={`grid gap-2 ${gptTextMode === 'text' ? 'grid-cols-3' : 'grid-cols-2'}`}>
                   {[
@@ -7167,7 +7167,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
               <div className="flex flex-col gap-2 border-t border-[#E9DFC5] pt-3">
                 <div className="flex flex-col gap-0.5">
                   <span className="text-[13px] font-bold text-[#795B16]">{t.geminiRepairTitle}</span>
-                  <span className="text-[13px] font-medium text-[#8A661C] leading-relaxed break-keep">{t.repairHelp}</span>
+                  <span className="sentence-flow text-[13px] font-medium text-[#8A661C] leading-relaxed">{t.repairHelp}</span>
                 </div>
                 <div className={`grid gap-2 ${geminiTextMode === 'text' ? 'grid-cols-3' : 'grid-cols-2'}`}>
                   {[
@@ -7241,7 +7241,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
               <div className="flex flex-col gap-2 border-t border-[#E9DFC5] pt-3">
                 <div className="flex flex-col gap-0.5">
                   <span className="text-[13px] font-bold text-[#795B16]">{t.grokRepairTitle}</span>
-                  <span className="text-[13px] font-medium text-[#8A661C] leading-relaxed break-keep">{t.repairHelp}</span>
+                  <span className="sentence-flow text-[13px] font-medium text-[#8A661C] leading-relaxed">{t.repairHelp}</span>
                 </div>
                 <div className={`grid gap-2 ${grokTextMode === 'text' ? 'grid-cols-3' : 'grid-cols-2'}`}>
                   {[
