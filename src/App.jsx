@@ -6596,7 +6596,6 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
           <div className="rounded-xl border-2 border-[#55A98E] bg-linear-to-br from-[#F1FFF9] to-white p-3.5 sm:p-4 shadow-bubbly flex flex-col gap-3">
             <div className="flex items-start justify-between gap-3">
               <div className="flex flex-col gap-1">
-                <span className="inline-flex w-fit rounded-full bg-mint-strong px-2.5 py-0.5 text-[11px] font-black text-white">STEP 2</span>
                 <h2 className="text-[18px] sm:text-[20px] font-black text-on-surface">{lang === 'ko' ? '이모티콘 문구 테마 선택' : t.phrases}</h2>
                 <p className="text-[12px] sm:text-[13px] font-medium text-on-surface-variant">
                   {lang === 'ko' ? '원하는 상황을 선택하면 15개 문구가 한 번에 변경됩니다.' : 'Choose a situation to update all 15 phrases.'}
@@ -6705,12 +6704,12 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                     ? 'col-span-2 max-w-[calc(50%_-_6px)] justify-self-center sm:col-span-1 sm:max-w-none'
                     : ''
                 }`}>
-                <span className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 z-10 flex h-6 min-w-6 items-center justify-center rounded-md bg-mint-strong px-1 text-[10px] font-black text-white">{String(idx + 1).padStart(2, '0')}</span>
+                <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 z-10 flex h-[18px] w-[18px] items-center justify-center rounded-full bg-[#DDF3EA] text-[9px] font-extrabold text-[#2F7D68]">{idx + 1}</span>
                 <input
                   type="text"
                   value={text}
                   onChange={(e) => handleEmoticonChange(idx, e.target.value)}
-                  className="interactive-control w-full h-[50px] sm:h-[52px] bg-[#F4FBF7] hover:bg-[#ECF8F1] focus:bg-white rounded-lg pl-10 pr-2.5 text-left text-[#214F40] focus:text-slate-900 text-[12px] sm:text-[13.5px] font-bold tracking-tight placeholder:text-slate-400 focus:outline-none focus:ring-3 focus:ring-mint/50 border-2 border-[#B8DDCF] focus:border-mint-strong transition-all text-ellipsis overflow-hidden whitespace-nowrap"
+                  className="interactive-control w-full h-[48px] sm:h-[50px] bg-[#F4FBF7] hover:bg-[#ECF8F1] focus:bg-white rounded-full pl-9 pr-3 text-left text-[#214F40] focus:text-slate-900 text-[12px] sm:text-[13.5px] font-bold tracking-tight placeholder:text-slate-400 focus:outline-none focus:ring-3 focus:ring-mint/50 border-2 border-[#B8DDCF] focus:border-mint-strong transition-all text-ellipsis overflow-hidden whitespace-nowrap"
                   placeholder={`Phrase ${idx + 1}`}
                 />
               </label>
