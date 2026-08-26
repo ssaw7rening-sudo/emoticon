@@ -7256,7 +7256,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
           <div className="mt-3.5 bg-white rounded-lg p-3.5 sm:p-4 border-2 border-slate-200/90 shadow-xs flex flex-col gap-2.5">
             <div className="flex items-center justify-between gap-2 flex-wrap">
               <span className="text-[13px] sm:text-[14px] font-extrabold text-slate-900 flex items-center gap-2">
-                <span className="bg-[#1D9BF0] text-white text-[11px] font-black px-1.5 py-0.5 rounded flex items-center justify-center leading-none">𝕏</span>
+                <span className="bg-[#EEF0F3] text-[#30343B] border border-[#C9CDD3] text-[11px] font-black px-1.5 py-0.5 rounded flex items-center justify-center leading-none">𝕏</span>
                 <span>{lang === 'ko' 
                   ? '트위터(X) SNS 홍보·자랑 캡션' 
                   : lang === 'ja' 
@@ -7265,7 +7265,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                   ? 'X (Twitter) 社交媒体宣传文案' 
                   : 'Twitter (X) Share Caption'}</span>
               </span>
-              <span className="text-[11px] font-bold text-sky-700 bg-sky-50 px-2.5 py-0.5 rounded-full border border-sky-200">
+              <span className="text-[11px] font-bold text-slate-600 bg-slate-50 px-2.5 py-0.5 rounded-full border border-slate-200">
                 ✨ {lang === 'ko' 
                   ? '원클릭 복사 & 바로 트윗' 
                   : lang === 'ja' 
@@ -7308,7 +7308,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
               <button
                 type="button"
                 onClick={() => shareOnTwitter(lang)}
-                className="interactive-control min-h-[38px] rounded-md bg-[#1D9BF0] hover:bg-[#1A8CD8] text-white font-extrabold text-[12.5px] sm:text-[13px] flex items-center justify-center gap-1.5 cursor-pointer shadow-sm hover:brightness-105 transition-all"
+                className="interactive-control min-h-[38px] rounded-md bg-[#EEF0F3] hover:bg-[#E2E5E9] text-[#30343B] border-2 border-[#C9CDD3] font-extrabold text-[12.5px] sm:text-[13px] flex items-center justify-center gap-1.5 cursor-pointer transition-all"
               >
                 <span className="text-[13px] font-black">𝕏</span>
                 <span>{lang === 'ko' ? '바로 트윗하기' : lang === 'ja' ? 'Xで投稿する' : lang === 'zh' ? '立即发推 (Tweet)' : 'Tweet Now'}</span>
