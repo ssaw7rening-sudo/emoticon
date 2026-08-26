@@ -6646,7 +6646,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
 
               {/* Scrollable Tag Chips Container (Smooth Inertial Scroll + Slim Scrollbar + Bottom Fade Indicator) */}
               <div className="relative">
-                <div className="p-3.5 pb-6 flex flex-wrap gap-2 bg-surface-container-lowest max-h-[330px] sm:max-h-[360px] overflow-y-auto overscroll-contain scroll-smooth [scrollbar-width:thin] [scrollbar-color:#A6E3D0_transparent] [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-[#A6E3D0] [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-mint-strong">
+                <div className="p-3.5 pb-6 flex flex-wrap gap-2 bg-surface-container-lowest max-h-[330px] sm:max-h-[360px] overflow-y-auto overscroll-y-auto scroll-smooth [scrollbar-width:thin] [scrollbar-color:#A6E3D0_transparent] [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-[#A6E3D0] [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-mint-strong">
                   {currentTags[activeTagCategory]?.map(tag => {
                     const selected = isTagSelected(tag);
                     return (
