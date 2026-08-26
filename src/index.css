@@ -67,30 +67,31 @@
   }
 }
 
-.lang-ko p,
-.lang-ko li,
-.lang-ko dd,
-.lang-ko .sentence-flow {
-  word-break: keep-all;
+.lang-ko,
+.lang-ko :where(*) {
+  /* Keep Korean words intact across every UI text element, including spans,
+     buttons, labels and headings. Some components use Tailwind's break-word
+     utility, so this must win over those local declarations. */
+  word-break: keep-all !important;
   overflow-wrap: break-word;
 }
 
-.lang-en p,
-.lang-en li,
-.lang-en dd {
-  word-break: normal;
+.lang-en,
+.lang-en :where(*) {
+  /* Wrap English at spaces instead of splitting ordinary words. */
+  word-break: normal !important;
   overflow-wrap: break-word;
 }
 
-.lang-ja p,
-.lang-ja li,
-.lang-ja dd,
-.lang-zh p,
-.lang-zh li,
-.lang-zh dd {
-  word-break: normal;
+.lang-ja,
+.lang-ja :where(*),
+.lang-zh,
+.lang-zh :where(*) {
+  /* CJK text normally wraps between characters; strict line breaking keeps
+     punctuation from being stranded at visually awkward boundaries. */
+  word-break: normal !important;
   line-break: strict;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
 }
 
 .lang-zh,
