@@ -3994,6 +3994,8 @@ function App() {
   const [toastMessage, setToastMessage] = useState('');
   const [showPhotoTips, setShowPhotoTips] = useState(false);
   const [showDetailedGuide, setShowDetailedGuide] = useState(false);
+  const [showThemePicker, setShowThemePicker] = useState(false);
+  const [themeSearch, setThemeSearch] = useState('');
 
   const getCategoryRuleBadge = (category) => {
     const isArtStyle = ['🖌️ 화풍', '🖌️ Art Style', '🖌️ 画風', '🖌️ 画风'].includes(category);
@@ -4172,21 +4174,13 @@ function App() {
     if (!themeName || !currentThemes[themeName]) return;
     setEmoticons(currentThemes[themeName]);
     setActiveTheme(themeName);
+    setIndividualPhrase(currentThemes[themeName][0] || '');
+    setBatchPhrase(currentThemes[themeName][0] || '');
     recordThemeUsage(themeName, 1);
     trackEvent('select_theme_top5', { theme_name: themeName, lang });
-  };
-
-  const handleThemeSelect = (e) => {
-    const themeName = e.target.value;
-    if (currentThemes[themeName]) {
-      const phrases = currentThemes[themeName];
-      setEmoticons(phrases);
-      setActiveTheme(themeName);
-      if (phrases && phrases.length > 0) {
-        setIndividualPhrase(phrases[0]);
-        setBatchPhrase(phrases[0]);
-      }
-    }
+    setShowThemePicker(false);
+    setThemeSearch('');
+    showToast(lang === 'ko' ? `✓ ${themeName} 테마가 적용되었습니다.` : `✓ ${themeName} applied.`);
   };
 
   const shuffleEmoticons = () => {
@@ -5988,6 +5982,16 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
     generationMode === 'batch' ? getSelectedPhrase() : null
   );
   const visiblePromptValidationError = promptValidationError;
+  const normalizedThemeSearch = themeSearch.trim().toLocaleLowerCase();
+  const filteredThemeKeys = themeKeys.filter((theme) => {
+    if (!normalizedThemeSearch) return true;
+    return theme.toLocaleLowerCase().includes(normalizedThemeSearch)
+      || currentThemes[theme].some((phrase) => phrase.toLocaleLowerCase().includes(normalizedThemeSearch));
+  });
+  const recentThemeKeys = [...new Set([
+    ...(activeTheme !== 'custom' ? [activeTheme] : []),
+    ...sortedThemeKeys,
+  ])].filter((theme) => currentThemes[theme]).slice(0, 6);
 
   if (currentPath === '/privacy') {
     return <PrivacyPage lang={lang} onBack={() => navigateTo('/')} />;
@@ -6589,106 +6593,127 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
 
         {/* Section 2: Emoji Phrases */}
         <section id="emoticon-phrase-grid" className="flex flex-col gap-md break-keep">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div className="flex flex-col gap-1">
-              <h2 className="font-headline-sm text-headline-sm text-on-surface">{t.phrases}</h2>
-              <span className="text-[12px] font-bold text-mint-strong flex items-center gap-1">
-                📌 {t.activeThemeLabel || 'Active Theme'}: 
-                <span className="bg-mint-soft text-mint-strong border border-mint-border px-2 py-0.5 rounded-full">
-                  {activeTheme === 'custom' 
-                    ? (t.customTheme || '✏️ Custom Theme')
-                    : activeTheme}
-                </span>
-              </span>
-            </div>
-            <div className="flex gap-2">
-              <select 
-                value={currentThemes[activeTheme] ? activeTheme : ''} 
-                onChange={handleThemeSelect}
-                className="px-3 py-1.5 text-[14px] font-bold rounded-full border border-mint-border bg-surface-container-lowest text-on-surface cursor-pointer focus:outline-none focus:ring-2 focus:ring-mint max-w-[200px] sm:max-w-none truncate"
-              >
-                <option value="" disabled>{t.themeSelect}</option>
-                {themeKeys.map((theme, idx) => (
-                  <option key={theme} value={theme}>{`${idx + 1}. ${theme}`}</option>
-                ))}
-              </select>
-              
-              <button 
-                onClick={shuffleEmoticons}
-                className="interactive-control flex items-center gap-1 min-h-10 px-3 py-1.5 text-[14px] font-bold rounded-full bg-mint text-mint-strong hover:bg-mint-hover border border-mint-border shrink-0"
-              >
-                <Shuffle size={14} /> {t.randomMix}
+          <div className="rounded-xl border-2 border-[#55A98E] bg-linear-to-br from-[#F1FFF9] to-white p-3.5 sm:p-4 shadow-bubbly flex flex-col gap-3">
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex flex-col gap-1">
+                <span className="inline-flex w-fit rounded-full bg-mint-strong px-2.5 py-0.5 text-[11px] font-black text-white">STEP 2</span>
+                <h2 className="text-[18px] sm:text-[20px] font-black text-on-surface">{lang === 'ko' ? '이모티콘 문구 테마 선택' : t.phrases}</h2>
+                <p className="text-[12px] sm:text-[13px] font-medium text-on-surface-variant">
+                  {lang === 'ko' ? '원하는 상황을 선택하면 15개 문구가 한 번에 변경됩니다.' : 'Choose a situation to update all 15 phrases.'}
+                </p>
+              </div>
+              <button onClick={shuffleEmoticons} className="interactive-control min-h-10 px-3 rounded-lg bg-white text-mint-strong border border-mint-border text-[12px] sm:text-[13px] font-bold shrink-0">
+                <Shuffle size={14} className="inline mr-1" />{t.randomMix}
               </button>
             </div>
-          </div>
 
-          {/* Real-time Popular TOP 5 Quick Select Chips */}
-          <div className="bg-[#FFF8EE] p-3 sm:p-3.5 rounded-lg border border-[#FCD3A1] flex flex-col gap-2.5 shadow-2xs">
-            <div className="flex items-center justify-between gap-2 select-none">
-              <div className="flex items-center gap-1.5 text-[13px] sm:text-[13.5px] font-extrabold text-[#9A3412]">
-                <span className="text-[15px]">🔥</span>
-                <span>{lang === 'ko' ? '실시간 인기 TOP 5 테마' : lang === 'ja' ? 'リアルタイム人気TOP 5' : lang === 'zh' ? '实时热门 TOP 5' : 'Real-time Popular TOP 5'}</span>
-              </div>
-              <span className="text-[11px] font-bold text-[#C2410C] bg-[#FFE8CC] px-2 py-0.5 rounded-full border border-[#FCD3A1]">
-                ⚡ {lang === 'ko' ? '원클릭 전환' : '1-Click'}
+            <button
+              type="button"
+              onClick={() => setShowThemePicker(true)}
+              className="interactive-control touch-manipulation w-full min-h-[66px] rounded-xl border-2 border-[#2F7D68] bg-white px-4 py-3 text-left shadow-sm hover:bg-[#F4FFF9] focus:outline-none focus-visible:ring-4 focus-visible:ring-mint/60"
+            >
+              <span className="flex items-center justify-between gap-3">
+                <span className="min-w-0">
+                  <span className="block text-[11px] font-bold text-mint-strong mb-0.5">🎨 {t.activeThemeLabel || 'Active Theme'}</span>
+                  <strong className="block truncate text-[16px] sm:text-[18px] font-black text-on-surface">
+                    {activeTheme === 'custom' ? (t.customTheme || '✏️ Custom Theme') : activeTheme}
+                  </strong>
+                </span>
+                <span className="inline-flex min-h-10 items-center rounded-lg bg-mint-strong px-3 text-[13px] font-black text-white shrink-0">
+                  {lang === 'ko' ? '변경 ›' : 'Change ›'}
+                </span>
               </span>
-            </div>
-            
-            <div className="grid grid-cols-2 sm:grid-cols-5 gap-1.5 sm:gap-2 w-full" role="group" aria-label="Popular Themes TOP 5">
-              {sortedThemeKeys.slice(0, 5).map((theme, idx) => {
-                const isCurrent = selectedTopTheme === theme;
-                const shortTitle = theme.split('(')[0].replace(/^[0-9]+\.\s*/, '').trim();
-                const isFirst = idx === 0;
-                const rankLabel = isFirst
-                  ? (lang === 'ko' ? '👑 1위 (TOP 1)' : lang === 'ja' ? '👑 1位 (TOP 1)' : lang === 'zh' ? '👑 榜首第1' : '👑 #1 (TOP 1)')
-                  : (lang === 'ko' ? `${idx + 1}위` : lang === 'ja' ? `${idx + 1}位` : lang === 'zh' ? `第${idx + 1}` : `#${idx + 1}`);
+            </button>
 
-                const styleClasses = isCurrent
-                  ? 'bg-[#C2410C] text-white border-[#9A3412] shadow-sm ring-2 ring-[#C2410C]/40 font-black'
-                  : isFirst
-                  ? 'bg-amber-100/80 hover:bg-amber-200/70 border-2 border-amber-300 text-amber-950 font-black shadow-2xs'
-                  : 'bg-white text-[#9A3412] border-[#FCD3A1] hover:bg-[#FFF1DE] hover:border-[#E89E5F] shadow-2xs font-bold';
-
-                const badgeClasses = isCurrent
-                  ? 'bg-amber-300 text-amber-950 font-black shadow-2xs'
-                  : isFirst
-                  ? 'bg-amber-200 text-amber-950 font-black shadow-2xs'
-                  : 'bg-[#FFF0DD] text-[#C2410C] font-black';
-
-                return (
-                  <button
-                    key={`${theme}-${idx}`}
-                    type="button"
-                    aria-pressed={isCurrent}
-                    onClick={() => selectPopularTheme(theme)}
-                    className={`interactive-control touch-manipulation w-full h-[40px] px-2.5 rounded-lg text-[12px] sm:text-[12.5px] transition-all flex items-center justify-center gap-1.5 cursor-pointer border select-none active:scale-95 ${
-                      isFirst ? 'col-span-2 sm:col-span-1' : ''
-                    } ${styleClasses}`}
-                  >
-                    <span className={`text-[11px] px-2 py-0.5 rounded-md shrink-0 ${badgeClasses}`}>
-                      {rankLabel}
-                    </span>
-                    <span className="truncate">{shortTitle}</span>
-                  </button>
-                );
-              })}
+            <div className="flex items-center gap-2 overflow-x-auto no-scrollbar" aria-label={lang === 'ko' ? '추천 테마' : 'Recommended themes'}>
+              <span className="text-[11px] font-black text-[#9A3412] shrink-0">🔥 {lang === 'ko' ? '추천' : 'Popular'}</span>
+              {sortedThemeKeys.slice(0, 3).map((theme) => (
+                <button key={theme} type="button" onClick={() => selectPopularTheme(theme)} className={`touch-manipulation min-h-9 max-w-[180px] truncate rounded-full border px-3 text-[12px] font-bold shrink-0 ${activeTheme === theme ? 'bg-[#C2410C] border-[#9A3412] text-white' : 'bg-[#FFF8EE] border-[#FCD3A1] text-[#9A3412]'}`}>
+                  {theme}
+                </button>
+              ))}
             </div>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-sm md:gap-md bg-surface-container-lowest rounded-md p-3.5 sm:p-md shadow-bubbly border border-outline-variant">
+          {showThemePicker && (
+            <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center bg-slate-950/50 p-0 sm:p-4" role="dialog" aria-modal="true" aria-label={t.themeSelect} onMouseDown={(event) => { if (event.target === event.currentTarget) setShowThemePicker(false); }}>
+              <div className="w-full sm:max-w-2xl max-h-[88dvh] overflow-hidden rounded-t-2xl sm:rounded-2xl bg-white shadow-2xl flex flex-col">
+                <div className="flex items-center justify-between gap-3 border-b border-outline-variant px-4 py-3.5 sm:px-5">
+                  <div>
+                    <strong className="block text-[18px] font-black text-on-surface">🎨 {t.themeSelect}</strong>
+                    <span className="text-[12px] font-medium text-on-surface-variant">{lang === 'ko' ? `총 ${themeKeys.length}개 테마에서 검색할 수 있습니다.` : `${themeKeys.length} themes available.`}</span>
+                  </div>
+                  <button type="button" onClick={() => setShowThemePicker(false)} className="interactive-control h-10 w-10 rounded-full border border-outline-variant bg-surface-container-lowest text-[24px] leading-none text-on-surface" aria-label={lang === 'ko' ? '닫기' : 'Close'}>×</button>
+                </div>
+
+                <div className="p-4 sm:px-5 sm:pt-4 pb-3 border-b border-outline-variant bg-[#F8FCFA]">
+                  <label className="relative block">
+                    <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-[16px]">🔍</span>
+                    <input
+                      autoFocus
+                      type="search"
+                      value={themeSearch}
+                      onChange={(event) => setThemeSearch(event.target.value)}
+                      placeholder={lang === 'ko' ? '테마 또는 문구 검색 (예: 수능, 회사, 할로윈)' : 'Search themes or phrases'}
+                      className="h-12 w-full rounded-xl border-2 border-mint-border bg-white pl-10 pr-4 text-[14px] font-bold text-on-surface outline-none focus:border-mint-strong focus:ring-4 focus:ring-mint/30"
+                    />
+                  </label>
+                </div>
+
+                <div className="overflow-y-auto overscroll-contain p-4 sm:p-5 flex flex-col gap-4">
+                  {!normalizedThemeSearch && (
+                    <div className="flex flex-col gap-2">
+                      <span className="text-[12px] font-black text-on-surface-variant">{lang === 'ko' ? '최근·추천 테마' : 'Recent & recommended'}</span>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                        {recentThemeKeys.map((theme) => (
+                          <button key={`recent-${theme}`} type="button" onClick={() => selectPopularTheme(theme)} className={`touch-manipulation min-h-11 rounded-lg border px-3 py-2 text-[12px] sm:text-[13px] font-bold text-left truncate ${activeTheme === theme ? 'bg-mint-strong text-white border-[#1E453B] ring-2 ring-mint/50' : 'bg-mint-soft text-mint-strong border-mint-border hover:bg-mint-hover'}`}>
+                            {activeTheme === theme ? '✓ ' : ''}{theme}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="flex flex-col gap-2">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-[12px] font-black text-on-surface-variant">{normalizedThemeSearch ? (lang === 'ko' ? '검색 결과' : 'Search results') : (lang === 'ko' ? '전체 테마' : 'All themes')}</span>
+                      <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-bold text-slate-600">{filteredThemeKeys.length}</span>
+                    </div>
+                    {filteredThemeKeys.length > 0 ? (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        {filteredThemeKeys.map((theme, index) => (
+                          <button key={theme} type="button" onClick={() => selectPopularTheme(theme)} className={`touch-manipulation min-h-12 rounded-xl border px-3.5 py-2.5 text-left flex items-center gap-3 ${activeTheme === theme ? 'bg-[#E3F8EF] border-2 border-mint-strong text-mint-strong' : 'bg-white border-outline-variant text-on-surface hover:border-mint-border hover:bg-[#F7FFFB]'}`}>
+                            <span className={`flex h-7 min-w-7 items-center justify-center rounded-md text-[11px] font-black ${activeTheme === theme ? 'bg-mint-strong text-white' : 'bg-slate-100 text-slate-500'}`}>{index + 1}</span>
+                            <span className="min-w-0 flex-1 truncate text-[13px] sm:text-[14px] font-bold">{theme}</span>
+                            {activeTheme === theme && <span className="text-[15px] font-black">✓</span>}
+                          </button>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="rounded-xl border border-dashed border-outline-variant bg-slate-50 px-4 py-8 text-center text-[13px] font-bold text-slate-500">{lang === 'ko' ? '검색 결과가 없습니다. 다른 단어를 입력해 보세요.' : 'No themes found.'}</div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 md:gap-3 bg-white rounded-xl p-3.5 sm:p-4 shadow-bubbly border-2 border-[#C6E7DA]">
             {emoticons.map((text, idx) => (
-              <input 
-                key={idx}
-                type="text" 
-                value={text}
-                onChange={(e) => handleEmoticonChange(idx, e.target.value)}
-                className={`interactive-control w-full h-[46px] sm:h-[48px] bg-[#F2F9F5] hover:bg-[#EBF6EF] focus:bg-white rounded-full px-1.5 sm:px-3 text-center text-[#2D6A4F]/80 focus:text-slate-900 text-[12px] sm:text-[13.5px] font-semibold focus:font-bold tracking-tight placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-mint-strong border border-[#D1EBE1] focus:border-mint-strong transition-all text-ellipsis overflow-hidden whitespace-nowrap ${
+              <label key={idx} className={`relative block ${
                   idx === emoticons.length - 1
                     ? 'col-span-2 max-w-[calc(50%_-_6px)] justify-self-center sm:col-span-1 sm:max-w-none'
                     : ''
-                }`}
-                placeholder={`Phrase ${idx+1}`}
-              />
+                }`}>
+                <span className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 z-10 flex h-6 min-w-6 items-center justify-center rounded-md bg-mint-strong px-1 text-[10px] font-black text-white">{String(idx + 1).padStart(2, '0')}</span>
+                <input
+                  type="text"
+                  value={text}
+                  onChange={(e) => handleEmoticonChange(idx, e.target.value)}
+                  className="interactive-control w-full h-[50px] sm:h-[52px] bg-[#F4FBF7] hover:bg-[#ECF8F1] focus:bg-white rounded-lg pl-10 pr-2.5 text-left text-[#214F40] focus:text-slate-900 text-[12px] sm:text-[13.5px] font-bold tracking-tight placeholder:text-slate-400 focus:outline-none focus:ring-3 focus:ring-mint/50 border-2 border-[#B8DDCF] focus:border-mint-strong transition-all text-ellipsis overflow-hidden whitespace-nowrap"
+                  placeholder={`Phrase ${idx + 1}`}
+                />
+              </label>
             ))}
           </div>
 
