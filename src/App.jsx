@@ -3997,6 +3997,7 @@ function App() {
   const [showThemePicker, setShowThemePicker] = useState(false);
   const [themeSearch, setThemeSearch] = useState('');
   const [themePickerViewportHeight, setThemePickerViewportHeight] = useState(null);
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
 
   useEffect(() => {
     if (!showThemePicker) return undefined;
@@ -4304,8 +4305,37 @@ function App() {
       : `🎲 Random character generated: ${combo.split(',')[0].trim()}`);
   };
 
-  const clearTags = () => {
+  const clearSelectedTags = () => {
     setCharManual('');
+  };
+
+  const resetAllSettings = () => {
+    const firstTheme = themeKeys[0];
+    const firstPhrases = currentThemes[firstTheme] || [];
+    setCharManual('');
+    setCharacterSource('photo');
+    setPhotoReferenceMode('balanced');
+    setActiveTagCategory(categoryKeys[0]);
+    setEmoticons(firstPhrases);
+    setActiveTheme(firstTheme);
+    setGenerationMode('sheet');
+    setIndividualPhrase(firstPhrases[0] || '');
+    setBatchPhrase(firstPhrases[0] || '');
+    setPreviewMode('gpt');
+    setGptTextMode('text');
+    setGptBackgroundMode('transparent');
+    setGeminiTextMode('visual');
+    setGeminiBackgroundMode('transparent');
+    setGrokTextMode('visual');
+    setSelectedTopTheme(null);
+    setActiveGoldenComboId(null);
+    setPreviousComboBackup(null);
+    setShowPhotoTips(false);
+    setShowDetailedGuide(false);
+    setShowThemePicker(false);
+    setThemeSearch('');
+    setShowResetConfirm(false);
+    showToast(lang === 'ko' ? '✓ 모든 설정이 초기화되었습니다.' : '✓ All settings have been reset.');
   };
 
   const appendTag = (tag) => {
@@ -6021,6 +6051,11 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
 
   return (
     <div className={`font-body-md text-body-md antialiased max-w-full w-full ${lang === 'zh' ? 'lang-zh' : ''}`}>
+      {toastMessage && (
+        <div role="status" aria-live="polite" className="fixed left-1/2 top-16 z-[150] -translate-x-1/2 rounded-full border border-mint-border bg-[#184F43] px-4 py-2.5 text-[13px] font-bold text-white shadow-lg whitespace-nowrap max-w-[calc(100vw_-_24px)] overflow-hidden text-ellipsis">
+          {toastMessage}
+        </div>
+      )}
       {/* TopAppBar */}
       <header className="w-full top-0 bg-background/95 backdrop-blur-md z-50 sticky border-b border-outline-variant/30 shadow-xs">
         <div className="max-w-3xl mx-auto flex items-center justify-between px-container-margin min-h-14 py-2 w-full">
@@ -6138,8 +6173,8 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
             <div className="flex justify-between items-center">
               <h2 className="font-headline-sm text-headline-sm text-on-surface">{t.step1}</h2>
               <div className="flex items-center gap-2">
-                <button onClick={clearTags} className="flex items-center gap-1.5 min-h-10 px-3 py-1.5 text-[13px] font-bold text-error hover:bg-red-50 border border-error/20 hover:border-error/40 rounded-lg transition-all cursor-pointer">
-                  <Trash2 size={14} /> {t.clear}
+                <button onClick={() => setShowResetConfirm(true)} className="flex items-center gap-1.5 min-h-10 px-3 py-1.5 text-[13px] font-bold text-error hover:bg-red-50 border border-error/20 hover:border-error/40 rounded-lg transition-all cursor-pointer">
+                  <Trash2 size={14} /> {lang === 'ko' ? '전체 초기화' : t.clear}
                 </button>
               </div>
             </div>
@@ -6538,10 +6573,10 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                       </span>
                       <button 
                         type="button"
-                        onClick={clearTags} 
+                        onClick={clearSelectedTags}
                         className="text-[11px] font-bold text-red-600 hover:text-red-700 hover:underline flex items-center gap-1 cursor-pointer"
                       >
-                        <Trash2 size={11} /> {lang === 'ko' ? '전체 초기화' : lang === 'ja' ? 'すべて解除' : lang === 'zh' ? '清空全部' : 'Clear All'}
+                        <Trash2 size={11} /> {lang === 'ko' ? '선택 태그 지우기' : lang === 'ja' ? 'タグを解除' : lang === 'zh' ? '清除标签' : 'Clear Tags'}
                       </button>
                     </div>
                     <div className="flex flex-wrap gap-1.5 max-h-[80px] overflow-y-auto no-scrollbar">
@@ -6607,6 +6642,25 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
               </div>
             </div>
           </div>
+
+          {showResetConfirm && (
+            <div className="fixed inset-0 z-[120] flex items-center justify-center bg-slate-950/50 p-4" role="dialog" aria-modal="true" aria-label={lang === 'ko' ? '모든 설정 초기화 확인' : 'Confirm reset'} onMouseDown={(event) => { if (event.target === event.currentTarget) setShowResetConfirm(false); }}>
+              <div className="w-full max-w-sm rounded-2xl bg-white p-5 shadow-2xl border border-red-100">
+                <div className="flex h-11 w-11 items-center justify-center rounded-full bg-red-50 text-red-600 mb-3"><Trash2 size={20} /></div>
+                <h3 className="text-[18px] font-black text-on-surface">{lang === 'ko' ? '모든 설정을 초기화할까요?' : 'Reset all settings?'}</h3>
+                <p className="mt-2 text-[13px] leading-relaxed text-on-surface-variant">
+                  {lang === 'ko'
+                    ? '캐릭터 설정, 선택 태그, 테마, 문구 15개와 모든 생성 옵션이 처음 상태로 돌아갑니다. 언어와 사용 통계는 유지됩니다.'
+                    : 'Character settings, tags, themes, all 15 phrases, and generation options will return to their defaults. Language and usage stats will be kept.'}
+                </p>
+                <p className="mt-2 text-[12px] font-bold text-red-600">{lang === 'ko' ? '직접 입력한 내용은 복구할 수 없습니다.' : 'Manually entered content cannot be recovered.'}</p>
+                <div className="mt-5 grid grid-cols-2 gap-2">
+                  <button type="button" onClick={() => setShowResetConfirm(false)} className="min-h-11 rounded-xl border border-outline-variant bg-white text-[13px] font-bold text-on-surface hover:bg-slate-50">{lang === 'ko' ? '취소' : 'Cancel'}</button>
+                  <button type="button" onClick={resetAllSettings} className="min-h-11 rounded-xl border border-red-600 bg-red-600 text-[13px] font-black text-white hover:bg-red-700">{lang === 'ko' ? '모두 초기화' : 'Reset all'}</button>
+                </div>
+              </div>
+            </div>
+          )}
         </section>
 
         {/* Section 2: Emoji Phrases */}
@@ -7123,14 +7177,14 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
             {/* ChatGPT Action Card */}
-            <div className="bg-white p-3.5 rounded-lg border-2 border-[#E8C66A]/60 flex flex-col gap-2 shadow-xs hover:border-[#E8C66A] transition-all">
+            <div className={`p-3.5 rounded-lg border-2 flex flex-col gap-2 transition-all ${previewMode === 'gpt' ? 'bg-[#F8FFFC] border-[#9FD5C4] shadow-sm' : 'bg-white border-slate-200 shadow-xs'}`}>
               <button
                 type="button"
                 onClick={() => launchAiCompanion('gpt')}
                 disabled={Boolean(promptValidationError)}
-                className="interactive-control w-full min-h-[52px] rounded-md bg-gradient-to-r from-[#2D7D64] to-[#1E5C49] text-white font-bold text-[15px] flex items-center justify-center gap-2 shadow-sm hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                className="interactive-control w-full min-h-[52px] rounded-md bg-[#E8F5F0] text-[#1E5C49] border-2 border-[#9FD5C4] font-bold text-[15px] flex items-center justify-center gap-2 hover:bg-[#D8EEE6] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
               >
-                <Bot size={20} className="text-[#A6E3D0]" />
+                <Bot size={20} className="text-[#2D7D64]" />
                 <span>{lang === 'ko' ? '🚀 ChatGPT 실행' : lang === 'ja' ? '🚀 ChatGPT 起動' : lang === 'zh' ? '🚀 ChatGPT 启动' : '🚀 Launch ChatGPT'}</span>
               </button>
               <button
@@ -7148,14 +7202,14 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
             </div>
 
             {/* Gemini Action Card */}
-            <div className="bg-white p-3.5 rounded-lg border-2 border-[#E8C66A]/60 flex flex-col gap-2 shadow-xs hover:border-[#E8C66A] transition-all">
+            <div className={`p-3.5 rounded-lg border-2 flex flex-col gap-2 transition-all ${previewMode === 'gemini' ? 'bg-[#FBF9FF] border-[#C9BDF0] shadow-sm' : 'bg-white border-slate-200 shadow-xs'}`}>
               <button
                 type="button"
                 onClick={() => launchAiCompanion('gemini')}
                 disabled={Boolean(visiblePromptValidationError)}
-                className="interactive-control w-full min-h-[52px] rounded-md bg-gradient-to-r from-[#D97706] to-[#B45309] text-white font-bold text-[15px] flex items-center justify-center gap-2 shadow-sm hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                className="interactive-control w-full min-h-[52px] rounded-md bg-[#F1EDFF] text-[#59439B] border-2 border-[#CFC5F2] font-bold text-[15px] flex items-center justify-center gap-2 hover:bg-[#E7E0FA] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
               >
-                <Sparkles size={20} className="text-[#FFECA1]" />
+                <Sparkles size={20} className="text-[#735DB7]" />
                 <span>{lang === 'ko' ? '🚀 Gemini 실행' : lang === 'ja' ? '🚀 Gemini 起動' : lang === 'zh' ? '🚀 Gemini 启动' : '🚀 Launch Gemini'}</span>
               </button>
               <button
@@ -7173,14 +7227,14 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
             </div>
 
             {/* Grok Action Card */}
-            <div className="bg-white p-3.5 rounded-lg border-2 border-[#E8C66A]/60 flex flex-col gap-2 shadow-xs hover:border-[#E8C66A] transition-all">
+            <div className={`p-3.5 rounded-lg border-2 flex flex-col gap-2 transition-all ${previewMode === 'grok' ? 'bg-[#F8F9FA] border-[#AEB4BD] shadow-sm' : 'bg-white border-slate-200 shadow-xs'}`}>
               <button
                 type="button"
                 onClick={() => launchAiCompanion('grok')}
                 disabled={Boolean(visiblePromptValidationError)}
-                className="interactive-control w-full min-h-[52px] rounded-md bg-gradient-to-r from-[#7C3AED] to-[#5B21B6] text-white font-bold text-[15px] flex items-center justify-center gap-2 shadow-sm hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                className="interactive-control w-full min-h-[52px] rounded-md bg-[#EEF0F3] text-[#30343B] border-2 border-[#C9CDD3] font-bold text-[15px] flex items-center justify-center gap-2 hover:bg-[#E2E5E9] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
               >
-                <Zap size={20} className="text-[#DDD6FE]" />
+                <Zap size={20} className="text-[#4B515A]" />
                 <span>{lang === 'ko' ? '🚀 Grok 실행' : lang === 'ja' ? '🚀 Grok 起動' : lang === 'zh' ? '🚀 Grok 启动' : '🚀 Launch Grok'}</span>
               </button>
               <button
