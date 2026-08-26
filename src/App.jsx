@@ -6080,6 +6080,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
     ...(activeTheme !== 'custom' ? [activeTheme] : []),
     ...sortedThemeKeys,
   ])].filter((theme) => currentThemes[theme]).slice(0, 6);
+  const activeTagList = charManual.split(',').map((tag) => tag.trim()).filter(Boolean);
 
   if (currentPath === '/privacy') {
     return <PrivacyPage lang={lang} onBack={() => navigateTo('/')} />;
@@ -6219,28 +6220,53 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
               </div>
             </div>
             
-            {/* Live Active Settings Status Banner (Responsive Clean Header) */}
-            <div className="bg-[#EAF8F3] text-mint-strong rounded-lg px-3 py-2 sm:px-3.5 sm:py-2.5 shadow-bubbly flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 sm:gap-3 border border-mint-border overflow-hidden">
-              <div className="flex items-center gap-2 shrink-0 whitespace-nowrap">
-                <span className="bg-[#C5F2E3] text-[#184F43] border border-[#A6E3D0] text-[11px] font-black px-2 py-0.5 rounded-md uppercase tracking-wide shadow-xs">
-                  ⚡ {lang === 'ko' ? '실시간 적용' : 'Live Active'}
+            {/* Current prompt settings summary */}
+            <div className="rounded-lg border border-[#B9DDD0] bg-[#F4FBF8] px-3.5 py-3 shadow-bubbly">
+              <div className="mb-2.5 flex items-center justify-between gap-2 border-b border-[#D9ECE5] pb-2">
+                <strong className="text-[13px] sm:text-[14px] font-black text-[#244E43]">
+                  {lang === 'ko' ? '현재 설정 요약' : lang === 'ja' ? '現在の設定概要' : lang === 'zh' ? '当前设置摘要' : 'Current Settings'}
+                </strong>
+                <span className="inline-flex items-center rounded-full border border-[#B9DDD0] bg-white px-2 py-0.5 text-[10.5px] font-bold text-[#397562] whitespace-nowrap">
+                  ✓ {lang === 'ko' ? '프롬프트에 자동 반영 중' : lang === 'ja' ? 'プロンプトに自動反映中' : lang === 'zh' ? '正自动应用到提示词' : 'Auto-applied to prompt'}
                 </span>
-                <span className="text-[12.5px] sm:text-[13px] font-bold text-mint-strong whitespace-nowrap">
-                  {characterSource === 'photo' 
-                    ? `📸 ${lang === 'ko' ? '사진 참고' : 'Photo'} (${getPhotoModeLabel(lang)})`
+              </div>
+
+              <dl className="grid grid-cols-[74px_minmax(0,1fr)] gap-x-2 gap-y-2 text-[12px] sm:text-[12.5px]">
+                <dt className="font-bold text-[#668078]">{lang === 'ko' ? '캐릭터 기준' : lang === 'ja' ? 'キャラ基準' : lang === 'zh' ? '角色来源' : 'Character'}</dt>
+                <dd className="font-bold text-[#244E43]">
+                  {characterSource === 'photo'
+                    ? `📷 ${lang === 'ko' ? '참고 사진' : lang === 'ja' ? '参照写真' : lang === 'zh' ? '参考照片' : 'Reference photo'}`
                     : characterSource === 'random'
-                    ? `🎲 ${lang === 'ko' ? '랜덤 캐릭터' : 'Random Char'}`
-                    : `✏️ ${lang === 'ko' ? '직접 캐릭터 설정' : 'Direct Setup'}`}
-                </span>
-              </div>
-              <div 
-                className="min-w-0 text-left sm:text-right text-[11.5px] sm:text-[12px] font-bold text-mint-strong/90 truncate cursor-default whitespace-nowrap" 
-                title={charManual.trim() ? `${lang === 'ko' ? '적용된 태그:' : 'Active Tags:'} ${charManual}` : ''}
-              >
-                {charManual.trim() 
-                  ? `${lang === 'ko' ? '태그:' : 'Tags:'} ${charManual}` 
-                  : (lang === 'ko' ? '태그 미선택 (기본 2D 캐릭터)' : 'No tags (Default 2D active)')}
-              </div>
+                    ? `🎲 ${lang === 'ko' ? '랜덤 캐릭터' : lang === 'ja' ? 'ランダムキャラ' : lang === 'zh' ? '随机角色' : 'Random character'}`
+                    : `✏️ ${lang === 'ko' ? '직접 설정' : lang === 'ja' ? '直接設定' : lang === 'zh' ? '手动设置' : 'Direct setup'}`}
+                </dd>
+
+                {characterSource === 'photo' && (
+                  <>
+                    <dt className="font-bold text-[#668078]">{lang === 'ko' ? '사진 반영' : lang === 'ja' ? '写真反映' : lang === 'zh' ? '照片模式' : 'Photo mode'}</dt>
+                    <dd className="font-bold text-[#244E43]">⭐ {getPhotoModeLabel(lang)}</dd>
+                  </>
+                )}
+
+                <dt className="font-bold text-[#668078] pt-0.5">{lang === 'ko' ? '선택 태그' : lang === 'ja' ? '選択タグ' : lang === 'zh' ? '已选标签' : 'Tags'}</dt>
+                <dd className="min-w-0">
+                  {activeTagList.length > 0 ? (
+                    <div className="flex flex-wrap gap-1" title={charManual}>
+                      {activeTagList.map((tag, index) => (
+                        <span key={`summary-${tag}-${index}`} className="max-w-full truncate rounded-full border border-[#C9E3DA] bg-white px-2 py-0.5 text-[10.5px] font-bold text-[#397562]">{tag}</span>
+                      ))}
+                      <span className="self-center text-[10.5px] font-bold text-[#668078]">
+                        {lang === 'ko' ? `총 ${activeTagList.length}개 반영` : lang === 'ja' ? `全${activeTagList.length}個を反映` : lang === 'zh' ? `共应用${activeTagList.length}个` : `${activeTagList.length} applied`}
+                      </span>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col gap-0.5">
+                      <span className="font-bold text-[#49675E]">{lang === 'ko' ? '아직 선택하지 않았어요' : lang === 'ja' ? 'まだ選択されていません' : lang === 'zh' ? '尚未选择' : 'None selected yet'}</span>
+                      <span className="text-[10.5px] font-medium text-[#789087]">{lang === 'ko' ? '아래에서 원하는 특징을 선택해 주세요.' : lang === 'ja' ? '下から希望の特徴を選択してください。' : lang === 'zh' ? '请在下方选择想要的特征。' : 'Choose the features you want below.'}</span>
+                    </div>
+                  )}
+                </dd>
+              </dl>
             </div>
           </div>
           
