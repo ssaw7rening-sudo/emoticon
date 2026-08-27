@@ -206,6 +206,14 @@ section:has(textarea[readonly]) + section > div[class*="bg-[#EAF8F3]"] > span {
   }
 }
 
+/* Toast / 안내 팝업: use a warm peach palette that fits the cream and coral UI. */
+div[role="status"][aria-live="polite"] {
+  background-color: #F6C8B8;
+  border-color: #E9A48C;
+  color: #6F3428;
+  box-shadow: 0 8px 24px rgba(111, 52, 40, 0.16);
+}
+
 @layer utilities {
   .shadow-diffused {
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
