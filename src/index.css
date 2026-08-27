@@ -31,6 +31,29 @@
     font-display: swap;
 }
 
+/* Keep the document itself locked to the viewport. Horizontal carousels can
+   still scroll inside their own overflow-x containers, but an oversized child
+   must not make the entire mobile page pan left/right. */
+html,
+body,
+#root {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: clip;
+}
+
+@supports not (overflow: clip) {
+  html,
+  body,
+  #root {
+    overflow-x: hidden;
+  }
+}
+
+#root {
+  min-width: 0;
+}
+
 @layer base {
   body {
     min-height: max(884px, 100dvh);
@@ -74,6 +97,12 @@
      utility, so this must win over those local declarations. */
   word-break: keep-all !important;
   overflow-wrap: break-word;
+}
+
+/* keep-all can increase a flex/grid item's min-content width. Let structural
+   containers shrink back inside the viewport without changing text wrapping. */
+.lang-ko :where(div, section, main, article, header, footer, nav, form) {
+  min-width: 0;
 }
 
 .lang-en,
