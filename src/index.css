@@ -214,6 +214,14 @@ div[role="status"][aria-live="polite"] {
   box-shadow: 0 8px 24px rgba(111, 52, 40, 0.16);
 }
 
+/* On mobile, keep transient notices away from the hero banner. */
+@media (max-width: 639px) {
+  div[role="status"][aria-live="polite"] {
+    top: auto !important;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 1rem);
+  }
+}
+
 @layer utilities {
   .shadow-diffused {
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
