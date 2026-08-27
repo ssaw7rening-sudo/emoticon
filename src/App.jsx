@@ -579,8 +579,8 @@ const I18N = {
     photoBadge: '📷 사진 참고 모드',
     photoMethod: '사진 반영 방식',
     photoBalanced: '⭐ 균형 추천',
-    photoLikeness: '닮음 우선',
-    photoStyle: '화풍 우선',
+    photoLikeness: '🎯 닮음 우선',
+    photoStyle: '🎨 화풍 우선',
     photoAttachGuide: '프롬프트를 복사한 뒤 AI 대화창(ChatGPT, Gemini, Grok)에 참고할 사진도 함께 첨부해 주세요.',
     photoActive: '참고 이미지 사용',
     phrases: '이모티콘 문구 그리드',
@@ -669,8 +669,8 @@ const I18N = {
     photoBadge: '📷 Photo Reference Mode',
     photoMethod: 'Photo reference style',
     photoBalanced: '⭐ Balanced',
-    photoLikeness: 'Likeness First',
-    photoStyle: 'Style First',
+    photoLikeness: '🎯 Likeness First',
+    photoStyle: '🎨 Style First',
     photoAttachGuide: 'After copying the prompt, attach the reference photo in the AI chat (ChatGPT, Gemini, or Grok) as well.',
     photoActive: 'Reference image enabled',
     phrases: 'Phrase Grid',
@@ -757,8 +757,8 @@ const I18N = {
     photoBadge: '📷 写真参照モード',
     photoMethod: '写真参照スタイル',
     photoBalanced: '⭐ バランス推奨',
-    photoLikeness: '似顔絵優先',
-    photoStyle: '画風優先',
+    photoLikeness: '🎯 似顔絵優先',
+    photoStyle: '🎨 画風優先',
     photoAttachGuide: 'プロンプトコピー後、AIチャットにも写真を添付してください。',
     photoActive: '参照画像有効中',
     phrases: 'フレーズ選択 (15種)',
@@ -847,8 +847,8 @@ const I18N = {
     photoBadge: '📷 照片参考模式',
     photoMethod: '照片参考风格',
     photoBalanced: '⭐ 推荐平衡',
-    photoLikeness: '还原优先',
-    photoStyle: '画风优先',
+    photoLikeness: '🎯 还原优先',
+    photoStyle: '🎨 风格优先',
     photoAttachGuide: '复制提示词后，请在AI聊天框中同时发送参考照片。',
     photoActive: '参考图片已启用',
     phrases: '表情短语网格 (15种)',
@@ -6319,7 +6319,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                 {characterSource === 'photo' && (
                   <>
                     <dt className="font-bold text-[#668078]">{lang === 'ko' ? '사진 반영' : lang === 'ja' ? '写真反映' : lang === 'zh' ? '照片模式' : 'Photo mode'}</dt>
-                    <dd className="font-bold text-[#244E43]">⭐ {getPhotoModeLabel(lang)}</dd>
+                    <dd className="font-bold text-[#244E43]">{getPhotoModeLabel(lang)}</dd>
                   </>
                 )}
 
