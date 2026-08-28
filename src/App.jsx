@@ -7134,16 +7134,16 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
             <button
               type="button"
               onClick={() => setShowThemePicker(true)}
-              className="interactive-control touch-manipulation w-full min-h-[66px] sm:min-h-[72px] rounded-xl border-2 border-[#9ED2C0] bg-white px-4 py-3 sm:px-5 sm:py-3.5 text-left shadow-xs hover:bg-[#F3FAF7] focus:outline-none focus-visible:ring-4 focus-visible:ring-mint/40 transition-all"
+              className="interactive-control touch-manipulation w-full min-h-[62px] sm:min-h-[68px] rounded-xl border-2 border-[#9ED2C0] bg-white px-4 py-2.5 sm:px-5 sm:py-3 text-left shadow-xs hover:bg-[#F3FAF7] focus:outline-none focus-visible:ring-4 focus-visible:ring-mint/40 transition-all"
             >
               <span className="flex items-center justify-between gap-3">
                 <span className="min-w-0">
-                  <span className="block text-[11px] sm:text-[12px] font-extrabold text-mint-strong mb-0.5 uppercase tracking-wide">🎨 {t.activeThemeLabel || 'Active Theme'}</span>
-                  <strong className="block truncate text-[17px] sm:text-[20px] font-black text-[#133E32] tracking-tight">
+                  <span className="block text-[11px] sm:text-[11.5px] font-semibold text-mint-strong mb-0.5 uppercase tracking-wide">🎨 {t.activeThemeLabel || 'Active Theme'}</span>
+                  <strong className="block truncate text-[16px] sm:text-[18px] font-bold text-[#133E32] tracking-tight">
                     {activeTheme === 'custom' ? (t.customTheme || '✏️ Custom Theme') : activeTheme}
                   </strong>
                 </span>
-                <span className="inline-flex min-h-9 sm:min-h-10 items-center rounded-lg border border-[#A8D2C3] bg-[#E3F4ED] hover:bg-[#D5EFE5] px-3 sm:px-3.5 text-[12.5px] sm:text-[13.5px] font-black text-[#1E5D4B] shrink-0 shadow-2xs">
+                <span className="inline-flex min-h-9 sm:min-h-9.5 items-center rounded-lg border border-[#A8D2C3] bg-[#E3F4ED] hover:bg-[#D5EFE5] px-3 sm:px-3.5 text-[12px] sm:text-[13px] font-bold text-[#1E5D4B] shrink-0 shadow-2xs">
                   {lang === 'ko' ? '테마 변경 ›' : 'Change ›'}
                 </span>
               </span>
