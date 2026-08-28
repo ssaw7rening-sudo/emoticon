@@ -4486,9 +4486,23 @@ function App() {
     setCharManual('');
   };
 
-  // 🔤 Uniform 9px font size for all emoticon phrases
-  const getDynamicPhraseFontSize = () => 'text-[9px] sm:text-[9.5px] font-bold tracking-tight';
-  const getDynamicBatchFontSize = () => 'text-[9px] sm:text-[9.5px] font-bold tracking-tight';
+  // 🔤 Responsive font scaling (Mobile compact + PC natural readable balance)
+  const getDynamicPhraseFontSize = (str = '') => {
+    const len = (str || '').trim().length;
+    if (len <= 5) return 'text-[12px] sm:text-[13.5px] md:text-[14px] font-bold tracking-normal';
+    if (len <= 8) return 'text-[11px] sm:text-[12.5px] md:text-[13px] font-bold tracking-tight';
+    if (len <= 11) return 'text-[10.5px] sm:text-[11.5px] md:text-[12px] font-bold tracking-tight';
+    if (len <= 14) return 'text-[10px] sm:text-[11px] md:text-[11.5px] font-bold tracking-tighter';
+    return 'text-[9.5px] sm:text-[10.5px] md:text-[11px] font-extrabold tracking-tighter';
+  };
+
+  const getDynamicBatchFontSize = (str = '') => {
+    const len = (str || '').trim().length;
+    if (len <= 5) return 'text-[12px] sm:text-[13px] md:text-[13.5px] font-bold tracking-tight';
+    if (len <= 9) return 'text-[11px] sm:text-[12px] md:text-[12.5px] font-bold tracking-tight';
+    if (len <= 13) return 'text-[10px] sm:text-[11px] md:text-[11.5px] font-bold tracking-tighter';
+    return 'text-[9.5px] sm:text-[10px] md:text-[10.5px] font-extrabold tracking-tighter';
+  };
 
   const handleEmoticonChange = (index, value) => {
     const newEmoticons = [...emoticons];
@@ -7193,16 +7207,16 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
             <button
               type="button"
               onClick={() => setShowThemePicker(true)}
-              className="interactive-control touch-manipulation w-full min-h-[62px] sm:min-h-[66px] rounded-xl border-2 border-[#9ED2C0] bg-white px-3.5 py-2.5 sm:px-4 sm:py-3 text-left shadow-xs hover:bg-[#F3FAF7] focus:outline-none focus-visible:ring-4 focus-visible:ring-mint/40 transition-all"
+              className="interactive-control touch-manipulation w-full min-h-[66px] sm:min-h-[72px] rounded-xl border-2 border-[#9ED2C0] bg-white px-4 py-3 sm:px-5 sm:py-3.5 text-left shadow-xs hover:bg-[#F3FAF7] focus:outline-none focus-visible:ring-4 focus-visible:ring-mint/40 transition-all"
             >
               <span className="flex items-center justify-between gap-3">
                 <span className="min-w-0">
-                  <span className="block text-[10.5px] sm:text-[11px] font-bold text-mint-strong mb-0.5 uppercase tracking-wide">🎨 {t.activeThemeLabel || 'Active Theme'}</span>
-                  <strong className="block truncate text-[15px] sm:text-[16.5px] font-black text-[#133E32] tracking-tight">
+                  <span className="block text-[11px] sm:text-[12px] font-extrabold text-mint-strong mb-0.5 uppercase tracking-wide">🎨 {t.activeThemeLabel || 'Active Theme'}</span>
+                  <strong className="block truncate text-[17px] sm:text-[20px] font-black text-[#133E32] tracking-tight">
                     {activeTheme === 'custom' ? (t.customTheme || '✏️ Custom Theme') : activeTheme}
                   </strong>
                 </span>
-                <span className="inline-flex min-h-9 items-center rounded-lg border border-[#A8D2C3] bg-[#E3F4ED] hover:bg-[#D5EFE5] px-3 text-[12px] sm:text-[12.5px] font-black text-[#1E5D4B] shrink-0 shadow-2xs">
+                <span className="inline-flex min-h-9 sm:min-h-10 items-center rounded-lg border border-[#A8D2C3] bg-[#E3F4ED] hover:bg-[#D5EFE5] px-3 sm:px-3.5 text-[12.5px] sm:text-[13.5px] font-black text-[#1E5D4B] shrink-0 shadow-2xs">
                   {lang === 'ko' ? '테마 변경 ›' : 'Change ›'}
                 </span>
               </span>
@@ -7290,12 +7304,12 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                     ? 'col-span-2 max-w-[calc(50%_-_6px)] justify-self-center sm:col-span-1 sm:max-w-none'
                     : ''
                 }`}>
-                <span className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 z-10 flex h-[18px] w-[18px] items-center justify-center rounded-full bg-[#DDF3EA] text-[9px] font-black text-[#2F7D68] shadow-2xs shrink-0">{idx + 1}</span>
+                <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 z-10 flex h-[20px] w-[20px] items-center justify-center rounded-full bg-[#DDF3EA] text-[9.5px] sm:text-[10px] font-black text-[#2F7D68] shadow-2xs shrink-0">{idx + 1}</span>
                 <input
                   type="text"
                   value={text}
                   onChange={(e) => handleEmoticonChange(idx, e.target.value)}
-                  className={`interactive-control w-full h-[44px] sm:h-[46px] bg-[#F4FBF7] hover:bg-[#ECF8F1] focus:bg-white rounded-full pl-9 sm:pl-9.5 pr-3 text-left text-[#1D4A3C] focus:text-slate-900 ${getDynamicPhraseFontSize(text)} placeholder:text-slate-400 focus:outline-none focus:ring-3 focus:ring-mint/50 border-2 border-[#B8DDCF] focus:border-mint-strong transition-all overflow-x-auto whitespace-nowrap`}
+                  className={`interactive-control w-full h-[44px] sm:h-[48px] bg-[#F4FBF7] hover:bg-[#ECF8F1] focus:bg-white rounded-full pl-10 sm:pl-10.5 pr-3 text-left text-[#1D4A3C] focus:text-slate-900 ${getDynamicPhraseFontSize(text)} placeholder:text-slate-400 focus:outline-none focus:ring-3 focus:ring-mint/50 border-2 border-[#B8DDCF] focus:border-mint-strong transition-all overflow-x-auto whitespace-nowrap`}
                   placeholder={`Phrase ${idx + 1}`}
                 />
               </label>
