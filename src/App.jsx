@@ -583,6 +583,22 @@ const I18N = {
     photoStyle: '🎨 화풍 우선',
     photoAttachGuide: '프롬프트를 복사한 뒤 AI 대화창(ChatGPT, Gemini, Grok)에 참고할 사진도 함께 첨부해 주세요.',
     photoActive: '참고 이미지 사용',
+    quotaTitle: (rem, total) => `오늘 무료 복사 잔여 : ${rem}회 / ${total}회`,
+    quotaSub: '매일 밤 자정에 3회가 새로 충전됩니다. 로그인 시 평생 무제한 무료!',
+    quotaBtn: '3초 로그인하고 무제한 풀기 ›',
+    quotaMemberTitle: (name) => `${name}님은 평생 무제한 무료 VIP 회원입니다`,
+    quotaMemberSub: '110종 테마, 사진 연동, AI 3종 분할 프롬프트를 무제한 이용 중입니다.',
+    loginModalTitle1: '3초 간편 로그인으로',
+    loginModalTitle2: '평생 무제한 무료 이용하기',
+    loginModalSubQuota: '오늘의 무료 3회를 모두 사용하셨습니다. 로그인 시 110종 테마 & 사진 연동을 무제한으로 이용하실 수 있습니다.',
+    loginModalSubGeneral: '로그인 시 110종 테마, 사진 참고 캐리커처, AI 3종 분할 프롬프트를 평생 무제한 무료로 제공합니다.',
+    loginGoogleBtn: 'Google 계정으로 1초 시작하기',
+    loginModalFooter: '🔒 개인정보는 안전하게 보호되며 추가 비용은 없습니다.',
+    copyToastQuota: (n) => `📋 프롬프트 복사 완료! (오늘 무료 잔여: ${n}회)`,
+    copyToastQuotaLimit: '🔒 오늘의 무료 체험 3회를 모두 사용하셨습니다. 3초 로그인 시 평생 무제한 무료!',
+    previewBlurTitle: '오늘의 무료 체험 3회를 모두 사용하셨습니다',
+    previewBlurSub: '3초 간편 로그인 시 110종 테마, 사진 참고 모드, 전체 프롬프트를 평생 무제한 무료로 즉시 확인하실 수 있습니다.',
+    previewBlurBtn: '3초 로그인하고 전체 프롬프트 보기',
     phrases: '이모티콘 문구 그리드',
     themeSelect: '테마 선택',
     randomMix: '랜덤', 
@@ -673,6 +689,22 @@ const I18N = {
     photoStyle: '🎨 Style First',
     photoAttachGuide: 'After copying the prompt, attach the reference photo in the AI chat (ChatGPT, Gemini, or Grok) as well.',
     photoActive: 'Reference image enabled',
+    quotaTitle: (rem, total) => `Free Daily Copies Left: ${rem} / ${total}`,
+    quotaSub: 'Resets daily at midnight. Log in for lifetime unlimited free access!',
+    quotaBtn: 'Unlock Unlimited Free Access in 3s ›',
+    quotaMemberTitle: (name) => `${name} has lifetime unlimited VIP access`,
+    quotaMemberSub: 'Unlimited access to all 110 themes, photo mode, and AI prompts.',
+    loginModalTitle1: 'Log in in 3 Seconds',
+    loginModalTitle2: 'Unlock Lifetime Unlimited Access',
+    loginModalSubQuota: 'Daily free quota used up. Log in to get lifetime unlimited access!',
+    loginModalSubGeneral: 'Enjoy all 110 themes, photo caricature mode, and 3 AI prompts with lifetime unlimited access.',
+    loginGoogleBtn: 'Continue with Google',
+    loginModalFooter: '🔒 Your data is safe. 100% free with zero hidden costs.',
+    copyToastQuota: (n) => `📋 Prompt copied! (${n} free copies left today)`,
+    copyToastQuotaLimit: '🔒 Daily free quota (3/3) used. Log in for unlimited access!',
+    previewBlurTitle: 'Daily Free Quota (3/3) Reached',
+    previewBlurSub: 'Log in in 3 seconds to instantly view all prompts and enjoy lifetime unlimited free access.',
+    previewBlurBtn: 'Log in in 3s to View Full Prompt',
     phrases: 'Phrase Grid',
     themeSelect: 'Select Theme',
     randomMix: 'Random Mix',
@@ -761,6 +793,22 @@ const I18N = {
     photoStyle: '🎨 画風優先',
     photoAttachGuide: 'プロンプトコピー後、AIチャットにも写真を添付してください。',
     photoActive: '参照画像有効中',
+    quotaTitle: (rem, total) => `本日無料コピー残り : ${rem}回 / ${total}回`,
+    quotaSub: '毎晩0時に3回再チャージ。ログインで一生無制限無料！',
+    quotaBtn: '3秒で無制限無料を解除 ›',
+    quotaMemberTitle: (name) => `${name}様は一生無制限無料のVIP会員です`,
+    quotaMemberSub: '110種のテーマ、写真連動、3種AIプロンプトを無制限利用中。',
+    loginModalTitle1: '3秒簡単ログインで',
+    loginModalTitle2: '一生無制限で無料利用',
+    loginModalSubQuota: '本日の無料3回をすべて使用しました。ログインで110種のテーマと写真連動を無制限利用できます。',
+    loginModalSubGeneral: 'ログインで110種のテーマ、写真参考似顔絵、3大AIプロンプトが一生無制限無料で使い放題。',
+    loginGoogleBtn: 'Googleアカウントで1秒スタート',
+    loginModalFooter: '🔒 個人情報は安全に保護され、追加費用は一切かかりません。',
+    copyToastQuota: (n) => `📋 プロンプトをコピーしました！（本日無料残り: ${n}回）`,
+    copyToastQuotaLimit: '🔒 本日の無料3回をすべて使用しました。ログインで無制限無料！',
+    previewBlurTitle: '本日の無料体験（3回）が終了しました',
+    previewBlurSub: '3秒ログインで110種のテーマ・写真モード・全プロンプトを一生無制限無料で見られます。',
+    previewBlurBtn: '3秒ログインして全プロンプトを見る',
     phrases: 'フレーズ選択 (15種)',
     themeSelect: 'テーマ選択',
     randomMix: 'ランダム',
@@ -851,6 +899,22 @@ const I18N = {
     photoStyle: '🎨 风格优先',
     photoAttachGuide: '复制提示词后，请在AI聊天框中同时发送参考照片。',
     photoActive: '参考图片已启用',
+    quotaTitle: (rem, total) => `今日免费复制剩余 : ${rem}次 / ${total}次`,
+    quotaSub: '每晚午夜重新充值3次。登录即可终身无限免费！',
+    quotaBtn: '3秒登录解锁无限免费 ›',
+    quotaMemberTitle: (name) => `${name}是终身无限免费VIP会员`,
+    quotaMemberSub: '畅享110种主题、照片参考与3大AI提示词无限制。',
+    loginModalTitle1: '3秒快速登录',
+    loginModalTitle2: '终身无限免费使用',
+    loginModalSubQuota: '今天的3次免费额度已用完。登录即可畅享110种主题与照片参考无限制。',
+    loginModalSubGeneral: '登录即可终身无限免费畅享110种主题、照片参考转2D与3大AI专属提示词。',
+    loginGoogleBtn: '通过 Google 账号一键开始',
+    loginModalFooter: '🔒 个人信息受到安全保护，无任何附加费用。',
+    copyToastQuota: (n) => `📋 提示词已复制！（今日免费剩余：${n}次）`,
+    copyToastQuotaLimit: '🔒 今天的3次免费额度已用完。登录即可终身无限免费！',
+    previewBlurTitle: '今天的3次免费体验额度已用完',
+    previewBlurSub: '3秒简单登录即可终身无限免费查看全部提示词与110种主题。',
+    previewBlurBtn: '3秒登录查看完整提示词',
     phrases: '表情短语网格 (15种)',
     themeSelect: '主题选择',
     randomMix: '随机混合',
@@ -1380,16 +1444,16 @@ const PrivacyPage = ({ lang, onBack }) => {
                 ✨
               </div>
               <h3 className="text-[17px] sm:text-[18px] font-black text-slate-900 leading-tight">
-                {lang === 'ko' ? '3초 간편 로그인으로' : 'Log in in 3 Seconds'}
+                {t.loginModalTitle1 || 'Log in in 3 Seconds'}
                 <br />
                 <span className="text-amber-600">
-                  {lang === 'ko' ? '평생 무제한 무료 이용하기' : 'Unlock Unlimited Free Access'}
+                  {t.loginModalTitle2 || 'Unlock Lifetime Unlimited Access'}
                 </span>
               </h3>
               <p className="text-[12px] sm:text-[12.5px] font-medium text-slate-600 leading-relaxed mt-0.5 break-keep">
                 {loginModalTriggerReason === 'quota'
-                  ? (lang === 'ko' ? '오늘의 무료 3회를 모두 사용하셨습니다. 로그인 시 110종 테마 & 사진 연동을 무제한으로 이용하실 수 있습니다.' : 'Daily free quota used up. Log in to get lifetime unlimited access!')
-                  : (lang === 'ko' ? '로그인 시 110종 테마, 사진 참고 캐리커처, AI 3종 분할 프롬프트를 평생 무제한 무료로 제공합니다.' : 'Enjoy all 110 themes, photo caricature mode, and 3 AI prompts with unlimited access.')}
+                  ? (t.loginModalSubQuota || 'Daily free quota used up. Log in to get lifetime unlimited access!')
+                  : (t.loginModalSubGeneral || 'Enjoy all 110 themes, photo caricature mode, and 3 AI prompts with lifetime unlimited access.')}
               </p>
             </div>
 
@@ -1406,13 +1470,13 @@ const PrivacyPage = ({ lang, onBack }) => {
                   <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
                   <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
                 </svg>
-                <span>{lang === 'ko' ? 'Google 계정으로 1초 시작하기' : 'Continue with Google'}</span>
+                <span>{t.loginGoogleBtn || 'Continue with Google'}</span>
               </button>
             </div>
 
             {/* Footer Trust Note */}
             <div className="pt-2 border-t border-slate-100 flex items-center justify-center gap-1 text-[11px] font-bold text-slate-500">
-              <span>🔒 {lang === 'ko' ? '개인정보는 안전하게 보호되며 추가 비용은 없습니다.' : 'Safe & 100% Free Forever'}</span>
+              <span>{t.loginModalFooter || '🔒 Safe & 100% Free Forever'}</span>
             </div>
           </div>
         </div>
@@ -4223,7 +4287,7 @@ function App() {
     if (dailyUsage >= FREE_DAILY_LIMIT) {
       setLoginModalTriggerReason('quota');
       setShowLoginModal(true);
-      showToast(lang === 'ko' ? '🔒 오늘의 무료 체험 3회를 모두 사용하셨습니다. 3초 로그인 시 평생 무제한 무료!' : '🔒 Daily free quota (3/3) used. Log in for unlimited free access!');
+      showToast(t.copyToastQuotaLimit || '🔒 Daily free quota (3/3) used. Log in for unlimited free access!');
       return false;
     }
     const newCount = dailyUsage + 1;
@@ -6391,6 +6455,10 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
     navigator.clipboard.writeText(textToCopy);
     setCopiedType(copyKey);
     setTimeout(() => setCopiedType(null), 2500);
+    if (!isMember) {
+      const left = Math.max(0, FREE_DAILY_LIMIT - (dailyUsage + 1));
+      showToast(t.copyToastQuota ? t.copyToastQuota(left) : `📋 Prompt copied! (${left} free left)`);
+    }
   };
 
   const promptValidationError = getPromptValidationError(
@@ -7238,10 +7306,10 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                 <span className="text-[18px]">👑</span>
                 <div className="min-w-0">
                   <strong className="block text-[13px] sm:text-[14px] font-black text-[#133E32] truncate">
-                    {currentUser.nickname}{lang === 'ko' ? '님은 평생 무제한 무료 VIP 회원입니다' : ' has lifetime unlimited VIP access'}
+                    {t.quotaMemberTitle ? t.quotaMemberTitle(currentUser.nickname) : `${currentUser.nickname} has VIP access`}
                   </strong>
                   <span className="text-[11px] font-medium text-[#1E5D4B]">
-                    {lang === 'ko' ? '110종 테마, 사진 연동, AI 3종 분할 프롬프트를 무제한 이용 중입니다.' : 'Unlimited access to all 110 themes, photo mode, and prompts.'}
+                    {t.quotaMemberSub || 'Unlimited access to all 110 themes, photo mode, and prompts.'}
                   </span>
                 </div>
               </div>
@@ -7250,7 +7318,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                 onClick={logoutUser}
                 className="interactive-control text-[11px] font-bold text-[#1E5D4B] hover:text-rose-600 underline cursor-pointer shrink-0"
               >
-                {lang === 'ko' ? '로그아웃' : 'Logout'}
+                {lang === 'ko' ? '로그아웃' : lang === 'ja' ? 'ログアウト' : lang === 'zh' ? '退出登录' : 'Logout'}
               </button>
             </div>
           ) : (
@@ -7260,11 +7328,11 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                 <div className="flex flex-col min-w-0">
                   <div className="flex items-center gap-2">
                     <span className="text-[13.5px] sm:text-[14.5px] font-black text-[#5A3F05]">
-                      {lang === 'ko' ? `오늘 무료 복사 잔여 : ${remainingFreeUsage}회 / ${FREE_DAILY_LIMIT}회` : `Free Daily Quota: ${remainingFreeUsage}/${FREE_DAILY_LIMIT}`}
+                      {t.quotaTitle ? t.quotaTitle(remainingFreeUsage, FREE_DAILY_LIMIT) : `Free Daily Copies: ${remainingFreeUsage}/${FREE_DAILY_LIMIT}`}
                     </span>
                   </div>
                   <span className="text-[11.5px] sm:text-[12px] font-medium text-[#8C6514]">
-                    {lang === 'ko' ? '매일 밤 자정에 3회가 새로 충전됩니다. 로그인 시 평생 무제한 무료!' : 'Resets daily at midnight. Log in for unlimited free access.'}
+                    {t.quotaSub || 'Resets daily at midnight. Log in for unlimited free access!'}
                   </span>
                 </div>
               </div>
@@ -7277,7 +7345,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                 className="interactive-control touch-manipulation flex items-center justify-center gap-2 min-h-11 sm:min-h-12 px-5 sm:px-6 rounded-full bg-gradient-to-r from-[#FFD369] via-[#FFC745] to-[#FFAA00] hover:from-[#FFC745] hover:to-[#FF9E00] text-[#3D2800] border-2 border-[#E0A800] text-[13px] sm:text-[13.5px] font-extrabold shadow-md hover:shadow-lg active:scale-95 transition-all whitespace-nowrap cursor-pointer shrink-0"
               >
                 <span className="text-[15px]">👑</span>
-                <span>{lang === 'ko' ? '3초 로그인하고 무제한 풀기 ›' : 'Unlock Unlimited Free Access ›'}</span>
+                <span>{t.quotaBtn || 'Unlock Unlimited Free Access in 3s ›'}</span>
               </button>
             </div>
           )}
@@ -7646,12 +7714,10 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                 </div>
                 <div className="flex flex-col gap-1 max-w-sm">
                   <strong className="text-[15px] sm:text-[16px] font-black text-amber-950">
-                    {lang === 'ko' ? '오늘의 무료 체험 3회를 모두 사용하셨습니다' : 'Daily Free Quota (3/3) Reached'}
+                    {t.previewBlurTitle || 'Daily Free Quota (3/3) Reached'}
                   </strong>
                   <p className="text-[12px] sm:text-[12.5px] font-medium text-amber-800 leading-relaxed break-keep">
-                    {lang === 'ko' 
-                      ? '3초 간편 로그인 시 110종 테마, 사진 참고 모드, 전체 프롬프트를 평생 무제한 무료로 즉시 확인하실 수 있습니다.' 
-                      : 'Log in with Kakao, Naver, or Google to enjoy 100% unlimited free access forever.'}
+                    {t.previewBlurSub || 'Log in in 3 seconds to instantly view all prompts and enjoy lifetime unlimited free access.'}
                   </p>
                 </div>
                 <button
@@ -7663,7 +7729,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                   className="interactive-control touch-manipulation px-5 py-2.5 rounded-full bg-gradient-to-r from-amber-400 to-orange-400 hover:from-amber-500 hover:to-orange-500 text-amber-950 font-black text-[13.5px] sm:text-[14px] shadow-md active:scale-95 transition-all flex items-center gap-1.5 cursor-pointer"
                 >
                   <span>👑</span>
-                  <span>{lang === 'ko' ? '3초 로그인하고 전체 프롬프트 보기' : 'Log in for Unlimited Free Access'}</span>
+                  <span>{t.previewBlurBtn || 'Log in in 3s to View Full Prompt'}</span>
                 </button>
               </div>
             )}
