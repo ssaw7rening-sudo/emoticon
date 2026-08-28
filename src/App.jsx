@@ -7637,18 +7637,48 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
               </strong>
             </div>
           )}
-          <div className="relative bg-surface-container-lowest rounded-md p-3.5 sm:p-md shadow-[#B8E3D2] border border-outline-variant overflow-hidden">
+          <div className="relative bg-surface-container-lowest rounded-xl p-3 sm:p-3.5 shadow-bubbly border-2 border-[#9ED2C0] flex flex-col gap-2.5">
+            <div className="flex items-center justify-between gap-2 px-1">
+              <span className="text-[13px] sm:text-[13.5px] font-black text-mint-strong flex items-center gap-1.5 min-w-0 truncate">
+                <span>🔍</span>
+                <span className="truncate">{lang === 'ko' ? `${previewMode === 'gpt' ? 'ChatGPT' : previewMode === 'gemini' ? 'Gemini' : 'Grok'} 프롬프트 미리보기` : `${previewMode.toUpperCase()} Prompt Preview`}</span>
+              </span>
+              <button
+                type="button"
+                onClick={() => copyToClipboard(previewMode, generationMode === 'individual' ? individualPhrase : null, 'preview-direct-copy')}
+                className="interactive-control flex items-center gap-1 min-h-8.5 px-3 py-1 rounded-full bg-mint hover:bg-mint-hover text-mint-strong border border-mint-border text-[12px] sm:text-[12.5px] font-black shadow-xs active:scale-95 transition-all cursor-pointer shrink-0"
+              >
+                {copiedType === 'preview-direct-copy' ? <CheckCircle2 size={13} /> : <span>📋</span>}
+                <span>{copiedType === 'preview-direct-copy' ? (lang === 'ko' ? '복사 완료!' : 'Copied!') : (lang === 'ko' ? '이 프롬프트 복사' : 'Copy Prompt')}</span>
+              </button>
+            </div>
+
             <textarea 
-              className="w-full bg-white border-2 border-outline-variant rounded-md p-4 text-on-surface font-normal focus:outline-none resize-y min-h-[200px] max-h-[460px] shadow-sm scroll-smooth [scrollbar-width:thin] [scrollbar-color:#FCD3A1_transparent] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-[#FCD3A1] [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-[#E8C66A]"
+              className="w-full bg-white border-2 border-[#B8DDCF] focus:border-mint-strong rounded-xl p-3.5 sm:p-4 text-on-surface font-normal focus:outline-none resize-y min-h-[190px] max-h-[460px] shadow-sm scroll-smooth [scrollbar-width:thin] [scrollbar-color:#A6E3D0_transparent] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-[#A6E3D0] [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-mint-strong"
               readOnly
               value={getPreviewPrompt()}
             />
+
+            <button
+              type="button"
+              onClick={() => {
+                const el = document.getElementById('ai-action-hub');
+                if (el) {
+                  const y = el.getBoundingClientRect().top + window.scrollY - 70;
+                  window.scrollTo({ top: y, behavior: 'smooth' });
+                }
+              }}
+              className="interactive-control w-full min-h-9.5 rounded-xl bg-[#F0FAF5] hover:bg-[#E2F6ED] border border-[#BDE4D5] text-mint-strong text-[12px] sm:text-[12.5px] font-extrabold flex items-center justify-center gap-1.5 transition-all shadow-2xs cursor-pointer active:scale-98"
+            >
+              <span>🚀</span>
+              <span>{lang === 'ko' ? 'AI 사이트 바로 열기 및 모델별 복사 버튼으로 이동 ↓' : 'Go to AI Launch & Model Copy Buttons Below ↓'}</span>
+            </button>
           </div>
 
         </section>
 
         {/* Actions: One-Click Launch & Copy Dual Hub */}
-        <section className="flex flex-col gap-3 mt-2 pb-4">
+        <section id="ai-action-hub" className="flex flex-col gap-3 mt-2 pb-4">
           <AdBanner />
           <div className="bg-[#EAF8F3] p-3 rounded-lg border border-mint-border flex items-center justify-between text-[12.5px] font-bold text-mint-strong">
             <span className="flex items-center gap-1.5">
