@@ -6958,17 +6958,17 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
 
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-2.5 md:gap-3 bg-white rounded-xl p-3 sm:p-3.5 shadow-bubbly border-2 border-[#C6E7DA]">
             {emoticons.map((text, idx) => (
-              <label key={idx} className={`relative block ${
+              <label key={idx} className={`relative flex items-center min-h-[50px] sm:min-h-[54px] bg-[#F4FBF7] hover:bg-[#ECF8F1] focus-within:bg-white rounded-xl p-2 pl-8 border-2 border-[#B8DDCF] focus-within:border-mint-strong focus-within:ring-3 focus-within:ring-mint/40 transition-all shadow-2xs ${
                   idx === emoticons.length - 1
                     ? 'col-span-2 max-w-[calc(50%_-_6px)] justify-self-center sm:col-span-1 sm:max-w-none'
                     : ''
                 }`}>
-                <span className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 z-10 flex h-[16px] w-[16px] items-center justify-center rounded-full bg-[#DDF3EA] text-[8.5px] font-black text-[#2F7D68]">{idx + 1}</span>
-                <input
-                  type="text"
+                <span className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 z-10 flex h-[16px] w-[16px] items-center justify-center rounded-full bg-[#DDF3EA] text-[8.5px] font-black text-[#2F7D68] shrink-0">{idx + 1}</span>
+                <textarea
+                  rows={2}
                   value={text}
                   onChange={(e) => handleEmoticonChange(idx, e.target.value)}
-                  className="interactive-control w-full h-[45px] sm:h-[48px] bg-[#F4FBF7] hover:bg-[#ECF8F1] focus:bg-white rounded-full pl-8 pr-2.5 text-left text-[#214F40] focus:text-slate-900 text-[12.5px] sm:text-[13px] font-bold tracking-tight placeholder:text-slate-400 focus:outline-none focus:ring-3 focus:ring-mint/50 border-2 border-[#B8DDCF] focus:border-mint-strong transition-all text-ellipsis overflow-hidden whitespace-nowrap"
+                  className="interactive-control w-full bg-transparent text-left text-[#214F40] focus:text-slate-900 text-[12px] sm:text-[12.5px] font-bold tracking-tight placeholder:text-slate-400 focus:outline-none resize-none leading-snug break-keep overflow-y-auto no-scrollbar flex items-center my-auto"
                   placeholder={`Phrase ${idx + 1}`}
                 />
               </label>
@@ -7036,16 +7036,16 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                           setBatchPhrase(phrase);
                           copyToClipboard(previewMode, phrase, copyKey);
                         }}
-                        className={`interactive-control min-h-11 px-3 py-2 rounded-md border font-bold flex items-center justify-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E8C66A] focus-visible:ring-offset-2 ${
+                        className={`interactive-control min-h-[50px] px-2.5 py-2 rounded-xl border font-bold flex items-center justify-center gap-1.5 text-center focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E8C66A] focus-visible:ring-offset-2 ${
                           isSelected
                             ? 'bg-[#FFE8B5] text-[#5A461B] border-[#E8C66A] shadow-sm'
                             : 'bg-white text-on-surface border-[#E9DFC5] hover:bg-[#FFF3D8]'
                         }`}
                       >
                         {copiedType === copyKey
-                          ? <CheckCircle2 size={17} aria-label={t.copiedPrompt} />
-                          : <span className="text-[12px] font-black opacity-70">{idx + 1}</span>}
-                        <span className="truncate">{phrase}</span>
+                          ? <CheckCircle2 size={16} className="shrink-0" aria-label={t.copiedPrompt} />
+                          : <span className="text-[11px] font-black opacity-70 shrink-0">{idx + 1}.</span>}
+                        <span className="text-[11.5px] sm:text-[12px] leading-snug break-keep">{phrase}</span>
                       </button>
                     );
                   })}
