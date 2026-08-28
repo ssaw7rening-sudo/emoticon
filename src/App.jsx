@@ -4238,9 +4238,9 @@ function App() {
     setCharManual('');
   };
 
-  // 🔤 Uniform 10px font size for all emoticon phrases
-  const getDynamicPhraseFontSize = () => 'text-[10px] sm:text-[10.5px] font-bold tracking-tight';
-  const getDynamicBatchFontSize = () => 'text-[10px] sm:text-[10.5px] font-bold tracking-tight';
+  // 🔤 Uniform 9px font size for all emoticon phrases
+  const getDynamicPhraseFontSize = () => 'text-[9px] sm:text-[9.5px] font-bold tracking-tight';
+  const getDynamicBatchFontSize = () => 'text-[9px] sm:text-[9.5px] font-bold tracking-tight';
 
   const handleEmoticonChange = (index, value) => {
     const newEmoticons = [...emoticons];
