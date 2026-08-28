@@ -4238,23 +4238,9 @@ function App() {
     setCharManual('');
   };
 
-  // 🔤 Dynamic auto-scaling font size based on phrase text length (1px Slim Compact Scale)
-  const getDynamicPhraseFontSize = (str = '') => {
-    const len = (str || '').trim().length;
-    if (len <= 5) return 'text-[12px] sm:text-[13px] tracking-tight font-bold';
-    if (len <= 8) return 'text-[11px] sm:text-[12px] tracking-tight font-bold';
-    if (len <= 11) return 'text-[10px] sm:text-[11px] tracking-tighter font-bold';
-    if (len <= 14) return 'text-[9.5px] sm:text-[10px] tracking-tighter font-bold';
-    return 'text-[9px] sm:text-[9.5px] tracking-tighter font-extrabold';
-  };
-
-  const getDynamicBatchFontSize = (str = '') => {
-    const len = (str || '').trim().length;
-    if (len <= 5) return 'text-[11.5px] sm:text-[12px] tracking-tight';
-    if (len <= 9) return 'text-[10.5px] sm:text-[11px] tracking-tight';
-    if (len <= 13) return 'text-[9.5px] sm:text-[10px] tracking-tighter';
-    return 'text-[9px] sm:text-[9.5px] tracking-tighter';
-  };
+  // 🔤 Uniform 10px font size for all emoticon phrases
+  const getDynamicPhraseFontSize = () => 'text-[10px] sm:text-[10.5px] font-bold tracking-tight';
+  const getDynamicBatchFontSize = () => 'text-[10px] sm:text-[10.5px] font-bold tracking-tight';
 
   const handleEmoticonChange = (index, value) => {
     const newEmoticons = [...emoticons];
