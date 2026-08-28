@@ -6850,41 +6850,41 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
 
         {/* Section 2: Emoji Phrases */}
         <section id="emoticon-phrase-grid" className="flex flex-col gap-md break-keep">
-          <div className="rounded-xl border border-[#B9DDD0] bg-linear-to-br from-[#F7FCFA] to-white p-3.5 sm:p-4 shadow-bubbly flex flex-col gap-3">
+          <div className="rounded-xl border border-[#B9DDD0] bg-linear-to-br from-[#F7FCFA] to-white p-3.5 sm:p-4 shadow-bubbly flex flex-col gap-2.5">
             <div className="flex items-start justify-between gap-3">
-              <div className="flex flex-col gap-1">
-                <h2 className="text-[18px] sm:text-[20px] font-black text-on-surface">{lang === 'ko' ? '이모티콘 문구 테마 선택' : t.phrases}</h2>
-                <p className="text-[13.5px] leading-relaxed font-medium text-on-surface-variant">
+              <div className="flex flex-col gap-0.5">
+                <h2 className="text-[15px] sm:text-[16.5px] font-black text-on-surface">{lang === 'ko' ? '이모티콘 문구 테마 선택' : t.phrases}</h2>
+                <p className="text-[12px] sm:text-[12.5px] leading-relaxed font-medium text-on-surface-variant">
                   {lang === 'ko' ? '원하는 상황을 선택하면 15개 문구가 한 번에 변경됩니다.' : 'Choose a situation to update all 15 phrases.'}
                 </p>
               </div>
-              <button onClick={shuffleEmoticons} className="interactive-control min-h-10 px-3 rounded-lg bg-white text-mint-strong border border-mint-border text-[13px] font-bold shrink-0 whitespace-nowrap">
-                <Shuffle size={14} className="inline mr-1" />{t.randomMix}
+              <button onClick={shuffleEmoticons} className="interactive-control min-h-9 px-2.5 rounded-lg bg-white text-mint-strong border border-mint-border text-[12px] font-bold shrink-0 whitespace-nowrap">
+                <Shuffle size={13} className="inline mr-1" />{t.randomMix}
               </button>
             </div>
 
             <button
               type="button"
               onClick={() => setShowThemePicker(true)}
-              className="interactive-control touch-manipulation w-full min-h-[66px] rounded-xl border border-[#A8D2C3] bg-white px-4 py-3 text-left shadow-sm hover:bg-[#F7FCFA] focus:outline-none focus-visible:ring-4 focus-visible:ring-mint/40"
+              className="interactive-control touch-manipulation w-full min-h-[70px] rounded-xl border-2 border-[#9ED2C0] bg-white px-4 py-3 text-left shadow-xs hover:bg-[#F3FAF7] focus:outline-none focus-visible:ring-4 focus-visible:ring-mint/40 transition-all"
             >
               <span className="flex items-center justify-between gap-3">
                 <span className="min-w-0">
-                  <span className="block text-[12px] font-bold text-mint-strong mb-0.5">🎨 {t.activeThemeLabel || 'Active Theme'}</span>
-                  <strong className="block truncate text-[16px] sm:text-[18px] font-black text-on-surface">
+                  <span className="block text-[11px] sm:text-[11.5px] font-extrabold text-mint-strong mb-0.5 uppercase tracking-wide">🎨 {t.activeThemeLabel || 'Active Theme'}</span>
+                  <strong className="block truncate text-[18px] sm:text-[21px] font-black text-[#133E32] tracking-tight">
                     {activeTheme === 'custom' ? (t.customTheme || '✏️ Custom Theme') : activeTheme}
                   </strong>
                 </span>
-                <span className="inline-flex min-h-10 items-center rounded-lg border border-[#A8D2C3] bg-[#E3F4ED] px-3 text-[13px] font-black text-[#286C58] shrink-0">
-                  {lang === 'ko' ? '변경 ›' : 'Change ›'}
+                <span className="inline-flex min-h-10 items-center rounded-lg border border-[#A8D2C3] bg-[#E3F4ED] hover:bg-[#D5EFE5] px-3.5 text-[13px] sm:text-[13.5px] font-black text-[#1E5D4B] shrink-0 shadow-2xs">
+                  {lang === 'ko' ? '테마 변경 ›' : 'Change ›'}
                 </span>
               </span>
             </button>
 
             <div className="flex items-center gap-2 overflow-x-auto no-scrollbar" aria-label={lang === 'ko' ? '추천 테마' : 'Recommended themes'}>
-              <span className="text-[12px] font-black text-[#8A6048] shrink-0 whitespace-nowrap">🔥 {lang === 'ko' ? '추천' : 'Popular'}</span>
+              <span className="text-[11px] sm:text-[11.5px] font-extrabold text-[#8A6048] shrink-0 whitespace-nowrap">🔥 {lang === 'ko' ? '인기 추천' : 'Popular'}</span>
               {sortedThemeKeys.slice(0, 3).map((theme) => (
-                <button key={theme} type="button" onClick={() => selectPopularTheme(theme)} className={`touch-manipulation min-h-9 max-w-[180px] truncate rounded-full border px-3 text-[13px] font-bold shrink-0 whitespace-nowrap ${activeTheme === theme ? 'bg-[#FFF0E3] border-[#E9B88E] text-[#9A4B22]' : 'bg-white border-[#E8D8CA] text-[#7A5A46]'}`}>
+                <button key={theme} type="button" onClick={() => selectPopularTheme(theme)} className={`touch-manipulation min-h-8 max-w-[180px] truncate rounded-full border px-3 text-[12.5px] sm:text-[13px] font-bold shrink-0 whitespace-nowrap ${activeTheme === theme ? 'bg-[#FFF0E3] border-[#E9B88E] text-[#9A4B22] font-black' : 'bg-white border-[#E8D8CA] text-[#7A5A46]'}`}>
                   {activeTheme === theme ? '✓ ' : ''}{theme}
                 </button>
               ))}
@@ -6924,7 +6924,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                       <span className="text-[12px] font-black text-on-surface-variant">{lang === 'ko' ? '최근·추천 테마' : 'Recent & recommended'}</span>
                       <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                         {recentThemeKeys.map((theme) => (
-                          <button key={`recent-${theme}`} type="button" onClick={() => selectPopularTheme(theme)} className={`touch-manipulation min-h-11 rounded-lg border px-3 py-2 text-[14px] sm:text-[14.5px] font-bold text-left truncate ${activeTheme === theme ? 'bg-mint-strong text-white border-[#1E453B] ring-2 ring-mint/50' : 'bg-[#EEF8F4] text-[#285E50] border-[#B9DDD0] hover:bg-[#E3F4ED]'}`}>
+                          <button key={`recent-${theme}`} type="button" onClick={() => selectPopularTheme(theme)} className={`touch-manipulation min-h-12 rounded-lg border px-3.5 py-2 text-[15px] sm:text-[16px] font-black text-left truncate ${activeTheme === theme ? 'bg-mint-strong text-white border-[#1E453B] ring-2 ring-mint/50' : 'bg-[#EEF8F4] text-[#1E4E42] border-[#B9DDD0] hover:bg-[#E3F4ED]'}`}>
                             {activeTheme === theme ? '✓ ' : ''}{theme}
                           </button>
                         ))}
@@ -6940,10 +6940,10 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                     {filteredThemeKeys.length > 0 ? (
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         {filteredThemeKeys.map((theme, index) => (
-                          <button key={theme} type="button" onClick={() => selectPopularTheme(theme)} className={`touch-manipulation min-h-12 rounded-xl border px-3.5 py-2.5 text-left flex items-center gap-3 ${activeTheme === theme ? 'bg-[#DDF3EA] border-2 border-mint-strong text-mint-strong' : 'bg-[#F7FCFA] border-[#C6E7DA] text-[#285E50] hover:border-[#9FD5C4] hover:bg-[#EEF8F4]'}`}>
-                            <span className={`flex h-7 min-w-7 items-center justify-center rounded-md text-[11px] font-black ${activeTheme === theme ? 'bg-mint-strong text-white' : 'bg-slate-100 text-slate-500'}`}>{index + 1}</span>
-                            <span className="min-w-0 flex-1 truncate text-[14px] sm:text-[15px] font-bold">{theme}</span>
-                            {activeTheme === theme && <span className="text-[15px] font-black">✓</span>}
+                          <button key={theme} type="button" onClick={() => selectPopularTheme(theme)} className={`touch-manipulation min-h-13 rounded-xl border px-4 py-3 text-left flex items-center gap-3 ${activeTheme === theme ? 'bg-[#DDF3EA] border-2 border-mint-strong text-[#154639]' : 'bg-[#F7FCFA] border-[#C6E7DA] text-[#1B4B3D] hover:border-[#9FD5C4] hover:bg-[#EEF8F4]'}`}>
+                            <span className={`flex h-7 min-w-7 items-center justify-center rounded-md text-[11.5px] font-black ${activeTheme === theme ? 'bg-mint-strong text-white' : 'bg-slate-100 text-slate-500'}`}>{index + 1}</span>
+                            <span className="min-w-0 flex-1 truncate text-[15.5px] sm:text-[17px] font-black">{theme}</span>
+                            {activeTheme === theme && <span className="text-[16px] font-black text-mint-strong">✓</span>}
                           </button>
                         ))}
                       </div>
@@ -6956,19 +6956,19 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
             </div>
           )}
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 md:gap-3 bg-white rounded-xl p-3.5 sm:p-4 shadow-bubbly border-2 border-[#C6E7DA]">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-2.5 md:gap-3 bg-white rounded-xl p-3 sm:p-3.5 shadow-bubbly border-2 border-[#C6E7DA]">
             {emoticons.map((text, idx) => (
               <label key={idx} className={`relative block ${
                   idx === emoticons.length - 1
                     ? 'col-span-2 max-w-[calc(50%_-_6px)] justify-self-center sm:col-span-1 sm:max-w-none'
                     : ''
                 }`}>
-                <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 z-10 flex h-[18px] w-[18px] items-center justify-center rounded-full bg-[#DDF3EA] text-[9px] font-extrabold text-[#2F7D68]">{idx + 1}</span>
+                <span className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 z-10 flex h-[16px] w-[16px] items-center justify-center rounded-full bg-[#DDF3EA] text-[8.5px] font-black text-[#2F7D68]">{idx + 1}</span>
                 <input
                   type="text"
                   value={text}
                   onChange={(e) => handleEmoticonChange(idx, e.target.value)}
-                  className="interactive-control w-full h-[50px] bg-[#F4FBF7] hover:bg-[#ECF8F1] focus:bg-white rounded-full pl-9 pr-3 text-left text-[#214F40] focus:text-slate-900 text-[14px] font-bold tracking-tight placeholder:text-slate-400 focus:outline-none focus:ring-3 focus:ring-mint/50 border-2 border-[#B8DDCF] focus:border-mint-strong transition-all text-ellipsis overflow-hidden whitespace-nowrap"
+                  className="interactive-control w-full h-[45px] sm:h-[48px] bg-[#F4FBF7] hover:bg-[#ECF8F1] focus:bg-white rounded-full pl-8 pr-2.5 text-left text-[#214F40] focus:text-slate-900 text-[12.5px] sm:text-[13px] font-bold tracking-tight placeholder:text-slate-400 focus:outline-none focus:ring-3 focus:ring-mint/50 border-2 border-[#B8DDCF] focus:border-mint-strong transition-all text-ellipsis overflow-hidden whitespace-nowrap"
                   placeholder={`Phrase ${idx + 1}`}
                 />
               </label>
