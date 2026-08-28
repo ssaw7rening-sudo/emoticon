@@ -6418,10 +6418,27 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
     }
   };
 
+  const handlePreviewCopyAttempt = (e) => {
+    if (e && e.preventDefault) e.preventDefault();
+    const msg = lang === 'ko' 
+      ? '💡 프롬프트 복사 및 AI 사이트 열기는 아래 전용 버튼을 이용해 주세요!' 
+      : lang === 'ja'
+      ? '💡 プロンプトのコピーとAI生成は下の専用ボタンをご利用ください！'
+      : lang === 'zh'
+      ? '💡 请使用下方的专属按钮进行提示词复制与AI生成！'
+      : '💡 Please use the dedicated buttons below to copy and launch prompts!';
+    showToast(msg);
+
+    const el = document.getElementById('ai-action-hub');
+    if (el) {
+      const y = el.getBoundingClientRect().top + window.scrollY - 70;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    }
+  };
+
   const copyToClipboard = (type, selectedPhraseOverride = null, copyKey = type) => {
     const phraseOverride = selectedPhraseOverride ?? (generationMode === 'batch' ? getSelectedPhrase() : null);
     if (getPromptValidationError(phraseOverride)) return;
-    if (!checkAndUseQuota()) return;
 
     // Record theme usage score (+3 for copy action)
     recordThemeUsage(activeTheme, 3);
@@ -6445,10 +6462,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
     navigator.clipboard.writeText(textToCopy);
     setCopiedType(copyKey);
     setTimeout(() => setCopiedType(null), 2500);
-    if (!isMember) {
-      const left = Math.max(0, FREE_DAILY_LIMIT - (dailyUsage + 1));
-      showToast(t.copyToastQuota ? t.copyToastQuota(left) : `📋 Prompt copied! (${left} free left)`);
-    }
+    showToast(lang === 'ko' ? '📋 프롬프트가 복사되었습니다!' : lang === 'ja' ? '📋 プロンプトをコピーしました！' : lang === 'zh' ? '📋 提示词已复制！' : '📋 Prompt copied to clipboard!');
   };
 
   const promptValidationError = getPromptValidationError(
