@@ -6439,87 +6439,49 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
           {toastMessage}
         </div>
       )}
-      {/* TopAppBar - Responsive 2-tier on mobile / 1-line on desktop */}
-      <header className="w-full top-0 bg-background/95 backdrop-blur-md z-50 sticky border-b border-outline-variant/30 shadow-xs">
-        <div className="max-w-3xl mx-auto flex flex-col sm:flex-row sm:items-center sm:justify-between px-container-margin py-2 sm:py-2.5 gap-2 sm:gap-3 w-full">
-          {/* Row 1: Brand Logo + Membership/Quota Badge */}
-          <div className="flex items-center justify-between sm:justify-start gap-2 w-full sm:w-auto">
-            <h1 className="brand-logo text-[18px] sm:text-[22px] leading-none font-extrabold text-primary-strong tracking-tight whitespace-nowrap flex items-center gap-1.5">
-              <span>Prompt Maker</span>
-            </h1>
+      {/* TopAppBar - Super Clean Single-Row Sticky Header */}
+      <header className="w-full top-0 bg-white/95 backdrop-blur-md z-50 sticky border-b border-[#EADFCB] shadow-2xs">
+        <div className="max-w-3xl mx-auto flex items-center justify-between px-3 sm:px-4 h-13 sm:h-14 w-full gap-1.5 sm:gap-2">
+          {/* Left: Brand Logo */}
+          <h1 className="brand-logo text-[16.5px] xs:text-[18px] sm:text-[21px] font-black text-primary-strong tracking-tight whitespace-nowrap flex items-center gap-1 shrink-0">
+            <span>Prompt Maker</span>
+          </h1>
 
-            {/* On Mobile: Quota Badge is placed nicely on the right of Logo */}
-            <div className="sm:hidden flex items-center shrink-0">
-              {isMember ? (
-                <div className="flex items-center gap-1 bg-[#FFF9E6] border border-[#F6D77A] px-2 py-0.5 rounded-full shadow-2xs">
-                  <span className="text-[11px]">👑</span>
-                  <span className="text-[11px] font-extrabold text-[#795B16] max-w-[85px] truncate whitespace-nowrap">
-                    {currentUser.nickname}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={logoutUser}
-                    className="interactive-control text-[9.5px] font-bold text-[#8A661C] hover:text-rose-600 ml-0.5 underline cursor-pointer"
-                  >
-                    {lang === 'ko' ? '로그아웃' : 'Logout'}
-                  </button>
-                </div>
-              ) : (
+          {/* Right Controls: Single Line (Quota + Tips + Language) */}
+          <div className="flex items-center gap-1 xs:gap-1.5 sm:gap-2 shrink-0">
+            {/* 1. Membership / Quota Badge */}
+            {isMember ? (
+              <div className="flex items-center gap-1 bg-[#FFF9E6] border border-[#F6D77A] px-2 sm:px-2.5 py-1 rounded-full shadow-2xs shrink-0">
+                <span className="text-[11px]">👑</span>
+                <span className="text-[10.5px] sm:text-[11.5px] font-extrabold text-[#795B16] max-w-[65px] xs:max-w-[85px] sm:max-w-[110px] truncate whitespace-nowrap">
+                  {currentUser.nickname}
+                </span>
                 <button
                   type="button"
-                  onClick={() => {
-                    setLoginModalTriggerReason('header');
-                    setShowLoginModal(true);
-                  }}
-                  className="interactive-control flex items-center gap-1 min-h-8 px-2.5 py-0.5 rounded-full bg-gradient-to-r from-[#FFF4D9] to-[#FFE8B5] hover:from-[#FFE8B5] hover:to-[#FFD88A] border border-[#E8C66A] text-[#5A461B] text-[11px] font-black shadow-2xs active:scale-95 transition-all whitespace-nowrap shrink-0"
+                  onClick={logoutUser}
+                  className="interactive-control text-[9px] sm:text-[10px] font-bold text-[#8A661C] hover:text-rose-600 ml-0.5 underline cursor-pointer"
                 >
-                  <span>⚡</span>
-                  <span>{lang === 'ko' ? `무료 ${remainingFreeUsage}회` : `${remainingFreeUsage} Free`}</span>
-                  <span className="bg-[#5A461B] text-white text-[8.5px] font-black px-1.5 py-0.2 rounded-full">
-                    {lang === 'ko' ? '로그인' : 'Login'}
-                  </span>
+                  {lang === 'ko' ? '로그아웃' : 'Logout'}
                 </button>
-              )}
-            </div>
-          </div>
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={() => {
+                  setLoginModalTriggerReason('header');
+                  setShowLoginModal(true);
+                }}
+                className="interactive-control flex items-center gap-0.5 xs:gap-1 h-7.5 xs:h-8 sm:h-8.5 px-2 xs:px-2.5 sm:px-3 rounded-full bg-gradient-to-r from-[#FFF4D9] to-[#FFE8B5] hover:from-[#FFE8B5] hover:to-[#FFD88A] border border-[#E8C66A] text-[#5A461B] text-[10.5px] xs:text-[11px] sm:text-[12px] font-black shadow-2xs active:scale-95 transition-all whitespace-nowrap shrink-0 cursor-pointer"
+              >
+                <span className="text-[10px] xs:text-[11px]">⚡</span>
+                <span>{lang === 'ko' ? `무료 ${remainingFreeUsage}회` : `${remainingFreeUsage} Free`}</span>
+                <span className="bg-[#5A461B] text-white text-[8px] xs:text-[8.5px] sm:text-[9px] font-black px-1.5 py-0.2 rounded-full ml-0.5">
+                  {lang === 'ko' ? '로그인' : 'Login'}
+                </span>
+              </button>
+            )}
 
-          {/* Row 2 (Mobile) / Desktop Right side: Quota (desktop only) + 💡 꿀팁 + 4-Language Selector */}
-          <div className="flex items-center justify-between sm:justify-end gap-1.5 sm:gap-2 w-full sm:w-auto">
-            {/* Desktop Only Quota Badge */}
-            <div className="hidden sm:flex items-center shrink-0">
-              {isMember ? (
-                <div className="flex items-center gap-1.5 bg-[#FFF9E6] border border-[#F6D77A] px-2.5 py-1 rounded-full shadow-2xs">
-                  <span className="text-[12px]">👑</span>
-                  <span className="text-[11.5px] font-extrabold text-[#795B16] max-w-[120px] truncate whitespace-nowrap">
-                    {currentUser.nickname}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={logoutUser}
-                    className="interactive-control text-[10px] font-bold text-[#8A661C] hover:text-rose-600 ml-0.5 underline cursor-pointer"
-                  >
-                    {lang === 'ko' ? '로그아웃' : 'Logout'}
-                  </button>
-                </div>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setLoginModalTriggerReason('header');
-                    setShowLoginModal(true);
-                  }}
-                  className="interactive-control flex items-center gap-1 min-h-9 px-3 py-1 rounded-full bg-gradient-to-r from-[#FFF4D9] to-[#FFE8B5] hover:from-[#FFE8B5] hover:to-[#FFD88A] border border-[#E8C66A] text-[#5A461B] text-[12px] font-black shadow-2xs active:scale-95 transition-all whitespace-nowrap shrink-0"
-                >
-                  <span>⚡</span>
-                  <span>{lang === 'ko' ? `오늘 무료 ${remainingFreeUsage}회` : `${remainingFreeUsage} Free`}</span>
-                  <span className="bg-[#5A461B] text-white text-[9px] font-black px-1.5 py-0.2 rounded-full ml-0.5">
-                    {lang === 'ko' ? '로그인' : 'Login'}
-                  </span>
-                </button>
-              )}
-            </div>
-
-            {/* 💡 꿀팁 버튼 */}
+            {/* 2. 💡 꿀팁 버튼 */}
             <button 
               onClick={() => {
                 setShowPhotoTips(true);
@@ -6532,14 +6494,15 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                   }
                 }, 80);
               }}
-              className="interactive-control flex items-center gap-1 min-h-8 sm:min-h-9 px-2.5 sm:px-3 py-1 rounded-full bg-[#FFF4E5] border border-[#FFE8CC] text-[#8A4B00] text-[11.5px] sm:text-[12.5px] font-bold hover:bg-[#FFE8CC] shadow-2xs whitespace-nowrap shrink-0"
+              className="interactive-control flex items-center gap-0.5 h-7.5 xs:h-8 sm:h-8.5 px-1.5 xs:px-2 sm:px-2.5 rounded-full bg-[#FFF4E5] border border-[#FFE8CC] text-[#8A4B00] text-[10.5px] xs:text-[11px] sm:text-[12px] font-bold hover:bg-[#FFE8CC] shadow-2xs whitespace-nowrap shrink-0 cursor-pointer"
+              title="꿀팁 가이드 보기"
             >
-              <span className="text-[12px] sm:text-[13px]">💡</span>
-              <span>{lang === 'ko' ? '꿀팁 가이드' : lang === 'ja' ? 'ガイド' : lang === 'zh' ? '指南' : 'Guide'}</span>
+              <span className="text-[11px] xs:text-[12px]">💡</span>
+              <span className="hidden xs:inline">{lang === 'ko' ? '꿀팁' : lang === 'ja' ? 'ガイド' : lang === 'zh' ? '指南' : 'Guide'}</span>
             </button>
 
-            {/* 🌐 4개 국어 선택기 */}
-            <div className="flex items-center gap-0.5 sm:gap-1 bg-surface-container-lowest p-0.5 sm:p-1 rounded-full border border-outline-variant shadow-sm shrink-0" role="group" aria-label="Language Selector">
+            {/* 3. 🌐 4개 국어 선택기 (슬림 캡슐) */}
+            <div className="flex items-center gap-0.5 bg-[#FAF7F2] p-0.5 rounded-full border border-[#E5DFD5] shadow-2xs shrink-0" role="group" aria-label="Language Selector">
               {[
                 ['ko', 'KO', '한국어'],
                 ['en', 'EN', 'English'],
@@ -6551,10 +6514,10 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                   type="button"
                   aria-pressed={lang === code}
                   onClick={() => changeLanguage(code)}
-                  className={`brand-logo interactive-control w-7.5 sm:w-9 h-6.5 sm:h-8 flex items-center justify-center text-[11px] sm:text-[12px] font-extrabold rounded-full transition-all ${
+                  className={`brand-logo interactive-control w-5.5 xs:w-6.5 sm:w-7.5 h-5.5 xs:h-6 sm:h-7 flex items-center justify-center text-[9.5px] xs:text-[10px] sm:text-[11px] font-black rounded-full transition-all cursor-pointer ${
                     lang === code
-                      ? 'bg-mint text-mint-strong shadow-xs border border-mint-border'
-                      : 'text-on-surface-variant hover:bg-mint-soft'
+                      ? 'bg-mint text-mint-strong shadow-2xs border border-mint-border'
+                      : 'text-[#6C675E] hover:bg-white'
                   }`}
                   title={fullLabel}
                 >
