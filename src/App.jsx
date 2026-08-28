@@ -4112,6 +4112,7 @@ function App() {
   });
 
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const [showLangDropdown, setShowLangDropdown] = useState(false);
   const [loginModalTriggerReason, setLoginModalTriggerReason] = useState('quota'); // 'quota' | 'header' | 'preview'
 
   const isMember = !!(currentUser && currentUser.isMember);
@@ -6501,29 +6502,56 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
               <span className="hidden xs:inline">{lang === 'ko' ? '꿀팁' : lang === 'ja' ? 'ガイド' : lang === 'zh' ? '指南' : 'Guide'}</span>
             </button>
 
-            {/* 3. 🌐 4개 국어 선택기 (슬림 캡슐) */}
-            <div className="flex items-center gap-0.5 bg-[#FAF7F2] p-0.5 rounded-full border border-[#E5DFD5] shadow-2xs shrink-0" role="group" aria-label="Language Selector">
-              {[
-                ['ko', 'KO', '한국어'],
-                ['en', 'EN', 'English'],
-                ['ja', 'JA', '日本語'],
-                ['zh', 'ZH', '中文'],
-              ].map(([code, shortLabel, fullLabel]) => (
-                <button
-                  key={code}
-                  type="button"
-                  aria-pressed={lang === code}
-                  onClick={() => changeLanguage(code)}
-                  className={`brand-logo interactive-control w-5.5 xs:w-6.5 sm:w-7.5 h-5.5 xs:h-6 sm:h-7 flex items-center justify-center text-[9.5px] xs:text-[10px] sm:text-[11px] font-black rounded-full transition-all cursor-pointer ${
-                    lang === code
-                      ? 'bg-mint text-mint-strong shadow-2xs border border-mint-border'
-                      : 'text-[#6C675E] hover:bg-white'
-                  }`}
-                  title={fullLabel}
-                >
-                  <span>{shortLabel}</span>
-                </button>
-              ))}
+            {/* 3. 🌐 Sleek Language Dropdown */}
+            <div className="relative shrink-0">
+              <button
+                type="button"
+                onClick={() => setShowLangDropdown(prev => !prev)}
+                className="interactive-control flex items-center gap-1 h-7.5 xs:h-8 sm:h-8.5 px-2 sm:px-2.5 rounded-full bg-[#FAF7F2] hover:bg-[#F3EFE8] border border-[#E5DFD5] text-[#4A453C] text-[11px] sm:text-[12px] font-black shadow-2xs transition-all cursor-pointer active:scale-95"
+                aria-haspopup="true"
+                aria-expanded={showLangDropdown}
+                title="언어 변경 / Change Language"
+              >
+                <span className="text-[12px]">🌐</span>
+                <span>{lang === 'ko' ? 'KO' : lang === 'ja' ? 'JA' : lang === 'zh' ? 'ZH' : 'EN'}</span>
+                <span className="text-[8px] text-[#8C8578]">▾</span>
+              </button>
+
+              {showLangDropdown && (
+                <>
+                  {/* Backdrop for closing dropdown */}
+                  <div 
+                    className="fixed inset-0 z-[110]" 
+                    onClick={() => setShowLangDropdown(false)}
+                  />
+                  <div className="absolute right-0 top-full mt-1.5 w-34 bg-white rounded-xl shadow-xl border border-[#E8E2D8] py-1 z-[120] animate-in fade-in zoom-in-95 duration-150">
+                    {[
+                      { code: 'ko', label: '한국어', flag: '🇰🇷' },
+                      { code: 'en', label: 'English', flag: '🇺🇸' },
+                      { code: 'ja', label: '日本語', flag: '🇯🇵' },
+                      { code: 'zh', label: '中文', flag: '🇨🇳' },
+                    ].map((item) => (
+                      <button
+                        key={item.code}
+                        type="button"
+                        onClick={() => {
+                          changeLanguage(item.code);
+                          setShowLangDropdown(false);
+                        }}
+                        className={`w-full px-3 py-2 text-left text-[12px] font-bold flex items-center justify-between hover:bg-[#F3FAF7] transition-all cursor-pointer ${
+                          lang === item.code ? 'text-mint-strong bg-[#EDF8F3] font-black' : 'text-slate-700'
+                        }`}
+                      >
+                        <span className="flex items-center gap-1.5">
+                          <span>{item.flag}</span>
+                          <span>{item.label}</span>
+                        </span>
+                        {lang === item.code && <span className="text-mint-strong text-[13px]">✓</span>}
+                      </button>
+                    ))}
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </div>
