@@ -6981,12 +6981,12 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                     ? 'col-span-2 max-w-[calc(50%_-_6px)] justify-self-center sm:col-span-1 sm:max-w-none'
                     : ''
                 }`}>
-                <span className="pointer-events-none absolute left-2 top-1/2 -translate-y-1/2 z-10 flex h-[15px] w-[15px] items-center justify-center rounded-full bg-[#DDF3EA] text-[7.5px] sm:text-[8px] font-black text-[#2F7D68]">{idx + 1}</span>
+                <span className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 z-10 flex h-[18px] w-[18px] items-center justify-center rounded-full bg-[#DDF3EA] text-[9px] font-black text-[#2F7D68] shadow-2xs shrink-0">{idx + 1}</span>
                 <input
                   type="text"
                   value={text}
                   onChange={(e) => handleEmoticonChange(idx, e.target.value)}
-                  className={`interactive-control w-full h-[40px] sm:h-[43px] bg-[#F4FBF7] hover:bg-[#ECF8F1] focus:bg-white rounded-full pl-6.5 sm:pl-7 pr-2 text-left text-[#1D4A3C] focus:text-slate-900 ${getDynamicPhraseFontSize(text)} placeholder:text-slate-400 focus:outline-none focus:ring-3 focus:ring-mint/50 border-2 border-[#B8DDCF] focus:border-mint-strong transition-all overflow-x-auto whitespace-nowrap`}
+                  className={`interactive-control w-full h-[44px] sm:h-[46px] bg-[#F4FBF7] hover:bg-[#ECF8F1] focus:bg-white rounded-full pl-9 sm:pl-9.5 pr-3 text-left text-[#1D4A3C] focus:text-slate-900 ${getDynamicPhraseFontSize(text)} placeholder:text-slate-400 focus:outline-none focus:ring-3 focus:ring-mint/50 border-2 border-[#B8DDCF] focus:border-mint-strong transition-all overflow-x-auto whitespace-nowrap`}
                   placeholder={`Phrase ${idx + 1}`}
                 />
               </label>
