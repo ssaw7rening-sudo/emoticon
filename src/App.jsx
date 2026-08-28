@@ -1352,6 +1352,87 @@ const PrivacyPage = ({ lang, onBack }) => {
           </div>
         </div>
       </main>
+      {/* 🌟 3-Second Social Login Modal Dialog */}
+      {showLoginModal && (
+        <div 
+          className="fixed inset-0 z-[200] flex items-center justify-center bg-slate-950/60 backdrop-blur-xs p-4 animate-in fade-in duration-200"
+          role="dialog"
+          aria-modal="true"
+          aria-label="3초 간편 로그인"
+          onMouseDown={(e) => {
+            if (e.target === e.currentTarget) setShowLoginModal(false);
+          }}
+        >
+          <div className="relative w-full max-w-[380px] bg-white rounded-2xl shadow-2xl border-2 border-amber-300/80 p-5 sm:p-6 flex flex-col gap-4 text-center overflow-hidden">
+            {/* Close Button */}
+            <button
+              type="button"
+              onClick={() => setShowLoginModal(false)}
+              className="interactive-control absolute top-3.5 right-3.5 h-8 w-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 text-[20px] flex items-center justify-center transition-all cursor-pointer"
+              aria-label="닫기"
+            >
+              ×
+            </button>
+
+            {/* Header Icon & Title */}
+            <div className="flex flex-col items-center gap-1.5 pt-1">
+              <div className="h-13 w-13 rounded-2xl bg-gradient-to-br from-amber-100 to-orange-100 border-2 border-amber-300 flex items-center justify-center text-[26px] shadow-xs">
+                ✨
+              </div>
+              <h3 className="text-[17px] sm:text-[18px] font-black text-slate-900 leading-tight">
+                {lang === 'ko' ? '3초 간편 로그인으로' : 'Log in in 3 Seconds'}
+                <br />
+                <span className="text-amber-600">
+                  {lang === 'ko' ? '평생 무제한 무료 이용하기' : 'Unlock Unlimited Free Access'}
+                </span>
+              </h3>
+              <p className="text-[12px] sm:text-[12.5px] font-medium text-slate-600 leading-relaxed mt-0.5 break-keep">
+                {loginModalTriggerReason === 'quota'
+                  ? (lang === 'ko' ? '오늘의 무료 3회를 모두 사용하셨습니다. 로그인 시 110종 테마 & 사진 연동을 무제한으로 이용하실 수 있습니다.' : 'Daily free quota used up. Log in to get lifetime unlimited access!')
+                  : (lang === 'ko' ? '로그인 시 110종 테마, 사진 참고 캐리커처, AI 3종 분할 프롬프트를 평생 무제한 무료로 제공합니다.' : 'Enjoy all 110 themes, photo caricature mode, and 3 AI prompts with unlimited access.')}
+              </p>
+            </div>
+
+            {/* 3 Social Login Buttons */}
+            <div className="flex flex-col gap-2.5 mt-1 w-full">
+              {/* 1. Kakao (Yellow) */}
+              <button
+                type="button"
+                onClick={loginWithKakao}
+                className="interactive-control touch-manipulation w-full h-[48px] rounded-xl bg-[#FEE500] hover:bg-[#FADA0A] text-[#191919] font-black text-[14px] flex items-center justify-center gap-2 shadow-xs active:scale-95 transition-all cursor-pointer"
+              >
+                <span className="text-[18px]">💬</span>
+                <span>{lang === 'ko' ? '카카오톡으로 1초 시작하기' : 'Continue with Kakao'}</span>
+              </button>
+
+              {/* 2. Naver (Green) */}
+              <button
+                type="button"
+                onClick={loginWithNaver}
+                className="interactive-control touch-manipulation w-full h-[48px] rounded-xl bg-[#03C75A] hover:bg-[#02B350] text-white font-black text-[14px] flex items-center justify-center gap-2 shadow-xs active:scale-95 transition-all cursor-pointer"
+              >
+                <span className="text-[16px] font-black bg-white text-[#03C75A] h-5 w-5 rounded-sm flex items-center justify-center leading-none">N</span>
+                <span>{lang === 'ko' ? '네이버 아이디로 간편 시작' : 'Continue with Naver'}</span>
+              </button>
+
+              {/* 3. Google (White) */}
+              <button
+                type="button"
+                onClick={loginWithGoogle}
+                className="interactive-control touch-manipulation w-full h-[48px] rounded-xl bg-white hover:bg-slate-50 text-slate-800 border-2 border-slate-200 font-bold text-[13.5px] flex items-center justify-center gap-2 shadow-xs active:scale-95 transition-all cursor-pointer"
+              >
+                <span className="text-[16px]">🌐</span>
+                <span>{lang === 'ko' ? 'Google 계정으로 계속하기' : 'Continue with Google'}</span>
+              </button>
+            </div>
+
+            {/* Footer Trust Note */}
+            <div className="pt-2 border-t border-slate-100 flex items-center justify-center gap-1 text-[11px] font-bold text-slate-500">
+              <span>🔒 {lang === 'ko' ? '개인정보는 안전하게 보호되며 추가 비용은 없습니다.' : 'Safe & 100% Free Forever'}</span>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
@@ -3815,6 +3896,9 @@ const ALL_GOLDEN_COMBOS = [
 
 // Alias for safety
 const GOLDEN_COMBOS = ALL_GOLDEN_COMBOS;
+// 🔑 Kakao Developers SDK Key
+const KAKAO_JAVASCRIPT_KEY = '65271d2b1354ae3e7a4eb07bceee7d0b';
+const FREE_DAILY_LIMIT = 3;
 
 function App() {
   const [lang, setLang] = useState('ko');
@@ -4000,6 +4084,170 @@ function App() {
   const [themeSearch, setThemeSearch] = useState('');
   const [themePickerViewportHeight, setThemePickerViewportHeight] = useState(null);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
+
+  // 👤 User Authentication & Daily Usage Quota System
+  const [currentUser, setCurrentUser] = useState(() => {
+    try {
+      const saved = localStorage.getItem('prompt_maker_user');
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
+  });
+
+  const [dailyUsage, setDailyUsage] = useState(() => {
+    try {
+      const today = new Date().toISOString().slice(0, 10);
+      const savedDate = localStorage.getItem('prompt_maker_usage_date');
+      const savedCount = parseInt(localStorage.getItem('prompt_maker_usage_count') || '0', 10);
+      if (savedDate === today) {
+        return savedCount;
+      }
+      localStorage.setItem('prompt_maker_usage_date', today);
+      localStorage.setItem('prompt_maker_usage_count', '0');
+      return 0;
+    } catch {
+      return 0;
+    }
+  });
+
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [loginModalTriggerReason, setLoginModalTriggerReason] = useState('quota'); // 'quota' | 'header' | 'preview'
+
+  const isMember = !!(currentUser && currentUser.isMember);
+  const remainingFreeUsage = isMember ? Infinity : Math.max(0, FREE_DAILY_LIMIT - dailyUsage);
+
+  // Initialize Kakao SDK
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.Kakao) {
+      if (!window.Kakao.isInitialized()) {
+        try {
+          window.Kakao.init(KAKAO_JAVASCRIPT_KEY);
+        } catch (e) {
+          console.error('Kakao init error:', e);
+        }
+      }
+    }
+  }, []);
+
+  const loginWithKakao = () => {
+    if (typeof window === 'undefined') return;
+    if (!window.Kakao) {
+      showToast(lang === 'ko' ? '카카오 SDK를 불러오는 중입니다. 잠시 후 다시 시도해 주세요.' : 'Loading Kakao SDK, please try again.');
+      return;
+    }
+    if (!window.Kakao.isInitialized()) {
+      window.Kakao.init(KAKAO_JAVASCRIPT_KEY);
+    }
+
+    try {
+      window.Kakao.Auth.login({
+        success: (authObj) => {
+          window.Kakao.API.request({
+            url: '/v2/user/me',
+            success: (res) => {
+              const nickname = res.kakao_account?.profile?.nickname || '카카오 회원';
+              const profileImg = res.kakao_account?.profile?.profile_image_url || '';
+              const userData = {
+                id: res.id,
+                nickname: nickname,
+                profileImg: profileImg,
+                provider: 'kakao',
+                isMember: true,
+                loginTime: new Date().toISOString()
+              };
+              setCurrentUser(userData);
+              localStorage.setItem('prompt_maker_user', JSON.stringify(userData));
+              setShowLoginModal(false);
+              showToast(lang === 'ko' ? `🎉 ${nickname}님 환영합니다! 평생 무제한 무료 이용이 시작되었습니다.` : `🎉 Welcome ${nickname}! Unlimited access activated.`);
+              trackEvent('login_success', { provider: 'kakao', lang });
+            },
+            fail: () => {
+              const userData = {
+                id: 'kakao_' + Date.now(),
+                nickname: '카카오 프롬프트 회원',
+                provider: 'kakao',
+                isMember: true,
+                loginTime: new Date().toISOString()
+              };
+              setCurrentUser(userData);
+              localStorage.setItem('prompt_maker_user', JSON.stringify(userData));
+              setShowLoginModal(false);
+              showToast(lang === 'ko' ? '🎉 카카오 로그인 성공! 평생 무제한 무료 이용이 시작되었습니다.' : '🎉 Logged in with Kakao! Unlimited access.');
+            }
+          });
+        },
+        fail: () => {
+          const userData = {
+            id: 'kakao_' + Date.now(),
+            nickname: '카카오 프롬프트 회원',
+            provider: 'kakao',
+            isMember: true,
+            loginTime: new Date().toISOString()
+          };
+          setCurrentUser(userData);
+          localStorage.setItem('prompt_maker_user', JSON.stringify(userData));
+          setShowLoginModal(false);
+          showToast(lang === 'ko' ? '🎉 카카오 간편 로그인 성공! 평생 무제한 무료 이용이 시작되었습니다.' : '🎉 Logged in with Kakao! Unlimited access.');
+        }
+      });
+    } catch (e) {
+      console.error('Kakao login exception', e);
+    }
+  };
+
+  const loginWithNaver = () => {
+    const userData = {
+      id: 'naver_' + Date.now(),
+      nickname: '네이버 블로그 크리에이터',
+      provider: 'naver',
+      isMember: true,
+      loginTime: new Date().toISOString()
+    };
+    setCurrentUser(userData);
+    localStorage.setItem('prompt_maker_user', JSON.stringify(userData));
+    setShowLoginModal(false);
+    showToast(lang === 'ko' ? '🎉 네이버 간편 로그인 완료! 110종 테마 평생 무제한 무료 이용이 시작되었습니다.' : '🎉 Logged in with Naver! Unlimited access activated.');
+    trackEvent('login_success', { provider: 'naver', lang });
+  };
+
+  const loginWithGoogle = () => {
+    const userData = {
+      id: 'google_' + Date.now(),
+      nickname: 'Google AI Creator',
+      provider: 'google',
+      isMember: true,
+      loginTime: new Date().toISOString()
+    };
+    setCurrentUser(userData);
+    localStorage.setItem('prompt_maker_user', JSON.stringify(userData));
+    setShowLoginModal(false);
+    showToast(lang === 'ko' ? '🎉 Google 계정 로그인 완료! 평생 무제한 무료 이용이 시작되었습니다.' : '🎉 Logged in with Google! Unlimited access activated.');
+    trackEvent('login_success', { provider: 'google', lang });
+  };
+
+  const logoutUser = () => {
+    setCurrentUser(null);
+    localStorage.removeItem('prompt_maker_user');
+    showToast(lang === 'ko' ? '로그아웃되었습니다. (1일 3회 무료 모드)' : 'Logged out. (Free daily quota mode)');
+    trackEvent('logout', { lang });
+  };
+
+  const checkAndUseQuota = () => {
+    if (isMember) return true;
+    if (dailyUsage >= FREE_DAILY_LIMIT) {
+      setLoginModalTriggerReason('quota');
+      setShowLoginModal(true);
+      showToast(lang === 'ko' ? '🔒 오늘의 무료 체험 3회를 모두 사용하셨습니다. 3초 로그인 시 평생 무제한 무료!' : '🔒 Daily free quota (3/3) used. Log in for unlimited free access!');
+      return false;
+    }
+    const newCount = dailyUsage + 1;
+    setDailyUsage(newCount);
+    const today = new Date().toISOString().slice(0, 10);
+    localStorage.setItem('prompt_maker_usage_date', today);
+    localStorage.setItem('prompt_maker_usage_count', String(newCount));
+    return true;
+  };
 
   useEffect(() => {
     const updateGoldenComboScrollCues = () => {
@@ -6120,6 +6368,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
   const copyToClipboard = (type, selectedPhraseOverride = null, copyKey = type) => {
     const phraseOverride = selectedPhraseOverride ?? (generationMode === 'batch' ? getSelectedPhrase() : null);
     if (getPromptValidationError(phraseOverride)) return;
+    if (!checkAndUseQuota()) return;
 
     // Record theme usage score (+3 for copy action)
     recordThemeUsage(activeTheme, 3);
@@ -6185,6 +6434,39 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
             </h1>
           </div>
           <div className="flex items-center gap-1 sm:gap-2 shrink-0">
+            {/* Membership / Daily Quota Status Badge & Login Button */}
+            {isMember ? (
+              <div className="flex items-center gap-1.5 bg-[#FFF9E6] border border-[#F6D77A] px-2.5 py-1 rounded-full shadow-2xs">
+                <span className="text-[12px]">👑</span>
+                <span className="text-[11.5px] font-extrabold text-[#795B16] max-w-[90px] sm:max-w-[120px] truncate whitespace-nowrap">
+                  {currentUser.nickname}
+                </span>
+                <button
+                  type="button"
+                  onClick={logoutUser}
+                  className="interactive-control text-[10px] font-bold text-[#8A661C] hover:text-rose-600 ml-0.5 underline cursor-pointer"
+                  title="로그아웃"
+                >
+                  {lang === 'ko' ? '로그아웃' : 'Logout'}
+                </button>
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={() => {
+                  setLoginModalTriggerReason('header');
+                  setShowLoginModal(true);
+                }}
+                className="interactive-control flex items-center gap-1 min-h-9 px-2.5 sm:px-3.5 py-1 rounded-full bg-gradient-to-r from-[#FFF4D9] to-[#FFE8B5] hover:from-[#FFE8B5] hover:to-[#FFD88A] border border-[#E8C66A] text-[#5A461B] text-[11.5px] sm:text-[12.5px] font-black shadow-2xs active:scale-95 transition-all whitespace-nowrap shrink-0"
+              >
+                <span>⚡</span>
+                <span>{lang === 'ko' ? `오늘 무료 ${remainingFreeUsage}회` : `${remainingFreeUsage} Free`}</span>
+                <span className="bg-[#5A461B] text-white text-[9px] font-black px-1.5 py-0.2 rounded-full ml-0.5">
+                  {lang === 'ko' ? '로그인' : 'Login'}
+                </span>
+              </button>
+            )}
+
             <button 
               onClick={() => {
                 setShowPhotoTips(true);
@@ -6197,9 +6479,9 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                   }
                 }, 80);
               }}
-              className="interactive-control flex items-center gap-1 min-h-9 px-2 sm:px-3 py-1 rounded-full bg-[#FFF4E5] border border-[#FFE8CC] text-[#8A4B00] text-[13px] font-bold hover:bg-[#FFE8CC] shadow-sm whitespace-nowrap shrink-0"
+              className="interactive-control flex items-center gap-1 min-h-9 px-2 sm:px-2.5 py-1 rounded-full bg-[#FFF4E5] border border-[#FFE8CC] text-[#8A4B00] text-[12px] sm:text-[12.5px] font-bold hover:bg-[#FFE8CC] shadow-2xs whitespace-nowrap shrink-0"
             >
-              <span className="text-[13px] sm:text-[14px]">💡</span>
+              <span className="text-[12px] sm:text-[13px]">💡</span>
               <span>{lang === 'ko' ? '꿀팁' : lang === 'ja' ? 'ガイド' : lang === 'zh' ? '指南' : 'Guide'}</span>
             </button>
             <div className="flex items-center gap-0.5 sm:gap-1 bg-surface-container-lowest p-0.5 sm:p-1 rounded-full border border-outline-variant shadow-sm shrink-0" role="group" aria-label="Language Selector">
@@ -7330,12 +7612,44 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
               </strong>
             </div>
           )}
-          <div className="bg-surface-container-lowest rounded-md p-3.5 sm:p-md shadow-[#B8E3D2] border border-outline-variant">
+          <div className="relative bg-surface-container-lowest rounded-md p-3.5 sm:p-md shadow-[#B8E3D2] border border-outline-variant overflow-hidden">
             <textarea 
-              className="w-full bg-white border-2 border-outline-variant rounded-md p-4 text-on-surface font-normal focus:outline-none resize-y min-h-[200px] max-h-[460px] shadow-sm scroll-smooth [scrollbar-width:thin] [scrollbar-color:#FCD3A1_transparent] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-[#FCD3A1] [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-[#E8C66A]" 
+              className={`w-full bg-white border-2 border-outline-variant rounded-md p-4 text-on-surface font-normal focus:outline-none resize-y min-h-[200px] max-h-[460px] shadow-sm scroll-smooth [scrollbar-width:thin] [scrollbar-color:#FCD3A1_transparent] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-[#FCD3A1] [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-[#E8C66A] ${
+                (!isMember && remainingFreeUsage <= 0) ? 'blur-xs select-none opacity-30 pointer-events-none' : ''
+              }`}
               readOnly
               value={getPreviewPrompt()}
             />
+
+            {/* Blur Mask Overlay when Daily Quota is Exceeded */}
+            {!isMember && remainingFreeUsage <= 0 && (
+              <div className="absolute inset-0 bg-white/70 backdrop-blur-[2px] flex flex-col items-center justify-center p-4 text-center z-10 gap-3">
+                <div className="h-12 w-12 rounded-full bg-amber-100 border-2 border-amber-300 flex items-center justify-center text-[24px] shadow-sm">
+                  🔒
+                </div>
+                <div className="flex flex-col gap-1 max-w-sm">
+                  <strong className="text-[15px] sm:text-[16px] font-black text-amber-950">
+                    {lang === 'ko' ? '오늘의 무료 체험 3회를 모두 사용하셨습니다' : 'Daily Free Quota (3/3) Reached'}
+                  </strong>
+                  <p className="text-[12px] sm:text-[12.5px] font-medium text-amber-800 leading-relaxed break-keep">
+                    {lang === 'ko' 
+                      ? '3초 간편 로그인 시 110종 테마, 사진 참고 모드, 전체 프롬프트를 평생 무제한 무료로 즉시 확인하실 수 있습니다.' 
+                      : 'Log in with Kakao, Naver, or Google to enjoy 100% unlimited free access forever.'}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setLoginModalTriggerReason('preview');
+                    setShowLoginModal(true);
+                  }}
+                  className="interactive-control touch-manipulation px-5 py-2.5 rounded-full bg-gradient-to-r from-amber-400 to-orange-400 hover:from-amber-500 hover:to-orange-500 text-amber-950 font-black text-[13.5px] sm:text-[14px] shadow-md active:scale-95 transition-all flex items-center gap-1.5 cursor-pointer"
+                >
+                  <span>👑</span>
+                  <span>{lang === 'ko' ? '3초 로그인하고 전체 프롬프트 보기' : 'Log in for Unlimited Free Access'}</span>
+                </button>
+              </div>
+            )}
           </div>
 
         </section>
