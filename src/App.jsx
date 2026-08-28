@@ -7270,17 +7270,17 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
               </button>
             </div>
           ) : (
-            <div className="bg-[#FAF7F0] rounded-xl p-3 sm:p-3.5 border border-[#E5DCB] shadow-2xs flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5">
-              <div className="flex items-center gap-2.5 min-w-0">
-                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#EFE8D8] text-[15px] shadow-2xs shrink-0">⚡</span>
+            <div className="bg-gradient-to-r from-[#FFF9EE] via-[#FFF5DE] to-[#FFEECB] rounded-2xl p-3.5 sm:p-4.5 border-2 border-[#F6DC9B] shadow-sm flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
+              <div className="flex items-center gap-3 min-w-0">
+                <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#FFE7AA] border border-[#F3CD70] text-[20px] shadow-2xs shrink-0">⚡</span>
                 <div className="flex flex-col min-w-0">
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-[12.5px] sm:text-[13px] font-bold text-[#423826]">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[13.5px] sm:text-[14.5px] font-black text-[#5A3F05]">
                       {lang === 'ko' ? `오늘 무료 복사 잔여 : ${remainingFreeUsage}회 / ${FREE_DAILY_LIMIT}회` : `Free Daily Quota: ${remainingFreeUsage}/${FREE_DAILY_LIMIT}`}
                     </span>
                   </div>
-                  <span className="text-[11px] font-normal text-[#756852]">
-                    {lang === 'ko' ? '매일 밤 자정에 3회가 충전됩니다. 로그인 시 평생 무제한 무료!' : 'Resets daily at midnight. Log in for unlimited access.'}
+                  <span className="text-[11.5px] sm:text-[12px] font-medium text-[#8C6514]">
+                    {lang === 'ko' ? '매일 밤 자정에 3회가 새로 충전됩니다. 로그인 시 평생 무제한 무료!' : 'Resets daily at midnight. Log in for unlimited free access.'}
                   </span>
                 </div>
               </div>
@@ -7290,9 +7290,9 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                   setLoginModalTriggerReason('quota');
                   setShowLoginModal(true);
                 }}
-                className="interactive-control touch-manipulation flex items-center justify-center gap-1.5 h-8.5 px-3.5 rounded-full bg-white hover:bg-[#F6F2EA] text-[#4A3D28] border border-[#DCD3C0] text-[11.5px] sm:text-[12px] font-bold shadow-2xs active:scale-95 transition-all whitespace-nowrap cursor-pointer shrink-0"
+                className="interactive-control touch-manipulation flex items-center justify-center gap-2 min-h-11 sm:min-h-12 px-5 sm:px-6 rounded-full bg-gradient-to-r from-[#FFD369] via-[#FFC745] to-[#FFAA00] hover:from-[#FFC745] hover:to-[#FF9E00] text-[#3D2800] border-2 border-[#E0A800] text-[13px] sm:text-[13.5px] font-extrabold shadow-md hover:shadow-lg active:scale-95 transition-all whitespace-nowrap cursor-pointer shrink-0"
               >
-                <span className="text-[12px]">👑</span>
+                <span className="text-[15px]">👑</span>
                 <span>{lang === 'ko' ? '3초 로그인하고 무제한 풀기 ›' : 'Unlock Unlimited Free Access ›'}</span>
               </button>
             </div>
