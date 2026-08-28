@@ -7637,18 +7637,23 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
               </strong>
             </div>
           )}
-          <div className="relative bg-surface-container-lowest rounded-md p-3.5 sm:p-md shadow-[#B8E3D2] border border-outline-variant overflow-hidden select-none" onContextMenu={(e) => e.preventDefault()}>
+          <div 
+            className="relative bg-surface-container-lowest rounded-md p-3.5 sm:p-md shadow-[#B8E3D2] border border-outline-variant overflow-hidden select-none cursor-pointer group" 
+            onClick={handlePreviewCopyAttempt}
+            onContextMenu={handlePreviewCopyAttempt}
+          >
             <textarea 
-              className="w-full bg-white border-2 border-outline-variant rounded-md p-4 text-on-surface font-normal focus:outline-none resize-y min-h-[200px] max-h-[460px] shadow-sm scroll-smooth [scrollbar-width:thin] [scrollbar-color:#FCD3A1_transparent] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-[#FCD3A1] [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-[#E8C66A] select-none cursor-default"
+              className="w-full bg-white border-2 border-outline-variant rounded-md p-4 text-on-surface font-normal focus:outline-none resize-y min-h-[200px] max-h-[460px] shadow-sm scroll-smooth [scrollbar-width:thin] [scrollbar-color:#FCD3A1_transparent] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-[#FCD3A1] [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-[#E8C66A] select-none cursor-pointer"
               readOnly
               tabIndex={-1}
               style={{ userSelect: 'none', WebkitUserSelect: 'none', MozUserSelect: 'none', msUserSelect: 'none' }}
-              onCopy={(e) => { e.preventDefault(); }}
-              onCut={(e) => { e.preventDefault(); }}
-              onContextMenu={(e) => { e.preventDefault(); }}
+              onClick={handlePreviewCopyAttempt}
+              onCopy={handlePreviewCopyAttempt}
+              onCut={handlePreviewCopyAttempt}
+              onContextMenu={handlePreviewCopyAttempt}
               onKeyDown={(e) => {
                 if ((e.ctrlKey || e.metaKey) && (e.key === 'c' || e.key === 'a' || e.key === 'x')) {
-                  e.preventDefault();
+                  handlePreviewCopyAttempt(e);
                 }
               }}
               value={getPreviewPrompt()}
