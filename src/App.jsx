@@ -7679,158 +7679,65 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
         {/* Actions: One-Click Launch & Copy Dual Hub */}
         <section id="ai-action-hub" className="flex flex-col gap-3 mt-2 pb-4">
           <AdBanner />
-          <div className="bg-[#EAF8F3] p-3 sm:p-3.5 rounded-xl border-2 border-mint-border flex flex-col gap-2 text-mint-strong shadow-xs">
-            <div className="flex items-center gap-1.5 text-[12.5px] sm:text-[13px] font-extrabold">
-              <span>🚀</span>
-              <span>
+          <div className="bg-[#EAF8F3] p-3 sm:p-3.5 rounded-xl border-2 border-mint-border flex flex-col gap-2.5 text-mint-strong shadow-xs">
+            {/* 1. Launch Info Header */}
+            <div className="flex items-center gap-2">
+              <span className="text-[17px] shrink-0 leading-none">🚀</span>
+              <p className="text-[12.5px] sm:text-[13.5px] font-extrabold text-[#154639] leading-snug [word-break:keep-all]">
                 {lang === 'ko' 
-                  ? '버튼을 누르면 프롬프트가 자동으로 복사되고 AI 사이트가 바로 열립니다.'
+                  ? '버튼 클릭 시 프롬프트 자동 복사 & AI 사이트가 바로 열립니다.'
                   : lang === 'ja'
-                  ? 'ワンクリック起動: プロンプトが自動コピーされ、AI画面がすぐに開きます！'
+                  ? 'ボタンを押すとプロンプトを自動コピーしてAI画面を開きます。'
                   : lang === 'zh'
-                  ? '一键启动: 点击后自动复制提示词，并直接打开AI网站！'
-                  : 'Click a button below to auto-copy prompt & launch the AI companion!'}
-              </span>
+                  ? '点击按钮将自动复制提示词并直接打开AI网站。'
+                  : 'Click a button below to auto-copy prompt & launch the AI site.'}
+              </p>
             </div>
-            <div className="flex items-center gap-1.5 text-[12px] sm:text-[12.5px] font-medium flex-wrap pt-1.5 border-t border-[#CBEAE0]">
-              <span className="text-[14px]">💡</span>
-              <span className="flex items-center flex-wrap gap-1 leading-relaxed">
-                {lang === 'ko' ? (
-                  <>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const el = document.getElementById('character-setup-section');
-                        if (el) {
-                          const y = el.getBoundingClientRect().top + window.scrollY - 70;
-                          window.scrollTo({ top: y, behavior: 'smooth' });
-                        }
-                      }}
-                      className="inline-flex items-center gap-1 bg-white hover:bg-[#D5EFE5] text-[#1E5D4B] font-black px-2 py-0.5 rounded-md border border-[#9ED2C0] shadow-2xs cursor-pointer active:scale-95 transition-all"
-                    >
-                      <span>✏️</span>
-                      <span>캐릭터·태그 수정 ↑</span>
-                    </button>
-                    <span>또는</span>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const el = document.getElementById('emoticon-phrase-grid');
-                        if (el) {
-                          const y = el.getBoundingClientRect().top + window.scrollY - 70;
-                          window.scrollTo({ top: y, behavior: 'smooth' });
-                        }
-                      }}
-                      className="inline-flex items-center gap-1 bg-white hover:bg-[#D5EFE5] text-[#1E5D4B] font-black px-2 py-0.5 rounded-md border border-[#9ED2C0] shadow-2xs cursor-pointer active:scale-95 transition-all"
-                    >
-                      <span>🎨</span>
-                      <span>테마 변경 ↑</span>
-                    </button>
-                    <span>시 실시간으로 자동 반영됩니다.</span>
-                  </>
-                ) : lang === 'ja' ? (
-                  <>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const el = document.getElementById('character-setup-section');
-                        if (el) {
-                          const y = el.getBoundingClientRect().top + window.scrollY - 70;
-                          window.scrollTo({ top: y, behavior: 'smooth' });
-                        }
-                      }}
-                      className="inline-flex items-center gap-1 bg-white hover:bg-[#D5EFE5] text-[#1E5D4B] font-black px-2 py-0.5 rounded-md border border-[#9ED2C0] shadow-2xs cursor-pointer active:scale-95 transition-all"
-                    >
-                      <span>✏️</span>
-                      <span>キャラ・タグ修正 ↑</span>
-                    </button>
-                    <span>や</span>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const el = document.getElementById('emoticon-phrase-grid');
-                        if (el) {
-                          const y = el.getBoundingClientRect().top + window.scrollY - 70;
-                          window.scrollTo({ top: y, behavior: 'smooth' });
-                        }
-                      }}
-                      className="inline-flex items-center gap-1 bg-white hover:bg-[#D5EFE5] text-[#1E5D4B] font-black px-2 py-0.5 rounded-md border border-[#9ED2C0] shadow-2xs cursor-pointer active:scale-95 transition-all"
-                    >
-                      <span>🎨</span>
-                      <span>テーマ変更 ↑</span>
-                    </button>
-                    <span>を変更するとリアルタイムで自動反映されます。</span>
-                  </>
-                ) : lang === 'zh' ? (
-                  <>
-                    <span>修改</span>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const el = document.getElementById('character-setup-section');
-                        if (el) {
-                          const y = el.getBoundingClientRect().top + window.scrollY - 70;
-                          window.scrollTo({ top: y, behavior: 'smooth' });
-                        }
-                      }}
-                      className="inline-flex items-center gap-1 bg-white hover:bg-[#D5EFE5] text-[#1E5D4B] font-black px-2 py-0.5 rounded-md border border-[#9ED2C0] shadow-2xs cursor-pointer active:scale-95 transition-all"
-                    >
-                      <span>✏️</span>
-                      <span>角色与标签 ↑</span>
-                    </button>
-                    <span>或</span>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const el = document.getElementById('emoticon-phrase-grid');
-                        if (el) {
-                          const y = el.getBoundingClientRect().top + window.scrollY - 70;
-                          window.scrollTo({ top: y, behavior: 'smooth' });
-                        }
-                      }}
-                      className="inline-flex items-center gap-1 bg-white hover:bg-[#D5EFE5] text-[#1E5D4B] font-black px-2 py-0.5 rounded-md border border-[#9ED2C0] shadow-2xs cursor-pointer active:scale-95 transition-all"
-                    >
-                      <span>🎨</span>
-                      <span>主题变更 ↑</span>
-                    </button>
-                    <span>将实时自动同步至所有提示词。</span>
-                  </>
-                ) : (
-                  <>
-                    <span>Modifying</span>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const el = document.getElementById('character-setup-section');
-                        if (el) {
-                          const y = el.getBoundingClientRect().top + window.scrollY - 70;
-                          window.scrollTo({ top: y, behavior: 'smooth' });
-                        }
-                      }}
-                      className="inline-flex items-center gap-1 bg-white hover:bg-[#D5EFE5] text-[#1E5D4B] font-black px-2 py-0.5 rounded-md border border-[#9ED2C0] shadow-2xs cursor-pointer active:scale-95 transition-all"
-                    >
-                      <span>✏️</span>
-                      <span>Character & Tags ↑</span>
-                    </button>
-                    <span>or</span>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const el = document.getElementById('emoticon-phrase-grid');
-                        if (el) {
-                          const y = el.getBoundingClientRect().top + window.scrollY - 70;
-                          window.scrollTo({ top: y, behavior: 'smooth' });
-                        }
-                      }}
-                      className="inline-flex items-center gap-1 bg-white hover:bg-[#D5EFE5] text-[#1E5D4B] font-black px-2 py-0.5 rounded-md border border-[#9ED2C0] shadow-2xs cursor-pointer active:scale-95 transition-all"
-                    >
-                      <span>🎨</span>
-                      <span>Themes ↑</span>
-                    </button>
-                    <span>updates prompts in real-time.</span>
-                  </>
-                )}
-              </span>
+
+            {/* 2. Structured Quick Jump Action Bar */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-2 border-t border-[#CBEAE0]">
+              <div className="flex items-center gap-1.5 text-[11.5px] sm:text-[12px] font-bold text-[#2A6555] shrink-0">
+                <span>💡</span>
+                <span>
+                  {lang === 'ko' 
+                    ? '수정 시 실시간 자동 반영:' 
+                    : lang === 'ja' 
+                    ? '変更時にリアルタイム反映:' 
+                    : lang === 'zh' 
+                    ? '修改时实时自动同步:' 
+                    : 'Real-time sync on edit:'}
+                </span>
+              </div>
+              <div className="grid grid-cols-2 gap-2 w-full sm:w-auto">
+                <button
+                  type="button"
+                  onClick={() => {
+                    const el = document.getElementById('character-setup-section');
+                    if (el) {
+                      const y = el.getBoundingClientRect().top + window.scrollY - 70;
+                      window.scrollTo({ top: y, behavior: 'smooth' });
+                    }
+                  }}
+                  className="interactive-control flex items-center justify-center gap-1 min-h-[34px] bg-white hover:bg-[#D5EFE5] text-[#1E5D4B] font-black text-[12px] sm:text-[12.5px] px-3 py-1 rounded-lg border border-[#9ED2C0] shadow-2xs cursor-pointer active:scale-95 transition-all"
+                >
+                  <span>✏️</span>
+                  <span className="truncate">{lang === 'ko' ? '캐릭터·태그 수정 ↑' : lang === 'ja' ? 'キャラ・タグ修正 ↑' : lang === 'zh' ? '角色与标签 ↑' : 'Character·Tags ↑'}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const el = document.getElementById('emoticon-phrase-grid');
+                    if (el) {
+                      const y = el.getBoundingClientRect().top + window.scrollY - 70;
+                      window.scrollTo({ top: y, behavior: 'smooth' });
+                    }
+                  }}
+                  className="interactive-control flex items-center justify-center gap-1 min-h-[34px] bg-white hover:bg-[#D5EFE5] text-[#1E5D4B] font-black text-[12px] sm:text-[12.5px] px-3 py-1 rounded-lg border border-[#9ED2C0] shadow-2xs cursor-pointer active:scale-95 transition-all"
+                >
+                  <span>🎨</span>
+                  <span className="truncate">{lang === 'ko' ? '테마 변경 ↑' : lang === 'ja' ? 'テーマ変更 ↑' : lang === 'zh' ? '主题变更 ↑' : 'Themes ↑'}</span>
+                </button>
+              </div>
             </div>
           </div>
 
