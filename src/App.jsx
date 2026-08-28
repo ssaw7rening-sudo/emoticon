@@ -6429,10 +6429,10 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
       : '💡 Please use the dedicated buttons below to copy and launch prompts!';
     showToast(msg);
 
-    const el = document.getElementById('ai-action-hub');
-    if (el) {
-      const y = el.getBoundingClientRect().top + window.scrollY - 70;
-      window.scrollTo({ top: y, behavior: 'smooth' });
+    const gridEl = document.getElementById('ai-action-cards-grid') || document.getElementById('ai-action-hub');
+    if (gridEl) {
+      // On both mobile & desktop, scroll smoothly so all 3 cards (ChatGPT, Gemini, Grok) are comfortably visible
+      gridEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
   };
 
@@ -7691,7 +7691,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
             </span>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
+          <div id="ai-action-cards-grid" className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
             {/* ChatGPT Action Card */}
             <div className={`p-3.5 rounded-lg border-2 flex flex-col gap-2 transition-all ${previewMode === 'gpt' ? 'bg-[#F8FFFC] border-[#9FD5C4] shadow-sm' : 'bg-white border-slate-200 shadow-xs'}`}>
               <button
