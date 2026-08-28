@@ -6932,12 +6932,13 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
 
             {/* Character Prompt Direct Input Textarea */}
             <div className="flex flex-col gap-1.5 mt-1">
-              <div className="flex items-center justify-between px-1 text-[13px] font-bold text-mint-strong">
-                <span className="flex items-center gap-1">
-                  ✏️ {lang === 'ko' ? '캐릭터 상세 설명 & 태그 자동 반영' : lang === 'ja' ? 'キャラクター詳細＆タグ自動反映' : lang === 'zh' ? '角色详细描述与标签自动同步' : 'Character Prompt & Active Tags'}
+              <div className="flex flex-col gap-0.5 px-1">
+                <span className="text-[13.5px] sm:text-[14px] font-black text-mint-strong flex items-center gap-1.5">
+                  <span>✏️</span>
+                  <span>{lang === 'ko' ? '캐릭터 상세 설명 & 태그 자동 반영' : lang === 'ja' ? 'キャラクター詳細＆タグ自動反映' : lang === 'zh' ? '角色详细描述与标签自动同步' : 'Character Prompt & Active Tags'}</span>
                 </span>
-                <span className="text-[12px] text-mint-strong/80 font-normal whitespace-nowrap">
-                  {lang === 'ko' ? '직접 수정 및 타이핑 가능' : 'Editable directly'}
+                <span className="text-[11.5px] sm:text-[12px] text-mint-strong/85 font-medium pl-6">
+                  {lang === 'ko' ? '직접 수정 및 타이핑 가능' : lang === 'ja' ? '直接編集・タイピング可能' : lang === 'zh' ? '支持直接编辑与手动输入' : 'Editable directly & type freely'}
                 </span>
               </div>
               <textarea 
