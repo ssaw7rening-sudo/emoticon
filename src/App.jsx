@@ -6440,49 +6440,15 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
           {toastMessage}
         </div>
       )}
-      {/* TopAppBar - Generous, Comfortable Height Single-Row Sticky Header */}
-      <header className="w-full top-0 bg-white/95 backdrop-blur-md z-50 sticky border-b border-[#EADFCB] shadow-2xs">
-        <div className="max-w-3xl mx-auto flex items-center justify-between px-container-margin min-h-[58px] sm:min-h-[64px] py-2 sm:py-2.5 w-full gap-2 sm:gap-3">
-          {/* Left: Brand Logo */}
-          <h1 className="brand-logo text-[18px] xs:text-[19px] sm:text-[22px] font-black text-primary-strong tracking-tight whitespace-nowrap flex items-center gap-1.5 shrink-0">
-            <span>Prompt Maker</span>
-          </h1>
-
-          {/* Right Controls: Single Line (Quota + Tips + Language) */}
+      {/* TopAppBar - Clean Original Header */}
+      <header className="w-full top-0 bg-background/95 backdrop-blur-md z-50 sticky border-b border-outline-variant/30 shadow-xs">
+        <div className="max-w-3xl mx-auto flex items-center justify-between px-container-margin min-h-14 py-2 w-full">
           <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
-            {/* 1. Membership / Quota Badge */}
-            {isMember ? (
-              <div className="flex items-center gap-1.5 bg-[#FFF9E6] border border-[#F6D77A] px-2.5 sm:px-3 h-9 sm:h-9.5 rounded-full shadow-2xs shrink-0">
-                <span className="text-[12px]">👑</span>
-                <span className="text-[11px] sm:text-[12px] font-extrabold text-[#795B16] max-w-[75px] xs:max-w-[95px] sm:max-w-[120px] truncate whitespace-nowrap">
-                  {currentUser.nickname}
-                </span>
-                <button
-                  type="button"
-                  onClick={logoutUser}
-                  className="interactive-control text-[9.5px] sm:text-[10.5px] font-bold text-[#8A661C] hover:text-rose-600 ml-0.5 underline cursor-pointer"
-                >
-                  {lang === 'ko' ? '로그아웃' : 'Logout'}
-                </button>
-              </div>
-            ) : (
-              <button
-                type="button"
-                onClick={() => {
-                  setLoginModalTriggerReason('header');
-                  setShowLoginModal(true);
-                }}
-                className="interactive-control flex items-center gap-1 h-9 sm:h-9.5 px-2.5 sm:px-3.5 rounded-full bg-gradient-to-r from-[#FFF4D9] to-[#FFE8B5] hover:from-[#FFE8B5] hover:to-[#FFD88A] border border-[#E8C66A] text-[#5A461B] text-[11.5px] sm:text-[12.5px] font-black shadow-2xs active:scale-95 transition-all whitespace-nowrap shrink-0 cursor-pointer"
-              >
-                <span className="text-[11px] sm:text-[12px]">⚡</span>
-                <span>{lang === 'ko' ? `무료 ${remainingFreeUsage}회` : `${remainingFreeUsage} Free`}</span>
-                <span className="bg-[#5A461B] text-white text-[8.5px] sm:text-[9.5px] font-black px-1.5 py-0.5 rounded-full ml-0.5">
-                  {lang === 'ko' ? '로그인' : 'Login'}
-                </span>
-              </button>
-            )}
-
-            {/* 2. 💡 꿀팁 버튼 */}
+            <h1 className="brand-logo text-[18px] sm:text-[22px] leading-none font-extrabold text-primary-strong tracking-tight whitespace-nowrap flex items-center gap-1.5">
+              <span>Prompt Maker</span>
+            </h1>
+          </div>
+          <div className="flex items-center gap-1 sm:gap-2 shrink-0">
             <button 
               onClick={() => {
                 setShowPhotoTips(true);
@@ -6495,63 +6461,33 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                   }
                 }, 80);
               }}
-              className="interactive-control flex items-center gap-1 h-9 sm:h-9.5 px-2.5 sm:px-3 rounded-full bg-[#FFF4E5] border border-[#FFE8CC] text-[#8A4B00] text-[11.5px] sm:text-[12.5px] font-bold hover:bg-[#FFE8CC] shadow-2xs whitespace-nowrap shrink-0 cursor-pointer"
-              title="꿀팁 가이드 보기"
+              className="interactive-control flex items-center gap-1 min-h-9 px-2 sm:px-3 py-1 rounded-full bg-[#FFF4E5] border border-[#FFE8CC] text-[#8A4B00] text-[13px] font-bold hover:bg-[#FFE8CC] shadow-sm whitespace-nowrap shrink-0"
             >
-              <span className="text-[12px] sm:text-[13px]">💡</span>
-              <span className="hidden xs:inline">{lang === 'ko' ? '꿀팁' : lang === 'ja' ? 'ガイド' : lang === 'zh' ? '指南' : 'Guide'}</span>
+              <span className="text-[13px] sm:text-[14px]">💡</span>
+              <span>{lang === 'ko' ? '꿀팁' : lang === 'ja' ? 'ガイド' : lang === 'zh' ? '指南' : 'Guide'}</span>
             </button>
-
-            {/* 3. 🌐 Sleek Language Dropdown */}
-            <div className="relative shrink-0">
-              <button
-                type="button"
-                onClick={() => setShowLangDropdown(prev => !prev)}
-                className="interactive-control flex items-center gap-1 h-9 sm:h-9.5 px-2.5 sm:px-3 rounded-full bg-[#FAF7F2] hover:bg-[#F3EFE8] border border-[#E5DFD5] text-[#4A453C] text-[11.5px] sm:text-[12.5px] font-black shadow-2xs transition-all cursor-pointer active:scale-95"
-                aria-haspopup="true"
-                aria-expanded={showLangDropdown}
-                title="언어 변경 / Change Language"
-              >
-                <span className="text-[13px]">🌐</span>
-                <span>{lang === 'ko' ? 'KO' : lang === 'ja' ? 'JA' : lang === 'zh' ? 'ZH' : 'EN'}</span>
-                <span className="text-[9px] text-[#8C8578]">▾</span>
-              </button>
-
-              {showLangDropdown && (
-                <>
-                  {/* Backdrop for closing dropdown */}
-                  <div 
-                    className="fixed inset-0 z-[110]" 
-                    onClick={() => setShowLangDropdown(false)}
-                  />
-                  <div className="absolute right-0 top-full mt-1.5 w-34 bg-white rounded-xl shadow-xl border border-[#E8E2D8] py-1 z-[120] animate-in fade-in zoom-in-95 duration-150">
-                    {[
-                      { code: 'ko', label: '한국어', flag: '🇰🇷' },
-                      { code: 'en', label: 'English', flag: '🇺🇸' },
-                      { code: 'ja', label: '日本語', flag: '🇯🇵' },
-                      { code: 'zh', label: '中文', flag: '🇨🇳' },
-                    ].map((item) => (
-                      <button
-                        key={item.code}
-                        type="button"
-                        onClick={() => {
-                          changeLanguage(item.code);
-                          setShowLangDropdown(false);
-                        }}
-                        className={`w-full px-3 py-2 text-left text-[12px] font-bold flex items-center justify-between hover:bg-[#F3FAF7] transition-all cursor-pointer ${
-                          lang === item.code ? 'text-mint-strong bg-[#EDF8F3] font-black' : 'text-slate-700'
-                        }`}
-                      >
-                        <span className="flex items-center gap-1.5">
-                          <span>{item.flag}</span>
-                          <span>{item.label}</span>
-                        </span>
-                        {lang === item.code && <span className="text-mint-strong text-[13px]">✓</span>}
-                      </button>
-                    ))}
-                  </div>
-                </>
-              )}
+            <div className="flex items-center gap-0.5 sm:gap-1 bg-surface-container-lowest p-0.5 sm:p-1 rounded-full border border-outline-variant shadow-sm shrink-0" role="group" aria-label="Language Selector">
+              {[
+                ['ko', 'KO', '한국어'],
+                ['en', 'EN', 'English'],
+                ['ja', 'JA', '日本語'],
+                ['zh', 'ZH', '中文'],
+              ].map(([code, shortLabel, fullLabel]) => (
+                <button
+                  key={code}
+                  type="button"
+                  aria-pressed={lang === code}
+                  onClick={() => changeLanguage(code)}
+                  className={`brand-logo interactive-control w-8 sm:w-9 h-7 sm:h-8 flex items-center justify-center text-[12px] font-extrabold rounded-full transition-all ${
+                    lang === code
+                      ? 'bg-mint text-mint-strong shadow-xs border border-mint-border'
+                      : 'text-on-surface-variant hover:bg-mint-soft'
+                  }`}
+                  title={fullLabel}
+                >
+                  <span>{shortLabel}</span>
+                </button>
+              ))}
             </div>
           </div>
         </div>
@@ -7311,6 +7247,57 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
 
         {/* Section 3: Prompt Preview */}
         <section className="flex flex-col gap-md">
+          {/* Smart Quota & VIP Membership Banner (Section 3) */}
+          {isMember ? (
+            <div className="bg-gradient-to-r from-[#EDF8F3] via-[#E3F5EC] to-[#D5EFE3] rounded-xl px-4 py-3 border-2 border-[#9ED2C0] shadow-xs flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2 min-w-0">
+                <span className="text-[18px]">👑</span>
+                <div className="min-w-0">
+                  <strong className="block text-[13px] sm:text-[14px] font-black text-[#133E32] truncate">
+                    {currentUser.nickname}{lang === 'ko' ? '님은 평생 무제한 무료 VIP 회원입니다' : ' has lifetime unlimited VIP access'}
+                  </strong>
+                  <span className="text-[11px] font-medium text-[#1E5D4B]">
+                    {lang === 'ko' ? '110종 테마, 사진 연동, AI 3종 분할 프롬프트를 무제한 이용 중입니다.' : 'Unlimited access to all 110 themes, photo mode, and prompts.'}
+                  </span>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={logoutUser}
+                className="interactive-control text-[11px] font-bold text-[#1E5D4B] hover:text-rose-600 underline cursor-pointer shrink-0"
+              >
+                {lang === 'ko' ? '로그아웃' : 'Logout'}
+              </button>
+            </div>
+          ) : (
+            <div className="bg-gradient-to-r from-[#FFF9EC] via-[#FFF3D6] to-[#FFEEC2] rounded-xl p-3.5 sm:p-4 border-2 border-[#F6D77A] shadow-xs flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+              <div className="flex items-center gap-2.5 min-w-0">
+                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#FFE8B5] text-[18px] shadow-2xs shrink-0">⚡</span>
+                <div className="flex flex-col min-w-0">
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-[13.5px] sm:text-[14px] font-black text-[#5A461B]">
+                      {lang === 'ko' ? `오늘 무료 복사 잔여 : ${remainingFreeUsage}회 / ${FREE_DAILY_LIMIT}회` : `Free Daily Quota: ${remainingFreeUsage}/${FREE_DAILY_LIMIT}`}
+                    </span>
+                  </div>
+                  <span className="text-[11px] sm:text-[11.5px] font-medium text-[#8A661C]">
+                    {lang === 'ko' ? '매일 밤 자정에 3회가 충전됩니다. 로그인 시 평생 무제한 무료!' : 'Resets daily at midnight. Log in for unlimited access.'}
+                  </span>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setLoginModalTriggerReason('quota');
+                  setShowLoginModal(true);
+                }}
+                className="interactive-control touch-manipulation flex items-center justify-center gap-1.5 h-10 px-4 rounded-full bg-gradient-to-r from-[#FEE500] to-[#FADA0A] hover:from-[#FADA0A] hover:to-[#E5C700] text-[#191919] text-[12.5px] sm:text-[13px] font-black shadow-xs active:scale-95 transition-all whitespace-nowrap cursor-pointer shrink-0"
+              >
+                <span>👑</span>
+                <span>{lang === 'ko' ? '3초 로그인하고 무제한 풀기 ›' : 'Unlock Unlimited Free Access ›'}</span>
+              </button>
+            </div>
+          )}
+
           <div className="bg-[#FFF7DF] rounded-md p-3 md:p-4 border border-[#F6D77A] shadow-sm flex flex-col gap-3">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2" role="group" aria-label={lang === 'ko' ? '프롬프트 생성 방식' : 'Prompt generation mode'}>
               {[
