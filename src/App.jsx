@@ -6535,7 +6535,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
         </div>
       </header>
 
-      <main className="max-w-3xl mx-auto px-container-margin mt-md md:mt-lg flex flex-col gap-4 sm:gap-5">
+      <main className="max-w-3xl mx-auto px-container-margin mt-3 sm:mt-4 md:mt-4.5 flex flex-col gap-4 sm:gap-5">
         {/* App Intro Hero Section */}
         <section className="relative overflow-hidden bg-gradient-to-br from-[#FFD3B6] via-[#FFE8B6] to-[#FFC2C2] text-[#5C3A21] p-4 sm:p-6 md:p-xl rounded-md shadow-bubbly text-center flex flex-col items-center justify-center gap-3 sm:gap-4 md:gap-6 border-2 sm:border-4 border-white max-w-full w-full">
           {/* Decorative floating emojis */}
