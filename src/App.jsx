@@ -7496,7 +7496,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
             </div>
           )}
           {previewMode === 'gemini' && (
-            <div className="rounded-[8px] border border-[#E8C66A] bg-[#FFF8E8] p-3 flex flex-col gap-3">
+            <div className="rounded-lg border border-[#F6D77A] bg-[#FFF7DF] p-3 flex flex-col gap-3">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                 <span className="text-[13px] font-bold text-[#795B16]">{t.geminiTextMode}</span>
                 <div className="grid grid-cols-2 gap-1.5 sm:gap-2 w-full sm:w-auto" role="group" aria-label={t.geminiTextMode}>
@@ -7512,7 +7512,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                       className={`interactive-control min-h-10 rounded-[8px] border px-2 sm:px-3 py-2 text-[13px] font-bold text-center whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E8C66A] ${
                         geminiTextMode === mode
                           ? 'bg-[#FFE8B5] text-[#5A461B] border-[#E8C66A] shadow-sm'
-                          : 'bg-white text-[#795B16] border-[#E9DFC5] hover:bg-[#FFF3D8]'
+                          : 'bg-white text-on-surface border-[#E9DFC5] hover:bg-[#FFF3D8]'
                       }`}
                     >
                       {label}
@@ -7536,7 +7536,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                       className={`interactive-control min-h-10 rounded-[8px] border px-1 sm:px-2 py-2 text-[12px] sm:text-[13px] font-bold text-center text-ellipsis overflow-hidden whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E8C66A] ${
                         geminiBackgroundMode === mode
                           ? 'bg-[#FFE8B5] text-[#5A461B] border-[#E8C66A] shadow-sm'
-                          : 'bg-white text-[#795B16] border-[#E9DFC5] hover:bg-[#FFF3D8]'
+                          : 'bg-white text-on-surface border-[#E9DFC5] hover:bg-[#FFF3D8]'
                       }`}
                     >
                       {label}
@@ -7570,7 +7570,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
             </div>
           )}
           {previewMode === 'grok' && (
-            <div className="rounded-[8px] border border-[#E8C66A] bg-[#FFF8E8] p-3 flex flex-col gap-3">
+            <div className="rounded-lg border border-[#F6D77A] bg-[#FFF7DF] p-3 flex flex-col gap-3">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                 <span className="text-[13px] font-bold text-[#795B16]">{t.grokTextMode}</span>
                 <div className="grid grid-cols-2 gap-1.5 sm:gap-2 w-full sm:w-auto" role="group" aria-label={t.grokTextMode}>
@@ -7586,7 +7586,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                       className={`interactive-control min-h-10 rounded-[8px] border px-2 sm:px-3 py-2 text-[13px] font-bold text-center whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E8C66A] ${
                         grokTextMode === mode
                           ? 'bg-[#FFE8B5] text-[#5A461B] border-[#E8C66A] shadow-sm'
-                          : 'bg-white text-[#795B16] border-[#E9DFC5] hover:bg-[#FFF3D8]'
+                          : 'bg-white text-on-surface border-[#E9DFC5] hover:bg-[#FFF3D8]'
                       }`}
                     >
                       {label}
@@ -7610,7 +7610,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                       className={`interactive-control min-h-10 rounded-[8px] border px-1 sm:px-2 py-2 text-[12px] sm:text-[13px] font-bold text-center text-ellipsis overflow-hidden whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E8C66A] ${
                         grokBackgroundMode === mode
                           ? 'bg-[#FFE8B5] text-[#5A461B] border-[#E8C66A] shadow-sm'
-                          : 'bg-white text-[#795B16] border-[#E9DFC5] hover:bg-[#FFF3D8]'
+                          : 'bg-white text-on-surface border-[#E9DFC5] hover:bg-[#FFF3D8]'
                       }`}
                     >
                       {label}
