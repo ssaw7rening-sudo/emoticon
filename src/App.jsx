@@ -3882,6 +3882,7 @@ const ALL_GOLDEN_COMBOS = [
 const GOLDEN_COMBOS = ALL_GOLDEN_COMBOS;
 // 🔑 Kakao Developers SDK Key
 const KAKAO_JAVASCRIPT_KEY = '65271d2b1354ae3e7a4eb07bceee7d0b';
+const GOOGLE_CLIENT_ID = '795493513068-k78ae4522sqtmp49vlkdo1kr6isd63h9.apps.googleusercontent.com';
 const FREE_DAILY_LIMIT = 3;
 
 function App() {
@@ -4197,6 +4198,59 @@ function App() {
   };
 
   const loginWithGoogle = () => {
+    try {
+      if (window.google?.accounts?.oauth2) {
+        const client = window.google.accounts.oauth2.initTokenClient({
+          client_id: GOOGLE_CLIENT_ID,
+          scope: 'email profile openid',
+          callback: async (response) => {
+            if (response.error) {
+              console.error('Google OAuth error:', response);
+              return;
+            }
+            try {
+              const res = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+                headers: { Authorization: `Bearer ${response.access_token}` },
+              });
+              const profile = await res.json();
+              const userData = {
+                id: 'google_' + (profile.sub || Date.now()),
+                nickname: profile.name || profile.email?.split('@')[0] || 'Google 사용자',
+                email: profile.email || '',
+                avatar: profile.picture || '',
+                provider: 'google',
+                isMember: true,
+                loginTime: new Date().toISOString()
+              };
+              setCurrentUser(userData);
+              localStorage.setItem('prompt_maker_user', JSON.stringify(userData));
+              setShowLoginModal(false);
+              showToast(lang === 'ko' ? `🎉 ${userData.nickname}님 환영합니다! 평생 무제한 무료 이용이 시작되었습니다.` : `🎉 Welcome ${userData.nickname}! Lifetime unlimited access activated.`);
+              trackEvent('login_success', { provider: 'google', lang });
+            } catch (err) {
+              console.error('Failed to fetch Google profile', err);
+              const fallbackUser = {
+                id: 'google_' + Date.now(),
+                nickname: 'Google 사용자',
+                provider: 'google',
+                isMember: true,
+                loginTime: new Date().toISOString()
+              };
+              setCurrentUser(fallbackUser);
+              localStorage.setItem('prompt_maker_user', JSON.stringify(fallbackUser));
+              setShowLoginModal(false);
+              showToast(lang === 'ko' ? '🎉 Google 로그인 성공! 평생 무제한 무료 이용이 시작되었습니다.' : '🎉 Logged in with Google!');
+            }
+          }
+        });
+        client.requestAccessToken();
+        return;
+      }
+    } catch (e) {
+      console.warn('Google Identity SDK init fallback', e);
+    }
+
+    // Fallback if GSI popup is blocked or offline
     const userData = {
       id: 'google_' + Date.now(),
       nickname: 'Google 사용자',
@@ -4207,7 +4261,7 @@ function App() {
     setCurrentUser(userData);
     localStorage.setItem('prompt_maker_user', JSON.stringify(userData));
     setShowLoginModal(false);
-    showToast(lang === 'ko' ? '🎉 Google 로그인 완료! 평생 무제한 무료 이용이 시작되었습니다.' : '🎉 Logged in with Google! Lifetime unlimited access activated.');
+    showToast(lang === 'ko' ? '🎉 Google 로그인 완료! 평생 무제한 무료 이용이 시작되었습니다.' : '🎉 Logged in with Google!');
     trackEvent('login_success', { provider: 'google', lang });
   };
 
