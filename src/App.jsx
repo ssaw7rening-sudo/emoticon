@@ -4238,6 +4238,24 @@ function App() {
     setCharManual('');
   };
 
+  // 🔤 Dynamic auto-scaling font size based on phrase text length
+  const getDynamicPhraseFontSize = (str = '') => {
+    const len = (str || '').trim().length;
+    if (len <= 5) return 'text-[13px] sm:text-[14px] tracking-normal font-bold';
+    if (len <= 8) return 'text-[12px] sm:text-[13px] tracking-tight font-bold';
+    if (len <= 11) return 'text-[11px] sm:text-[12px] tracking-tight font-bold';
+    if (len <= 14) return 'text-[10px] sm:text-[11px] tracking-tighter font-bold';
+    return 'text-[9px] sm:text-[10px] tracking-tighter font-extrabold';
+  };
+
+  const getDynamicBatchFontSize = (str = '') => {
+    const len = (str || '').trim().length;
+    if (len <= 5) return 'text-[12.5px] sm:text-[13px] tracking-tight';
+    if (len <= 9) return 'text-[11.5px] sm:text-[12px] tracking-tight';
+    if (len <= 13) return 'text-[10.5px] sm:text-[11px] tracking-tighter';
+    return 'text-[9.5px] sm:text-[10px] tracking-tighter';
+  };
+
   const handleEmoticonChange = (index, value) => {
     const newEmoticons = [...emoticons];
     newEmoticons[index] = value;
@@ -6968,7 +6986,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                   type="text"
                   value={text}
                   onChange={(e) => handleEmoticonChange(idx, e.target.value)}
-                  className="interactive-control w-full h-[42px] sm:h-[45px] bg-[#F4FBF7] hover:bg-[#ECF8F1] focus:bg-white rounded-full pl-7 sm:pl-7.5 pr-2 text-left text-[#1D4A3C] focus:text-slate-900 text-[11px] sm:text-[12px] font-bold tracking-tight placeholder:text-slate-400 focus:outline-none focus:ring-3 focus:ring-mint/50 border-2 border-[#B8DDCF] focus:border-mint-strong transition-all overflow-x-auto whitespace-nowrap"
+                  className={`interactive-control w-full h-[42px] sm:h-[45px] bg-[#F4FBF7] hover:bg-[#ECF8F1] focus:bg-white rounded-full pl-7 sm:pl-7.5 pr-2 text-left text-[#1D4A3C] focus:text-slate-900 ${getDynamicPhraseFontSize(text)} placeholder:text-slate-400 focus:outline-none focus:ring-3 focus:ring-mint/50 border-2 border-[#B8DDCF] focus:border-mint-strong transition-all overflow-x-auto whitespace-nowrap`}
                   placeholder={`Phrase ${idx + 1}`}
                 />
               </label>
@@ -7045,7 +7063,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                         {copiedType === copyKey
                           ? <CheckCircle2 size={15} className="shrink-0" aria-label={t.copiedPrompt} />
                           : <span className="text-[10px] sm:text-[10.5px] font-black opacity-70 shrink-0">{idx + 1}.</span>}
-                        <span className="text-[11px] sm:text-[12px] font-bold tracking-tight leading-none truncate">{phrase}</span>
+                        <span className={`${getDynamicBatchFontSize(phrase)} font-bold leading-none truncate`}>{phrase}</span>
                       </button>
                     );
                   })}
