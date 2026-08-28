@@ -6442,7 +6442,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
       )}
       {/* TopAppBar - Generous, Comfortable Height Single-Row Sticky Header */}
       <header className="w-full top-0 bg-white/95 backdrop-blur-md z-50 sticky border-b border-[#EADFCB] shadow-2xs">
-        <div className="max-w-3xl mx-auto flex items-center justify-between px-3.5 sm:px-5 min-h-[58px] sm:min-h-[64px] py-2 sm:py-2.5 w-full gap-2 sm:gap-3">
+        <div className="max-w-3xl mx-auto flex items-center justify-between px-container-margin min-h-[58px] sm:min-h-[64px] py-2 sm:py-2.5 w-full gap-2 sm:gap-3">
           {/* Left: Brand Logo */}
           <h1 className="brand-logo text-[18px] xs:text-[19px] sm:text-[22px] font-black text-primary-strong tracking-tight whitespace-nowrap flex items-center gap-1.5 shrink-0">
             <span>Prompt Maker</span>
