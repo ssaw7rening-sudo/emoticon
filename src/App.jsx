@@ -7193,7 +7193,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
 
             <div className="flex items-center gap-2 overflow-x-auto no-scrollbar" aria-label={lang === 'ko' ? '추천 테마' : 'Recommended themes'}>
               <span className="text-[11px] sm:text-[11.5px] font-extrabold text-[#8A6048] shrink-0 whitespace-nowrap">🔥 {lang === 'ko' ? '인기 추천' : 'Popular'}</span>
-              {sortedThemeKeys.slice(0, 3).map((theme) => (
+              {sortedThemeKeys.slice(0, 5).map((theme) => (
                 <button key={theme} type="button" onClick={() => selectPopularTheme(theme)} className={`touch-manipulation min-h-8 max-w-[180px] truncate rounded-full border px-3 text-[12.5px] sm:text-[13px] font-bold shrink-0 whitespace-nowrap ${activeTheme === theme ? 'bg-[#FFF0E3] border-[#E9B88E] text-[#9A4B22] font-black' : 'bg-white border-[#E8D8CA] text-[#7A5A46]'}`}>
                   {activeTheme === theme ? '✓ ' : ''}{theme}
                 </button>
