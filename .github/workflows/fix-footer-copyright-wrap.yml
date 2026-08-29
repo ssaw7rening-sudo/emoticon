@@ -26,15 +26,11 @@ jobs:
           from pathlib import Path
           p = Path('src/App.jsx')
           s = p.read_text(encoding='utf-8')
-          old = '''          <p className="text-[13.5px] text-[#8C7A6B] font-bold mt-1">
-            © {new Date().getFullYear()} Prompt Maker (프롬프트 메이커). All rights reserved.
-          </p>'''
-          new = '''          <p className="text-[13.5px] text-[#8C7A6B] font-bold mt-1">
-            <span className="block">© {new Date().getFullYear()} Prompt Maker (프롬프트 메이커).</span>
-            <span className="block whitespace-nowrap">All rights reserved.</span>
-          </p>'''
+          old = '© {new Date().getFullYear()} Prompt Maker (프롬프트 메이커). All rights reserved.'
+          new = '''<span className="block">© {new Date().getFullYear()} Prompt Maker (프롬프트 메이커).</span>
+            <span className="block whitespace-nowrap">All rights reserved.</span>'''
           if old not in s:
-              raise SystemExit('Footer copyright anchor not found')
+              raise SystemExit('Footer copyright text not found')
           p.write_text(s.replace(old, new, 1), encoding='utf-8')
           PY
       - name: Build
