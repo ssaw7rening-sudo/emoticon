@@ -18,74 +18,30 @@ jobs:
           fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
-      - name: Normalize final settings edit controls
+          node-version: 22
+      - name: Replace final settings and launch controls block
         run: |
           python - <<'PY'
           from pathlib import Path
+          import base64
 
           path = Path('src/App.jsx')
           text = path.read_text(encoding='utf-8')
 
-          final_marker = '          {/* Final settings checkpoint after prompt preview */}'
-          ad_marker = '          <AdBanner />'
-          paragraph_tail = "                : 'Check these settings once more before launching or copying.'}"
-          button_start_marker = '              <div className="grid grid-cols-2 gap-2 w-full sm:w-auto">'
+          start_marker = '            {/* Final settings edit controls */}'
+          end_marker = '          <div id="ai-action-cards-grid" className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">'
+          replacement = base64.b64decode('ICAgICAgICAgICAgey8qIEZpbmFsIHNldHRpbmdzIGVkaXQgY29udHJvbHMgKi99CiAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJtdC0zIHB0LTMgYm9yZGVyLXQgYm9yZGVyLVsjRUZFNEM2XSI+CiAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9ImZsZXggaXRlbXMtY2VudGVyIGdhcC0xLjUgdGV4dC1bMTEuNXB4XSBzbTp0ZXh0LVsxMnB4XSBmb250LWJvbGQgdGV4dC1bIzhBNzc1OF0gbWItMiI+CiAgICAgICAgICAgICAgICA8c3Bhbj7wn5KhPC9zcGFuPgogICAgICAgICAgICAgICAgPHNwYW4+CiAgICAgICAgICAgICAgICAgIHtsYW5nID09PSAna28nCiAgICAgICAgICAgICAgICAgICAgPyAn7IiY7KCVIOyLnCDsi6Tsi5zqsIQg7J6Q64+ZIOuwmOyYgTonCiAgICAgICAgICAgICAgICAgICAgOiBsYW5nID09PSAnamEnCiAgICAgICAgICAgICAgICAgICAgPyAn5aSJ5pu05pmC44Gr44Oq44Ki44Or44K/44Kk44Og5Y+N5pigOicKICAgICAgICAgICAgICAgICAgICA6IGxhbmcgPT09ICd6aCcKICAgICAgICAgICAgICAgICAgICA/ICfkv67mlLnml7blrp7ml7boh6rliqjlkIzmraU6JwogICAgICAgICAgICAgICAgICAgIDogJ1JlYWwtdGltZSBzeW5jIG9uIGVkaXQ6J30KICAgICAgICAgICAgICAgIDwvc3Bhbj4KICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0iZ3JpZCBncmlkLWNvbHMtMiBnYXAtMiB3LWZ1bGwiPgogICAgICAgICAgICAgICAgPGJ1dHRvbgogICAgICAgICAgICAgICAgICB0eXBlPSJidXR0b24iCiAgICAgICAgICAgICAgICAgIG9uQ2xpY2s9eygpID0+IHsKICAgICAgICAgICAgICAgICAgICBjb25zdCBlbCA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdjaGFyYWN0ZXItc2V0dXAtc2VjdGlvbicpOwogICAgICAgICAgICAgICAgICAgIGlmIChlbCkgewogICAgICAgICAgICAgICAgICAgICAgY29uc3QgeSA9IGVsLmdldEJvdW5kaW5nQ2xpZW50UmVjdCgpLnRvcCArIHdpbmRvdy5zY3JvbGxZIC0gNzA7CiAgICAgICAgICAgICAgICAgICAgICB3aW5kb3cuc2Nyb2xsVG8oeyB0b3A6IHksIGJlaGF2aW9yOiAnc21vb3RoJyB9KTsKICAgICAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICAgIH19CiAgICAgICAgICAgICAgICAgIGNsYXNzTmFtZT0iaW50ZXJhY3RpdmUtY29udHJvbCBtaW4tdy0wIGZsZXggaXRlbXMtY2VudGVyIGp1c3RpZnktY2VudGVyIGdhcC0xIG1pbi1oLVszOHB4XSBiZy13aGl0ZSBob3ZlcjpiZy1bI0ZGRjdERl0gdGV4dC1bIzZBNTEyOV0gZm9udC1ibGFjayB0ZXh0LVsxMnB4XSBzbTp0ZXh0LVsxMi41cHhdIHB4LTIuNSBweS0xLjUgcm91bmRlZC1sZyBib3JkZXIgYm9yZGVyLVsjRTJDOTkwXSBzaGFkb3ctMnhzIGN1cnNvci1wb2ludGVyIGFjdGl2ZTpzY2FsZS05NSB0cmFuc2l0aW9uLWFsbCIKICAgICAgICAgICAgICAgID4KICAgICAgICAgICAgICAgICAgPHNwYW4+4pyP77iPPC9zcGFuPgogICAgICAgICAgICAgICAgICA8c3BhbiBjbGFzc05hbWU9InRydW5jYXRlIj57bGFuZyA9PT0gJ2tvJyA/ICfsupDrpq3thLDCt+2DnOq3uCDsiJjsoJUg4oaRJyA6IGxhbmcgPT09ICdqYScgPyAn44Kt44Oj44Op44O744K/44Kw5L+u5q2jIOKGkScgOiBsYW5nID09PSAnemgnID8gJ+inkuiJsuS4juagh+etviDihpEnIDogJ0NoYXJhY3RlcsK3VGFncyDihpEnfTwvc3Bhbj4KICAgICAgICAgICAgICAgIDwvYnV0dG9uPgogICAgICAgICAgICAgICAgPGJ1dHRvbgogICAgICAgICAgICAgICAgICB0eXBlPSJidXR0b24iCiAgICAgICAgICAgICAgICAgIG9uQ2xpY2s9eygpID0+IHsKICAgICAgICAgICAgICAgICAgICBjb25zdCBlbCA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdlbW90aWNvbi1waHJhc2UtZ3JpZCcpOwogICAgICAgICAgICAgICAgICAgIGlmIChlbCkgewogICAgICAgICAgICAgICAgICAgICAgY29uc3QgeSA9IGVsLmdldEJvdW5kaW5nQ2xpZW50UmVjdCgpLnRvcCArIHdpbmRvdy5zY3JvbGxZIC0gNzA7CiAgICAgICAgICAgICAgICAgICAgICB3aW5kb3cuc2Nyb2xsVG8oeyB0b3A6IHksIGJlaGF2aW9yOiAnc21vb3RoJyB9KTsKICAgICAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICAgIH19CiAgICAgICAgICAgICAgICAgIGNsYXNzTmFtZT0iaW50ZXJhY3RpdmUtY29udHJvbCBtaW4tdy0wIGZsZXggaXRlbXMtY2VudGVyIGp1c3RpZnktY2VudGVyIGdhcC0xIG1pbi1oLVszOHB4XSBiZy13aGl0ZSBob3ZlcjpiZy1bI0ZGRjdERl0gdGV4dC1bIzZBNTEyOV0gZm9udC1ibGFjayB0ZXh0LVsxMnB4XSBzbTp0ZXh0LVsxMi41cHhdIHB4LTIuNSBweS0xLjUgcm91bmRlZC1sZyBib3JkZXIgYm9yZGVyLVsjRTJDOTkwXSBzaGFkb3ctMnhzIGN1cnNvci1wb2ludGVyIGFjdGl2ZTpzY2FsZS05NSB0cmFuc2l0aW9uLWFsbCIKICAgICAgICAgICAgICAgID4KICAgICAgICAgICAgICAgICAgPHNwYW4+8J+OqDwvc3Bhbj4KICAgICAgICAgICAgICAgICAgPHNwYW4gY2xhc3NOYW1lPSJ0cnVuY2F0ZSI+e2xhbmcgPT09ICdrbycgPyAn7YWM66eIIOuzgOqyvSDihpEnIDogbGFuZyA9PT0gJ2phJyA/ICfjg4bjg7zjg57lpInmm7Qg4oaRJyA6IGxhbmcgPT09ICd6aCcgPyAn5Li76aKY5Y+Y5pu0IOKGkScgOiAnVGhlbWVzIOKGkSd9PC9zcGFuPgogICAgICAgICAgICAgICAgPC9idXR0b24+CiAgICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgPC9kaXY+CgogICAgICAgICAgPEFkQmFubmVyIC8+CiAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0iYmctWyNFQUY4RjNdIHAtMyBzbTpwLTMuNSByb3VuZGVkLXhsIGJvcmRlci0yIGJvcmRlci1taW50LWJvcmRlciBmbGV4IGZsZXgtY29sIGdhcC0yLjUgdGV4dC1taW50LXN0cm9uZyBzaGFkb3cteHMiPgogICAgICAgICAgICB7LyogMS4gTGF1bmNoIEluZm8gSGVhZGVyICovfQogICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0iZmxleCBpdGVtcy1jZW50ZXIgZ2FwLTIiPgogICAgICAgICAgICAgIDxzcGFuIGNsYXNzTmFtZT0idGV4dC1bMTdweF0gc2hyaW5rLTAgbGVhZGluZy1ub25lIj7wn5qAPC9zcGFuPgogICAgICAgICAgICAgIDxwIGNsYXNzTmFtZT0idGV4dC1bMTIuNXB4XSBzbTp0ZXh0LVsxMy41cHhdIGZvbnQtZXh0cmFib2xkIHRleHQtWyMxNTQ2MzldIGxlYWRpbmctc251ZyBbd29yZC1icmVhazprZWVwLWFsbF0iPgogICAgICAgICAgICAgICAge2xhbmcgPT09ICdrbycKICAgICAgICAgICAgICAgICAgPyAn67KE7Yq8IO2BtOumrSDsi5wg7ZSE66Gs7ZSE7Yq4IOyekOuPmSDrs7XsgqwgJiBBSSDsgqzsnbTtirjqsIAg67CU66GcIOyXtOumveuLiOuLpC4nCiAgICAgICAgICAgICAgICAgIDogbGFuZyA9PT0gJ2phJwogICAgICAgICAgICAgICAgICA/ICcjg5zjgr/jg7PjgpLmirzjgZnjgajjg5fjg63jg7Pjg5fjg4jjgpLoh6rli5XjgrPjg5Tjg7zjgZfjgaZBSeeUu+mdouOCkumWi+OBjeOBvuOBmeOAgicKICAgICAgICAgICAgICAgICAgOiBsYW5nID09PSAnemgnCiAgICAgICAgICAgICAgICAgID8gJ+eCueWHu+aMiemSruWwhuiHquWKqOWkjeWItuaPkOekuuivjeW5tuebtOaOpeaJk+W8gEFJ572R56uZ44CCJwogICAgICAgICAgICAgICAgICA6ICdDbGljayBhIGJ1dHRvbiBiZWxvdyB0byBhdXRvLWNvcHkgcHJvbXB0ICYgbGF1bmNoIHRoZSBBSSBzaXRlLid9CiAgICAgICAgICAgICAgPC9wPgogICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgIDwvZGl2PgoK').decode('utf-8')
 
-          if final_marker not in text:
-              raise SystemExit('Final settings card not found.')
-          if paragraph_tail not in text:
-              raise SystemExit('Final settings confirmation paragraph not found.')
-          if button_start_marker not in text:
-              raise SystemExit('Edit button container not found.')
+          if start_marker not in text:
+              raise SystemExit('Final settings edit-controls marker not found.')
+          if end_marker not in text:
+              raise SystemExit('AI action cards marker not found.')
 
-          button_start = text.index(button_start_marker)
-          themes_pos = text.index("'Themes ↑'", button_start)
-          button_end = text.index('              </div>', themes_pos) + len('              </div>\n')
-          buttons = text[button_start:button_end]
-
-          buttons = buttons.replace(
-              'className="grid grid-cols-2 gap-2 w-full sm:w-auto"',
-              'className="grid grid-cols-2 gap-2 w-full"',
-              1,
-          )
-          buttons = buttons.replace(
-              'className="interactive-control flex items-center justify-center gap-1 min-h-[34px] bg-white hover:bg-[#D5EFE5] text-[#1E5D4B] font-black text-[12px] sm:text-[12.5px] px-3 py-1 rounded-lg border border-[#9ED2C0] shadow-2xs cursor-pointer active:scale-95 transition-all"',
-              'className="interactive-control min-w-0 flex items-center justify-center gap-1 min-h-[38px] bg-white hover:bg-[#FFF7DF] text-[#6A5129] font-black text-[12px] sm:text-[12.5px] px-2.5 py-1.5 rounded-lg border border-[#E2C990] shadow-2xs cursor-pointer active:scale-95 transition-all"',
-          )
-
-          text = text[:button_start] + text[button_end:]
-
-          final_start = text.index(final_marker)
-          ad_pos = text.index(ad_marker, final_start)
-          paragraph_pos = text.index(paragraph_tail, final_start)
-          paragraph_end = text.index('            </p>', paragraph_pos) + len('            </p>\n')
-          card_core = text[final_start:paragraph_end]
-
-          edit_controls = (
-              '            {/* Final settings edit controls */}\n'
-              '            <div className="mt-3 pt-3 border-t border-[#EFE4C6]">\n'
-              '              <div className="flex items-center gap-1.5 text-[11.5px] sm:text-[12px] font-bold text-[#8A7758] mb-2">\n'
-              '                <span>💡</span>\n'
-              '                <span>\n'
-              "                  {lang === 'ko'\n"
-              "                    ? '수정 시 실시간 자동 반영:'\n"
-              "                    : lang === 'ja'\n"
-              "                    ? '変更時にリアルタイム反映:'\n"
-              "                    : lang === 'zh'\n"
-              "                    ? '修改时实时自动同步:'\n"
-              "                    : 'Real-time sync on edit:'}\n"
-              '                </span>\n'
-              '              </div>\n'
-              + buttons
-              + '            </div>\n'
-          )
-
-          rebuilt = card_core + edit_controls + '          </div>\n\n'
-          text = text[:final_start] + rebuilt + text[ad_pos:]
-
+          start = text.index(start_marker)
+          end = text.index(end_marker, start)
+          text = text[:start] + replacement + text[end:]
           path.write_text(text, encoding='utf-8')
-          print('Normalized final settings card and moved both edit buttons inside it.')
+          print('Replaced final settings/edit controls block deterministically.')
           PY
       - name: Install dependencies
         run: npm ci
@@ -100,5 +56,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add src/App.jsx
-          git commit -m "Finish moving edit controls into final settings"
+          git commit -m "Move edit buttons into final settings card"
           git push
