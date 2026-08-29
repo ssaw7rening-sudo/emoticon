@@ -1,6 +1,7 @@
 // AI 이모티콘 프롬프트 메이커 메인 애플리케이션
 import React, { useState, useEffect, useRef } from "react";
 import { Shuffle, CheckCircle2, Bot, Sparkles, Zap, Trash2, RotateCcw } from "lucide-react";
+import BackgroundRemover from "./components/BackgroundRemover.jsx";
 
 const THEMES_KO = {
   '일상/인사 ①': ['ㅋㅋㅋㅋ', '안녕!', '오늘도 화이팅', '좋아요', '고마워요', '사랑해요', '최고!', '오예', '미안해요', '수고했어요', '축하해요', '대박', '헐', '감동', '잘자요'],
@@ -8287,6 +8288,8 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
               <SectionFAQ lang={lang} />
             </div>
         </div>
+
+        <BackgroundRemover lang={lang} />
       </main>
 
       {/* Footer */}
