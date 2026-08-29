@@ -4,36 +4,36 @@ let removerPromise = null;
 
 const COPY = {
   ko: {
-    title: '배경 제거', badge: 'BETA', desc: '이미지의 배경을 AI로 지우고 투명 PNG로 저장해 보세요.',
-    privacy: '이미지는 서버에 업로드하지 않고 이 기기에서 처리됩니다.', first: '첫 실행은 AI 모델을 준비하느라 조금 오래 걸릴 수 있습니다.',
+    title: '배경 제거', badge: 'BETA', desc: '이미지의 배경을 지우고 투명 PNG로 저장해 보세요.',
+    privacy: '이미지는 서버에 업로드하지 않고 이 기기에서 처리됩니다.', first: '흰 배경 이미지는 빠르게 처리하며, 복잡한 배경은 AI 모델을 사용해 처음 실행이 조금 오래 걸릴 수 있습니다.',
     upload: '이미지를 선택하거나 여기에 끌어놓으세요', format: 'PNG · JPG · WEBP / 최대 12MB', change: '이미지 변경',
-    remove: '배경 제거하기', preparing: 'AI 모델 준비 중…', processing: '배경을 제거하고 있어요…',
+    remove: '배경 제거하기', preparing: '이미지 분석 중…', processing: '배경을 제거하고 있어요…',
     original: '원본', result: '투명 배경', download: '투명 PNG 저장', again: '다른 이미지',
-    badType: 'PNG, JPG, WEBP 이미지만 사용할 수 있습니다.', tooLarge: '12MB 이하의 이미지를 사용해 주세요.', failed: '배경 제거에 실패했습니다. 다른 이미지로 다시 시도해 주세요.'
+    badType: 'PNG, JPG, WEBP 이미지만 사용할 수 있습니다.', tooLarge: '12MB 이하의 이미지를 사용해 주세요.', failed: '배경 제거에 실패했습니다. 브라우저를 새로고침한 뒤 다시 시도해 주세요.'
   },
   en: {
-    title: 'Remove Background', badge: 'BETA', desc: 'Remove an image background with AI and save it as a transparent PNG.',
-    privacy: 'Your image is processed on this device and is not uploaded to our server.', first: 'The first run may take longer while the AI model is prepared.',
+    title: 'Remove Background', badge: 'BETA', desc: 'Remove an image background and save it as a transparent PNG.',
+    privacy: 'Your image is processed on this device and is not uploaded to our server.', first: 'White backgrounds are handled quickly. Complex backgrounds use an AI model, so the first run may take longer.',
     upload: 'Choose an image or drop it here', format: 'PNG · JPG · WEBP / up to 12MB', change: 'Change image',
-    remove: 'Remove background', preparing: 'Preparing AI model…', processing: 'Removing background…',
+    remove: 'Remove background', preparing: 'Analyzing image…', processing: 'Removing background…',
     original: 'Original', result: 'Transparent', download: 'Save transparent PNG', again: 'Try another image',
-    badType: 'Please use a PNG, JPG, or WEBP image.', tooLarge: 'Please use an image under 12MB.', failed: 'Background removal failed. Please try another image.'
+    badType: 'Please use a PNG, JPG, or WEBP image.', tooLarge: 'Please use an image under 12MB.', failed: 'Background removal failed. Refresh the page and try again.'
   },
   ja: {
-    title: '背景を削除', badge: 'BETA', desc: 'AIで画像の背景を削除し、透過PNGとして保存できます。',
-    privacy: '画像はサーバーへ送信せず、この端末内で処理します。', first: '初回はAIモデルの準備に少し時間がかかる場合があります。',
+    title: '背景を削除', badge: 'BETA', desc: '画像の背景を削除し、透過PNGとして保存できます。',
+    privacy: '画像はサーバーへ送信せず、この端末内で処理します。', first: '白背景は高速処理し、複雑な背景ではAIモデルを使用するため初回は少し時間がかかる場合があります。',
     upload: '画像を選択するか、ここにドロップしてください', format: 'PNG · JPG · WEBP / 最大12MB', change: '画像を変更',
-    remove: '背景を削除する', preparing: 'AIモデルを準備中…', processing: '背景を削除しています…',
+    remove: '背景を削除する', preparing: '画像を解析中…', processing: '背景を削除しています…',
     original: '元画像', result: '透過背景', download: '透過PNGを保存', again: '別の画像',
-    badType: 'PNG、JPG、WEBP画像のみ使用できます。', tooLarge: '12MB以下の画像を使用してください。', failed: '背景の削除に失敗しました。別の画像でもう一度お試しください。'
+    badType: 'PNG、JPG、WEBP画像のみ使用できます。', tooLarge: '12MB以下の画像を使用してください。', failed: '背景の削除に失敗しました。ページを再読み込みしてもう一度お試しください。'
   },
   zh: {
-    title: '移除背景', badge: 'BETA', desc: '使用AI移除图片背景，并保存为透明PNG。',
-    privacy: '图片不会上传到服务器，而是在当前设备中处理。', first: '首次使用需要准备AI模型，可能会稍慢一些。',
+    title: '移除背景', badge: 'BETA', desc: '移除图片背景，并保存为透明PNG。',
+    privacy: '图片不会上传到服务器，而是在当前设备中处理。', first: '白色背景会快速处理；复杂背景会使用AI模型，因此首次使用可能稍慢。',
     upload: '选择图片或将图片拖到这里', format: 'PNG · JPG · WEBP / 最大12MB', change: '更换图片',
-    remove: '移除背景', preparing: '正在准备AI模型…', processing: '正在移除背景…',
+    remove: '移除背景', preparing: '正在分析图片…', processing: '正在移除背景…',
     original: '原图', result: '透明背景', download: '保存透明PNG', again: '换一张图片',
-    badType: '仅支持PNG、JPG、WEBP图片。', tooLarge: '请使用12MB以内的图片。', failed: '背景移除失败，请换一张图片重试。'
+    badType: '仅支持PNG、JPG、WEBP图片。', tooLarge: '请使用12MB以内的图片。', failed: '背景移除失败。请刷新页面后重试。'
   }
 };
 
@@ -44,20 +44,173 @@ const checkerStyle = {
   backgroundPosition: '0 0,0 10px,10px -10px,-10px 0px'
 };
 
+const canvasToPngBlob = (canvas) => new Promise((resolve, reject) => {
+  canvas.toBlob((blob) => {
+    if (blob) resolve(blob);
+    else reject(new Error('Canvas PNG export failed'));
+  }, 'image/png');
+});
+
+async function drawFileToCanvas(file) {
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d', { willReadFrequently: true });
+  if (!ctx) throw new Error('Canvas 2D is unavailable');
+
+  if (typeof createImageBitmap === 'function') {
+    const bitmap = await createImageBitmap(file);
+    canvas.width = bitmap.width;
+    canvas.height = bitmap.height;
+    ctx.drawImage(bitmap, 0, 0);
+    bitmap.close?.();
+    return { canvas, ctx };
+  }
+
+  const objectUrl = URL.createObjectURL(file);
+  try {
+    const image = await new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => resolve(img);
+      img.onerror = () => reject(new Error('Image decode failed'));
+      img.src = objectUrl;
+    });
+    canvas.width = image.naturalWidth || image.width;
+    canvas.height = image.naturalHeight || image.height;
+    ctx.drawImage(image, 0, 0);
+    return { canvas, ctx };
+  } finally {
+    URL.revokeObjectURL(objectUrl);
+  }
+}
+
+function estimateCornerBackground(data, width, height) {
+  const sampleSize = Math.max(6, Math.min(24, Math.floor(Math.min(width, height) * 0.025)));
+  const corners = [
+    [0, 0],
+    [Math.max(0, width - sampleSize), 0],
+    [0, Math.max(0, height - sampleSize)],
+    [Math.max(0, width - sampleSize), Math.max(0, height - sampleSize)]
+  ];
+
+  let r = 0;
+  let g = 0;
+  let b = 0;
+  let count = 0;
+  let varianceSeed = 0;
+
+  for (const [startX, startY] of corners) {
+    for (let y = startY; y < Math.min(height, startY + sampleSize); y += 2) {
+      for (let x = startX; x < Math.min(width, startX + sampleSize); x += 2) {
+        const p = (y * width + x) * 4;
+        r += data[p];
+        g += data[p + 1];
+        b += data[p + 2];
+        varianceSeed += data[p] * data[p] + data[p + 1] * data[p + 1] + data[p + 2] * data[p + 2];
+        count += 1;
+      }
+    }
+  }
+
+  if (!count) return null;
+  const bg = [r / count, g / count, b / count];
+  const meanSquare = varianceSeed / (count * 3);
+  const channelMean = (bg[0] + bg[1] + bg[2]) / 3;
+  const variance = Math.max(0, meanSquare - channelMean * channelMean);
+  return { bg, brightness: channelMean, spread: Math.sqrt(variance) };
+}
+
+async function tryFastLightBackgroundRemoval(file) {
+  const { canvas, ctx } = await drawFileToCanvas(file);
+  const { width, height } = canvas;
+  if (!width || !height) return null;
+
+  const imageData = ctx.getImageData(0, 0, width, height);
+  const pixels = imageData.data;
+  const estimate = estimateCornerBackground(pixels, width, height);
+  if (!estimate || estimate.brightness < 224 || estimate.spread > 22) return null;
+
+  const [bgR, bgG, bgB] = estimate.bg;
+  const total = width * height;
+  const visited = new Uint8Array(total);
+  const queue = new Int32Array(total);
+  let head = 0;
+  let tail = 0;
+
+  const matchesBackground = (index) => {
+    const p = index * 4;
+    const r = pixels[p];
+    const g = pixels[p + 1];
+    const b = pixels[p + 2];
+    const maxDelta = Math.max(Math.abs(r - bgR), Math.abs(g - bgG), Math.abs(b - bgB));
+    const brightness = (r + g + b) / 3;
+    return maxDelta <= 38 && brightness >= 205;
+  };
+
+  const enqueue = (index) => {
+    if (index < 0 || index >= total || visited[index] || !matchesBackground(index)) return;
+    visited[index] = 1;
+    queue[tail++] = index;
+  };
+
+  for (let x = 0; x < width; x += 1) {
+    enqueue(x);
+    enqueue((height - 1) * width + x);
+  }
+  for (let y = 1; y < height - 1; y += 1) {
+    enqueue(y * width);
+    enqueue(y * width + width - 1);
+  }
+
+  while (head < tail) {
+    const index = queue[head++];
+    const x = index % width;
+    const y = Math.floor(index / width);
+    const p = index * 4;
+    pixels[p + 3] = 0;
+    if (x > 0) enqueue(index - 1);
+    if (x + 1 < width) enqueue(index + 1);
+    if (y > 0) enqueue(index - width);
+    if (y + 1 < height) enqueue(index + width);
+  }
+
+  // Avoid treating a tiny bright corner as a full background. In that case,
+  // fall through to the AI model instead.
+  if (tail < total * 0.08) return null;
+
+  ctx.putImageData(imageData, 0, 0);
+  return canvasToPngBlob(canvas);
+}
+
 async function getRemover(onProgress) {
   if (!removerPromise) {
     removerPromise = (async () => {
-      const { pipeline } = await import('@huggingface/transformers');
-      return pipeline('background-removal', 'onnx-community/ormbg-ONNX', {
+      const { pipeline, RawImage } = await import('@huggingface/transformers');
+      const remover = await pipeline('background-removal', 'onnx-community/ormbg-ONNX', {
+        device: 'wasm',
         dtype: 'q8',
         progress_callback: (info) => onProgress?.(info)
       });
+      return { remover, RawImage };
     })().catch((error) => {
       removerPromise = null;
       throw error;
     });
   }
   return removerPromise;
+}
+
+async function removeWithAi(file, onProgress) {
+  const { remover, RawImage } = await getRemover(onProgress);
+  const rawImage = await RawImage.fromBlob(file);
+  // The current ORMBG Transformers.js model card uses an input array and
+  // returns an array of RawImage results. Keeping the fallback handles a
+  // single RawImage return shape as well.
+  const output = await remover([rawImage]);
+  const image = Array.isArray(output) ? output[0] : output;
+  if (image instanceof Blob) return image;
+  if (!image?.toBlob) throw new Error('No removable image output');
+  const blob = await image.toBlob();
+  if (!blob) throw new Error('No output blob');
+  return blob;
 }
 
 export default function BackgroundRemover({ lang = 'ko' }) {
@@ -111,21 +264,26 @@ export default function BackgroundRemover({ lang = 'ko' }) {
   };
 
   const removeBackground = async () => {
-    if (!file || !sourceUrl || busy) return;
+    if (!file || busy) return;
     clearResult();
     setBusy(true);
     setStage('preparing');
     try {
-      const remover = await getRemover((info) => {
-        if (typeof info?.progress === 'number') setProgress(Math.max(0, Math.min(100, Math.round(info.progress))));
-      });
+      // Most generated emoticon sheets use a plain white/off-white background.
+      // Remove that locally first: it is much faster and does not need a model download.
+      let blob = await tryFastLightBackgroundRemoval(file);
+
+      if (!blob) {
+        setStage('preparing');
+        blob = await removeWithAi(file, (info) => {
+          if (typeof info?.progress === 'number') {
+            setProgress(Math.max(0, Math.min(100, Math.round(info.progress))));
+          }
+        });
+      }
+
       setStage('processing');
       setProgress(null);
-      const output = await remover(sourceUrl);
-      const image = Array.isArray(output) ? output[0] : output?.[0];
-      if (!image?.toBlob) throw new Error('No removable image output');
-      const blob = await image.toBlob();
-      if (!blob) throw new Error('No output blob');
       const url = URL.createObjectURL(blob);
       setResultBlob(blob);
       setResultUrl(url);
