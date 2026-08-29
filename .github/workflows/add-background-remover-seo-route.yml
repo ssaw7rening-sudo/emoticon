@@ -1,0 +1,123 @@
+name: Add Background Remover SEO Route
+
+on:
+  push:
+    paths:
+      - '.github/workflows/add-background-remover-seo-route.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Patch app route and SEO
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path('src/App.jsx')
+          text = path.read_text(encoding='utf-8')
+
+          old_import = 'import BackgroundRemover from "./components/BackgroundRemover.jsx";'
+          new_import = old_import + '\nimport BackgroundRemoverLanding from "./components/BackgroundRemoverLanding.jsx";'
+          if old_import not in text:
+              raise SystemExit('BackgroundRemover import not found')
+          text = text.replace(old_import, new_import, 1)
+
+          old_seo = "  const seo = APP_SEO_META[lang] || APP_SEO_META.ko;"
+          new_seo = '''  const removerSeoMeta = {
+            ko: {
+              title: '무료 이미지 배경 제거 | 누끼 따기 · 투명 PNG 만들기',
+              description: '사진·이미지 배경을 무료로 제거하고 투명 PNG로 저장하세요. 균일한 단색 배경은 빠르게 처리하고 복잡한 배경은 AI로 자동 제거합니다.',
+              canonical: 'https://emoticon-beige.vercel.app/background-remover/'
+            },
+            en: {
+              title: 'Free Image Background Remover | Transparent PNG Maker',
+              description: 'Remove image and photo backgrounds for free in your browser. Fast solid-color removal, AI processing for complex scenes, and transparent PNG export.',
+              canonical: 'https://emoticon-beige.vercel.app/en/background-remover/'
+            },
+            ja: {
+              title: '無料画像背景削除 | 透過PNG・背景透過ツール',
+              description: '写真や画像の背景を無料で削除し、透過PNGとして保存できます。単色背景は高速処理し、複雑な背景はAIで自動処理します。',
+              canonical: 'https://emoticon-beige.vercel.app/ja/background-remover/'
+            },
+            zh: {
+              title: '免费图片背景移除 | 透明PNG制作工具',
+              description: '免费移除照片和图片背景并保存为透明PNG。均匀纯色背景快速处理，复杂背景自动使用AI。',
+              canonical: 'https://emoticon-beige.vercel.app/zh/background-remover/'
+            }
+          };
+          const pathname = typeof window !== 'undefined' ? window.location.pathname.toLowerCase() : '';
+          const isBackgroundRemoverPage = /(^|\\/)background-remover\\/?$/.test(pathname);
+          const seo = isBackgroundRemoverPage
+            ? (removerSeoMeta[lang] || removerSeoMeta.ko)
+            : (APP_SEO_META[lang] || APP_SEO_META.ko);'''
+          if old_seo not in text:
+              raise SystemExit('syncClientSeoMeta anchor not found')
+          text = text.replace(old_seo, new_seo, 1)
+
+          route_anchor = '''  if (currentPath === '/privacy') {
+            return <PrivacyPage lang={lang} onBack={() => navigateTo('/')} />;
+          }'''
+          route_insert = '''  const locationPath = typeof window !== 'undefined' ? window.location.pathname.toLowerCase() : '';
+          if (/(^|\\/)background-remover\\/?$/.test(locationPath)) {
+            return <BackgroundRemoverLanding lang={lang} />;
+          }
+
+          if (currentPath === '/privacy') {
+            return <PrivacyPage lang={lang} onBack={() => navigateTo('/')} />;
+          }'''
+          if route_anchor not in text:
+              raise SystemExit('privacy route anchor not found')
+          text = text.replace(route_anchor, route_insert, 1)
+
+          tool_anchor = '''        <BackgroundRemover lang={lang} />
+              </main>'''
+          tool_insert = '''        <div className="mx-auto mb-2 mt-2 flex max-w-4xl justify-end px-4 sm:px-6">
+                <a
+                  href={lang === 'en' ? '/en/background-remover/' : lang === 'ja' ? '/ja/background-remover/' : lang === 'zh' ? '/zh/background-remover/' : '/background-remover/'}
+                  className="text-xs font-extrabold text-[#587153] underline decoration-[#B8C8B2] underline-offset-4 hover:text-[#3E5E39]"
+                >
+                  {lang === 'en' ? 'Open dedicated Background Remover →' : lang === 'ja' ? '背景削除専用ページを開く →' : lang === 'zh' ? '打开背景移除专用页面 →' : '배경 제거 전용 페이지 열기 →'}
+                </a>
+              </div>
+              <BackgroundRemover lang={lang} />
+              </main>'''
+          if tool_anchor not in text:
+              raise SystemExit('BackgroundRemover main anchor not found')
+          text = text.replace(tool_anchor, tool_insert, 1)
+
+          path.write_text(text, encoding='utf-8')
+          PY
+
+      - name: Build and verify generated pages
+        run: |
+          npm ci
+          npm run build
+          test -f dist/background-remover/index.html
+          test -f dist/en/background-remover/index.html
+          test -f dist/ja/background-remover/index.html
+          test -f dist/zh/background-remover/index.html
+          grep -q '무료 이미지 배경 제거' dist/background-remover/index.html
+          grep -q 'Free Image Background Remover' dist/en/background-remover/index.html
+
+      - name: Commit changes
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add src/App.jsx
+          git commit -m 'Add background remover SEO landing routes'
+          git push
