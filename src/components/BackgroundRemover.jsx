@@ -6,7 +6,7 @@ let removerPromise = null;
 const COPY = {
   ko: {
     title: '배경 제거', badge: 'BETA', desc: '이미지의 배경을 지우고 투명 PNG로 저장해 보세요.',
-    privacy: '이미지는 서버에 업로드하지 않고 이 기기에서 처리됩니다.', first: '흰 배경 이미지는 빠르게 처리하며, 복잡한 배경은 AI 모델을 사용해 처음 실행이 조금 오래 걸릴 수 있습니다.',
+    privacy: '이미지는 서버에 업로드하지 않고 이 기기에서 처리됩니다.', first: '균일한 단색 배경은 빠르게 처리하며, 복잡한 배경은 AI 모델을 사용해 처음 실행이 조금 오래 걸릴 수 있습니다.',
     upload: '이미지를 선택하거나 여기에 끌어놓으세요', format: 'PNG · JPG · WEBP / 최대 12MB', change: '이미지 변경',
     remove: '배경 제거하기', preparing: '이미지 분석 중…', processing: '배경을 제거하고 있어요…',
     original: '원본', result: '투명 배경', download: '투명 PNG 저장', again: '다른 이미지',
@@ -21,7 +21,7 @@ const COPY = {
   },
   en: {
     title: 'Remove Background', badge: 'BETA', desc: 'Remove an image background and save it as a transparent PNG.',
-    privacy: 'Your image is processed on this device and is not uploaded to our server.', first: 'White backgrounds are handled quickly. Complex backgrounds use an AI model, so the first run may take longer.',
+    privacy: 'Your image is processed on this device and is not uploaded to our server.', first: 'Uniform solid-color backgrounds are handled quickly. Complex backgrounds use an AI model, so the first run may take longer.',
     upload: 'Choose an image or drop it here', format: 'PNG · JPG · WEBP / up to 12MB', change: 'Change image',
     remove: 'Remove background', preparing: 'Analyzing image…', processing: 'Removing background…',
     original: 'Original', result: 'Transparent', download: 'Save transparent PNG', again: 'Try another image',
@@ -36,7 +36,7 @@ const COPY = {
   },
   ja: {
     title: '背景を削除', badge: 'BETA', desc: '画像の背景を削除し、透過PNGとして保存できます。',
-    privacy: '画像はサーバーへ送信せず、この端末内で処理します。', first: '白背景は高速処理し、複雑な背景ではAIモデルを使用するため初回は少し時間がかかる場合があります。',
+    privacy: '画像はサーバーへ送信せず、この端末内で処理します。', first: '均一な単色背景は高速処理し、複雑な背景ではAIモデルを使用するため初回は少し時間がかかる場合があります。',
     upload: '画像を選択するか、ここにドロップしてください', format: 'PNG · JPG · WEBP / 最大12MB', change: '画像を変更',
     remove: '背景を削除する', preparing: '画像を解析中…', processing: '背景を削除しています…',
     original: '元画像', result: '透過背景', download: '透過PNGを保存', again: '別の画像',
@@ -51,7 +51,7 @@ const COPY = {
   },
   zh: {
     title: '移除背景', badge: 'BETA', desc: '移除图片背景，并保存为透明PNG。',
-    privacy: '图片不会上传到服务器，而是在当前设备中处理。', first: '白色背景会快速处理；复杂背景会使用AI模型，因此首次使用可能稍慢。',
+    privacy: '图片不会上传到服务器，而是在当前设备中处理。', first: '均匀的纯色背景会快速处理；复杂背景会使用AI模型，因此首次使用可能稍慢。',
     upload: '选择图片或将图片拖到这里', format: 'PNG · JPG · WEBP / 最大12MB', change: '更换图片',
     remove: '移除背景', preparing: '正在分析图片…', processing: '正在移除背景…',
     original: '原图', result: '透明背景', download: '保存透明PNG', again: '换一张图片',
@@ -111,53 +111,97 @@ async function drawFileToCanvas(file) {
   }
 }
 
-function estimateCornerBackground(data, width, height) {
-  const sampleSize = Math.max(6, Math.min(24, Math.floor(Math.min(width, height) * 0.025)));
-  const corners = [
-    [0, 0],
-    [Math.max(0, width - sampleSize), 0],
-    [0, Math.max(0, height - sampleSize)],
-    [Math.max(0, width - sampleSize), Math.max(0, height - sampleSize)]
-  ];
+function colorDistance(a, b) {
+  const dr = a[0] - b[0];
+  const dg = a[1] - b[1];
+  const db = a[2] - b[2];
+  return Math.sqrt(dr * dr + dg * dg + db * db);
+}
 
+function sampleBackgroundPatch(data, width, height, startX, startY, sampleSize) {
+  const colors = [];
   let r = 0;
   let g = 0;
   let b = 0;
-  let count = 0;
-  let varianceSeed = 0;
 
-  for (const [startX, startY] of corners) {
-    for (let y = startY; y < Math.min(height, startY + sampleSize); y += 2) {
-      for (let x = startX; x < Math.min(width, startX + sampleSize); x += 2) {
-        const p = (y * width + x) * 4;
-        r += data[p];
-        g += data[p + 1];
-        b += data[p + 2];
-        varianceSeed += data[p] * data[p] + data[p + 1] * data[p + 1] + data[p + 2] * data[p + 2];
-        count += 1;
-      }
+  for (let y = startY; y < Math.min(height, startY + sampleSize); y += 2) {
+    for (let x = startX; x < Math.min(width, startX + sampleSize); x += 2) {
+      const p = (y * width + x) * 4;
+      if (data[p + 3] < 240) continue;
+      const color = [data[p], data[p + 1], data[p + 2]];
+      colors.push(color);
+      r += color[0];
+      g += color[1];
+      b += color[2];
     }
   }
 
-  if (!count) return null;
-  const bg = [r / count, g / count, b / count];
-  const meanSquare = varianceSeed / (count * 3);
-  const channelMean = (bg[0] + bg[1] + bg[2]) / 3;
-  const variance = Math.max(0, meanSquare - channelMean * channelMean);
-  return { bg, brightness: channelMean, spread: Math.sqrt(variance) };
+  if (colors.length < 6) return null;
+  const mean = [r / colors.length, g / colors.length, b / colors.length];
+  const distances = colors.map((color) => colorDistance(color, mean)).sort((a, b) => a - b);
+  const p90 = distances[Math.min(distances.length - 1, Math.floor(distances.length * 0.9))] || 0;
+  return { mean, spread: p90, count: colors.length };
 }
 
-async function tryFastLightBackgroundRemoval(file) {
+function estimateUniformEdgeBackground(data, width, height) {
+  const sampleSize = Math.max(8, Math.min(30, Math.floor(Math.min(width, height) * 0.025)));
+  const half = Math.floor(sampleSize / 2);
+  const points = [
+    [0, 0],
+    [Math.max(0, width - sampleSize), 0],
+    [0, Math.max(0, height - sampleSize)],
+    [Math.max(0, width - sampleSize), Math.max(0, height - sampleSize)],
+    [Math.max(0, Math.floor(width / 2) - half), 0],
+    [Math.max(0, Math.floor(width / 2) - half), Math.max(0, height - sampleSize)],
+    [0, Math.max(0, Math.floor(height / 2) - half)],
+    [Math.max(0, width - sampleSize), Math.max(0, Math.floor(height / 2) - half)]
+  ];
+
+  const patches = points
+    .map(([x, y]) => sampleBackgroundPatch(data, width, height, x, y, sampleSize))
+    .filter((patch) => patch && patch.spread <= 24);
+
+  if (patches.length < 4) return null;
+
+  let bestGroup = [];
+  for (const seed of patches) {
+    const group = patches.filter((patch) => colorDistance(seed.mean, patch.mean) <= 42);
+    if (group.length > bestGroup.length) bestGroup = group;
+  }
+
+  if (bestGroup.length < 4) return null;
+
+  const bg = [0, 0, 0];
+  let totalWeight = 0;
+  for (const patch of bestGroup) {
+    const weight = Math.max(1, patch.count);
+    bg[0] += patch.mean[0] * weight;
+    bg[1] += patch.mean[1] * weight;
+    bg[2] += patch.mean[2] * weight;
+    totalWeight += weight;
+  }
+  bg[0] /= totalWeight;
+  bg[1] /= totalWeight;
+  bg[2] /= totalWeight;
+
+  const groupSpread = Math.max(
+    ...bestGroup.map((patch) => Math.max(patch.spread, colorDistance(patch.mean, bg)))
+  );
+  const tolerance = Math.max(24, Math.min(52, 24 + groupSpread * 1.35));
+  return { bg, tolerance };
+}
+
+async function tryFastUniformBackgroundRemoval(file) {
   const { canvas, ctx } = await drawFileToCanvas(file);
   const { width, height } = canvas;
   if (!width || !height) return null;
 
   const imageData = ctx.getImageData(0, 0, width, height);
   const pixels = imageData.data;
-  const estimate = estimateCornerBackground(pixels, width, height);
-  if (!estimate || estimate.brightness < 224 || estimate.spread > 22) return null;
+  const estimate = estimateUniformEdgeBackground(pixels, width, height);
+  if (!estimate) return null;
 
-  const [bgR, bgG, bgB] = estimate.bg;
+  const { bg, tolerance } = estimate;
   const total = width * height;
   const visited = new Uint8Array(total);
   const queue = new Int32Array(total);
@@ -166,12 +210,8 @@ async function tryFastLightBackgroundRemoval(file) {
 
   const matchesBackground = (index) => {
     const p = index * 4;
-    const r = pixels[p];
-    const g = pixels[p + 1];
-    const b = pixels[p + 2];
-    const maxDelta = Math.max(Math.abs(r - bgR), Math.abs(g - bgG), Math.abs(b - bgB));
-    const brightness = (r + g + b) / 3;
-    return maxDelta <= 38 && brightness >= 205;
+    if (pixels[p + 3] < 16) return true;
+    return colorDistance([pixels[p], pixels[p + 1], pixels[p + 2]], bg) <= tolerance;
   };
 
   const enqueue = (index) => {
@@ -193,15 +233,16 @@ async function tryFastLightBackgroundRemoval(file) {
     const index = queue[head++];
     const x = index % width;
     const y = Math.floor(index / width);
-    const p = index * 4;
-    pixels[p + 3] = 0;
+    pixels[index * 4 + 3] = 0;
     if (x > 0) enqueue(index - 1);
     if (x + 1 < width) enqueue(index + 1);
     if (y > 0) enqueue(index - width);
     if (y + 1 < height) enqueue(index + width);
   }
 
-  if (tail < total * 0.08) return null;
+  // A solid backdrop should occupy a meaningful border-connected area.
+  // If too little was removed, fall back to the AI model rather than risk a false positive.
+  if (tail < total * 0.06) return null;
 
   ctx.putImageData(imageData, 0, 0);
   return canvasToPngBlob(canvas);
@@ -225,16 +266,71 @@ async function getRemover(onProgress) {
   return removerPromise;
 }
 
+function alphaPercentile(histogram, visibleCount, percentile) {
+  if (!visibleCount) return 0;
+  const target = Math.max(1, Math.ceil(visibleCount * percentile));
+  let seen = 0;
+  for (let alpha = 1; alpha <= 255; alpha += 1) {
+    seen += histogram[alpha];
+    if (seen >= target) return alpha;
+  }
+  return 255;
+}
+
+async function correctUnexpectedForegroundTransparency(blob) {
+  const { canvas, ctx } = await drawFileToCanvas(blob);
+  const { width, height } = canvas;
+  if (!width || !height) return blob;
+
+  const imageData = ctx.getImageData(0, 0, width, height);
+  const pixels = imageData.data;
+  const histogram = new Uint32Array(256);
+  let visibleCount = 0;
+
+  for (let p = 3; p < pixels.length; p += 4) {
+    const alpha = pixels[p];
+    if (alpha <= 2) continue;
+    histogram[alpha] += 1;
+    visibleCount += 1;
+  }
+
+  if (visibleCount < width * height * 0.005) return blob;
+
+  const p50 = alphaPercentile(histogram, visibleCount, 0.5);
+  const p90 = alphaPercentile(histogram, visibleCount, 0.9);
+  const p98 = alphaPercentile(histogram, visibleCount, 0.98);
+
+  // ORMBG can occasionally return a correct mask whose entire foreground alpha
+  // is scaled down. Only compensate when the high percentile itself is translucent,
+  // so normal antialiased edges and intentional soft boundaries are preserved.
+  if (p98 >= 242 || p50 >= 225 || p90 >= 238) return blob;
+
+  const scale = Math.min(3.25, 255 / Math.max(32, p98));
+  if (scale <= 1.04) return blob;
+
+  for (let p = 3; p < pixels.length; p += 4) {
+    const alpha = pixels[p];
+    if (alpha <= 2) continue;
+    pixels[p] = Math.min(255, Math.round(alpha * scale));
+  }
+
+  ctx.putImageData(imageData, 0, 0);
+  return canvasToPngBlob(canvas);
+}
+
 async function removeWithAi(file, onProgress) {
   const { remover, RawImage } = await getRemover(onProgress);
   const rawImage = await RawImage.fromBlob(file);
   const output = await remover([rawImage]);
   const image = Array.isArray(output) ? output[0] : output;
-  if (image instanceof Blob) return image;
-  if (!image?.toBlob) throw new Error('No removable image output');
-  const blob = await image.toBlob();
+  let blob;
+  if (image instanceof Blob) blob = image;
+  else {
+    if (!image?.toBlob) throw new Error('No removable image output');
+    blob = await image.toBlob();
+  }
   if (!blob) throw new Error('No output blob');
-  return blob;
+  return correctUnexpectedForegroundTransparency(blob);
 }
 
 function extractConnectedComponents(ctx, width, height) {
@@ -508,7 +604,7 @@ export default function BackgroundRemover({ lang = 'ko' }) {
     setBusy(true);
     setStage('preparing');
     try {
-      let blob = await tryFastLightBackgroundRemoval(file);
+      let blob = await tryFastUniformBackgroundRemoval(file);
 
       if (!blob) {
         setStage('preparing');
