@@ -7744,39 +7744,19 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
             </p>
             {/* Final settings edit controls */}
             <div className="mt-3 pt-3 border-t border-[#EFE4C6]">
-              <div className="flex items-center gap-1.5 text-[11.5px] sm:text-[12px] font-bold text-[#8A7758] shrink-0 mb-2">
+              <div className="flex items-center gap-1.5 text-[11.5px] sm:text-[12px] font-bold text-[#8A7758] mb-2">
                 <span>💡</span>
                 <span>
-                  {lang === 'ko' 
-                    ? '수정 시 실시간 자동 반영:' 
-                    : lang === 'ja' 
-                    ? '変更時にリアルタイム反映:' 
-                    : lang === 'zh' 
-                    ? '修改时实时自动同步:' 
+                  {lang === 'ko'
+                    ? '수정 시 실시간 자동 반영:'
+                    : lang === 'ja'
+                    ? '変更時にリアルタイム反映:'
+                    : lang === 'zh'
+                    ? '修改时实时自动同步:'
                     : 'Real-time sync on edit:'}
                 </span>
               </div>
-
-          <AdBanner />
-          <div className="bg-[#EAF8F3] p-3 sm:p-3.5 rounded-xl border-2 border-mint-border flex flex-col gap-2.5 text-mint-strong shadow-xs">
-
-            {/* 1. Launch Info Header */}
-            <div className="flex items-center gap-2">
-              <span className="text-[17px] shrink-0 leading-none">🚀</span>
-              <p className="text-[12.5px] sm:text-[13.5px] font-extrabold text-[#154639] leading-snug [word-break:keep-all]">
-                {lang === 'ko' 
-                  ? '버튼 클릭 시 프롬프트 자동 복사 & AI 사이트가 바로 열립니다.'
-                  : lang === 'ja'
-                  ? 'ボタンを押すとプロンプトを自動コピーしてAI画面を開きます。'
-                  : lang === 'zh'
-                  ? '点击按钮将自动复制提示词并直接打开AI网站。'
-                  : 'Click a button below to auto-copy prompt & launch the AI site.'}
-              </p>
-            </div>
-
-            {/* 2. Structured Quick Jump Action Bar */}
-          </div>
-              <div className="grid grid-cols-2 gap-2 w-full sm:w-auto">
+              <div className="grid grid-cols-2 gap-2 w-full">
                 <button
                   type="button"
                   onClick={() => {
@@ -7786,7 +7766,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                       window.scrollTo({ top: y, behavior: 'smooth' });
                     }
                   }}
-                  className="interactive-control flex items-center justify-center gap-1 min-h-[34px] bg-white hover:bg-[#D5EFE5] text-[#1E5D4B] font-black text-[12px] sm:text-[12.5px] px-3 py-1 rounded-lg border border-[#9ED2C0] shadow-2xs cursor-pointer active:scale-95 transition-all"
+                  className="interactive-control min-w-0 flex items-center justify-center gap-1 min-h-[38px] bg-white hover:bg-[#FFF7DF] text-[#6A5129] font-black text-[12px] sm:text-[12.5px] px-2.5 py-1.5 rounded-lg border border-[#E2C990] shadow-2xs cursor-pointer active:scale-95 transition-all"
                 >
                   <span>✏️</span>
                   <span className="truncate">{lang === 'ko' ? '캐릭터·태그 수정 ↑' : lang === 'ja' ? 'キャラ・タグ修正 ↑' : lang === 'zh' ? '角色与标签 ↑' : 'Character·Tags ↑'}</span>
@@ -7800,12 +7780,29 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                       window.scrollTo({ top: y, behavior: 'smooth' });
                     }
                   }}
-                  className="interactive-control flex items-center justify-center gap-1 min-h-[34px] bg-white hover:bg-[#D5EFE5] text-[#1E5D4B] font-black text-[12px] sm:text-[12.5px] px-3 py-1 rounded-lg border border-[#9ED2C0] shadow-2xs cursor-pointer active:scale-95 transition-all"
+                  className="interactive-control min-w-0 flex items-center justify-center gap-1 min-h-[38px] bg-white hover:bg-[#FFF7DF] text-[#6A5129] font-black text-[12px] sm:text-[12.5px] px-2.5 py-1.5 rounded-lg border border-[#E2C990] shadow-2xs cursor-pointer active:scale-95 transition-all"
                 >
                   <span>🎨</span>
                   <span className="truncate">{lang === 'ko' ? '테마 변경 ↑' : lang === 'ja' ? 'テーマ変更 ↑' : lang === 'zh' ? '主题变更 ↑' : 'Themes ↑'}</span>
                 </button>
               </div>
+            </div>
+          </div>
+
+          <AdBanner />
+          <div className="bg-[#EAF8F3] p-3 sm:p-3.5 rounded-xl border-2 border-mint-border flex flex-col gap-2.5 text-mint-strong shadow-xs">
+            {/* 1. Launch Info Header */}
+            <div className="flex items-center gap-2">
+              <span className="text-[17px] shrink-0 leading-none">🚀</span>
+              <p className="text-[12.5px] sm:text-[13.5px] font-extrabold text-[#154639] leading-snug [word-break:keep-all]">
+                {lang === 'ko'
+                  ? '버튼 클릭 시 프롬프트 자동 복사 & AI 사이트가 바로 열립니다.'
+                  : lang === 'ja'
+                  ? 'ボタンを押すとプロンプトを自動コピーしてAI画面を開きます。'
+                  : lang === 'zh'
+                  ? '点击按钮将自动复制提示词并直接打开AI网站。'
+                  : 'Click a button below to auto-copy prompt & launch the AI site.'}
+              </p>
             </div>
           </div>
 
