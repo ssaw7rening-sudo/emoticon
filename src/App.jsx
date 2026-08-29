@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Shuffle, CheckCircle2, Bot, Sparkles, Zap, Trash2, RotateCcw } from "lucide-react";
 import BackgroundRemover from "./components/BackgroundRemover.jsx";
+import BackgroundRemoverLanding from "./components/BackgroundRemoverLanding.jsx";
 
 const THEMES_KO = {
   '일상/인사 ①': ['ㅋㅋㅋㅋ', '안녕!', '오늘도 화이팅', '좋아요', '고마워요', '사랑해요', '최고!', '오예', '미안해요', '수고했어요', '축하해요', '대박', '헐', '감동', '잘자요'],
@@ -3922,7 +3923,33 @@ const getAppLanguageFromLocation = () => {
 
 const syncClientSeoMeta = (lang) => {
   if (typeof document === 'undefined') return;
-  const seo = APP_SEO_META[lang] || APP_SEO_META.ko;
+  const removerSeoMeta = {
+  ko: {
+    title: '무료 이미지 배경 제거 | 누끼 따기 · 투명 PNG 만들기',
+    description: '사진·이미지 배경을 무료로 제거하고 투명 PNG로 저장하세요. 균일한 단색 배경은 빠르게 처리하고 복잡한 배경은 AI로 자동 제거합니다.',
+    canonical: 'https://emoticon-beige.vercel.app/background-remover/'
+  },
+  en: {
+    title: 'Free Image Background Remover | Transparent PNG Maker',
+    description: 'Remove image and photo backgrounds for free in your browser. Fast solid-color removal, AI processing for complex scenes, and transparent PNG export.',
+    canonical: 'https://emoticon-beige.vercel.app/en/background-remover/'
+  },
+  ja: {
+    title: '無料画像背景削除 | 透過PNG・背景透過ツール',
+    description: '写真や画像の背景を無料で削除し、透過PNGとして保存できます。単色背景は高速処理し、複雑な背景はAIで自動処理します。',
+    canonical: 'https://emoticon-beige.vercel.app/ja/background-remover/'
+  },
+  zh: {
+    title: '免费图片背景移除 | 透明PNG制作工具',
+    description: '免费移除照片和图片背景并保存为透明PNG。均匀纯色背景快速处理，复杂背景自动使用AI。',
+    canonical: 'https://emoticon-beige.vercel.app/zh/background-remover/'
+  }
+};
+const pathname = typeof window !== 'undefined' ? window.location.pathname.toLowerCase() : '';
+const isBackgroundRemoverPage = /(^|\/)background-remover\/?$/.test(pathname);
+const seo = isBackgroundRemoverPage
+  ? (removerSeoMeta[lang] || removerSeoMeta.ko)
+  : (APP_SEO_META[lang] || APP_SEO_META.ko);
   document.documentElement.lang = APP_HTML_LANGS[lang] || 'ko';
   document.title = seo.title;
 
@@ -6705,7 +6732,12 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
   ])].filter((theme) => currentThemes[theme]).slice(0, 6);
   const activeTagList = charManual.split(',').map((tag) => tag.trim()).filter(Boolean);
 
-  if (currentPath === '/privacy') {
+  const locationPath = typeof window !== 'undefined' ? window.location.pathname.toLowerCase() : '';
+if (/(^|\/)background-remover\/?$/.test(locationPath)) {
+  return <BackgroundRemoverLanding lang={lang} />;
+}
+
+if (currentPath === '/privacy') {
     return <PrivacyPage lang={lang} onBack={() => navigateTo('/')} />;
   }
 
@@ -8289,7 +8321,15 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
             </div>
         </div>
 
-        <BackgroundRemover lang={lang} />
+        <div className="mx-auto mb-2 mt-2 flex max-w-4xl justify-end px-4 sm:px-6">
+      <a
+        href={lang === 'en' ? '/en/background-remover/' : lang === 'ja' ? '/ja/background-remover/' : lang === 'zh' ? '/zh/background-remover/' : '/background-remover/'}
+        className="text-xs font-extrabold text-[#587153] underline decoration-[#B8C8B2] underline-offset-4 hover:text-[#3E5E39]"
+      >
+        {lang === 'en' ? 'Open dedicated Background Remover →' : lang === 'ja' ? '背景削除専用ページを開く →' : lang === 'zh' ? '打开背景移除专用页面 →' : '배경 제거 전용 페이지 열기 →'}
+      </a>
+    </div>
+    <BackgroundRemover lang={lang} />
       </main>
 
       {/* Footer */}
