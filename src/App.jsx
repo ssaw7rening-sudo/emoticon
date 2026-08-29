@@ -7089,7 +7089,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                         <Trash2 size={11} /> {lang === 'ko' ? '선택 태그 지우기' : lang === 'ja' ? 'タグを解除' : lang === 'zh' ? '清除标签' : 'Clear Tags'}
                       </button>
                     </div>
-                    <div className="flex flex-wrap gap-1.5 max-h-[80px] overflow-y-auto no-scrollbar">
+                    <div className="flex flex-wrap gap-1.5 overflow-visible">
                       {charManual.split(',').map(v => v.trim()).filter(Boolean).map(tag => (
                         <span 
                           key={tag} 
