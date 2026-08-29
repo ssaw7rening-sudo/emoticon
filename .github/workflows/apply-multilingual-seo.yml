@@ -1,0 +1,53 @@
+name: Apply multilingual SEO
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Apply multilingual SEO patch
+        run: node .github/scripts/apply-multilingual-seo.mjs
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Verify localized build output
+        run: |
+          test -f dist/index.html
+          test -f dist/ko/index.html
+          test -f dist/en/index.html
+          test -f dist/ja/index.html
+          test -f dist/zh/index.html
+          grep -q '<html lang="en">' dist/en/index.html
+          grep -q 'https://emoticon-beige.vercel.app/en/' dist/en/index.html
+          grep -q '<html lang="ja">' dist/ja/index.html
+          grep -q '<html lang="zh-CN">' dist/zh/index.html
+
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/App.jsx index.html package.json public/sitemap.xml scripts/generate-localized-pages.mjs
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Add multilingual SEO landing pages"
+            git push
+          fi
