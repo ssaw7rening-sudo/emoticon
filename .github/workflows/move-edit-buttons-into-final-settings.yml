@@ -19,7 +19,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - name: Move edit controls into final settings card
+      - name: Normalize final settings edit controls
         run: |
           python - <<'PY'
           from pathlib import Path
@@ -27,51 +27,69 @@ jobs:
           path = Path('src/App.jsx')
           text = path.read_text(encoding='utf-8')
 
-          row_start_marker = '            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-2 border-t border-[#CBEAE0]">'
-          final_anchor = "            </p>\n          </div>\n\n          <AdBanner />"
-          guard = '            {/* Final settings edit controls */}'
+          final_marker = '          {/* Final settings checkpoint after prompt preview */}'
+          ad_marker = '          <AdBanner />'
+          paragraph_tail = "                : 'Check these settings once more before launching or copying.'}"
+          button_start_marker = '              <div className="grid grid-cols-2 gap-2 w-full sm:w-auto">'
 
-          if guard in text:
-              print('Final settings edit controls already moved; skipping.')
-          else:
-              if row_start_marker not in text:
-                  raise SystemExit('Edit controls row not found.')
-              start = text.index(row_start_marker)
-              # The next 10-space closing div belongs to the mint launch-info box;
-              # everything before it is the edit-controls row we want to move.
-              mint_box_close = text.index('          </div>', start)
-              row = text[start:mint_box_close]
-              text = text[:start] + text[mint_box_close:]
+          if final_marker not in text:
+              raise SystemExit('Final settings card not found.')
+          if paragraph_tail not in text:
+              raise SystemExit('Final settings confirmation paragraph not found.')
+          if button_start_marker not in text:
+              raise SystemExit('Edit button container not found.')
 
-              row = row.replace(
-                  row_start_marker,
-                  '            {/* Final settings edit controls */}\n            <div className="mt-3 pt-3 border-t border-[#EFE4C6]">',
-                  1,
-              )
-              row = row.replace(
-                  'text-[#2A6555] shrink-0',
-                  'text-[#8A7758] shrink-0 mb-2',
-                  1,
-              )
-              row = row.replace('hover:bg-[#D5EFE5]', 'hover:bg-[#FFF7DF]')
-              row = row.replace('text-[#1E5D4B]', 'text-[#6A5129]')
-              row = row.replace('border-[#9ED2C0]', 'border-[#E2C990]')
+          # Extract the two existing jump buttons with their click handlers intact.
+          button_start = text.index(button_start_marker)
+          themes_pos = text.index("'Themes ↑'", button_start)
+          button_end = text.index('              </div>', themes_pos) + len('              </div>\n')
+          buttons = text[button_start:button_end]
 
-              # Make the two edit buttons share the mobile width evenly while
-              # preserving their existing click/scroll behavior.
-              first_button = 'className="interactive-control flex items-center justify-center gap-1 min-h-[34px]'
-              row = row.replace(
-                  first_button,
-                  'className="interactive-control flex-1 min-w-0 flex items-center justify-center gap-1 min-h-[38px]',
-              )
+          # Restyle the controls for the warm final-confirmation card and make
+          # the two buttons share the available width evenly.
+          buttons = buttons.replace(
+              'className="grid grid-cols-2 gap-2 w-full sm:w-auto"',
+              'className="grid grid-cols-2 gap-2 w-full"',
+              1,
+          )
+          buttons = buttons.replace(
+              'className="interactive-control flex items-center justify-center gap-1 min-h-[34px] bg-white hover:bg-[#D5EFE5] text-[#1E5D4B] font-black text-[12px] sm:text-[12.5px] px-3 py-1 rounded-lg border border-[#9ED2C0] shadow-2xs cursor-pointer active:scale-95 transition-all"',
+              'className="interactive-control min-w-0 flex items-center justify-center gap-1 min-h-[38px] bg-white hover:bg-[#FFF7DF] text-[#6A5129] font-black text-[12px] sm:text-[12.5px] px-2.5 py-1.5 rounded-lg border border-[#E2C990] shadow-2xs cursor-pointer active:scale-95 transition-all"',
+          )
 
-              if final_anchor not in text:
-                  raise SystemExit('Final settings card insertion anchor not found.')
-              replacement = "            </p>\n" + row + "          </div>\n\n          <AdBanner />"
-              text = text.replace(final_anchor, replacement, 1)
+          # Remove the old standalone button container.
+          text = text[:button_start] + text[button_end:]
 
-              path.write_text(text, encoding='utf-8')
-              print('Moved edit controls into the final settings card.')
+          # Rebuild the tail of the final settings card so it has one clean
+          # closing structure regardless of the previous partial move.
+          final_start = text.index(final_marker)
+          ad_pos = text.index(ad_marker, final_start)
+          paragraph_pos = text.index(paragraph_tail, final_start)
+          paragraph_end = text.index('            </p>', paragraph_pos) + len('            </p>\n')
+          card_core = text[final_start:paragraph_end]
+
+          edit_controls = '''            {/* Final settings edit controls */}
+            <div className="mt-3 pt-3 border-t border-[#EFE4C6]">
+              <div className="flex items-center gap-1.5 text-[11.5px] sm:text-[12px] font-bold text-[#8A7758] mb-2">
+                <span>💡</span>
+                <span>
+                  {lang === 'ko'
+                    ? '수정 시 실시간 자동 반영:'
+                    : lang === 'ja'
+                    ? '変更時にリアルタイム反映:'
+                    : lang === 'zh'
+                    ? '修改时实时自动同步:'
+                    : 'Real-time sync on edit:'}
+                </span>
+              </div>
+''' + buttons + '''            </div>
+'''
+
+          rebuilt = card_core + edit_controls + '          </div>\n\n'
+          text = text[:final_start] + rebuilt + text[ad_pos:]
+
+          path.write_text(text, encoding='utf-8')
+          print('Normalized final settings card and moved both edit buttons inside it.')
           PY
       - name: Install dependencies
         run: npm ci
@@ -86,5 +104,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add src/App.jsx
-          git commit -m "Move edit controls into final settings card"
+          git commit -m "Finish moving edit controls into final settings"
           git push
