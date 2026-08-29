@@ -5337,83 +5337,50 @@ Do not follow the photo's photorealistic rendering. Apply the selected art style
   const getGeminiCharacterDetails = (langMode = lang) => {
     const { subjects, appearances, personalities, outfits, props, effects, additionalDescription } = getSelectedCharacterRoles();
     const isKo = langMode === 'ko';
-    const subjectParts = [
-      ...(characterSource === 'photo'
-        ? [isKo ? 'AI 채팅에 첨부한 참고 사진 속 대상' : 'the subject in the attached reference photo']
-        : []),
-      ...subjects,
-      ...(additionalDescription ? [additionalDescription] : []),
-    ];
+
+    const subjectParts = characterSource === 'photo'
+      ? [isKo ? 'AI 채팅에 첨부한 참고 사진 속 대상' : 'the subject in the attached reference photo']
+      : [
+          ...subjects,
+          ...(additionalDescription ? [additionalDescription] : []),
+        ];
+
+    const subjectMotifs = characterSource === 'photo' && subjects.length
+      ? (isKo
+          ? `${subjects.join(', ')} — 사진 속 대상을 다른 존재로 교체하지 말고 의상·모티프·캐릭터 디자인 요소로 융합`
+          : `${subjects.join(', ')} — use as costume, motif, or character-design cues around the same photographed identity; never replace the photographed subject`)
+      : '';
 
     const photoAppearanceEn = {
-      balanced: 'preserve the subject\'s key identifying features (facial shape, eye direction, nose, mouth, hairstyle or fur pattern, skin/coat tone) so they are recognizable, while naturally stylizing the face and body to match the selected art style. Allow proportional simplification and expression exaggeration (no unrequested accessories)',
-      likeness: 'consistently maintain the subject\'s facial shape, eye characteristics, nose, lips, jawline, hairstyle, skin tone or fur color so the subject remains easily identifiable even after stylization. Apply the art style primarily through linework, coloring, and expression rendering (no unrequested accessories)',
-      style: 'maintain only the subject\'s core identifying traits (facial shape, eye direction, hairstyle or fur pattern, skin/coat tone, signature items) while actively applying the selected art style\'s visual language to proportions, expressions, form simplification, and coloring (no unrequested accessories)',
-    }[photoReferenceMode];
+      balanced: 'preserve the subject\'s key identifying features (face shape, eye direction and spacing, nose, mouth, hairstyle or fur pattern, skin/coat tone) so the subject remains clearly recognizable while naturally stylizing expression and body to the selected art style; no unrequested accessories',
+      likeness: 'consistently maintain the subject\'s face shape, eye characteristics, nose, lips or mouth shape, jawline, hairstyle, skin tone or fur color so the subject remains immediately recognizable after stylization; apply the art style mainly through rendering, linework, coloring, texture, and expression; no unrequested accessories',
+      style: 'apply the selected art style strongly to linework, coloring, texture, expression, and body stylization while retaining stable identity anchors such as facial structure, eye direction, hairstyle or fur pattern, skin/coat tone, and signature features; style must not replace the subject; no unrequested accessories',
+    }[photoReferenceMode] || 'preserve the attached subject as the primary recognizable identity while applying the selected art style around that identity';
 
     const photoAppearanceKo = {
-      balanced: '첨부 사진 속 대상의 핵심 식별 특징(얼굴형, 눈매, 코, 입, 헤어스타일 또는 털 무늬, 피부톤 또는 털 색상)을 알아볼 수 있도록 유지하되, 선택된 화풍에 맞게 얼굴과 신체를 자연스럽게 스타일화. 비율 단순화와 표정 과장 허용 (사진에 없는 악세사리 임의 추가 금지)',
-      likeness: '스타일화 후에도 첨부 사진 속 대상임을 쉽게 알아볼 수 있도록 얼굴형, 눈매, 코, 입술, 턱선, 헤어스타일, 피부톤 또는 털 색상을 일관되게 유지. 선택된 화풍은 선, 채색, 표정 연출 중심으로 적용 (사진에 없는 악세사리 임의 추가 금지)',
-      style: '첨부 사진 속 대상의 핵심 식별 특징(얼굴형, 눈매, 헤어스타일 또는 털 무늬, 피부톤, 대표 아이템)만 유지하고, 선택한 화풍의 조형 언어를 우선 적용하여 비율, 표정, 형태, 채색을 적극 변환 (사진에 없는 악세사리 임의 추가 금지)',
-    }[photoReferenceMode];
-
-    const anthropomorphicGuide = getSmartAnthropomorphicInstruction(subjectParts.join(' '), isKo ? 'ko' : 'en');
-    return {
-      subject: subjectParts.join(', ') || (isKo ? '오리지널 마스코트 캐릭터' : 'original mascot character'),
-      appearance: [
-        ...(characterSource === 'photo' ? [isKo ? photoAppearanceKo : photoAppearanceEn] : []),
-        ...appearances,
-        ...(anthropomorphicGuide ? [anthropomorphicGuide] : []),
-      ].join(', ') || (isKo ? '깔끔하고 명확한 캐릭터 실루엣 유지' : 'use a simple, recognizable silhouette and keep it unchanged'),
-      personality: personalities.join(', ') || (isKo ? '친근하고 표정이 풍부한' : 'friendly and expressive'),
-      outfit: outfits.join(', ') || (characterSource === 'photo'
-        ? (isKo ? '참고 사진의 의상 스타일 유지' : 'preserve outfit from reference photo')
-        : (isKo ? '지정 없음. 처음 정한 의상은 모든 이미지에서 유지' : 'no fixed outfit specified; once chosen, keep it unchanged')),
-      props: props.join(', ') || (isKo ? '필수 소품 없음' : 'none required'),
-      effects: effects.join(', ') || (isKo ? '감정 전달에 필요한 최소한의 효과만 사용' : 'use only a minimal effect when it clarifies the emotion'),
-      artStyle: getGeminiStyleTags(),
-    };
-  };
-
-  const getGptCharacterDetails = () => {
-    const { subjects, appearances, personalities, outfits, props, effects, additionalDescription } = getSelectedCharacterRoles();
-    const isKo = lang === 'ko';
-    const subjectParts = [
-      ...(characterSource === 'photo'
-        ? [isKo ? 'AI 채팅에 첨부한 참고 사진 속 대상' : 'the subject in the reference photo attached in the AI chat']
-        : []),
-      ...subjects,
-      ...(additionalDescription ? [additionalDescription] : []),
-    ];
-
-    const photoAppearanceEn = {
-      balanced: 'preserve the subject\'s key identifying features (facial shape, eye direction, nose, mouth, hairstyle or fur pattern, skin/coat tone) so they are recognizable, while naturally stylizing the face and body to match the selected art style. Allow proportional simplification and expression exaggeration (no unrequested accessories)',
-      likeness: 'consistently maintain the subject\'s facial shape, eye characteristics, nose, lips, jawline, hairstyle, skin tone or fur color so the subject remains easily identifiable even after stylization. Apply the art style primarily through linework, coloring, and expression rendering (no unrequested accessories)',
-      style: 'maintain only the subject\'s core identifying traits (facial shape, eye direction, hairstyle or fur pattern, skin/coat tone, signature items) while actively applying the selected art style\'s visual language to proportions, expressions, form simplification, and coloring (no unrequested accessories)',
-    }[photoReferenceMode];
-
-    const photoAppearanceKo = {
-      balanced: '첨부 사진 속 대상의 핵심 식별 특징(얼굴형, 눈매, 코, 입, 헤어스타일 또는 털 무늬, 피부톤 또는 털 색상)을 알아볼 수 있도록 유지하되, 선택된 화풍에 맞게 얼굴과 신체를 자연스럽게 스타일화. 비율 단순화와 표정 과장 허용 (사진에 없는 악세사리 임의 추가 금지)',
-      likeness: '스타일화 후에도 첨부 사진 속 대상임을 쉽게 알아볼 수 있도록 얼굴형, 눈매, 코, 입술, 턱선, 헤어스타일, 피부톤 또는 털 색상을 일관되게 유지. 선택된 화풍은 선, 채색, 표정 연출 중심으로 적용 (사진에 없는 악세사리 임의 추가 금지)',
-      style: '첨부 사진 속 대상의 핵심 식별 특징(얼굴형, 눈매, 헤어스타일 또는 털 무늬, 피부톤, 대표 아이템)만 유지하고, 선택한 화풍의 조형 언어를 우선 적용하여 비율, 표정, 형태, 채색을 적극 변환 (사진에 없는 악세사리 임의 추가 금지)',
-    }[photoReferenceMode];
+      balanced: '첨부 사진 속 대상의 핵심 식별 특징(얼굴형, 눈매 방향과 간격, 코, 입, 헤어스타일 또는 털 무늬, 피부톤 또는 털 색상)을 명확히 알아볼 수 있도록 유지하면서 표정과 신체는 선택 화풍에 맞게 자연스럽게 스타일화. 사진에 없는 액세서리 임의 추가 금지',
+      likeness: '스타일화 후에도 첨부 사진 속 대상임을 즉시 알아볼 수 있도록 얼굴형, 눈매, 코, 입술 또는 입 모양, 턱선, 헤어스타일, 피부톤 또는 털 색상을 일관되게 유지. 화풍은 렌더링, 선, 채색, 질감과 표정 연출 중심으로 적용. 사진에 없는 액세서리 임의 추가 금지',
+      style: '선택 화풍을 선, 채색, 질감, 표정과 신체 스타일화에 적극 적용하되 얼굴 구조, 눈매 방향, 헤어스타일 또는 털 무늬, 피부톤 또는 털 색상과 대표 특징을 안정적으로 유지하여 첨부 사진 속 대상임을 분명히 알아볼 수 있게 함. 화풍이 정체성을 대체하면 안 됨',
+    }[photoReferenceMode] || '첨부 사진 속 대상을 최우선 정체성 기준으로 유지하면서 그 위에 선택 화풍을 적용';
 
     return {
       subject: subjectParts.join(', ') || (isKo ? '귀여운 오리지널 캐릭터' : 'a cute original character'),
+      subjectMotifs,
       appearance: [
         ...(characterSource === 'photo'
           ? [isKo ? photoAppearanceKo : photoAppearanceEn]
           : [isKo
-              ? '큰 동그란 머리와 앙증맞고 통통한 몸체를 가진 사랑스러운 2.5등신 대두 SD/Chibi 마스코트 캐릭터 비율, 크고 생생한 눈동자와 또렷한 캐릭터 실루엣'
-              : 'adorable 2.5-head SD/Chibi mascot proportions with a big round head, chubby compact body, sparkling expressive eyes, and crisp character silhouette']),
+              ? '큰 머리와 간결하고 친근한 마스코트 실루엣을 기본으로 하되, 최종 신체 비율과 형태는 선택 화풍 및 선택 태그가 우선 결정'
+              : 'start from a friendly mascot silhouette, while final body proportions and form are determined by the selected art style and selected tags']),
         ...appearances,
-      ].join(', ') || (isKo ? '깔끔하고 명확한 2.5등신 SD 캐릭터 실루엣 유지' : 'use a clean recognizable 2.5-head SD character silhouette and keep it unchanged'),
+      ].filter(Boolean).join(', ') || (isKo ? '선택 화풍에 맞는 명확한 캐릭터 실루엣 유지' : 'maintain a clear character silhouette appropriate to the selected art style'),
       personality: personalities.join(', ') || (isKo ? '친근하고 표정이 풍부한' : 'friendly and expressive'),
       outfit: outfits.join(', ') || (characterSource === 'photo'
-        ? (isKo ? '참고 사진의 의상 스타일 유지' : 'preserve outfit from reference photo')
+        ? (isKo ? '참고 사진의 의상 스타일을 기본값으로 유지' : 'preserve the reference-photo outfit as the default')
         : (isKo ? '지정 없음. 처음 정한 의상은 모든 이미지에서 유지' : 'not specified; once chosen, keep it unchanged')),
       props: props.join(', ') || (isKo ? '필수 소품 없음' : 'no prop required'),
       effects: effects.join(', ') || (isKo ? '감정 전달에 필요한 최소한의 효과만 사용' : 'use only a minimal effect when it clarifies the emotion'),
+      additionalCues: additionalDescription || '',
     };
   };
 
@@ -5734,271 +5701,376 @@ ${textExclusion} No grid lines, no cell division lines, no border lines between 
     const isKorean = lang === 'ko';
     const character = getGeminiCharacterDetails(isKorean ? 'ko' : 'en');
     const themeProps = getThemeSignatureProps(activeTheme, isKorean ? 'ko' : 'en');
+    const selectedArtStyleTag = getSelectedArtStyle();
+    const expandedArtStyle = getExpandedArtStyleText(selectedArtStyleTag, isKorean);
+    const styleDirectives = getAdaptiveStyleDirectives(selectedArtStyleTag, isKorean ? 'ko' : 'en');
+    const artDirection = expandedArtStyle
+      ? `${expandedArtStyle}. ${styleDirectives.instruction}`
+      : getGeminiStyleTags(isKorean ? 'ko' : 'en');
     const hasPhraseOverride = phraseOverride !== null;
     const targetPhrase = generationMode === 'individual'
       ? getSelectedPhrase()
       : (phraseOverride || '').trim();
 
     const inlineTypographyEn = [
-      'Bright Golden Yellow bold curved font with sparkle stars',
-      'Vibrant Hot Pink bouncy font with mini hearts',
-      'Red/Orange gradient font with sparkling stars',
-      'Vivid Pink/Red bold font with thumbs-up icon',
-      'Deep Navy/Purple clean elegant font',
-      'Hot Pink vertical bold font with floating hearts',
-      'Golden Yellow bold font with crown icon',
-      'Bubbly Violet/Purple font with colorful party confetti',
-      'Sky Blue font with blue sweat/tear drops',
-      'Warm Sunny Orange/Yellow font with flower sparkles',
-      'Magenta/Pink vertical festive font with party popper ribbons',
-      'Giant Golden Yellow comic font with dark red outline and explosion sparkles',
-      'Electric Neon Yellow font with purple outline and lightning shock lines',
-      'Soft Glowing Rose/Pink font with sparkling tear drops',
-      'Deep Night Purple/Indigo font with yellow crescent moon and zZ'
+      'Bright golden-yellow bold curved lettering with one small sparkle accent',
+      'Vibrant hot-pink bouncy lettering with one or two tiny heart accents',
+      'Red-orange energetic lettering with a small sparkle accent',
+      'Vivid pink-red bold lettering with a tiny thumbs-up accent',
+      'Deep navy-purple clean elegant lettering',
+      'Hot-pink expressive lettering with a small floating-heart accent',
+      'Golden-yellow bold lettering with one small crown accent',
+      'Bubbly violet-purple lettering with restrained party confetti',
+      'Sky-blue lettering with one small sweat or tear-drop accent',
+      'Warm sunny orange-yellow lettering with a tiny flower sparkle',
+      'Magenta-pink festive lettering with a small party-popper accent',
+      'Large golden-yellow comic lettering with a dark inner stroke and tiny explosion sparkle',
+      'Electric neon-yellow lettering with a purple inner stroke and one lightning accent',
+      'Soft rose-pink lettering with one sparkling tear or heart accent',
+      'Deep night-purple/indigo lettering with one crescent-moon or zZ accent'
     ];
 
     const inlineTypographyKo = [
-      '반짝이 별이 포함된 화사한 골든 옐로우 볼드 곡선 폰트',
-      '미니 하트가 퐁퐁 떠 있는 생동감 넘치는 핫핑크 통통 폰트',
-      '빛나는 별 효과가 들어간 레드/오렌지 그라데이션 폰트',
-      '따봉 아이콘이 결합된 선명한 핑크/레드 볼드 폰트',
-      '깔끔하고 정중한 딥네이비/퍼플 폰트',
-      '풍성한 하트가 감싸는 핫핑크 세로형 입체 폰트',
-      '황금 왕관 아이콘이 얹어진 골든 옐로우 볼드 폰트',
-      '화려한 축제 폭죽 리본과 컨페티가 흩날리는 바이올렛/퍼플 폰트',
-      '흘리는 땀방울/눈물방울 효과의 스카이블루 폰트',
-      '꽃잎 반짝이가 흩날리는 따스한 오렌지/옐로우 폰트',
-      '파티 폭죽 리본이 터지는 화려한 마젠타/핑크 세로형 축제 폰트',
-      '폭발 스파클과 다크레드 외곽선의 큼직한 골든 옐로우 만화 폰트',
-      '번개 스파크 효과와 퍼플 외곽선의 일렉트릭 네온 옐로우 폰트',
-      '감동의 반짝이는 눈물방울과 하트가 어우러진 소프트 로즈핑크 폰트',
-      '노란 초승달과 zZ 아이콘이 포함된 딥나이트 퍼플/인디고 야간 폰트'
+      '화사한 골든 옐로우 볼드 곡선 글자 + 작은 반짝이 별 1개',
+      '생동감 넘치는 핫핑크 통통 글자 + 작은 하트 1~2개',
+      '에너지감 있는 레드·오렌지 글자 + 작은 반짝이 1개',
+      '선명한 핑크·레드 볼드 글자 + 작은 따봉 포인트 1개',
+      '깔끔하고 정중한 딥네이비·퍼플 글자',
+      '핫핑크 감성 글자 + 작은 하트 포인트 1개',
+      '골든 옐로우 볼드 글자 + 작은 왕관 포인트 1개',
+      '통통한 바이올렛·퍼플 글자 + 절제된 컨페티',
+      '스카이블루 글자 + 작은 땀방울 또는 눈물방울 1개',
+      '따뜻한 오렌지·옐로우 글자 + 작은 꽃 반짝이 1개',
+      '마젠타·핑크 축제 글자 + 작은 파티 폭죽 포인트 1개',
+      '큼직한 골든 옐로우 만화 글자 + 다크 내부선 + 작은 폭발 스파클',
+      '네온 옐로우 글자 + 퍼플 내부선 + 번개 포인트 1개',
+      '소프트 로즈핑크 글자 + 반짝이는 눈물 또는 하트 포인트 1개',
+      '딥나이트 퍼플·인디고 글자 + 초승달 또는 zZ 포인트 1개'
     ];
 
     const bgInstructionKo = {
-      transparent: '단일 연속 순수 단색 순백색(#FFFFFF) 배경. 각 스티커 실루엣 주변에 선명하고 깔끔한 흰색 다이컷(Die-cut) 외곽선이 둘러져 있습니다. 체커보드 투명 패턴, 회색 격자선 절대 금지.',
-      solid: '캐릭터와 뚜렷하게 대비되는 깔끔한 단색 배경 (Solid contrasting background). 질감이나 잡음 없이 균일한 단색으로 생성하세요. 체커보드 패턴 절대 금지.',
-      chroma: '배경 분리(누끼 작업)를 위한 선명한 연두색 단색 크로마키 배경 (#00FF00 Chroma-key Green). 캐릭터 외곽선에 녹색이 번지지 않게 깔끔하게 분리하세요.',
-    }[geminiBackgroundMode] || '단일 연속 순수 단색 순백색(#FFFFFF) 배경.';
+      transparent: '후처리 배경 제거를 위한 단일 연속 순수 단색 순백색(#FFFFFF) 배경. 각 스티커는 완전히 분리된 선명한 실루엣으로 만들고 체커보드 투명 패턴, 회색 격자선, 복잡한 배경 요소를 그리지 마세요.',
+      solid: '캐릭터와 뚜렷하게 대비되는 깨끗한 단색 배경. 그라데이션, 질감, 배경 사물, 체커보드 패턴 금지.',
+      chroma: '배경 분리를 위한 선명한 연두색 단색 크로마키 배경(#00FF00). 캐릭터 외곽에 녹색 번짐이 없어야 합니다.',
+    }[geminiBackgroundMode] || '후처리 배경 제거를 위한 순수 단색 순백색(#FFFFFF) 배경.';
 
     const bgInstructionEn = {
-      transparent: 'Pure solid white background (#FFFFFF) with a distinct white die-cut sticker contour around each sticker silhouette. Absolutely no background grid lines, no checkerboard transparency pattern.',
-      solid: 'One clean solid background color with strong contrast against the character. No gradient, no texture, no background objects, no checkerboard pattern.',
-      chroma: 'Solid bright green #00FF00 chroma-key background for easy background removal. Clean edges with no green color bleed on character borders.',
-    }[geminiBackgroundMode] || 'Pure solid white background (#FFFFFF) with a distinct white die-cut sticker contour around each sticker silhouette.';
+      transparent: 'Pure solid white (#FFFFFF) background prepared for later background removal. Keep every sticker fully isolated with a clean continuous silhouette. No checkerboard transparency pattern, grid lines, or background objects.',
+      solid: 'One clean solid background color with strong contrast against the character. No gradient, texture, background objects, or checkerboard pattern.',
+      chroma: 'Solid bright green #00FF00 chroma-key background for easy removal. No green bleed on character outlines.',
+    }[geminiBackgroundMode] || 'Pure solid white (#FFFFFF) removal-ready background.';
+
+    const phraseIndex = Math.max(0, emoticons.findIndex((phrase) => (phrase || '').trim() === (targetPhrase || '').trim()));
+    const singleTypographyKo = inlineTypographyKo[phraseIndex % inlineTypographyKo.length];
+    const singleTypographyEn = inlineTypographyEn[phraseIndex % inlineTypographyEn.length];
+    const singleGlyphProtection = isKorean ? getKoreanGlyphProtection([targetPhrase]) : '';
+    const sheetGlyphProtection = isKorean ? getKoreanGlyphProtection(emoticons) : '';
+
+    const fusionKo = `[선택 태그·테마 융합]
+- 대상 모티프: ${character.subjectMotifs || '추가 대상 모티프 없음'}
+- 외형/특징: ${character.appearance}
+- 성격/감정: ${character.personality}
+- 의상: ${character.outfit}
+- 소품/행동: ${character.props}
+- 시각 효과: ${character.effects}
+- 테마 시그니처: ${themeProps || '문구의 감정과 상황에 맞는 최소한의 보조 요소'}
+- 추가 설정: ${character.additionalCues || '없음'}
+융합 원칙: 모든 태그는 역할을 나누어 자연스럽게 결합하세요. 사진 모드에서는 사진 속 대상을 다른 인물·동물·마스코트로 교체하지 말고, 대상성 태그는 의상·모티프·소품·캐릭터화 요소로만 융합하세요.`;
+
+    const fusionEn = `[SELECTED TAGS & THEME FUSION]
+- Subject motifs: ${character.subjectMotifs || 'none'}
+- Appearance cues: ${character.appearance}
+- Personality / emotion: ${character.personality}
+- Outfit: ${character.outfit}
+- Props / actions: ${character.props}
+- Visual effects: ${character.effects}
+- Theme signature: ${themeProps || 'use only minimal supporting elements appropriate to the phrase'}
+- Additional cues: ${character.additionalCues || 'none'}
+Fusion rule: assign every selected tag a clear visual role and combine them naturally. In photo mode, never replace the photographed identity with another person, animal, or generic mascot; subject-like tags become costume, motif, prop, or stylization cues around the same identity.`;
+
+    const stickerDesignKoText = geminiTextMode === 'text'
+      ? `[완성형 메신저 스티커 디자인 시스템 — GPT식 디자인 문법]
+1. 캐릭터, 문구, 작은 포인트 아이콘과 감정 효과를 서로 따로 떠 있는 요소가 아니라 하나의 완성된 다이컷 스티커 디자인으로 설계하세요.
+2. 시각 위계는 캐릭터/얼굴 1순위 → 문구 2순위 → 장식 3순위입니다. 문구와 장식이 얼굴, 손, 핵심 소품을 가리면 안 됩니다.
+3. 문구는 머리 위 또는 어깨·얼굴 옆의 자연스러운 여백에 배치하고 캐릭터의 동작 방향과 시선을 따라 약간의 곡선·기울기·크기 변화를 줄 수 있습니다.
+4. 타이포그래피는 선명한 감정색 채움 + 필요한 경우 얇은 다크 내부선 + 두꺼운 순백색 다이컷 외곽선 + 아주 약한 그림자로 구성하세요. 글자 내부 획은 절대 가리지 마세요.
+5. 하트, 별, 왕관, 땀방울, 번개, 컨페티, 꽃, zZ 같은 장식은 감정에 맞는 것만 최대 1~2개 사용하며 글자 획에 닿지 않게 하세요.
+6. 선택 화풍의 재질과 렌더링은 그대로 존중하되, 문구는 작은 모바일 화면에서도 즉시 읽히는 상업용 메신저 스티커 가독성을 유지하세요.
+7. 각 스티커는 문구에 맞게 디자인 변주가 있어야 하지만 캐릭터 정체성, 화풍, 색 조화와 전체 브랜드 톤은 일관되어야 합니다.`
+      : `[완성형 메신저 스티커 디자인 시스템]
+캐릭터의 표정, 자세, 작은 소품과 감정 효과를 하나의 완성된 다이컷 스티커 디자인으로 구성하세요. 글자나 숫자는 넣지 말고 시각적 감정 전달과 캐릭터 실루엣의 완성도를 우선하세요.`;
+
+    const stickerDesignEnText = geminiTextMode === 'text'
+      ? `[POLISHED MESSENGER STICKER DESIGN SYSTEM — GPT-LIKE DESIGN LANGUAGE]
+1. Treat the character, phrase lettering, tiny accent icon, and emotion effect as ONE cohesive die-cut sticker composition, not disconnected elements.
+2. Visual hierarchy: character/face first, phrase second, decoration third. Text and accents must never cover the face, hands, or key prop.
+3. Place lettering in natural negative space above the head or beside the face/shoulders. It may gently curve, tilt, or scale to follow the pose and emotion.
+4. Typography: vivid emotion-matched fill + optional thin dark inner stroke + thick pure-white die-cut outline + extremely subtle shadow. Never cover internal glyph strokes.
+5. Use at most one or two emotion-matched mini accents such as hearts, sparkles, crown, sweat drop, lightning, confetti, flower, or zZ. Keep accents away from the glyph strokes.
+6. Respect the selected art style for character materials and rendering, while keeping the lettering highly legible as commercial messenger-sticker typography on a small mobile screen.
+7. Vary the design treatment by phrase while keeping one coherent character identity, art style, palette relationship, and sticker brand language.`
+      : `[POLISHED MESSENGER STICKER DESIGN SYSTEM]
+Treat the expression, pose, small prop, and emotion effect as one cohesive die-cut sticker composition. Render no text or numbers; prioritize clear visual emotion and a polished character silhouette.`;
 
     if (isKorean) {
       const referenceInstructionKo = characterSource === 'photo'
-        ? `[시각적 정체성 & 사진 기반 인물 캐리커처 (${getPhotoModeLabel('ko')})]
-- 캐릭터 스타일: 2.5등신 치비/버블헤드 캐리커처 (참고 사진의 실제 얼굴을 직접 반영한 고화질 실사풍 얼굴).
-- 얼굴 정확도 (최우선 순위): 참고 사진 속 실제 인물의 눈매, 쌍꺼풀/무쌍 구조, 콧대, 미소선, 얼굴 윤곽, 피부 결, 실제 조명 느낌을 극도로 정밀하게 유지하세요. 단순한 2D 플랫 선화로 뭉개지 말고, 실제 사람의 얼굴 입체감과 자연스러운 피부톤을 온전히 살리세요.
+        ? `[시각적 정체성 — 최우선]
+- 이 작업은 새 인물을 만드는 작업이 아니라 첨부 사진 속 동일 대상을 캐릭터화하는 작업입니다.
+- 사진 반영 방식: ${getPhotoModeLabel('ko')}
 - 사진 반영 지침: ${getReferenceImageInstruction('ko')}
-- 최우선 화풍: ${getGeminiStyleTags('ko')}
-- 의상 및 헤어 일관성: ${character.appearance}, ${character.outfit}. 15개 모든 셀에서 동일한 의상과 헤어스타일을 완벽히 일관되게 유지하세요.`
-        : `[시각적 정체성 & 캐릭터 스타일]
+- 얼굴형, 눈매 방향과 간격, 코, 입/입술, 턱선, 헤어스타일 또는 털 무늬, 피부톤 또는 털 색상 등 식별 특징을 먼저 고정하세요.
+- 화풍과 신체 비율은 정체성을 고정한 다음 적용합니다. 선택 화풍이 얼굴 정체성을 덮어쓰거나 다른 사람/동물/마스코트로 교체하면 안 됩니다.`
+        : `[캐릭터 정체성]
 - 대상: ${character.subject}
-- 최우선 화풍: ${getGeminiStyleTags('ko')}
-- 외형 & 특징: ${character.appearance}
+- 외형: ${character.appearance}
+- 성격: ${character.personality}
 - 의상: ${character.outfit}
-- 캐릭터 스타일: 2.5등신 치비 캐리커처, 선명한 이목구비와 입체감.`;
+- 신체 비율과 형태는 고정된 2.5등신을 강제하지 말고 선택 화풍과 선택 태그에 가장 잘 맞는 비율로 설계하세요.`;
 
       if (generationMode === 'individual' || hasPhraseOverride) {
         const textPolicyKo = geminiTextMode === 'text'
-          ? `[타이포그래피 규칙 — 하단 중복 원천 금지 & 단 1회 렌더링]
-- 단일 렌더링 원칙: 캐릭터 상단 또는 측면에 지정된 한글 텍스트 "${targetPhrase}"를 정확히 '단 1번'만 렌더링하세요.
-- 하단 텍스트 절대 금지: 캐릭터 하단(다리/바닥 아래)에 문구를 다시 반복해서 쓰거나 쪼개어 적지 마세요. 하단 공간은 글자 없는 깨끗한 배경이어야 합니다.
-- 엄격 금지: 상단과 하단에 2번 중복 표기 금지, 단어 반복 금지, 첫 자음/모음 중복 표기("축축하해요", "미미안해요" 등) 절대 금지.`
+          ? `[원문 문자열 잠금 — 최우선 문자 규칙]
+SOURCE TEXT = "${targetPhrase}"
+1. 위 SOURCE TEXT는 의미를 해석해 바꾸는 문장이 아니라 수정 불가능한 원본 문자열 데이터입니다. 글자 순서, 띄어쓰기, 문장부호를 포함해 문자 단위로 정확히 복사하세요.
+2. 번역, 교정, 축약, 의역, 철자 변경, 글자 추가/삭제/중복, 비슷한 자모로 교체를 절대 하지 마세요.
+3. 이미지에는 SOURCE TEXT를 정확히 1회만 렌더링하세요. 머리 위 또는 얼굴/어깨 옆 한 곳에만 배치하고 캐릭터 아래에는 반복하지 마세요.
+4. 이번 문구의 디자인 프리셋: ${singleTypographyKo}. 장식 때문에 글자 획이 가려질 가능성이 있으면 장식을 줄이고 원문 정확도를 우선하세요.
+5. 최종 렌더링 직전과 직후에 SOURCE TEXT와 출력 글자의 문자 개수와 순서를 대조하고, 다르면 장식이 적은 단순한 글자 형태로 다시 정확히 렌더링하세요.
+${singleGlyphProtection}`
           : `[텍스트 규칙]
-한국어 문구 "${targetPhrase}"는 표정과 자세 결정을 위한 감정 맥락으로만 사용하며 이미지 내에 텍스트, 글자, 숫자를 그리지 마세요.`;
+문구 "${targetPhrase}"는 표정과 자세를 정하는 감정 맥락으로만 사용하세요. 이미지에는 텍스트, 글자, 숫자, 말풍선을 렌더링하지 마세요.`;
 
         const textExclusionKo = geminiTextMode === 'text'
-          ? '하단 텍스트 중복, 텍스트 2회 중복 렌더링, 단어 반복, 첫 글자 자음/모음 중복(축축하해요, 미미안해요 등), 밋밋한 흑백 글자, 평면 2D 만화 선화, 낮은 인물 유사도, 전형적인 양산형 만화 얼굴, 한글 오타, 글자 누락, 체커보드 투명 배경, 잘린 사지, 뭉개진 인물.'
-          : '모든 텍스트, 글자, 숫자, 말풍선, 평면 2D 만화, 신체 크롭, 격자선.';
+          ? '한글 오타, 글자 누락, 글자 추가, 자모 교체, 단어 반복, 상하단 이중 문구, 캐릭터 아래 중복 문구, 의미 없는 글자, 말풍선, 텍스트 박스, 얼굴을 가리는 글자, 장식이 글자 획에 겹치는 현상, 체커보드 배경, 잘린 신체, 추가 팔다리, 워터마크.'
+          : '모든 텍스트, 글자, 숫자, 말풍선, 워터마크, 잘린 신체, 추가 팔다리, 복잡한 배경.';
 
-        return `[포맷 & 캔버스 비율]
-- 캔버스: 1:1 정사각형 캔버스 중앙에 단일 스티커 1개 배치.
-- 배경: ${bgInstructionKo}
-- 절대 금지: 배경 격자선, 체커보드 투명 패턴, 워터마크.
+        return `[목표]
+선택한 캐릭터·태그·화풍을 완전히 융합한 고품질 개인용 메신저 스티커 1개를 제작하세요.
 
 ${referenceInstructionKo}
 
+${fusionKo}
+
+[최우선 화풍]
+${artDirection}
+화풍은 선, 채색, 재질, 질감, 조명과 형태 언어에 충실히 적용하되 사진 모드에서는 정체성보다 우선할 수 없습니다.
+
+${stickerDesignKoText}
+
+[문구·표정·동작]
+- 원문 문구: "${targetPhrase}"
+- 감정/동작: ${getPhraseActionKo(targetPhrase)}
+- 캐릭터의 표정, 시선, 손동작과 몸짓이 문구 감정을 먼저 전달하도록 하세요.
+
 ${textPolicyKo}
 
-[포즈 & 문구]
-- 감정 / 동작: "${targetPhrase}" — ${getPhraseActionKo(targetPhrase)}. 최소 소품: ${character.props}${themeProps ? `, ${themeProps}` : ''}, ${character.effects}.
+[구도 및 배경]
+- 1:1 정사각형 캔버스 중앙에 완전한 스티커 1개.
+- 머리끝·귀·모자부터 발끝과 소품까지 잘리지 않게 충분한 여백 확보.
+- 배경: ${bgInstructionKo}
 
-[제외 조건 (Negative Directives)]
-${textExclusionKo}`;
+[최종 검수]
+캐릭터 정체성 → 선택 태그/테마 융합 → 선택 화풍 → 문구 정확도 → 스티커 디자인 완성도 순으로 모두 충족했는지 확인하세요.
+
+[제외 조건]
+${textExclusionKo}${styleDirectives.negativeExtra ? ` ${styleDirectives.negativeExtra}` : ''}`;
       }
 
-      const row1Plan = [0, 1, 2, 3, 4].map(i => {
+      const makeRow = (startIndex, rowNumber) => [0, 1, 2, 3, 4].map((offset) => {
+        const i = startIndex + offset;
         const phrase = (emoticons[i] || '').trim();
         const action = getPhraseActionKo(phrase);
-        const typo = inlineTypographyKo[i % 15];
-        return `${i + 1}. [1-${i + 1}] ${action} | 텍스트 (상단/측면 단 1회): "${phrase}" (${typo})`;
+        const typo = inlineTypographyKo[i % inlineTypographyKo.length];
+        return `${i + 1}. [${rowNumber}-${offset + 1}] 원문="${phrase}" | 동작=${action} | 타이포=${typo}`;
       }).join('\n');
 
-      const row2Plan = [5, 6, 7, 8, 9].map(i => {
-        const phrase = (emoticons[i] || '').trim();
-        const action = getPhraseActionKo(phrase);
-        const typo = inlineTypographyKo[i % 15];
-        return `${i + 1}. [2-${i - 4}] ${action} | 텍스트 (상단/측면 단 1회): "${phrase}" (${typo})`;
-      }).join('\n');
-
-      const row3Plan = [10, 11, 12, 13, 14].map(i => {
-        const phrase = (emoticons[i] || '').trim();
-        const action = getPhraseActionKo(phrase);
-        const typo = inlineTypographyKo[i % 15];
-        return `${i + 1}. [3-${i - 9}] ${action} | 텍스트 (상단/측면 단 1회): "${phrase}" (${typo})`;
-      }).join('\n');
+      const row1Plan = makeRow(0, 1);
+      const row2Plan = makeRow(5, 2);
+      const row3Plan = makeRow(10, 3);
 
       const textPolicyKo = geminiTextMode === 'text'
-        ? `[타이포그래피 필수 규칙 — 하단 중복 절대 금지 & 상단/측면 단 1회 렌더링 (CRITICAL)]
-1. 단일 위치 렌더링 (Exact Single Placement): 각 문구는 캐릭터 머리 위(Top) 또는 옆(Side) 중 '오직 한 군데'에만 단 1개의 텍스트 블록으로 렌더링하세요.
-2. 캐릭터 하단 텍스트 절대 금지 (Zero Bottom Text): 캐릭터 다리, 손, 무릎 아래 공간에는 절대로 글자를 적지 마세요. 하단 영역은 100% 글자 없는 순백색 여백이어야 합니다.
-3. 상·하단 중복 표기 원천 금지 (Forbidden Double Text):
-   - 상단에 "오늘도 화이팅"을 적고 하단에 "화이팅"을 또 적는 행위 절대 금지.
-   - 상단에 "수고했어요"를 적고 하단에 "수고했어요"를 또 적는 행위 절대 금지.
-   - 상단에 "오예"를 적고 하단에 "예"를 또 적는 행위 절대 금지.
-   - 한 스티커 셀 안의 텍스트 개수는 무조건 '정확히 1개'여야 합니다.
-4. 폰트 스타일: 통통하고 생동감 넘치는 카카오톡 스타일 팝아트 손글씨 스티커 타이포그래피 (채도 높은 원색 채움 + 다크 테두리 + 순백색 다이컷 외곽선 + 지정된 포인트 장식).`
-        : `[Typography Rules]
-- Korean phrases below are emotional context only — do not render any text, letters, or numbers in the image.`;
+        ? `[15개 원문 문자열 잠금 — 문자 정확도 최우선]
+1. 아래 15개의 원문은 수정 불가능한 문자열 데이터입니다. 각 셀에 배정된 원문을 문자 단위로 그대로 복사하고 번역, 교정, 축약, 의역, 철자 변경을 하지 마세요.
+2. 각 셀의 원문은 정확히 1회만 머리 위 또는 얼굴/어깨 옆에 렌더링하세요. 캐릭터 아래쪽에는 어떤 문구도 반복하지 마세요.
+3. 글자 추가/삭제/중복, 자음·모음 교체, 비슷한 한글 글리프 대체, 다른 셀 문구 혼합을 금지합니다.
+4. 타이포그래피 장식보다 철자 정확도가 우선입니다. 글자 획이 복잡해지거나 장식과 겹치면 장식을 줄이고 글자를 단순하고 또렷하게 만드세요.
+5. 각 셀 완성 후 원문과 출력 문자의 개수·순서를 대조하세요. 정확하지 않은 셀은 디자인을 단순화해서라도 원문 그대로 수정하세요.
+${sheetGlyphProtection}`
+        : `[텍스트 규칙]
+아래 15개 문구는 각 셀의 감정, 표정, 자세와 행동을 정하는 맥락으로만 사용하세요. 이미지에는 텍스트, 글자, 숫자, 말풍선을 렌더링하지 마세요.`;
 
       const textExclusionKo = geminiTextMode === 'text'
-        ? '하단 텍스트 중복 렌더링(오늘도 화이팅/화이팅 2번 쓰기, 수고했어요 위아래 2번 쓰기, 오예/예 2번 쓰기 등 절대 금지), 상하단 이중 텍스트, 캐릭터 아래 글자, 단어 반복, 첫 글자 자음/모음 중복, 밋밋한 폰트, 평면 2D 만화, 낮은 인물 유사도, 전형적인 양산형 만화 얼굴, 한글 오타, 글자 누락, 4x4 레이아웃, 투명 체커보드 배경, 잘린 사지.'
-        : 'No text, no letters, no numbers, 4x4 layout, 16 stickers, 4th row, flat 2D anime, deformed limbs, cropped figures, panel borders, grid lines.';
+        ? '한글 오타, 누락, 추가 글자, 자모 교체, 단어 반복, 다른 셀 문구 혼합, 상하단 중복 텍스트, 캐릭터 아래 글자, 텍스트 박스, 말풍선, 글자 획을 가리는 장식, 4x4 레이아웃, 16번째 스티커, 격자선, 체커보드 패턴, 잘린 신체, 추가 팔다리, 워터마크.'
+        : '모든 텍스트, 글자, 숫자, 4x4 레이아웃, 16번째 스티커, 4번째 행, 격자선, 셀 경계선, 잘린 신체, 추가 팔다리, 워터마크.';
 
-      return `[포맷 & 캔버스 비율 — 16:9 와이드 가로형 그리드]
-- 캔버스: 16:9 와이드 가로 직사각형 비율, 엄격한 5열 × 3행 그리드 배치 (정확히 총 15개의 개별 스티커).
-- 배경: ${bgInstructionKo}
-- 절대 금지 조건: 4x4 레이아웃 절대 금지, 16번째 스티커 금지, 배경 격자선 금지, 체커보드 투명 패턴 금지.
+      return `[목표]
+동일한 캐릭터의 서로 다른 표현 15개가 담긴 완성도 높은 개인용 메신저 이모티콘 시트 한 장을 제작하세요.
 
 ${referenceInstructionKo}
 
+${fusionKo}
+
+[최우선 화풍]
+${artDirection}
+15개 모두 같은 캐릭터 정체성, 선·채색·재질·질감과 색 조화를 유지하세요. 단, 각 문구의 감정에 맞는 타이포그래피 색과 작은 포인트 장식은 개별 변주가 가능합니다.
+
+${stickerDesignKoText}
+
+[구도 및 배경]
+- 16:9 와이드 가로형 캔버스, 정확히 5열 × 3행 = 총 15개.
+- 각 스티커는 같은 크기의 공간에 독립적으로 배치하되 실제 격자선, 셀 경계선, 번호는 그리지 마세요.
+- 캐릭터, 문구, 소품과 효과가 인접 스티커 영역을 침범하지 않게 충분한 여백을 확보하세요.
+- 배경: ${bgInstructionKo}
+
 ${textPolicyKo}
 
-[15종 스티커 & 화려한 이모티콘 팝아트 타이포그래피 매트릭스]
-[제 1행 — 상단 5개 스티커]
+[15종 디자인 매트릭스]
+[1행]
 ${row1Plan}
 
-[제 2행 — 중단 5개 스티커]
+[2행]
 ${row2Plan}
 
-[제 3행 — 하단 5개 스티커]
+[3행]
 ${row3Plan}
+
+[일관성]
+15개 모두 같은 얼굴/헤어 또는 털 무늬, 체형 기준, 의상 기준과 화풍을 유지하세요. 문구에 필요한 표정, 자세, 소품, 효과와 타이포그래피 디자인만 변화시키세요.
 
 [종료 검증]
-- 15번째 스티커에서 완벽히 렌더링이 종료됩니다. 4번째 행은 없으며 총 스티커 개수는 정확히 15개입니다.
+15번째 스티커에서 종료. 4번째 행과 16번째 스티커는 절대 만들지 마세요.
 
-[제외 조건 (Negative Directives)]
-${textExclusionKo}`;
+[제외 조건]
+${textExclusionKo}${styleDirectives.negativeExtra ? ` ${styleDirectives.negativeExtra}` : ''}`;
     }
 
-    // English Version
-    const referenceInstruction = characterSource === 'photo'
-      ? `[Visual Identity & Photo Reference Caricature (${getPhotoModeLabel('en')})]
-- Character Style: 2.5-head Chibi/Bobblehead Caricature featuring a realistic, high-fidelity face directly from the reference photo (${getPhotoModeLabel('en')}).
-- Facial Accuracy (Highest Priority): Maintain exact likeness of the reference photo's actual eyes, eyelid shape, nose, smile lines, facial contour, skin texture, and realistic lighting. DO NOT flatten into generic 2D line art. Keep real human facial depth and skin tone.
-- Reference Photo Policy: ${getReferenceImageInstruction('en')}
-- Art Style (Highest Priority): ${getGeminiStyleTags('en')}
-- Consistent Outfits: ${character.appearance}, ${character.outfit} across all 15 cells.`
-      : `[Visual Identity & Realistic Chibi Style]
+    const referenceInstructionEn = characterSource === 'photo'
+      ? `[VISUAL IDENTITY — HIGHEST PRIORITY]
+- This is a transformation of the same subject in the uploaded reference photo, not a new-person design task.
+- Photo reference mode: ${getPhotoModeLabel('en')}.
+- Reference policy: ${getReferenceImageInstruction('en')}
+- Lock recognizable identity anchors first: face shape, eye direction and spacing, nose, mouth/lips, jawline, hairstyle or fur pattern, and skin/coat tone.
+- Apply art style and body stylization only after identity is anchored. Never replace the reference subject with a different person, animal, or generic mascot.`
+      : `[CHARACTER IDENTITY]
 - Subject: ${character.subject}
-- Art Style: ${getGeminiStyleTags('en')}
-- Appearance & Features: ${character.appearance}
+- Appearance: ${character.appearance}
+- Personality: ${character.personality}
 - Outfit: ${character.outfit}
-- Character Style: 2.5-head Chibi caricature featuring realistic facial structure and depth.`;
+- Do not force a universal 2.5-head chibi ratio; let the selected art style and tags determine the most appropriate proportions.`;
 
     if (generationMode === 'individual' || hasPhraseOverride) {
-      const textPolicy = geminiTextMode === 'text'
-        ? `[Typography Rules — Zero Bottom Text & Strict Single Placement]
-- Top/Side Single Placement: Render the Korean text "${targetPhrase}" exactly ONCE above or adjacent to the character.
-- Zero Bottom Text: DO NOT render any text beneath the character. The area below must be completely blank.
-- STRICT: Absolutely NO repeated words, NO top-and-bottom double text, NO doubled initial consonants.`
-        : `Do not render text, letters, or numbers. Use "${targetPhrase}" only as visual context for expression and pose.`;
-      const textExclusion = geminiTextMode === 'text'
-        ? 'Bottom text echo, top-and-bottom double text, duplicate text, repeated words, double Korean characters, text rendered twice, plain dull font, flat 2D anime line art, low likeness, generic cartoon face, Korean spelling errors, missing letters, transparent checkerboard background, cut-off limbs, merged figures.'
-        : 'No text, no letters, no numbers, no speech bubbles, no sticker labels, no meaningless symbols.';
+      const textPolicyEn = geminiTextMode === 'text'
+        ? `[VERBATIM SOURCE-TEXT LOCK — CHARACTER ACCURACY FIRST]
+SOURCE TEXT = "${targetPhrase}"
+1. Treat SOURCE TEXT as immutable character data, not semantic text to rewrite. Copy it character-for-character in the original writing system, preserving order, spacing, and punctuation.
+2. Do not translate, normalize, correct, paraphrase, shorten, add, omit, duplicate, or substitute any character.
+3. Render SOURCE TEXT exactly ONCE in one location above the head or beside the face/shoulders. Never repeat text below the character.
+4. Typography preset: ${singleTypographyEn}. If decoration threatens glyph accuracy, simplify decoration and preserve the exact source text.
+5. Before final output, compare the rendered character count and sequence against SOURCE TEXT. If mismatched, redraw the lettering more simply and exactly.`
+        : `[TEXT RULE]
+Use "${targetPhrase}" only as emotional context for expression and pose. Render no text, letters, numbers, labels, or speech bubbles.`;
 
-      return `[Format & Canvas Ratio]
-- Canvas: 1:1 square canvas, single centered sticker.
+      const textExclusionEn = geminiTextMode === 'text'
+        ? 'Spelling changes, missing or added characters, duplicated words, substituted glyphs, repeated bottom text, random letters, speech bubbles, text boxes, lettering covering the face, accents touching glyph strokes, checkerboard background, cropped body, extra limbs, watermark.'
+        : 'No text, letters, numbers, speech bubbles, labels, watermark, cropped body, extra limbs, or complex background.';
+
+      return `[GOAL]
+Create one polished high-quality personal messenger sticker that fully integrates the selected character, tags, theme, and art style.
+
+${referenceInstructionEn}
+
+${fusionEn}
+
+[ART DIRECTION]
+${artDirection}
+Follow the selected style faithfully for linework, coloring, materials, texture, lighting, and form language. In photo mode, style cannot override identity.
+
+${stickerDesignEnText}
+
+[PHRASE, EXPRESSION & ACTION]
+- Source phrase: "${targetPhrase}"
+- Expression / action: ${getPhraseActionEn(targetPhrase)}
+- Make the face, gaze, hands, and body gesture communicate the phrase before decoration does.
+
+${textPolicyEn}
+
+[COMPOSITION & BACKGROUND]
+- 1:1 square canvas with exactly one complete sticker centered.
+- Keep the full head/ears/hat, body, feet, and required props inside the canvas with comfortable margins.
 - Background: ${bgInstructionEn}
-- Absolute Constraints: No background grid lines, no checkerboard transparency pattern.
 
-${referenceInstruction}
+[FINAL CHECK]
+Satisfy identity → selected tag/theme fusion → selected art style → source-text accuracy → polished sticker composition, in that order.
 
-${textPolicy}
-
-[Pose & Action]
-- Emotion / Action: "${targetPhrase}" — ${getPhraseActionEn(targetPhrase)}
-
-[Negative Directives]
-${textExclusion}`;
+[EXCLUDE]
+${textExclusionEn}${styleDirectives.negativeExtra ? ` ${styleDirectives.negativeExtra}` : ''}`;
     }
 
-    const row1Plan = [0, 1, 2, 3, 4].map(i => {
+    const makeRowEn = (startIndex, rowNumber) => [0, 1, 2, 3, 4].map((offset) => {
+      const i = startIndex + offset;
       const phrase = (emoticons[i] || '').trim();
       const action = getPhraseActionEn(phrase);
-      const typo = inlineTypographyEn[i % 15];
-      return `${i + 1}. [1-${i + 1}] ${action} | Text (Top/Side single block only): "${phrase}" (${typo})`;
+      const typo = inlineTypographyEn[i % inlineTypographyEn.length];
+      return `${i + 1}. [${rowNumber}-${offset + 1}] SOURCE="${phrase}" | ACTION=${action} | TYPOGRAPHY=${typo}`;
     }).join('\n');
 
-    const row2Plan = [5, 6, 7, 8, 9].map(i => {
-      const phrase = (emoticons[i] || '').trim();
-      const action = getPhraseActionEn(phrase);
-      const typo = inlineTypographyEn[i % 15];
-      return `${i + 1}. [2-${i - 4}] ${action} | Text (Top/Side single block only): "${phrase}" (${typo})`;
-    }).join('\n');
+    const row1PlanEn = makeRowEn(0, 1);
+    const row2PlanEn = makeRowEn(5, 2);
+    const row3PlanEn = makeRowEn(10, 3);
 
-    const row3Plan = [10, 11, 12, 13, 14].map(i => {
-      const phrase = (emoticons[i] || '').trim();
-      const action = getPhraseActionEn(phrase);
-      const typo = inlineTypographyEn[i % 15];
-      return `${i + 1}. [3-${i - 9}] ${action} | Text (Top/Side single block only): "${phrase}" (${typo})`;
-    }).join('\n');
+    const textPolicyEn = geminiTextMode === 'text'
+      ? `[15 VERBATIM SOURCE-TEXT LOCKS]
+1. Every source phrase below is immutable character data. Copy the phrase assigned to each sticker exactly in its original writing system; do not translate, normalize, correct, paraphrase, shorten, or respell it.
+2. Render each source phrase exactly ONCE above the head or beside the face/shoulders of its own sticker. Never repeat text beneath a character.
+3. No added, omitted, duplicated, or substituted characters; never mix text from neighboring stickers.
+4. Text accuracy outranks decorative complexity. If lettering becomes ambiguous, reduce effects and redraw with simpler, highly legible forms.
+5. Verify the character count and order against the source phrase for every sticker before final output.`
+      : `[TEXT RULE]
+Use each phrase only as visual context for its sticker's expression, pose, and action. Render no text, letters, numbers, labels, or speech bubbles.`;
 
-    const textPolicy = geminiTextMode === 'text'
-      ? `[Typography Rules — Zero Bottom Text & Strict Single Placement Mandate (CRITICAL)]
-1. Top/Side Single Placement: Render each Korean phrase strictly ONCE per character, positioned exclusively above the head or adjacent to the shoulders/head.
-2. ZERO BOTTOM TEXT MANDATE: Absolutely DO NOT render any text beneath the character's body, hands, knees, or waist. The area below the character MUST remain 100% clean blank white space with zero text.
-3. FORBIDDEN BOTTOM DUPLICATION:
-   - NEVER write "오늘도 화이팅" at the top and "화이팅" at the bottom.
-   - NEVER write "수고했어요" at both top and bottom.
-   - NEVER write "오예" at the top and repeat "예" at the bottom.
-   - Exactly ONE single text instance per sticker cell (Count = 1).
-4. Font Styling: Bold, bubbly, highly expressive KakaoTalk-style pop-art hand-lettered sticker typography (saturated vibrant colors + dark stroke + white die-cut contour + designated micro-effects).`
-      : `[Typography Rules]
-- Korean phrases below are emotional context only — do not render any text, letters, or numbers in the image.`;
+    const textExclusionEn = geminiTextMode === 'text'
+      ? 'Spelling changes, missing/added/substituted characters, duplicated phrases, mixed neighboring phrases, repeated bottom text, text boxes, speech bubbles, accents touching glyph strokes, 4x4 layout, 16th sticker, grid lines, checkerboard pattern, cropped body, extra limbs, watermark.'
+      : 'No text, letters, numbers, 4x4 layout, 16th sticker, fourth row, grid lines, cell borders, cropped body, extra limbs, or watermark.';
 
-    const textExclusion = geminiTextMode === 'text'
-      ? 'Bottom text echo, top-and-bottom double text (e.g. writing 오늘도 화이팅 and 화이팅 twice, writing 수고했어요 twice, repeating 오예/예 twice), text rendered beneath character, duplicate text blocks per cell, repeated words, double Korean consonants, plain dull font, flat 2D anime line art, low likeness, generic cartoon face, Korean spelling errors, missing letters, extra 4th row, 4x4 layout, transparent checkerboard background, cut-off limbs, merged figures.'
-      : 'No text, no letters, no numbers, 4x4 layout, 16 stickers, 4th row, flat 2D anime, deformed limbs, cropped figures, panel borders, grid lines.';
+    return `[GOAL]
+Create one polished personal messenger sticker sheet containing exactly 15 distinct expressions and actions of the same character.
 
-    return `[Format & Canvas Ratio - 16:9 Landscape Grid]
-- Canvas: 16:9 wide landscape aspect ratio, strictly arranged in a 5 columns × 3 rows grid (Exactly 15 distinct stickers in total).
+${referenceInstructionEn}
+
+${fusionEn}
+
+[ART DIRECTION]
+${artDirection}
+Keep one consistent identity, linework/material language, texture treatment, and palette relationship across all 15 stickers. Phrase-specific typography colors and tiny accents may vary.
+
+${stickerDesignEnText}
+
+[COMPOSITION & BACKGROUND]
+- 16:9 wide landscape canvas, exactly 5 columns × 3 rows = 15 stickers total.
+- Use equal visual spaces but draw NO actual grid lines, cell borders, labels, or numbers.
+- Keep each character, phrase, prop, and effect inside its own visual area with comfortable separation.
 - Background: ${bgInstructionEn}
-- Absolute Constraints: No 4x4 layout, no 16th sticker, no background grid lines, no checkerboard transparency pattern.
 
-${referenceInstruction}
+${textPolicyEn}
 
-${textPolicy}
+[15-STICKER DESIGN MATRIX]
+[ROW 1]
+${row1PlanEn}
 
-[15 Stickers & Vibrant Emoticon Pop-Art Typography Matrix]
-[Row 1 - Top 5 Stickers]
-${row1Plan}
+[ROW 2]
+${row2PlanEn}
 
-[Row 2 - Middle 5 Stickers]
-${row2Plan}
+[ROW 3]
+${row3PlanEn}
 
-[Row 3 - Bottom 5 Stickers]
-${row3Plan}
+[CONSISTENCY]
+Preserve the same identity, hairstyle/fur pattern, body-design baseline, outfit baseline, and selected art style across all 15. Change only the expression, pose, supporting prop/effect, and typography treatment required by each phrase.
 
-[Termination Check]
-- Total 15 stickers strictly concluded at Sticker 15. No Row 4.
+[TERMINATION CHECK]
+Stop after Sticker 15. No fourth row and no 16th sticker.
 
-[Negative Directives]
-${textExclusion}`;
+[EXCLUDE]
+${textExclusionEn}${styleDirectives.negativeExtra ? ` ${styleDirectives.negativeExtra}` : ''}`;
   };
 
   const getGrokBackgroundInstruction = () => {
