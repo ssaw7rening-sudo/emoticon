@@ -7681,15 +7681,15 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
           {/* Final settings checkpoint after prompt preview */}
           <div className="rounded-xl border border-[#E8D7A6] bg-[#FFFDF7] px-3.5 py-3.5 shadow-sm">
             <div className="mb-3 flex items-center justify-between gap-2 border-b border-[#EFE4C6] pb-2.5">
-              <strong className="text-[14px] sm:text-[15px] font-black text-[#5C4328]">
+              <strong className="text-[15px] sm:text-[16px] font-black text-[#5C4328]">
                 {lang === 'ko' ? '✓ 최종 설정 확인' : lang === 'ja' ? '✓ 最終設定確認' : lang === 'zh' ? '✓ 最终设置确认' : '✓ Final Settings'}
               </strong>
-              <span className="inline-flex shrink-0 items-center rounded-full border border-[#E8D7A6] bg-white px-2 py-0.5 text-[11px] font-bold text-[#8A6A34] whitespace-nowrap">
+              <span className="inline-flex shrink-0 items-center rounded-full border border-[#E8D7A6] bg-white px-2 py-0.5 text-[12px] font-bold text-[#8A6A34] whitespace-nowrap">
                 {lang === 'ko' ? '실행 전 확인' : lang === 'ja' ? '実行前確認' : lang === 'zh' ? '运行前确认' : 'Before launch'}
               </span>
             </div>
 
-            <dl className="grid grid-cols-[76px_minmax(0,1fr)] gap-x-2.5 gap-y-2 text-[12.5px] sm:text-[13px]">
+            <dl className="grid grid-cols-[76px_minmax(0,1fr)] gap-x-2.5 gap-y-2.5 text-[13.5px] sm:text-[14px]">
               <dt className="font-bold text-[#8A7758]">{lang === 'ko' ? '캐릭터' : lang === 'ja' ? 'キャラ' : lang === 'zh' ? '角色' : 'Character'}</dt>
               <dd className="min-w-0 font-bold text-[#4F4638]">
                 {characterSource === 'photo'
@@ -7710,7 +7710,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
               <dd className="min-w-0 font-bold text-[#4F4638]">
                 {activeTagList.length > 0
                   ? (
-                    <span className="block whitespace-normal leading-relaxed [word-break:keep-all] [overflow-wrap:break-word]">
+                    <span className="block text-[14px] sm:text-[14.5px] whitespace-normal leading-[1.65] [word-break:keep-all] [overflow-wrap:break-word]">
                       {activeTagList.join(' · ')}
                     </span>
                   )
@@ -7730,7 +7730,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
               </dd>
             </dl>
 
-            <p className="mt-3 border-t border-[#EFE4C6] pt-2.5 text-[11.5px] sm:text-[12px] font-bold text-[#8A7758] leading-relaxed">
+            <p className="mt-3 border-t border-[#EFE4C6] pt-2.5 text-[12.5px] sm:text-[13px] font-bold text-[#8A7758] leading-relaxed">
               {lang === 'ko'
                 ? '아래 실행·복사 버튼을 누르기 전에 설정이 맞는지 마지막으로 확인해 주세요.'
                 : lang === 'ja'
@@ -7741,7 +7741,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
             </p>
             {/* Final settings edit controls */}
             <div className="mt-3 pt-3 border-t border-[#EFE4C6]">
-              <div className="flex items-center gap-1.5 text-[11.5px] sm:text-[12px] font-bold text-[#8A7758] mb-2">
+              <div className="flex items-center gap-1.5 text-[12.5px] sm:text-[13px] font-bold text-[#8A7758] mb-2">
                 <span>💡</span>
                 <span>
                   {lang === 'ko'
@@ -7763,7 +7763,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                       window.scrollTo({ top: y, behavior: 'smooth' });
                     }
                   }}
-                  className="interactive-control min-w-0 flex items-center justify-center gap-1 min-h-[38px] bg-white hover:bg-[#FFF7DF] text-[#6A5129] font-black text-[12px] sm:text-[12.5px] px-2.5 py-1.5 rounded-lg border border-[#E2C990] shadow-2xs cursor-pointer active:scale-95 transition-all"
+                  className="interactive-control min-w-0 flex items-center justify-center gap-1 min-h-[38px] bg-white hover:bg-[#FFF7DF] text-[#6A5129] font-black text-[13px] sm:text-[13px] px-2.5 py-1.5 rounded-lg border border-[#E2C990] shadow-2xs cursor-pointer active:scale-95 transition-all"
                 >
                   <span>✏️</span>
                   <span className="truncate">{lang === 'ko' ? '캐릭터·태그 수정 ↑' : lang === 'ja' ? 'キャラ・タグ修正 ↑' : lang === 'zh' ? '角色与标签 ↑' : 'Character·Tags ↑'}</span>
@@ -7777,7 +7777,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                       window.scrollTo({ top: y, behavior: 'smooth' });
                     }
                   }}
-                  className="interactive-control min-w-0 flex items-center justify-center gap-1 min-h-[38px] bg-white hover:bg-[#FFF7DF] text-[#6A5129] font-black text-[12px] sm:text-[12.5px] px-2.5 py-1.5 rounded-lg border border-[#E2C990] shadow-2xs cursor-pointer active:scale-95 transition-all"
+                  className="interactive-control min-w-0 flex items-center justify-center gap-1 min-h-[38px] bg-white hover:bg-[#FFF7DF] text-[#6A5129] font-black text-[13px] sm:text-[13px] px-2.5 py-1.5 rounded-lg border border-[#E2C990] shadow-2xs cursor-pointer active:scale-95 transition-all"
                 >
                   <span>🎨</span>
                   <span className="truncate">{lang === 'ko' ? '테마 변경 ↑' : lang === 'ja' ? 'テーマ変更 ↑' : lang === 'zh' ? '主题变更 ↑' : 'Themes ↑'}</span>
