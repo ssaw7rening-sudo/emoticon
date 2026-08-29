@@ -8379,7 +8379,8 @@ if (currentPath === '/privacy') {
           </div>
 
           <p className="text-[13.5px] text-[#8C7A6B] font-bold mt-1">
-            © {new Date().getFullYear()} Prompt Maker (프롬프트 메이커). All rights reserved.
+            <span className="block">© {new Date().getFullYear()} Prompt Maker (프롬프트 메이커).</span>
+  <span className="block whitespace-nowrap">All rights reserved.</span>
           </p>
           <p className="text-[12.5px] text-[#A69B8F] leading-relaxed max-w-2xl break-keep">
             {lang === 'ko' 
