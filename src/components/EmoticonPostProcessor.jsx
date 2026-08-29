@@ -5,25 +5,25 @@ const COPY = {
     title: '이모티콘 마무리', ready: '분리된 15개 이미지를 수정하고 360×360 규격으로 저장할 수 있습니다.',
     normalizeAll: '전체 360×360 변환', zip: 'ZIP 일괄 저장', working: '처리 중…', edit: '수정', save: 'PNG 저장',
     editorTitle: '360×360 미세조정', zoom: '크기', x: '좌우 위치', y: '상하 위치', reset: '초기화', cancel: '취소', apply: '수정 적용',
-    normalized: '360×360 완료', raw: '자동 분리', zipName: 'emoticon-360', failed: '이미지 처리 중 오류가 발생했습니다.'
+    normalized: '360', raw: '자동', zipName: 'emoticon-360', failed: '이미지 처리 중 오류가 발생했습니다.'
   },
   en: {
     title: 'Finish emoticons', ready: 'Fine-tune the 15 split images and export them at 360×360.',
     normalizeAll: 'Convert all to 360×360', zip: 'Download ZIP', working: 'Processing…', edit: 'Edit', save: 'Save PNG',
     editorTitle: 'Fine-tune 360×360', zoom: 'Size', x: 'Horizontal', y: 'Vertical', reset: 'Reset', cancel: 'Cancel', apply: 'Apply edit',
-    normalized: '360×360 ready', raw: 'Auto split', zipName: 'emoticon-360', failed: 'An error occurred while processing the image.'
+    normalized: '360', raw: 'Auto', zipName: 'emoticon-360', failed: 'An error occurred while processing the image.'
   },
   ja: {
     title: '絵文字の仕上げ', ready: '分割した15枚を微調整し、360×360で保存できます。',
     normalizeAll: 'すべて360×360に変換', zip: 'ZIP一括保存', working: '処理中…', edit: '編集', save: 'PNG保存',
     editorTitle: '360×360微調整', zoom: 'サイズ', x: '左右位置', y: '上下位置', reset: 'リセット', cancel: 'キャンセル', apply: '編集を適用',
-    normalized: '360×360完了', raw: '自動分割', zipName: 'emoticon-360', failed: '画像処理中にエラーが発生しました。'
+    normalized: '360', raw: '自動', zipName: 'emoticon-360', failed: '画像処理中にエラーが発生しました。'
   },
   zh: {
     title: '表情包收尾', ready: '可微调已分割的15张图片，并按360×360规格保存。',
     normalizeAll: '全部转换为360×360', zip: 'ZIP批量保存', working: '处理中…', edit: '调整', save: '保存PNG',
     editorTitle: '360×360微调', zoom: '大小', x: '左右位置', y: '上下位置', reset: '重置', cancel: '取消', apply: '应用调整',
-    normalized: '360×360完成', raw: '自动分割', zipName: 'emoticon-360', failed: '图片处理时发生错误。'
+    normalized: '360', raw: '自动', zipName: 'emoticon-360', failed: '图片处理时发生错误。'
   }
 };
 
@@ -249,12 +249,12 @@ export default function EmoticonPostProcessor({ items = [], sourceName = 'emotic
               ) : (
                 <img src={item.url} alt={`emoticon ${item.index}`} className="h-full w-full object-contain p-1.5" />
               )}
-              <span className="absolute left-1.5 top-1.5 flex h-6 min-w-6 items-center justify-center rounded-full bg-black/65 px-1.5 text-[10px] font-extrabold text-white">{item.index}</span>
-              <span className="absolute bottom-1.5 right-1.5 rounded-full bg-white/90 px-1.5 py-0.5 text-[8px] font-extrabold text-[#61705D] shadow-sm">{item.finalBlob ? t.normalized : t.raw}</span>
+              <span className="absolute left-1 top-1 flex h-5 min-w-5 items-center justify-center rounded-md bg-black/55 px-1 text-[9px] font-extrabold leading-none text-white shadow-sm">{String(item.index).padStart(2, '0')}</span>
+              <span className="absolute right-1 top-1 rounded-md bg-white/88 px-1.5 py-0.5 text-[8px] font-extrabold leading-none text-[#5B6E56] shadow-sm backdrop-blur-[1px]">✓ {item.finalBlob ? t.normalized : t.raw}</span>
             </div>
-            <div className="grid grid-cols-2 border-t border-[#EEEAE3]">
-              <button type="button" onClick={() => openEditor(item)} className="border-r border-[#EEEAE3] px-1 py-2 text-[10px] font-extrabold text-[#6A5A46] hover:bg-[#FFF9F0]">✏️ {t.edit}</button>
-              <button type="button" onClick={() => downloadItem(item)} className="px-1 py-2 text-[10px] font-extrabold text-[#4E664A] hover:bg-[#F8FBF6]">↓ {t.save}</button>
+            <div className="grid grid-cols-2 border-t border-[#EEEAE3] bg-white">
+              <button type="button" onClick={() => openEditor(item)} className="whitespace-nowrap border-r border-[#EEEAE3] px-1 py-1.5 text-[9px] font-extrabold leading-5 text-[#6A5A46] hover:bg-[#FFF9F0] sm:text-[10px]">✏️ {t.edit}</button>
+              <button type="button" onClick={() => downloadItem(item)} className="whitespace-nowrap px-1 py-1.5 text-[9px] font-extrabold leading-5 text-[#4E664A] hover:bg-[#F8FBF6] sm:text-[10px]">↓ {t.save}</button>
             </div>
           </div>
         ))}
