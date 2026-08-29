@@ -102,7 +102,14 @@ export default function BackgroundRemoverLanding({ lang = 'ko' }) {
       <main className="mx-auto max-w-5xl px-4 pb-14 pt-8 sm:px-6 sm:pt-12">
         <section className="mx-auto max-w-3xl text-center">
           <div className="inline-flex rounded-full bg-[#EEF5EA] px-3 py-1 text-xs font-extrabold text-[#4E6748]">✨ {t.eyebrow}</div>
-          <h1 className="mt-4 text-3xl font-black leading-tight tracking-tight text-[#2F2B27] sm:text-4xl">{t.title}</h1>
+          <h1 className="mt-4 text-3xl font-black leading-tight tracking-tight text-[#2F2B27] sm:text-4xl">
+  {lang === 'ko' ? (
+    <>
+      <span className="block whitespace-nowrap">무료 이미지 배경 제거</span>
+      <span className="mt-1 block whitespace-nowrap">투명 PNG 만들기</span>
+    </>
+  ) : t.title}
+</h1>
           <p className="mx-auto mt-4 max-w-2xl text-sm font-medium leading-7 text-[#6D665E] sm:text-base">{t.lead}</p>
           <p className="mx-auto mt-3 max-w-2xl text-xs font-bold leading-5 text-[#4F6B4A]">🔒 {t.privacy}</p>
         </section>
