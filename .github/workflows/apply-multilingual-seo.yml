@@ -2,6 +2,10 @@ name: Apply multilingual SEO
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/apply-multilingual-seo.yml'
 
 permissions:
   contents: write
