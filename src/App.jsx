@@ -8378,7 +8378,7 @@ if (currentPath === '/privacy') {
             </button>
           </div>
 
-          <p className="text-[13.5px] text-[#8C7A6B] font-bold mt-1">
+          <p className="footer-copyright text-[13.5px] text-[#8C7A6B] font-bold mt-1">
             <span className="block">© {new Date().getFullYear()} Prompt Maker (프롬프트 메이커).</span>
   <span className="block whitespace-nowrap">All rights reserved.</span>
           </p>

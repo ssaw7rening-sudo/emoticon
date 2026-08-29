@@ -138,6 +138,13 @@ body,
   font-family: 'Paperlogy', -apple-system, BlinkMacSystemFont, sans-serif !important;
 }
 
+/* Keep the copyright signature visually identical in every language. */
+.footer-copyright,
+.lang-zh .footer-copyright,
+.lang-zh .footer-copyright * {
+  font-family: 'Paperlogy', -apple-system, BlinkMacSystemFont, sans-serif !important;
+}
+
 /* Give the phrase-theme title and help copy the full mobile width. The random
    button previously squeezed this sentence into a narrow side column. */
 @media (max-width: 639px) {
