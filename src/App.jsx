@@ -6011,43 +6011,53 @@ ${textExclusion}`;
   };
 
   const getGrokCharacterDetails = (langMode = lang) => {
-    const { subjects, appearances, personalities, outfits, props, effects, additionalDescription } = getSelectedCharacterRoles();
-    const isKo = langMode === 'ko';
-    const subjectParts = [
-      ...(characterSource === 'photo' 
-        ? [isKo ? 'AI 채팅에 첨부한 참고 사진 속 대상' : 'the subject in the reference photo attached in the AI chat'] 
-        : []),
-      ...subjects,
-      ...(additionalDescription ? [additionalDescription] : []),
-    ];
+  const { subjects, appearances, personalities, outfits, props, effects, additionalDescription } = getSelectedCharacterRoles();
+  const isKo = langMode === 'ko';
 
-    const photoAppearanceEn = {
-      exact: 'realistically reproduce actual face proportions, facial structure, eye shape, nose, lips, jawline, hairstyle, and skin tone matching reference photo so the person is immediately recognizable; do not add unrequested accessories',
-      features: 'do NOT match actual face; instead extract signature points (hairstyle, glasses if any, outfit, body type, vibe) and design a stylish new 2D character avatar; do not add unrequested accessories',
-      characterize: 'use general impression as loose reference and transform into an ultra-cute 2.5-head SD/Chibi mascot with big round head, chubby body, and huge sparkling eyes',
-    }[photoReferenceMode];
+  // In photo mode, the uploaded subject is the identity. Subject tags become secondary motifs,
+  // never a competing/replacement identity.
+  const subjectParts = characterSource === 'photo'
+    ? [isKo ? 'AI 채팅에 첨부한 참고 사진 속 대상' : 'the subject in the reference photo attached in the AI chat']
+    : [
+        ...subjects,
+        ...(additionalDescription ? [additionalDescription] : []),
+      ];
 
-    const photoAppearanceKo = {
-      exact: '참고 사진 인물의 실제 얼굴 비율, 이목구비 구조, 눈매, 코, 입술, 턱선, 헤어스타일, 피부톤을 95% 이상 리얼하게 재현하여 본인임을 즉시 알아볼 수 있게 함 (사진에 없는 악세사리 임의 추가 금지)',
-      features: '얼굴 자체를 닮게 그릴 필요 없음; 헤어스타일, 안경 유무, 의상, 체형, 전체 분위기 등 시그니처 포인트만 추출하여 스타일리시한 새 캐릭터로 디자인 (사진에 없는 악세사리 임의 추가 금지)',
-      characterize: '전체적인 인상(헤어 색상, 분위기)만 살짝 참고하고 2.5등신 커다란 머리와 동글동글한 몸체의 극도로 귀여운 SD/Chibi 마스코트로 완전 변환',
-    }[photoReferenceMode];
+  const subjectMotifs = characterSource === 'photo' && subjects.length
+    ? (isKo
+        ? `${subjects.join(', ')} — 참고 사진 속 동일 대상을 교체하지 말고 의상·소품·동물 모티프·캐릭터 디자인 요소로만 융합`
+        : `${subjects.join(', ')} — use only as costume, accessory, species-inspired, or character-design motifs around the same referenced identity; never replace the referenced subject`)
+    : '';
 
-    return {
-      subject: subjectParts.join(', ') || (isKo ? '귀여운 오리지널 캐릭터' : 'a cute original character'),
-      appearance: [
-        ...(characterSource === 'photo' ? [isKo ? photoAppearanceKo : photoAppearanceEn] : []),
-        ...appearances,
-      ].join(', ') || (isKo ? '단순하고 알아보기 쉬운 실루엣을 정한 뒤 그대로 유지' : 'simple, recognizable silhouette kept unchanged'),
-      personality: personalities.join(', ') || (isKo ? '친근하고 표정이 풍부한' : 'friendly and expressive'),
-      outfit: outfits.join(', ') || (characterSource === 'photo'
-        ? (isKo ? '참고 사진의 의상 스타일 유지' : 'preserve outfit from reference photo')
-        : (isKo ? '지정 없음. 처음 정한 의상은 모든 이미지에서 유지' : 'no fixed outfit specified; once chosen, keep it unchanged')),
-      props: props.join(', ') || (isKo ? '필수 소품 없음' : 'none required'),
-      effects: effects.join(', ') || (isKo ? '감정 전달에 필요한 최소한의 효과만 사용' : 'use only a minimal effect when it clarifies the emotion'),
-      artStyle: getGeminiStyleTags(langMode),
-    };
+  const photoAppearanceEn = {
+    likeness: 'preserve the uploaded subject with maximum identity fidelity: exact recognizable face shape, eye shape and spacing, nose, lips or mouth shape, jawline, hairstyle or fur pattern, and skin/coat tone. Stylize only the rendering; do not redesign the identity or add unrequested accessories',
+    balanced: 'preserve the uploaded subject as the clear identity anchor: keep the key recognizable face shape, eyes, nose, mouth, hairstyle or fur pattern, and skin/coat tone while allowing natural stylization of expression and body. Do not replace the subject with a generic character',
+    style: 'apply the selected art style strongly to linework, coloring, texture, expression, and body stylization, but keep the uploaded subject unmistakably identifiable through stable facial structure, eye direction, hairstyle or fur pattern, skin/coat tone, and signature features. Style must not replace identity',
+  }[photoReferenceMode] || 'preserve the uploaded subject as the primary recognizable identity while applying the selected art style around that identity';
+
+  const photoAppearanceKo = {
+    likeness: '첨부 사진 속 대상의 얼굴형, 눈매와 간격, 코, 입 또는 입술 형태, 턱선, 헤어스타일 또는 털 무늬, 피부톤 또는 털 색상을 최대한 정확하게 유지하여 한눈에 동일 대상임을 알아볼 수 있게 함. 화풍은 렌더링에만 적용하고 정체성을 재설계하지 않으며 사진에 없는 액세서리를 임의 추가하지 않음',
+    balanced: '첨부 사진 속 대상을 명확한 정체성 기준으로 유지하고 얼굴형, 눈, 코, 입, 헤어스타일 또는 털 무늬, 피부톤 또는 털 색상 등 핵심 식별 특징을 보존하면서 표정과 신체는 자연스럽게 스타일화. 다른 일반 캐릭터로 교체하지 않음',
+    style: '선택 화풍을 선·채색·질감·표정·신체 스타일화에 적극 적용하되 얼굴 구조, 눈매 방향, 헤어스타일 또는 털 무늬, 피부톤 또는 털 색상과 대표 특징을 유지하여 첨부 사진 속 대상임을 분명히 알아볼 수 있게 함. 화풍이 정체성을 대체하지 않음',
+  }[photoReferenceMode] || '첨부 사진 속 대상을 최우선 정체성 기준으로 유지하면서 그 위에 선택 화풍을 적용';
+
+  return {
+    subject: subjectParts.join(', ') || (isKo ? '귀여운 오리지널 캐릭터' : 'a cute original character'),
+    subjectMotifs,
+    appearance: [
+      ...(characterSource === 'photo' ? [isKo ? photoAppearanceKo : photoAppearanceEn] : []),
+      ...appearances,
+      ...(characterSource === 'photo' && additionalDescription ? [additionalDescription] : []),
+    ].filter(Boolean).join(', ') || (isKo ? '단순하고 알아보기 쉬운 실루엣을 정한 뒤 그대로 유지' : 'simple, recognizable silhouette kept unchanged'),
+    personality: personalities.join(', ') || (isKo ? '친근하고 표정이 풍부한' : 'friendly and expressive'),
+    outfit: outfits.join(', ') || (characterSource === 'photo'
+      ? (isKo ? '참고 사진의 의상 스타일을 기본값으로 유지' : 'preserve the reference-photo outfit as the default')
+      : (isKo ? '지정 없음. 처음 정한 의상은 모든 이미지에서 유지' : 'no fixed outfit specified; once chosen, keep it unchanged')),
+    props: props.join(', ') || (isKo ? '필수 소품 없음' : 'none required'),
+    effects: effects.join(', ') || (isKo ? '감정 전달에 필요한 최소한의 효과만 사용' : 'use only a minimal effect when it clarifies the emotion'),
+    artStyle: getGeminiStyleTags(langMode),
   };
+};
 
   const generateGrokPrompt = (phraseOverride = null) => {
     const isKorean = lang === 'ko';
@@ -6059,42 +6069,59 @@ ${textExclusion}`;
       ? getSelectedPhrase()
       : (phraseOverride || '').trim();
 
-    const bgInstruction = {
-      transparent: 'pure solid white (#FFFFFF) background only. No gradients, no patterns, no gray tones, no checkerboard.',
-      solid: 'one clean solid background color contrasting with the character. No gradient, texture, or background objects.',
-      chroma: 'solid bright lime-green #00FF00 chroma key background for easy cutout. No green bleed on character outlines.',
-    }[grokBackgroundMode] || 'pure solid white (#FFFFFF) background only. No gradients, no patterns, no gray tones, no checkerboard.';
+    const bgInstruction = getGrokBackgroundInstruction();
 
-    // xAI Grok Imagine 3-Tier Photo Reference Directive
-    const photoDirectives = {
-      likeness: `REFERENCE IMAGE PRIORITY (LIKENESS-FIRST):
-Use the uploaded image as the absolute identity ground truth. Preserve the subject's exact recognizable facial structure, eye shape, nose bridge/tip, lip thickness, jawline, hairstyle, and skin tone with maximum fidelity across all panels. The art style applies strictly to clean linework and subtle shading without replacing or simplifying the subject's real facial identity.`,
-      balanced: `REFERENCE IMAGE PRIORITY (BALANCED RECOMMENDED):
-Use the uploaded image as the primary identity reference. The reference image defines WHO the character is. Preserve the subject's key recognizable facial structure and distinguishing features consistently across all panels. Apply the requested art style to rendering, linework, proportions, coloring, and expressions without replacing the subject's identity.`,
-      style: `REFERENCE IMAGE PRIORITY (STYLE-FIRST):
-Use the uploaded image as character design inspiration. Extract signature styling points (hairstyle, distinctive vibe, glasses/accessories if any, outfit colors) and actively apply the chosen art style's stylized visual language to proportions, expressions, and forms while preserving an identifiable likeness.`
-    };
+  // xAI Grok Imagine: photo transformation comes before theme/style fusion.
+  const photoDirectives = {
+    likeness: `IMAGE TRANSFORMATION TASK — LIKENESS FIRST:
+The uploaded image is the source image and absolute identity ground truth. This is NOT a new-character design task. Do not invent, replace, or redesign the subject. Preserve the exact recognizable facial structure, eye shape and spacing, nose bridge/tip, mouth/lips, jawline, hairstyle or fur pattern, and skin/coat tone. Apply stylization only around this identity anchor.`,
+    balanced: `IMAGE TRANSFORMATION TASK — BALANCED RECOMMENDED:
+The uploaded image defines WHO the character is and remains the primary identity anchor. This is NOT a subject-replacement task. Preserve the subject's recognizable facial structure and signature features first; then fuse the selected theme, tags, expressions, proportions, and art style around that same identity.`,
+    style: `IMAGE TRANSFORMATION TASK — STYLE FIRST, IDENTITY STILL LOCKED:
+Apply the selected art style strongly, but transform the uploaded subject rather than designing a new subject. Keep the reference identity unmistakable through stable face geometry, eye direction, hairstyle or fur pattern, skin/coat tone, and signature features. Strong stylization is allowed only after identity is preserved.`
+  };
 
-    const refImageBlock = characterSource === 'photo'
-      ? photoDirectives[photoReferenceMode] || photoDirectives.balanced
-      : `CHARACTER SOURCE: Original mascot character design.`;
+  const priorityOrder = characterSource === 'photo'
+    ? `PRIORITY ORDER (resolve every conflict in this order):
+1. Uploaded reference identity — never replace it.
+2. Requested expression and action.
+3. Selected tags, outfit, props, and subject motifs — fuse them onto the same identity.
+4. Selected art style and body stylization.
+5. Theme effects and background.
+If any lower-priority instruction would make the subject look like a different person, pet, or generic mascot, ignore that conflicting part and preserve the reference identity.`
+    : '';
 
-    const charSubject = character.subject || 'a real person';
-    const charAppearance = character.appearance || 'natural facial features matching reference photo';
-    const charOutfit = character.outfit || 'outfit matching reference photo';
-    const themePart = themeProps ? ` (${themeProps})` : '';
+  const refImageBlock = characterSource === 'photo'
+    ? `${photoDirectives[photoReferenceMode] || photoDirectives.balanced}\n\n${priorityOrder}`
+    : `CHARACTER SOURCE: Original mascot character design.`;
 
-    const identityLock = characterSource === 'photo'
-      ? `IDENTITY LOCK (must remain identical in all panels):
-- Face & Facial Features: Exact jawline, cheekbones, chin shape, nose bridge/tip, lip thickness, and natural smile line matching the photo.
-- Eyes & Gaze: Authentic eye shape, eyelid structure, eye distance, and natural expression.
-- Hair: Exact hairstyle, length, part, volume, and natural flow matching the photo.
-- Skin & Details: Natural skin tone and subtle facial characteristics (${charAppearance}). No beauty filter, no generic anime face, no baby face.
-- Outfit: ${charOutfit}${themePart}.`
-      : `IDENTITY LOCK (must remain identical in all panels):
-- Recurring mascot character: ${charSubject}${themePart}.
-- Key features: ${charAppearance}.
-- Outfit & Props: ${charOutfit}.`;
+  const charSubject = character.subject || 'a real person';
+  const charAppearance = character.appearance || 'natural facial features matching reference photo';
+  const charOutfit = character.outfit || 'outfit matching reference photo';
+  const subjectMotifs = character.subjectMotifs || 'none';
+  const themePart = themeProps || 'use the selected phrase theme only for expression, pose, props, and supporting effects';
+
+  const baseIdentityLock = characterSource === 'photo'
+    ? `IDENTITY LOCK (must remain the same subject in every panel):
+- Face & Facial Features: Preserve the reference jawline, cheekbones, chin, nose, mouth/lips, and natural smile line.
+- Eyes & Gaze: Preserve authentic eye shape, eyelid structure, eye distance, and characteristic gaze.
+- Hair / Fur: Preserve hairstyle, length, part, volume and flow, or the reference fur pattern and markings.
+- Skin / Coat & Details: Preserve natural skin/coat tone and identifying details. ${charAppearance}
+- Never average the face into a generic anime, baby, beauty-filter, or stock mascot face.`
+    : `IDENTITY LOCK (must remain identical in all panels):
+- Recurring mascot character: ${charSubject}.
+- Key features: ${charAppearance}.`;
+
+  const fusionBlock = `SELECTED TAGS & THEME FUSION:
+- Subject motifs: ${subjectMotifs}.
+- Appearance / character cues: ${charAppearance}.
+- Outfit cues: ${charOutfit}.
+- Props / action cues: ${character.props}.
+- Effects: ${character.effects}.
+- Theme cues: ${themePart}.
+FUSION RULE: Keep every useful selected tag and theme cue, but assign it a role. In photo mode, animal/mascot/subject tags are motifs, costume ideas, accessories, or stylization cues around the SAME uploaded identity — never instructions to replace the subject. Outfit, prop, mood, effect, and art-style tags should enrich the result without identity drift.`;
+
+  const identityLock = `${baseIdentityLock}\n\n${fusionBlock}`;
 
     const formatStickerLine = (phrase, number) => {
       const action = getPhraseActionEn(phrase);
@@ -6122,7 +6149,7 @@ Pure graphic artwork with NO text, NO letters, NO numbers, and NO speech bubbles
         : `${singleAction}`;
 
       return `TASK:
-Create one polished high-resolution square messenger sticker on a ${bgInstruction}
+Create one polished high-resolution square messenger sticker.\n\nBACKGROUND:\n${bgInstruction}
 
 ${refImageBlock}
 
@@ -6133,13 +6160,12 @@ ${singleLine}
 
 ART STYLE & RENDERING:
 ${selectedArtStyle}.
-- Clean uniform black vector line art (3-4px).
-- Flat two-tone cel shading for body, hair, and clothing.
-- Slightly softer, subtle shading on the face only to preserve volume and recognizable likeness.
-- No gradients, no airbrush, no 3D rendering, no watercolor, no soft glow.
+- Apply the selected art style faithfully to linework, coloring, texture, materials, and rendering.
+- Do not impose a generic vector/cel-shading look when the selected style calls for another medium or rendering method.
+- In photo mode, style changes rendering and secondary proportions only; it must not erase the subject's recognizable identity anchors.
 
 BODY PROPORTIONS:
-Natural stylized 3.5–4 head-length ratio. Face retains full detail and photo-accurate likeness; body can be slightly stylized.
+Follow the selected art style and selected tags for body proportions. In photo mode, body stylization and expression exaggeration are allowed while the face and signature identity features remain recognizable.
 ${textSection}
 DIE-CUT OUTLINE:
 Thick, clean white outline around the full character silhouette + very faint subtle contact shadow along the outline edge so the sticker shape is distinct on pure white background without changing border color.
@@ -6148,14 +6174,14 @@ AVOID:
 Generic anime face, baby face, eye distortion, altered facial structure, extra or missing limbs, speech bubbles, random gibberish letters, watermark, outer frame.
 
 FINAL CHECK:
-One single polished sticker with exact facial likeness to the reference photo on pure background.
+${characterSource === 'photo' ? 'One polished sticker that unmistakably matches the uploaded reference identity while integrating the selected tags/theme.' : 'One polished sticker with the selected mascot identity, tags, theme, and art style fully integrated.'}
 
 [Optional X-ready output request]
 After generating the sticker, also prepare a short, engaging Korean caption + English hashtags that can be directly copied and posted on X (Twitter).`;
     }
 
     return `TASK:
-Create one polished messenger sticker sheet containing exactly 15 distinct expressions and actions of the same character on a ${bgInstruction}
+Create one polished messenger sticker sheet containing exactly 15 distinct expressions and actions of the same character.\n\nBACKGROUND:\n${bgInstruction}
 
 ${refImageBlock}
 
@@ -6163,14 +6189,12 @@ ${identityLock}
 
 ART STYLE & RENDERING:
 ${selectedArtStyle}.
-- Clean uniform black vector line art (3-4px).
-- Flat two-tone cel shading for body, hair, and clothing with a coherent color palette.
-- Slightly softer, subtle shading on the face only to preserve volume and recognizable likeness.
-- Do not allow the art style to erase the subject's recognizable identity.
-- No gradients, no airbrush, no 3D rendering, no watercolor, no soft glow.
+- Apply the selected art style faithfully and consistently across all 15 stickers: linework, coloring, texture, materials, lighting, and rendering should follow that style.
+- Do not force generic vector/cel shading when it conflicts with the selected style.
+- In photo mode, the style is subordinate to the uploaded identity; never let stylization turn the subject into a different person, pet, or generic mascot.
 
 BODY PROPORTIONS:
-Natural stylized 3.5–4 head-length ratio. Face retains full detail and photo-accurate likeness; body can be slightly simplified.
+Follow the selected art style and selected tags for proportions consistently across the sheet. In photo mode, body simplification or chibi exaggeration is allowed only while recognizable face and signature identity anchors remain stable.
 
 SHEET COMPOSITION:
 Arrange exactly 15 stickers in a clean 3-row by 5-column grid (5 stickers per row, 3 rows total), evenly and naturally spaced, floating freely within the white margins. No grid lines, cell borders, numbers, frames, or crop marks.
@@ -6198,7 +6222,7 @@ AVOID:
 Identity drift between panels, generic anime faces, baby-face averaging, inconsistent hairstyles, random outfit changes, duplicated poses, speech bubbles, random gibberish letters, watermark, grid lines, outer frames, extra or missing stickers (must be exactly 15).
 
 FINAL CHECK:
-Exactly 15 stickers in a 3×5 grid, one consistent recognizable character matching the reference photo, pure white background only.
+${characterSource === 'photo' ? 'Exactly 15 stickers in a 3×5 grid, all unmistakably the same uploaded reference identity with the selected tags/theme fused consistently.' : 'Exactly 15 stickers in a 3×5 grid with one consistent mascot identity and the selected tags/theme/style fused consistently.'}
 
 [Optional X-ready output request]
 After generating the sticker sheet, also prepare a short, engaging Korean caption + English hashtags that can be directly copied and posted on X (Twitter).`;
