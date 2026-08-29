@@ -1,0 +1,90 @@
+name: Move edit controls into final settings
+
+on:
+  push:
+    paths:
+      - '.github/workflows/move-edit-buttons-into-final-settings.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Move edit controls into final settings card
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path('src/App.jsx')
+          text = path.read_text(encoding='utf-8')
+
+          row_start_marker = '            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-2 border-t border-[#CBEAE0]">'
+          final_anchor = "            </p>\n          </div>\n\n          <AdBanner />"
+          guard = '            {/* Final settings edit controls */}'
+
+          if guard in text:
+              print('Final settings edit controls already moved; skipping.')
+          else:
+              if row_start_marker not in text:
+                  raise SystemExit('Edit controls row not found.')
+              start = text.index(row_start_marker)
+              # The next 10-space closing div belongs to the mint launch-info box;
+              # everything before it is the edit-controls row we want to move.
+              mint_box_close = text.index('          </div>', start)
+              row = text[start:mint_box_close]
+              text = text[:start] + text[mint_box_close:]
+
+              row = row.replace(
+                  row_start_marker,
+                  '            {/* Final settings edit controls */}\n            <div className="mt-3 pt-3 border-t border-[#EFE4C6]">',
+                  1,
+              )
+              row = row.replace(
+                  'text-[#2A6555] shrink-0',
+                  'text-[#8A7758] shrink-0 mb-2',
+                  1,
+              )
+              row = row.replace('hover:bg-[#D5EFE5]', 'hover:bg-[#FFF7DF]')
+              row = row.replace('text-[#1E5D4B]', 'text-[#6A5129]')
+              row = row.replace('border-[#9ED2C0]', 'border-[#E2C990]')
+
+              # Make the two edit buttons share the mobile width evenly while
+              # preserving their existing click/scroll behavior.
+              first_button = 'className="interactive-control flex items-center justify-center gap-1 min-h-[34px]'
+              row = row.replace(
+                  first_button,
+                  'className="interactive-control flex-1 min-w-0 flex items-center justify-center gap-1 min-h-[38px]',
+              )
+
+              if final_anchor not in text:
+                  raise SystemExit('Final settings card insertion anchor not found.')
+              replacement = "            </p>\n" + row + "          </div>\n\n          <AdBanner />"
+              text = text.replace(final_anchor, replacement, 1)
+
+              path.write_text(text, encoding='utf-8')
+              print('Moved edit controls into the final settings card.')
+          PY
+      - name: Install dependencies
+        run: npm ci
+      - name: Build
+        run: npm run build
+      - name: Commit patch
+        run: |
+          if git diff --quiet -- src/App.jsx; then
+            echo "No App.jsx changes to commit"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/App.jsx
+          git commit -m "Move edit controls into final settings card"
+          git push
