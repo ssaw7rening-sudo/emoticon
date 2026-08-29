@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import EmoticonPostProcessor from './EmoticonPostProcessor';
 
 let removerPromise = null;
 
@@ -10,6 +11,7 @@ const COPY = {
     remove: '배경 제거하기', preparing: '이미지 분석 중…', processing: '배경을 제거하고 있어요…',
     original: '원본', result: '투명 배경', download: '투명 PNG 저장', again: '다른 이미지',
     compareHint: '가운데 슬라이더를 좌우로 움직여 원본과 결과를 비교하세요.',
+    transparentAlready: '이미 투명 배경인 PNG는 배경 제거 대상이 아닙니다. 배경이 있는 PNG·JPG·WEBP 이미지를 사용해 주세요.',
     splitTitle: '15개 이모티콘 자동 분리', splitBadge: '스마트 감지',
     splitDesc: '고정 격자로 자르지 않고 실제 캐릭터·문구 덩어리를 감지해 15개 이모티콘을 각각 분리합니다.',
     splitAction: '15개로 자동 분리', splitting: '15개 이모티콘을 분리하고 있어요…',
@@ -24,6 +26,7 @@ const COPY = {
     remove: 'Remove background', preparing: 'Analyzing image…', processing: 'Removing background…',
     original: 'Original', result: 'Transparent', download: 'Save transparent PNG', again: 'Try another image',
     compareHint: 'Drag the center slider left or right to compare the original and result.',
+    transparentAlready: 'A PNG that already has transparency does not need background removal. Please use a PNG, JPG, or WEBP with a background.',
     splitTitle: 'Auto-split 15 emoticons', splitBadge: 'Smart detect',
     splitDesc: 'Detect the actual character and text groups instead of using a fixed grid, then split all 15 emoticons.',
     splitAction: 'Auto-split into 15', splitting: 'Splitting 15 emoticons…',
@@ -38,6 +41,7 @@ const COPY = {
     remove: '背景を削除する', preparing: '画像を解析中…', processing: '背景を削除しています…',
     original: '元画像', result: '透過背景', download: '透過PNGを保存', again: '別の画像',
     compareHint: '中央のスライダーを左右に動かして元画像と結果を比較できます。',
+    transparentAlready: 'すでに透過背景のPNGは背景削除の対象ではありません。背景のあるPNG・JPG・WEBPをご利用ください。',
     splitTitle: '15個の絵文字を自動分割', splitBadge: 'スマート検出',
     splitDesc: '固定グリッドではなく実際のキャラクターと文字のまとまりを検出し、15個の絵文字を個別に分割します。',
     splitAction: '15個に自動分割', splitting: '15個の絵文字を分割しています…',
@@ -52,6 +56,7 @@ const COPY = {
     remove: '移除背景', preparing: '正在分析图片…', processing: '正在移除背景…',
     original: '原图', result: '透明背景', download: '保存透明PNG', again: '换一张图片',
     compareHint: '左右拖动中间滑块即可对比原图和处理结果。',
+    transparentAlready: '已经带透明背景的PNG无需再次移除背景。请使用带背景的PNG、JPG或WEBP图片。',
     splitTitle: '自动分割15个表情', splitBadge: '智能检测',
     splitDesc: '不再按固定网格切割，而是检测实际角色和文字组合并分别分割15个表情。',
     splitAction: '自动分成15个', splitting: '正在分割15个表情…',
@@ -405,6 +410,21 @@ async function splitIntoFifteen(blob) {
   return items;
 }
 
+async function hasRealTransparency(file) {
+  if (file?.type !== 'image/png') return false;
+  const { canvas, ctx } = await drawFileToCanvas(file);
+  const { width, height } = canvas;
+  if (!width || !height) return false;
+  const pixels = ctx.getImageData(0, 0, width, height).data;
+  const step = Math.max(1, Math.floor(Math.sqrt((width * height) / 300000)));
+  for (let y = 0; y < height; y += step) {
+    for (let x = 0; x < width; x += step) {
+      if (pixels[(y * width + x) * 4 + 3] < 250) return true;
+    }
+  }
+  return false;
+}
+
 export default function BackgroundRemover({ lang = 'ko' }) {
   const t = COPY[lang] || COPY.ko;
   const inputRef = useRef(null);
@@ -448,7 +468,7 @@ export default function BackgroundRemover({ lang = 'ko' }) {
     setComparePosition(50);
   };
 
-  const selectFile = (nextFile) => {
+  const selectFile = async (nextFile) => {
     if (!nextFile) return;
     if (!['image/png', 'image/jpeg', 'image/webp'].includes(nextFile.type)) {
       setError(t.badType);
@@ -457,6 +477,16 @@ export default function BackgroundRemover({ lang = 'ko' }) {
     if (nextFile.size > 12 * 1024 * 1024) {
       setError(t.tooLarge);
       return;
+    }
+    if (nextFile.type === 'image/png') {
+      try {
+        if (await hasRealTransparency(nextFile)) {
+          setError(t.transparentAlready);
+          return;
+        }
+      } catch (e) {
+        console.warn('Transparent PNG detection failed:', e);
+      }
     }
     if (sourceUrl) URL.revokeObjectURL(sourceUrl);
     clearResult();
@@ -716,19 +746,11 @@ export default function BackgroundRemover({ lang = 'ko' }) {
                     <button type="button" onClick={autoSplit} className="shrink-0 text-xs font-extrabold text-[#607859] underline underline-offset-2">{t.splitAgain}</button>
                   </div>
 
-                  <div className="mt-3 grid grid-cols-3 gap-2 sm:grid-cols-5 sm:gap-2.5">
-                    {splitItems.map((item) => (
-                      <div key={item.index} className="overflow-hidden rounded-xl border border-[#E2DDD5] bg-white shadow-sm">
-                        <div className="relative aspect-square overflow-hidden" style={checkerStyle}>
-                          <img src={item.url} alt={`${t.splitTitle} ${item.index}`} className="h-full w-full object-contain p-1.5" />
-                          <span className="absolute left-1.5 top-1.5 flex h-6 min-w-6 items-center justify-center rounded-full bg-black/65 px-1.5 text-[10px] font-extrabold text-white">{item.index}</span>
-                        </div>
-                        <button type="button" onClick={() => downloadSplitItem(item)} className="w-full border-t border-[#EEEAE3] px-1.5 py-2 text-[10px] sm:text-[11px] font-extrabold text-[#4E664A] hover:bg-[#F8FBF6]">
-                          ↓ {t.splitDownload}
-                        </button>
-                      </div>
-                    ))}
-                  </div>
+                  <EmoticonPostProcessor
+                    items={splitItems}
+                    sourceName={file?.name || 'emoticon'}
+                    lang={lang}
+                  />
                 </>
               )}
             </div>
