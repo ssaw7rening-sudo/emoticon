@@ -7742,7 +7742,20 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
                 ? '点击下方运行或复制按钮前，请最后确认设置。'
                 : 'Check these settings once more before launching or copying.'}
             </p>
-          </div>
+            {/* Final settings edit controls */}
+            <div className="mt-3 pt-3 border-t border-[#EFE4C6]">
+              <div className="flex items-center gap-1.5 text-[11.5px] sm:text-[12px] font-bold text-[#8A7758] shrink-0 mb-2">
+                <span>💡</span>
+                <span>
+                  {lang === 'ko' 
+                    ? '수정 시 실시간 자동 반영:' 
+                    : lang === 'ja' 
+                    ? '変更時にリアルタイム反映:' 
+                    : lang === 'zh' 
+                    ? '修改时实时自动同步:' 
+                    : 'Real-time sync on edit:'}
+                </span>
+              </div>
 
           <AdBanner />
           <div className="bg-[#EAF8F3] p-3 sm:p-3.5 rounded-xl border-2 border-mint-border flex flex-col gap-2.5 text-mint-strong shadow-xs">
@@ -7762,19 +7775,7 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
             </div>
 
             {/* 2. Structured Quick Jump Action Bar */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-2 border-t border-[#CBEAE0]">
-              <div className="flex items-center gap-1.5 text-[11.5px] sm:text-[12px] font-bold text-[#2A6555] shrink-0">
-                <span>💡</span>
-                <span>
-                  {lang === 'ko' 
-                    ? '수정 시 실시간 자동 반영:' 
-                    : lang === 'ja' 
-                    ? '変更時にリアルタイム反映:' 
-                    : lang === 'zh' 
-                    ? '修改时实时自动同步:' 
-                    : 'Real-time sync on edit:'}
-                </span>
-              </div>
+          </div>
               <div className="grid grid-cols-2 gap-2 w-full sm:w-auto">
                 <button
                   type="button"
