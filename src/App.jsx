@@ -2988,10 +2988,10 @@ const InfoSection = ({ t, lang }) => {
               </h3>
               <p className="text-[14px] sm:text-[15px] leading-relaxed text-on-surface font-medium">
                 {getText('whatIsDesc', {
-                  ko: '이모티콘 프롬프트 메이커는 사용자의 키워드 선택이나 사진을 바탕으로 ChatGPT(DALL-E 3), Google Gemini(Imagen 3), xAI Grok(Flux.1)에 즉시 사용 가능한 15종 카카오톡·라인 이모티콘 프롬프트를 1초 만에 자동 생성해 주는 무료 웹 도구입니다.',
-                  ja: 'スタンププロンプトメーカーは、キーワード選択や写真をもとに、ChatGPT (DALL-E 3)、Google Gemini (Imagen 3)、xAI Grok (Flux.1) で使える15種LINE・KakaoTalkスタンププロンプトを1秒で自動生成する無料Webツールです。',
-                  zh: '表情包提示词生成器是一款免费在线工具，根据您选择的关键词或上传的照片，1秒内自动生成适用于 ChatGPT (DALL-E 3)、Google Gemini (Imagen 3) 和 xAI Grok (Flux.1) 的15格全套表情包提示词。',
-                  en: 'Emoticon Prompt Maker is a free web tool that instantly generates 15-sticker emoticon prompts for ChatGPT (DALL-E 3), Google Gemini (Imagen 3), and xAI Grok (Flux.1) in 1 second based on your keywords or photos.'
+                  ko: '이모티콘 프롬프트 메이커는 사용자의 키워드 선택이나 사진을 바탕으로 ChatGPT(DALL-E 3), Google Gemini(Imagen 3), xAI Grok(Imagine Image 2.0)에 즉시 사용 가능한 15종 카카오톡·라인 이모티콘 프롬프트를 1초 만에 자동 생성해 주는 무료 웹 도구입니다.',
+                  ja: 'スタンププロンプトメーカーは、キーワード選択や写真をもとに、ChatGPT (DALL-E 3)、Google Gemini (Imagen 3)、xAI Grok (Imagine Image 2.0) で使える15種LINE・KakaoTalkスタンププロンプトを1秒で自動生成する無料Webツールです。',
+                  zh: '表情包提示词生成器是一款免费在线工具，根据您选择的关键词或上传的照片，1秒内自动生成适用于 ChatGPT (DALL-E 3)、Google Gemini (Imagen 3) 和 xAI Grok (Imagine Image 2.0) 的15格全套表情包提示词。',
+                  en: 'Emoticon Prompt Maker is a free web tool that instantly generates 15-sticker emoticon prompts for ChatGPT (DALL-E 3), Google Gemini (Imagen 3), and xAI Grok (Imagine Image 2.0) in 1 second based on your keywords or photos.'
                 })}
               </p>
             </div>
@@ -3103,10 +3103,10 @@ const InfoSection = ({ t, lang }) => {
                 })}
               </strong>
               {getText('optStandardDesc', {
-                ko: '본 사이트는 ChatGPT(DALL-E 3), Google Gemini(Imagen 3), xAI Grok(Flux.1) 각 엔진의 특화 파라미터와 메신저 대화 및 개인용 커스텀 스티커, 캐릭터 창작 시트에 최적화된 고품질 프롬프트를 자동으로 조립하여 제공합니다.',
-                ja: '当サイトは ChatGPT (DALL-E 3)、Google Gemini (Imagen 3)、xAI Grok (Flux.1) の各エンジン特性と、メッセンジャー会話や個人用カスタムスタンプ、キャラクター創作シートに最適なプロンプトを自動生成して提供します。',
-                zh: '本网站自动生成完全适配 ChatGPT (DALL-E 3)、Google Gemini (Imagen 3) 和 xAI Grok (Flux.1) 各引擎特性，适用于日常聊天、专属个人贴纸以及角色创意设计的专业提示词。',
-                en: 'This service automatically generates high-quality prompts optimized for the specialized parameters of ChatGPT (DALL-E 3), Google Gemini (Imagen 3), and xAI Grok (Flux.1), perfect for messenger chats, personal custom stickers, and creative character design.'
+                ko: '본 사이트는 ChatGPT(DALL-E 3), Google Gemini(Imagen 3), xAI Grok(Imagine Image 2.0) 각 엔진의 특화 파라미터와 메신저 대화 및 개인용 커스텀 스티커, 캐릭터 창작 시트에 최적화된 고품질 프롬프트를 자동으로 조립하여 제공합니다.',
+                ja: '当サイトは ChatGPT (DALL-E 3)、Google Gemini (Imagen 3)、xAI Grok (Imagine Image 2.0) の各エンジン特性と、メッセンジャー会話や個人用カスタムスタンプ、キャラクター創作シートに最適なプロンプトを自動生成して提供します。',
+                zh: '本网站自动生成完全适配 ChatGPT (DALL-E 3)、Google Gemini (Imagen 3) 和 xAI Grok (Imagine Image 2.0) 各引擎特性，适用于日常聊天、专属个人贴纸以及角色创意设计的专业提示词。',
+                en: 'This service automatically generates high-quality prompts optimized for the specialized parameters of ChatGPT (DALL-E 3), Google Gemini (Imagen 3), and xAI Grok (Imagine Image 2.0), perfect for messenger chats, personal custom stickers, and creative character design.'
               })}
             </div>
           </div>
@@ -6063,7 +6063,8 @@ ${textExclusion}`;
     const isKorean = lang === 'ko';
     const character = getGrokCharacterDetails('en');
     const themeProps = getThemeSignatureProps(activeTheme, 'en');
-    const selectedArtStyle = getSelectedArtStyle('en') || 'Realistic semi-caricature 2D illustration';
+    const selectedArtStyleTag = getSelectedArtStyle();
+    const selectedArtStyle = getExpandedArtStyleText(selectedArtStyleTag, false) || selectedArtStyleTag || 'Realistic semi-caricature 2D illustration';
     const hasPhraseOverride = phraseOverride !== null;
     const targetPhrase = generationMode === 'individual'
       ? getSelectedPhrase()
@@ -6259,7 +6260,7 @@ After generating the sticker sheet, also prepare a short, engaging Korean captio
     const modelTag = {
       gpt: lang === 'ko' ? '[대상 AI: ChatGPT (OpenAI / DALL-E 3 엔진)]' : lang === 'ja' ? '[対象AI: ChatGPT (OpenAI / DALL-E 3)]' : lang === 'zh' ? '[目标AI: ChatGPT (OpenAI / DALL-E 3)]' : '[TARGET AI: ChatGPT (OpenAI / DALL-E 3 Engine)]',
       gemini: lang === 'ko' ? '[대상 AI: Gemini (Google / Imagen 3 엔진)]' : lang === 'ja' ? '[対象AI: Gemini (Google / Imagen 3)]' : lang === 'zh' ? '[目标AI: Gemini (Google / Imagen 3)]' : '[TARGET AI: Gemini (Google / Imagen 3 Engine)]',
-      grok: lang === 'ko' ? '[대상 AI: Grok (xAI / Flux.1 엔진)]' : lang === 'ja' ? '[対象AI: Grok (xAI / Flux.1)]' : lang === 'zh' ? '[目标AI: Grok (xAI / Flux.1)]' : '[TARGET AI: Grok (xAI / Flux.1 Engine)]',
+      grok: lang === 'ko' ? '[대상 AI: Grok (xAI / Imagine Image 2.0)]' : lang === 'ja' ? '[対象AI: Grok (xAI / Imagine Image 2.0)]' : lang === 'zh' ? '[目标AI: Grok (xAI / Imagine Image 2.0)]' : '[TARGET AI: Grok (xAI / Imagine Image 2.0)]',
     }[model] || '';
 
     const defaultTrait = {
