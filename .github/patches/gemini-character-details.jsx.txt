@@ -1,0 +1,49 @@
+  const getGeminiCharacterDetails = (langMode = lang) => {
+    const { subjects, appearances, personalities, outfits, props, effects, additionalDescription } = getSelectedCharacterRoles();
+    const isKo = langMode === 'ko';
+
+    const subjectParts = characterSource === 'photo'
+      ? [isKo ? 'AI 채팅에 첨부한 참고 사진 속 대상' : 'the subject in the attached reference photo']
+      : [
+          ...subjects,
+          ...(additionalDescription ? [additionalDescription] : []),
+        ];
+
+    const subjectMotifs = characterSource === 'photo' && subjects.length
+      ? (isKo
+          ? `${subjects.join(', ')} — 사진 속 대상을 다른 존재로 교체하지 말고 의상·모티프·캐릭터 디자인 요소로 융합`
+          : `${subjects.join(', ')} — use as costume, motif, or character-design cues around the same photographed identity; never replace the photographed subject`)
+      : '';
+
+    const photoAppearanceEn = {
+      balanced: 'preserve the subject\'s key identifying features (face shape, eye direction and spacing, nose, mouth, hairstyle or fur pattern, skin/coat tone) so the subject remains clearly recognizable while naturally stylizing expression and body to the selected art style; no unrequested accessories',
+      likeness: 'consistently maintain the subject\'s face shape, eye characteristics, nose, lips or mouth shape, jawline, hairstyle, skin tone or fur color so the subject remains immediately recognizable after stylization; apply the art style mainly through rendering, linework, coloring, texture, and expression; no unrequested accessories',
+      style: 'apply the selected art style strongly to linework, coloring, texture, expression, and body stylization while retaining stable identity anchors such as facial structure, eye direction, hairstyle or fur pattern, skin/coat tone, and signature features; style must not replace the subject; no unrequested accessories',
+    }[photoReferenceMode] || 'preserve the attached subject as the primary recognizable identity while applying the selected art style around that identity';
+
+    const photoAppearanceKo = {
+      balanced: '첨부 사진 속 대상의 핵심 식별 특징(얼굴형, 눈매 방향과 간격, 코, 입, 헤어스타일 또는 털 무늬, 피부톤 또는 털 색상)을 명확히 알아볼 수 있도록 유지하면서 표정과 신체는 선택 화풍에 맞게 자연스럽게 스타일화. 사진에 없는 액세서리 임의 추가 금지',
+      likeness: '스타일화 후에도 첨부 사진 속 대상임을 즉시 알아볼 수 있도록 얼굴형, 눈매, 코, 입술 또는 입 모양, 턱선, 헤어스타일, 피부톤 또는 털 색상을 일관되게 유지. 화풍은 렌더링, 선, 채색, 질감과 표정 연출 중심으로 적용. 사진에 없는 액세서리 임의 추가 금지',
+      style: '선택 화풍을 선, 채색, 질감, 표정과 신체 스타일화에 적극 적용하되 얼굴 구조, 눈매 방향, 헤어스타일 또는 털 무늬, 피부톤 또는 털 색상과 대표 특징을 안정적으로 유지하여 첨부 사진 속 대상임을 분명히 알아볼 수 있게 함. 화풍이 정체성을 대체하면 안 됨',
+    }[photoReferenceMode] || '첨부 사진 속 대상을 최우선 정체성 기준으로 유지하면서 그 위에 선택 화풍을 적용';
+
+    return {
+      subject: subjectParts.join(', ') || (isKo ? '귀여운 오리지널 캐릭터' : 'a cute original character'),
+      subjectMotifs,
+      appearance: [
+        ...(characterSource === 'photo'
+          ? [isKo ? photoAppearanceKo : photoAppearanceEn]
+          : [isKo
+              ? '큰 머리와 간결하고 친근한 마스코트 실루엣을 기본으로 하되, 최종 신체 비율과 형태는 선택 화풍 및 선택 태그가 우선 결정'
+              : 'start from a friendly mascot silhouette, while final body proportions and form are determined by the selected art style and selected tags']),
+        ...appearances,
+      ].filter(Boolean).join(', ') || (isKo ? '선택 화풍에 맞는 명확한 캐릭터 실루엣 유지' : 'maintain a clear character silhouette appropriate to the selected art style'),
+      personality: personalities.join(', ') || (isKo ? '친근하고 표정이 풍부한' : 'friendly and expressive'),
+      outfit: outfits.join(', ') || (characterSource === 'photo'
+        ? (isKo ? '참고 사진의 의상 스타일을 기본값으로 유지' : 'preserve the reference-photo outfit as the default')
+        : (isKo ? '지정 없음. 처음 정한 의상은 모든 이미지에서 유지' : 'not specified; once chosen, keep it unchanged')),
+      props: props.join(', ') || (isKo ? '필수 소품 없음' : 'no prop required'),
+      effects: effects.join(', ') || (isKo ? '감정 전달에 필요한 최소한의 효과만 사용' : 'use only a minimal effect when it clarifies the emotion'),
+      additionalCues: additionalDescription || '',
+    };
+  };
