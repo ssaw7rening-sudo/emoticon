@@ -1,0 +1,56 @@
+name: Apply final settings summary
+
+on:
+  push:
+    paths:
+      - '.github/workflows/apply-final-settings-summary.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Insert final settings checkpoint
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import base64
+
+          path = Path('src/App.jsx')
+          text = path.read_text(encoding='utf-8')
+          marker = '            {/* 1. Launch Info Header */}'
+          guard = '            {/* Final settings checkpoint before AI launch */}'
+          insert = base64.b64decode('CiAgICAgICAgICAgIHsvKiBGaW5hbCBzZXR0aW5ncyBjaGVja3BvaW50IGJlZm9yZSBBSSBsYXVuY2ggKi99CiAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJyb3VuZGVkLXhsIGJvcmRlciBib3JkZXItWyNFOEQ3QTZdIGJnLVsjRkZGREY3XSBweC0zLjUgcHktMy41IHNoYWRvdy1zbSI+CiAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9Im1iLTMgZmxleCBpdGVtcy1jZW50ZXIganVzdGlmeS1iZXR3ZWVuIGdhcC0yIGJvcmRlci1iIGJvcmRlci1bI0VGRTRDNl0gcGItMi41Ij4KICAgICAgICAgICAgICAgIDxzdHJvbmcgY2xhc3NOYW1lPSJ0ZXh0LVsxNHB4XSBzbTp0ZXh0LVsxNXB4XSBmb250LWJsYWNrIHRleHQtWyM1QzQzMjhdIj4KICAgICAgICAgICAgICAgICAge2xhbmcgPT09ICdrbycgPyAn4pyTIOy1nOyihSDshKTsoJUg7ZmV7J24JyA6IGxhbmcgPT09ICdqYScgPyAn4pyTIOacgOe1guioreWumueiuuiqjScgOiBsYW5nID09PSAnemgnID8gJ+KckyDmnIDnu4jorr7nva7noa7orqQnIDogJ+KckyBGaW5hbCBTZXR0aW5ncyd9CiAgICAgICAgICAgICAgICA8L3N0cm9uZz4KICAgICAgICAgICAgICAgIDxzcGFuIGNsYXNzTmFtZT0iaW5saW5lLWZsZXggc2hyaW5rLTAgaXRlbXMtY2VudGVyIHJvdW5kZWQtZnVsbCBib3JkZXIgYm9yZGVyLVsjRThEN0E2XSBiZy13aGl0ZSBweC0yIHB5LTAuNSB0ZXh0LVsxMXB4XSBmb250LWJvbGQgdGV4dC1bIzhBNkEzNF0gd2hpdGVzcGFjZS1ub3dyYXAiPgogICAgICAgICAgICAgICAgICB7bGFuZyA9PT0gJ2tvJyA/ICfsi6Ttlokg7KCEIO2ZleyduCcgOiBsYW5nID09PSAnamEnID8gJ+Wun+ihjOWJjeeiuuiqjScgOiBsYW5nID09PSAnemgnID8gJ+i/kOihjOWJjeehruiupCcgOiAnQmVmb3JlIGxhdW5jaCd9CiAgICAgICAgICAgICAgICA8L3NwYW4+CiAgICAgICAgICAgICAgPC9kaXY+CgogICAgICAgICAgICAgIDxkbCBjbGFzc05hbWU9ImdyaWQgZ3JpZC1jb2xzLVs3NnB4X21pbm1heCgwLDFmcildIGdhcC14LTIuNSBnYXAteS0yIHRleHQtWzEyLjVweF0gc206dGV4dC1bMTNweF0iPgogICAgICAgICAgICAgICAgPGR0IGNsYXNzTmFtZT0iZm9udC1ib2xkIHRleHQtWyM4QTc3NThdIj57bGFuZyA9PT0gJ2tvJyA/ICfsupDrpq3thLAnIDogbGFuZyA9PT0gJ2phJyA/ICfjgq3jg6Pjg6knIDogbGFuZyA9PT0gJ3poJyA/ICfop5LoibInIDogJ0NoYXJhY3Rlcid9PC9kdD4KICAgICAgICAgICAgICAgIDxkZCBjbGFzc05hbWU9Im1pbi13LTAgZm9udC1ib2xkIHRleHQtWyM0RjQ2MzhdIj4KICAgICAgICAgICAgICAgICAge2NoYXJhY3RlclNvdXJjZSA9PT0gJ3Bob3RvJwogICAgICAgICAgICAgICAgICAgID8gYPCfk7cgJHtsYW5nID09PSAna28nID8gJ+ywuOqzoCDsgqzsp4QnIDogbGFuZyA9PT0gJ2phJyA/ICflj4LnhaflhpnnnJ8nIDogbGFuZyA9PT0gJ3poJyA/ICflj4LogIPnhafniYcnIDogJ1JlZmVyZW5jZSBwaG90byd9YAogICAgICAgICAgICAgICAgICAgIDogY2hhcmFjdGVyU291cmNlID09PSAncmFuZG9tJwogICAgICAgICAgICAgICAgICAgID8gYPCfjrIgJHtsYW5nID09PSAna28nID8gJ+uenOuNpCDsupDrpq3thLAnIDogbGFuZyA9PT0gJ2phJyA/ICfjg6njg7Pjg4Djg6Djgq3jg6Pjg6knIDogbGFuZyA9PT0gJ3poJyA/ICfpmo/mnLrop5LoibInIDogJ1JhbmRvbSBjaGFyYWN0ZXInfWAKICAgICAgICAgICAgICAgICAgICA6IGDinI/vuI8gJHtsYW5nID09PSAna28nID8gJ+yngeygkSDshKTsoJUnIDogbGFuZyA9PT0gJ2phJyA/ICfnm7TmjqXoqK3lrponIDogbGFuZyA9PT0gJ3poJyA/ICfmiYvliqjorr7nva4nIDogJ0RpcmVjdCBzZXR1cCd9YH0KICAgICAgICAgICAgICAgIDwvZGQ+CgogICAgICAgICAgICAgICAge2NoYXJhY3RlclNvdXJjZSA9PT0gJ3Bob3RvJyAmJiAoCiAgICAgICAgICAgICAgICAgIDw+CiAgICAgICAgICAgICAgICAgICAgPGR0IGNsYXNzTmFtZT0iZm9udC1ib2xkIHRleHQtWyM4QTc3NThdIj57bGFuZyA9PT0gJ2tvJyA/ICfsgqzsp4Qg67CY7JiBJyA6IGxhbmcgPT09ICdqYScgPyAn5YaZ55yf5Y+N5pigJyA6IGxhbmcgPT09ICd6aCcgPyAn54Wn54mH5qih5byPJyA6ICdQaG90byBtb2RlJ308L2R0PgogICAgICAgICAgICAgICAgICAgIDxkZCBjbGFzc05hbWU9ImZvbnQtYm9sZCB0ZXh0LVsjNEY0NjM4XSI+e2dldFBob3RvTW9kZUxhYmVsKGxhbmcpfTwvZGQ+CiAgICAgICAgICAgICAgICAgIDwvPgogICAgICAgICAgICAgICAgKX0KCiAgICAgICAgICAgICAgICA8ZHQgY2xhc3NOYW1lPSJmb250LWJvbGQgdGV4dC1bIzhBNzc1OF0iPntsYW5nID09PSAna28nID8gJ+yEoO2DnSDtg5zqt7gnIDogbGFuZyA9PT0gJ2phJyA/ICfpgbjmip7jgr/jgrAnIDogbGFuZyA9PT0gJ3poJyA/ICflt7LpgInmoIfnrb4nIDogJ1RhZ3MnfTwvZHQ+CiAgICAgICAgICAgICAgICA8ZGQgY2xhc3NOYW1lPSJtaW4tdy0wIGZvbnQtYm9sZCB0ZXh0LVsjNEY0NjM4XSI+CiAgICAgICAgICAgICAgICAgIHthY3RpdmVUYWdMaXN0Lmxlbmd0aCA+IDAKICAgICAgICAgICAgICAgICAgICA/ICgKICAgICAgICAgICAgICAgICAgICAgIDxzcGFuIGNsYXNzTmFtZT0iYmxvY2sgdHJ1bmNhdGUiIHRpdGxlPXtjaGFyTWFudWFsfT4KICAgICAgICAgICAgICAgICAgICAgICAge2FjdGl2ZVRhZ0xpc3Quc2xpY2UoMCwgMykuam9pbignIMK3ICcpfQogICAgICAgICAgICAgICAgICAgICAgICB7YWN0aXZlVGFnTGlzdC5sZW5ndGggPiAzCiAgICAgICAgICAgICAgICAgICAgICAgICAgPyAobGFuZyA9PT0gJ2tvJyA/IGAg7Jm4ICR7YWN0aXZlVGFnTGlzdC5sZW5ndGggLSAzfeqwnGAgOiBgICske2FjdGl2ZVRhZ0xpc3QubGVuZ3RoIC0gM31gKQogICAgICAgICAgICAgICAgICAgICAgICAgIDogJyd9CiAgICAgICAgICAgICAgICAgICAgICA8L3NwYW4+CiAgICAgICAgICAgICAgICAgICAgKQogICAgICAgICAgICAgICAgICAgIDogKGxhbmcgPT09ICdrbycgPyAn7ISg7YOd65CcIO2DnOq3uCDsl4bsnYwnIDogbGFuZyA9PT0gJ2phJyA/ICfpgbjmip7jgr/jgrDjgarjgZcnIDogbGFuZyA9PT0gJ3poJyA/ICfmnKrpgInmi6nmoIfnrb4nIDogJ05vIHRhZ3Mgc2VsZWN0ZWQnKX0KICAgICAgICAgICAgICAgIDwvZGQ+CgogICAgICAgICAgICAgICAgPGR0IGNsYXNzTmFtZT0iZm9udC1ib2xkIHRleHQtWyM4QTc3NThdIj57bGFuZyA9PT0gJ2tvJyA/ICfrrLjqtawg7YWM66eIJyA6IGxhbmcgPT09ICdqYScgPyAn5paH6KiA44OG44O844OeJyA6IGxhbmcgPT09ICd6aCcgPyAn5paH5qGI5Li76aKYJyA6ICdQaHJhc2UgdGhlbWUnfTwvZHQ+CiAgICAgICAgICAgICAgICA8ZGQgY2xhc3NOYW1lPSJtaW4tdy0wIHRydW5jYXRlIGZvbnQtYm9sZCB0ZXh0LVsjNEY0NjM4XSI+CiAgICAgICAgICAgICAgICAgIHthY3RpdmVUaGVtZSA9PT0gJ2N1c3RvbScKICAgICAgICAgICAgICAgICAgICA/IChsYW5nID09PSAna28nID8gJ+yCrOyaqeyekCDsp4DsoJUgLyDrnpzrjaQnIDogbGFuZyA9PT0gJ2phJyA/ICfjgqvjgrnjgr/jg6AgLyDjg6njg7Pjg4Djg6AnIDogbGFuZyA9PT0gJ3poJyA/ICfoh6rlrprkuYkgLyDpmo/mnLonIDogJ0N1c3RvbSAvIFJhbmRvbScpCiAgICAgICAgICAgICAgICAgICAgOiBhY3RpdmVUaGVtZX0KICAgICAgICAgICAgICAgIDwvZGQ+CgogICAgICAgICAgICAgICAgPGR0IGNsYXNzTmFtZT0iZm9udC1ib2xkIHRleHQtWyM4QTc3NThdIj57bGFuZyA9PT0gJ2tvJyA/ICfsnbTrqqjti7DsvZgnIDogbGFuZyA9PT0gJ2phJyA/ICfjgrnjgr/jg7Pjg5cnIDogbGFuZyA9PT0gJ3poJyA/ICfooajmg4XotLTnurgnIDogJ1N0aWNrZXJzJ308L2R0PgogICAgICAgICAgICAgICAgPGRkIGNsYXNzTmFtZT0iZm9udC1ibGFjayB0ZXh0LVsjNUI3QzY4XSI+CiAgICAgICAgICAgICAgICAgIHtsYW5nID09PSAna28nID8gYCR7ZW1vdGljb25zLmxlbmd0aH3sooUg7KSA67mEIOyZhOujjGAgOiBsYW5nID09PSAnamEnID8gYCR7ZW1vdGljb25zLmxlbmd0aH3nqK4g5rqW5YKZ5a6M5LqGYCA6IGxhbmcgPT09ICd6aCcgPyBg5bey5YeG5aSHICR7ZW1vdGljb25zLmxlbmd0aH0g5qy+YCA6IGAke2Vtb3RpY29ucy5sZW5ndGh9IHJlYWR5YH0KICAgICAgICAgICAgICAgIDwvZGQ+CiAgICAgICAgICAgICAgPC9kbD4KCiAgICAgICAgICAgICAgPHAgY2xhc3NOYW1lPSJtdC0zIGJvcmRlci10IGJvcmRlci1bI0VGRTRDNl0gcHQtMi41IHRleHQtWzExLjVweF0gc206dGV4dC1bMTJweF0gZm9udC1ib2xkIHRleHQtWyM4QTc3NThdIGxlYWRpbmctcmVsYXhlZCI+CiAgICAgICAgICAgICAgICB7bGFuZyA9PT0gJ2tvJwogICAgICAgICAgICAgICAgICA/ICfslYTrnpgg7Iuk7ZaJwrfrs7Xsgqwg67KE7Yq87J2EIOuIhOultOq4sCDsoITsl5Ag7ISk7KCV7J20IOunnuuKlOyngCDrp4jsp4Drp4nsnLzroZwg7ZmV7J247ZW0IOyjvOyEuOyalC4nCiAgICAgICAgICAgICAgICAgIDogbGFuZyA9PT0gJ2phJwogICAgICAgICAgICAgICAgICA/ICfkuIvjga7lrp/ooYzjg7vjgrPjg5Tjg7zjg5zjgr/jg7PjgpLmirzjgZnliY3jgavoqK3lrprjgpLjgZTnorroqo3jgY/jgaDjgZXjgYTjgIInCiAgICAgICAgICAgICAgICAgIDogbGFuZyA9PT0gJ3poJwogICAgICAgICAgICAgICAgICA/ICfngrnlh7vkuIvmlrnov5DooYzmiJblpI3liLbmjInpkq7liY3vvIzor7fmnIDlkI7noa7orqTorr7nva7jgIInCiAgICAgICAgICAgICAgICAgIDogJ0NoZWNrIHRoZXNlIHNldHRpbmdzIG9uY2UgbW9yZSBiZWZvcmUgbGF1bmNoaW5nIG9yIGNvcHlpbmcuJ30KICAgICAgICAgICAgICA8L3A+CiAgICAgICAgICAgIDwvZGl2PgoK').decode('utf-8')
+          if guard in text:
+              print('Checkpoint already present; no change needed.')
+          else:
+              if marker not in text:
+                  raise SystemExit('Launch marker not found')
+              text = text.replace(marker, insert + marker, 1)
+              path.write_text(text, encoding='utf-8')
+              print('Inserted final settings checkpoint.')
+          PY
+      - name: Install dependencies
+        run: npm ci
+      - name: Build
+        run: npm run build
+      - name: Commit patch
+        run: |
+          if git diff --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/App.jsx
+          git commit -m "Add final settings check before AI launch"
+          git push
