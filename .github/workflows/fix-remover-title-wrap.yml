@@ -1,0 +1,53 @@
+name: Fix Remover Title Wrap
+
+on:
+  push:
+    paths:
+      - '.github/workflows/fix-remover-title-wrap.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Fix Korean title wrapping
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('src/components/BackgroundRemoverLanding.jsx')
+          s = p.read_text(encoding='utf-8')
+          old = '<h1 className="mt-4 text-3xl font-black leading-tight tracking-tight text-[#2F2B27] sm:text-4xl">{t.title}</h1>'
+          new = '''<h1 className="mt-4 text-3xl font-black leading-tight tracking-tight text-[#2F2B27] sm:text-4xl">
+            {lang === 'ko' ? (
+              <>
+                <span className="block whitespace-nowrap">무료 이미지 배경 제거</span>
+                <span className="mt-1 block whitespace-nowrap">투명 PNG 만들기</span>
+              </>
+            ) : t.title}
+          </h1>'''
+          if old not in s:
+              raise SystemExit('Landing h1 anchor not found')
+          p.write_text(s.replace(old, new, 1), encoding='utf-8')
+          PY
+      - name: Build
+        run: |
+          npm ci
+          npm run build
+      - name: Commit
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add src/components/BackgroundRemoverLanding.jsx
+          git commit -m 'Fix Korean background remover title wrapping'
+          git push
