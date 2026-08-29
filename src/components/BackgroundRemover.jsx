@@ -10,8 +10,8 @@ const COPY = {
     remove: '배경 제거하기', preparing: '이미지 분석 중…', processing: '배경을 제거하고 있어요…',
     original: '원본', result: '투명 배경', download: '투명 PNG 저장', again: '다른 이미지',
     compareHint: '가운데 슬라이더를 좌우로 움직여 원본과 결과를 비교하세요.',
-    splitTitle: '15개 이모티콘 자동 분리', splitBadge: '5열 × 3행',
-    splitDesc: '투명 배경 결과를 15개 영역으로 나누고, 각 이모티콘의 불필요한 투명 여백을 자동으로 정리합니다.',
+    splitTitle: '15개 이모티콘 자동 분리', splitBadge: '스마트 감지',
+    splitDesc: '고정 격자로 자르지 않고 실제 캐릭터·문구 덩어리를 감지해 15개 이모티콘을 각각 분리합니다.',
     splitAction: '15개로 자동 분리', splitting: '15개 이모티콘을 분리하고 있어요…',
     splitReady: '분리 완료 · 각 이미지를 눌러 개별 PNG로 저장할 수 있습니다.',
     splitAgain: '다시 분리', splitDownload: 'PNG 저장', splitFailed: '자동 분리에 실패했습니다. 이미지를 다시 처리한 뒤 시도해 주세요.',
@@ -24,8 +24,8 @@ const COPY = {
     remove: 'Remove background', preparing: 'Analyzing image…', processing: 'Removing background…',
     original: 'Original', result: 'Transparent', download: 'Save transparent PNG', again: 'Try another image',
     compareHint: 'Drag the center slider left or right to compare the original and result.',
-    splitTitle: 'Auto-split 15 emoticons', splitBadge: '5 columns × 3 rows',
-    splitDesc: 'Split the transparent sheet into 15 areas and automatically trim unnecessary transparent space around each emoticon.',
+    splitTitle: 'Auto-split 15 emoticons', splitBadge: 'Smart detect',
+    splitDesc: 'Detect the actual character and text groups instead of using a fixed grid, then split all 15 emoticons.',
     splitAction: 'Auto-split into 15', splitting: 'Splitting 15 emoticons…',
     splitReady: 'Split complete · Save each emoticon as an individual PNG.',
     splitAgain: 'Split again', splitDownload: 'Save PNG', splitFailed: 'Auto split failed. Process the image again and retry.',
@@ -38,8 +38,8 @@ const COPY = {
     remove: '背景を削除する', preparing: '画像を解析中…', processing: '背景を削除しています…',
     original: '元画像', result: '透過背景', download: '透過PNGを保存', again: '別の画像',
     compareHint: '中央のスライダーを左右に動かして元画像と結果を比較できます。',
-    splitTitle: '15個の絵文字を自動分割', splitBadge: '5列 × 3行',
-    splitDesc: '透過背景のシートを15領域に分け、各絵文字の不要な透明余白を自動で整えます。',
+    splitTitle: '15個の絵文字を自動分割', splitBadge: '智能检测',
+    splitDesc: '固定グリッドではなく実際のキャラクターと文字のまとまりを検出し、15個の絵文字を個別に分割します。',
     splitAction: '15個に自動分割', splitting: '15個の絵文字を分割しています…',
     splitReady: '分割完了 · 各画像を個別PNGとして保存できます。',
     splitAgain: '再分割', splitDownload: 'PNG保存', splitFailed: '自動分割に失敗しました。画像を再処理してお試しください。',
@@ -53,7 +53,7 @@ const COPY = {
     original: '原图', result: '透明背景', download: '保存透明PNG', again: '换一张图片',
     compareHint: '左右拖动中间滑块即可对比原图和处理结果。',
     splitTitle: '自动分割15个表情', splitBadge: '5列 × 3行',
-    splitDesc: '将透明背景图片分成15个区域，并自动裁掉每个表情周围多余的透明空间。',
+    splitDesc: '不再按固定网格切割，而是检测实际角色和文字组合并分别分割15个表情。',
     splitAction: '自动分成15个', splitting: '正在分割15个表情…',
     splitReady: '分割完成 · 可将每个表情单独保存为PNG。',
     splitAgain: '重新分割', splitDownload: '保存PNG', splitFailed: '自动分割失败，请重新处理图片后再试。',
@@ -232,84 +232,176 @@ async function removeWithAi(file, onProgress) {
   return blob;
 }
 
-function findVisibleBounds(ctx, width, height) {
+function extractConnectedComponents(ctx, width, height) {
   const pixels = ctx.getImageData(0, 0, width, height).data;
-  let minX = width;
-  let minY = height;
-  let maxX = -1;
-  let maxY = -1;
+  const total = width * height;
+  const visited = new Uint8Array(total);
+  const queue = new Int32Array(total);
+  const components = [];
+  const minPixels = Math.max(8, Math.round(total * 0.000004));
 
-  for (let y = 0; y < height; y += 1) {
-    for (let x = 0; x < width; x += 1) {
-      const alpha = pixels[(y * width + x) * 4 + 3];
-      if (alpha <= 10) continue;
+  const isVisible = (index) => pixels[index * 4 + 3] > 18;
+  const enqueue = (index, state) => {
+    if (index < 0 || index >= total || visited[index] || !isVisible(index)) return;
+    visited[index] = 1;
+    queue[state.tail++] = index;
+  };
+
+  for (let seed = 0; seed < total; seed += 1) {
+    if (visited[seed] || !isVisible(seed)) continue;
+
+    const state = { head: 0, tail: 0 };
+    enqueue(seed, state);
+    let minX = width;
+    let minY = height;
+    let maxX = -1;
+    let maxY = -1;
+    let area = 0;
+
+    while (state.head < state.tail) {
+      const index = queue[state.head++];
+      const x = index % width;
+      const y = Math.floor(index / width);
+      area += 1;
       if (x < minX) minX = x;
-      if (y < minY) minY = y;
       if (x > maxX) maxX = x;
+      if (y < minY) minY = y;
       if (y > maxY) maxY = y;
+
+      if (x > 0) enqueue(index - 1, state);
+      if (x + 1 < width) enqueue(index + 1, state);
+      if (y > 0) enqueue(index - width, state);
+      if (y + 1 < height) enqueue(index + width, state);
+    }
+
+    if (area < minPixels || maxX < minX || maxY < minY) continue;
+    components.push({
+      id: components.length + 1,
+      minX,
+      minY,
+      maxX,
+      maxY,
+      width: maxX - minX + 1,
+      height: maxY - minY + 1,
+      area,
+      centerX: (minX + maxX) / 2,
+      centerY: (minY + maxY) / 2
+    });
+  }
+
+  return components;
+}
+
+function orderPrimaryStickerComponents(components, width, height) {
+  if (components.length < 15) throw new Error('Not enough visible sticker components');
+
+  const expectedCellWidth = width / 5;
+  const expectedCellHeight = height / 3;
+  const score = (component) => {
+    const heightBoost = 0.65 + Math.min(1.4, component.height / Math.max(1, height * 0.12));
+    return component.area * heightBoost;
+  };
+
+  const ranked = [...components].sort((a, b) => score(b) - score(a));
+  const selected = [];
+
+  for (const candidate of ranked) {
+    const tooClose = selected.some((picked) => {
+      const dx = (candidate.centerX - picked.centerX) / expectedCellWidth;
+      const dy = (candidate.centerY - picked.centerY) / expectedCellHeight;
+      return Math.hypot(dx, dy) < 0.45;
+    });
+    if (!tooClose) selected.push(candidate);
+    if (selected.length === 15) break;
+  }
+
+  if (selected.length < 15) {
+    for (const candidate of ranked) {
+      if (!selected.includes(candidate)) selected.push(candidate);
+      if (selected.length === 15) break;
     }
   }
 
-  if (maxX < minX || maxY < minY) return null;
-  return { minX, minY, maxX, maxY };
+  const byY = selected.slice(0, 15).sort((a, b) => a.centerY - b.centerY);
+  const ordered = [];
+  for (let row = 0; row < 3; row += 1) {
+    const rowItems = byY.slice(row * 5, row * 5 + 5).sort((a, b) => a.centerX - b.centerX);
+    ordered.push(...rowItems);
+  }
+  return ordered;
+}
+
+function assignComponentsToStickers(components, primaries, width, height) {
+  const expectedCellWidth = width / 5;
+  const expectedVerticalGap = (height / 3) * 0.43;
+  const primaryIds = new Set(primaries.map((item) => item.id));
+  const groups = new Map(primaries.map((item) => [item.id, [item]]));
+
+  for (const component of components) {
+    if (primaryIds.has(component.id)) continue;
+
+    let bestPrimary = null;
+    let bestScore = Number.POSITIVE_INFINITY;
+
+    for (const primary of primaries) {
+      const dx = Math.max(primary.minX - component.maxX, component.minX - primary.maxX, 0);
+      const dy = Math.max(primary.minY - component.maxY, component.minY - primary.maxY, 0);
+      const centerDx = component.centerX - primary.centerX;
+      const centerDy = component.centerY - primary.centerY;
+      const distanceScore =
+        (dx / expectedCellWidth) ** 2 +
+        (dy / expectedVerticalGap) ** 2 +
+        0.04 * (centerDx / expectedCellWidth) ** 2 +
+        0.02 * (centerDy / expectedVerticalGap) ** 2;
+
+      if (distanceScore < bestScore) {
+        bestScore = distanceScore;
+        bestPrimary = primary;
+      }
+    }
+
+    if (bestPrimary && bestScore < 2.2) groups.get(bestPrimary.id).push(component);
+  }
+
+  return groups;
 }
 
 async function splitIntoFifteen(blob) {
-  const { canvas } = await drawFileToCanvas(blob);
-  const columns = 5;
-  const rows = 3;
+  const { canvas, ctx } = await drawFileToCanvas(blob);
+  const { width, height } = canvas;
+  const components = extractConnectedComponents(ctx, width, height);
+  const primaries = orderPrimaryStickerComponents(components, width, height);
+  const groups = assignComponentsToStickers(components, primaries, width, height);
   const items = [];
+  const padding = Math.max(8, Math.round(Math.min(width / 5, height / 3) * 0.035));
 
-  for (let row = 0; row < rows; row += 1) {
-    for (let column = 0; column < columns; column += 1) {
-      const x0 = Math.floor((column * canvas.width) / columns);
-      const x1 = Math.floor(((column + 1) * canvas.width) / columns);
-      const y0 = Math.floor((row * canvas.height) / rows);
-      const y1 = Math.floor(((row + 1) * canvas.height) / rows);
-      const cellWidth = Math.max(1, x1 - x0);
-      const cellHeight = Math.max(1, y1 - y0);
+  for (let index = 0; index < primaries.length; index += 1) {
+    const primary = primaries[index];
+    const group = groups.get(primary.id) || [primary];
+    const minX = Math.max(0, Math.min(...group.map((item) => item.minX)) - padding);
+    const minY = Math.max(0, Math.min(...group.map((item) => item.minY)) - padding);
+    const maxX = Math.min(width - 1, Math.max(...group.map((item) => item.maxX)) + padding);
+    const maxY = Math.min(height - 1, Math.max(...group.map((item) => item.maxY)) + padding);
+    const cropWidth = Math.max(1, maxX - minX + 1);
+    const cropHeight = Math.max(1, maxY - minY + 1);
 
-      const cell = document.createElement('canvas');
-      cell.width = cellWidth;
-      cell.height = cellHeight;
-      const cellCtx = cell.getContext('2d', { willReadFrequently: true });
-      if (!cellCtx) throw new Error('Canvas 2D is unavailable');
-      cellCtx.drawImage(canvas, x0, y0, cellWidth, cellHeight, 0, 0, cellWidth, cellHeight);
+    const output = document.createElement('canvas');
+    output.width = cropWidth;
+    output.height = cropHeight;
+    const outputCtx = output.getContext('2d');
+    if (!outputCtx) throw new Error('Canvas 2D is unavailable');
+    outputCtx.drawImage(canvas, minX, minY, cropWidth, cropHeight, 0, 0, cropWidth, cropHeight);
 
-      const bounds = findVisibleBounds(cellCtx, cellWidth, cellHeight);
-      const basePadding = Math.max(8, Math.round(Math.min(cellWidth, cellHeight) * 0.035));
-
-      let cropX = 0;
-      let cropY = 0;
-      let cropWidth = cellWidth;
-      let cropHeight = cellHeight;
-
-      if (bounds) {
-        cropX = Math.max(0, bounds.minX - basePadding);
-        cropY = Math.max(0, bounds.minY - basePadding);
-        const cropRight = Math.min(cellWidth - 1, bounds.maxX + basePadding);
-        const cropBottom = Math.min(cellHeight - 1, bounds.maxY + basePadding);
-        cropWidth = Math.max(1, cropRight - cropX + 1);
-        cropHeight = Math.max(1, cropBottom - cropY + 1);
-      }
-
-      const output = document.createElement('canvas');
-      output.width = cropWidth;
-      output.height = cropHeight;
-      const outputCtx = output.getContext('2d');
-      if (!outputCtx) throw new Error('Canvas 2D is unavailable');
-      outputCtx.drawImage(cell, cropX, cropY, cropWidth, cropHeight, 0, 0, cropWidth, cropHeight);
-
-      const itemBlob = await canvasToPngBlob(output);
-      items.push({
-        index: row * columns + column + 1,
-        blob: itemBlob,
-        width: cropWidth,
-        height: cropHeight
-      });
-    }
+    const itemBlob = await canvasToPngBlob(output);
+    items.push({
+      index: index + 1,
+      blob: itemBlob,
+      width: cropWidth,
+      height: cropHeight
+    });
   }
 
+  if (items.length !== 15) throw new Error('Could not detect 15 sticker groups');
   return items;
 }
 
