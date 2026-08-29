@@ -85,7 +85,7 @@ export default function BackgroundRemoverLanding({ lang = 'ko' }) {
   const t = COPY[lang] || COPY.ko;
 
   return (
-    <div className="min-h-screen bg-[#FFFDF8] text-[#35312C]">
+    <div className="min-h-screen bg-[#FFFDF8] text-[#35312C]" style={lang === 'ko' ? { wordBreak: 'keep-all', overflowWrap: 'break-word' } : undefined}>
       <header className="sticky top-0 z-30 border-b border-[#E8E1D8] bg-white/95 px-4 py-3 backdrop-blur-md sm:px-6">
         <div className="mx-auto flex max-w-5xl items-center justify-between gap-3">
           <a href={HOME_PATHS[lang] || '/'} className="font-extrabold tracking-tight text-[#3D3933]">{t.brand}</a>
