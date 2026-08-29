@@ -9,6 +9,7 @@ const COPY = {
     upload: '이미지를 선택하거나 여기에 끌어놓으세요', format: 'PNG · JPG · WEBP / 최대 12MB', change: '이미지 변경',
     remove: '배경 제거하기', preparing: '이미지 분석 중…', processing: '배경을 제거하고 있어요…',
     original: '원본', result: '투명 배경', download: '투명 PNG 저장', again: '다른 이미지',
+    compareHint: '가운데 슬라이더를 좌우로 움직여 원본과 결과를 비교하세요.',
     badType: 'PNG, JPG, WEBP 이미지만 사용할 수 있습니다.', tooLarge: '12MB 이하의 이미지를 사용해 주세요.', failed: '배경 제거에 실패했습니다. 브라우저를 새로고침한 뒤 다시 시도해 주세요.'
   },
   en: {
@@ -17,6 +18,7 @@ const COPY = {
     upload: 'Choose an image or drop it here', format: 'PNG · JPG · WEBP / up to 12MB', change: 'Change image',
     remove: 'Remove background', preparing: 'Analyzing image…', processing: 'Removing background…',
     original: 'Original', result: 'Transparent', download: 'Save transparent PNG', again: 'Try another image',
+    compareHint: 'Drag the center slider left or right to compare the original and result.',
     badType: 'Please use a PNG, JPG, or WEBP image.', tooLarge: 'Please use an image under 12MB.', failed: 'Background removal failed. Refresh the page and try again.'
   },
   ja: {
@@ -25,6 +27,7 @@ const COPY = {
     upload: '画像を選択するか、ここにドロップしてください', format: 'PNG · JPG · WEBP / 最大12MB', change: '画像を変更',
     remove: '背景を削除する', preparing: '画像を解析中…', processing: '背景を削除しています…',
     original: '元画像', result: '透過背景', download: '透過PNGを保存', again: '別の画像',
+    compareHint: '中央のスライダーを左右に動かして元画像と結果を比較できます。',
     badType: 'PNG、JPG、WEBP画像のみ使用できます。', tooLarge: '12MB以下の画像を使用してください。', failed: '背景の削除に失敗しました。ページを再読み込みしてもう一度お試しください。'
   },
   zh: {
@@ -33,6 +36,7 @@ const COPY = {
     upload: '选择图片或将图片拖到这里', format: 'PNG · JPG · WEBP / 最大12MB', change: '更换图片',
     remove: '移除背景', preparing: '正在分析图片…', processing: '正在移除背景…',
     original: '原图', result: '透明背景', download: '保存透明PNG', again: '换一张图片',
+    compareHint: '左右拖动中间滑块即可对比原图和处理结果。',
     badType: '仅支持PNG、JPG、WEBP图片。', tooLarge: '请使用12MB以内的图片。', failed: '背景移除失败。请刷新页面后重试。'
   }
 };
@@ -224,6 +228,7 @@ export default function BackgroundRemover({ lang = 'ko' }) {
   const [stage, setStage] = useState('');
   const [progress, setProgress] = useState(null);
   const [error, setError] = useState('');
+  const [comparePosition, setComparePosition] = useState(50);
 
   useEffect(() => () => {
     if (sourceUrl) URL.revokeObjectURL(sourceUrl);
@@ -237,6 +242,7 @@ export default function BackgroundRemover({ lang = 'ko' }) {
     setError('');
     setProgress(null);
     setStage('');
+    setComparePosition(50);
   };
 
   const selectFile = (nextFile) => {
@@ -287,6 +293,7 @@ export default function BackgroundRemover({ lang = 'ko' }) {
       const url = URL.createObjectURL(blob);
       setResultBlob(blob);
       setResultUrl(url);
+      setComparePosition(50);
     } catch (e) {
       console.error('Background removal failed:', e);
       setError(t.failed);
@@ -306,6 +313,31 @@ export default function BackgroundRemover({ lang = 'ko' }) {
     document.body.appendChild(a);
     a.click();
     a.remove();
+  };
+
+  const updateComparePosition = (element, clientX) => {
+    const rect = element.getBoundingClientRect();
+    if (!rect.width) return;
+    const next = ((clientX - rect.left) / rect.width) * 100;
+    setComparePosition(Math.max(0, Math.min(100, next)));
+  };
+
+  const handleComparePointerDown = (event) => {
+    event.currentTarget.setPointerCapture?.(event.pointerId);
+    updateComparePosition(event.currentTarget, event.clientX);
+  };
+
+  const handleComparePointerMove = (event) => {
+    if (event.currentTarget.hasPointerCapture?.(event.pointerId)) {
+      updateComparePosition(event.currentTarget, event.clientX);
+    }
+  };
+
+  const handleCompareKeyDown = (event) => {
+    if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+    event.preventDefault();
+    const direction = event.key === 'ArrowLeft' ? -1 : 1;
+    setComparePosition((value) => Math.max(0, Math.min(100, value + direction * 5)));
   };
 
   return (
@@ -334,22 +366,72 @@ export default function BackgroundRemover({ lang = 'ko' }) {
         </button>
       ) : (
         <div className="mt-4">
-          <div className={`grid gap-3 ${resultUrl ? 'sm:grid-cols-2' : 'grid-cols-1'}`}>
+          {!resultUrl ? (
             <div className="overflow-hidden rounded-2xl border border-[#E2DDD5] bg-white">
               <div className="border-b border-[#EEE9E1] px-3 py-2 text-xs font-bold text-[#716A62]">{t.original}</div>
               <div className="flex min-h-[230px] items-center justify-center bg-[#F7F5F1] p-3">
-                <img src={sourceUrl} alt={t.original} className="max-h-[420px] max-w-full rounded-xl object-contain" />
+                <img src={sourceUrl} alt={t.original} className="max-h-[520px] max-w-full rounded-xl object-contain" />
               </div>
             </div>
-            {resultUrl && (
-              <div className="overflow-hidden rounded-2xl border border-[#D8E0D2] bg-white">
-                <div className="border-b border-[#E7ECE3] px-3 py-2 text-xs font-bold text-[#61705D]">{t.result}</div>
-                <div className="flex min-h-[230px] items-center justify-center p-3" style={checkerStyle}>
-                  <img src={resultUrl} alt={t.result} className="max-h-[420px] max-w-full rounded-xl object-contain" />
+          ) : (
+            <div className="overflow-hidden rounded-2xl border border-[#D8E0D2] bg-white">
+              <div className="flex items-center justify-between border-b border-[#E7ECE3] px-3 py-2 text-xs font-extrabold">
+                <span className="text-[#716A62]">{t.original}</span>
+                <span className="text-[#61705D]">{t.result}</span>
+              </div>
+              <div
+                role="slider"
+                tabIndex={0}
+                aria-label={t.compareHint}
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-valuenow={Math.round(comparePosition)}
+                onPointerDown={handleComparePointerDown}
+                onPointerMove={handleComparePointerMove}
+                onPointerUp={(event) => event.currentTarget.releasePointerCapture?.(event.pointerId)}
+                onPointerCancel={(event) => event.currentTarget.releasePointerCapture?.(event.pointerId)}
+                onKeyDown={handleCompareKeyDown}
+                className="relative cursor-ew-resize select-none overflow-hidden outline-none focus-visible:ring-2 focus-visible:ring-[#7D9A75] focus-visible:ring-inset"
+                style={{ ...checkerStyle, touchAction: 'pan-y' }}
+              >
+                <img
+                  src={resultUrl}
+                  alt={t.result}
+                  draggable={false}
+                  className="pointer-events-none block h-auto w-full select-none"
+                />
+                <div
+                  className="pointer-events-none absolute inset-0 bg-white"
+                  style={{ clipPath: `inset(0 ${100 - comparePosition}% 0 0)` }}
+                >
+                  <img
+                    src={sourceUrl}
+                    alt={t.original}
+                    draggable={false}
+                    className="h-full w-full select-none object-contain"
+                  />
+                </div>
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute bottom-0 top-0 z-10 w-0.5 bg-white shadow-[0_0_0_1px_rgba(52,48,43,0.22),0_0_10px_rgba(0,0,0,0.18)]"
+                  style={{ left: `${comparePosition}%`, transform: 'translateX(-50%)' }}
+                >
+                  <div className="absolute left-1/2 top-1/2 flex h-11 w-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-2 border-white bg-[#3E3933] text-lg font-black text-white shadow-lg">
+                    ↔
+                  </div>
+                </div>
+                <div className="pointer-events-none absolute left-3 top-3 rounded-full bg-black/60 px-2.5 py-1 text-[11px] font-extrabold text-white shadow-sm">
+                  {t.original}
+                </div>
+                <div className="pointer-events-none absolute right-3 top-3 rounded-full bg-[#3E6B4B]/90 px-2.5 py-1 text-[11px] font-extrabold text-white shadow-sm">
+                  {t.result}
                 </div>
               </div>
-            )}
-          </div>
+              <div className="border-t border-[#E7ECE3] bg-[#FBFCFA] px-3 py-2.5 text-center text-xs font-semibold leading-5 text-[#6B7467]">
+                ↔ {t.compareHint}
+              </div>
+            </div>
+          )}
 
           {busy && (
             <div className="mt-4 rounded-xl border border-[#E8DFD1] bg-white px-4 py-3">
