@@ -10,6 +10,11 @@ const COPY = {
     remove: '배경 제거하기', preparing: '이미지 분석 중…', processing: '배경을 제거하고 있어요…',
     original: '원본', result: '투명 배경', download: '투명 PNG 저장', again: '다른 이미지',
     compareHint: '가운데 슬라이더를 좌우로 움직여 원본과 결과를 비교하세요.',
+    splitTitle: '15개 이모티콘 자동 분리', splitBadge: '5열 × 3행',
+    splitDesc: '투명 배경 결과를 15개 영역으로 나누고, 각 이모티콘의 불필요한 투명 여백을 자동으로 정리합니다.',
+    splitAction: '15개로 자동 분리', splitting: '15개 이모티콘을 분리하고 있어요…',
+    splitReady: '분리 완료 · 각 이미지를 눌러 개별 PNG로 저장할 수 있습니다.',
+    splitAgain: '다시 분리', splitDownload: 'PNG 저장', splitFailed: '자동 분리에 실패했습니다. 이미지를 다시 처리한 뒤 시도해 주세요.',
     badType: 'PNG, JPG, WEBP 이미지만 사용할 수 있습니다.', tooLarge: '12MB 이하의 이미지를 사용해 주세요.', failed: '배경 제거에 실패했습니다. 브라우저를 새로고침한 뒤 다시 시도해 주세요.'
   },
   en: {
@@ -19,6 +24,11 @@ const COPY = {
     remove: 'Remove background', preparing: 'Analyzing image…', processing: 'Removing background…',
     original: 'Original', result: 'Transparent', download: 'Save transparent PNG', again: 'Try another image',
     compareHint: 'Drag the center slider left or right to compare the original and result.',
+    splitTitle: 'Auto-split 15 emoticons', splitBadge: '5 columns × 3 rows',
+    splitDesc: 'Split the transparent sheet into 15 areas and automatically trim unnecessary transparent space around each emoticon.',
+    splitAction: 'Auto-split into 15', splitting: 'Splitting 15 emoticons…',
+    splitReady: 'Split complete · Save each emoticon as an individual PNG.',
+    splitAgain: 'Split again', splitDownload: 'Save PNG', splitFailed: 'Auto split failed. Process the image again and retry.',
     badType: 'Please use a PNG, JPG, or WEBP image.', tooLarge: 'Please use an image under 12MB.', failed: 'Background removal failed. Refresh the page and try again.'
   },
   ja: {
@@ -28,6 +38,11 @@ const COPY = {
     remove: '背景を削除する', preparing: '画像を解析中…', processing: '背景を削除しています…',
     original: '元画像', result: '透過背景', download: '透過PNGを保存', again: '別の画像',
     compareHint: '中央のスライダーを左右に動かして元画像と結果を比較できます。',
+    splitTitle: '15個の絵文字を自動分割', splitBadge: '5列 × 3行',
+    splitDesc: '透過背景のシートを15領域に分け、各絵文字の不要な透明余白を自動で整えます。',
+    splitAction: '15個に自動分割', splitting: '15個の絵文字を分割しています…',
+    splitReady: '分割完了 · 各画像を個別PNGとして保存できます。',
+    splitAgain: '再分割', splitDownload: 'PNG保存', splitFailed: '自動分割に失敗しました。画像を再処理してお試しください。',
     badType: 'PNG、JPG、WEBP画像のみ使用できます。', tooLarge: '12MB以下の画像を使用してください。', failed: '背景の削除に失敗しました。ページを再読み込みしてもう一度お試しください。'
   },
   zh: {
@@ -37,6 +52,11 @@ const COPY = {
     remove: '移除背景', preparing: '正在分析图片…', processing: '正在移除背景…',
     original: '原图', result: '透明背景', download: '保存透明PNG', again: '换一张图片',
     compareHint: '左右拖动中间滑块即可对比原图和处理结果。',
+    splitTitle: '自动分割15个表情', splitBadge: '5列 × 3行',
+    splitDesc: '将透明背景图片分成15个区域，并自动裁掉每个表情周围多余的透明空间。',
+    splitAction: '自动分成15个', splitting: '正在分割15个表情…',
+    splitReady: '分割完成 · 可将每个表情单独保存为PNG。',
+    splitAgain: '重新分割', splitDownload: '保存PNG', splitFailed: '自动分割失败，请重新处理图片后再试。',
     badType: '仅支持PNG、JPG、WEBP图片。', tooLarge: '请使用12MB以内的图片。', failed: '背景移除失败。请刷新页面后重试。'
   }
 };
@@ -176,8 +196,6 @@ async function tryFastLightBackgroundRemoval(file) {
     if (y + 1 < height) enqueue(index + width);
   }
 
-  // Avoid treating a tiny bright corner as a full background. In that case,
-  // fall through to the AI model instead.
   if (tail < total * 0.08) return null;
 
   ctx.putImageData(imageData, 0, 0);
@@ -205,9 +223,6 @@ async function getRemover(onProgress) {
 async function removeWithAi(file, onProgress) {
   const { remover, RawImage } = await getRemover(onProgress);
   const rawImage = await RawImage.fromBlob(file);
-  // The current ORMBG Transformers.js model card uses an input array and
-  // returns an array of RawImage results. Keeping the fallback handles a
-  // single RawImage return shape as well.
   const output = await remover([rawImage]);
   const image = Array.isArray(output) ? output[0] : output;
   if (image instanceof Blob) return image;
@@ -215,6 +230,87 @@ async function removeWithAi(file, onProgress) {
   const blob = await image.toBlob();
   if (!blob) throw new Error('No output blob');
   return blob;
+}
+
+function findVisibleBounds(ctx, width, height) {
+  const pixels = ctx.getImageData(0, 0, width, height).data;
+  let minX = width;
+  let minY = height;
+  let maxX = -1;
+  let maxY = -1;
+
+  for (let y = 0; y < height; y += 1) {
+    for (let x = 0; x < width; x += 1) {
+      const alpha = pixels[(y * width + x) * 4 + 3];
+      if (alpha <= 10) continue;
+      if (x < minX) minX = x;
+      if (y < minY) minY = y;
+      if (x > maxX) maxX = x;
+      if (y > maxY) maxY = y;
+    }
+  }
+
+  if (maxX < minX || maxY < minY) return null;
+  return { minX, minY, maxX, maxY };
+}
+
+async function splitIntoFifteen(blob) {
+  const { canvas } = await drawFileToCanvas(blob);
+  const columns = 5;
+  const rows = 3;
+  const items = [];
+
+  for (let row = 0; row < rows; row += 1) {
+    for (let column = 0; column < columns; column += 1) {
+      const x0 = Math.floor((column * canvas.width) / columns);
+      const x1 = Math.floor(((column + 1) * canvas.width) / columns);
+      const y0 = Math.floor((row * canvas.height) / rows);
+      const y1 = Math.floor(((row + 1) * canvas.height) / rows);
+      const cellWidth = Math.max(1, x1 - x0);
+      const cellHeight = Math.max(1, y1 - y0);
+
+      const cell = document.createElement('canvas');
+      cell.width = cellWidth;
+      cell.height = cellHeight;
+      const cellCtx = cell.getContext('2d', { willReadFrequently: true });
+      if (!cellCtx) throw new Error('Canvas 2D is unavailable');
+      cellCtx.drawImage(canvas, x0, y0, cellWidth, cellHeight, 0, 0, cellWidth, cellHeight);
+
+      const bounds = findVisibleBounds(cellCtx, cellWidth, cellHeight);
+      const basePadding = Math.max(8, Math.round(Math.min(cellWidth, cellHeight) * 0.035));
+
+      let cropX = 0;
+      let cropY = 0;
+      let cropWidth = cellWidth;
+      let cropHeight = cellHeight;
+
+      if (bounds) {
+        cropX = Math.max(0, bounds.minX - basePadding);
+        cropY = Math.max(0, bounds.minY - basePadding);
+        const cropRight = Math.min(cellWidth - 1, bounds.maxX + basePadding);
+        const cropBottom = Math.min(cellHeight - 1, bounds.maxY + basePadding);
+        cropWidth = Math.max(1, cropRight - cropX + 1);
+        cropHeight = Math.max(1, cropBottom - cropY + 1);
+      }
+
+      const output = document.createElement('canvas');
+      output.width = cropWidth;
+      output.height = cropHeight;
+      const outputCtx = output.getContext('2d');
+      if (!outputCtx) throw new Error('Canvas 2D is unavailable');
+      outputCtx.drawImage(cell, cropX, cropY, cropWidth, cropHeight, 0, 0, cropWidth, cropHeight);
+
+      const itemBlob = await canvasToPngBlob(output);
+      items.push({
+        index: row * columns + column + 1,
+        blob: itemBlob,
+        width: cropWidth,
+        height: cropHeight
+      });
+    }
+  }
+
+  return items;
 }
 
 export default function BackgroundRemover({ lang = 'ko' }) {
@@ -229,14 +325,29 @@ export default function BackgroundRemover({ lang = 'ko' }) {
   const [progress, setProgress] = useState(null);
   const [error, setError] = useState('');
   const [comparePosition, setComparePosition] = useState(50);
+  const [splitItems, setSplitItems] = useState([]);
+  const [splitting, setSplitting] = useState(false);
+  const [splitError, setSplitError] = useState('');
 
   useEffect(() => () => {
     if (sourceUrl) URL.revokeObjectURL(sourceUrl);
     if (resultUrl) URL.revokeObjectURL(resultUrl);
   }, [sourceUrl, resultUrl]);
 
+  useEffect(() => () => {
+    splitItems.forEach((item) => URL.revokeObjectURL(item.url));
+  }, [splitItems]);
+
+  const clearSplitItems = () => {
+    splitItems.forEach((item) => URL.revokeObjectURL(item.url));
+    setSplitItems([]);
+    setSplitError('');
+    setSplitting(false);
+  };
+
   const clearResult = () => {
     if (resultUrl) URL.revokeObjectURL(resultUrl);
+    clearSplitItems();
     setResultUrl('');
     setResultBlob(null);
     setError('');
@@ -275,8 +386,6 @@ export default function BackgroundRemover({ lang = 'ko' }) {
     setBusy(true);
     setStage('preparing');
     try {
-      // Most generated emoticon sheets use a plain white/off-white background.
-      // Remove that locally first: it is much faster and does not need a model download.
       let blob = await tryFastLightBackgroundRemoval(file);
 
       if (!blob) {
@@ -304,15 +413,44 @@ export default function BackgroundRemover({ lang = 'ko' }) {
     }
   };
 
-  const download = () => {
-    if (!resultBlob || !resultUrl) return;
-    const base = (file?.name || 'image').replace(/\.[^.]+$/, '').replace(/[^a-zA-Z0-9가-힣ぁ-んァ-ン一-龥_-]+/g, '-');
+  const downloadBlob = (blob, filename) => {
+    if (!blob) return;
+    const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
-    a.href = resultUrl;
-    a.download = `${base || 'image'}-transparent.png`;
+    a.href = url;
+    a.download = filename;
     document.body.appendChild(a);
     a.click();
     a.remove();
+    window.setTimeout(() => URL.revokeObjectURL(url), 1200);
+  };
+
+  const download = () => {
+    if (!resultBlob) return;
+    const base = (file?.name || 'image').replace(/\.[^.]+$/, '').replace(/[^a-zA-Z0-9가-힣ぁ-んァ-ン一-龥_-]+/g, '-');
+    downloadBlob(resultBlob, `${base || 'image'}-transparent.png`);
+  };
+
+  const autoSplit = async () => {
+    if (!resultBlob || splitting) return;
+    clearSplitItems();
+    setSplitting(true);
+    setSplitError('');
+    try {
+      const items = await splitIntoFifteen(resultBlob);
+      const withUrls = items.map((item) => ({ ...item, url: URL.createObjectURL(item.blob) }));
+      setSplitItems(withUrls);
+    } catch (e) {
+      console.error('Sticker auto split failed:', e);
+      setSplitError(t.splitFailed);
+    } finally {
+      setSplitting(false);
+    }
+  };
+
+  const downloadSplitItem = (item) => {
+    const base = (file?.name || 'emoticon').replace(/\.[^.]+$/, '').replace(/[^a-zA-Z0-9가-힣ぁ-んァ-ン一-龥_-]+/g, '-');
+    downloadBlob(item.blob, `${base || 'emoticon'}-${String(item.index).padStart(2, '0')}.png`);
   };
 
   const updateComparePosition = (element, clientX) => {
@@ -459,6 +597,50 @@ export default function BackgroundRemover({ lang = 'ko' }) {
               {resultUrl ? t.again : t.change}
             </button>
           </div>
+
+          {resultUrl && (
+            <div className="mt-5 rounded-2xl border border-[#DDD8CE] bg-white p-3.5 sm:p-4">
+              <div className="flex flex-wrap items-center gap-2">
+                <h3 className="text-sm sm:text-base font-extrabold text-[#35312C]">✂️ {t.splitTitle}</h3>
+                <span className="rounded-full bg-[#EEF4EA] px-2.5 py-1 text-[11px] font-extrabold text-[#597153]">{t.splitBadge}</span>
+              </div>
+              <p className="mt-2 text-xs sm:text-[13px] leading-5 text-[#746E65]">{t.splitDesc}</p>
+
+              {splitError && <div className="mt-3 rounded-xl bg-[#FFF1EE] px-3 py-2.5 text-xs font-semibold leading-5 text-[#A64D3D]">{splitError}</div>}
+
+              {splitItems.length === 0 ? (
+                <button
+                  type="button"
+                  disabled={splitting}
+                  onClick={autoSplit}
+                  className="mt-3 w-full rounded-xl border border-[#CFC5B7] bg-[#FFF9F0] px-4 py-3 text-sm font-extrabold text-[#5B4B39] transition hover:bg-[#FFF3DF] disabled:cursor-wait disabled:opacity-60"
+                >
+                  {splitting ? `⏳ ${t.splitting}` : `✂️ ${t.splitAction}`}
+                </button>
+              ) : (
+                <>
+                  <div className="mt-3 flex items-center justify-between gap-3 rounded-xl bg-[#F4F8F1] px-3 py-2.5">
+                    <span className="text-xs font-bold leading-5 text-[#5D6D58]">✓ {t.splitReady}</span>
+                    <button type="button" onClick={autoSplit} className="shrink-0 text-xs font-extrabold text-[#607859] underline underline-offset-2">{t.splitAgain}</button>
+                  </div>
+
+                  <div className="mt-3 grid grid-cols-3 gap-2 sm:grid-cols-5 sm:gap-2.5">
+                    {splitItems.map((item) => (
+                      <div key={item.index} className="overflow-hidden rounded-xl border border-[#E2DDD5] bg-white shadow-sm">
+                        <div className="relative aspect-square overflow-hidden" style={checkerStyle}>
+                          <img src={item.url} alt={`${t.splitTitle} ${item.index}`} className="h-full w-full object-contain p-1.5" />
+                          <span className="absolute left-1.5 top-1.5 flex h-6 min-w-6 items-center justify-center rounded-full bg-black/65 px-1.5 text-[10px] font-extrabold text-white">{item.index}</span>
+                        </div>
+                        <button type="button" onClick={() => downloadSplitItem(item)} className="w-full border-t border-[#EEEAE3] px-1.5 py-2 text-[10px] sm:text-[11px] font-extrabold text-[#4E664A] hover:bg-[#F8FBF6]">
+                          ↓ {t.splitDownload}
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
+          )}
         </div>
       )}
 
