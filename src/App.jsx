@@ -7680,6 +7680,73 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
         <section id="ai-action-hub" className="flex flex-col gap-3 mt-2 pb-4">
           <AdBanner />
           <div className="bg-[#EAF8F3] p-3 sm:p-3.5 rounded-xl border-2 border-mint-border flex flex-col gap-2.5 text-mint-strong shadow-xs">
+
+            {/* Final settings checkpoint before AI launch */}
+            <div className="rounded-xl border border-[#E8D7A6] bg-[#FFFDF7] px-3.5 py-3.5 shadow-sm">
+              <div className="mb-3 flex items-center justify-between gap-2 border-b border-[#EFE4C6] pb-2.5">
+                <strong className="text-[14px] sm:text-[15px] font-black text-[#5C4328]">
+                  {lang === 'ko' ? '✓ 최종 설정 확인' : lang === 'ja' ? '✓ 最終設定確認' : lang === 'zh' ? '✓ 最终设置确认' : '✓ Final Settings'}
+                </strong>
+                <span className="inline-flex shrink-0 items-center rounded-full border border-[#E8D7A6] bg-white px-2 py-0.5 text-[11px] font-bold text-[#8A6A34] whitespace-nowrap">
+                  {lang === 'ko' ? '실행 전 확인' : lang === 'ja' ? '実行前確認' : lang === 'zh' ? '运行前确认' : 'Before launch'}
+                </span>
+              </div>
+
+              <dl className="grid grid-cols-[76px_minmax(0,1fr)] gap-x-2.5 gap-y-2 text-[12.5px] sm:text-[13px]">
+                <dt className="font-bold text-[#8A7758]">{lang === 'ko' ? '캐릭터' : lang === 'ja' ? 'キャラ' : lang === 'zh' ? '角色' : 'Character'}</dt>
+                <dd className="min-w-0 font-bold text-[#4F4638]">
+                  {characterSource === 'photo'
+                    ? `📷 ${lang === 'ko' ? '참고 사진' : lang === 'ja' ? '参照写真' : lang === 'zh' ? '参考照片' : 'Reference photo'}`
+                    : characterSource === 'random'
+                    ? `🎲 ${lang === 'ko' ? '랜덤 캐릭터' : lang === 'ja' ? 'ランダムキャラ' : lang === 'zh' ? '随机角色' : 'Random character'}`
+                    : `✏️ ${lang === 'ko' ? '직접 설정' : lang === 'ja' ? '直接設定' : lang === 'zh' ? '手动设置' : 'Direct setup'}`}
+                </dd>
+
+                {characterSource === 'photo' && (
+                  <>
+                    <dt className="font-bold text-[#8A7758]">{lang === 'ko' ? '사진 반영' : lang === 'ja' ? '写真反映' : lang === 'zh' ? '照片模式' : 'Photo mode'}</dt>
+                    <dd className="font-bold text-[#4F4638]">{getPhotoModeLabel(lang)}</dd>
+                  </>
+                )}
+
+                <dt className="font-bold text-[#8A7758]">{lang === 'ko' ? '선택 태그' : lang === 'ja' ? '選択タグ' : lang === 'zh' ? '已选标签' : 'Tags'}</dt>
+                <dd className="min-w-0 font-bold text-[#4F4638]">
+                  {activeTagList.length > 0
+                    ? (
+                      <span className="block truncate" title={charManual}>
+                        {activeTagList.slice(0, 3).join(' · ')}
+                        {activeTagList.length > 3
+                          ? (lang === 'ko' ? ` 외 ${activeTagList.length - 3}개` : ` +${activeTagList.length - 3}`)
+                          : ''}
+                      </span>
+                    )
+                    : (lang === 'ko' ? '선택된 태그 없음' : lang === 'ja' ? '選択タグなし' : lang === 'zh' ? '未选择标签' : 'No tags selected')}
+                </dd>
+
+                <dt className="font-bold text-[#8A7758]">{lang === 'ko' ? '문구 테마' : lang === 'ja' ? '文言テーマ' : lang === 'zh' ? '文案主题' : 'Phrase theme'}</dt>
+                <dd className="min-w-0 truncate font-bold text-[#4F4638]">
+                  {activeTheme === 'custom'
+                    ? (lang === 'ko' ? '사용자 지정 / 랜덤' : lang === 'ja' ? 'カスタム / ランダム' : lang === 'zh' ? '自定义 / 随机' : 'Custom / Random')
+                    : activeTheme}
+                </dd>
+
+                <dt className="font-bold text-[#8A7758]">{lang === 'ko' ? '이모티콘' : lang === 'ja' ? 'スタンプ' : lang === 'zh' ? '表情贴纸' : 'Stickers'}</dt>
+                <dd className="font-black text-[#5B7C68]">
+                  {lang === 'ko' ? `${emoticons.length}종 준비 완료` : lang === 'ja' ? `${emoticons.length}種 準備完了` : lang === 'zh' ? `已准备 ${emoticons.length} 款` : `${emoticons.length} ready`}
+                </dd>
+              </dl>
+
+              <p className="mt-3 border-t border-[#EFE4C6] pt-2.5 text-[11.5px] sm:text-[12px] font-bold text-[#8A7758] leading-relaxed">
+                {lang === 'ko'
+                  ? '아래 실행·복사 버튼을 누르기 전에 설정이 맞는지 마지막으로 확인해 주세요.'
+                  : lang === 'ja'
+                  ? '下の実行・コピーボタンを押す前に設定をご確認ください。'
+                  : lang === 'zh'
+                  ? '点击下方运行或复制按钮前，请最后确认设置。'
+                  : 'Check these settings once more before launching or copying.'}
+              </p>
+            </div>
+
             {/* 1. Launch Info Header */}
             <div className="flex items-center gap-2">
               <span className="text-[17px] shrink-0 leading-none">🚀</span>
