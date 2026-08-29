@@ -7710,11 +7710,8 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
               <dd className="min-w-0 font-bold text-[#4F4638]">
                 {activeTagList.length > 0
                   ? (
-                    <span className="block truncate" title={charManual}>
-                      {activeTagList.slice(0, 3).join(' · ')}
-                      {activeTagList.length > 3
-                        ? (lang === 'ko' ? ` 외 ${activeTagList.length - 3}개` : ` +${activeTagList.length - 3}`)
-                        : ''}
+                    <span className="block whitespace-normal leading-relaxed [word-break:keep-all] [overflow-wrap:break-word]">
+                      {activeTagList.join(' · ')}
                     </span>
                   )
                   : (lang === 'ko' ? '선택된 태그 없음' : lang === 'ja' ? '選択タグなし' : lang === 'zh' ? '未选择标签' : 'No tags selected')}
