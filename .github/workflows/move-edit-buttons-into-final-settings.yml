@@ -39,14 +39,11 @@ jobs:
           if button_start_marker not in text:
               raise SystemExit('Edit button container not found.')
 
-          # Extract the two existing jump buttons with their click handlers intact.
           button_start = text.index(button_start_marker)
           themes_pos = text.index("'Themes ↑'", button_start)
           button_end = text.index('              </div>', themes_pos) + len('              </div>\n')
           buttons = text[button_start:button_end]
 
-          # Restyle the controls for the warm final-confirmation card and make
-          # the two buttons share the available width evenly.
           buttons = buttons.replace(
               'className="grid grid-cols-2 gap-2 w-full sm:w-auto"',
               'className="grid grid-cols-2 gap-2 w-full"',
@@ -57,33 +54,32 @@ jobs:
               'className="interactive-control min-w-0 flex items-center justify-center gap-1 min-h-[38px] bg-white hover:bg-[#FFF7DF] text-[#6A5129] font-black text-[12px] sm:text-[12.5px] px-2.5 py-1.5 rounded-lg border border-[#E2C990] shadow-2xs cursor-pointer active:scale-95 transition-all"',
           )
 
-          # Remove the old standalone button container.
           text = text[:button_start] + text[button_end:]
 
-          # Rebuild the tail of the final settings card so it has one clean
-          # closing structure regardless of the previous partial move.
           final_start = text.index(final_marker)
           ad_pos = text.index(ad_marker, final_start)
           paragraph_pos = text.index(paragraph_tail, final_start)
           paragraph_end = text.index('            </p>', paragraph_pos) + len('            </p>\n')
           card_core = text[final_start:paragraph_end]
 
-          edit_controls = '''            {/* Final settings edit controls */}
-            <div className="mt-3 pt-3 border-t border-[#EFE4C6]">
-              <div className="flex items-center gap-1.5 text-[11.5px] sm:text-[12px] font-bold text-[#8A7758] mb-2">
-                <span>💡</span>
-                <span>
-                  {lang === 'ko'
-                    ? '수정 시 실시간 자동 반영:'
-                    : lang === 'ja'
-                    ? '変更時にリアルタイム反映:'
-                    : lang === 'zh'
-                    ? '修改时实时自动同步:'
-                    : 'Real-time sync on edit:'}
-                </span>
-              </div>
-''' + buttons + '''            </div>
-'''
+          edit_controls = (
+              '            {/* Final settings edit controls */}\n'
+              '            <div className="mt-3 pt-3 border-t border-[#EFE4C6]">\n'
+              '              <div className="flex items-center gap-1.5 text-[11.5px] sm:text-[12px] font-bold text-[#8A7758] mb-2">\n'
+              '                <span>💡</span>\n'
+              '                <span>\n'
+              "                  {lang === 'ko'\n"
+              "                    ? '수정 시 실시간 자동 반영:'\n"
+              "                    : lang === 'ja'\n"
+              "                    ? '変更時にリアルタイム反映:'\n"
+              "                    : lang === 'zh'\n"
+              "                    ? '修改时实时自动同步:'\n"
+              "                    : 'Real-time sync on edit:'}\n"
+              '                </span>\n'
+              '              </div>\n'
+              + buttons
+              + '            </div>\n'
+          )
 
           rebuilt = card_core + edit_controls + '          </div>\n\n'
           text = text[:final_start] + rebuilt + text[ad_pos:]
