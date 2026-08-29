@@ -3885,8 +3885,81 @@ const KAKAO_JAVASCRIPT_KEY = '65271d2b1354ae3e7a4eb07bceee7d0b';
 const GOOGLE_CLIENT_ID = '795493513068-k78ae4522sqtmp49vlkdo1kr6isd63h9.apps.googleusercontent.com';
 const FREE_DAILY_LIMIT = 3;
 
+const APP_LOCALE_PATHS = { ko: '/', en: '/en/', ja: '/ja/', zh: '/zh/' };
+const APP_HTML_LANGS = { ko: 'ko', en: 'en', ja: 'ja', zh: 'zh-CN' };
+const APP_SEO_META = {
+  ko: {
+    title: '프롬프트 메이커 | AI 카카오톡 이모티콘 프롬프트 생성기 (ChatGPT · Gemini · Grok)',
+    description: '사진 한 장이나 캐릭터 태그 선택으로 ChatGPT, Gemini, Grok 전용 15종 메신저 이모티콘 프롬프트를 만드는 무료 AI 프롬프트 메이커입니다.',
+    canonical: 'https://emoticon-beige.vercel.app/'
+  },
+  en: {
+    title: 'Prompt Maker | AI Emoticon Prompt Generator (ChatGPT · Gemini · Grok)',
+    description: 'Create 15-expression AI messenger emoticon prompts from a photo or character tags for ChatGPT, Gemini and Grok. Free prompt maker with multiple art styles and themes.',
+    canonical: 'https://emoticon-beige.vercel.app/en/'
+  },
+  ja: {
+    title: 'プロンプトメーカー | AI絵文字プロンプト生成ツール (ChatGPT・Gemini・Grok)',
+    description: '写真やキャラクタータグからChatGPT・Gemini・Grok向けの15種類のメッセンジャー絵文字プロンプトを作成できる無料AIプロンプトメーカーです。',
+    canonical: 'https://emoticon-beige.vercel.app/ja/'
+  },
+  zh: {
+    title: '提示词生成器 | AI表情包提示词工具 (ChatGPT · Gemini · Grok)',
+    description: '通过照片或角色标签，为ChatGPT、Gemini和Grok生成15种聊天表情包提示词。支持多种画风与主题的免费AI提示词工具。',
+    canonical: 'https://emoticon-beige.vercel.app/zh/'
+  }
+};
+
+const getAppLanguageFromLocation = () => {
+  if (typeof window === 'undefined') return 'ko';
+  const segment = window.location.pathname.toLowerCase().split('/').filter(Boolean)[0];
+  if (['ko', 'en', 'ja', 'zh'].includes(segment)) return segment;
+  const legacyLang = new URLSearchParams(window.location.search).get('lang');
+  if (['ko', 'en', 'ja', 'zh'].includes(legacyLang)) return legacyLang;
+  return 'ko';
+};
+
+const syncClientSeoMeta = (lang) => {
+  if (typeof document === 'undefined') return;
+  const seo = APP_SEO_META[lang] || APP_SEO_META.ko;
+  document.documentElement.lang = APP_HTML_LANGS[lang] || 'ko';
+  document.title = seo.title;
+
+  const setContent = (selector, value) => {
+    const el = document.querySelector(selector);
+    if (el) el.setAttribute('content', value);
+  };
+  const canonical = document.querySelector('link[rel="canonical"]');
+  if (canonical) canonical.setAttribute('href', seo.canonical);
+  setContent('meta[name="description"]', seo.description);
+  setContent('meta[property="og:title"]', seo.title);
+  setContent('meta[property="og:description"]', seo.description);
+  setContent('meta[property="og:url"]', seo.canonical);
+  setContent('meta[name="twitter:title"]', seo.title);
+  setContent('meta[name="twitter:description"]', seo.description);
+};
+
 function App() {
-  const [lang, setLang] = useState('ko');
+  const [lang, setLang] = useState(getAppLanguageFromLocation);
+
+  useEffect(() => {
+    syncClientSeoMeta(lang);
+  }, [lang]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return undefined;
+
+    const legacyLang = new URLSearchParams(window.location.search).get('lang');
+    if (['ko', 'en', 'ja', 'zh'].includes(legacyLang) && window.location.pathname === '/') {
+      window.history.replaceState({ lang: legacyLang }, '', APP_LOCALE_PATHS[legacyLang]);
+    }
+
+    const handlePopState = () => {
+      setLang(getAppLanguageFromLocation());
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
   const [currentPath, setCurrentPath] = useState(() => {
     if (typeof window !== 'undefined') {
       const path = window.location.pathname.toLowerCase();
@@ -4486,6 +4559,17 @@ function App() {
     const oldCategoryKeys = Object.keys(oldTags);
     const newCategoryKeys = Object.keys(newTags);
     
+    if (typeof window !== 'undefined') {
+      const currentPagePath = window.location.pathname.toLowerCase();
+      const isPolicyPage = currentPagePath === '/privacy' || currentPagePath === '/terms';
+      if (!isPolicyPage) {
+        const nextPath = APP_LOCALE_PATHS[newLang] || '/';
+        const currentUrl = new URL(window.location.href);
+        if (currentUrl.pathname !== nextPath || currentUrl.search) {
+          window.history.pushState({ lang: newLang }, '', nextPath);
+        }
+      }
+    }
     setLang(newLang);
 
     if (activeTheme !== 'custom') {
