@@ -1,0 +1,41 @@
+  const getGptCharacterDetails = () => {
+    const { subjects, appearances, personalities, outfits, props, effects, additionalDescription } = getSelectedCharacterRoles();
+    const isKo = lang === 'ko';
+    const subjectParts = [
+      ...(characterSource === 'photo'
+        ? [isKo ? 'AI 채팅에 첨부한 참고 사진 속 대상' : 'the subject in the reference photo attached in the AI chat']
+        : []),
+      ...subjects,
+      ...(additionalDescription ? [additionalDescription] : []),
+    ];
+
+    const photoAppearanceEn = {
+      balanced: 'preserve the subject\'s key identifying features (facial shape, eye direction, nose, mouth, hairstyle or fur pattern, skin/coat tone) so they are recognizable, while naturally stylizing the face and body to match the selected art style. Allow proportional simplification and expression exaggeration (no unrequested accessories)',
+      likeness: 'consistently maintain the subject\'s facial shape, eye characteristics, nose, lips, jawline, hairstyle, skin tone or fur color so the subject remains easily identifiable even after stylization. Apply the art style primarily through linework, coloring, and expression rendering (no unrequested accessories)',
+      style: 'maintain only the subject\'s core identifying traits (facial shape, eye direction, hairstyle or fur pattern, skin/coat tone, signature items) while actively applying the selected art style\'s visual language to proportions, expressions, form simplification, and coloring (no unrequested accessories)',
+    }[photoReferenceMode];
+
+    const photoAppearanceKo = {
+      balanced: '첨부 사진 속 대상의 핵심 식별 특징(얼굴형, 눈매, 코, 입, 헤어스타일 또는 털 무늬, 피부톤 또는 털 색상)을 알아볼 수 있도록 유지하되, 선택된 화풍에 맞게 얼굴과 신체를 자연스럽게 스타일화. 비율 단순화와 표정 과장 허용 (사진에 없는 악세사리 임의 추가 금지)',
+      likeness: '스타일화 후에도 첨부 사진 속 대상임을 쉽게 알아볼 수 있도록 얼굴형, 눈매, 코, 입술, 턱선, 헤어스타일, 피부톤 또는 털 색상을 일관되게 유지. 선택된 화풍은 선, 채색, 표정 연출 중심으로 적용 (사진에 없는 악세사리 임의 추가 금지)',
+      style: '첨부 사진 속 대상의 핵심 식별 특징(얼굴형, 눈매, 헤어스타일 또는 털 무늬, 피부톤, 대표 아이템)만 유지하고, 선택한 화풍의 조형 언어를 우선 적용하여 비율, 표정, 형태, 채색을 적극 변환 (사진에 없는 악세사리 임의 추가 금지)',
+    }[photoReferenceMode];
+
+    return {
+      subject: subjectParts.join(', ') || (isKo ? '귀여운 오리지널 캐릭터' : 'a cute original character'),
+      appearance: [
+        ...(characterSource === 'photo'
+          ? [isKo ? photoAppearanceKo : photoAppearanceEn]
+          : [isKo
+              ? '큰 동그란 머리와 앙증맞고 통통한 몸체를 가진 사랑스러운 2.5등신 대두 SD/Chibi 마스코트 캐릭터 비율, 크고 생생한 눈동자와 또렷한 캐릭터 실루엣'
+              : 'adorable 2.5-head SD/Chibi mascot proportions with a big round head, chubby compact body, sparkling expressive eyes, and crisp character silhouette']),
+        ...appearances,
+      ].join(', ') || (isKo ? '깔끔하고 명확한 2.5등신 SD 캐릭터 실루엣 유지' : 'use a clean recognizable 2.5-head SD character silhouette and keep it unchanged'),
+      personality: personalities.join(', ') || (isKo ? '친근하고 표정이 풍부한' : 'friendly and expressive'),
+      outfit: outfits.join(', ') || (characterSource === 'photo'
+        ? (isKo ? '참고 사진의 의상 스타일 유지' : 'preserve outfit from reference photo')
+        : (isKo ? '지정 없음. 처음 정한 의상은 모든 이미지에서 유지' : 'not specified; once chosen, keep it unchanged')),
+      props: props.join(', ') || (isKo ? '필수 소품 없음' : 'no prop required'),
+      effects: effects.join(', ') || (isKo ? '감정 전달에 필요한 최소한의 효과만 사용' : 'use only a minimal effect when it clarifies the emotion'),
+    };
+  };
