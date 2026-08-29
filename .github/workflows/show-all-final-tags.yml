@@ -35,17 +35,18 @@ jobs:
           dd_start = text.index(dd_marker, tag_pos)
           theme_pos = text.index(theme_marker, dd_start)
 
-          replacement = '''              <dd className="min-w-0 font-bold text-[#4F4638]">
-                {activeTagList.length > 0
-                  ? (
-                    <span className="block whitespace-normal leading-relaxed [word-break:keep-all] [overflow-wrap:break-word]">
-                      {activeTagList.join(' · ')}
-                    </span>
-                  )
-                  : (lang === 'ko' ? '선택된 태그 없음' : lang === 'ja' ? '選択タグなし' : lang === 'zh' ? '未选择标签' : 'No tags selected')}
-              </dd>
-
-'''
+          replacement = "\n".join([
+              '              <dd className="min-w-0 font-bold text-[#4F4638]">',
+              '                {activeTagList.length > 0',
+              '                  ? (',
+              '                    <span className="block whitespace-normal leading-relaxed [word-break:keep-all] [overflow-wrap:break-word]">',
+              "                      {activeTagList.join(' · ')}",
+              '                    </span>',
+              '                  )',
+              "                  : (lang === 'ko' ? '선택된 태그 없음' : lang === 'ja' ? '選択タグなし' : lang === 'zh' ? '未选择标签' : 'No tags selected')}",
+              '              </dd>',
+              '',
+          ]) + "\n"
 
           text = text[:dd_start] + replacement + text[theme_pos:]
           path.write_text(text, encoding='utf-8')
