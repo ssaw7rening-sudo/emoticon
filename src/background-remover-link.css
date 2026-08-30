@@ -1,8 +1,4 @@
-/* Main prompt-maker page: keep the heavy background remover on its dedicated page. */
-html[data-page='prompt-maker'] #background-remover {
-  display: none !important;
-}
-
+/* Main prompt-maker page: style the dedicated background-remover link as a real button. */
 html[data-page='prompt-maker'] a[href$='/background-remover/'] {
   display: inline-flex;
   min-height: 44px;
