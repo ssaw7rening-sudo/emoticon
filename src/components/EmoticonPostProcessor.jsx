@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 
 const COPY = {
   ko: {
@@ -132,6 +132,7 @@ export default function EmoticonPostProcessor({ items = [], sourceName = 'emotic
   const [editingIndex, setEditingIndex] = useState(null);
   const [editor, setEditor] = useState({ zoom: 1, x: 0, y: 0 });
   const [outputScale, setOutputScale] = useState(1);
+  const processedRef = useRef([]);
 
   useEffect(() => {
     setProcessed((previous) => {
@@ -142,9 +143,13 @@ export default function EmoticonPostProcessor({ items = [], sourceName = 'emotic
     setError('');
   }, [items]);
 
-  useEffect(() => () => {
-    processed.forEach((item) => item.finalUrl && URL.revokeObjectURL(item.finalUrl));
+  useEffect(() => {
+    processedRef.current = processed;
   }, [processed]);
+
+  useEffect(() => () => {
+    processedRef.current.forEach((item) => item.finalUrl && URL.revokeObjectURL(item.finalUrl));
+  }, []);
 
   const current = useMemo(() => processed.find((item) => item.index === editingIndex) || null, [processed, editingIndex]);
   const base = safeBaseName(sourceName);
