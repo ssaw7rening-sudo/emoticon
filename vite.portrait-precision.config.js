@@ -11,23 +11,96 @@ function portraitPrecisionBackgroundFix() {
 
       let transformed = code.replace(/\r\n/g, '\n')
 
-      const fastSource = '      let blob = await tryFastUniformBackgroundRemoval(file);'
-      const fastTarget = `      // Portrait photos must not use the edge-color shortcut. A complex indoor\n      // photo can have a wall color that looks uniform at the border while ceiling,\n      // furniture and pillars remain as false foreground. Route vertical photos\n      // directly to the precision matte instead.\n      const { canvas: fastPreflightCanvas } = await drawFileToCanvas(file);\n      const skipFastForPortrait =\n        fastPreflightCanvas.width > 0 &&\n        fastPreflightCanvas.height >= fastPreflightCanvas.width * 1.08;\n      let blob = skipFastForPortrait ? null : await tryFastUniformBackgroundRemoval(file);`
-
-      if (!transformed.includes(fastSource)) {
+      const fastPattern = /let\s+blob\s*=\s*await\s+tryFastUniformBackgroundRemoval\(file\);/
+      if (!fastPattern.test(transformed)) {
         throw new Error('[portrait-precision] Fast-removal source pattern was not found')
       }
-      transformed = transformed.replace(fastSource, fastTarget)
+      transformed = transformed.replace(
+        fastPattern,
+        `// Portrait photos must not use the edge-color shortcut. Complex indoor
+      // backgrounds can look uniform at the border while ceiling, furniture and
+      // pillars remain as false foreground. Vertical photos go straight to AI.
+      const { canvas: fastPreflightCanvas } = await drawFileToCanvas(file);
+      const skipFastForPortrait =
+        fastPreflightCanvas.width > 0 &&
+        fastPreflightCanvas.height >= fastPreflightCanvas.width * 1.08;
+      let blob = skipFastForPortrait ? null : await tryFastUniformBackgroundRemoval(file);`
+      )
 
-      const portraitSource = `        if (portraitFirst) {\n          // Vertical photos are most often people/selfies in this tool. Start with\n          // the portrait-matting model so ceilings, pillars and wall structures are\n          // less likely to be retained as foreground. Only fall back to ORMBG when\n          // MODNet is clearly unreliable.\n          method = 'modnet';\n          setStage('preparing');\n          setProgress(null);\n          blob = await removeWithModnet(file, (info) => {\n            if (typeof info?.progress === 'number') {\n              setProgress(Math.max(0, Math.min(100, Math.round(info.progress))));\n            }\n          });\n          quality = await assessRemovalQuality(blob);\n\n          const modnetClearlyFailed =\n            quality.status === 'fail' ||\n            (quality.status === 'warning' && (quality.score ?? 0) >= 4);\n\n          if (modnetClearlyFailed) {\n            try {\n              setStage('preparing');\n              setProgress(null);\n              const generalBlob = await removeWithAi(file, (info) => {\n                if (typeof info?.progress === 'number') {\n                  setProgress(Math.max(0, Math.min(100, Math.round(info.progress))));\n                }\n              });\n              const generalQuality = await assessRemovalQuality(generalBlob);\n              if (qualityRank(generalQuality) < qualityRank(quality)) {\n                blob = generalBlob;\n                quality = generalQuality;\n                method = 'ai';\n              }\n            } catch (generalError) {\n              console.warn('ORMBG fallback after MODNet failed:', generalError);\n            }\n          }\n        } else {`
-
-      const portraitTarget = `        if (portraitFirst) {\n          // Complex vertical photos bypass the fast edge-color remover and use\n          // BiRefNet Lite first. Unlike the generic alpha correction path, the\n          // precision matte is kept as-is so weak background alpha is not boosted\n          // back into visible ceiling/pillar fragments.\n          let precisionError = null;\n          try {\n            method = 'birefnet';\n            setStage('preparing');\n            setProgress(null);\n            blob = await removeWithBiRefNet(file, (info) => {\n              if (typeof info?.progress === 'number') {\n                setProgress(Math.max(0, Math.min(100, Math.round(info.progress))));\n              }\n            });\n            blob = await refineHairBackgroundChannels(blob);\n            blob = await cleanAiForegroundArtifacts(blob);\n            blob = await refinePrecisionEdges(blob);\n            quality = await assessRemovalQuality(blob);\n          } catch (error) {\n            precisionError = error;\n            blob = null;\n            quality = { status: 'fail', score: 99 };\n            console.warn('BiRefNet portrait-first removal failed:', error);\n          }\n\n          // MODNet is the first fallback only when the precision model failed or\n          // produced a result that the quality gate explicitly rejects.\n          if (!blob || quality.status === 'fail') {\n            try {\n              setStage('preparing');\n              setProgress(null);\n              const portraitBlob = await removeWithModnet(file, (info) => {\n                if (typeof info?.progress === 'number') {\n                  setProgress(Math.max(0, Math.min(100, Math.round(info.progress))));\n                }\n              });\n              const portraitQuality = await assessRemovalQuality(portraitBlob);\n              if (!blob || qualityRank(portraitQuality) < qualityRank(quality)) {\n                blob = portraitBlob;\n                quality = portraitQuality;\n                method = 'modnet';\n              }\n            } catch (portraitError) {\n              console.warn('MODNet fallback after BiRefNet failed:', portraitError);\n            }\n          }\n\n          // The broad-purpose model is only a last resort for a vertical portrait.\n          if (!blob || quality.status === 'fail') {\n            try {\n              setStage('preparing');\n              setProgress(null);\n              const generalBlob = await removeWithAi(file, (info) => {\n                if (typeof info?.progress === 'number') {\n                  setProgress(Math.max(0, Math.min(100, Math.round(info.progress))));\n                }\n              });\n              const generalQuality = await assessRemovalQuality(generalBlob);\n              if (!blob || qualityRank(generalQuality) < qualityRank(quality)) {\n                blob = generalBlob;\n                quality = generalQuality;\n                method = 'ai';\n              }\n            } catch (generalError) {\n              console.warn('ORMBG last-resort fallback failed:', generalError, precisionError);\n            }\n          }\n\n          if (!blob) throw precisionError || new Error('Portrait background removal failed');\n        } else {`
-
-      if (!transformed.includes(portraitSource)) {
+      const portraitPattern = /if\s*\(portraitFirst\)\s*\{[\s\S]*?\n\s*\}\s*else\s*\{/
+      if (!portraitPattern.test(transformed)) {
         throw new Error('[portrait-precision] Portrait-first source pattern was not found')
       }
-      transformed = transformed.replace(portraitSource, portraitTarget)
 
+      const portraitTarget = `if (portraitFirst) {
+          // Vertical photos bypass the fast remover and use BiRefNet Lite first.
+          // Do not run the generic alpha booster here: it can turn weak residual
+          // background alpha back into visible ceiling or pillar fragments.
+          let precisionError = null;
+          try {
+            method = 'birefnet';
+            setStage('preparing');
+            setProgress(null);
+            blob = await removeWithBiRefNet(file, (info) => {
+              if (typeof info?.progress === 'number') {
+                setProgress(Math.max(0, Math.min(100, Math.round(info.progress))));
+              }
+            });
+            blob = await refineHairBackgroundChannels(blob);
+            blob = await cleanAiForegroundArtifacts(blob);
+            blob = await refinePrecisionEdges(blob);
+            quality = await assessRemovalQuality(blob);
+          } catch (error) {
+            precisionError = error;
+            blob = null;
+            quality = { status: 'fail', score: 99 };
+            console.warn('BiRefNet portrait-first removal failed:', error);
+          }
+
+          if (!blob || quality.status === 'fail') {
+            try {
+              setStage('preparing');
+              setProgress(null);
+              const portraitBlob = await removeWithModnet(file, (info) => {
+                if (typeof info?.progress === 'number') {
+                  setProgress(Math.max(0, Math.min(100, Math.round(info.progress))));
+                }
+              });
+              const portraitQuality = await assessRemovalQuality(portraitBlob);
+              if (!blob || qualityRank(portraitQuality) < qualityRank(quality)) {
+                blob = portraitBlob;
+                quality = portraitQuality;
+                method = 'modnet';
+              }
+            } catch (portraitError) {
+              console.warn('MODNet fallback after BiRefNet failed:', portraitError);
+            }
+          }
+
+          if (!blob || quality.status === 'fail') {
+            try {
+              setStage('preparing');
+              setProgress(null);
+              const generalBlob = await removeWithAi(file, (info) => {
+                if (typeof info?.progress === 'number') {
+                  setProgress(Math.max(0, Math.min(100, Math.round(info.progress))));
+                }
+              });
+              const generalQuality = await assessRemovalQuality(generalBlob);
+              if (!blob || qualityRank(generalQuality) < qualityRank(quality)) {
+                blob = generalBlob;
+                quality = generalQuality;
+                method = 'ai';
+              }
+            } catch (generalError) {
+              console.warn('ORMBG last-resort fallback failed:', generalError, precisionError);
+            }
+          }
+
+          if (!blob) throw precisionError || new Error('Portrait background removal failed');
+        } else {`
+
+      transformed = transformed.replace(portraitPattern, portraitTarget)
       return { code: transformed, map: null }
     },
   }
