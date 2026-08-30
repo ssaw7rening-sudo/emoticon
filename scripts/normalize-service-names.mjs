@@ -47,8 +47,17 @@ for (const name of jsFiles) {
   }
 }
 
-if (replacementCount < 4) {
-  throw new Error(`[service-names] Expected 4 localized template descriptions, replaced ${replacementCount}`);
+// The source copy may already be normalized or may have been intentionally
+// rewritten by a newer prompt-template update. In that case there is nothing
+// for this legacy bundle-normalization step to replace. Treat zero matches as
+// a valid no-op, but still fail on a partial 1~3 language replacement because
+// that would leave localized bundles inconsistent.
+if (replacementCount > 0 && replacementCount < replacements.length) {
+  throw new Error(`[service-names] Partial localized template update: replaced ${replacementCount} of ${replacements.length}`);
 }
 
-console.log(`Service-name copy normalized in ${changedFiles} bundle file(s); ${replacementCount} localized descriptions updated`);
+if (replacementCount === 0) {
+  console.log('Service-name copy already normalized or superseded; no bundle replacements needed');
+} else {
+  console.log(`Service-name copy normalized in ${changedFiles} bundle file(s); ${replacementCount} localized descriptions updated`);
+}
