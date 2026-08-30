@@ -1,0 +1,34 @@
+name: Patch Hugging Face Removal Models
+
+on:
+  push:
+    paths:
+      - '.github/workflows/patch-hf-removal-models.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Patch models
+        run: python scripts/patch-hf-removal-models.py
+      - name: Build
+        run: |
+          npm ci
+          npm run build
+      - name: Commit
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add src/components/BackgroundRemover.jsx
+          git commit -m 'Add MODNet fallback and BiRefNet precision retry'
+          git push
