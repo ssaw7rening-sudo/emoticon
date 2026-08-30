@@ -3925,23 +3925,23 @@ const syncClientSeoMeta = (lang) => {
   if (typeof document === 'undefined') return;
   const removerSeoMeta = {
   ko: {
-    title: '무료 이미지 배경 제거 | 누끼 따기 · 투명 PNG 만들기',
-    description: '사진·이미지 배경을 무료로 제거하고 투명 PNG로 저장하세요. 균일한 단색 배경은 빠르게 처리하고 복잡한 배경은 AI로 자동 제거합니다.',
+    title: '무료 이미지 배경 제거 | 누끼 따기 · 투명 PNG · 업스케일',
+    description: '사진·이미지 배경을 무료로 제거하고 투명 PNG로 저장하세요. 360·720·1440px 저장과 2×·4× 고화질 업스케일도 지원합니다.',
     canonical: 'https://emoticon-beige.vercel.app/background-remover/'
   },
   en: {
-    title: 'Free Image Background Remover | Transparent PNG Maker',
-    description: 'Remove image and photo backgrounds for free in your browser. Fast solid-color removal, AI processing for complex scenes, and transparent PNG export.',
+    title: 'Free Background Remover | Transparent PNG & Image Upscaler',
+    description: 'Remove backgrounds for free, export transparent PNGs, and upscale to 720px (2×) or 1440px (4×) with high-quality scaling.',
     canonical: 'https://emoticon-beige.vercel.app/en/background-remover/'
   },
   ja: {
-    title: '無料画像背景削除 | 透過PNG・背景透過ツール',
-    description: '写真や画像の背景を無料で削除し、透過PNGとして保存できます。単色背景は高速処理し、複雑な背景はAIで自動処理します。',
+    title: '無料の画像背景削除 | 透過PNG・高画質アップスケール',
+    description: '写真や画像の背景を無料で削除して透過PNGとして保存し、720px（2×）・1440px（4×）へ高品質アップスケールできます。',
     canonical: 'https://emoticon-beige.vercel.app/ja/background-remover/'
   },
   zh: {
-    title: '免费图片背景移除 | 透明PNG制作工具',
-    description: '免费移除照片和图片背景并保存为透明PNG。均匀纯色背景快速处理，复杂背景自动使用AI。',
+    title: '免费图片背景移除 | 透明PNG・高清图片放大',
+    description: '免费移除图片背景并保存透明PNG，还可高质量放大至720px（2×）或1440px（4×）。',
     canonical: 'https://emoticon-beige.vercel.app/zh/background-remover/'
   }
 };

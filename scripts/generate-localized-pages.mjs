@@ -16,10 +16,10 @@ const mainPages = {
 };
 
 const removerPages = {
-  ko: { htmlLang: 'ko', dir: 'background-remover', canonical: `${origin}/background-remover/`, ogLocale: 'ko_KR', title: '무료 이미지 배경 제거 | 누끼 따기 · 투명 PNG 만들기', description: '사진·이미지 배경을 무료로 제거하고 투명 PNG로 저장하세요. 흰색뿐 아니라 균일한 단색 배경은 빠르게 처리하며, 복잡한 배경은 AI로 자동 제거합니다. 이미지 파일은 서버에 업로드하지 않고 브라우저에서 처리합니다.', keywords: '배경 제거, 이미지 배경 제거, 사진 배경 제거, 누끼 따기, 무료 누끼 따기, 투명 PNG, PNG 배경 제거, 무료 배경 제거, 이모티콘 배경 제거' },
-  en: { htmlLang: 'en', dir: 'en/background-remover', canonical: `${origin}/en/background-remover/`, ogLocale: 'en_US', title: 'Free Image Background Remover | Transparent PNG Maker', description: 'Remove image and photo backgrounds for free in your browser. Fast solid-color background removal, AI processing for complex scenes, and transparent PNG export without uploading images to our server.', keywords: 'background remover, remove image background, free background remover, transparent PNG, photo background remover, PNG background remover' },
-  ja: { htmlLang: 'ja', dir: 'ja/background-remover', canonical: `${origin}/ja/background-remover/`, ogLocale: 'ja_JP', title: '無料画像背景削除 | 透過PNG・背景透過ツール', description: '写真や画像の背景を無料で削除し、透過PNGとして保存できます。均一な単色背景は高速処理、複雑な背景はAIで自動処理。画像はサーバーへアップロードせずブラウザ内で処理します。', keywords: '背景削除, 画像背景削除, 背景透過, 透過PNG, 無料背景削除, 写真背景削除, PNG背景透過' },
-  zh: { htmlLang: 'zh-CN', dir: 'zh/background-remover', canonical: `${origin}/zh/background-remover/`, ogLocale: 'zh_CN', title: '免费图片背景移除 | 透明PNG制作工具', description: '免费移除照片和图片背景并保存为透明PNG。均匀纯色背景快速处理，复杂背景自动使用AI；图片在浏览器中处理，不上传到本站服务器。', keywords: '背景移除, 图片背景移除, 免费抠图, 透明PNG, 照片背景移除, PNG背景透明, AI抠图' }
+  ko: { htmlLang: 'ko', dir: 'background-remover', canonical: `${origin}/background-remover/`, ogLocale: 'ko_KR', title: '무료 이미지 배경 제거 | 누끼 따기 · 투명 PNG · 업스케일', description: '사진·이미지 배경을 무료로 제거하고 투명 PNG로 저장하세요. 균일한 단색 배경은 빠르게 처리하고 복잡한 배경은 AI로 자동 제거합니다. 360·720·1440px 저장과 2×·4× 고화질 업스케일도 지원하며 이미지는 브라우저에서 처리합니다.', keywords: '배경 제거, 이미지 배경 제거, 사진 배경 제거, 누끼 따기, 무료 누끼 따기, 투명 PNG, PNG 배경 제거, 무료 배경 제거, 이미지 업스케일, 사진 업스케일, 고화질 이미지 확대, 이모티콘 배경 제거' },
+  en: { htmlLang: 'en', dir: 'en/background-remover', canonical: `${origin}/en/background-remover/`, ogLocale: 'en_US', title: 'Free Background Remover | Transparent PNG & Image Upscaler', description: 'Remove image and photo backgrounds for free in your browser, export transparent PNGs, and upscale to 720px (2×) or 1440px (4×) with high-quality scaling and light sharpening.', keywords: 'background remover, remove image background, free background remover, transparent PNG, photo background remover, PNG background remover, image upscaler, upscale image, high quality image enlargement' },
+  ja: { htmlLang: 'ja', dir: 'ja/background-remover', canonical: `${origin}/ja/background-remover/`, ogLocale: 'ja_JP', title: '無料の画像背景削除 | 透過PNG・高画質アップスケール', description: '写真や画像の背景を無料で削除して透過PNGとして保存し、720px（2×）・1440px（4×）へ高品質アップスケールできます。画像はサーバーへアップロードせずブラウザ内で処理します。', keywords: '背景削除, 画像背景削除, 背景透過, 透過PNG, 無料背景削除, 写真背景削除, PNG背景透過, 画像アップスケール, 高画質化, 画像拡大' },
+  zh: { htmlLang: 'zh-CN', dir: 'zh/background-remover', canonical: `${origin}/zh/background-remover/`, ogLocale: 'zh_CN', title: '免费图片背景移除 | 透明PNG・高清图片放大', description: '免费移除照片和图片背景并保存为透明PNG，还可高质量放大至720px（2×）或1440px（4×）并轻度锐化。图片在浏览器中处理，不上传到本站服务器。', keywords: '背景移除, 图片背景移除, 免费抠图, 透明PNG, 照片背景移除, PNG背景透明, 图片放大, 图片高清化, 图片upscale, AI抠图' }
 };
 
 const mainAlternates = {
@@ -72,7 +72,7 @@ function buildHtml(page, alternates, { remover = false } = {}) {
       operatingSystem: 'All',
       isAccessibleForFree: true,
       offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
-      featureList: ['Image background removal', 'Transparent PNG export', 'Solid-color fast removal', 'AI background removal', '15-emoticon auto split', '360x360 PNG export'],
+      featureList: ['Image background removal', 'Transparent PNG export', 'Solid-color fast removal', 'AI background removal', '15-emoticon auto split', '360px PNG export', '720px 2x high-quality upscale', '1440px 4x high-quality upscale', 'ZIP batch export'],
       inLanguage: page.htmlLang
     })}</script>\n`;
     html = replaceRequired(html, /<\/head>/, `${jsonLd}  </head>`, 'head close');
