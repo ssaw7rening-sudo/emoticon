@@ -100,6 +100,77 @@ async function splitIntoFifteen(blob) {`
   }
 }
 
+function refreshRuntimeSeoMeta() {
+  const replacements = [
+    [
+      "title: '프롬프트 메이커 | AI 카카오톡 이모티콘 프롬프트 생성기 (ChatGPT · Gemini · Grok)'",
+      "title: '프롬프트 메이커 | AI 이모티콘·스티커 만들기, 배경 제거·15개 분리'"
+    ],
+    [
+      "description: '사진 한 장이나 캐릭터 태그 선택으로 ChatGPT, Gemini, Grok 전용 15종 메신저 이모티콘 프롬프트를 만드는 무료 AI 프롬프트 메이커입니다.'",
+      "description: '사진·캐릭터 설정으로 ChatGPT, Gemini, Grok용 15종 이모티콘 프롬프트를 만들고, 배경 제거·정밀 재처리·15개 자동 분리·360/720/1440px PNG·ZIP 저장까지 한 번에 이용하세요.'"
+    ],
+    [
+      "title: 'Prompt Maker | AI Emoticon Prompt Generator (ChatGPT · Gemini · Grok)'",
+      "title: 'Prompt Maker | AI Sticker Maker, Background Remover & Sheet Splitter'"
+    ],
+    [
+      "description: 'Create 15-expression AI messenger emoticon prompts from a photo or character tags for ChatGPT, Gemini and Grok. Free prompt maker with multiple art styles and themes.'",
+      "description: 'Create 15-sticker prompts for ChatGPT, Gemini and Grok from photos or character settings, then remove backgrounds, auto-split sticker sheets, export transparent PNGs at 360/720/1440px, and download ZIP files.'"
+    ],
+    [
+      "title: 'プロンプトメーカー | AI絵文字プロンプト生成ツール (ChatGPT・Gemini・Grok)'",
+      "title: 'Prompt Maker | AIスタンプ作成・背景透過・15個自動分割'"
+    ],
+    [
+      "description: '写真やキャラクタータグからChatGPT・Gemini・Grok向けの15種類のメッセンジャー絵文字プロンプトを作成できる無料AIプロンプトメーカーです。'",
+      "description: '写真やキャラクター設定からChatGPT・Gemini・Grok向け15種類のAIスタンププロンプトを作成し、背景透過・精密再処理・15個自動分割・360/720/1440px PNG・ZIP保存まで一括で利用できます。'"
+    ],
+    [
+      "title: '提示词生成器 | AI表情包提示词工具 (ChatGPT · Gemini · Grok)'",
+      "title: 'Prompt Maker | AI表情包生成・去背景・15张自动分割'"
+    ],
+    [
+      "description: '通过照片或角色标签，为ChatGPT、Gemini和Grok生成15种聊天表情包提示词。支持多种画风与主题的免费AI提示词工具。'",
+      "description: '根据照片或角色设置生成适用于ChatGPT、Gemini和Grok的15张AI表情包提示词，并完成去背景、精细处理、15张自动分割、360/720/1440px透明PNG与ZIP批量导出。'"
+    ],
+    [
+      "description: '사진·이미지 배경을 무료로 제거하고 투명 PNG로 저장하세요. 360·720·1440px 저장과 2×·4× 고화질 업스케일도 지원합니다.'",
+      "description: '이미지 배경을 브라우저에서 무료로 제거하고 정밀 재처리로 외곽선을 다듬으세요. 15개 이모티콘 자동 분리, 360/720/1440px 변환, 투명 PNG·ZIP 저장까지 지원합니다.'"
+    ],
+    [
+      "description: 'Remove backgrounds for free, export transparent PNGs, and upscale to 720px (2×) or 1440px (4×) with high-quality scaling.'",
+      "description: 'Remove image backgrounds in your browser, refine difficult edges, auto-split 15-sticker sheets, export transparent PNGs at 360/720/1440px, and batch-download ZIP files.'"
+    ],
+    [
+      "description: '写真や画像の背景を無料で削除して透過PNGとして保存し、720px（2×）・1440px（4×）へ高品質アップスケールできます。'",
+      "description: 'ブラウザで画像背景を無料削除し、精密再処理で輪郭を調整。15個スタンプの自動分割、360/720/1440px変換、透過PNG・ZIP一括保存まで対応します。'"
+    ],
+    [
+      "description: '免费移除图片背景并保存透明PNG，还可高质量放大至720px（2×）或1440px（4×）。'",
+      "description: '在浏览器中免费移除图片背景并精细处理复杂边缘，支持15张表情自动分割、360/720/1440px输出、透明PNG及ZIP批量保存。'"
+    ]
+  ]
+
+  return {
+    name: 'refresh-runtime-seo-meta',
+    enforce: 'pre',
+    transform(code, id) {
+      const normalizedId = id.replace(/\\/g, '/')
+      if (!normalizedId.endsWith('/src/App.jsx')) return null
+
+      let transformed = code.replace(/\r\n/g, '\n')
+      for (const [from, to] of replacements) {
+        if (!transformed.includes(from)) {
+          throw new Error(`[runtime-seo] Expected App SEO source pattern was not found: ${from}`)
+        }
+        transformed = transformed.replace(from, to)
+      }
+      return { code: transformed, map: null }
+    }
+  }
+}
+
 function refreshBackgroundGuide() {
   const blockPattern = /\n        \{activeTab === 'bg' && \(\n[\s\S]*?\n        \)\}\n\n        \{activeTab === 'usage' && \(/
 
@@ -212,5 +283,5 @@ function refreshBackgroundGuide() {
 }
 
 export default defineConfig({
-  plugins: [preservePrecisionBackgroundRemovalRgb(), refreshBackgroundGuide(), react()],
+  plugins: [preservePrecisionBackgroundRemovalRgb(), refreshRuntimeSeoMeta(), refreshBackgroundGuide(), react()],
 })
