@@ -42,24 +42,10 @@ function backgroundQualityRouting() {
       }
 
       // Add mobile-aware inference helpers once. Heavy WASM models receive a
-      // resized working image, while preserveOriginalRgb restores the original
-      // resolution and RGB data after the alpha mask has been generated.
-      const canvasHelper = `const canvasToPngBlob = (canvas) => new Promise((resolve, reject) => {
-  canvas.toBlob((blob) => {
-    if (blob) resolve(blob);
-    else reject(new Error('Canvas PNG export failed'));
-  }, 'image/png');
-});`
-
+      // resized working image. The helper functions are prepended so they are
+      // independent of Vite/React transform formatting around existing helpers.
       if (!transformed.includes('MOBILE_BG_REMOVAL_STABILITY_V2')) {
-        if (!transformed.includes(canvasHelper)) {
-          throw new Error('[background-quality] canvas helper pattern was not found')
-        }
-        transformed = transformed.replace(
-          canvasHelper,
-          `${canvasHelper}
-
-// MOBILE_BG_REMOVAL_STABILITY_V2
+        const mobileHelperCode = `// MOBILE_BG_REMOVAL_STABILITY_V2
 function isMobileLikeDevice() {
   if (typeof window === 'undefined' || typeof navigator === 'undefined') return false;
   const ua = navigator.userAgent || '';
@@ -105,7 +91,7 @@ async function createInferenceInputFile(file, maxSide = 1400) {
   const ext = mimeType === 'image/png' ? 'png' : 'jpg';
   return new File([resizedBlob], baseName + '-inference.' + ext, { type: mimeType });
 }`
-        )
+        transformed = `${mobileHelperCode}\n\n${transformed}`
       }
 
       const pipelinePattern = /async function pipelineRemovalToBlob\(file, loader, onProgress\) \{[\s\S]*?\n\}/
