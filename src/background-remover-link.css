@@ -85,3 +85,20 @@ html[data-page='prompt-maker'] a[href$='/background-remover/']:active {
   color: #9A9187 !important;
   box-shadow: none !important;
 }
+
+/* Emotion formula CTA: replace the strong amber button with the mint/sage palette used elsewhere in Prompt Maker. */
+html[data-page='prompt-maker'] button.bg-amber-600 {
+  background-color: #BFE8DA !important;
+  border: 1px solid #8FCFBB !important;
+  color: #285C4E !important;
+  box-shadow: 0 3px 10px rgba(40, 92, 78, 0.10) !important;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  html[data-page='prompt-maker'] button.bg-amber-600:hover {
+    background-color: #A7DDCB !important;
+    border-color: #78C2AB !important;
+    color: #214F43 !important;
+    box-shadow: 0 5px 14px rgba(40, 92, 78, 0.14) !important;
+  }
+}
