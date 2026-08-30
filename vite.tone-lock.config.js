@@ -53,7 +53,7 @@ function originalToneLock() {
         throw new Error('[tone-lock] Existing tone preservation helper was not found')
       }
 
-      const helper = `// FOREGROUND_TONE_PRESERVATION_V4
+      const helper = `// FOREGROUND_TONE_PRESERVATION_V5
 async function restoreSolidForegroundOpacity(sourceFile, matteBlob) {
   const sourceUrl = URL.createObjectURL(sourceFile);
   const matteUrl = URL.createObjectURL(matteBlob);
@@ -103,7 +103,6 @@ async function restoreSolidForegroundOpacity(sourceFile, matteBlob) {
     sourceCtx.imageSmoothingQuality = 'high';
     sourceCtx.drawImage(sourceImage, 0, 0, width, height);
 
-    // Full-resolution matte used only as alpha; its RGB never touches the source.
     const maskCanvas = document.createElement('canvas');
     maskCanvas.width = width;
     maskCanvas.height = height;
@@ -116,9 +115,8 @@ async function restoreSolidForegroundOpacity(sourceFile, matteBlob) {
     const maskImageData = maskCtx.getImageData(0, 0, width, height);
     const maskPixels = maskImageData.data;
 
-    // Detect distance from true transparent background on a bounded preview.
-    // Pixels safely inside the subject become fully opaque regardless of the
-    // model's slightly soft alpha. Only the real contour band stays feathered.
+    // Keep solid subject interiors opaque while preserving a narrow feathered
+    // contour for hair, fingers and antialiased clothing edges.
     const maxAnalysisDimension = 900;
     const analysisScale = Math.min(1, maxAnalysisDimension / Math.max(width, height));
     const analysisWidth = Math.max(1, Math.round(width * analysisScale));
@@ -183,9 +181,6 @@ async function restoreSolidForegroundOpacity(sourceFile, matteBlob) {
         const alpha = maskPixels[p + 3];
         if (alpha <= 0 || alpha >= 255) continue;
 
-        // Solid opaque subjects such as skin, clothing, products and stickers
-        // should not inherit the model's soft interior matte. Keeping a 3-4px
-        // analysis-space contour band protects hair strands and antialiasing.
         if (interiorDistance >= solidInteriorDistance && alpha >= 92) {
           maskPixels[p + 3] = 255;
         } else if (interiorDistance >= nearInteriorDistance && alpha >= 150) {
@@ -196,8 +191,167 @@ async function restoreSolidForegroundOpacity(sourceFile, matteBlob) {
 
     maskCtx.putImageData(maskImageData, 0, 0);
 
-    // destination-in changes coverage only. Source RGB and its color-managed
-    // rendering remain untouched from the original image element.
+    // Remove small detached foreground islands near the upper/middle part of a
+    // clearly dominant main subject. This targets a background face or partial
+    // person accidentally classified as foreground without harming group photos
+    // or sticker sheets, where no single component strongly dominates.
+    const cleanupMaxDimension = 720;
+    const cleanupScale = Math.min(1, cleanupMaxDimension / Math.max(width, height));
+    const cleanupWidth = Math.max(1, Math.round(width * cleanupScale));
+    const cleanupHeight = Math.max(1, Math.round(height * cleanupScale));
+    const cleanupCanvas = document.createElement('canvas');
+    cleanupCanvas.width = cleanupWidth;
+    cleanupCanvas.height = cleanupHeight;
+    const cleanupCtx = cleanupCanvas.getContext('2d', { willReadFrequently: true });
+
+    if (cleanupCtx) {
+      cleanupCtx.imageSmoothingEnabled = true;
+      cleanupCtx.imageSmoothingQuality = 'high';
+      cleanupCtx.drawImage(maskCanvas, 0, 0, cleanupWidth, cleanupHeight);
+      const cleanupPixels = cleanupCtx.getImageData(0, 0, cleanupWidth, cleanupHeight).data;
+      const cleanupTotal = cleanupWidth * cleanupHeight;
+      const labels = new Int32Array(cleanupTotal);
+      const componentQueue = new Int32Array(cleanupTotal);
+      const components = [];
+      const componentThreshold = 76;
+      let nextLabel = 1;
+
+      for (let start = 0; start < cleanupTotal; start += 1) {
+        if (labels[start] !== 0 || cleanupPixels[start * 4 + 3] < componentThreshold) continue;
+
+        const label = nextLabel++;
+        let qHead = 0;
+        let qTail = 0;
+        componentQueue[qTail++] = start;
+        labels[start] = label;
+        let area = 0;
+        let minX = cleanupWidth;
+        let minY = cleanupHeight;
+        let maxX = -1;
+        let maxY = -1;
+        let sumX = 0;
+        let sumY = 0;
+
+        while (qHead < qTail) {
+          const index = componentQueue[qHead++];
+          const x = index % cleanupWidth;
+          const y = Math.floor(index / cleanupWidth);
+          area += 1;
+          sumX += x;
+          sumY += y;
+          if (x < minX) minX = x;
+          if (x > maxX) maxX = x;
+          if (y < minY) minY = y;
+          if (y > maxY) maxY = y;
+
+          const visit = (neighbor) => {
+            if (neighbor < 0 || neighbor >= cleanupTotal) return;
+            if (labels[neighbor] !== 0) return;
+            if (cleanupPixels[neighbor * 4 + 3] < componentThreshold) return;
+            labels[neighbor] = label;
+            componentQueue[qTail++] = neighbor;
+          };
+
+          if (x > 0) visit(index - 1);
+          if (x + 1 < cleanupWidth) visit(index + 1);
+          if (y > 0) visit(index - cleanupWidth);
+          if (y + 1 < cleanupHeight) visit(index + cleanupWidth);
+        }
+
+        components.push({
+          label,
+          area,
+          minX,
+          minY,
+          maxX,
+          maxY,
+          width: maxX - minX + 1,
+          height: maxY - minY + 1,
+          centerX: sumX / Math.max(1, area),
+          centerY: sumY / Math.max(1, area)
+        });
+      }
+
+      const minSignificantArea = Math.max(18, Math.round(cleanupTotal * 0.00012));
+      const significant = components
+        .filter((component) => component.area >= minSignificantArea)
+        .sort((a, b) => b.area - a.area);
+
+      if (significant.length >= 2 && significant.length <= 7) {
+        const main = significant[0];
+        const visibleArea = significant.reduce((sum, component) => sum + component.area, 0);
+        const dominance = main.area / Math.max(1, visibleArea);
+
+        if (dominance >= 0.72) {
+          const removeLabels = new Set();
+          for (let i = 1; i < significant.length; i += 1) {
+            const component = significant[i];
+            const relativeArea = component.area / Math.max(1, main.area);
+            const imageAreaRatio = component.area / Math.max(1, cleanupTotal);
+            const touchesBottom = component.maxY >= cleanupHeight - 3;
+            const upperOrMiddle = component.centerY <= main.minY + main.height * 0.67;
+            const nearMainHorizontally =
+              component.centerX >= main.minX - main.width * 0.38 &&
+              component.centerX <= main.maxX + main.width * 0.38;
+            const verySmall = relativeArea <= 0.06 && imageAreaRatio <= 0.014;
+            const smallPeekingFragment =
+              relativeArea <= 0.13 &&
+              imageAreaRatio <= 0.028 &&
+              component.height <= cleanupHeight * 0.30 &&
+              component.width <= cleanupWidth * 0.22;
+
+            if (
+              !touchesBottom &&
+              upperOrMiddle &&
+              nearMainHorizontally &&
+              (verySmall || smallPeekingFragment)
+            ) {
+              removeLabels.add(component.label);
+            }
+          }
+
+          if (removeLabels.size) {
+            const removeMap = new Uint8Array(cleanupTotal);
+            for (let index = 0; index < cleanupTotal; index += 1) {
+              if (removeLabels.has(labels[index])) removeMap[index] = 1;
+            }
+
+            // One-pixel expansion clears the antialiased halo around the removed
+            // background face while remaining far from the dominant subject.
+            const expanded = removeMap.slice();
+            for (let y = 0; y < cleanupHeight; y += 1) {
+              for (let x = 0; x < cleanupWidth; x += 1) {
+                const index = y * cleanupWidth + x;
+                if (!removeMap[index]) continue;
+                for (let dy = -1; dy <= 1; dy += 1) {
+                  const ny = y + dy;
+                  if (ny < 0 || ny >= cleanupHeight) continue;
+                  for (let dx = -1; dx <= 1; dx += 1) {
+                    const nx = x + dx;
+                    if (nx < 0 || nx >= cleanupWidth) continue;
+                    expanded[ny * cleanupWidth + nx] = 1;
+                  }
+                }
+              }
+            }
+
+            const cleanupXScale = cleanupWidth / width;
+            const cleanupYScale = cleanupHeight / height;
+            for (let y = 0; y < height; y += 1) {
+              const cy = Math.min(cleanupHeight - 1, Math.floor(y * cleanupYScale));
+              for (let x = 0; x < width; x += 1) {
+                const cx = Math.min(cleanupWidth - 1, Math.floor(x * cleanupXScale));
+                if (expanded[cy * cleanupWidth + cx]) {
+                  maskPixels[(y * width + x) * 4 + 3] = 0;
+                }
+              }
+            }
+            maskCtx.putImageData(maskImageData, 0, 0);
+          }
+        }
+      }
+    }
+
     sourceCtx.save();
     sourceCtx.globalCompositeOperation = 'destination-in';
     sourceCtx.drawImage(maskCanvas, 0, 0, width, height);
