@@ -5,30 +5,37 @@ html[data-page='prompt-maker'] a[href$='/background-remover/'] {
   align-items: center;
   justify-content: center;
   gap: 0.45rem;
-  border: 1px solid #31573D;
+  border: 1px solid #E8C66E;
   border-radius: 14px;
-  background: #3E6B4B;
+  background: #FFF8E8;
   padding: 0.72rem 1rem;
-  color: #fff !important;
+  color: #7A4B22 !important;
   font-size: 13px;
   font-weight: 800;
   line-height: 1.25;
   text-decoration: none !important;
-  box-shadow: 0 4px 12px rgba(49, 87, 61, 0.16);
-  transition: transform 160ms ease, background-color 160ms ease, box-shadow 160ms ease;
+  box-shadow: 0 3px 10px rgba(137, 92, 42, 0.09);
+  transition: transform 160ms ease, background-color 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
 }
 
 html[data-page='prompt-maker'] a[href$='/background-remover/']::before {
-  content: '✂️';
-  font-size: 15px;
+  content: '✂';
+  color: #C96A43;
+  font-size: 16px;
   line-height: 1;
+}
+
+/* Keep the tool close to its dedicated-page button on the main page only. */
+html[data-page='prompt-maker'] #background-remover {
+  margin-top: 0.75rem !important;
 }
 
 @media (hover: hover) and (pointer: fine) {
   html[data-page='prompt-maker'] a[href$='/background-remover/']:hover {
-    background: #31573D;
+    background: #FFF2D2;
+    border-color: #DDB653;
     transform: translateY(-1px);
-    box-shadow: 0 6px 16px rgba(49, 87, 61, 0.2);
+    box-shadow: 0 5px 14px rgba(137, 92, 42, 0.13);
   }
 }
 
@@ -39,7 +46,7 @@ html[data-page='prompt-maker'] a[href$='/background-remover/']:active {
 @media (max-width: 639px) {
   html[data-page='prompt-maker'] a[href$='/background-remover/'] {
     width: 100%;
-    padding: 0.8rem 1rem;
+    padding: 0.78rem 1rem;
     font-size: 14px;
   }
 }
