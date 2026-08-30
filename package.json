@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build && node scripts/generate-localized-pages.mjs",
+    "build": "vite build && node scripts/generate-localized-pages.mjs && node scripts/generate-feature-seo-pages.mjs",
     "lint": "oxlint",
     "preview": "vite preview",
     "cap:build": "vite build && npx cap sync",
