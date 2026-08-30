@@ -119,12 +119,8 @@ async function restoreSolidForegroundOpacity(blob) {
       const avgNearby = sumNearby / Math.max(1, countNearby);
       let nextAlpha = alpha;
 
-      // High-confidence interior: make it fully opaque so the source tone is
-      // displayed exactly as captured.
       if (alpha >= 232 && minNearby >= 216 && avgNearby >= 236) {
         nextAlpha = 255;
-      // Slightly softer interior: gently lift opacity without flattening natural
-      // antialiasing or genuinely translucent detail.
       } else if (alpha >= 212 && minNearby >= 202 && avgNearby >= 226) {
         nextAlpha = Math.min(255, Math.round(alpha + (255 - alpha) * 0.68));
       }
@@ -269,17 +265,25 @@ async function restoreSolidForegroundOpacity(blob) {
         "          if (quality.status !== 'pass' && (!isMobileLikeDevice() || file.size <= 3 * 1024 * 1024)) {"
       )
 
-      // Apply tone preservation once to whichever removal method won. Keeping it
-      // at the final common path makes desktop/mobile and all model fallbacks
-      // visually consistent without changing model selection or quality scoring.
-      const processingPattern = /\n\s*setStage\('processing'\);\n\s*setProgress\(null\);/
-      if (!processingPattern.test(transformed)) {
-        throw new Error('[background-quality] Final processing pattern was not found')
+      // Apply tone preservation at stable URL-creation anchors. The first blob
+      // URL belongs to the main removal result; the precision retry has its own
+      // explicit precisionBlob anchor. These survive formatting transforms.
+      const mainUrlAnchor = 'const url = URL.createObjectURL(blob);'
+      if (!transformed.includes(mainUrlAnchor)) {
+        throw new Error('[background-quality] Main result URL anchor was not found')
       }
       transformed = transformed.replace(
-        processingPattern,
-        `\n      blob = await restoreSolidForegroundOpacity(blob);\n      setStage('processing');\n      setProgress(null);`
+        mainUrlAnchor,
+        `blob = await restoreSolidForegroundOpacity(blob);\n      const url = URL.createObjectURL(blob);`
       )
+
+      const precisionUrlAnchor = 'const url = URL.createObjectURL(precisionBlob);'
+      if (transformed.includes(precisionUrlAnchor)) {
+        transformed = transformed.replace(
+          precisionUrlAnchor,
+          `precisionBlob = await restoreSolidForegroundOpacity(precisionBlob);\n        const url = URL.createObjectURL(precisionBlob);`
+        )
+      }
 
       // Improve the failure copy without making the build depend on the exact UI.
       const failureCopy = [
