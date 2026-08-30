@@ -184,6 +184,36 @@ async function restoreSolidForegroundOpacity(sourceFile, matteBlob) {
         'restoreSolidForegroundOpacity(file, precisionBlob)'
       )
 
+      // Preview the transparent result using the original image element for RGB
+      // and the generated PNG only as an alpha mask. This avoids the canvas/PNG
+      // color conversion path in the comparison UI while keeping the real saved
+      // resultBlob unchanged for download and sticker splitting.
+      const resultPreviewPattern = /<img\s+src=\{resultUrl\}\s+alt=\{t\.result\}\s+draggable=\{false\}\s+className="pointer-events-none block h-auto w-full select-none"\s*\/>/
+      if (!resultPreviewPattern.test(transformed)) {
+        throw new Error('[tone-lock] Result preview image pattern was not found')
+      }
+      transformed = transformed.replace(
+        resultPreviewPattern,
+        `<img
+                  src={sourceUrl}
+                  alt={t.result}
+                  draggable={false}
+                  className="pointer-events-none block h-auto w-full select-none"
+                  style={{
+                    WebkitMaskImage: \`url(\${resultUrl})\`,
+                    maskImage: \`url(\${resultUrl})\`,
+                    WebkitMaskMode: 'alpha',
+                    maskMode: 'alpha',
+                    WebkitMaskRepeat: 'no-repeat',
+                    maskRepeat: 'no-repeat',
+                    WebkitMaskPosition: 'center',
+                    maskPosition: 'center',
+                    WebkitMaskSize: '100% 100%',
+                    maskSize: '100% 100%'
+                  }}
+                />`
+      )
+
       return { code: transformed, map: null }
     },
   }
