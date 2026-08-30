@@ -1,21 +1,224 @@
 {
   "rewrites": [
-    { "source": "/en", "destination": "/en/index.html" },
-    { "source": "/en/", "destination": "/en/index.html" },
-    { "source": "/ja", "destination": "/ja/index.html" },
-    { "source": "/ja/", "destination": "/ja/index.html" },
-    { "source": "/zh", "destination": "/zh/index.html" },
-    { "source": "/zh/", "destination": "/zh/index.html" },
-
-    { "source": "/background-remover", "destination": "/background-remover/index.html" },
-    { "source": "/background-remover/", "destination": "/background-remover/index.html" },
-    { "source": "/en/background-remover", "destination": "/en/background-remover/index.html" },
-    { "source": "/en/background-remover/", "destination": "/en/background-remover/index.html" },
-    { "source": "/ja/background-remover", "destination": "/ja/background-remover/index.html" },
-    { "source": "/ja/background-remover/", "destination": "/ja/background-remover/index.html" },
-    { "source": "/zh/background-remover", "destination": "/zh/background-remover/index.html" },
-    { "source": "/zh/background-remover/", "destination": "/zh/background-remover/index.html" },
-
-    { "source": "/(.*)", "destination": "/index.html" }
+    {
+      "source": "/en",
+      "destination": "/en/index.html"
+    },
+    {
+      "source": "/en/",
+      "destination": "/en/index.html"
+    },
+    {
+      "source": "/ja",
+      "destination": "/ja/index.html"
+    },
+    {
+      "source": "/ja/",
+      "destination": "/ja/index.html"
+    },
+    {
+      "source": "/zh",
+      "destination": "/zh/index.html"
+    },
+    {
+      "source": "/zh/",
+      "destination": "/zh/index.html"
+    },
+    {
+      "source": "/background-remover",
+      "destination": "/background-remover/index.html"
+    },
+    {
+      "source": "/background-remover/",
+      "destination": "/background-remover/index.html"
+    },
+    {
+      "source": "/en/background-remover",
+      "destination": "/en/background-remover/index.html"
+    },
+    {
+      "source": "/en/background-remover/",
+      "destination": "/en/background-remover/index.html"
+    },
+    {
+      "source": "/ja/background-remover",
+      "destination": "/ja/background-remover/index.html"
+    },
+    {
+      "source": "/ja/background-remover/",
+      "destination": "/ja/background-remover/index.html"
+    },
+    {
+      "source": "/zh/background-remover",
+      "destination": "/zh/background-remover/index.html"
+    },
+    {
+      "source": "/zh/background-remover/",
+      "destination": "/zh/background-remover/index.html"
+    },
+    {
+      "source": "/ai-sticker-maker",
+      "destination": "/ai-sticker-maker/index.html"
+    },
+    {
+      "source": "/ai-sticker-maker/",
+      "destination": "/ai-sticker-maker/index.html"
+    },
+    {
+      "source": "/photo-to-sticker",
+      "destination": "/photo-to-sticker/index.html"
+    },
+    {
+      "source": "/photo-to-sticker/",
+      "destination": "/photo-to-sticker/index.html"
+    },
+    {
+      "source": "/sticker-sheet-splitter",
+      "destination": "/sticker-sheet-splitter/index.html"
+    },
+    {
+      "source": "/sticker-sheet-splitter/",
+      "destination": "/sticker-sheet-splitter/index.html"
+    },
+    {
+      "source": "/transparent-png-maker",
+      "destination": "/transparent-png-maker/index.html"
+    },
+    {
+      "source": "/transparent-png-maker/",
+      "destination": "/transparent-png-maker/index.html"
+    },
+    {
+      "source": "/image-upscaler",
+      "destination": "/image-upscaler/index.html"
+    },
+    {
+      "source": "/image-upscaler/",
+      "destination": "/image-upscaler/index.html"
+    },
+    {
+      "source": "/en/ai-sticker-maker",
+      "destination": "/en/ai-sticker-maker/index.html"
+    },
+    {
+      "source": "/en/ai-sticker-maker/",
+      "destination": "/en/ai-sticker-maker/index.html"
+    },
+    {
+      "source": "/en/photo-to-sticker",
+      "destination": "/en/photo-to-sticker/index.html"
+    },
+    {
+      "source": "/en/photo-to-sticker/",
+      "destination": "/en/photo-to-sticker/index.html"
+    },
+    {
+      "source": "/en/sticker-sheet-splitter",
+      "destination": "/en/sticker-sheet-splitter/index.html"
+    },
+    {
+      "source": "/en/sticker-sheet-splitter/",
+      "destination": "/en/sticker-sheet-splitter/index.html"
+    },
+    {
+      "source": "/en/transparent-png-maker",
+      "destination": "/en/transparent-png-maker/index.html"
+    },
+    {
+      "source": "/en/transparent-png-maker/",
+      "destination": "/en/transparent-png-maker/index.html"
+    },
+    {
+      "source": "/en/image-upscaler",
+      "destination": "/en/image-upscaler/index.html"
+    },
+    {
+      "source": "/en/image-upscaler/",
+      "destination": "/en/image-upscaler/index.html"
+    },
+    {
+      "source": "/ja/ai-sticker-maker",
+      "destination": "/ja/ai-sticker-maker/index.html"
+    },
+    {
+      "source": "/ja/ai-sticker-maker/",
+      "destination": "/ja/ai-sticker-maker/index.html"
+    },
+    {
+      "source": "/ja/photo-to-sticker",
+      "destination": "/ja/photo-to-sticker/index.html"
+    },
+    {
+      "source": "/ja/photo-to-sticker/",
+      "destination": "/ja/photo-to-sticker/index.html"
+    },
+    {
+      "source": "/ja/sticker-sheet-splitter",
+      "destination": "/ja/sticker-sheet-splitter/index.html"
+    },
+    {
+      "source": "/ja/sticker-sheet-splitter/",
+      "destination": "/ja/sticker-sheet-splitter/index.html"
+    },
+    {
+      "source": "/ja/transparent-png-maker",
+      "destination": "/ja/transparent-png-maker/index.html"
+    },
+    {
+      "source": "/ja/transparent-png-maker/",
+      "destination": "/ja/transparent-png-maker/index.html"
+    },
+    {
+      "source": "/ja/image-upscaler",
+      "destination": "/ja/image-upscaler/index.html"
+    },
+    {
+      "source": "/ja/image-upscaler/",
+      "destination": "/ja/image-upscaler/index.html"
+    },
+    {
+      "source": "/zh/ai-sticker-maker",
+      "destination": "/zh/ai-sticker-maker/index.html"
+    },
+    {
+      "source": "/zh/ai-sticker-maker/",
+      "destination": "/zh/ai-sticker-maker/index.html"
+    },
+    {
+      "source": "/zh/photo-to-sticker",
+      "destination": "/zh/photo-to-sticker/index.html"
+    },
+    {
+      "source": "/zh/photo-to-sticker/",
+      "destination": "/zh/photo-to-sticker/index.html"
+    },
+    {
+      "source": "/zh/sticker-sheet-splitter",
+      "destination": "/zh/sticker-sheet-splitter/index.html"
+    },
+    {
+      "source": "/zh/sticker-sheet-splitter/",
+      "destination": "/zh/sticker-sheet-splitter/index.html"
+    },
+    {
+      "source": "/zh/transparent-png-maker",
+      "destination": "/zh/transparent-png-maker/index.html"
+    },
+    {
+      "source": "/zh/transparent-png-maker/",
+      "destination": "/zh/transparent-png-maker/index.html"
+    },
+    {
+      "source": "/zh/image-upscaler",
+      "destination": "/zh/image-upscaler/index.html"
+    },
+    {
+      "source": "/zh/image-upscaler/",
+      "destination": "/zh/image-upscaler/index.html"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
   ]
 }
