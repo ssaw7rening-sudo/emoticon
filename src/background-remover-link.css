@@ -1,0 +1,49 @@
+/* Main prompt-maker page: keep the heavy background remover on its dedicated page. */
+html[data-page='prompt-maker'] #background-remover {
+  display: none !important;
+}
+
+html[data-page='prompt-maker'] a[href$='/background-remover/'] {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  border: 1px solid #31573D;
+  border-radius: 14px;
+  background: #3E6B4B;
+  padding: 0.72rem 1rem;
+  color: #fff !important;
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.25;
+  text-decoration: none !important;
+  box-shadow: 0 4px 12px rgba(49, 87, 61, 0.16);
+  transition: transform 160ms ease, background-color 160ms ease, box-shadow 160ms ease;
+}
+
+html[data-page='prompt-maker'] a[href$='/background-remover/']::before {
+  content: '✂️';
+  font-size: 15px;
+  line-height: 1;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  html[data-page='prompt-maker'] a[href$='/background-remover/']:hover {
+    background: #31573D;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(49, 87, 61, 0.2);
+  }
+}
+
+html[data-page='prompt-maker'] a[href$='/background-remover/']:active {
+  transform: translateY(0) scale(0.98);
+}
+
+@media (max-width: 639px) {
+  html[data-page='prompt-maker'] a[href$='/background-remover/'] {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    font-size: 14px;
+  }
+}
