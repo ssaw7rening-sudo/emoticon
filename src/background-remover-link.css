@@ -50,3 +50,36 @@ html[data-page='prompt-maker'] a[href$='/background-remover/']:active {
     font-size: 14px;
   }
 }
+
+/* Background-remover tools: use the site's warm cream / orange palette for actions. */
+#background-remover button[class*="bg-[#3E6B4B]"] {
+  background-color: #C96A43 !important;
+  border-color: #B85B36 !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 3px 10px rgba(184, 91, 54, 0.18) !important;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  #background-remover button[class*="bg-[#3E6B4B]"]:hover {
+    background-color: #B85B36 !important;
+  }
+}
+
+#background-remover button[class*="bg-[#F3F8F0]"] {
+  background-color: #FFF5EC !important;
+  border-color: #E7B894 !important;
+  color: #9A512F !important;
+}
+
+#background-remover button[class*="bg-[#EEF5EA]"] {
+  background-color: #FFF0E3 !important;
+  border-color: #D8926D !important;
+  color: #934923 !important;
+}
+
+/* Keep disabled primary actions neutral instead of orange. */
+#background-remover button:disabled[class*="bg-[#3E6B4B]"] {
+  background-color: #B7B0A8 !important;
+  border-color: #B7B0A8 !important;
+  box-shadow: none !important;
+}
