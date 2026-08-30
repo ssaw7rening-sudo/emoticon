@@ -1,8 +1,21 @@
 {
   "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
-    }
+    { "source": "/en", "destination": "/en/index.html" },
+    { "source": "/en/", "destination": "/en/index.html" },
+    { "source": "/ja", "destination": "/ja/index.html" },
+    { "source": "/ja/", "destination": "/ja/index.html" },
+    { "source": "/zh", "destination": "/zh/index.html" },
+    { "source": "/zh/", "destination": "/zh/index.html" },
+
+    { "source": "/background-remover", "destination": "/background-remover/index.html" },
+    { "source": "/background-remover/", "destination": "/background-remover/index.html" },
+    { "source": "/en/background-remover", "destination": "/en/background-remover/index.html" },
+    { "source": "/en/background-remover/", "destination": "/en/background-remover/index.html" },
+    { "source": "/ja/background-remover", "destination": "/ja/background-remover/index.html" },
+    { "source": "/ja/background-remover/", "destination": "/ja/background-remover/index.html" },
+    { "source": "/zh/background-remover", "destination": "/zh/background-remover/index.html" },
+    { "source": "/zh/background-remover/", "destination": "/zh/background-remover/index.html" },
+
+    { "source": "/(.*)", "destination": "/index.html" }
   ]
-}
+}
