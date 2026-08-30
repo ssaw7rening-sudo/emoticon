@@ -1,9 +1,9 @@
 import { defineConfig } from 'vite'
 import baseConfig from './vite.text-default.config.js'
 
-function portraitPrecisionBackgroundFix() {
+function backgroundQualityRouting() {
   return {
-    name: 'portrait-precision-background-fix',
+    name: 'background-quality-routing',
     enforce: 'post',
     transform(code, id) {
       const normalizedId = id.replace(/\\/g, '/')
@@ -11,31 +11,67 @@ function portraitPrecisionBackgroundFix() {
 
       let transformed = code.replace(/\r\n/g, '\n')
 
-      const fastPattern = /let\s+blob\s*=\s*await\s+tryFastUniformBackgroundRemoval\(file\);/
-      if (!fastPattern.test(transformed)) {
-        throw new Error('[portrait-precision] Fast-removal source pattern was not found')
+      // The fast flood-fill path is only allowed for genuinely uniform backdrops.
+      // These stricter checks deliberately prefer a slower AI pass over a false
+      // positive on indoor scenes, landscapes, furniture, signage or mixed light.
+      const strictFastReplacements = [
+        [
+          '.filter((patch) => patch && patch.spread <= 24);',
+          '.filter((patch) => patch && patch.spread <= 12);'
+        ],
+        [
+          'if (patches.length < 4) return null;',
+          'if (patches.length < 6) return null;'
+        ],
+        [
+          'const group = patches.filter((patch) => colorDistance(seed.mean, patch.mean) <= 42);',
+          'const group = patches.filter((patch) => colorDistance(seed.mean, patch.mean) <= 22);'
+        ],
+        [
+          'if (bestGroup.length < 4) return null;',
+          'if (bestGroup.length < 6) return null;'
+        ],
+        [
+          'const tolerance = Math.max(24, Math.min(52, 24 + groupSpread * 1.35));',
+          'const tolerance = Math.max(14, Math.min(30, 14 + groupSpread * 0.9));'
+        ],
+        [
+          'if (tail < total * 0.06) return null;',
+          'if (tail < total * 0.15) return null;'
+        ]
+      ]
+
+      for (const [from, to] of strictFastReplacements) {
+        if (!transformed.includes(from)) {
+          throw new Error(`[background-quality] Expected fast-removal pattern was not found: ${from}`)
+        }
+        transformed = transformed.replace(from, to)
+      }
+
+      // The previous build routing created a portraitFirst branch after the fast
+      // check. Direction is not a reliable proxy for photo type, so every image
+      // that was not confidently removed by the strict uniform-background path
+      // now enters the precision branch regardless of portrait/landscape ratio.
+      const routePattern = /const\s+portraitFirst\s*=\s*[\s\S]*?;/
+      if (!routePattern.test(transformed)) {
+        throw new Error('[background-quality] AI routing pattern was not found')
       }
       transformed = transformed.replace(
-        fastPattern,
-        `// Portrait photos must not use the edge-color shortcut. Complex indoor
-      // backgrounds can look uniform at the border while ceiling, furniture and
-      // pillars remain as false foreground. Vertical photos go straight to AI.
-      const { canvas: fastPreflightCanvas } = await drawFileToCanvas(file);
-      const skipFastForPortrait =
-        fastPreflightCanvas.width > 0 &&
-        fastPreflightCanvas.height >= fastPreflightCanvas.width * 1.08;
-      let blob = skipFastForPortrait ? null : await tryFastUniformBackgroundRemoval(file);`
+        routePattern,
+        `const portraitFirst = true; // all non-uniform images use precision removal`
       )
 
-      const portraitPattern = /if\s*\(portraitFirst\)\s*\{[\s\S]*?\n\s*\}\s*else\s*\{/
-      if (!portraitPattern.test(transformed)) {
-        throw new Error('[portrait-precision] Portrait-first source pattern was not found')
+      const precisionBranchPattern = /if\s*\(portraitFirst\)\s*\{[\s\S]*?\n\s*\}\s*else\s*\{/
+      if (!precisionBranchPattern.test(transformed)) {
+        throw new Error('[background-quality] Precision branch pattern was not found')
       }
 
-      const portraitTarget = `if (portraitFirst) {
-          // Vertical photos bypass the fast remover and use BiRefNet Lite first.
-          // Do not run the generic alpha booster here: it can turn weak residual
-          // background alpha back into visible ceiling or pillar fragments.
+      const precisionTarget = `if (portraitFirst) {
+          // All non-uniform images use BiRefNet Lite first. This covers people,
+          // pets, products, food, vehicles, indoor/outdoor photos and sticker
+          // sheets without guessing from image orientation or background type.
+          // Sticker-sheet classification happens after matte generation using
+          // the existing connected-component layout analysis.
           let precisionError = null;
           try {
             method = 'birefnet';
@@ -54,9 +90,11 @@ function portraitPrecisionBackgroundFix() {
             precisionError = error;
             blob = null;
             quality = { status: 'fail', score: 99 };
-            console.warn('BiRefNet portrait-first removal failed:', error);
+            console.warn('BiRefNet primary removal failed:', error);
           }
 
+          // MODNet is a portrait-specialized fallback when the general precision
+          // matte is explicitly rejected by the quality gate.
           if (!blob || quality.status === 'fail') {
             try {
               setStage('preparing');
@@ -77,6 +115,8 @@ function portraitPrecisionBackgroundFix() {
             }
           }
 
+          // ORMBG remains the broad-purpose last resort only when both earlier
+          // outputs are unavailable or still fail the quality gate.
           if (!blob || quality.status === 'fail') {
             try {
               setStage('preparing');
@@ -97,10 +137,10 @@ function portraitPrecisionBackgroundFix() {
             }
           }
 
-          if (!blob) throw precisionError || new Error('Portrait background removal failed');
+          if (!blob) throw precisionError || new Error('Background removal failed');
         } else {`
 
-      transformed = transformed.replace(portraitPattern, portraitTarget)
+      transformed = transformed.replace(precisionBranchPattern, precisionTarget)
       return { code: transformed, map: null }
     },
   }
@@ -108,5 +148,5 @@ function portraitPrecisionBackgroundFix() {
 
 export default defineConfig({
   ...baseConfig,
-  plugins: [...(baseConfig.plugins || []), portraitPrecisionBackgroundFix()],
+  plugins: [...(baseConfig.plugins || []), backgroundQualityRouting()],
 })
