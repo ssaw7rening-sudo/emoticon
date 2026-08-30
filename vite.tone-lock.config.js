@@ -15,13 +15,14 @@ function originalToneLock() {
         throw new Error('[tone-lock] Existing tone preservation helper was not found')
       }
 
-      const helper = `// FOREGROUND_TONE_PRESERVATION_V3
+      const helper = `// FOREGROUND_TONE_PRESERVATION_V4
 async function restoreSolidForegroundOpacity(sourceFile, matteBlob) {
   const sourceUrl = URL.createObjectURL(sourceFile);
   const matteUrl = URL.createObjectURL(matteBlob);
 
   const loadImage = (url) => new Promise((resolve, reject) => {
     const image = new Image();
+    image.decoding = 'async';
     image.onload = () => resolve(image);
     image.onerror = () => reject(new Error('Tone-lock image decode failed'));
     image.src = url;
@@ -37,8 +38,6 @@ async function restoreSolidForegroundOpacity(sourceFile, matteBlob) {
     const height = sourceImage.naturalHeight || sourceImage.height;
     if (!width || !height || width < 5 || height < 5) return matteBlob;
 
-    // Keep the source image in a color-managed canvas. On wide-gamut phones,
-    // Display-P3 prevents the default sRGB canvas from muting the original tone.
     const sourceCanvas = document.createElement('canvas');
     sourceCanvas.width = width;
     sourceCanvas.height = height;
@@ -66,7 +65,7 @@ async function restoreSolidForegroundOpacity(sourceFile, matteBlob) {
     sourceCtx.imageSmoothingQuality = 'high';
     sourceCtx.drawImage(sourceImage, 0, 0, width, height);
 
-    // The AI output is used only for alpha. Its RGB never touches the source.
+    // Full-resolution matte used only as alpha; its RGB never touches the source.
     const maskCanvas = document.createElement('canvas');
     maskCanvas.width = width;
     maskCanvas.height = height;
@@ -76,53 +75,91 @@ async function restoreSolidForegroundOpacity(sourceFile, matteBlob) {
     maskCtx.imageSmoothingQuality = 'high';
     maskCtx.drawImage(matteImage, 0, 0, width, height);
 
-    // Harden only interior matte pixels. A nearby weak-alpha pixel marks a true
-    // contour, so hair strands and antialiased edges remain soft.
     const maskImageData = maskCtx.getImageData(0, 0, width, height);
     const maskPixels = maskImageData.data;
-    const alphaSource = new Uint8ClampedArray(width * height);
-    for (let i = 0; i < alphaSource.length; i += 1) {
-      alphaSource[i] = maskPixels[i * 4 + 3];
+
+    // Detect distance from true transparent background on a bounded preview.
+    // Pixels safely inside the subject become fully opaque regardless of the
+    // model's slightly soft alpha. Only the real contour band stays feathered.
+    const maxAnalysisDimension = 900;
+    const analysisScale = Math.min(1, maxAnalysisDimension / Math.max(width, height));
+    const analysisWidth = Math.max(1, Math.round(width * analysisScale));
+    const analysisHeight = Math.max(1, Math.round(height * analysisScale));
+    const analysisCanvas = document.createElement('canvas');
+    analysisCanvas.width = analysisWidth;
+    analysisCanvas.height = analysisHeight;
+    const analysisCtx = analysisCanvas.getContext('2d', { willReadFrequently: true });
+    if (!analysisCtx) return matteBlob;
+    analysisCtx.imageSmoothingEnabled = true;
+    analysisCtx.imageSmoothingQuality = 'high';
+    analysisCtx.drawImage(matteImage, 0, 0, analysisWidth, analysisHeight);
+
+    const analysisPixels = analysisCtx.getImageData(0, 0, analysisWidth, analysisHeight).data;
+    const total = analysisWidth * analysisHeight;
+    const distance = new Uint8Array(total);
+    distance.fill(255);
+    const queue = new Int32Array(total);
+    let head = 0;
+    let tail = 0;
+    const backgroundSeedAlpha = 44;
+    const maxDistance = 8;
+
+    for (let index = 0; index < total; index += 1) {
+      if (analysisPixels[index * 4 + 3] <= backgroundSeedAlpha) {
+        distance[index] = 0;
+        queue[tail++] = index;
+      }
     }
 
-    const offsets = [
-      [-1, 0], [1, 0], [0, -1], [0, 1],
-      [-1, -1], [1, -1], [-1, 1], [1, 1],
-      [-2, 0], [2, 0], [0, -2], [0, 2]
-    ];
+    const tryVisit = (index, nextDistance) => {
+      if (index < 0 || index >= total) return;
+      if (nextDistance >= distance[index] || nextDistance > maxDistance) return;
+      distance[index] = nextDistance;
+      queue[tail++] = index;
+    };
 
-    for (let y = 2; y < height - 2; y += 1) {
-      for (let x = 2; x < width - 2; x += 1) {
-        const index = y * width + x;
-        const alpha = alphaSource[index];
-        if (alpha < 165 || alpha >= 255) continue;
+    while (head < tail) {
+      const index = queue[head++];
+      const currentDistance = distance[index];
+      if (currentDistance >= maxDistance) continue;
+      const x = index % analysisWidth;
+      const y = Math.floor(index / analysisWidth);
+      const nextDistance = currentDistance + 1;
+      if (x > 0) tryVisit(index - 1, nextDistance);
+      if (x + 1 < analysisWidth) tryVisit(index + 1, nextDistance);
+      if (y > 0) tryVisit(index - analysisWidth, nextDistance);
+      if (y + 1 < analysisHeight) tryVisit(index + analysisWidth, nextDistance);
+    }
 
-        let minNearby = 255;
-        let sumNearby = 0;
-        let weakNearby = 0;
-        for (const [dx, dy] of offsets) {
-          const nearby = alphaSource[(y + dy) * width + (x + dx)];
-          if (nearby < minNearby) minNearby = nearby;
-          sumNearby += nearby;
-          if (nearby < 112) weakNearby += 1;
+    const xScale = analysisWidth / width;
+    const yScale = analysisHeight / height;
+    const solidInteriorDistance = 4;
+    const nearInteriorDistance = 3;
+
+    for (let y = 0; y < height; y += 1) {
+      const ay = Math.min(analysisHeight - 1, Math.floor(y * yScale));
+      for (let x = 0; x < width; x += 1) {
+        const ax = Math.min(analysisWidth - 1, Math.floor(x * xScale));
+        const interiorDistance = distance[ay * analysisWidth + ax];
+        const p = (y * width + x) * 4;
+        const alpha = maskPixels[p + 3];
+        if (alpha <= 0 || alpha >= 255) continue;
+
+        // Solid opaque subjects such as skin, clothing, products and stickers
+        // should not inherit the model's soft interior matte. Keeping a 3-4px
+        // analysis-space contour band protects hair strands and antialiasing.
+        if (interiorDistance >= solidInteriorDistance && alpha >= 92) {
+          maskPixels[p + 3] = 255;
+        } else if (interiorDistance >= nearInteriorDistance && alpha >= 150) {
+          maskPixels[p + 3] = Math.min(255, Math.round(alpha + (255 - alpha) * 0.94));
         }
-
-        const avgNearby = sumNearby / offsets.length;
-        let nextAlpha = alpha;
-        if (alpha >= 190 && minNearby >= 128 && avgNearby >= 190 && weakNearby === 0) {
-          nextAlpha = 255;
-        } else if (alpha >= 165 && minNearby >= 116 && avgNearby >= 178 && weakNearby <= 1) {
-          nextAlpha = Math.min(255, Math.round(alpha + (255 - alpha) * 0.92));
-        }
-
-        if (nextAlpha > alpha) maskPixels[index * 4 + 3] = nextAlpha;
       }
     }
 
     maskCtx.putImageData(maskImageData, 0, 0);
 
-    // destination-in multiplies only alpha coverage. The source RGB/color space
-    // remains untouched, unlike getImageData/putImageData round-tripping.
+    // destination-in changes coverage only. Source RGB and its color-managed
+    // rendering remain untouched from the original image element.
     sourceCtx.save();
     sourceCtx.globalCompositeOperation = 'destination-in';
     sourceCtx.drawImage(maskCanvas, 0, 0, width, height);
