@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 const distDir = path.resolve('dist');
+const SHOW_TOOL_LINKS = false;
 
 const locales = {
   ko: {
@@ -79,7 +80,11 @@ const blockFor = (locale) => {
     `<a href="${hrefFor(locale, slug)}" style="display:inline-flex;align-items:center;justify-content:center;min-height:38px;padding:8px 12px;border:1px solid #e7d7b7;border-radius:10px;background:#fffaf0;color:#6f512e;font-size:12px;font-weight:800;text-decoration:none;line-height:1.35">${label}</a>`
   )).join('');
 
-  return `\n<section id="prompt-maker-tool-links" aria-label="${locale.title}" style="max-width:896px;margin:18px auto 28px;padding:0 16px;font-family:inherit;color:#403a33">\n  <div style="border:1px solid #eadfce;border-radius:16px;background:#fffdf8;padding:16px;box-shadow:0 2px 8px rgba(80,60,30,.04)">\n    <div style="font-size:14px;font-weight:900;margin-bottom:4px">🧰 ${locale.title}</div>\n    <p style="margin:0 0 12px;font-size:12px;line-height:1.6;color:#766d63;font-weight:600">${locale.desc}</p>\n    <nav style="display:flex;flex-wrap:wrap;gap:7px">${links}</nav>\n  </div>\n</section>\n`;
+  const visibility = SHOW_TOOL_LINKS
+    ? ''
+    : ' hidden aria-hidden="true" style="display:none!important"';
+
+  return `\n<section id="prompt-maker-tool-links" aria-label="${locale.title}"${visibility}>\n  <div style="max-width:896px;margin:18px auto 28px;padding:0 16px;font-family:inherit;color:#403a33">\n    <div style="border:1px solid #eadfce;border-radius:16px;background:#fffdf8;padding:16px;box-shadow:0 2px 8px rgba(80,60,30,.04)">\n      <div style="font-size:14px;font-weight:900;margin-bottom:4px">🧰 ${locale.title}</div>\n      <p style="margin:0 0 12px;font-size:12px;line-height:1.6;color:#766d63;font-weight:600">${locale.desc}</p>\n      <nav style="display:flex;flex-wrap:wrap;gap:7px">${links}</nav>\n    </div>\n  </div>\n</section>\n`;
 };
 
 for (const [code, relativePath] of pageTargets) {
@@ -97,4 +102,4 @@ for (const [code, relativePath] of pageTargets) {
   fs.writeFileSync(filePath, html, 'utf8');
 }
 
-console.log('Localized internal tool links added to main and background-remover pages');
+console.log(`Localized internal tool links ${SHOW_TOOL_LINKS ? 'shown' : 'kept hidden'} on main and background-remover pages`);
