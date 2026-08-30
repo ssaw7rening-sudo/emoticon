@@ -36,7 +36,7 @@ function preservePrecisionBackgroundRemovalRgb() {
       const normalizedId = id.replace(/\\/g, '/')
       if (!normalizedId.endsWith('/src/components/BackgroundRemover.jsx')) return null
 
-      let transformed = code
+      let transformed = code.replace(/\r\n/g, '\n')
       for (const [from, to] of replacements) {
         if (!transformed.includes(from)) {
           throw new Error(`[precision-rgb] Expected BackgroundRemover source pattern was not found: ${from}`)
