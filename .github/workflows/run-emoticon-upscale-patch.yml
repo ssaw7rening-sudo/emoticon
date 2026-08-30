@@ -1,0 +1,34 @@
+name: Run Emoticon Upscale Patch
+
+on:
+  push:
+    paths:
+      - '.github/workflows/run-emoticon-upscale-patch.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Patch post processor
+        run: python scripts/patch-emoticon-upscale.py
+      - name: Build
+        run: |
+          npm ci
+          npm run build
+      - name: Commit
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add src/components/EmoticonPostProcessor.jsx
+          git commit -m 'Add transparent-safe emoticon upscaling'
+          git push
