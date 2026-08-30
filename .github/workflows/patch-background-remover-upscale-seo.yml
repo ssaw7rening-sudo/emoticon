@@ -32,3 +32,4 @@ jobs:
           git add src/components/BackgroundRemoverLanding.jsx scripts/generate-localized-pages.mjs src/App.jsx
           git commit -m 'Add upscale messaging to background remover landing'
           git push
+# retry with current landing structure
