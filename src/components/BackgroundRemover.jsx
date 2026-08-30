@@ -786,22 +786,40 @@ async function assessRemovalQuality(blob) {
   // close-up may touch the frame too, so only treat this as strong contamination
   // when the overall foreground is not already filling nearly the whole image.
   const bothUpperCornersContaminated =
-    topLeftCorner > 0.30 &&
-    topRightCorner > 0.30 &&
-    topEdge > 0.26 &&
-    visibleRatio > 0.28 &&
-    visibleRatio < 0.74;
+    topLeftCorner > 0.24 &&
+    topRightCorner > 0.24 &&
+    topEdge > 0.20 &&
+    visibleRatio > 0.24 &&
+    visibleRatio < 0.78;
   if (bothUpperCornersContaminated) score += 4;
 
+  // Softer upper-frame signals are intentionally warning-grade. They make
+  // ORMBG compare against MODNet without immediately blocking a legitimate
+  // close-up or group photo that happens to touch one edge.
+  const softBothUpperCorners =
+    topLeftCorner > 0.16 &&
+    topRightCorner > 0.16 &&
+    topEdge > 0.13 &&
+    visibleRatio > 0.20 &&
+    visibleRatio < 0.82;
+  if (!bothUpperCornersContaminated && softBothUpperCorners) score += 2;
+
   const leftUpperFrameContaminated =
-    topLeftCorner > 0.50 && upperLeftSide > 0.38 && topEdge > 0.20 && visibleRatio < 0.72;
+    topLeftCorner > 0.42 && upperLeftSide > 0.30 && topEdge > 0.16 && visibleRatio < 0.78;
   const rightUpperFrameContaminated =
-    topRightCorner > 0.50 && upperRightSide > 0.38 && topEdge > 0.20 && visibleRatio < 0.72;
+    topRightCorner > 0.42 && upperRightSide > 0.30 && topEdge > 0.16 && visibleRatio < 0.78;
   if (leftUpperFrameContaminated) score += 2;
   if (rightUpperFrameContaminated) score += 2;
 
+  const softLeftUpperFrame =
+    topLeftCorner > 0.30 && upperLeftSide > 0.22 && topEdge > 0.11 && visibleRatio < 0.82;
+  const softRightUpperFrame =
+    topRightCorner > 0.30 && upperRightSide > 0.22 && topEdge > 0.11 && visibleRatio < 0.82;
+  if (!leftUpperFrameContaminated && softLeftUpperFrame) score += 1;
+  if (!rightUpperFrameContaminated && softRightUpperFrame) score += 1;
+
   const broadUpperFrameContamination =
-    topEdge > 0.30 && leftEdge > 0.24 && rightEdge > 0.24 && visibleRatio > 0.34 && visibleRatio < 0.74;
+    topEdge > 0.24 && leftEdge > 0.18 && rightEdge > 0.18 && visibleRatio > 0.30 && visibleRatio < 0.78;
   if (broadUpperFrameContamination) score += 3;
 
   if (suspiciousDetachedRatio > 0.12) score += 2;
@@ -1519,7 +1537,7 @@ export default function BackgroundRemover({ lang = 'ko' }) {
             </div>
           )}
 
-          {resultUrl && ['ai', 'modnet'].includes(resultMethod) && ['warning', 'fail'].includes(qualityAssessment.status) && (
+          {resultUrl && ['ai', 'modnet'].includes(resultMethod) && (
             <div className="mt-3 rounded-xl border border-[#D8D0C5] bg-white px-3.5 py-3">
               <button type="button" disabled={busy} onClick={runPrecisionRetry} className="w-full rounded-xl bg-[#4B5868] px-4 py-3 text-sm font-extrabold text-white shadow-sm transition hover:bg-[#394554] disabled:cursor-wait disabled:opacity-60">
                 🧪 {busy && stage === 'precision' ? t.precisionWorking : t.precisionRetry}
