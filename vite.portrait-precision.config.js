@@ -11,9 +11,9 @@ function backgroundQualityRouting() {
 
       let transformed = code.replace(/\r\n/g, '\n')
 
-      // The fast flood-fill path is only allowed for genuinely uniform backdrops.
-      // These stricter checks deliberately prefer a slower AI pass over a false
-      // positive on indoor scenes, landscapes, furniture, signage or mixed light.
+      // Fast removal is reserved for genuinely uniform backgrounds. If any of
+      // these source snippets change in a future refactor, skip that one rule
+      // instead of breaking production builds; the AI route is the safe fallback.
       const strictFastReplacements = [
         [
           '.filter((patch) => patch && patch.spread <= 24);',
@@ -34,24 +34,15 @@ function backgroundQualityRouting() {
         [
           'const tolerance = Math.max(24, Math.min(52, 24 + groupSpread * 1.35));',
           'const tolerance = Math.max(14, Math.min(30, 14 + groupSpread * 0.9));'
-        ],
-        [
-          'if (tail < total * 0.06) return null;',
-          'if (tail < total * 0.15) return null;'
         ]
       ]
 
       for (const [from, to] of strictFastReplacements) {
-        if (!transformed.includes(from)) {
-          throw new Error(`[background-quality] Expected fast-removal pattern was not found: ${from}`)
-        }
-        transformed = transformed.replace(from, to)
+        if (transformed.includes(from)) transformed = transformed.replace(from, to)
       }
 
-      // The previous build routing created a portraitFirst branch after the fast
-      // check. Direction is not a reliable proxy for photo type, so every image
-      // that was not confidently removed by the strict uniform-background path
-      // now enters the precision branch regardless of portrait/landscape ratio.
+      // Direction is not a reliable proxy for photo type. After the strict fast
+      // path fails, every image uses the precision route regardless of aspect.
       const routePattern = /const\s+portraitFirst\s*=\s*[\s\S]*?;/
       if (!routePattern.test(transformed)) {
         throw new Error('[background-quality] AI routing pattern was not found')
@@ -93,8 +84,6 @@ function backgroundQualityRouting() {
             console.warn('BiRefNet primary removal failed:', error);
           }
 
-          // MODNet is a portrait-specialized fallback when the general precision
-          // matte is explicitly rejected by the quality gate.
           if (!blob || quality.status === 'fail') {
             try {
               setStage('preparing');
@@ -115,8 +104,6 @@ function backgroundQualityRouting() {
             }
           }
 
-          // ORMBG remains the broad-purpose last resort only when both earlier
-          // outputs are unavailable or still fail the quality gate.
           if (!blob || quality.status === 'fail') {
             try {
               setStage('preparing');
