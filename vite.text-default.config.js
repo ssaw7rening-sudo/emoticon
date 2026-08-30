@@ -111,6 +111,114 @@ async function removeWithModnet(file, onProgress) {
       narrowVerticalEdgeFragment ||
       flatTopEdgeFragment ||
       distantEdgeFragment;`
+    ],
+    [
+      'async function assessRemovalQuality(blob) {',
+      `async function shouldTryPortraitModel(blob) {
+  const { canvas } = await drawFileToCanvas(blob);
+  const { width, height } = canvas;
+  if (!width || !height) return false;
+
+  // Portrait matting is only auto-compared for clearly vertical images. This
+  // keeps square sticker sheets and most object/product images on ORMBG.
+  const aspect = width / Math.max(1, height);
+  if (aspect > 0.92 || height < width * 1.08) return false;
+
+  const maxDimension = 420;
+  const scale = Math.min(1, maxDimension / Math.max(width, height));
+  const analysisWidth = Math.max(1, Math.round(width * scale));
+  const analysisHeight = Math.max(1, Math.round(height * scale));
+  const analysisCanvas = document.createElement('canvas');
+  analysisCanvas.width = analysisWidth;
+  analysisCanvas.height = analysisHeight;
+  const ctx = analysisCanvas.getContext('2d', { willReadFrequently: true });
+  if (!ctx) return false;
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = 'high';
+  ctx.drawImage(canvas, 0, 0, analysisWidth, analysisHeight);
+
+  const pixels = ctx.getImageData(0, 0, analysisWidth, analysisHeight).data;
+  const threshold = 56;
+  let coreVisible = 0;
+  let coreTotal = 0;
+  let lowerCoreVisible = 0;
+  let lowerCoreTotal = 0;
+  let upperOuterVisible = 0;
+  let upperOuterTotal = 0;
+  let upperSideVisible = 0;
+  let upperSideTotal = 0;
+  let topVisible = 0;
+  let topTotal = 0;
+
+  for (let y = 0; y < analysisHeight; y += 1) {
+    const yRatio = y / Math.max(1, analysisHeight - 1);
+    for (let x = 0; x < analysisWidth; x += 1) {
+      const xRatio = x / Math.max(1, analysisWidth - 1);
+      const visible = pixels[(y * analysisWidth + x) * 4 + 3] >= threshold;
+
+      if (xRatio >= 0.25 && xRatio <= 0.75 && yRatio >= 0.18 && yRatio <= 0.95) {
+        coreTotal += 1;
+        if (visible) coreVisible += 1;
+      }
+      if (xRatio >= 0.18 && xRatio <= 0.82 && yRatio >= 0.66 && yRatio <= 0.98) {
+        lowerCoreTotal += 1;
+        if (visible) lowerCoreVisible += 1;
+      }
+      if (yRatio <= 0.62 && (xRatio <= 0.24 || xRatio >= 0.76)) {
+        upperOuterTotal += 1;
+        if (visible) upperOuterVisible += 1;
+      }
+      if (yRatio <= 0.70 && (xRatio <= 0.10 || xRatio >= 0.90)) {
+        upperSideTotal += 1;
+        if (visible) upperSideVisible += 1;
+      }
+      if (yRatio <= 0.12) {
+        topTotal += 1;
+        if (visible) topVisible += 1;
+      }
+    }
+  }
+
+  const coreRatio = coreVisible / Math.max(1, coreTotal);
+  const lowerCoreRatio = lowerCoreVisible / Math.max(1, lowerCoreTotal);
+  const upperOuterRatio = upperOuterVisible / Math.max(1, upperOuterTotal);
+  const upperSideRatio = upperSideVisible / Math.max(1, upperSideTotal);
+  const topRatio = topVisible / Math.max(1, topTotal);
+
+  // A centered upper-body/full-body photo normally has strong central and lower
+  // foreground coverage. Large upper-corner/side coverage is then more likely to
+  // be ceiling, wall, sign or pillar residue than part of the person.
+  const centeredSubject = coreRatio >= 0.34 && lowerCoreRatio >= 0.38;
+  const suspiciousPortraitFrame =
+    upperOuterRatio >= 0.09 ||
+    upperSideRatio >= 0.11 ||
+    topRatio >= 0.10;
+
+  return centeredSubject && suspiciousPortraitFrame;
+}
+
+async function assessRemovalQuality(blob) {`
+    ],
+    [
+      `        // ORMBG is broad-purpose. If its mask looks unreliable, automatically
+        // try MODNet, a smaller portrait-matting model, and keep whichever
+        // result scores better. This costs nothing on clean ORMBG results.
+        if (quality.status !== 'pass') {`,
+      `        // ORMBG is broad-purpose. Besides warning/failure cases, vertical
+        // centered portraits with suspicious upper-frame residue are compared
+        // against MODNet even if the generic quality score says "pass".
+        const portraitCandidate = quality.status === 'pass' ? await shouldTryPortraitModel(blob) : false;
+        if (quality.status !== 'pass' || portraitCandidate) {`
+    ],
+    [
+      `            const portraitQuality = await assessRemovalQuality(portraitBlob);
+            if (qualityRank(portraitQuality) < qualityRank(quality)) {`,
+      `            const portraitQuality = await assessRemovalQuality(portraitBlob);
+            const portraitPassPreferred =
+              portraitCandidate &&
+              quality.status === 'pass' &&
+              portraitQuality.status === 'pass';
+            if (qualityRank(portraitQuality) < qualityRank(quality) || portraitPassPreferred) {`
     ]
   ]
 
