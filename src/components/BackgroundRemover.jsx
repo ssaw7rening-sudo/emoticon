@@ -613,6 +613,13 @@ async function assessRemovalQuality(blob) {
   let bottomVisible = 0;
   let leftVisible = 0;
   let rightVisible = 0;
+  let topLeftCornerVisible = 0;
+  let topRightCornerVisible = 0;
+  let upperLeftSideVisible = 0;
+  let upperRightSideVisible = 0;
+  const cornerWidth = Math.max(3, Math.round(analysisWidth * 0.18));
+  const cornerHeight = Math.max(3, Math.round(analysisHeight * 0.16));
+  const upperSideHeight = Math.max(3, Math.round(analysisHeight * 0.62));
 
   for (let y = 0; y < analysisHeight; y += 1) {
     for (let x = 0; x < analysisWidth; x += 1) {
@@ -624,6 +631,10 @@ async function assessRemovalQuality(blob) {
       if (y >= analysisHeight - bandY) bottomVisible += 1;
       if (x < bandX) leftVisible += 1;
       if (x >= analysisWidth - bandX) rightVisible += 1;
+      if (x < cornerWidth && y < cornerHeight) topLeftCornerVisible += 1;
+      if (x >= analysisWidth - cornerWidth && y < cornerHeight) topRightCornerVisible += 1;
+      if (x < bandX && y < upperSideHeight) upperLeftSideVisible += 1;
+      if (x >= analysisWidth - bandX && y < upperSideHeight) upperRightSideVisible += 1;
     }
   }
 
@@ -634,8 +645,15 @@ async function assessRemovalQuality(blob) {
   const bottomEdge = bottomVisible / Math.max(1, analysisWidth * bandY);
   const leftEdge = leftVisible / Math.max(1, analysisHeight * bandX);
   const rightEdge = rightVisible / Math.max(1, analysisHeight * bandX);
+  const topLeftCorner = topLeftCornerVisible / Math.max(1, cornerWidth * cornerHeight);
+  const topRightCorner = topRightCornerVisible / Math.max(1, cornerWidth * cornerHeight);
+  const upperLeftSide = upperLeftSideVisible / Math.max(1, bandX * upperSideHeight);
+  const upperRightSide = upperRightSideVisible / Math.max(1, bandX * upperSideHeight);
 
   const { components } = analyzeAlphaComponents(ctx, analysisWidth, analysisHeight, threshold);
+  const sheetCheck = classifyEmoticonSheetComponents(components, analysisWidth, analysisHeight);
+  if (sheetCheck.status === 'sheet') return { status: 'pass', score: 0 };
+
   const ranked = [...components].sort((a, b) => b.area - a.area);
   const largest = ranked[0];
   const major = ranked.filter((item) => item.area >= total * 0.018);
@@ -667,6 +685,30 @@ async function assessRemovalQuality(blob) {
   else if (topEdge > 0.30 && Math.max(leftEdge, rightEdge) > 0.24) score += 1;
 
   if (leftEdge > 0.58 && rightEdge > 0.58 && visibleRatio > 0.48) score += 2;
+
+  // Complex indoor failures often leave large ceiling/signboard regions in both
+  // upper corners even though the center subject was isolated. A legitimate
+  // close-up may touch the frame too, so only treat this as strong contamination
+  // when the overall foreground is not already filling nearly the whole image.
+  const bothUpperCornersContaminated =
+    topLeftCorner > 0.30 &&
+    topRightCorner > 0.30 &&
+    topEdge > 0.26 &&
+    visibleRatio > 0.28 &&
+    visibleRatio < 0.74;
+  if (bothUpperCornersContaminated) score += 4;
+
+  const leftUpperFrameContaminated =
+    topLeftCorner > 0.50 && upperLeftSide > 0.38 && topEdge > 0.20 && visibleRatio < 0.72;
+  const rightUpperFrameContaminated =
+    topRightCorner > 0.50 && upperRightSide > 0.38 && topEdge > 0.20 && visibleRatio < 0.72;
+  if (leftUpperFrameContaminated) score += 2;
+  if (rightUpperFrameContaminated) score += 2;
+
+  const broadUpperFrameContamination =
+    topEdge > 0.30 && leftEdge > 0.24 && rightEdge > 0.24 && visibleRatio > 0.34 && visibleRatio < 0.74;
+  if (broadUpperFrameContamination) score += 3;
+
   if (suspiciousDetachedRatio > 0.12) score += 2;
   else if (suspiciousDetachedRatio > 0.065) score += 1;
 
@@ -679,6 +721,13 @@ async function assessRemovalQuality(blob) {
   // A solid foreground is expected; this metric is only diagnostic for future tuning.
   const solidRatio = solid / Math.max(1, visible);
   if (solidRatio < 0.26 && visibleRatio > 0.44) score += 1;
+
+  // Two independent strong upper-frame signals are enough to block saving even
+  // when the foreground component graph is connected by thin alpha bridges.
+  if ((bothUpperCornersContaminated && (leftUpperFrameContaminated || rightUpperFrameContaminated)) ||
+      (broadUpperFrameContamination && (topLeftCorner > 0.42 || topRightCorner > 0.42))) {
+    score = Math.max(score, 5);
+  }
 
   if (score >= 4) return { status: 'fail', score };
   if (score >= 2) return { status: 'warning', score };
