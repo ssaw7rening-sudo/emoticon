@@ -80,6 +80,68 @@ async function createInferenceInputFile(file, maxSide = 1400) {
         transformed = `${mobileHelpers}\n\n${transformed}`
       }
 
+      // Restore fully opaque subject interiors after matte generation. AI mattes
+      // can leave skin/clothing at alpha ~220-250, which makes the original RGB
+      // look slightly darker against the transparency preview. Only alpha changes;
+      // RGB is never altered, and pixels near transparent edges are left alone.
+      if (!transformed.includes('FOREGROUND_TONE_PRESERVATION_V1')) {
+        const toneHelper = `// FOREGROUND_TONE_PRESERVATION_V1
+async function restoreSolidForegroundOpacity(blob) {
+  const { canvas, ctx } = await drawFileToCanvas(blob);
+  const { width, height } = canvas;
+  if (!width || !height || width < 5 || height < 5) return blob;
+
+  const imageData = ctx.getImageData(0, 0, width, height);
+  const pixels = imageData.data;
+  const source = new Uint8ClampedArray(pixels);
+  let changed = 0;
+
+  for (let y = 2; y < height - 2; y += 1) {
+    for (let x = 2; x < width - 2; x += 1) {
+      const p = (y * width + x) * 4;
+      const alpha = source[p + 3];
+      if (alpha < 212 || alpha >= 255) continue;
+
+      let minNearby = 255;
+      let sumNearby = 0;
+      let countNearby = 0;
+      for (let dy = -2; dy <= 2; dy += 1) {
+        for (let dx = -2; dx <= 2; dx += 1) {
+          if (dx === 0 && dy === 0) continue;
+          const np = ((y + dy) * width + (x + dx)) * 4;
+          const nearbyAlpha = source[np + 3];
+          if (nearbyAlpha < minNearby) minNearby = nearbyAlpha;
+          sumNearby += nearbyAlpha;
+          countNearby += 1;
+        }
+      }
+
+      const avgNearby = sumNearby / Math.max(1, countNearby);
+      let nextAlpha = alpha;
+
+      // High-confidence interior: make it fully opaque so the source tone is
+      // displayed exactly as captured.
+      if (alpha >= 232 && minNearby >= 216 && avgNearby >= 236) {
+        nextAlpha = 255;
+      // Slightly softer interior: gently lift opacity without flattening natural
+      // antialiasing or genuinely translucent detail.
+      } else if (alpha >= 212 && minNearby >= 202 && avgNearby >= 226) {
+        nextAlpha = Math.min(255, Math.round(alpha + (255 - alpha) * 0.68));
+      }
+
+      if (nextAlpha <= alpha) continue;
+      pixels[p + 3] = nextAlpha;
+      changed += 1;
+    }
+  }
+
+  if (!changed) return blob;
+  ctx.putImageData(imageData, 0, 0);
+  return canvasToPngBlob(canvas);
+}`
+        transformed = `${toneHelper}\n\n${transformed}`
+      }
+
       // If the source still has the simple pipeline form, resize only the model
       // input. The existing preserveOriginalRgb logic restores original colors
       // and dimensions after ORMBG/MODNet completes.
@@ -205,6 +267,18 @@ async function createInferenceInputFile(file, maxSide = 1400) {
       transformed = transformed.replace(
         "          if (quality.status !== 'pass') {",
         "          if (quality.status !== 'pass' && (!isMobileLikeDevice() || file.size <= 3 * 1024 * 1024)) {"
+      )
+
+      // Apply tone preservation once to whichever removal method won. Keeping it
+      // at the final common path makes desktop/mobile and all model fallbacks
+      // visually consistent without changing model selection or quality scoring.
+      const processingPattern = /\n\s*setStage\('processing'\);\n\s*setProgress\(null\);/
+      if (!processingPattern.test(transformed)) {
+        throw new Error('[background-quality] Final processing pattern was not found')
+      }
+      transformed = transformed.replace(
+        processingPattern,
+        `\n      blob = await restoreSolidForegroundOpacity(blob);\n      setStage('processing');\n      setProgress(null);`
       )
 
       // Improve the failure copy without making the build depend on the exact UI.
