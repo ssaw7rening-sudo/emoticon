@@ -1,0 +1,34 @@
+name: Optimize AI Foreground Cleanup
+
+on:
+  push:
+    paths:
+      - '.github/workflows/optimize-ai-foreground-cleanup.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  optimize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Optimize cleanup
+        run: python scripts/optimize-ai-foreground-cleanup.py
+      - name: Build
+        run: |
+          npm ci
+          npm run build
+      - name: Commit
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add src/components/BackgroundRemover.jsx
+          git commit -m 'Optimize AI cleanup on mobile'
+          git push
