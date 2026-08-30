@@ -258,6 +258,8 @@ async function tryFastUniformBackgroundRemoval(file) {
     if (y + 1 < height) enqueue(index + width);
   }
 
+  // A solid backdrop should occupy a meaningful border-connected area.
+  // If too little was removed, fall back to the AI model rather than risk a false positive.
   if (tail < total * 0.06) return null;
 
   ctx.putImageData(imageData, 0, 0);
@@ -405,6 +407,9 @@ async function correctUnexpectedForegroundTransparency(blob) {
   const p90 = alphaPercentile(histogram, visibleCount, 0.9);
   const p98 = alphaPercentile(histogram, visibleCount, 0.98);
 
+  // ORMBG can occasionally return a correct mask whose entire foreground alpha
+  // is scaled down. Only compensate when the high percentile itself is translucent,
+  // so normal antialiased edges and intentional soft boundaries are preserved.
   if (p98 >= 242 || p50 >= 225 || p90 >= 238) return blob;
 
   const scale = Math.min(3.25, 255 / Math.max(32, p98));
@@ -483,7 +488,18 @@ function analyzeAlphaComponents(ctx, width, height, alphaThreshold = 36) {
       }
     }
 
-    components.push({ label: nextLabel, area, minX, minY, maxX, maxY, width: maxX - minX + 1, height: maxY - minY + 1, centerX: (minX + maxX) / 2, centerY: (minY + maxY) / 2 });
+    components.push({
+      label: nextLabel,
+      area,
+      minX,
+      minY,
+      maxX,
+      maxY,
+      width: maxX - minX + 1,
+      height: maxY - minY + 1,
+      centerX: (minX + maxX) / 2,
+      centerY: (minY + maxY) / 2
+    });
   }
 
   return { pixels, labels, components };
@@ -500,6 +516,9 @@ async function cleanAiForegroundArtifacts(blob) {
   const { width, height } = canvas;
   if (!width || !height) return blob;
 
+  // Detect disconnected remnants on a bounded preview. The full-resolution
+  // image is only touched once after the keep-mask is decided, which keeps
+  // memory use reasonable on phones.
   const maxAnalysisDimension = 960;
   const scale = Math.min(1, maxAnalysisDimension / Math.max(width, height));
   const analysisWidth = Math.max(1, Math.round(width * scale));
@@ -522,6 +541,10 @@ async function cleanAiForegroundArtifacts(blob) {
   const largestShare = largest.area / Math.max(1, visibleArea);
   const topFiveShare = ranked.slice(0, 5).reduce((sum, item) => sum + item.area, 0) / Math.max(1, visibleArea);
 
+  // A 15-sticker sheet has many similarly sized foreground islands. Skip this
+  // cleanup unless a few dominant subjects account for most visible pixels.
+  // This still supports two or three people because several large components
+  // can be retained at the same time.
   const photoLikeForeground = largestShare >= 0.30 || topFiveShare >= 0.72;
   if (!photoLikeForeground) return blob;
 
@@ -540,15 +563,22 @@ async function cleanAiForegroundArtifacts(blob) {
     const touchesBottom = component.maxY >= analysisHeight - 3;
     const edgeCount = Number(touchesLeft) + Number(touchesRight) + Number(touchesTop) + Number(touchesBottom);
 
+    // Typical ORMBG leftovers are wall/sign/ceiling fragments attached to the
+    // outer frame. Do not discard a sizeable second/third person merely for
+    // being near one edge; only reject strongly background-like edge shapes.
     const suspiciousEdgeFragment =
       (edgeCount >= 2 && component.area < largest.area * 0.62) ||
-      (((touchesLeft || touchesRight || touchesTop) && !touchesBottom) && component.area < largest.area * 0.28 && (fillRatio < 0.48 || aspect > 2.7));
+      (((touchesLeft || touchesRight || touchesTop) && !touchesBottom) &&
+        component.area < largest.area * 0.28 &&
+        (fillRatio < 0.48 || aspect > 2.7));
 
     if (suspiciousEdgeFragment) continue;
     keepLabels.add(component.label);
     keptComponents.push(component);
   }
 
+  // Preserve disconnected hands, hair wisps and accessories close to a kept
+  // person, while still dropping distant text/sign fragments.
   const satelliteMinArea = Math.max(analysisTotal * 0.00012, largest.area * 0.0035);
   const satelliteMaxGap = Math.max(4, Math.max(analysisWidth, analysisHeight) * 0.026);
   for (const component of ranked) {
@@ -563,6 +593,7 @@ async function cleanAiForegroundArtifacts(blob) {
     if (keepLabels.has(labels[i])) keepMask[i] = 1;
   }
 
+  // Expand the keep mask slightly so antialiased hair/clothing edges survive.
   const expandedMask = keepMask.slice();
   const radius = 2;
   for (let y = 0; y < analysisHeight; y += 1) {
@@ -601,14 +632,21 @@ async function cleanAiForegroundArtifacts(blob) {
         continue;
       }
 
+      // Tighten only weak matte pixels. Strong hair/skin/clothing alpha stays
+      // untouched; faint white/gray halos become less visible.
       if (alpha < 16) pixels[p + 3] = 0;
       else if (alpha < 72) pixels[p + 3] = Math.round(alpha * 0.68);
       else if (alpha < 132) pixels[p + 3] = Math.round(alpha * 0.90);
     }
   }
 
+  // Very small cleanups are mostly antialias noise; avoid an unnecessary
+  // re-encode unless the mask actually removed something meaningful.
   if (removedPixels < width * height * 0.00008) return blob;
 
+  // Reduce bright fringe color using adjacent confident foreground colors.
+  // This is deliberately one-pixel and conservative so facial detail is not
+  // blurred and multiple people remain independent.
   const neighborOffsets = [[-1, 0], [1, 0], [0, -1], [0, 1]];
   for (let y = 1; y < height - 1; y += 1) {
     for (let x = 1; x < width - 1; x += 1) {
@@ -743,23 +781,45 @@ async function assessRemovalQuality(blob) {
 
   if (leftEdge > 0.58 && rightEdge > 0.58 && visibleRatio > 0.48) score += 2;
 
-  const bothUpperCornersContaminated = topLeftCorner > 0.24 && topRightCorner > 0.24 && topEdge > 0.20 && visibleRatio > 0.24 && visibleRatio < 0.78;
+  // Complex indoor failures often leave large ceiling/signboard regions in both
+  // upper corners even though the center subject was isolated. A legitimate
+  // close-up may touch the frame too, so only treat this as strong contamination
+  // when the overall foreground is not already filling nearly the whole image.
+  const bothUpperCornersContaminated =
+    topLeftCorner > 0.24 &&
+    topRightCorner > 0.24 &&
+    topEdge > 0.20 &&
+    visibleRatio > 0.24 &&
+    visibleRatio < 0.78;
   if (bothUpperCornersContaminated) score += 4;
 
-  const softBothUpperCorners = topLeftCorner > 0.16 && topRightCorner > 0.16 && topEdge > 0.13 && visibleRatio > 0.20 && visibleRatio < 0.82;
+  // Softer upper-frame signals are intentionally warning-grade. They make
+  // ORMBG compare against MODNet without immediately blocking a legitimate
+  // close-up or group photo that happens to touch one edge.
+  const softBothUpperCorners =
+    topLeftCorner > 0.16 &&
+    topRightCorner > 0.16 &&
+    topEdge > 0.13 &&
+    visibleRatio > 0.20 &&
+    visibleRatio < 0.82;
   if (!bothUpperCornersContaminated && softBothUpperCorners) score += 2;
 
-  const leftUpperFrameContaminated = topLeftCorner > 0.42 && upperLeftSide > 0.30 && topEdge > 0.16 && visibleRatio < 0.78;
-  const rightUpperFrameContaminated = topRightCorner > 0.42 && upperRightSide > 0.30 && topEdge > 0.16 && visibleRatio < 0.78;
+  const leftUpperFrameContaminated =
+    topLeftCorner > 0.42 && upperLeftSide > 0.30 && topEdge > 0.16 && visibleRatio < 0.78;
+  const rightUpperFrameContaminated =
+    topRightCorner > 0.42 && upperRightSide > 0.30 && topEdge > 0.16 && visibleRatio < 0.78;
   if (leftUpperFrameContaminated) score += 2;
   if (rightUpperFrameContaminated) score += 2;
 
-  const softLeftUpperFrame = topLeftCorner > 0.30 && upperLeftSide > 0.22 && topEdge > 0.11 && visibleRatio < 0.82;
-  const softRightUpperFrame = topRightCorner > 0.30 && upperRightSide > 0.22 && topEdge > 0.11 && visibleRatio < 0.82;
+  const softLeftUpperFrame =
+    topLeftCorner > 0.30 && upperLeftSide > 0.22 && topEdge > 0.11 && visibleRatio < 0.82;
+  const softRightUpperFrame =
+    topRightCorner > 0.30 && upperRightSide > 0.22 && topEdge > 0.11 && visibleRatio < 0.82;
   if (!leftUpperFrameContaminated && softLeftUpperFrame) score += 1;
   if (!rightUpperFrameContaminated && softRightUpperFrame) score += 1;
 
-  const broadUpperFrameContamination = topEdge > 0.24 && leftEdge > 0.18 && rightEdge > 0.18 && visibleRatio > 0.30 && visibleRatio < 0.78;
+  const broadUpperFrameContamination =
+    topEdge > 0.24 && leftEdge > 0.18 && rightEdge > 0.18 && visibleRatio > 0.30 && visibleRatio < 0.78;
   if (broadUpperFrameContamination) score += 3;
 
   if (suspiciousDetachedRatio > 0.12) score += 2;
@@ -767,11 +827,16 @@ async function assessRemovalQuality(blob) {
 
   if (largest && largestWidthRatio > 0.90 && largestHeightRatio > 0.72 && largestTouchesTop && largestTouchesSide && visibleRatio > 0.46) score += 2;
 
+  // Bottom contact is common for a correctly isolated person or group. Reward it
+  // slightly so normal full-body/upper-body photos are less likely to be blocked.
   if (bottomEdge > 0.28 && topEdge < 0.24 && visibleRatio < 0.66) score = Math.max(0, score - 1);
 
+  // A solid foreground is expected; this metric is only diagnostic for future tuning.
   const solidRatio = solid / Math.max(1, visible);
   if (solidRatio < 0.26 && visibleRatio > 0.44) score += 1;
 
+  // Two independent strong upper-frame signals are enough to block saving even
+  // when the foreground component graph is connected by thin alpha bridges.
   if ((bothUpperCornersContaminated && (leftUpperFrameContaminated || rightUpperFrameContaminated)) ||
       (broadUpperFrameContamination && (topLeftCorner > 0.42 || topRightCorner > 0.42))) {
     score = Math.max(score, 5);
@@ -831,7 +896,18 @@ function extractConnectedComponents(ctx, width, height) {
     }
 
     if (area < minPixels || maxX < minX || maxY < minY) continue;
-    components.push({ id: components.length + 1, minX, minY, maxX, maxY, width: maxX - minX + 1, height: maxY - minY + 1, area, centerX: (minX + maxX) / 2, centerY: (minY + maxY) / 2 });
+    components.push({
+      id: components.length + 1,
+      minX,
+      minY,
+      maxX,
+      maxY,
+      width: maxX - minX + 1,
+      height: maxY - minY + 1,
+      area,
+      centerX: (minX + maxX) / 2,
+      centerY: (minY + maxY) / 2
+    });
   }
 
   return components;
@@ -893,7 +969,11 @@ function assignComponentsToStickers(components, primaries, width, height) {
       const dy = Math.max(primary.minY - component.maxY, component.minY - primary.maxY, 0);
       const centerDx = component.centerX - primary.centerX;
       const centerDy = component.centerY - primary.centerY;
-      const distanceScore = (dx / expectedCellWidth) ** 2 + (dy / expectedVerticalGap) ** 2 + 0.04 * (centerDx / expectedCellWidth) ** 2 + 0.02 * (centerDy / expectedVerticalGap) ** 2;
+      const distanceScore =
+        (dx / expectedCellWidth) ** 2 +
+        (dy / expectedVerticalGap) ** 2 +
+        0.04 * (centerDx / expectedCellWidth) ** 2 +
+        0.02 * (centerDy / expectedVerticalGap) ** 2;
 
       if (distanceScore < bestScore) {
         bestScore = distanceScore;
@@ -918,6 +998,8 @@ function classifyEmoticonSheetComponents(components, width, height) {
   const total = width * height;
   if (!total || components.length < 10) return { status: 'not-sheet', confidence: 0 };
 
+  // A sticker-sheet primary is substantial but still much smaller than the full image.
+  // This excludes faces/bodies in ordinary group photos while filtering tiny text/noise fragments.
   const candidates = components.filter((component) => {
     const areaRatio = component.area / total;
     const fillRatio = component.area / Math.max(1, component.width * component.height);
@@ -978,7 +1060,7 @@ function classifyEmoticonSheetComponents(components, width, height) {
   const medianWidth = median(selected.map((item) => item.width / width));
   const medianHeight = median(selected.map((item) => item.height / height));
 
-  let confidence = 0.15;
+  let confidence = 0.15; // fifteen separated primary candidates were found
   if (xCoverage >= 0.62) confidence += 0.15;
   if (yCoverage >= 0.44) confidence += 0.15;
   if (averageRowSpread <= 0.13) confidence += 0.15;
@@ -997,6 +1079,8 @@ async function detectEmoticonSheet(blob) {
   const { width, height } = canvas;
   if (!width || !height) return { status: 'not-sheet', confidence: 0 };
 
+  // Layout detection does not need full-resolution pixels. Analyze a bounded
+  // preview so high-resolution phone photos do not allocate a huge BFS queue.
   const maxDimension = 900;
   const scale = Math.min(1, maxDimension / Math.max(width, height));
   const analysisWidth = Math.max(1, Math.round(width * scale));
@@ -1041,7 +1125,12 @@ async function splitIntoFifteen(blob) {
     outputCtx.drawImage(canvas, minX, minY, cropWidth, cropHeight, 0, 0, cropWidth, cropHeight);
 
     const itemBlob = await canvasToPngBlob(output);
-    items.push({ index: index + 1, blob: itemBlob, width: cropWidth, height: cropHeight });
+    items.push({
+      index: index + 1,
+      blob: itemBlob,
+      width: cropWidth,
+      height: cropHeight
+    });
   }
 
   if (items.length !== 15) throw new Error('Could not detect 15 sticker groups');
@@ -1177,6 +1266,9 @@ export default function BackgroundRemover({ lang = 'ko' }) {
       let blob = await tryFastUniformBackgroundRemoval(file);
       let quality = { status: 'pass', score: 0 };
 
+      // The edge-color shortcut can occasionally mistake a complex indoor scene
+      // for a uniform backdrop. Validate the fast result before accepting it.
+      // Any warning/failure is discarded and routed through the AI models.
       if (blob) {
         try {
           const fastQuality = await assessRemovalQuality(blob);
@@ -1204,6 +1296,9 @@ export default function BackgroundRemover({ lang = 'ko' }) {
         });
         quality = await assessRemovalQuality(blob);
 
+        // ORMBG is broad-purpose. If its mask looks unreliable, automatically
+        // try MODNet, a smaller portrait-matting model, and keep whichever
+        // result scores better. This costs nothing on clean ORMBG results.
         if (quality.status !== 'pass') {
           try {
             setStage('preparing');
@@ -1395,17 +1490,42 @@ export default function BackgroundRemover({ lang = 'ko' }) {
                 className="relative cursor-ew-resize select-none overflow-hidden outline-none focus-visible:ring-2 focus-visible:ring-[#7D9A75] focus-visible:ring-inset"
                 style={{ ...checkerStyle, touchAction: 'pan-y' }}
               >
-                <img src={resultUrl} alt={t.result} draggable={false} className="pointer-events-none block h-auto w-full select-none" />
-                <div className="pointer-events-none absolute inset-0 bg-white" style={{ clipPath: `inset(0 ${100 - comparePosition}% 0 0)` }}>
-                  <img src={sourceUrl} alt={t.original} draggable={false} className="h-full w-full select-none object-contain" />
+                <img
+                  src={resultUrl}
+                  alt={t.result}
+                  draggable={false}
+                  className="pointer-events-none block h-auto w-full select-none"
+                />
+                <div
+                  className="pointer-events-none absolute inset-0 bg-white"
+                  style={{ clipPath: `inset(0 ${100 - comparePosition}% 0 0)` }}
+                >
+                  <img
+                    src={sourceUrl}
+                    alt={t.original}
+                    draggable={false}
+                    className="h-full w-full select-none object-contain"
+                  />
                 </div>
-                <div aria-hidden="true" className="pointer-events-none absolute bottom-0 top-0 z-10 w-0.5 bg-white shadow-[0_0_0_1px_rgba(52,48,43,0.22),0_0_10px_rgba(0,0,0,0.18)]" style={{ left: `${comparePosition}%`, transform: 'translateX(-50%)' }}>
-                  <div className="absolute left-1/2 top-1/2 flex h-11 w-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-2 border-white bg-[#3E3933] text-lg font-black text-white shadow-lg">↔</div>
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute bottom-0 top-0 z-10 w-0.5 bg-white shadow-[0_0_0_1px_rgba(52,48,43,0.22),0_0_10px_rgba(0,0,0,0.18)]"
+                  style={{ left: `${comparePosition}%`, transform: 'translateX(-50%)' }}
+                >
+                  <div className="absolute left-1/2 top-1/2 flex h-11 w-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-2 border-white bg-[#3E3933] text-lg font-black text-white shadow-lg">
+                    ↔
+                  </div>
                 </div>
-                <div className="pointer-events-none absolute left-3 top-3 rounded-full bg-black/60 px-2.5 py-1 text-[11px] font-extrabold text-white shadow-sm">{t.original}</div>
-                <div className="pointer-events-none absolute right-3 top-3 rounded-full bg-[#3E6B4B]/90 px-2.5 py-1 text-[11px] font-extrabold text-white shadow-sm">{t.result}</div>
+                <div className="pointer-events-none absolute left-3 top-3 rounded-full bg-black/60 px-2.5 py-1 text-[11px] font-extrabold text-white shadow-sm">
+                  {t.original}
+                </div>
+                <div className="pointer-events-none absolute right-3 top-3 rounded-full bg-[#3E6B4B]/90 px-2.5 py-1 text-[11px] font-extrabold text-white shadow-sm">
+                  {t.result}
+                </div>
               </div>
-              <div className="border-t border-[#E7ECE3] bg-[#FBFCFA] px-3 py-2.5 text-center text-xs font-semibold leading-5 text-[#6B7467]">↔ {t.compareHint}</div>
+              <div className="border-t border-[#E7ECE3] bg-[#FBFCFA] px-3 py-2.5 text-center text-xs font-semibold leading-5 text-[#6B7467]">
+                ↔ {t.compareHint}
+              </div>
             </div>
           )}
 
@@ -1415,7 +1535,9 @@ export default function BackgroundRemover({ lang = 'ko' }) {
                 <span className="flex items-center gap-2"><span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-[#C8B79D] border-t-[#6D5C46]" />{stage === 'precision' ? t.precisionWorking : (stage === 'preparing' ? t.preparing : t.processing)}</span>
                 {typeof progress === 'number' && <span className="text-xs text-[#897D6D]">{progress}%</span>}
               </div>
-              {typeof progress === 'number' && <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-[#EFEAE2]"><div className="h-full rounded-full bg-[#7D9A75] transition-all" style={{ width: `${progress}%` }} /></div>}
+              {typeof progress === 'number' && (
+                <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-[#EFEAE2]"><div className="h-full rounded-full bg-[#7D9A75] transition-all" style={{ width: `${progress}%` }} /></div>
+              )}
             </div>
           )}
 
@@ -1437,7 +1559,9 @@ export default function BackgroundRemover({ lang = 'ko' }) {
 
           {resultUrl && ['ai', 'modnet'].includes(resultMethod) && (
             <div className="mt-3 rounded-xl border border-[#D8D0C5] bg-white px-3.5 py-3">
-              <button type="button" disabled={busy} onClick={runPrecisionRetry} className="w-full rounded-xl bg-[#4B5868] px-4 py-3 text-sm font-extrabold text-white shadow-sm transition hover:bg-[#394554] disabled:cursor-wait disabled:opacity-60">🧪 {busy && stage === 'precision' ? t.precisionWorking : t.precisionRetry}</button>
+              <button type="button" disabled={busy} onClick={runPrecisionRetry} className="w-full rounded-xl bg-[#4B5868] px-4 py-3 text-sm font-extrabold text-white shadow-sm transition hover:bg-[#394554] disabled:cursor-wait disabled:opacity-60">
+                🧪 {busy && stage === 'precision' ? t.precisionWorking : t.precisionRetry}
+              </button>
               <p className="mt-2 text-[11px] sm:text-xs font-medium leading-5 text-[#7B746B]">{t.precisionHint}</p>
             </div>
           )}
@@ -1446,11 +1570,15 @@ export default function BackgroundRemover({ lang = 'ko' }) {
 
           <div className="mt-4 flex flex-col gap-2 sm:flex-row">
             {!resultUrl ? (
-              <button type="button" disabled={busy} onClick={removeBackground} className="flex-1 rounded-xl bg-[#38332D] px-4 py-3 text-sm font-extrabold text-white shadow-sm transition hover:bg-[#27231F] disabled:cursor-wait disabled:opacity-60">{busy ? (stage === 'precision' ? t.precisionWorking : (stage === 'preparing' ? t.preparing : t.processing)) : `✨ ${t.remove}`}</button>
+              <button type="button" disabled={busy} onClick={removeBackground} className="flex-1 rounded-xl bg-[#38332D] px-4 py-3 text-sm font-extrabold text-white shadow-sm transition hover:bg-[#27231F] disabled:cursor-wait disabled:opacity-60">
+                {busy ? (stage === 'precision' ? t.precisionWorking : (stage === 'preparing' ? t.preparing : t.processing)) : `✨ ${t.remove}`}
+              </button>
             ) : (
               <button type="button" disabled={qualityAssessment.status === 'fail'} onClick={download} className="flex-1 rounded-xl bg-[#3E6B4B] px-4 py-3 text-sm font-extrabold text-white shadow-sm transition hover:bg-[#31573D] disabled:cursor-not-allowed disabled:bg-[#9D9A94] disabled:shadow-none">{qualityAssessment.status === 'fail' ? `⚠️ ${t.qualityBlocked}` : `⬇️ ${t.download}`}</button>
             )}
-            <button type="button" disabled={busy} onClick={resultUrl ? reset : () => inputRef.current?.click()} className="rounded-xl border border-[#D8D0C5] bg-white px-4 py-3 text-sm font-bold text-[#5F574E] transition hover:bg-[#F8F5EF] disabled:opacity-50">{resultUrl ? t.again : t.change}</button>
+            <button type="button" disabled={busy} onClick={resultUrl ? reset : () => inputRef.current?.click()} className="rounded-xl border border-[#D8D0C5] bg-white px-4 py-3 text-sm font-bold text-[#5F574E] transition hover:bg-[#F8F5EF] disabled:opacity-50">
+              {resultUrl ? t.again : t.change}
+            </button>
           </div>
 
           {resultUrl && qualityAssessment.status !== 'fail' && (sheetDetection.status === 'sheet' || splitItems.length > 0) && (
@@ -1464,14 +1592,26 @@ export default function BackgroundRemover({ lang = 'ko' }) {
               {splitError && <div className="mt-3 rounded-xl bg-[#FFF1EE] px-3 py-2.5 text-xs font-semibold leading-5 text-[#A64D3D]">{splitError}</div>}
 
               {splitItems.length === 0 ? (
-                <button type="button" disabled={splitting} onClick={autoSplit} className="mt-3 w-full rounded-xl border border-[#CFC5B7] bg-[#FFF9F0] px-4 py-3 text-sm font-extrabold text-[#5B4B39] transition hover:bg-[#FFF3DF] disabled:cursor-wait disabled:opacity-60">{splitting ? `⏳ ${t.splitting}` : `✂️ ${t.splitAction}`}</button>
+                <button
+                  type="button"
+                  disabled={splitting}
+                  onClick={autoSplit}
+                  className="mt-3 w-full rounded-xl border border-[#CFC5B7] bg-[#FFF9F0] px-4 py-3 text-sm font-extrabold text-[#5B4B39] transition hover:bg-[#FFF3DF] disabled:cursor-wait disabled:opacity-60"
+                >
+                  {splitting ? `⏳ ${t.splitting}` : `✂️ ${t.splitAction}`}
+                </button>
               ) : (
                 <>
                   <div className="mt-3 flex items-center justify-between gap-3 rounded-xl bg-[#F4F8F1] px-3 py-2.5">
                     <span className="text-xs font-bold leading-5 text-[#5D6D58]">✓ {t.splitReady}</span>
                     <button type="button" onClick={autoSplit} className="shrink-0 text-xs font-extrabold text-[#607859] underline underline-offset-2">{t.splitAgain}</button>
                   </div>
-                  <EmoticonPostProcessor items={splitItems} sourceName={file?.name || 'emoticon'} lang={lang} />
+
+                  <EmoticonPostProcessor
+                    items={splitItems}
+                    sourceName={file?.name || 'emoticon'}
+                    lang={lang}
+                  />
                 </>
               )}
             </div>
@@ -1484,7 +1624,14 @@ export default function BackgroundRemover({ lang = 'ko' }) {
                   <div className="text-xs sm:text-sm font-extrabold text-[#4A453F]">✂️ {t.splitMaybeTitle}</div>
                   <p className="mt-1 text-[11px] sm:text-xs leading-5 text-[#7A736B]">{t.splitMaybeDesc}</p>
                 </div>
-                <button type="button" disabled={splitting} onClick={autoSplit} className="shrink-0 rounded-lg border border-[#D8CDBD] bg-white px-3 py-2 text-xs font-extrabold text-[#625544] transition hover:bg-[#FFF8ED] disabled:cursor-wait disabled:opacity-60">{splitting ? `⏳ ${t.splitting}` : `✂️ ${t.splitMaybeAction}`}</button>
+                <button
+                  type="button"
+                  disabled={splitting}
+                  onClick={autoSplit}
+                  className="shrink-0 rounded-lg border border-[#D8CDBD] bg-white px-3 py-2 text-xs font-extrabold text-[#625544] transition hover:bg-[#FFF8ED] disabled:cursor-wait disabled:opacity-60"
+                >
+                  {splitting ? `⏳ ${t.splitting}` : `✂️ ${t.splitMaybeAction}`}
+                </button>
               </div>
               {splitError && <div className="mt-2 rounded-lg bg-[#FFF1EE] px-3 py-2 text-xs font-semibold leading-5 text-[#A64D3D]">{splitError}</div>}
             </div>
