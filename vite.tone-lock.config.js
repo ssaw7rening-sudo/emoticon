@@ -15,76 +15,124 @@ function originalToneLock() {
         throw new Error('[tone-lock] Existing tone preservation helper was not found')
       }
 
-      const helper = `// FOREGROUND_TONE_PRESERVATION_V2
+      const helper = `// FOREGROUND_TONE_PRESERVATION_V3
 async function restoreSolidForegroundOpacity(sourceFile, matteBlob) {
-  const { canvas: sourceCanvas, ctx: sourceCtx } = await drawFileToCanvas(sourceFile);
-  const { canvas: matteCanvas } = await drawFileToCanvas(matteBlob);
-  const { width, height } = sourceCanvas;
-  if (!width || !height || width < 5 || height < 5) return matteBlob;
+  const sourceUrl = URL.createObjectURL(sourceFile);
+  const matteUrl = URL.createObjectURL(matteBlob);
 
-  const maskCanvas = document.createElement('canvas');
-  maskCanvas.width = width;
-  maskCanvas.height = height;
-  const maskCtx = maskCanvas.getContext('2d', { willReadFrequently: true });
-  if (!maskCtx) return matteBlob;
-  maskCtx.imageSmoothingEnabled = true;
-  maskCtx.imageSmoothingQuality = 'high';
-  maskCtx.drawImage(matteCanvas, 0, 0, width, height);
+  const loadImage = (url) => new Promise((resolve, reject) => {
+    const image = new Image();
+    image.onload = () => resolve(image);
+    image.onerror = () => reject(new Error('Tone-lock image decode failed'));
+    image.src = url;
+  });
 
-  const sourceData = sourceCtx.getImageData(0, 0, width, height);
-  const maskData = maskCtx.getImageData(0, 0, width, height).data;
-  const pixels = sourceData.data;
-  const alphaSource = new Uint8ClampedArray(width * height);
+  try {
+    const [sourceImage, matteImage] = await Promise.all([
+      loadImage(sourceUrl),
+      loadImage(matteUrl)
+    ]);
 
-  // Use the model output strictly as an alpha matte. RGB always comes from the
-  // original file, so skin, clothing and product colors cannot shift darker.
-  for (let i = 0; i < width * height; i += 1) {
-    const p = i * 4;
-    const originalAlpha = pixels[p + 3];
-    const matteAlpha = maskData[p + 3];
-    const alpha = Math.round((originalAlpha * matteAlpha) / 255);
-    pixels[p + 3] = alpha;
-    alphaSource[i] = alpha;
-  }
+    const width = sourceImage.naturalWidth || sourceImage.width;
+    const height = sourceImage.naturalHeight || sourceImage.height;
+    if (!width || !height || width < 5 || height < 5) return matteBlob;
 
-  const offsets = [
-    [-1, 0], [1, 0], [0, -1], [0, 1],
-    [-1, -1], [1, -1], [-1, 1], [1, 1],
-    [-2, 0], [2, 0], [0, -2], [0, 2]
-  ];
+    // Keep the source image in a color-managed canvas. On wide-gamut phones,
+    // Display-P3 prevents the default sRGB canvas from muting the original tone.
+    const sourceCanvas = document.createElement('canvas');
+    sourceCanvas.width = width;
+    sourceCanvas.height = height;
 
-  // Restore only solid subject interiors. Any nearby low-alpha sample marks a
-  // real edge, so hair strands and antialiased contours keep their soft matte.
-  for (let y = 2; y < height - 2; y += 1) {
-    for (let x = 2; x < width - 2; x += 1) {
-      const index = y * width + x;
-      const alpha = alphaSource[index];
-      if (alpha < 185 || alpha >= 255) continue;
+    const wantsP3 =
+      typeof window !== 'undefined' &&
+      typeof window.matchMedia === 'function' &&
+      window.matchMedia('(color-gamut: p3)').matches;
 
-      let minNearby = 255;
-      let sumNearby = 0;
-      let solidNearby = 0;
-      for (const [dx, dy] of offsets) {
-        const nearby = alphaSource[(y + dy) * width + (x + dx)];
-        if (nearby < minNearby) minNearby = nearby;
-        sumNearby += nearby;
-        if (nearby >= 205) solidNearby += 1;
+    let sourceCtx = null;
+    if (wantsP3) {
+      try {
+        sourceCtx = sourceCanvas.getContext('2d', {
+          alpha: true,
+          colorSpace: 'display-p3'
+        });
+      } catch (error) {
+        sourceCtx = null;
       }
-
-      const avgNearby = sumNearby / offsets.length;
-      let nextAlpha = alpha;
-      if (alpha >= 205 && minNearby >= 170 && avgNearby >= 210 && solidNearby >= 9) {
-        nextAlpha = 255;
-      } else if (alpha >= 185 && minNearby >= 165 && avgNearby >= 200 && solidNearby >= 8) {
-        nextAlpha = Math.min(255, Math.round(alpha + (255 - alpha) * 0.85));
-      }
-
-      if (nextAlpha > alpha) pixels[index * 4 + 3] = nextAlpha;
     }
-  }
+    if (!sourceCtx) sourceCtx = sourceCanvas.getContext('2d', { alpha: true });
+    if (!sourceCtx) return matteBlob;
 
-  sourceCtx.putImageData(sourceData, 0, 0);
-  return canvasToPngBlob(sourceCanvas);
+    sourceCtx.imageSmoothingEnabled = true;
+    sourceCtx.imageSmoothingQuality = 'high';
+    sourceCtx.drawImage(sourceImage, 0, 0, width, height);
+
+    // The AI output is used only for alpha. Its RGB never touches the source.
+    const maskCanvas = document.createElement('canvas');
+    maskCanvas.width = width;
+    maskCanvas.height = height;
+    const maskCtx = maskCanvas.getContext('2d', { willReadFrequently: true });
+    if (!maskCtx) return matteBlob;
+    maskCtx.imageSmoothingEnabled = true;
+    maskCtx.imageSmoothingQuality = 'high';
+    maskCtx.drawImage(matteImage, 0, 0, width, height);
+
+    // Harden only interior matte pixels. A nearby weak-alpha pixel marks a true
+    // contour, so hair strands and antialiased edges remain soft.
+    const maskImageData = maskCtx.getImageData(0, 0, width, height);
+    const maskPixels = maskImageData.data;
+    const alphaSource = new Uint8ClampedArray(width * height);
+    for (let i = 0; i < alphaSource.length; i += 1) {
+      alphaSource[i] = maskPixels[i * 4 + 3];
+    }
+
+    const offsets = [
+      [-1, 0], [1, 0], [0, -1], [0, 1],
+      [-1, -1], [1, -1], [-1, 1], [1, 1],
+      [-2, 0], [2, 0], [0, -2], [0, 2]
+    ];
+
+    for (let y = 2; y < height - 2; y += 1) {
+      for (let x = 2; x < width - 2; x += 1) {
+        const index = y * width + x;
+        const alpha = alphaSource[index];
+        if (alpha < 165 || alpha >= 255) continue;
+
+        let minNearby = 255;
+        let sumNearby = 0;
+        let weakNearby = 0;
+        for (const [dx, dy] of offsets) {
+          const nearby = alphaSource[(y + dy) * width + (x + dx)];
+          if (nearby < minNearby) minNearby = nearby;
+          sumNearby += nearby;
+          if (nearby < 112) weakNearby += 1;
+        }
+
+        const avgNearby = sumNearby / offsets.length;
+        let nextAlpha = alpha;
+        if (alpha >= 190 && minNearby >= 128 && avgNearby >= 190 && weakNearby === 0) {
+          nextAlpha = 255;
+        } else if (alpha >= 165 && minNearby >= 116 && avgNearby >= 178 && weakNearby <= 1) {
+          nextAlpha = Math.min(255, Math.round(alpha + (255 - alpha) * 0.92));
+        }
+
+        if (nextAlpha > alpha) maskPixels[index * 4 + 3] = nextAlpha;
+      }
+    }
+
+    maskCtx.putImageData(maskImageData, 0, 0);
+
+    // destination-in multiplies only alpha coverage. The source RGB/color space
+    // remains untouched, unlike getImageData/putImageData round-tripping.
+    sourceCtx.save();
+    sourceCtx.globalCompositeOperation = 'destination-in';
+    sourceCtx.drawImage(maskCanvas, 0, 0, width, height);
+    sourceCtx.restore();
+
+    return canvasToPngBlob(sourceCanvas);
+  } finally {
+    URL.revokeObjectURL(sourceUrl);
+    URL.revokeObjectURL(matteUrl);
+  }
 }
 
 `
