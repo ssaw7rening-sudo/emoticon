@@ -1,0 +1,34 @@
+name: Patch Removal Quality Gate
+
+on:
+  push:
+    paths:
+      - '.github/workflows/patch-removal-quality-gate.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Patch removal quality gate
+        run: python scripts/patch-removal-quality-gate.py
+      - name: Build
+        run: |
+          npm ci
+          npm run build
+      - name: Commit
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add src/components/BackgroundRemover.jsx
+          git commit -m 'Add background removal quality gate'
+          git push
