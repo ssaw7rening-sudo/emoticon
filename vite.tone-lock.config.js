@@ -1,6 +1,44 @@
 import { defineConfig } from 'vite'
 import baseConfig from './vite.portrait-precision.config.js'
 
+function originalColorPreviewMask() {
+  return {
+    name: 'original-color-preview-mask',
+    enforce: 'pre',
+    transform(code, id) {
+      const normalizedId = id.replace(/\\/g, '/')
+      if (!normalizedId.endsWith('/src/components/BackgroundRemover.jsx')) return null
+
+      const pattern = /<img\s+src=\{resultUrl\}[\s\S]*?className="pointer-events-none block h-auto w-full select-none"\s*\/>/
+      if (!pattern.test(code)) {
+        throw new Error('[tone-preview] Result preview image pattern was not found')
+      }
+
+      const transformed = code.replace(
+        pattern,
+        `<img
+                  src={sourceUrl}
+                  alt={t.result}
+                  draggable={false}
+                  className="pointer-events-none block h-auto w-full select-none"
+                  style={{
+                    WebkitMaskImage: \`url(\${resultUrl})\`,
+                    maskImage: \`url(\${resultUrl})\`,
+                    WebkitMaskRepeat: 'no-repeat',
+                    maskRepeat: 'no-repeat',
+                    WebkitMaskPosition: 'center',
+                    maskPosition: 'center',
+                    WebkitMaskSize: '100% 100%',
+                    maskSize: '100% 100%'
+                  }}
+                />`
+      )
+
+      return { code: transformed, map: null }
+    },
+  }
+}
+
 function originalToneLock() {
   return {
     name: 'original-rgb-tone-lock',
@@ -184,36 +222,6 @@ async function restoreSolidForegroundOpacity(sourceFile, matteBlob) {
         'restoreSolidForegroundOpacity(file, precisionBlob)'
       )
 
-      // Preview the transparent result using the original image element for RGB
-      // and the generated PNG only as an alpha mask. This avoids the canvas/PNG
-      // color conversion path in the comparison UI while keeping the real saved
-      // resultBlob unchanged for download and sticker splitting.
-      const resultPreviewPattern = /<img\s+src=\{resultUrl\}\s+alt=\{t\.result\}\s+draggable=\{false\}\s+className="pointer-events-none block h-auto w-full select-none"\s*\/>/
-      if (!resultPreviewPattern.test(transformed)) {
-        throw new Error('[tone-lock] Result preview image pattern was not found')
-      }
-      transformed = transformed.replace(
-        resultPreviewPattern,
-        `<img
-                  src={sourceUrl}
-                  alt={t.result}
-                  draggable={false}
-                  className="pointer-events-none block h-auto w-full select-none"
-                  style={{
-                    WebkitMaskImage: \`url(\${resultUrl})\`,
-                    maskImage: \`url(\${resultUrl})\`,
-                    WebkitMaskMode: 'alpha',
-                    maskMode: 'alpha',
-                    WebkitMaskRepeat: 'no-repeat',
-                    maskRepeat: 'no-repeat',
-                    WebkitMaskPosition: 'center',
-                    maskPosition: 'center',
-                    WebkitMaskSize: '100% 100%',
-                    maskSize: '100% 100%'
-                  }}
-                />`
-      )
-
       return { code: transformed, map: null }
     },
   }
@@ -221,5 +229,5 @@ async function restoreSolidForegroundOpacity(sourceFile, matteBlob) {
 
 export default defineConfig({
   ...baseConfig,
-  plugins: [...(baseConfig.plugins || []), originalToneLock()],
+  plugins: [originalColorPreviewMask(), ...(baseConfig.plugins || []), originalToneLock()],
 })
