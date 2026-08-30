@@ -51,35 +51,37 @@ html[data-page='prompt-maker'] a[href$='/background-remover/']:active {
   }
 }
 
-/* Background-remover tools: use the site's warm cream / orange palette for actions. */
+/* Background-remover tools: keep actions bright and consistent with the cream/gold UI. */
 #background-remover button[class*="bg-[#3E6B4B]"] {
-  background-color: #C96A43 !important;
-  border-color: #B85B36 !important;
-  color: #FFFFFF !important;
-  box-shadow: 0 3px 10px rgba(184, 91, 54, 0.18) !important;
+  background-color: #FFF2C9 !important;
+  border: 1px solid #E4BE58 !important;
+  color: #744816 !important;
+  box-shadow: 0 2px 8px rgba(148, 105, 28, 0.10) !important;
 }
 
 @media (hover: hover) and (pointer: fine) {
   #background-remover button[class*="bg-[#3E6B4B]"]:hover {
-    background-color: #B85B36 !important;
+    background-color: #FFE9AE !important;
+    border-color: #D9AD3A !important;
   }
 }
 
 #background-remover button[class*="bg-[#F3F8F0]"] {
-  background-color: #FFF5EC !important;
-  border-color: #E7B894 !important;
-  color: #9A512F !important;
+  background-color: #FFF9E8 !important;
+  border-color: #E8CB7A !important;
+  color: #7A5426 !important;
 }
 
 #background-remover button[class*="bg-[#EEF5EA]"] {
-  background-color: #FFF0E3 !important;
-  border-color: #D8926D !important;
-  color: #934923 !important;
+  background-color: #FFF3D6 !important;
+  border-color: #E1BB5C !important;
+  color: #754A17 !important;
 }
 
-/* Keep disabled primary actions neutral instead of orange. */
+/* Keep disabled primary actions visibly disabled without becoming dark. */
 #background-remover button:disabled[class*="bg-[#3E6B4B]"] {
-  background-color: #B7B0A8 !important;
-  border-color: #B7B0A8 !important;
+  background-color: #F1ECE4 !important;
+  border-color: #D8D0C5 !important;
+  color: #9A9187 !important;
   box-shadow: none !important;
 }
