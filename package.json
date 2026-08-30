@@ -4,11 +4,11 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite --config vite.tone-lock.config.js",
-    "build": "node scripts/generate-og-images.mjs && vite build --config vite.tone-lock.config.js && node scripts/normalize-service-names.mjs && node scripts/generate-localized-pages.mjs && node scripts/generate-feature-seo-pages.mjs && node scripts/add-internal-tool-links.mjs && node scripts/finalize-seo.mjs && node scripts/enhance-global-seo.mjs && node scripts/polish-feature-landing-pages.mjs && node scripts/apply-og-images.mjs && node scripts/inject-prompt-template-fallback.mjs",
+    "dev": "vite --config vite.subject-cleanup.config.js",
+    "build": "node scripts/generate-og-images.mjs && vite build --config vite.subject-cleanup.config.js && node scripts/normalize-service-names.mjs && node scripts/generate-localized-pages.mjs && node scripts/generate-feature-seo-pages.mjs && node scripts/add-internal-tool-links.mjs && node scripts/finalize-seo.mjs && node scripts/enhance-global-seo.mjs && node scripts/polish-feature-landing-pages.mjs && node scripts/apply-og-images.mjs && node scripts/inject-prompt-template-fallback.mjs",
     "lint": "oxlint",
     "preview": "vite preview",
-    "cap:build": "vite build --config vite.tone-lock.config.js && npx cap sync",
+    "cap:build": "vite build --config vite.subject-cleanup.config.js && npx cap sync",
     "cap:sync": "npx cap sync",
     "cap:open:android": "npx cap open android"
   },
