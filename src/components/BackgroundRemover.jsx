@@ -1264,8 +1264,28 @@ export default function BackgroundRemover({ lang = 'ko' }) {
     try {
       let method = 'fast';
       let blob = await tryFastUniformBackgroundRemoval(file);
-
       let quality = { status: 'pass', score: 0 };
+
+      // The edge-color shortcut can occasionally mistake a complex indoor scene
+      // for a uniform backdrop. Validate the fast result before accepting it.
+      // Any warning/failure is discarded and routed through the AI models.
+      if (blob) {
+        try {
+          const fastQuality = await assessRemovalQuality(blob);
+          if (fastQuality.status === 'pass') {
+            quality = fastQuality;
+          } else {
+            console.warn('Fast background removal rejected by quality gate:', fastQuality);
+            blob = null;
+            quality = { status: 'idle', score: 0 };
+          }
+        } catch (fastQualityError) {
+          console.warn('Fast background validation failed; falling back to AI:', fastQualityError);
+          blob = null;
+          quality = { status: 'idle', score: 0 };
+        }
+      }
+
       if (!blob) {
         method = 'ai';
         setStage('preparing');
