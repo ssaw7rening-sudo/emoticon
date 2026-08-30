@@ -425,6 +425,81 @@ async function correctUnexpectedForegroundTransparency(blob) {
   return canvasToPngBlob(canvas);
 }
 
+async function refinePrecisionEdges(blob) {
+  const { canvas, ctx } = await drawFileToCanvas(blob);
+  const { width, height } = canvas;
+  if (!width || !height || width < 5 || height < 5) return blob;
+
+  const imageData = ctx.getImageData(0, 0, width, height);
+  const pixels = imageData.data;
+  const source = new Uint8ClampedArray(pixels);
+  const neighborOffsets = [
+    [-1, 0], [1, 0], [0, -1], [0, 1],
+    [-1, -1], [1, -1], [-1, 1], [1, 1],
+    [-2, 0], [2, 0], [0, -2], [0, 2],
+    [-2, -1], [2, -1], [-2, 1], [2, 1],
+    [-1, -2], [1, -2], [-1, 2], [1, 2]
+  ];
+  let changedPixels = 0;
+
+  for (let y = 2; y < height - 2; y += 1) {
+    for (let x = 2; x < width - 2; x += 1) {
+      const p = (y * width + x) * 4;
+      const alpha = source[p + 3];
+      if (alpha <= 0 || alpha >= 238) continue;
+
+      let transparentNearby = false;
+      let r = 0;
+      let g = 0;
+      let b = 0;
+      let confidentCount = 0;
+
+      for (const [dx, dy] of neighborOffsets) {
+        const np = ((y + dy) * width + (x + dx)) * 4;
+        const neighborAlpha = source[np + 3];
+        if (neighborAlpha <= 14) transparentNearby = true;
+        if (neighborAlpha >= 232) {
+          r += source[np];
+          g += source[np + 1];
+          b += source[np + 2];
+          confidentCount += 1;
+        }
+      }
+
+      // Only touch the actual matte boundary. Semi-transparent details inside
+      // the subject are preserved even if their alpha happens to be similar.
+      if (!transparentNearby) continue;
+
+      let nextAlpha = alpha;
+      if (alpha < 22) nextAlpha = 0;
+      else if (alpha < 64) nextAlpha = Math.round(alpha * 0.48);
+      else if (alpha < 118) nextAlpha = Math.round(alpha * 0.72);
+      else if (alpha < 170) nextAlpha = Math.round(alpha * 0.88);
+      else nextAlpha = Math.round(alpha * 0.96);
+
+      if (nextAlpha !== alpha) {
+        pixels[p + 3] = nextAlpha;
+        changedPixels += 1;
+      }
+
+      // Pull contaminated edge colors toward nearby confident foreground pixels.
+      // This reduces faint skin/hair colors from a person standing behind the
+      // subject without blurring the solid face, hair or clothing interior.
+      if (nextAlpha > 0 && confidentCount > 0) {
+        const mix = alpha < 118 ? 0.34 : alpha < 170 ? 0.22 : 0.12;
+        pixels[p] = Math.round(source[p] * (1 - mix) + (r / confidentCount) * mix);
+        pixels[p + 1] = Math.round(source[p + 1] * (1 - mix) + (g / confidentCount) * mix);
+        pixels[p + 2] = Math.round(source[p + 2] * (1 - mix) + (b / confidentCount) * mix);
+        changedPixels += 1;
+      }
+    }
+  }
+
+  if (!changedPixels) return blob;
+  ctx.putImageData(imageData, 0, 0);
+  return canvasToPngBlob(canvas);
+}
+
 function analyzeAlphaComponents(ctx, width, height, alphaThreshold = 36) {
   const pixels = ctx.getImageData(0, 0, width, height).data;
   const total = width * height;
@@ -1345,11 +1420,14 @@ export default function BackgroundRemover({ lang = 'ko' }) {
     setProgress(null);
     setPrecisionMessage('');
     try {
-      const precisionBlob = await removeWithBiRefNet(file, (info) => {
+      let precisionBlob = await removeWithBiRefNet(file, (info) => {
         if (typeof info?.progress === 'number') {
           setProgress(Math.max(0, Math.min(100, Math.round(info.progress))));
         }
       });
+      precisionBlob = await correctUnexpectedForegroundTransparency(precisionBlob);
+      precisionBlob = await cleanAiForegroundArtifacts(precisionBlob);
+      precisionBlob = await refinePrecisionEdges(precisionBlob);
       const precisionQuality = await assessRemovalQuality(precisionBlob);
       if (qualityRank(precisionQuality) <= qualityRank(qualityAssessment)) {
         const url = URL.createObjectURL(precisionBlob);
