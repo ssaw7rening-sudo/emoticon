@@ -425,6 +425,154 @@ async function correctUnexpectedForegroundTransparency(blob) {
   return canvasToPngBlob(canvas);
 }
 
+async function refineHairBackgroundChannels(blob) {
+  const { canvas, ctx } = await drawFileToCanvas(blob);
+  const { width, height } = canvas;
+  if (!width || !height || width < 8 || height < 8) return blob;
+
+  const maxAnalysisDimension = 1200;
+  const scale = Math.min(1, maxAnalysisDimension / Math.max(width, height));
+  const analysisWidth = Math.max(1, Math.round(width * scale));
+  const analysisHeight = Math.max(1, Math.round(height * scale));
+  if (analysisWidth < 8 || analysisHeight < 8) return blob;
+
+  const analysisCanvas = document.createElement('canvas');
+  analysisCanvas.width = analysisWidth;
+  analysisCanvas.height = analysisHeight;
+  const analysisCtx = analysisCanvas.getContext('2d', { willReadFrequently: true });
+  if (!analysisCtx) return blob;
+  analysisCtx.imageSmoothingEnabled = true;
+  analysisCtx.imageSmoothingQuality = 'high';
+  analysisCtx.drawImage(canvas, 0, 0, analysisWidth, analysisHeight);
+
+  const analysisData = analysisCtx.getImageData(0, 0, analysisWidth, analysisHeight).data;
+  const total = analysisWidth * analysisHeight;
+  const reachable = new Uint8Array(total);
+  const queue = new Int32Array(total);
+  const transparentThreshold = 14;
+  const weakThreshold = 205;
+  const confidentThreshold = 225;
+  let head = 0;
+  let tail = 0;
+
+  // Start from pixels that the precision matte already considers background,
+  // including small transparent holes. Grow only through weak-confidence matte
+  // so solid hair, skin and clothing cannot become part of the background path.
+  for (let index = 0; index < total; index += 1) {
+    if (analysisData[index * 4 + 3] > transparentThreshold) continue;
+    reachable[index] = 1;
+    queue[tail++] = index;
+  }
+
+  const tryReach = (index) => {
+    if (index < 0 || index >= total || reachable[index]) return;
+    if (analysisData[index * 4 + 3] > weakThreshold) return;
+    reachable[index] = 1;
+    queue[tail++] = index;
+  };
+
+  while (head < tail) {
+    const index = queue[head++];
+    const x = index % analysisWidth;
+    const y = Math.floor(index / analysisWidth);
+    if (x > 0) tryReach(index - 1);
+    if (x + 1 < analysisWidth) tryReach(index + 1);
+    if (y > 0) tryReach(index - analysisWidth);
+    if (y + 1 < analysisHeight) tryReach(index + analysisWidth);
+  }
+
+  const candidates = new Uint8Array(total);
+  const axes = [[1, 0], [0, 1], [1, 1], [1, -1]];
+  const searchRadius = 6;
+  let candidateCount = 0;
+
+  const hasConfidentPixel = (x, y, dx, dy) => {
+    for (let step = 1; step <= searchRadius; step += 1) {
+      const nx = x + dx * step;
+      const ny = y + dy * step;
+      if (nx < 0 || nx >= analysisWidth || ny < 0 || ny >= analysisHeight) break;
+      const alpha = analysisData[(ny * analysisWidth + nx) * 4 + 3];
+      if (alpha >= confidentThreshold) return true;
+    }
+    return false;
+  };
+
+  for (let y = searchRadius; y < analysisHeight - searchRadius; y += 1) {
+    for (let x = searchRadius; x < analysisWidth - searchRadius; x += 1) {
+      const index = y * analysisWidth + x;
+      if (!reachable[index]) continue;
+      const alpha = analysisData[index * 4 + 3];
+      if (alpha <= transparentThreshold || alpha > weakThreshold) continue;
+
+      let betweenForeground = false;
+      for (const [dx, dy] of axes) {
+        if (hasConfidentPixel(x, y, dx, dy) && hasConfidentPixel(x, y, -dx, -dy)) {
+          betweenForeground = true;
+          break;
+        }
+      }
+      if (!betweenForeground) continue;
+      candidates[index] = 1;
+      candidateCount += 1;
+    }
+  }
+
+  if (!candidateCount || candidateCount > total * 0.04) return blob;
+
+  // Expand a detected narrow gap slightly through the same weak background path.
+  // This opens the middle of a gap without crossing high-confidence hair strands.
+  const refinedMask = candidates.slice();
+  const expandRadius = 2;
+  for (let y = 0; y < analysisHeight; y += 1) {
+    for (let x = 0; x < analysisWidth; x += 1) {
+      const index = y * analysisWidth + x;
+      if (!candidates[index]) continue;
+      for (let dy = -expandRadius; dy <= expandRadius; dy += 1) {
+        const ny = y + dy;
+        if (ny < 0 || ny >= analysisHeight) continue;
+        for (let dx = -expandRadius; dx <= expandRadius; dx += 1) {
+          const nx = x + dx;
+          if (nx < 0 || nx >= analysisWidth) continue;
+          const next = ny * analysisWidth + nx;
+          if (!reachable[next]) continue;
+          if (analysisData[next * 4 + 3] <= weakThreshold) refinedMask[next] = 1;
+        }
+      }
+    }
+  }
+
+  const imageData = ctx.getImageData(0, 0, width, height);
+  const pixels = imageData.data;
+  const xScale = analysisWidth / width;
+  const yScale = analysisHeight / height;
+  let changedPixels = 0;
+
+  for (let y = 0; y < height; y += 1) {
+    const ay = Math.min(analysisHeight - 1, Math.floor(y * yScale));
+    for (let x = 0; x < width; x += 1) {
+      const ax = Math.min(analysisWidth - 1, Math.floor(x * xScale));
+      if (!refinedMask[ay * analysisWidth + ax]) continue;
+      const p = (y * width + x) * 4;
+      const alpha = pixels[p + 3];
+      if (alpha <= transparentThreshold || alpha >= 224) continue;
+
+      let nextAlpha = alpha;
+      if (alpha < 72) nextAlpha = 0;
+      else if (alpha < 130) nextAlpha = Math.round(alpha * 0.35);
+      else if (alpha < 180) nextAlpha = Math.round(alpha * 0.55);
+      else nextAlpha = Math.round(alpha * 0.72);
+
+      if (nextAlpha === alpha) continue;
+      pixels[p + 3] = nextAlpha;
+      changedPixels += 1;
+    }
+  }
+
+  if (!changedPixels) return blob;
+  ctx.putImageData(imageData, 0, 0);
+  return canvasToPngBlob(canvas);
+}
+
 async function refinePrecisionEdges(blob) {
   const { canvas, ctx } = await drawFileToCanvas(blob);
   const { width, height } = canvas;
@@ -1425,6 +1573,7 @@ export default function BackgroundRemover({ lang = 'ko' }) {
           setProgress(Math.max(0, Math.min(100, Math.round(info.progress))));
         }
       });
+      precisionBlob = await refineHairBackgroundChannels(precisionBlob);
       precisionBlob = await correctUnexpectedForegroundTransparency(precisionBlob);
       precisionBlob = await cleanAiForegroundArtifacts(precisionBlob);
       precisionBlob = await refinePrecisionEdges(precisionBlob);
