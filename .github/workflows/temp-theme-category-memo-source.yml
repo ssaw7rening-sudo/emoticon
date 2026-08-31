@@ -44,18 +44,18 @@ jobs:
           app_path.write_text(app)
 
           vite = vite_path.read_text()
-          vite_block = '''      // Keep derived key arrays stable while the selected language dictionaries
-      // are unchanged. This also makes the sorted theme memo effective.
-      const keyAnchor = "  const themeKeys = Object.keys(currentThemes);\\n  const categoryKeys = Object.keys(currentTags);"
-      if (!transformed.includes(keyAnchor)) {
-        throw new Error('[sort-memoization] theme/category key anchor was not found')
-      }
-      transformed = transformed.replace(
-        keyAnchor,
-        "  const themeKeys = React.useMemo(() => Object.keys(currentThemes), [currentThemes]);\\n  const categoryKeys = React.useMemo(() => Object.keys(currentTags), [currentTags]);"
-      )
-
-'''
+          vite_block = (
+              "      // Keep derived key arrays stable while the selected language dictionaries\n"
+              "      // are unchanged. This also makes the sorted theme memo effective.\n"
+              "      const keyAnchor = \"  const themeKeys = Object.keys(currentThemes);\\n  const categoryKeys = Object.keys(currentTags);\"\n"
+              "      if (!transformed.includes(keyAnchor)) {\n"
+              "        throw new Error('[sort-memoization] theme/category key anchor was not found')\n"
+              "      }\n"
+              "      transformed = transformed.replace(\n"
+              "        keyAnchor,\n"
+              "        \"  const themeKeys = React.useMemo(() => Object.keys(currentThemes), [currentThemes]);\\n  const categoryKeys = React.useMemo(() => Object.keys(currentTags), [currentTags]);\"\n"
+              "      )\n\n"
+          )
           vite_count = vite.count(vite_block)
           print(f'vite key transform block count={vite_count}')
           if vite_count != 1:
