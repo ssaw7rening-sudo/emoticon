@@ -32,8 +32,8 @@ jobs:
           app = app_path.read_text()
           target = 'rounded-md md:rounded-md'
           count = app.count(target)
-          if count != 12:
-              raise SystemExit(f'Expected 12 rounded-md duplicates, found {count}')
+          if count != 6:
+              raise SystemExit(f'Expected 6 rounded-md duplicates, found {count}')
           app = app.replace(target, 'rounded-md')
           if target in app:
               raise SystemExit('rounded-md duplicate remained after replacement')
