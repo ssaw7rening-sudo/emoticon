@@ -2,6 +2,7 @@ import { pipeline, RawImage } from '@huggingface/transformers';
 
 let removerPromise = null;
 let activeRequestId = null;
+const modelWaiters = new Set();
 
 function normalizeModelProgress(value) {
   if (typeof value !== 'number' || !Number.isFinite(value)) return null;
@@ -19,30 +20,41 @@ function sendProgress(id, progress, stage, detail = '') {
   });
 }
 
-async function ensureRemover(id) {
-  if (!removerPromise) {
-    removerPromise = (async () => {
-      sendProgress(id, 2, 'model', 'BEN2 모델 준비 중');
-      const remover = await pipeline('background-removal', 'onnx-community/BEN2-ONNX', {
-        device: 'wasm',
-        progress_callback: (info) => {
-          const raw = normalizeModelProgress(info?.progress);
-          if (raw === null) return;
-          // Model download/loading is only the first part of the job. Never
-          // expose 100% here because inference still has to run afterwards.
-          sendProgress(id, 3 + raw * 0.25, 'model', 'BEN2 모델 불러오는 중');
-        },
-      });
-      return remover;
-    })().catch((error) => {
-      removerPromise = null;
-      throw error;
-    });
+function sendModelProgress(progress, stage, detail) {
+  for (const id of modelWaiters) {
+    sendProgress(id, progress, stage, detail);
   }
+}
 
-  const remover = await removerPromise;
-  sendProgress(id, 30, 'model-ready', '정밀 모델 준비 완료');
-  return remover;
+async function ensureRemover(id) {
+  modelWaiters.add(id);
+  try {
+    if (!removerPromise) {
+      removerPromise = (async () => {
+        sendModelProgress(2, 'model', 'BEN2 모델 준비 중');
+        const remover = await pipeline('background-removal', 'onnx-community/BEN2-ONNX', {
+          device: 'wasm',
+          progress_callback: (info) => {
+            const raw = normalizeModelProgress(info?.progress);
+            if (raw === null) return;
+            // Model download/loading is only the first part of the job. Never
+            // expose 100% here because inference still has to run afterwards.
+            sendModelProgress(3 + raw * 0.25, 'model', 'BEN2 모델 불러오는 중');
+          },
+        });
+        return remover;
+      })().catch((error) => {
+        removerPromise = null;
+        throw error;
+      });
+    }
+
+    const remover = await removerPromise;
+    sendProgress(id, 30, 'model-ready', '정밀 모델 준비 완료');
+    return remover;
+  } finally {
+    modelWaiters.delete(id);
+  }
 }
 
 async function resizeForInference(file, maxSide, id) {
@@ -118,6 +130,22 @@ async function runBen2(file, maxSide, id) {
 
 self.onmessage = async (event) => {
   const data = event.data || {};
+
+  if (data.type === 'warmup') {
+    const id = data.id || `warmup-${Date.now()}`;
+    try {
+      await ensureRemover(id);
+      self.postMessage({ type: 'warmup-ready', id });
+    } catch (error) {
+      self.postMessage({
+        type: 'warmup-error',
+        id,
+        message: error?.message || 'BEN2 warmup failed',
+      });
+    }
+    return;
+  }
+
   if (data.type !== 'process') return;
 
   const id = data.id;
