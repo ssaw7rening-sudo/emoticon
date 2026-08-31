@@ -57,10 +57,10 @@ const COPY = {
     splitAction: '15個に自動分割', splitting: '15個の絵文字を分割しています…',
     splitReady: '分割完了 · 各画像を個別PNGとして保存できます。',
     splitAgain: '再分割', splitDownload: 'PNG保存', splitFailed: '自動分割に失敗しました。画像を再処理してお試しください。',
-    splitMaybeTitle: '15個の絵文字シートですか？', splitMaybeDesc: '自動判定が確実ではありません。絵文字シートの場合は手動で分割を実行できます。', splitMaybeAction: '絵文字シートを分割',
+    splitMaybeTitle: '15個の絵文字シートですか?', splitMaybeDesc: '自動判定が確実ではありません。絵文字シートの場合は手動で分割を実行できます。', splitMaybeAction: '絵文字シートを分割',
     qualityFailTitle: '背景削除結果を確認してください', qualityFailDesc: '複雑な背景が多く残っており、正確な透過PNGとして保存するには不安定です。背景がより単純な別の画像をおすすめします。', qualityBlocked: '品質確認が必要',
     qualityWarnTitle: '背景が一部残っている可能性があります', qualityWarnDesc: 'スライダーで元画像と結果を確認してから保存してください。',
-    precisionRetry: '高精度で再処理', precisionHint: '初回は必要なファイルの読み込みに時間がかかる場合があります。', precisionWorking: '高精度モデルで再処理しています…', precisionNoBetter: '高精度処理でも改善しなかったため、現在の結果を維持しました。',
+    precisionRetry: '高精度で再処理', precisionHint: '初回は必要なファイルの読み込みに時間がかかる場合があります。', precisionWorking: '高精度モデルで再処理しています…', precisionNoBetter: '高精度処理でも改善しなかったため、現在の結果を維持しました.',
     badType: 'PNG、JPG、WEBP画像のみ使用できます。', tooLarge: '12MB以下の画像を使用してください。', failed: '背景の削除に失敗しました。ページを再読み込みしてもう一度お試しください。'
   },
   zh: {
@@ -76,7 +76,7 @@ const COPY = {
     splitAction: '自动分成15个', splitting: '正在分割15个表情…',
     splitReady: '分割完成 · 可将每个表情单独保存为PNG。',
     splitAgain: '重新分割', splitDownload: '保存PNG', splitFailed: '自动分割失败，请重新处理图片后再试。',
-    splitMaybeTitle: '这是15个表情的图片合集吗？', splitMaybeDesc: '自动判断不够确定。如果这是表情合集，可以手动启动分割。', splitMaybeAction: '分割表情合集',
+    splitMaybeTitle: '这是15个表情的图片合集吗?', splitMaybeDesc: '自动判断不够确定。如果这是表情合集，可以手动启动分割。', splitMaybeAction: '分割表情合集',
     qualityFailTitle: '请检查背景移除结果', qualityFailDesc: '复杂背景残留较多，当前结果不适合直接作为可靠的透明PNG保存。建议换用背景更简单的图片。', qualityBlocked: '需要检查质量',
     qualityWarnTitle: '可能仍有部分背景残留', qualityWarnDesc: '请先用滑块对比原图和结果，再决定是否保存。',
     precisionRetry: '高精度重试', precisionHint: '首次运行需要加载必要文件，可能耗时较长。', precisionWorking: '正在使用高精度模型重新处理…', precisionNoBetter: '高精度重试没有改善，因此保留当前结果。',
@@ -1385,6 +1385,23 @@ export default function BackgroundRemover({ lang = 'ko' }) {
   const [busy, setBusy] = useState(false);
   const [stage, setStage] = useState('');
   const [progress, setProgress] = useState(null);
+  const progressRenderRef = useRef({ value: null, time: 0 });
+  const updateRemovalProgress = (rawProgress) => {
+    const numericProgress = Number(rawProgress);
+    if (!Number.isFinite(numericProgress)) return;
+
+    const nextValue = Math.max(0, Math.min(100, Math.round(numericProgress)));
+    const now = typeof performance !== 'undefined' && typeof performance.now === 'function'
+      ? performance.now()
+      : Date.now();
+    const previous = progressRenderRef.current;
+    const isBoundary = nextValue === 0 || nextValue === 100;
+
+    if (!isBoundary && previous.value !== null && now - previous.time < 80) return;
+
+    progressRenderRef.current = { value: nextValue, time: now };
+    setProgress((current) => current === nextValue ? current : nextValue);
+  };
   const [error, setError] = useState('');
   const [comparePosition, setComparePosition] = useState(50);
   const [splitItems, setSplitItems] = useState([]);
@@ -1514,7 +1531,7 @@ export default function BackgroundRemover({ lang = 'ko' }) {
         setStage('preparing');
         blob = await removeWithAi(file, (info) => {
           if (typeof info?.progress === 'number') {
-            setProgress(Math.max(0, Math.min(100, Math.round(info.progress))));
+            updateRemovalProgress(info.progress);
           }
         });
         quality = await assessRemovalQuality(blob);
@@ -1528,7 +1545,7 @@ export default function BackgroundRemover({ lang = 'ko' }) {
             setProgress(null);
             const portraitBlob = await removeWithModnet(file, (info) => {
               if (typeof info?.progress === 'number') {
-                setProgress(Math.max(0, Math.min(100, Math.round(info.progress))));
+                updateRemovalProgress(info.progress);
               }
             });
             const portraitQuality = await assessRemovalQuality(portraitBlob);
@@ -1570,7 +1587,7 @@ export default function BackgroundRemover({ lang = 'ko' }) {
     try {
       let precisionBlob = await removeWithBiRefNet(file, (info) => {
         if (typeof info?.progress === 'number') {
-          setProgress(Math.max(0, Math.min(100, Math.round(info.progress))));
+          updateRemovalProgress(info.progress);
         }
       });
       precisionBlob = await refineHairBackgroundChannels(precisionBlob);
