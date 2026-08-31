@@ -2,11 +2,10 @@
   "appId": "com.promptmaker.emoticon",
   "appName": "프롬프트 메이커",
   "webDir": "dist",
-  "bundledWebRuntime": false,
   "server": {
     "androidScheme": "https"
   },
   "android": {
-    "allowMixedContent": true
+    "allowMixedContent": false
   }
 }
