@@ -51,7 +51,7 @@ html[data-page='prompt-maker'] a[href$='/background-remover/']:active {
   }
 }
 
-/* Background-remover tools: match exact Tailwind class tokens instead of substring matching. */
+/* Background-remover primary download action: match its exact Tailwind class token. */
 #background-remover button[class~="bg-[#3E6B4B]"] {
   background-color: #FFF2C9;
   border: 1px solid #E4BE58;
@@ -64,18 +64,6 @@ html[data-page='prompt-maker'] a[href$='/background-remover/']:active {
     background-color: #FFE9AE;
     border-color: #D9AD3A;
   }
-}
-
-#background-remover button[class~="bg-[#F3F8F0]"] {
-  background-color: #FFF9E8;
-  border-color: #E8CB7A;
-  color: #7A5426;
-}
-
-#background-remover button[class~="bg-[#EEF5EA]"] {
-  background-color: #FFF3D6;
-  border-color: #E1BB5C;
-  color: #754A17;
 }
 
 /* Keep disabled primary actions visibly disabled without becoming dark. */
