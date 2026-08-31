@@ -15,6 +15,12 @@ jobs:
         with:
           node-version: 22
           cache: npm
+      - name: Regenerate lockfile for audit branch
+        run: npm install --package-lock-only --ignore-scripts --no-audit --no-fund
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dependency-audit-lockfile
+          path: package-lock.json
       - run: npm ci
       - name: Dependency audit report
         run: npm audit --json || true
