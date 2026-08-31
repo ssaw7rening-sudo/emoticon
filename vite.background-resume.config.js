@@ -3,7 +3,7 @@ import baseConfig from './vite.always-split-menu.config.js'
 
 function backgroundRemovalResumeRecovery() {
   return {
-    name: 'background-removal-wake-lock-resume-v1',
+    name: 'background-removal-wake-lock-resume-v2',
     enforce: 'pre',
     transform(code, id) {
       const normalizedId = id.replace(/\\/g, '/')
@@ -118,37 +118,33 @@ function backgroundRemovalResumeRecovery() {
         'stale result guard'
       )
 
-      replaceOnce(
-        `    } catch (e) {
-      console.error('Background removal failed:', e);
-      setError(t.failed);
-    } finally {
-      setBusy(false);
-      setStage('');
-      setProgress(null);
-    }
-  };
-
-  const runPrecisionRetry = async () => {`,
-        `    } catch (e) {
-      if (operationIdRef.current === operationId) {
-        console.error('Background removal failed:', e);
-        setError(t.failed);
+      // Earlier build plugins can rewrite the exact catch/finally body, so locate
+      // the outer removeBackground tail structurally instead of matching its full text.
+      const removeStart = transformed.indexOf('  const removeBackground = async ({ forceRestart = false, resumed = false } = {}) => {')
+      const retryStart = transformed.indexOf('  const runPrecisionRetry = async () => {', removeStart)
+      if (removeStart < 0 || retryStart < 0) {
+        throw new Error('[background-resume] removeBackground function boundaries were not found')
       }
-    } finally {
-      if (operationIdRef.current === operationId) {
-        setBusy(false);
-        setStage('');
-        setProgress(null);
-        interruptedRemovalRef.current = false;
-      }
-    }
-  };
-  removeBackgroundRef.current = removeBackground;
 
-  const runPrecisionRetry = async () => {`,
-        'operation completion guard'
-      )
+      const outerCatch = transformed.lastIndexOf('    } catch (e) {', retryStart)
+      const outerFinally = transformed.lastIndexOf('    } finally {', retryStart)
+      if (outerCatch < removeStart || outerFinally < outerCatch) {
+        throw new Error('[background-resume] removeBackground catch/finally blocks were not found')
+      }
+
+      const catchBodyStart = outerCatch + '    } catch (e) {'.length
+      transformed = transformed.slice(0, catchBodyStart) + `
+      if (operationIdRef.current !== operationId) return;` + transformed.slice(catchBodyStart)
+
+      // Recompute the positions after inserting the catch guard.
+      const retryStartAfterCatch = transformed.indexOf('  const runPrecisionRetry = async () => {', removeStart)
+      const outerFinallyAfterCatch = transformed.lastIndexOf('    } finally {', retryStartAfterCatch)
+      const finallyBodyStart = outerFinallyAfterCatch + '    } finally {'.length
+      transformed = transformed.slice(0, finallyBodyStart) + `
+      if (operationIdRef.current !== operationId) return;` + transformed.slice(finallyBodyStart)
+
+      const retryStartFinal = transformed.indexOf('  const runPrecisionRetry = async () => {', removeStart)
+      transformed = transformed.slice(0, retryStartFinal) + '  removeBackgroundRef.current = removeBackground;\n\n' + transformed.slice(retryStartFinal)
 
       replaceOnce(
         `              {typeof progress === 'number' && (
