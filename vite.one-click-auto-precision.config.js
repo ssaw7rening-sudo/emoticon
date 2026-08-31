@@ -79,9 +79,8 @@ function singlePassRouting() {
 
       let transformed = code.replace(/\r\n/g, '\n')
 
-      // The base routing plugin has already inserted the precision/mobile branch
-      // at this point. Force every non-uniform image through the precision branch
-      // once, rather than ORMBG -> MODNet -> BiRefNet or the reverse.
+      // This plugin is inserted immediately after background-quality-routing,
+      // while its routing markers are still intact.
       const portraitRoutePattern = /const\s+portraitFirst\s*=\s*!isMobileLikeDevice\(\);[^\n]*/
       if (!portraitRoutePattern.test(transformed)) {
         throw new Error('[single-pass-routing] Precision route marker was not found')
@@ -91,8 +90,8 @@ function singlePassRouting() {
         `const portraitFirst = true; // uniform background => fast, otherwise one precision AI pass`
       )
 
-      // Keep fallbacks only for a hard model failure (blob is missing). A merely
-      // imperfect quality score must not trigger a second full AI model pass.
+      // A weak quality score no longer launches a second full AI model. Fallbacks
+      // remain available only when the current model produced no blob at all.
       const qualityFallback = "if (!blob || quality.status === 'fail') {"
       const fallbackCount = transformed.split(qualityFallback).length - 1
       if (fallbackCount < 2) {
@@ -105,11 +104,20 @@ function singlePassRouting() {
   }
 }
 
+const inheritedPlugins = [...(baseConfig.plugins || [])]
+const qualityRoutingIndex = inheritedPlugins.findIndex(
+  (plugin) => plugin?.name === 'background-quality-routing'
+)
+const finalPlugins = [...inheritedPlugins]
+
+if (qualityRoutingIndex >= 0) {
+  finalPlugins.splice(qualityRoutingIndex + 1, 0, singlePassRouting())
+} else {
+  finalPlugins.push(singlePassRouting())
+}
+finalPlugins.push(oneClickUiCleanup())
+
 export default defineConfig({
   ...baseConfig,
-  plugins: [
-    ...(baseConfig.plugins || []),
-    oneClickUiCleanup(),
-    singlePassRouting(),
-  ],
+  plugins: finalPlugins,
 })
