@@ -118,7 +118,7 @@ async function removeWithModnet(file, onProgress) {
         setStage('preparing');
         blob = await removeWithAi(file, (info) => {
           if (typeof info?.progress === 'number') {
-            setProgress(Math.max(0, Math.min(100, Math.round(info.progress))));
+            updateRemovalProgress(info.progress);
           }
         });
         quality = await assessRemovalQuality(blob);
@@ -132,7 +132,7 @@ async function removeWithModnet(file, onProgress) {
             setProgress(null);
             const portraitBlob = await removeWithModnet(file, (info) => {
               if (typeof info?.progress === 'number') {
-                setProgress(Math.max(0, Math.min(100, Math.round(info.progress))));
+                updateRemovalProgress(info.progress);
               }
             });
             const portraitQuality = await assessRemovalQuality(portraitBlob);
@@ -163,7 +163,7 @@ async function removeWithModnet(file, onProgress) {
           setProgress(null);
           blob = await removeWithModnet(file, (info) => {
             if (typeof info?.progress === 'number') {
-              setProgress(Math.max(0, Math.min(100, Math.round(info.progress))));
+              updateRemovalProgress(info.progress);
             }
           });
           quality = await assessRemovalQuality(blob);
@@ -178,7 +178,7 @@ async function removeWithModnet(file, onProgress) {
               setProgress(null);
               const generalBlob = await removeWithAi(file, (info) => {
                 if (typeof info?.progress === 'number') {
-                  setProgress(Math.max(0, Math.min(100, Math.round(info.progress))));
+                  updateRemovalProgress(info.progress);
                 }
               });
               const generalQuality = await assessRemovalQuality(generalBlob);
@@ -198,7 +198,7 @@ async function removeWithModnet(file, onProgress) {
           setStage('preparing');
           blob = await removeWithAi(file, (info) => {
             if (typeof info?.progress === 'number') {
-              setProgress(Math.max(0, Math.min(100, Math.round(info.progress))));
+              updateRemovalProgress(info.progress);
             }
           });
           quality = await assessRemovalQuality(blob);
@@ -209,7 +209,7 @@ async function removeWithModnet(file, onProgress) {
               setProgress(null);
               const portraitBlob = await removeWithModnet(file, (info) => {
                 if (typeof info?.progress === 'number') {
-                  setProgress(Math.max(0, Math.min(100, Math.round(info.progress))));
+                  updateRemovalProgress(info.progress);
                 }
               });
               const portraitQuality = await assessRemovalQuality(portraitBlob);
