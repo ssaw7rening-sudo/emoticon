@@ -79,24 +79,24 @@ function preferBen2PrecisionRoute() {
       if (!transformed.includes('async function removeWithBen2')) {
         throw new Error('[ben2-auto] Compiled BEN2 helper was not found')
       }
-      if (!transformed.includes('removeWithBiRefNet(file,')) {
+      if (!transformed.includes('await removeWithBiRefNet(file,')) {
         throw new Error('[ben2-auto] Precision model call was not found')
       }
 
-      // Replace both the automatic high-precision route and the manual precision
-      // retry with BEN2. The existing quality gate, RGB restoration, subject
-      // cleanup and shadow cleanup remain untouched around the new model.
-      transformed = transformed.split('removeWithBiRefNet(file,').join('removeWithBen2(file,')
+      // Replace only invocation sites, never the BiRefNet function declaration.
+      // This keeps BiRefNet available as a dormant fallback implementation while
+      // routing both automatic precision and manual retry through BEN2.
+      transformed = transformed.split('await removeWithBiRefNet(file,').join('await removeWithBen2(file,')
       transformed = transformed.split("method = 'birefnet';").join("method = 'ben2';")
       transformed = transformed.split("setResultMethod('birefnet');").join("setResultMethod('ben2');")
       transformed = transformed.split('BiRefNet primary removal failed:').join('BEN2 primary removal failed:')
       transformed = transformed.split('MODNet fallback after BiRefNet failed:').join('MODNet fallback after BEN2 failed:')
       transformed = transformed.split('BiRefNet precision retry failed:').join('BEN2 precision retry failed:')
 
-      // The previous route treated every phone as low-power. BEN2 is now used
-      // automatically on capable phones too. Only devices that explicitly report
-      // limited memory, or very few CPU cores when memory is unavailable, stay on
-      // the lightweight automatic route. They can still request BEN2 manually.
+      // Use BEN2 automatically on capable desktop/mobile devices. Only devices
+      // that explicitly report limited memory, or very few CPU cores when memory
+      // is unavailable, stay on the lightweight automatic route. Manual precision
+      // retry still allows BEN2 there when the user explicitly requests it.
       const mobileRoute = 'const portraitFirst = !isMobileLikeDevice(); // desktop precision-first, mobile lightweight-first'
       if (!transformed.includes(mobileRoute)) {
         throw new Error('[ben2-auto] Existing mobile precision route was not found')
