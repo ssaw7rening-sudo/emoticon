@@ -1,2 +1,3 @@
 Trigger Vercel deployment for the latest main branch.
 Retry requested after background-hole refinement.
+Retry requested after always-visible split menu fix.
