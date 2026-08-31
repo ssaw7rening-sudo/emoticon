@@ -75,7 +75,7 @@ function tailwindMotionCleanup() {
 
 function backgroundProgressRenderThrottle() {
   return {
-    name: 'background-progress-render-throttle-v1',
+    name: 'background-progress-render-throttle-v2-width-transition',
     enforce: 'pre',
     transform(code, id) {
       const normalizedId = id.replace(/\\/g, '/')
@@ -97,6 +97,15 @@ function backgroundProgressRenderThrottle() {
       }
 
       transformed = transformed.split(directProgressUpdate).join('updateRemovalProgress(info.progress);')
+
+      // The progress bar only changes its inline width. Limiting the transition
+      // to width avoids accidentally animating unrelated layout/style changes.
+      const progressTransitionAnchor = 'h-full rounded-full bg-[#7D9A75] transition-all'
+      const progressTransitionMatches = transformed.split(progressTransitionAnchor).length - 1
+      if (progressTransitionMatches !== 1) {
+        throw new Error('[progress-transition] expected exactly one progress bar transition anchor')
+      }
+      transformed = transformed.replace(progressTransitionAnchor, 'h-full rounded-full bg-[#7D9A75] transition-[width]')
 
       // Give the result download action a stable semantic CSS hook. This keeps
       // presentation CSS independent from its Tailwind color utility token.
