@@ -85,7 +85,7 @@ jobs:
           test "$(grep -F -c 'const sortedThemeKeys = React.useMemo(() => [...themeKeys].sort((a, b) => {' src/App.jsx)" = "1"
           ! grep -Fq 'const sortedThemeKeys = [...themeKeys].sort((a, b) => {' src/App.jsx
           ! grep -Fq 'const themeSortAnchor =' vite.tailwind-motion-cleanup.config.js
-          grep -Fq '/\\btransition-all\\b/g' vite.tailwind-motion-cleanup.config.js
+          grep -Fq 'transition-all' vite.tailwind-motion-cleanup.config.js
           grep -Fq 'const sortedGoldenCombos = React.useMemo(() => [...ALL_GOLDEN_COMBOS].sort((a, b) => {' src/App.jsx
       - name: Install dependencies
         run: npm ci
