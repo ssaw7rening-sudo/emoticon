@@ -4130,13 +4130,13 @@ function App() {
 
   // Compute live auto-ranked Golden Combos list (User usage + Real-world Current Month Seasonal Boost)
   const currentMonth = new Date().getMonth() + 1; // 1 ~ 12
-  const sortedGoldenCombos = [...ALL_GOLDEN_COMBOS].sort((a, b) => {
+  const sortedGoldenCombos = React.useMemo(() => [...ALL_GOLDEN_COMBOS].sort((a, b) => {
     const isSeasonA = (a.seasonMonths || []).includes(currentMonth) ? 100 : 0;
     const isSeasonB = (b.seasonMonths || []).includes(currentMonth) ? 100 : 0;
     const scoreA = (comboStats[a.id] || 0) + isSeasonA;
     const scoreB = (comboStats[b.id] || 0) + isSeasonB;
     return scoreB - scoreA;
-  });
+  }), [comboStats, currentMonth]);
 
   const sortedThemeKeys = [...themeKeys].sort((a, b) => {
     const scoreA = themeStats[a] || 0;
