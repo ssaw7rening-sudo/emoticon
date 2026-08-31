@@ -55,6 +55,11 @@ jobs:
           )
           if 'shadow-xs' in app or 'shadow-2xs' in app or 'drop-shadow-xs' in app:
               raise SystemExit('Invalid shadow token remained after replacement')
+
+          trailing_anchor = "bg-white/90 font-black' \n"
+          if app.count(trailing_anchor) != 1:
+              raise SystemExit(f'Expected one touched trailing-space anchor, found {app.count(trailing_anchor)}')
+          app = app.replace(trailing_anchor, "bg-white/90 font-black'\n")
           app_path.write_text(app)
 
           vite = vite_path.read_text()
