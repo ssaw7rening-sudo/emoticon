@@ -36,7 +36,7 @@ function tailwindMotionCleanup() {
 function backgroundProgressRenderThrottle() {
   return {
     name: 'background-progress-render-throttle-v1',
-    enforce: 'post',
+    enforce: 'pre',
     transform(code, id) {
       const normalizedId = id.replace(/\\/g, '/')
       if (!normalizedId.endsWith('/src/components/BackgroundRemover.jsx')) return null
