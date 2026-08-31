@@ -205,14 +205,6 @@ section:has(textarea[readonly]) + section > div[class*="bg-[#EAF8F3]"] > span {
   word-break: normal !important;
 }
 
-/* Phrase chips are compact controls; keep them slightly smaller than the
-   global 16px mobile input size while preserving their touch target. */
-@media (max-width: 640px) {
-  #emoticon-phrase-grid input[type="text"] {
-    font-size: 15px !important;
-  }
-}
-
 @layer utilities {
   .shadow-diffused {
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
