@@ -1,6 +1,131 @@
 import { defineConfig } from 'vite'
 import baseConfig from './vite.always-split-menu.config.js'
 
+function safeImageCanvasDecoding() {
+  return {
+    name: 'background-removal-safe-image-canvas-v1',
+    enforce: 'pre',
+    transform(code, id) {
+      const normalizedId = id.replace(/\\/g, '/')
+      if (!normalizedId.endsWith('/src/components/BackgroundRemover.jsx')) return null
+
+      let transformed = code.replace(/\r\n/g, '\n')
+
+      const drawStart = transformed.indexOf('async function drawFileToCanvas(file) {')
+      const colorStart = transformed.indexOf('\nfunction colorDistance(', drawStart)
+      if (drawStart < 0 || colorStart < 0) {
+        throw new Error('[safe-canvas] drawFileToCanvas boundaries were not found')
+      }
+
+      const replacement = `const FAST_CANVAS_MAX_EDGE = 4096;
+const FAST_CANVAS_MAX_PIXELS = 12 * 1024 * 1024;
+
+function fitCanvasSize(sourceWidth, sourceHeight, { maxEdge = Infinity, maxPixels = Infinity } = {}) {
+  const width = Math.max(1, Math.floor(Number(sourceWidth) || 1));
+  const height = Math.max(1, Math.floor(Number(sourceHeight) || 1));
+  let scale = 1;
+
+  if (Number.isFinite(maxEdge) && maxEdge > 0) {
+    scale = Math.min(scale, maxEdge / Math.max(width, height));
+  }
+
+  const pixels = width * height;
+  if (Number.isFinite(maxPixels) && maxPixels > 0 && pixels > maxPixels) {
+    scale = Math.min(scale, Math.sqrt(maxPixels / pixels));
+  }
+
+  if (!Number.isFinite(scale) || scale <= 0) scale = 1;
+  scale = Math.min(1, scale);
+
+  return {
+    width: Math.max(1, Math.round(width * scale)),
+    height: Math.max(1, Math.round(height * scale)),
+    scale,
+  };
+}
+
+async function drawFileToCanvas(file, options = {}) {
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d', { willReadFrequently: true });
+  if (!ctx) throw new Error('Canvas 2D is unavailable');
+
+  const drawDecodedImage = (source, sourceWidth, sourceHeight) => {
+    const target = fitCanvasSize(sourceWidth, sourceHeight, options);
+    canvas.width = target.width;
+    canvas.height = target.height;
+    if ('imageSmoothingEnabled' in ctx) ctx.imageSmoothingEnabled = true;
+    if ('imageSmoothingQuality' in ctx) ctx.imageSmoothingQuality = 'high';
+    ctx.drawImage(source, 0, 0, target.width, target.height);
+    return {
+      canvas,
+      ctx,
+      sourceWidth: Math.max(1, Math.floor(Number(sourceWidth) || target.width)),
+      sourceHeight: Math.max(1, Math.floor(Number(sourceHeight) || target.height)),
+      scale: target.scale,
+    };
+  };
+
+  if (typeof createImageBitmap === 'function') {
+    let bitmap = null;
+    try {
+      bitmap = await createImageBitmap(file);
+    } catch (bitmapError) {
+      // Some mobile WebViews reject valid images here. Fall through to Image().
+      console.warn('createImageBitmap failed; using Image fallback:', bitmapError);
+    }
+
+    if (bitmap) {
+      try {
+        return drawDecodedImage(bitmap, bitmap.width, bitmap.height);
+      } finally {
+        bitmap.close?.();
+      }
+    }
+  }
+
+  const objectUrl = URL.createObjectURL(file);
+  try {
+    const image = await new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => resolve(img);
+      img.onerror = () => reject(new Error('Image decode failed'));
+      img.src = objectUrl;
+    });
+    const sourceWidth = image.naturalWidth || image.width;
+    const sourceHeight = image.naturalHeight || image.height;
+    return drawDecodedImage(image, sourceWidth, sourceHeight);
+  } finally {
+    URL.revokeObjectURL(objectUrl);
+  }
+}
+`
+
+      transformed = transformed.slice(0, drawStart) + replacement + transformed.slice(colorStart + 1)
+
+      const fastStart = transformed.indexOf('async function tryFastUniformBackgroundRemoval(file) {')
+      const fastEnd = transformed.indexOf('\nasync function getRemover(', fastStart)
+      if (fastStart < 0 || fastEnd < 0) {
+        throw new Error('[safe-canvas] fast background-removal boundaries were not found')
+      }
+
+      const fastSegment = transformed.slice(fastStart, fastEnd)
+      const oldFastCanvas = '  const { canvas, ctx } = await drawFileToCanvas(file);'
+      if (!fastSegment.includes(oldFastCanvas)) {
+        throw new Error('[safe-canvas] fast-path canvas anchor was not found')
+      }
+
+      const safeFastCanvas = `  const { canvas, ctx } = await drawFileToCanvas(file, {
+    maxEdge: FAST_CANVAS_MAX_EDGE,
+    maxPixels: FAST_CANVAS_MAX_PIXELS,
+  });`
+      const patchedFastSegment = fastSegment.replace(oldFastCanvas, safeFastCanvas)
+      transformed = transformed.slice(0, fastStart) + patchedFastSegment + transformed.slice(fastEnd)
+
+      return { code: transformed, map: null }
+    },
+  }
+}
+
 function backgroundRemovalResumeRecovery() {
   return {
     name: 'background-removal-wake-lock-resume-v3',
@@ -165,5 +290,5 @@ function backgroundRemovalResumeRecovery() {
 
 export default defineConfig({
   ...baseConfig,
-  plugins: [...(baseConfig.plugins || []), backgroundRemovalResumeRecovery()],
+  plugins: [...(baseConfig.plugins || []), safeImageCanvasDecoding(), backgroundRemovalResumeRecovery()],
 })
