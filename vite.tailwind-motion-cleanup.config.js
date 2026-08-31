@@ -3,7 +3,7 @@ import baseConfig from './vite.ui-runtime-cleanup.config.js'
 
 function tailwindMotionCleanup() {
   return {
-    name: 'tailwind-motion-cleanup-v5-noop-padding-cleanup',
+    name: 'tailwind-motion-cleanup-v6-dead-transform-cleanup',
     enforce: 'pre',
     transform(code, id) {
       const normalizedId = id.replace(/\\/g, '/')
@@ -25,14 +25,9 @@ function tailwindMotionCleanup() {
         'focus:border-mint-strong transition-[color,background-color,border-color,box-shadow,opacity,transform,filter] whitespace-nowrap'
       )
 
-      // Remove no-op responsive duplicates. These responsive utilities resolve
-      // to the same value as their base utility and therefore change no rendering.
-      transformed = transformed.replace(/text-\[13px\] sm:text-\[13px\]/g, 'text-[13px]')
+      // Remove the remaining no-op responsive duplicate. This responsive utility
+      // resolves to the same value as its base utility and therefore changes no rendering.
       transformed = transformed.replace(/\brounded-md md:rounded-md\b/g, 'rounded-md')
-      transformed = transformed.replace(
-        'p-4 sm:px-5 sm:pt-4 pb-3 border-b border-outline-variant bg-[#F8FCFA]',
-        'p-4 sm:px-5 pb-3 border-b border-outline-variant bg-[#F8FCFA]'
-      )
 
       // Tailwind 3.4 does not provide shadow-xs or shadow-2xs. They currently
       // generate no CSS, so removing the tokens preserves the rendered UI while
