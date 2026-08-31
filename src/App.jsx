@@ -4041,8 +4041,8 @@ function App() {
 
   const currentThemes = getThemesByLang(lang);
   const currentTags = getTagsByLang(lang);
-  const themeKeys = Object.keys(currentThemes);
-  const categoryKeys = Object.keys(currentTags);
+  const themeKeys = React.useMemo(() => Object.keys(currentThemes), [currentThemes]);
+  const categoryKeys = React.useMemo(() => Object.keys(currentTags), [currentTags]);
   
   const [showPartnershipModal, setShowPartnershipModal] = useState(false);
   const [activeGoldenComboId, setActiveGoldenComboId] = useState(null);
