@@ -3,7 +3,7 @@ import baseConfig from './vite.legal-notices.config.js'
 
 function preciseStickerSheetSplit() {
   return {
-    name: 'precise-sticker-sheet-split-v5',
+    name: 'precise-sticker-sheet-split-v6-content-groups',
     enforce: 'pre',
     transform(code, id) {
       const normalizedId = id.replace(/\\/g, '/')
@@ -27,88 +27,195 @@ function preciseStickerSheetSplit() {
 
   const pixels = ctx.getImageData(0, 0, width, height).data;
   const total = width * height;
-  let transparent = 0;
-  const alphaStep = Math.max(1, Math.floor(Math.sqrt(total / 220000)));
-
-  for (let y = 0; y < height; y += alphaStep) {
-    for (let x = 0; x < width; x += alphaStep) {
-      if (pixels[(y * width + x) * 4 + 3] < 245) transparent += 1;
-    }
-  }
-
-  const sampledTotal = Math.ceil(width / alphaStep) * Math.ceil(height / alphaStep);
-  const useAlpha = transparent / Math.max(1, sampledTotal) >= 0.06;
-
-  // If the image is still opaque, estimate the solid background from border
-  // samples. This keeps sheet detection/splitting stable for both black and
-  // white source sheets instead of depending on a successful alpha matte first.
-  const borderR = [];
-  const borderG = [];
-  const borderB = [];
-  if (!useAlpha) {
-    const borderStep = Math.max(1, Math.floor(Math.max(width, height) / 180));
-    const collect = (x, y) => {
-      const idx = (y * width + x) * 4;
-      borderR.push(pixels[idx]);
-      borderG.push(pixels[idx + 1]);
-      borderB.push(pixels[idx + 2]);
-    };
-    for (let x = 0; x < width; x += borderStep) {
-      collect(x, 0);
-      collect(x, height - 1);
-    }
-    for (let y = 0; y < height; y += borderStep) {
-      collect(0, y);
-      collect(width - 1, y);
-    }
-  }
-
-  const channelMedian = (values) => {
-    if (!values.length) return 0;
-    const sorted = values.slice().sort((a, b) => a - b);
-    return sorted[Math.floor(sorted.length / 2)];
-  };
-
-  const bgR = channelMedian(borderR);
-  const bgG = channelMedian(borderG);
-  const bgB = channelMedian(borderB);
   const mask = new Uint8Array(total);
+  let transparentSamples = 0;
+  let sampleCount = 0;
+  const sampleStep = Math.max(1, Math.floor(Math.sqrt(total / 180000)));
+
+  for (let y = 0; y < height; y += sampleStep) {
+    for (let x = 0; x < width; x += sampleStep) {
+      sampleCount += 1;
+      if (pixels[(y * width + x) * 4 + 3] < 245) transparentSamples += 1;
+    }
+  }
+
+  const useAlpha = transparentSamples / Math.max(1, sampleCount) >= 0.035;
   let visibleTotal = 0;
 
-  for (let y = 0; y < height; y += 1) {
-    for (let x = 0; x < width; x += 1) {
-      const pixelIndex = y * width + x;
-      const idx = pixelIndex * 4;
-      const alpha = pixels[idx + 3];
-      let visible = false;
-
-      if (useAlpha) {
-        visible = alpha > 10;
-      } else if (alpha > 10) {
-        const dr = pixels[idx] - bgR;
-        const dg = pixels[idx + 1] - bgG;
-        const db = pixels[idx + 2] - bgB;
-        // About 28 RGB-distance units ignores JPEG noise and soft white/black
-        // backgrounds while keeping sticker outlines, text and pale clothing.
-        visible = Math.sqrt(dr * dr + dg * dg + db * db) > 28;
-      }
-
-      if (visible) {
-        mask[pixelIndex] = 1;
+  if (useAlpha) {
+    for (let i = 0; i < total; i += 1) {
+      if (pixels[i * 4 + 3] > 8) {
+        mask[i] = 1;
         visibleTotal += 1;
       }
     }
+    return { mask, width, height, visibleTotal, mode: 'alpha' };
   }
 
-  return { mask, width, height, visibleTotal, mode: useAlpha ? 'alpha' : 'border-color' };
+  // Opaque sheets can be black or white. Instead of deleting every pixel close
+  // to the border colour, flood-fill only the background that is actually
+  // connected to the outer edge. This preserves black hair on a black sheet and
+  // white clothing on a white sheet when a sticker outline encloses the subject.
+  const borderR = [];
+  const borderG = [];
+  const borderB = [];
+  const borderStep = Math.max(1, Math.floor(Math.max(width, height) / 180));
+  const collect = (x, y) => {
+    const idx = (y * width + x) * 4;
+    borderR.push(pixels[idx]);
+    borderG.push(pixels[idx + 1]);
+    borderB.push(pixels[idx + 2]);
+  };
+  for (let x = 0; x < width; x += borderStep) {
+    collect(x, 0);
+    collect(x, height - 1);
+  }
+  for (let y = 0; y < height; y += borderStep) {
+    collect(0, y);
+    collect(width - 1, y);
+  }
+
+  const median = (values) => {
+    const sorted = values.slice().sort((a, b) => a - b);
+    return sorted.length ? sorted[Math.floor(sorted.length / 2)] : 0;
+  };
+  const bgR = median(borderR);
+  const bgG = median(borderG);
+  const bgB = median(borderB);
+  const background = new Uint8Array(total);
+  const queue = new Int32Array(total);
+  let head = 0;
+  let tail = 0;
+  const toleranceSq = 46 * 46;
+
+  const isBackgroundLike = (index) => {
+    const idx = index * 4;
+    const dr = pixels[idx] - bgR;
+    const dg = pixels[idx + 1] - bgG;
+    const db = pixels[idx + 2] - bgB;
+    return dr * dr + dg * dg + db * db <= toleranceSq;
+  };
+  const pushBackground = (index) => {
+    if (index < 0 || index >= total || background[index] || !isBackgroundLike(index)) return;
+    background[index] = 1;
+    queue[tail++] = index;
+  };
+
+  for (let x = 0; x < width; x += 1) {
+    pushBackground(x);
+    pushBackground((height - 1) * width + x);
+  }
+  for (let y = 0; y < height; y += 1) {
+    pushBackground(y * width);
+    pushBackground(y * width + width - 1);
+  }
+
+  while (head < tail) {
+    const index = queue[head++];
+    const x = index % width;
+    const y = Math.floor(index / width);
+    if (x > 0) pushBackground(index - 1);
+    if (x + 1 < width) pushBackground(index + 1);
+    if (y > 0) pushBackground(index - width);
+    if (y + 1 < height) pushBackground(index + width);
+  }
+
+  for (let i = 0; i < total; i += 1) {
+    if (!background[i] && pixels[i * 4 + 3] > 8) {
+      mask[i] = 1;
+      visibleTotal += 1;
+    }
+  }
+
+  return { mask, width, height, visibleTotal, mode: 'edge-flood' };
 }
 
-function analyzeStickerGridLayout(canvas) {
+function labelStickerComponents(mask, width, height) {
+  const total = width * height;
+  const labels = new Int32Array(total);
+  const queue = new Int32Array(total);
+  const components = [];
+  let nextLabel = 0;
+
+  for (let start = 0; start < total; start += 1) {
+    if (!mask[start] || labels[start]) continue;
+    nextLabel += 1;
+    let head = 0;
+    let tail = 0;
+    queue[tail++] = start;
+    labels[start] = nextLabel;
+    let area = 0;
+    let sumX = 0;
+    let sumY = 0;
+    let minX = width;
+    let minY = height;
+    let maxX = -1;
+    let maxY = -1;
+
+    while (head < tail) {
+      const index = queue[head++];
+      const x = index % width;
+      const y = Math.floor(index / width);
+      area += 1;
+      sumX += x;
+      sumY += y;
+      if (x < minX) minX = x;
+      if (x > maxX) maxX = x;
+      if (y < minY) minY = y;
+      if (y > maxY) maxY = y;
+
+      const visit = (neighbor) => {
+        if (neighbor < 0 || neighbor >= total || labels[neighbor] || !mask[neighbor]) return;
+        labels[neighbor] = nextLabel;
+        queue[tail++] = neighbor;
+      };
+
+      if (x > 0) visit(index - 1);
+      if (x + 1 < width) visit(index + 1);
+      if (y > 0) visit(index - width);
+      if (y + 1 < height) visit(index + width);
+      if (x > 0 && y > 0) visit(index - width - 1);
+      if (x + 1 < width && y > 0) visit(index - width + 1);
+      if (x > 0 && y + 1 < height) visit(index + width - 1);
+      if (x + 1 < width && y + 1 < height) visit(index + width + 1);
+    }
+
+    components.push({
+      id: nextLabel,
+      area,
+      cx: sumX / Math.max(1, area),
+      cy: sumY / Math.max(1, area),
+      minX,
+      minY,
+      maxX,
+      maxY
+    });
+  }
+
+  return { labels, components, componentCount: nextLabel };
+}
+
+function nearestStickerGroup(x, y, centers, cellWidth, cellHeight) {
+  let best = 0;
+  let bestDistance = Number.POSITIVE_INFINITY;
+  for (let i = 0; i < centers.length; i += 1) {
+    const dx = (x - centers[i].x) / Math.max(1, cellWidth);
+    const dy = (y - centers[i].y) / Math.max(1, cellHeight);
+    const distance = dx * dx + dy * dy;
+    if (distance < bestDistance) {
+      bestDistance = distance;
+      best = i;
+    }
+  }
+  return best;
+}
+
+function analyzeStickerContentGroups(canvas) {
   const sourceWidth = canvas.width;
   const sourceHeight = canvas.height;
   if (!sourceWidth || !sourceHeight) return null;
 
-  const maxDimension = 900;
+  const maxDimension = 720;
   const scale = Math.min(1, maxDimension / Math.max(sourceWidth, sourceHeight));
   const width = Math.max(1, Math.round(sourceWidth * scale));
   const height = Math.max(1, Math.round(sourceHeight * scale));
@@ -122,240 +229,218 @@ function analyzeStickerGridLayout(canvas) {
   ctx.drawImage(canvas, 0, 0, width, height);
 
   const foreground = buildStickerForegroundMask(analysisCanvas);
-  if (!foreground || foreground.visibleTotal < width * height * 0.012) return null;
+  if (!foreground || foreground.visibleTotal < width * height * 0.01) return null;
+  const labelled = labelStickerComponents(foreground.mask, width, height);
+  if (!labelled.components.length) return null;
 
-  const { mask } = foreground;
-  const colProjection = new Uint32Array(width);
-  const rowProjection = new Uint32Array(height);
-
-  for (let y = 0; y < height; y += 1) {
-    for (let x = 0; x < width; x += 1) {
-      if (!mask[y * width + x]) continue;
-      colProjection[x] += 1;
-      rowProjection[y] += 1;
+  const cellWidth = width / 5;
+  const cellHeight = height / 3;
+  const nominalCenters = [];
+  for (let row = 0; row < 3; row += 1) {
+    for (let col = 0; col < 5; col += 1) {
+      nominalCenters.push({ x: (col + 0.5) * cellWidth, y: (row + 0.5) * cellHeight });
     }
   }
+  let centers = nominalCenters.map((center) => ({ ...center }));
+  const minClusterArea = Math.max(3, Math.round(foreground.visibleTotal * 0.000015));
+  const clusteringComponents = labelled.components.filter((component) => component.area >= minClusterArea);
 
-  const findCuts = (projection, cellCount) => {
-    const length = projection.length;
-    const nominalCell = length / cellCount;
-    const cuts = [];
-    let valleyScore = 0;
+  // The 5×3 grid is now only a set of soft starting positions. No pixel is ever
+  // cropped at a grid boundary. Connected foreground components move the 15
+  // centres toward the actual generated characters and captions.
+  for (let iteration = 0; iteration < 5; iteration += 1) {
+    const sumX = new Float64Array(15);
+    const sumY = new Float64Array(15);
+    const sumWeight = new Float64Array(15);
 
-    for (let k = 1; k < cellCount; k += 1) {
-      const expected = nominalCell * k;
-      const radius = Math.max(4, Math.round(nominalCell * 0.20));
-      const from = Math.max(3, Math.round(expected - radius));
-      const to = Math.min(length - 4, Math.round(expected + radius));
-      let best = Math.round(expected);
-      let bestValue = Number.POSITIVE_INFINITY;
-      let bestBandAverage = Number.POSITIVE_INFINITY;
-
-      let localSum = 0;
-      let localCount = 0;
-      const localRadius = Math.max(5, Math.round(nominalCell * 0.15));
-      for (let p = Math.max(0, Math.round(expected) - localRadius); p <= Math.min(length - 1, Math.round(expected) + localRadius); p += 1) {
-        localSum += projection[p];
-        localCount += 1;
-      }
-      const localAverage = localSum / Math.max(1, localCount);
-
-      for (let p = from; p <= to; p += 1) {
-        // Score a small separator band rather than one pixel so anti-aliased text
-        // or a stray hair cannot pull the cut through a neighboring sticker.
-        const bandAverage = (
-          projection[p - 2] +
-          projection[p - 1] +
-          projection[p] +
-          projection[p + 1] +
-          projection[p + 2]
-        ) / 5;
-        const expectedPenalty = Math.abs(p - expected) / Math.max(1, radius) * Math.max(1, localAverage) * 0.12;
-        const adjusted = bandAverage + expectedPenalty;
-        if (adjusted < bestValue) {
-          bestValue = adjusted;
-          bestBandAverage = bandAverage;
-          best = p;
-        }
-      }
-
-      valleyScore += localAverage > 0 ? Math.max(0, 1 - bestBandAverage / localAverage) : 0;
-      cuts.push(best);
+    for (const component of clusteringComponents) {
+      const group = nearestStickerGroup(component.cx, component.cy, centers, cellWidth, cellHeight);
+      const weight = Math.pow(component.area, 0.72);
+      sumX[group] += component.cx * weight;
+      sumY[group] += component.cy * weight;
+      sumWeight[group] += weight;
     }
 
-    return {
-      cuts,
-      valleyScore: valleyScore / Math.max(1, cellCount - 1)
-    };
-  };
+    centers = centers.map((center, index) => {
+      if (!sumWeight[index]) return { ...center };
+      const observedX = sumX[index] / sumWeight[index];
+      const observedY = sumY[index] / sumWeight[index];
+      const nominal = nominalCenters[index];
+      const blendedX = observedX * 0.75 + nominal.x * 0.25;
+      const blendedY = observedY * 0.75 + nominal.y * 0.25;
+      return {
+        x: Math.max(nominal.x - cellWidth * 0.38, Math.min(nominal.x + cellWidth * 0.38, blendedX)),
+        y: Math.max(nominal.y - cellHeight * 0.38, Math.min(nominal.y + cellHeight * 0.38, blendedY))
+      };
+    });
+  }
 
-  const makeBounds = (length, cuts) => {
-    const points = [0, ...cuts, length];
-    const bounds = [];
-    for (let i = 0; i < points.length - 1; i += 1) {
-      bounds.push({ start: points[i], end: Math.max(points[i], points[i + 1] - 1) });
-    }
-    return bounds;
-  };
+  const componentGroup = new Int16Array(labelled.componentCount + 1);
+  componentGroup.fill(-1);
+  const groupAreas = new Float64Array(15);
+  const weightedX = new Float64Array(15);
+  const weightedY = new Float64Array(15);
 
-  const evaluate = (cols, rows) => {
-    const xCuts = findCuts(colProjection, cols);
-    const yCuts = findCuts(rowProjection, rows);
-    const colBounds = makeBounds(width, xCuts.cuts);
-    const rowBounds = makeBounds(height, yCuts.cuts);
-    const cellVisible = [];
-    let nonEmpty = 0;
+  for (const component of labelled.components) {
+    const group = nearestStickerGroup(component.cx, component.cy, centers, cellWidth, cellHeight);
+    componentGroup[component.id] = group;
+    groupAreas[group] += component.area;
+    weightedX[group] += component.cx * component.area;
+    weightedY[group] += component.cy * component.area;
+  }
 
-    for (let row = 0; row < rows; row += 1) {
-      for (let col = 0; col < cols; col += 1) {
-        const x0 = colBounds[col].start;
-        const x1 = colBounds[col].end;
-        const y0 = rowBounds[row].start;
-        const y1 = rowBounds[row].end;
-        const cellArea = Math.max(1, (x1 - x0 + 1) * (y1 - y0 + 1));
-        let count = 0;
-        for (let y = y0; y <= y1; y += 1) {
-          for (let x = x0; x <= x1; x += 1) {
-            if (mask[y * width + x]) count += 1;
-          }
-        }
-        const occupancy = count / cellArea;
-        cellVisible.push(occupancy);
-        if (occupancy >= 0.006) nonEmpty += 1;
-      }
-    }
-
-    const occupied = cellVisible.filter((value) => value >= 0.006);
-    const mean = occupied.reduce((sum, value) => sum + value, 0) / Math.max(1, occupied.length);
-    const deviation = occupied.reduce((sum, value) => sum + Math.abs(value - mean), 0) / Math.max(1, occupied.length);
-    const balance = mean > 0 ? Math.max(0, 1 - deviation / mean) : 0;
-    const separatorScore = (xCuts.valleyScore + yCuts.valleyScore) / 2;
-    const score = (nonEmpty / 15) * 0.64 + separatorScore * 0.24 + balance * 0.12;
-    return { cols, rows, colBounds, rowBounds, nonEmpty, score, separatorScore, balance, width, height, maskMode: foreground.mode };
-  };
-
-  // Prompt Maker's 15-emoticon specification is canonical 5 columns × 3 rows.
-  // The canvas itself may be portrait (for example 1031×1536) or square, so the
-  // image aspect ratio must never switch the logical grid to 3×5.
-  const best = evaluate(5, 3);
+  let nonEmpty = 0;
+  let alignmentSum = 0;
+  const meaningfulArea = Math.max(10, foreground.visibleTotal * 0.012);
+  const activeAreas = [];
+  for (let i = 0; i < 15; i += 1) {
+    if (groupAreas[i] < meaningfulArea) continue;
+    nonEmpty += 1;
+    activeAreas.push(groupAreas[i]);
+    const gx = weightedX[i] / Math.max(1, groupAreas[i]);
+    const gy = weightedY[i] / Math.max(1, groupAreas[i]);
+    const dx = (gx - nominalCenters[i].x) / Math.max(1, cellWidth);
+    const dy = (gy - nominalCenters[i].y) / Math.max(1, cellHeight);
+    alignmentSum += Math.max(0, 1 - Math.sqrt(dx * dx + dy * dy) / 0.8);
+  }
+  const alignment = nonEmpty ? alignmentSum / nonEmpty : 0;
+  const meanArea = activeAreas.reduce((sum, value) => sum + value, 0) / Math.max(1, activeAreas.length);
+  const deviation = activeAreas.reduce((sum, value) => sum + Math.abs(value - meanArea), 0) / Math.max(1, activeAreas.length);
+  const balance = meanArea > 0 ? Math.max(0, 1 - deviation / meanArea) : 0;
+  const score = Math.min(1, (nonEmpty / 15) * 0.72 + alignment * 0.18 + balance * 0.10);
 
   return {
-    ...best,
+    analysisCanvas,
+    foreground,
+    labels: labelled.labels,
+    components: labelled.components,
+    componentGroup,
+    centers,
+    nominalCenters,
+    cellWidth,
+    cellHeight,
+    width,
+    height,
+    sourceWidth,
+    sourceHeight,
     scaleX: sourceWidth / width,
-    scaleY: sourceHeight / height
+    scaleY: sourceHeight / height,
+    groupAreas,
+    nonEmpty,
+    alignment,
+    balance,
+    score
   };
 }
 
 async function detectEmoticonSheet(blob) {
   const { canvas } = await drawFileToCanvas(blob);
-  const layout = analyzeStickerGridLayout(canvas);
-  if (!layout) return { status: 'not-sheet', confidence: 0 };
-
-  let confidence = Math.max(0, Math.min(1, layout.score));
-  if (layout.nonEmpty >= 15 && layout.separatorScore >= 0.24) confidence = Math.max(confidence, 0.84);
-  else if (layout.nonEmpty >= 14) confidence = Math.max(confidence, 0.72);
-  else if (layout.nonEmpty >= 13) confidence = Math.max(confidence, 0.60);
-
-  if (layout.nonEmpty >= 14 && confidence >= 0.72) return { status: 'sheet', confidence, cols: 5, rows: 3 };
-  if (layout.nonEmpty >= 12 && confidence >= 0.50) return { status: 'ambiguous', confidence, cols: 5, rows: 3 };
+  const analysis = analyzeStickerContentGroups(canvas);
+  if (!analysis) return { status: 'not-sheet', confidence: 0 };
+  const confidence = analysis.score;
+  if (analysis.nonEmpty >= 14 && confidence >= 0.72) return { status: 'sheet', confidence, cols: 5, rows: 3 };
+  if (analysis.nonEmpty >= 12 && confidence >= 0.52) return { status: 'ambiguous', confidence, cols: 5, rows: 3 };
   return { status: 'not-sheet', confidence };
 }
 
 async function splitIntoFifteen(blob) {
-  const { canvas } = await drawFileToCanvas(blob);
-  const { width, height } = canvas;
-  const layout = analyzeStickerGridLayout(canvas);
-  if (!layout) throw new Error('Could not analyze sticker sheet layout');
+  const { canvas, ctx } = await drawFileToCanvas(blob);
+  const width = canvas.width;
+  const height = canvas.height;
+  const analysis = analyzeStickerContentGroups(canvas);
+  if (!analysis || analysis.nonEmpty < 12) throw new Error('Could not reliably detect 15 sticker groups');
 
-  const foreground = buildStickerForegroundMask(canvas);
-  if (!foreground) throw new Error('Could not analyze sticker foreground');
-  const { mask } = foreground;
-  const items = [];
-  let detectedCells = 0;
+  const sourceForeground = buildStickerForegroundMask(canvas);
+  if (!sourceForeground) throw new Error('Could not analyze sticker foreground');
+  const groupBounds = Array.from({ length: 15 }, () => ({ minX: width, minY: height, maxX: -1, maxY: -1, count: 0 }));
+  const nearestFallback = (analysisX, analysisY) => nearestStickerGroup(
+    analysisX,
+    analysisY,
+    analysis.centers,
+    analysis.cellWidth,
+    analysis.cellHeight
+  );
+  const groupForSourcePixel = (x, y) => {
+    const analysisX = Math.max(0, Math.min(analysis.width - 1, Math.floor(x / analysis.scaleX)));
+    const analysisY = Math.max(0, Math.min(analysis.height - 1, Math.floor(y / analysis.scaleY)));
+    const label = analysis.labels[analysisY * analysis.width + analysisX];
+    if (label > 0) {
+      const group = analysis.componentGroup[label];
+      if (group >= 0) return group;
+    }
+    return nearestFallback(analysisX, analysisY);
+  };
 
-  const toSourceBounds = (bound, axisScale, maxValue) => ({
-    start: Math.max(0, Math.min(maxValue - 1, Math.round(bound.start * axisScale))),
-    end: Math.max(0, Math.min(maxValue - 1, Math.round((bound.end + 1) * axisScale) - 1))
-  });
-
-  const colBounds = layout.colBounds.map((bound) => toSourceBounds(bound, layout.scaleX, width));
-  const rowBounds = layout.rowBounds.map((bound) => toSourceBounds(bound, layout.scaleY, height));
-
-  for (let row = 0; row < 3; row += 1) {
-    for (let col = 0; col < 5; col += 1) {
-      const cellX0 = colBounds[col].start;
-      const cellX1 = colBounds[col].end;
-      const cellY0 = rowBounds[row].start;
-      const cellY1 = rowBounds[row].end;
-      const cellWidth = Math.max(1, cellX1 - cellX0 + 1);
-      const cellHeight = Math.max(1, cellY1 - cellY0 + 1);
-
-      // Give each cell a very small overlap into the separator gutter. This is
-      // enough to preserve a hand, hair strand or caption outline that crosses a
-      // cut by a few pixels without reaching the neighboring sticker body.
-      const overlapX = Math.max(2, Math.round(cellWidth * 0.035));
-      const overlapY = Math.max(2, Math.round(cellHeight * 0.025));
-      const scanX0 = Math.max(0, cellX0 - overlapX);
-      const scanX1 = Math.min(width - 1, cellX1 + overlapX);
-      const scanY0 = Math.max(0, cellY0 - overlapY);
-      const scanY1 = Math.min(height - 1, cellY1 + overlapY);
-
-      let minX = scanX1;
-      let minY = scanY1;
-      let maxX = scanX0;
-      let maxY = scanY0;
-      let visible = 0;
-
-      for (let y = scanY0; y <= scanY1; y += 1) {
-        for (let x = scanX0; x <= scanX1; x += 1) {
-          if (!mask[y * width + x]) continue;
-          visible += 1;
-          if (x < minX) minX = x;
-          if (x > maxX) maxX = x;
-          if (y < minY) minY = y;
-          if (y > maxY) maxY = y;
-        }
-      }
-
-      const minVisible = Math.max(16, Math.round(cellWidth * cellHeight * 0.0025));
-      if (visible >= minVisible && maxX >= minX && maxY >= minY) {
-        detectedCells += 1;
-      } else {
-        minX = cellX0;
-        minY = cellY0;
-        maxX = cellX1;
-        maxY = cellY1;
-      }
-
-      const padding = Math.max(8, Math.round(Math.min(cellWidth, cellHeight) * 0.075));
-      minX = Math.max(scanX0, minX - padding);
-      minY = Math.max(scanY0, minY - padding);
-      maxX = Math.min(scanX1, maxX + padding);
-      maxY = Math.min(scanY1, maxY + padding);
-
-      const cropWidth = Math.max(1, maxX - minX + 1);
-      const cropHeight = Math.max(1, maxY - minY + 1);
-      const output = document.createElement('canvas');
-      output.width = cropWidth;
-      output.height = cropHeight;
-      const outputCtx = output.getContext('2d');
-      if (!outputCtx) throw new Error('Canvas 2D is unavailable');
-      outputCtx.clearRect(0, 0, cropWidth, cropHeight);
-      outputCtx.drawImage(canvas, minX, minY, cropWidth, cropHeight, 0, 0, cropWidth, cropHeight);
-
-      const itemBlob = await canvasToPngBlob(output);
-      items.push({
-        index: items.length + 1,
-        blob: itemBlob,
-        width: cropWidth,
-        height: cropHeight
-      });
+  // First pass: assign every foreground pixel to a content group and measure the
+  // real content bounds. There are no cell rectangles and no hard crop lines.
+  for (let y = 0; y < height; y += 1) {
+    for (let x = 0; x < width; x += 1) {
+      const sourceIndex = y * width + x;
+      if (!sourceForeground.mask[sourceIndex]) continue;
+      const group = groupForSourcePixel(x, y);
+      const bounds = groupBounds[group];
+      bounds.count += 1;
+      if (x < bounds.minX) bounds.minX = x;
+      if (x > bounds.maxX) bounds.maxX = x;
+      if (y < bounds.minY) bounds.minY = y;
+      if (y > bounds.maxY) bounds.maxY = y;
     }
   }
 
-  if (items.length !== 15 || detectedCells < 12) {
-    throw new Error('Could not reliably detect 15 sticker cells');
+  const totalVisible = sourceForeground.visibleTotal;
+  const minimumGroupPixels = Math.max(24, Math.round(totalVisible * 0.006));
+  const detectedGroups = groupBounds.filter((bounds) => bounds.count >= minimumGroupPixels).length;
+  if (detectedGroups < 12) throw new Error('Could not reliably separate sticker content groups');
+
+  const items = [];
+  const basePadding = Math.max(10, Math.round(Math.min(width / 5, height / 3) * 0.09));
+
+  for (let group = 0; group < 15; group += 1) {
+    const bounds = groupBounds[group];
+    if (bounds.maxX < bounds.minX || bounds.maxY < bounds.minY) {
+      throw new Error('A sticker content group is empty');
+    }
+
+    // Final crop is only around the pixels already assigned to this sticker.
+    // It may overlap the position of another sticker, but foreign pixels are
+    // masked out below, so hands/captions can cross former grid boundaries safely.
+    const minX = Math.max(0, bounds.minX - basePadding);
+    const minY = Math.max(0, bounds.minY - basePadding);
+    const maxX = Math.min(width - 1, bounds.maxX + basePadding);
+    const maxY = Math.min(height - 1, bounds.maxY + basePadding);
+    const cropWidth = Math.max(1, maxX - minX + 1);
+    const cropHeight = Math.max(1, maxY - minY + 1);
+    const imageData = ctx.getImageData(minX, minY, cropWidth, cropHeight);
+    const data = imageData.data;
+
+    for (let localY = 0; localY < cropHeight; localY += 1) {
+      const sourceY = minY + localY;
+      for (let localX = 0; localX < cropWidth; localX += 1) {
+        const sourceX = minX + localX;
+        const localIndex = localY * cropWidth + localX;
+        const rgbaIndex = localIndex * 4;
+        const sourceIndex = sourceY * width + sourceX;
+        if (!sourceForeground.mask[sourceIndex] || groupForSourcePixel(sourceX, sourceY) !== group) {
+          data[rgbaIndex] = 0;
+          data[rgbaIndex + 1] = 0;
+          data[rgbaIndex + 2] = 0;
+          data[rgbaIndex + 3] = 0;
+        }
+      }
+    }
+
+    const output = document.createElement('canvas');
+    output.width = cropWidth;
+    output.height = cropHeight;
+    const outputCtx = output.getContext('2d');
+    if (!outputCtx) throw new Error('Canvas 2D is unavailable');
+    outputCtx.putImageData(imageData, 0, 0);
+
+    const itemBlob = await canvasToPngBlob(output);
+    items.push({ index: group + 1, blob: itemBlob, width: cropWidth, height: cropHeight });
   }
+
+  if (items.length !== 15) throw new Error('Could not create 15 sticker outputs');
   return items;
 }
 
