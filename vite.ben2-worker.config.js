@@ -3,7 +3,7 @@ import baseConfig from './vite.precise-sticker-split.config.js'
 
 function offloadBen2ToWorker() {
   return {
-    name: 'ben2-worker-offload-v2',
+    name: 'ben2-worker-offload-v4',
     enforce: 'pre',
     transform(code, id) {
       const normalizedId = id.replace(/\\/g, '/')
@@ -21,12 +21,14 @@ function offloadBen2ToWorker() {
       const workerHelper = `let ben2WorkerInstance = null;
 let ben2WorkerRequestSequence = 0;
 let ben2WorkerActiveCancel = null;
+let ben2PrewarmScheduled = false;
 
 function resetBen2Worker() {
   if (ben2WorkerInstance) {
     try { ben2WorkerInstance.terminate(); } catch (error) { /* noop */ }
   }
   ben2WorkerInstance = null;
+  ben2PrewarmScheduled = false;
 }
 
 function cancelBen2Processing() {
@@ -50,16 +52,48 @@ function getBen2WorkerInstance() {
   return ben2WorkerInstance;
 }
 
+function scheduleBen2Prewarm() {
+  if (ben2PrewarmScheduled || typeof Worker !== 'function') return;
+  ben2PrewarmScheduled = true;
+
+  const start = () => {
+    try {
+      const worker = getBen2WorkerInstance();
+      const id = 'warmup-' + (++ben2WorkerRequestSequence);
+      worker.postMessage({ type: 'warmup', id });
+    } catch (error) {
+      ben2PrewarmScheduled = false;
+      console.warn('BEN2 prewarm skipped:', error);
+    }
+  };
+
+  if (typeof requestIdleCallback === 'function') {
+    requestIdleCallback(start, { timeout: 900 });
+  } else {
+    setTimeout(start, 180);
+  }
+}
+
 function getBen2InferenceMaxSide() {
   if (typeof navigator === 'undefined') return 1440;
   const memory = typeof navigator.deviceMemory === 'number' ? navigator.deviceMemory : null;
   const cores = typeof navigator.hardwareConcurrency === 'number' ? navigator.hardwareConcurrency : null;
   const mobileLike = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent || '');
 
-  if ((memory !== null && memory <= 4) || (memory === null && cores !== null && cores <= 4)) {
-    return 1024;
+  if (mobileLike) {
+    const highEndMobile =
+      (memory !== null && memory >= 8) ||
+      (memory === null && cores !== null && cores >= 8);
+    // Keep BEN2 precision on mobile, but reduce only the inference-mask size.
+    // The existing original-RGB/tone-lock pass scales the matte back onto the
+    // full-resolution source, so saved output dimensions remain unchanged.
+    return highEndMobile ? 1152 : 960;
   }
-  return mobileLike ? 1280 : 1600;
+
+  if ((memory !== null && memory <= 4) || (memory === null && cores !== null && cores <= 4)) {
+    return 1152;
+  }
+  return 1600;
 }
 
 async function runBen2Worker(file, onProgress) {
