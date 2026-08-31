@@ -18,13 +18,6 @@ function tailwindMotionCleanup() {
         'transition-[color,background-color,border-color,box-shadow,opacity,transform,filter]'
       )
 
-      // text inputs do not benefit from overflow scrolling; the browser already
-      // handles caret/selection scrolling internally for a single-line input.
-      transformed = transformed.replace(
-        'focus:border-mint-strong transition-[color,background-color,border-color,box-shadow,opacity,transform,filter] overflow-x-auto whitespace-nowrap',
-        'focus:border-mint-strong transition-[color,background-color,border-color,box-shadow,opacity,transform,filter] whitespace-nowrap'
-      )
-
       // Remove the remaining no-op responsive duplicate. This responsive utility
       // resolves to the same value as its base utility and therefore changes no rendering.
       transformed = transformed.replace(/\brounded-md md:rounded-md\b/g, 'rounded-md')
