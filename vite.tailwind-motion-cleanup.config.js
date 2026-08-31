@@ -18,10 +18,6 @@ function tailwindMotionCleanup() {
         'transition-[color,background-color,border-color,box-shadow,opacity,transform,filter]'
       )
 
-      // Remove the remaining no-op responsive duplicate. This responsive utility
-      // resolves to the same value as its base utility and therefore changes no rendering.
-      transformed = transformed.replace(/\brounded-md md:rounded-md\b/g, 'rounded-md')
-
       // Tailwind 3.4 does not provide shadow-xs or shadow-2xs. They currently
       // generate no CSS, so removing the tokens preserves the rendered UI while
       // eliminating invalid utilities from the compiled App source.
