@@ -11,23 +11,14 @@ function pixelOwnershipStickerSplit() {
 
       let transformed = code.replace(/\r\n/g, '\n')
 
-      const componentOwnership = `  const nearestFallback = (analysisX, analysisY) => nearestStickerGroup(
-    analysisX,
-    analysisY,
-    analysis.centers,
-    analysis.cellWidth,
-    analysis.cellHeight
-  );
-  const groupForSourcePixel = (x, y) => {
-    const analysisX = Math.max(0, Math.min(analysis.width - 1, Math.floor(x / analysis.scaleX)));
-    const analysisY = Math.max(0, Math.min(analysis.height - 1, Math.floor(y / analysis.scaleY)));
-    const label = analysis.labels[analysisY * analysis.width + analysisX];
-    if (label > 0) {
-      const group = analysis.componentGroup[label];
-      if (group >= 0) return group;
-    }
-    return nearestFallback(analysisX, analysisY);
-  };`
+      const groupForSourcePixelPattern = /  const groupForSourcePixel = \(x, y\) => \{[\s\S]*?\n  \};/
+      const currentBlock = transformed.match(groupForSourcePixelPattern)?.[0] || ''
+
+      // Only replace the v6 content-group ownership path. If another unrelated
+      // function with the same local name ever appears, leave it untouched.
+      if (!currentBlock || !currentBlock.includes('analysis.componentGroup')) {
+        throw new Error('[pixel-owner-split] Component ownership function was not found')
+      }
 
       const pixelOwnership = `  // Connected-component ownership can accidentally merge two neighboring
   // stickers when anti-aliased outlines, text or background-removal residue make
@@ -46,11 +37,7 @@ function pixelOwnershipStickerSplit() {
     );
   };`
 
-      if (!transformed.includes(componentOwnership)) {
-        throw new Error('[pixel-owner-split] Component ownership block was not found')
-      }
-
-      transformed = transformed.replace(componentOwnership, pixelOwnership)
+      transformed = transformed.replace(groupForSourcePixelPattern, pixelOwnership)
       return { code: transformed, map: null }
     },
   }
