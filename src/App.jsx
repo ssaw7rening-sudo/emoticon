@@ -2707,7 +2707,7 @@ const InfoSection = ({ t, lang }) => {
                     })}
                   </div>
                   <div className="flex flex-col gap-3 h-full">
-                    <div className="bg-white p-4 sm:p-5 rounded-md md:rounded-md border border-[#E5E0D8] shadow-sm flex-1 flex flex-col">
+                    <div className="bg-white p-4 sm:p-5 rounded-md border border-[#E5E0D8] shadow-sm flex-1 flex flex-col">
                       <strong className="text-on-surface block mb-2 text-[15px]">
                         {getText('m1Title', {
                           ko: '방법 1: remove.bg 웹사이트',
@@ -2758,7 +2758,7 @@ const InfoSection = ({ t, lang }) => {
                         <span>👉</span> {getText('goRemoveBg', { ko: 'remove.bg 바로가기', ja: 'remove.bg へ移動', zh: '前往 remove.bg', en: 'Go to remove.bg' })}
                       </a>
                     </div>
-                    <div className="bg-white p-4 sm:p-5 rounded-md md:rounded-md border border-[#E5E0D8] shadow-sm flex-1 flex flex-col">
+                    <div className="bg-white p-4 sm:p-5 rounded-md border border-[#E5E0D8] shadow-sm flex-1 flex flex-col">
                       <strong className="text-on-surface block mb-2 text-[15px]">
                         {getText('m2Title', {
                           ko: '방법 2: 이미지 편집 프로그램',
@@ -2821,7 +2821,7 @@ const InfoSection = ({ t, lang }) => {
                     })}
                   </div>
                   <div className="flex flex-col gap-3 h-full">
-                    <div className="bg-white p-4 sm:p-5 rounded-md md:rounded-md border border-[#E5E0D8] shadow-sm flex-1 flex flex-col">
+                    <div className="bg-white p-4 sm:p-5 rounded-md border border-[#E5E0D8] shadow-sm flex-1 flex flex-col">
                       <strong className="text-on-surface block mb-2 text-[15px] flex items-center gap-1.5"><span className="text-[16px]">🤖</span> Galaxy</strong>
                       <ul className="text-[14px] leading-relaxed text-secondary-strong flex flex-col gap-1.5 break-keep list-decimal pl-4">
                         {lang === 'ko' && (
@@ -2862,7 +2862,7 @@ const InfoSection = ({ t, lang }) => {
                         )}
                       </ul>
                     </div>
-                    <div className="bg-white p-4 sm:p-5 rounded-md md:rounded-md border border-[#E5E0D8] shadow-sm flex-1 flex flex-col">
+                    <div className="bg-white p-4 sm:p-5 rounded-md border border-[#E5E0D8] shadow-sm flex-1 flex flex-col">
                       <strong className="text-on-surface block mb-2 text-[15px] flex items-center gap-1.5"><span className="text-[16px]">🍎</span> iPhone</strong>
                       <ul className="text-[14px] leading-relaxed text-secondary-strong flex flex-col gap-1.5 break-keep list-decimal pl-4">
                         {lang === 'ko' && (
@@ -3138,7 +3138,7 @@ const InfoSection = ({ t, lang }) => {
                       en: '1. Official Release and Sale',
                     })}
                   </div>
-                  <div className="bg-white p-4 sm:p-5 rounded-md md:rounded-md border border-[#E5E0D8] shadow-sm flex-1 flex flex-col gap-3">
+                  <div className="bg-white p-4 sm:p-5 rounded-md border border-[#E5E0D8] shadow-sm flex-1 flex flex-col gap-3">
                     <strong className="text-on-surface block text-[15px]">
                       {getText('studioTitle', {
                         ko: '카카오 이모티콘 스튜디오 제안',
@@ -3236,7 +3236,7 @@ const InfoSection = ({ t, lang }) => {
                       en: '2. Casual Free Use with Friends',
                     })}
                   </div>
-                  <div className="bg-white p-4 sm:p-5 rounded-md md:rounded-md border border-[#E5E0D8] shadow-sm flex-1 flex flex-col gap-3">
+                  <div className="bg-white p-4 sm:p-5 rounded-md border border-[#E5E0D8] shadow-sm flex-1 flex flex-col gap-3">
                     <strong className="text-on-surface block mb-1 text-[15px]">
                       {getText('chatTrickTitle', {
                         ko: '개인 소장용 (채팅방 활용법)',
