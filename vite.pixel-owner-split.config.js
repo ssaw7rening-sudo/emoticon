@@ -4,7 +4,10 @@ import baseConfig from './vite.one-click-auto-precision.config.js'
 function pixelOwnershipStickerSplit() {
   return {
     name: 'pixel-ownership-sticker-split-v7',
-    enforce: 'post',
+    // Keep this in the pre-transform chain so it sees the BackgroundRemover
+    // function injected by precise-sticker-sheet-split-v6 before React/Rolldown
+    // compiles and rewrites the source structure.
+    enforce: 'pre',
     transform(code, id) {
       const normalizedId = id.replace(/\\/g, '/')
       if (!normalizedId.endsWith('/src/components/BackgroundRemover.jsx')) return null
