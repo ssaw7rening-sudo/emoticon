@@ -98,6 +98,20 @@ function backgroundProgressRenderThrottle() {
 
       transformed = transformed.split(directProgressUpdate).join('updateRemovalProgress(info.progress);')
 
+      // Give the result download action a stable semantic CSS hook. This keeps
+      // presentation CSS independent from its Tailwind color utility token.
+      const downloadButtonAnchor = 'onClick={download} className="'
+      const downloadButtonIndex = transformed.indexOf(downloadButtonAnchor)
+      if (downloadButtonIndex < 0) {
+        throw new Error('[background-style-hook] download button anchor was not found')
+      }
+      const downloadClassStart = downloadButtonIndex + downloadButtonAnchor.length
+      if (!transformed.startsWith('background-remover-download ', downloadClassStart)) {
+        transformed = transformed.slice(0, downloadClassStart)
+          + 'background-remover-download '
+          + transformed.slice(downloadClassStart)
+      }
+
       return { code: transformed, map: null }
     },
   }
