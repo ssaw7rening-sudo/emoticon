@@ -30,20 +30,24 @@ jobs:
           vite_path = Path('vite.tailwind-motion-cleanup.config.js')
 
           app = app_path.read_text()
-          app_anchor = '''  const sortedGoldenCombos = [...ALL_GOLDEN_COMBOS].sort((a, b) => {
-            const isSeasonA = (a.seasonMonths || []).includes(currentMonth) ? 100 : 0;
-            const isSeasonB = (b.seasonMonths || []).includes(currentMonth) ? 100 : 0;
-            const scoreA = (comboStats[a.id] || 0) + isSeasonA;
-            const scoreB = (comboStats[b.id] || 0) + isSeasonB;
-            return scoreB - scoreA;
-          });'''.replace('\n          ', '\n')
-          app_replacement = '''  const sortedGoldenCombos = React.useMemo(() => [...ALL_GOLDEN_COMBOS].sort((a, b) => {
-            const isSeasonA = (a.seasonMonths || []).includes(currentMonth) ? 100 : 0;
-            const isSeasonB = (b.seasonMonths || []).includes(currentMonth) ? 100 : 0;
-            const scoreA = (comboStats[a.id] || 0) + isSeasonA;
-            const scoreB = (comboStats[b.id] || 0) + isSeasonB;
-            return scoreB - scoreA;
-          }), [comboStats, currentMonth]);'''.replace('\n          ', '\n')
+          app_anchor = "\n".join([
+              "  const sortedGoldenCombos = [...ALL_GOLDEN_COMBOS].sort((a, b) => {",
+              "    const isSeasonA = (a.seasonMonths || []).includes(currentMonth) ? 100 : 0;",
+              "    const isSeasonB = (b.seasonMonths || []).includes(currentMonth) ? 100 : 0;",
+              "    const scoreA = (comboStats[a.id] || 0) + isSeasonA;",
+              "    const scoreB = (comboStats[b.id] || 0) + isSeasonB;",
+              "    return scoreB - scoreA;",
+              "  });",
+          ])
+          app_replacement = "\n".join([
+              "  const sortedGoldenCombos = React.useMemo(() => [...ALL_GOLDEN_COMBOS].sort((a, b) => {",
+              "    const isSeasonA = (a.seasonMonths || []).includes(currentMonth) ? 100 : 0;",
+              "    const isSeasonB = (b.seasonMonths || []).includes(currentMonth) ? 100 : 0;",
+              "    const scoreA = (comboStats[a.id] || 0) + isSeasonA;",
+              "    const scoreB = (comboStats[b.id] || 0) + isSeasonB;",
+              "    return scoreB - scoreA;",
+              "  }), [comboStats, currentMonth]);",
+          ])
           app_count = app.count(app_anchor)
           print(f'app golden anchor count={app_count}')
           if app_count != 1:
@@ -54,21 +58,25 @@ jobs:
           app_path.write_text(app)
 
           vite = vite_path.read_text()
-          vite_block = '''      const goldenAnchor = `  const sortedGoldenCombos = [...ALL_GOLDEN_COMBOS].sort((a, b) => {\\n    const isSeasonA = (a.seasonMonths || []).includes(currentMonth) ? 100 : 0;\\n    const isSeasonB = (b.seasonMonths || []).includes(currentMonth) ? 100 : 0;\\n    const scoreA = (comboStats[a.id] || 0) + isSeasonA;\\n    const scoreB = (comboStats[b.id] || 0) + isSeasonB;\\n    return scoreB - scoreA;\\n  });`
-          if (!transformed.includes(goldenAnchor)) {
-            throw new Error('[sort-memoization] golden combo sort anchor was not found')
-          }
-          transformed = transformed.replace(
-            goldenAnchor,
-            `  const sortedGoldenCombos = React.useMemo(() => [...ALL_GOLDEN_COMBOS].sort((a, b) => {\\n    const isSeasonA = (a.seasonMonths || []).includes(currentMonth) ? 100 : 0;\\n    const isSeasonB = (b.seasonMonths || []).includes(currentMonth) ? 100 : 0;\\n    const scoreA = (comboStats[a.id] || 0) + isSeasonA;\\n    const scoreB = (comboStats[b.id] || 0) + isSeasonB;\\n    return scoreB - scoreA;\\n  }), [comboStats, currentMonth]);`
-          )
-
-'''.replace('\n          ', '\n      ')
-          vite_count = vite.count(vite_block)
-          print(f'vite golden transform block count={vite_count}')
-          if vite_count != 1:
-              raise SystemExit(f'Expected exactly one Vite golden combo transform block, found {vite_count}')
-          vite = vite.replace(vite_block, '')
+          start_marker = "      const goldenAnchor = `  const sortedGoldenCombos = [...ALL_GOLDEN_COMBOS].sort((a, b) => {"
+          end_marker = "      const themeSortAnchor = `  const sortedThemeKeys = [...themeKeys].sort((a, b) => {"
+          if vite.count(start_marker) != 1 or vite.count(end_marker) != 1:
+              raise SystemExit('Expected exactly one golden block and one following theme-sort block')
+          start = vite.index(start_marker)
+          end = vite.index(end_marker)
+          if end <= start:
+              raise SystemExit('Golden block ordering is invalid')
+          golden_block = vite[start:end]
+          required_fragments = [
+              "[sort-memoization] golden combo sort anchor was not found",
+              "transformed = transformed.replace(",
+              "React.useMemo(() => [...ALL_GOLDEN_COMBOS].sort((a, b) => {",
+              "[comboStats, currentMonth]",
+          ]
+          missing = [fragment for fragment in required_fragments if fragment not in golden_block]
+          if missing:
+              raise SystemExit(f'Golden Vite block is missing expected fragments: {missing}')
+          vite = vite[:start] + vite[end:]
           vite_path.write_text(vite)
           PY
       - name: Verify intended diff only
@@ -80,7 +88,7 @@ jobs:
           ! grep -Fq 'const sortedGoldenCombos = [...ALL_GOLDEN_COMBOS].sort((a, b) => {' src/App.jsx
           ! grep -Fq 'const goldenAnchor =' vite.tailwind-motion-cleanup.config.js
           grep -Fq 'const themeSortAnchor =' vite.tailwind-motion-cleanup.config.js
-          grep -Fq '/\\btransition-all\\b/g' vite.tailwind-motion-cleanup.config.js
+          grep -Fq 'transition-all' vite.tailwind-motion-cleanup.config.js
       - name: Install dependencies
         run: npm ci
       - name: Build
