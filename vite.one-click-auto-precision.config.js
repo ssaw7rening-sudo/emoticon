@@ -4,7 +4,7 @@ import baseConfig from './vite.hair-fur-precision-v3.config.js'
 function oneClickAutoPrecision() {
   return {
     name: 'one-click-auto-precision-v2-single-pass',
-    enforce: 'pre',
+    enforce: 'post',
     transform(code, id) {
       const normalizedId = id.replace(/\\/g, '/')
       if (!normalizedId.endsWith('/src/components/BackgroundRemover.jsx')) return null
