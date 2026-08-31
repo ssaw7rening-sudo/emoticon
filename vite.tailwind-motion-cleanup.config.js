@@ -18,15 +18,6 @@ function tailwindMotionCleanup() {
         'transition-[color,background-color,border-color,box-shadow,opacity,transform,filter]'
       )
 
-      const themeSortAnchor = `  const sortedThemeKeys = [...themeKeys].sort((a, b) => {\n    const scoreA = themeStats[a] || 0;\n    const scoreB = themeStats[b] || 0;\n    return scoreB - scoreA;\n  });`
-      if (!transformed.includes(themeSortAnchor)) {
-        throw new Error('[sort-memoization] theme sort anchor was not found')
-      }
-      transformed = transformed.replace(
-        themeSortAnchor,
-        `  const sortedThemeKeys = React.useMemo(() => [...themeKeys].sort((a, b) => {\n    const scoreA = themeStats[a] || 0;\n    const scoreB = themeStats[b] || 0;\n    return scoreB - scoreA;\n  }), [themeKeys, themeStats]);`
-      )
-
       return { code: transformed, map: null }
     },
   }
