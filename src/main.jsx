@@ -4,6 +4,7 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import './background-remover-link.css'
 import App from './App.jsx'
+import AppErrorBoundary from './components/AppErrorBoundary.jsx'
 
 const currentPath = window.location.pathname.toLowerCase()
 document.documentElement.dataset.page = /(^|\/)background-remover\/?$/.test(currentPath)
@@ -18,6 +19,8 @@ if ('serviceWorker' in navigator && process.env.NODE_ENV === 'production') {
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <App />
+    <AppErrorBoundary>
+      <App />
+    </AppErrorBoundary>
   </StrictMode>,
 )
