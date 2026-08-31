@@ -1004,7 +1004,7 @@ const AdBanner = () => {
   if (!IS_AD_CONFIGURED) return null;
 
   return (
-    <div className="w-full text-center my-1.5 p-2 sm:p-2.5 bg-surface-container-lowest rounded-lg border border-outline-variant/60 shadow-2xs overflow-hidden max-h-[120px]">
+    <div className="w-full text-center my-1.5 p-2 sm:p-2.5 bg-surface-container-lowest rounded-lg border border-outline-variant/60 overflow-hidden max-h-[120px]">
       <p className="text-[10px] font-semibold text-neutral-400 mb-0.5 text-left tracking-wider uppercase">Advertisement</p>
       <ins className="adsbygoogle"
            style={{display: 'inline-block', width: '100%', height: '90px', maxHeight: '90px'}}
@@ -1323,7 +1323,7 @@ const GUIDE_TEXTS = {
 const PrivacyPage = ({ lang, onBack }) => {
   return (
     <div className="min-h-screen bg-[#FFFDF8] text-slate-800 pb-16 font-sans">
-      <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-[#E5E0D8] px-4 py-3 sm:px-6 shadow-2xs">
+      <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-[#E5E0D8] px-4 py-3 sm:px-6">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           <button
             onClick={onBack}
@@ -1399,7 +1399,7 @@ const PrivacyPage = ({ lang, onBack }) => {
                   href="https://forms.gle/Q2oG84fL4B9g2Jda7"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="interactive-control inline-flex items-center justify-center gap-1.5 px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white font-bold text-[13px] rounded-lg shadow-xs transition-all shrink-0 cursor-pointer"
+                  className="interactive-control inline-flex items-center justify-center gap-1.5 px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white font-bold text-[13px] rounded-lg transition-all shrink-0 cursor-pointer"
                 >
                   <span>📝 구글 폼 문의 접수</span>
                   <span>↗</span>
@@ -1426,7 +1426,7 @@ const PrivacyPage = ({ lang, onBack }) => {
 const TermsPage = ({ lang, onBack }) => {
   return (
     <div className="min-h-screen bg-[#FFFDF8] text-slate-800 pb-16 font-sans">
-      <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-[#E5E0D8] px-4 py-3 sm:px-6 shadow-2xs">
+      <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-[#E5E0D8] px-4 py-3 sm:px-6">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           <button
             onClick={onBack}
@@ -1605,7 +1605,7 @@ const SectionAbout = ({ lang }) => {
   const cur = data[lang] || data['ko'];
 
   return (
-    <section className="bg-white rounded-xl p-5 sm:p-7 border border-slate-200/90 shadow-xs flex flex-col gap-4 break-keep">
+    <section className="bg-white rounded-xl p-5 sm:p-7 border border-slate-200/90 flex flex-col gap-4 break-keep">
       <div className="flex items-center gap-2.5">
         <span className="text-[24px]">🎨</span>
         <div>
@@ -1777,7 +1777,7 @@ const SectionGuide = ({ lang }) => {
   const cur = data[lang] || data['ko'];
 
   return (
-    <section className="bg-white rounded-xl p-5 sm:p-7 border border-slate-200/90 shadow-xs flex flex-col gap-4 break-keep">
+    <section className="bg-white rounded-xl p-5 sm:p-7 border border-slate-200/90 flex flex-col gap-4 break-keep">
       <div className="flex items-center gap-2.5">
         <span className="text-[24px]">📖</span>
         <div>
@@ -1792,7 +1792,7 @@ const SectionGuide = ({ lang }) => {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 mt-1">
         {cur.steps.map((s, idx) => (
-          <div key={idx} className="bg-slate-50/80 hover:bg-amber-50/20 transition-colors p-4 sm:p-4.5 rounded-xl border border-slate-200/90 flex flex-col gap-2 relative shadow-2xs">
+          <div key={idx} className="bg-slate-50/80 hover:bg-amber-50/20 transition-colors p-4 sm:p-4.5 rounded-xl border border-slate-200/90 flex flex-col gap-2 relative">
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-2">
                 <span className="w-7 h-7 rounded-lg bg-amber-500/15 text-amber-900 border border-amber-500/30 flex items-center justify-center font-black text-[12px] font-mono shrink-0">
@@ -1802,7 +1802,7 @@ const SectionGuide = ({ lang }) => {
                   STEP {s.step}
                 </span>
               </div>
-              <span className="text-[11.5px] font-bold px-2.5 py-0.5 bg-white text-slate-700 rounded-full border border-slate-200 shadow-2xs shrink-0 whitespace-nowrap">
+              <span className="text-[11.5px] font-bold px-2.5 py-0.5 bg-white text-slate-700 rounded-full border border-slate-200 shrink-0 whitespace-nowrap">
                 {s.badge}
               </span>
             </div>
@@ -1954,7 +1954,7 @@ const SectionPrinciples = ({ lang }) => {
   const cur = data[lang] || data['ko'];
 
   return (
-    <section className="bg-white rounded-xl p-5 sm:p-7 border border-slate-200/90 shadow-xs flex flex-col gap-4 break-keep">
+    <section className="bg-white rounded-xl p-5 sm:p-7 border border-slate-200/90 flex flex-col gap-4 break-keep">
       <div className="flex items-center gap-2.5">
         <span className="text-[24px]">🏆</span>
         <div>
@@ -2003,7 +2003,7 @@ const SectionEmotionFormula = ({ lang, onApplyFormula }) => {
           items: ['안녕!', '최고야!', '고마워요', '사랑해요'],
           cardStyle: 'bg-emerald-50/70 border-emerald-200/90 text-emerald-950',
           badgeStyle: 'bg-emerald-500/15 text-emerald-800 border-emerald-300',
-          pillStyle: 'bg-white/95 text-emerald-900 border-emerald-200/90 shadow-2xs'
+          pillStyle: 'bg-white/95 text-emerald-900 border-emerald-200/90'
         },
         {
           group: '2. 일상 대답 & 따뜻한 응원',
@@ -2012,7 +2012,7 @@ const SectionEmotionFormula = ({ lang, onApplyFormula }) => {
           items: ['오늘도 화이팅', '좋아요', '축하해요', '다 잘될 거야'],
           cardStyle: 'bg-blue-50/70 border-blue-200/90 text-blue-950',
           badgeStyle: 'bg-blue-500/15 text-blue-800 border-blue-300',
-          pillStyle: 'bg-white/95 text-blue-900 border-blue-200/90 shadow-2xs'
+          pillStyle: 'bg-white/95 text-blue-900 border-blue-200/90'
         },
         {
           group: '3. 현실 공감 & 피로 회복',
@@ -2021,7 +2021,7 @@ const SectionEmotionFormula = ({ lang, onApplyFormula }) => {
           items: ['수고했어요', '네 (영혼 탈출)', '살려줘요', '잘자요 꿀잠'],
           cardStyle: 'bg-amber-50/70 border-amber-200/90 text-amber-950',
           badgeStyle: 'bg-amber-500/15 text-amber-800 border-amber-300',
-          pillStyle: 'bg-white/95 text-amber-900 border-amber-200/90 shadow-2xs'
+          pillStyle: 'bg-white/95 text-amber-900 border-amber-200/90'
         },
         {
           group: '4. 당황 & 반전 재미',
@@ -2030,7 +2030,7 @@ const SectionEmotionFormula = ({ lang, onApplyFormula }) => {
           items: ['헐 대박', '킹받네 (분노)', '오예! (환호)'],
           cardStyle: 'bg-rose-50/70 border-rose-200/90 text-rose-950',
           badgeStyle: 'bg-rose-500/15 text-rose-800 border-rose-300',
-          pillStyle: 'bg-white/95 text-rose-900 border-rose-200/90 shadow-2xs'
+          pillStyle: 'bg-white/95 text-rose-900 border-rose-200/90'
         }
       ]
     },
@@ -2048,7 +2048,7 @@ const SectionEmotionFormula = ({ lang, onApplyFormula }) => {
           items: ['こんにちは！', '最高！', 'ありがとう', '大好き'],
           cardStyle: 'bg-emerald-50/70 border-emerald-200/90 text-emerald-950',
           badgeStyle: 'bg-emerald-500/15 text-emerald-800 border-emerald-300',
-          pillStyle: 'bg-white/95 text-emerald-900 border-emerald-200/90 shadow-2xs'
+          pillStyle: 'bg-white/95 text-emerald-900 border-emerald-200/90'
         },
         {
           group: '2. 日常の返事・応援',
@@ -2057,7 +2057,7 @@ const SectionEmotionFormula = ({ lang, onApplyFormula }) => {
           items: ['ファイト！', 'いいね！', 'おめでとう', '大丈夫だよ'],
           cardStyle: 'bg-blue-50/70 border-blue-200/90 text-blue-950',
           badgeStyle: 'bg-blue-500/15 text-blue-800 border-blue-300',
-          pillStyle: 'bg-white/95 text-blue-900 border-blue-200/90 shadow-2xs'
+          pillStyle: 'bg-white/95 text-blue-900 border-blue-200/90'
         },
         {
           group: '3. 共感・お疲れモード',
@@ -2066,7 +2066,7 @@ const SectionEmotionFormula = ({ lang, onApplyFormula }) => {
           items: ['お疲れ様', 'はい(魂抜け)', '助けて', 'おやすみ'],
           cardStyle: 'bg-amber-50/70 border-amber-200/90 text-amber-950',
           badgeStyle: 'bg-amber-500/15 text-amber-800 border-amber-300',
-          pillStyle: 'bg-white/95 text-amber-900 border-amber-200/90 shadow-2xs'
+          pillStyle: 'bg-white/95 text-amber-900 border-amber-200/90'
         },
         {
           group: '4. 驚き・リアクション',
@@ -2075,7 +2075,7 @@ const SectionEmotionFormula = ({ lang, onApplyFormula }) => {
           items: ['まじで！', '激おこ', 'やったー！'],
           cardStyle: 'bg-rose-50/70 border-rose-200/90 text-rose-950',
           badgeStyle: 'bg-rose-500/15 text-rose-800 border-rose-300',
-          pillStyle: 'bg-white/95 text-rose-900 border-rose-200/90 shadow-2xs'
+          pillStyle: 'bg-white/95 text-rose-900 border-rose-200/90'
         }
       ]
     },
@@ -2093,7 +2093,7 @@ const SectionEmotionFormula = ({ lang, onApplyFormula }) => {
           items: ['你好！', '太棒了！', '谢谢你', '超喜欢'],
           cardStyle: 'bg-emerald-50/70 border-emerald-200/90 text-emerald-950',
           badgeStyle: 'bg-emerald-500/15 text-emerald-800 border-emerald-300',
-          pillStyle: 'bg-white/95 text-emerald-900 border-emerald-200/90 shadow-2xs'
+          pillStyle: 'bg-white/95 text-emerald-900 border-emerald-200/90'
         },
         {
           group: '2. 日常回复与暖心加油',
@@ -2102,7 +2102,7 @@ const SectionEmotionFormula = ({ lang, onApplyFormula }) => {
           items: ['今天也加油', '好的/赞', '恭喜恭喜', '一切都会好'],
           cardStyle: 'bg-blue-50/70 border-blue-200/90 text-blue-950',
           badgeStyle: 'bg-blue-500/15 text-blue-800 border-blue-300',
-          pillStyle: 'bg-white/95 text-blue-900 border-blue-200/90 shadow-2xs'
+          pillStyle: 'bg-white/95 text-blue-900 border-blue-200/90'
         },
         {
           group: '3. 现实共鸣与疲惫治愈',
@@ -2111,7 +2111,7 @@ const SectionEmotionFormula = ({ lang, onApplyFormula }) => {
           items: ['辛苦啦', '好的(灵魂出窍)', '救救我', '晚安好梦'],
           cardStyle: 'bg-amber-50/70 border-amber-200/90 text-amber-950',
           badgeStyle: 'bg-amber-500/15 text-amber-800 border-amber-300',
-          pillStyle: 'bg-white/95 text-amber-900 border-amber-200/90 shadow-2xs'
+          pillStyle: 'bg-white/95 text-amber-900 border-amber-200/90'
         },
         {
           group: '4. 震惊与趣味反转',
@@ -2120,7 +2120,7 @@ const SectionEmotionFormula = ({ lang, onApplyFormula }) => {
           items: ['我的天！', '气炸了', '太爽了！'],
           cardStyle: 'bg-rose-50/70 border-rose-200/90 text-rose-950',
           badgeStyle: 'bg-rose-500/15 text-rose-800 border-rose-300',
-          pillStyle: 'bg-white/95 text-rose-900 border-rose-200/90 shadow-2xs'
+          pillStyle: 'bg-white/95 text-rose-900 border-rose-200/90'
         }
       ]
     },
@@ -2138,7 +2138,7 @@ const SectionEmotionFormula = ({ lang, onApplyFormula }) => {
           items: ['Hello!', 'Awesome!', 'Thank you', 'Love it'],
           cardStyle: 'bg-emerald-50/70 border-emerald-200/90 text-emerald-950',
           badgeStyle: 'bg-emerald-500/15 text-emerald-800 border-emerald-300',
-          pillStyle: 'bg-white/95 text-emerald-900 border-emerald-200/90 shadow-2xs'
+          pillStyle: 'bg-white/95 text-emerald-900 border-emerald-200/90'
         },
         {
           group: '2. Daily Responses & Cheers',
@@ -2147,7 +2147,7 @@ const SectionEmotionFormula = ({ lang, onApplyFormula }) => {
           items: ['Cheer up!', 'Sounds good', 'Congrats!', 'All is well'],
           cardStyle: 'bg-blue-50/70 border-blue-200/90 text-blue-950',
           badgeStyle: 'bg-blue-500/15 text-blue-800 border-blue-300',
-          pillStyle: 'bg-white/95 text-blue-900 border-blue-200/90 shadow-2xs'
+          pillStyle: 'bg-white/95 text-blue-900 border-blue-200/90'
         },
         {
           group: '3. Empathy & Relaxation',
@@ -2156,7 +2156,7 @@ const SectionEmotionFormula = ({ lang, onApplyFormula }) => {
           items: ['Good job', 'Yes (Exhausted)', 'Save me', 'Good night'],
           cardStyle: 'bg-amber-50/70 border-amber-200/90 text-amber-950',
           badgeStyle: 'bg-amber-500/15 text-amber-800 border-amber-300',
-          pillStyle: 'bg-white/95 text-amber-900 border-amber-200/90 shadow-2xs'
+          pillStyle: 'bg-white/95 text-amber-900 border-amber-200/90'
         },
         {
           group: '4. Shock & Fun Reactions',
@@ -2165,7 +2165,7 @@ const SectionEmotionFormula = ({ lang, onApplyFormula }) => {
           items: ['OMG!', 'Furious!', 'Yay! (Cheer)'],
           cardStyle: 'bg-rose-50/70 border-rose-200/90 text-rose-950',
           badgeStyle: 'bg-rose-500/15 text-rose-800 border-rose-300',
-          pillStyle: 'bg-white/95 text-rose-900 border-rose-200/90 shadow-2xs'
+          pillStyle: 'bg-white/95 text-rose-900 border-rose-200/90'
         }
       ]
     }
@@ -2181,7 +2181,7 @@ const SectionEmotionFormula = ({ lang, onApplyFormula }) => {
   };
 
   return (
-    <section className="bg-white rounded-xl p-5 sm:p-7 border border-slate-200/90 shadow-xs flex flex-col gap-4 break-keep">
+    <section className="bg-white rounded-xl p-5 sm:p-7 border border-slate-200/90 flex flex-col gap-4 break-keep">
       <div className="flex items-center gap-2.5">
         <span className="text-[24px]">🎯</span>
         <div>
@@ -2224,7 +2224,7 @@ const SectionEmotionFormula = ({ lang, onApplyFormula }) => {
       </div>
 
       {onApplyFormula && (
-        <div className="mt-1 bg-gradient-to-r from-amber-50 via-amber-100/35 to-amber-50 p-3.5 sm:p-4 rounded-xl border border-amber-200/80 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-2xs break-keep">
+        <div className="mt-1 bg-gradient-to-r from-amber-50 via-amber-100/35 to-amber-50 p-3.5 sm:p-4 rounded-xl border border-amber-200/80 flex flex-col sm:flex-row items-center justify-between gap-3 break-keep">
           <div className="flex items-center gap-2 text-[12.5px] sm:text-[13px] text-amber-950 font-medium text-center sm:text-left break-keep leading-snug">
             <span className="w-5 h-5 rounded-full bg-amber-500/20 text-amber-800 flex items-center justify-center shrink-0">
               <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -2235,7 +2235,7 @@ const SectionEmotionFormula = ({ lang, onApplyFormula }) => {
           </div>
           <button
             onClick={handleApply}
-            className="interactive-control px-4 py-2.5 bg-amber-600 hover:bg-amber-700 text-white font-extrabold text-[13px] rounded-lg shadow-xs transition-all flex items-center justify-center gap-2 shrink-0 active:scale-95 cursor-pointer whitespace-nowrap break-keep w-full sm:w-auto"
+            className="interactive-control px-4 py-2.5 bg-amber-600 hover:bg-amber-700 text-white font-extrabold text-[13px] rounded-lg transition-all flex items-center justify-center gap-2 shrink-0 active:scale-95 cursor-pointer whitespace-nowrap break-keep w-full sm:w-auto"
           >
             <span>{cur.applyAllBtn}</span>
             <svg className="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -2369,7 +2369,7 @@ const SectionFAQ = ({ lang }) => {
   };
 
   return (
-    <section className="bg-white rounded-xl p-5 sm:p-7 border border-slate-200/90 shadow-xs flex flex-col gap-4 break-keep">
+    <section className="bg-white rounded-xl p-5 sm:p-7 border border-slate-200/90 flex flex-col gap-4 break-keep">
       <div className="flex items-center gap-2.5">
         <span className="text-[24px]">❓</span>
         <div>
@@ -2425,28 +2425,28 @@ const InfoSection = ({ t, lang }) => {
           <span>💡</span> {t.guideHeader}
         </h2>
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 lg:flex lg:items-center gap-1 sm:gap-1.5 bg-mint-soft p-1.5 rounded-lg border border-mint-border shadow-xs w-full lg:w-auto max-w-full">
+        <div className="grid grid-cols-2 sm:grid-cols-4 lg:flex lg:items-center gap-1 sm:gap-1.5 bg-mint-soft p-1.5 rounded-lg border border-mint-border w-full lg:w-auto max-w-full">
           <button
             onClick={() => setActiveTab('model')}
-            className={`interactive-control px-2 sm:px-3 py-1.5 text-[12px] sm:text-[13px] font-bold rounded-md text-center transition-all cursor-pointer ${activeTab === 'model' ? 'bg-mint text-mint-strong shadow-xs border border-mint-border' : 'text-mint-strong hover:bg-mint-hover'}`}
+            className={`interactive-control px-2 sm:px-3 py-1.5 text-[12px] sm:text-[13px] font-bold rounded-md text-center transition-all cursor-pointer ${activeTab === 'model' ? 'bg-mint text-mint-strong border border-mint-border' : 'text-mint-strong hover:bg-mint-hover'}`}
           >
             ✨ {lang === 'ko' ? 'AI 모델' : lang === 'ja' ? 'AIモデル' : lang === 'zh' ? 'AI模型' : 'AI Models'}
           </button>
           <button
             onClick={() => setActiveTab('bg')}
-            className={`interactive-control px-2 sm:px-3 py-1.5 text-[12px] sm:text-[13px] font-bold rounded-md text-center transition-all cursor-pointer ${activeTab === 'bg' ? 'bg-mint text-mint-strong shadow-xs border border-mint-border' : 'text-mint-strong hover:bg-mint-hover'}`}
+            className={`interactive-control px-2 sm:px-3 py-1.5 text-[12px] sm:text-[13px] font-bold rounded-md text-center transition-all cursor-pointer ${activeTab === 'bg' ? 'bg-mint text-mint-strong border border-mint-border' : 'text-mint-strong hover:bg-mint-hover'}`}
           >
             ✂️ {lang === 'ko' ? '배경(누끼) 제거' : lang === 'ja' ? '背景(透過)の消し方' : lang === 'zh' ? '一键去除背景' : 'Remove BG'}
           </button>
           <button
             onClick={() => setActiveTab('usage')}
-            className={`interactive-control px-2 sm:px-3 py-1.5 text-[12px] sm:text-[13px] font-bold rounded-md text-center transition-all cursor-pointer ${activeTab === 'usage' ? 'bg-mint text-mint-strong shadow-xs border border-mint-border' : 'text-mint-strong hover:bg-mint-hover'}`}
+            className={`interactive-control px-2 sm:px-3 py-1.5 text-[12px] sm:text-[13px] font-bold rounded-md text-center transition-all cursor-pointer ${activeTab === 'usage' ? 'bg-mint text-mint-strong border border-mint-border' : 'text-mint-strong hover:bg-mint-hover'}`}
           >
             💬 {lang === 'ko' ? '이모티콘 등록·사용법' : lang === 'ja' ? 'スタンプ登録・使い方' : lang === 'zh' ? '表情包使用指南' : 'How to Use'}
           </button>
           <button
             onClick={() => setActiveTab('template')}
-            className={`interactive-control px-2 sm:px-3 py-1.5 text-[12px] sm:text-[13px] font-bold rounded-md text-center transition-all cursor-pointer ${activeTab === 'template' ? 'bg-mint text-mint-strong shadow-xs border border-mint-border' : 'text-mint-strong hover:bg-mint-hover'}`}
+            className={`interactive-control px-2 sm:px-3 py-1.5 text-[12px] sm:text-[13px] font-bold rounded-md text-center transition-all cursor-pointer ${activeTab === 'template' ? 'bg-mint text-mint-strong border border-mint-border' : 'text-mint-strong hover:bg-mint-hover'}`}
           >
             📜 {lang === 'ko' ? '프롬프트 템플릿' : lang === 'ja' ? 'プロンプト構造' : lang === 'zh' ? '提示词结构' : 'Prompt Template'}
           </button>
@@ -3008,7 +3008,7 @@ const InfoSection = ({ t, lang }) => {
                 })}
               </h4>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-[13px] sm:text-[14px]">
-                <div className="bg-white p-4 rounded-md border border-outline-variant flex flex-col gap-1.5 shadow-2xs">
+                <div className="bg-white p-4 rounded-md border border-outline-variant flex flex-col gap-1.5">
                   <span className="font-bold text-emerald-800">
                     {getText('tplStep1Title', {
                       ko: '1. 핵심 스타일 (Core Style)',
@@ -3029,7 +3029,7 @@ const InfoSection = ({ t, lang }) => {
                     })}
                   </span>
                 </div>
-                <div className="bg-white p-4 rounded-md border border-outline-variant flex flex-col gap-1.5 shadow-2xs">
+                <div className="bg-white p-4 rounded-md border border-outline-variant flex flex-col gap-1.5">
                   <span className="font-bold text-emerald-800">
                     {getText('tplStep2Title', {
                       ko: '2. 캐릭터 묘사 (Subject & Trait)',
@@ -3050,7 +3050,7 @@ const InfoSection = ({ t, lang }) => {
                     })}
                   </span>
                 </div>
-                <div className="bg-white p-4 rounded-md border border-outline-variant flex flex-col gap-1.5 shadow-2xs">
+                <div className="bg-white p-4 rounded-md border border-outline-variant flex flex-col gap-1.5">
                   <span className="font-bold text-emerald-800">
                     {getText('tplStep3Title', {
                       ko: '3. 15종 감정 및 포즈 그리드 (15 Grid Matrix)',
@@ -3071,7 +3071,7 @@ const InfoSection = ({ t, lang }) => {
                     })}
                   </span>
                 </div>
-                <div className="bg-white p-4 rounded-md border border-outline-variant flex flex-col gap-1.5 shadow-2xs">
+                <div className="bg-white p-4 rounded-md border border-outline-variant flex flex-col gap-1.5">
                   <span className="font-bold text-emerald-800">
                     {getText('tplStep4Title', {
                       ko: '4. 배경 및 다이컷 분리 (Isolation & Die-cut)',
@@ -6753,7 +6753,7 @@ if (currentPath === '/privacy') {
         </div>
       )}
       {/* TopAppBar - Clean Original Header */}
-      <header className="w-full top-0 bg-background/95 backdrop-blur-md z-50 sticky border-b border-outline-variant/30 shadow-xs">
+      <header className="w-full top-0 bg-background/95 backdrop-blur-md z-50 sticky border-b border-outline-variant/30">
         <div className="max-w-3xl mx-auto flex items-center justify-between px-container-margin min-h-14 py-2 w-full">
           <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
             <h1 className="brand-logo text-[18px] sm:text-[22px] leading-none font-extrabold text-primary-strong tracking-tight whitespace-nowrap flex items-center gap-1.5">
@@ -6792,7 +6792,7 @@ if (currentPath === '/privacy') {
                   onClick={() => changeLanguage(code)}
                   className={`brand-logo interactive-control w-8 sm:w-9 h-7 sm:h-8 flex items-center justify-center text-[12px] font-extrabold rounded-full transition-all ${
                     lang === code
-                      ? 'bg-mint text-mint-strong shadow-xs border border-mint-border'
+                      ? 'bg-mint text-mint-strong border border-mint-border'
                       : 'text-on-surface-variant hover:bg-mint-soft'
                   }`}
                   title={fullLabel}
@@ -6958,7 +6958,7 @@ if (currentPath === '/privacy') {
               </div>
 
               {characterSource === 'random' && (
-                <div className="rounded-xl border-2 border-amber-300 bg-linear-to-r from-amber-50 via-[#FFF8E7] to-orange-50/80 p-4 flex flex-col gap-3 shadow-xs">
+                <div className="rounded-xl border-2 border-amber-300 bg-linear-to-r from-amber-50 via-[#FFF8E7] to-orange-50/80 p-4 flex flex-col gap-3">
                   <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                     <div className="flex items-center gap-2.5">
                       <span className="text-[26px]">🎲</span>
@@ -6974,7 +6974,7 @@ if (currentPath === '/privacy') {
                     <button
                       type="button"
                       onClick={generateRandomCharacter}
-                      className="interactive-control flex items-center justify-center gap-2 min-h-11 px-5 py-2 text-[14px] font-extrabold text-[#5C3B00] bg-linear-to-r from-[#FFE58F] to-[#FFD666] hover:from-[#FFD666] hover:to-[#FFC069] border border-[#E8B339] rounded-xl shadow-xs hover:shadow-md transition-all cursor-pointer w-full sm:w-auto shrink-0 active:scale-95"
+                      className="interactive-control flex items-center justify-center gap-2 min-h-11 px-5 py-2 text-[14px] font-extrabold text-[#5C3B00] bg-linear-to-r from-[#FFE58F] to-[#FFD666] hover:from-[#FFD666] hover:to-[#FFC069] border border-[#E8B339] rounded-xl hover:shadow-md transition-all cursor-pointer w-full sm:w-auto shrink-0 active:scale-95"
                     >
                       <span className="text-[17px]">🎲</span>
                       <span>{t.rerollRandom || (lang === 'ko' ? '다른 캐릭터 다시 뽑기' : 'Re-roll Character')}</span>
@@ -7015,7 +7015,7 @@ if (currentPath === '/privacy') {
                       </button>
                     ))}
                   </div>
-                  <div className="text-[14px] leading-relaxed text-amber-900 bg-white/90 p-3.5 rounded-lg border border-amber-200 flex flex-col gap-2 shadow-2xs font-normal">
+                  <div className="text-[14px] leading-relaxed text-amber-900 bg-white/90 p-3.5 rounded-lg border border-amber-200 flex flex-col gap-2 font-normal">
                     <p className="font-bold flex items-center gap-1.5 text-[14px] text-amber-900">
                       💡 {lang === 'ko' 
                         ? '사진 참고 모드 (인물 / 동물 / 사물 자유 결합)' 
@@ -7070,11 +7070,11 @@ if (currentPath === '/privacy') {
             </div>
 
                             {/* 🌟 Section 0: One-Click Golden Combos Showcase (Instant 1-Second Setup) */}
-            <div className="bg-gradient-to-br from-[#FFFDF7] via-[#FFF8EE] to-[#F2FAF5] rounded-xl p-3 sm:p-4 border border-[#FCD3A1] shadow-2xs flex flex-col gap-2.5 mb-3.5">
+            <div className="bg-gradient-to-br from-[#FFFDF7] via-[#FFF8EE] to-[#F2FAF5] rounded-xl p-3 sm:p-4 border border-[#FCD3A1] flex flex-col gap-2.5 mb-3.5">
               <div className="flex flex-col gap-1">
                 <div className="h-[28px] flex items-center justify-between gap-2 w-full">
                   <div className="flex items-center gap-1.5 min-w-0">
-                    <span className="bg-amber-400 text-amber-950 text-[10px] sm:text-[10.5px] font-black px-2 py-0.5 rounded-full shadow-2xs shrink-0 leading-none">
+                    <span className="bg-amber-400 text-amber-950 text-[10px] sm:text-[10.5px] font-black px-2 py-0.5 rounded-full shrink-0 leading-none">
                       HOT
                     </span>
                     <h3 className="text-[13.5px] sm:text-[15px] font-black text-amber-950 flex items-center gap-1 truncate whitespace-nowrap">
@@ -7089,7 +7089,7 @@ if (currentPath === '/privacy') {
                     <button
                       type="button"
                       onClick={undoGoldenCombo}
-                      className="interactive-control h-[25px] text-[11px] font-extrabold text-amber-900 bg-white border border-amber-300 px-2.5 rounded-full shadow-2xs hover:bg-amber-100 flex items-center gap-1 cursor-pointer whitespace-nowrap shrink-0 active:scale-95 animate-in fade-in duration-150"
+                      className="interactive-control h-[25px] text-[11px] font-extrabold text-amber-900 bg-white border border-amber-300 px-2.5 rounded-full hover:bg-amber-100 flex items-center gap-1 cursor-pointer whitespace-nowrap shrink-0 active:scale-95 animate-in fade-in duration-150"
                     >
                       <RotateCcw size={11} /> {lang === 'ko' ? '되돌리기' : lang === 'ja' ? '元に戻す' : lang === 'zh' ? '撤销' : 'Undo'}
                     </button>
@@ -7153,7 +7153,7 @@ if (currentPath === '/privacy') {
                       className={`interactive-control touch-manipulation flex flex-col text-left p-3 rounded-xl w-[220px] sm:w-[235px] shrink-0 border-2 transition-all duration-200 cursor-pointer select-none active:scale-95 ${
                         isSelected
                           ? 'bg-gradient-to-b from-[#FFFBEB] to-[#FEF3C7] border-amber-500 shadow-md ring-2 ring-amber-400/60'
-                          : 'bg-white hover:bg-amber-50/50 border-amber-200/80 hover:border-amber-300 shadow-xs'
+                          : 'bg-white hover:bg-amber-50/50 border-amber-200/80 hover:border-amber-300'
                       }`}
                     >
                       {/* Top Row: Icon + Title + Status Badge */}
@@ -7165,7 +7165,7 @@ if (currentPath === '/privacy') {
                           </strong>
                         </div>
                         {isSelected && (
-                          <span className="bg-amber-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full shrink-0 flex items-center gap-0.5 animate-pulse shadow-2xs">
+                          <span className="bg-amber-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full shrink-0 flex items-center gap-0.5 animate-pulse">
                             <CheckCircle2 size={9} /> {lang === 'ko' ? '적용' : lang === 'ja' ? '適用済み' : lang === 'zh' ? '已应用' : 'APPLIED'}
                           </span>
                         )}
@@ -7254,7 +7254,7 @@ if (currentPath === '/privacy') {
                     (⚡ {lang === 'ko' ? '클릭 시 자동 동기화 / 재클릭 시 해제' : 'Auto-sync on click / Toggle off'})
                   </span>
                 </div>
-                <span className="bg-[#C5F2E3] text-[#184F43] border border-[#A6E3D0] px-3 py-0.5 rounded-full text-[12px] font-extrabold shadow-xs shrink-0 self-start sm:self-auto">
+                <span className="bg-[#C5F2E3] text-[#184F43] border border-[#A6E3D0] px-3 py-0.5 rounded-full text-[12px] font-extrabold shrink-0 self-start sm:self-auto">
                   {getCategoryRuleBadge(activeTagCategory)}
                 </span>
               </div>
@@ -7275,10 +7275,10 @@ if (currentPath === '/privacy') {
                       : 'bg-[#FFFBEB] text-[#92400E] border-[#FDE68A]'
                   }`}>
                     <div className="flex items-center justify-between sm:justify-start gap-2">
-                      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-white/95 border shrink-0 whitespace-nowrap shadow-2xs">
+                      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-white/95 border shrink-0 whitespace-nowrap">
                         {isOptimal ? '✨ 사진급 최고 화질' : isTooMany ? '⚠️ 태그 과다 주의' : '💡 화질 최적화 추천'}
                       </span>
-                      <span className="sm:hidden px-2 py-0.5 rounded bg-white/95 border text-[11px] font-extrabold shrink-0 shadow-2xs">
+                      <span className="sm:hidden px-2 py-0.5 rounded bg-white/95 border text-[11px] font-extrabold shrink-0">
                         {lang === 'ko' ? `선택 태그: ${tagCount}개` : `Tags: ${tagCount}`}
                       </span>
                     </div>
@@ -7289,7 +7289,7 @@ if (currentPath === '/privacy') {
                         ? (lang === 'ko' ? '태그가 6개 이상이면 AI가 특징을 뭉갤 수 있으니 4~5개로 줄여보세요.' : 'Too many tags (6+) may dilute AI focus. Reduce to 4-5 for best quality.')
                         : (lang === 'ko' ? '태그를 1~2개 더 조합하시면(의상/소품/화풍) 캐릭터가 더욱 완성도 높게 나옵니다.' : 'Add 1-2 more tags (outfit/prop/style) for full character identity.')}
                     </p>
-                    <span className="hidden sm:inline-flex px-2.5 py-0.5 rounded bg-white/95 border text-[11px] font-extrabold shrink-0 shadow-2xs">
+                    <span className="hidden sm:inline-flex px-2.5 py-0.5 rounded bg-white/95 border text-[11px] font-extrabold shrink-0">
                       {lang === 'ko' ? `선택 태그: ${tagCount}개` : `Tags: ${tagCount}`}
                     </span>
                   </div>
@@ -7297,7 +7297,7 @@ if (currentPath === '/privacy') {
               })()}
 
               {/* Sticky Header: Category Tabs + Active Tags Bar */}
-              <div className="sticky top-0 z-20 bg-surface-container-highest shadow-xs">
+              <div className="sticky top-0 z-20 bg-surface-container-highest">
                 <div className="no-scrollbar flex flex-wrap bg-[#EAF8F3] px-2 border-b border-mint-border">
                   {categoryKeys.map(category => {
                     const catTags = currentTags[category] || [];
@@ -7311,13 +7311,13 @@ if (currentPath === '/privacy') {
                         onClick={() => setActiveTagCategory(category)}
                         className={`whitespace-nowrap px-3 py-2.5 text-[13px] font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
                           isActive 
-                            ? 'text-mint-strong border-b-2 border-mint-strong bg-white/90 font-black shadow-2xs' 
+                            ? 'text-mint-strong border-b-2 border-mint-strong bg-white/90 font-black'
                             : 'text-mint-strong/80 hover:text-mint-strong hover:bg-mint-hover/50 border-b-2 border-transparent'
                         }`}
                       >
                         <span>{category}</span>
                         {selectedCount > 0 && (
-                          <span className="bg-mint-strong text-white text-[10.5px] px-1.5 py-0.2 rounded-full font-black leading-none shadow-2xs">
+                          <span className="bg-mint-strong text-white text-[10.5px] px-1.5 py-0.2 rounded-full font-black leading-none">
                             {selectedCount}
                           </span>
                         )}
@@ -7328,7 +7328,7 @@ if (currentPath === '/privacy') {
 
                 {/* Integrated Active Character Tags Bar directly inside Tag Screen */}
                 {charManual.trim() && (
-                  <div className="bg-[#F0FDF8] border-b border-mint-border px-3.5 py-2 flex flex-col gap-1.5 shadow-xs animate-in fade-in duration-200">
+                  <div className="bg-[#F0FDF8] border-b border-mint-border px-3.5 py-2 flex flex-col gap-1.5 animate-in fade-in duration-200">
                     <div className="flex items-center justify-between gap-2">
                       <span className="text-[13px] font-extrabold text-mint-strong flex items-center gap-1.5">
                         <span>🏷️</span>
@@ -7349,7 +7349,7 @@ if (currentPath === '/privacy') {
                       {charManual.split(',').map(v => v.trim()).filter(Boolean).map(tag => (
                         <span 
                           key={tag} 
-                          className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-white text-mint-strong border border-mint-border text-[12.5px] font-extrabold shadow-2xs hover:border-mint-strong transition-all whitespace-nowrap"
+                          className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-white text-mint-strong border border-mint-border text-[12.5px] font-extrabold hover:border-mint-strong transition-all whitespace-nowrap"
                         >
                           <span className="text-[#2D7D64] font-black">✓</span>
                           <span>{tag}</span>
@@ -7385,12 +7385,12 @@ if (currentPath === '/privacy') {
                         className={`interactive-control touch-manipulation min-h-[38px] px-3.5 py-1.5 rounded-full text-[13px] font-bold transition-all flex items-center gap-1.5 cursor-pointer select-none active:scale-95 ${
                           selected
                             ? 'bg-mint-strong text-white border-2 border-[#1E453B] shadow-md scale-105 ring-2 ring-mint-strong/40 font-black'
-                            : 'bg-white text-on-surface hover:bg-mint-soft hover:text-mint-strong border border-outline-variant hover:border-mint-border shadow-xs'
+                            : 'bg-white text-on-surface hover:bg-mint-soft hover:text-mint-strong border border-outline-variant hover:border-mint-border'
                         }`}
                       >
                         {selected ? (
                           <>
-                            <span className="bg-white text-mint-strong text-[10px] px-1.5 py-0.5 rounded-full font-extrabold shrink-0 shadow-xs">✓ ON</span>
+                            <span className="bg-white text-mint-strong text-[10px] px-1.5 py-0.5 rounded-full font-extrabold shrink-0">✓ ON</span>
                             <span className="font-extrabold">{tag}</span>
                           </>
                         ) : (
@@ -7447,7 +7447,7 @@ if (currentPath === '/privacy') {
             <button
               type="button"
               onClick={() => setShowThemePicker(true)}
-              className="interactive-control touch-manipulation w-full min-h-[62px] sm:min-h-[68px] rounded-xl border-2 border-[#9ED2C0] bg-white px-4 py-2.5 sm:px-5 sm:py-3 text-left shadow-xs hover:bg-[#F3FAF7] focus:outline-none focus-visible:ring-4 focus-visible:ring-mint/40 transition-all"
+              className="interactive-control touch-manipulation w-full min-h-[62px] sm:min-h-[68px] rounded-xl border-2 border-[#9ED2C0] bg-white px-4 py-2.5 sm:px-5 sm:py-3 text-left hover:bg-[#F3FAF7] focus:outline-none focus-visible:ring-4 focus-visible:ring-mint/40 transition-all"
             >
               <span className="flex items-center justify-between gap-3">
                 <span className="min-w-0">
@@ -7456,7 +7456,7 @@ if (currentPath === '/privacy') {
                     {activeTheme === 'custom' ? (t.customTheme || '✏️ Custom Theme') : activeTheme}
                   </strong>
                 </span>
-                <span className="inline-flex min-h-9 sm:min-h-9.5 items-center rounded-lg border border-[#A8D2C3] bg-[#E3F4ED] hover:bg-[#D5EFE5] px-3 sm:px-3.5 text-[12px] sm:text-[13px] font-bold text-[#1E5D4B] shrink-0 shadow-2xs">
+                <span className="inline-flex min-h-9 sm:min-h-9.5 items-center rounded-lg border border-[#A8D2C3] bg-[#E3F4ED] hover:bg-[#D5EFE5] px-3 sm:px-3.5 text-[12px] sm:text-[13px] font-bold text-[#1E5D4B] shrink-0">
                   {lang === 'ko' ? '테마 변경 ›' : 'Change ›'}
                 </span>
               </span>
@@ -7544,7 +7544,7 @@ if (currentPath === '/privacy') {
                     ? 'col-span-2 max-w-[calc(50%_-_6px)] justify-self-center sm:col-span-1 sm:max-w-none'
                     : ''
                 }`}>
-                <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 z-10 flex h-[20px] w-[20px] items-center justify-center rounded-full bg-[#DDF3EA] text-[9.5px] sm:text-[10px] font-black text-[#2F7D68] shadow-2xs shrink-0">{idx + 1}</span>
+                <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 z-10 flex h-[20px] w-[20px] items-center justify-center rounded-full bg-[#DDF3EA] text-[9.5px] sm:text-[10px] font-black text-[#2F7D68] shrink-0">{idx + 1}</span>
                 <input
                   type="text"
                   value={text}
@@ -8019,7 +8019,7 @@ if (currentPath === '/privacy') {
                       window.scrollTo({ top: y, behavior: 'smooth' });
                     }
                   }}
-                  className="interactive-control min-w-0 flex items-center justify-center gap-1 min-h-[38px] bg-white hover:bg-[#FFF7DF] text-[#6A5129] font-black text-[13px] sm:text-[13px] px-2.5 py-1.5 rounded-lg border border-[#E2C990] shadow-2xs cursor-pointer active:scale-95 transition-all"
+                  className="interactive-control min-w-0 flex items-center justify-center gap-1 min-h-[38px] bg-white hover:bg-[#FFF7DF] text-[#6A5129] font-black text-[13px] sm:text-[13px] px-2.5 py-1.5 rounded-lg border border-[#E2C990] cursor-pointer active:scale-95 transition-all"
                 >
                   <span>✏️</span>
                   <span className="truncate">{lang === 'ko' ? '캐릭터·태그 수정 ↑' : lang === 'ja' ? 'キャラ・タグ修正 ↑' : lang === 'zh' ? '角色与标签 ↑' : 'Character·Tags ↑'}</span>
@@ -8033,7 +8033,7 @@ if (currentPath === '/privacy') {
                       window.scrollTo({ top: y, behavior: 'smooth' });
                     }
                   }}
-                  className="interactive-control min-w-0 flex items-center justify-center gap-1 min-h-[38px] bg-white hover:bg-[#FFF7DF] text-[#6A5129] font-black text-[13px] sm:text-[13px] px-2.5 py-1.5 rounded-lg border border-[#E2C990] shadow-2xs cursor-pointer active:scale-95 transition-all"
+                  className="interactive-control min-w-0 flex items-center justify-center gap-1 min-h-[38px] bg-white hover:bg-[#FFF7DF] text-[#6A5129] font-black text-[13px] sm:text-[13px] px-2.5 py-1.5 rounded-lg border border-[#E2C990] cursor-pointer active:scale-95 transition-all"
                 >
                   <span>🎨</span>
                   <span className="truncate">{lang === 'ko' ? '테마 변경 ↑' : lang === 'ja' ? 'テーマ変更 ↑' : lang === 'zh' ? '主题变更 ↑' : 'Themes ↑'}</span>
@@ -8043,7 +8043,7 @@ if (currentPath === '/privacy') {
           </div>
 
           <AdBanner />
-          <div className="bg-[#EAF8F3] p-3 sm:p-3.5 rounded-xl border-2 border-mint-border flex flex-col gap-2.5 text-mint-strong shadow-xs">
+          <div className="bg-[#EAF8F3] p-3 sm:p-3.5 rounded-xl border-2 border-mint-border flex flex-col gap-2.5 text-mint-strong">
             {/* 1. Launch Info Header */}
             <div className="flex items-center gap-2">
               <span className="text-[17px] shrink-0 leading-none">🚀</span>
@@ -8061,7 +8061,7 @@ if (currentPath === '/privacy') {
 
           <div id="ai-action-cards-grid" className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
             {/* ChatGPT Action Card */}
-            <div className={`p-3.5 rounded-lg border-2 flex flex-col gap-2 transition-all ${previewMode === 'gpt' ? 'bg-[#F8FFFC] border-[#9FD5C4] shadow-sm' : 'bg-white border-slate-200 shadow-xs'}`}>
+            <div className={`p-3.5 rounded-lg border-2 flex flex-col gap-2 transition-all ${previewMode === 'gpt' ? 'bg-[#F8FFFC] border-[#9FD5C4] shadow-sm' : 'bg-white border-slate-200'}`}>
               <button
                 type="button"
                 onClick={() => launchAiCompanion('gpt')}
@@ -8086,7 +8086,7 @@ if (currentPath === '/privacy') {
             </div>
 
             {/* Gemini Action Card */}
-            <div className={`p-3.5 rounded-lg border-2 flex flex-col gap-2 transition-all ${previewMode === 'gemini' ? 'bg-[#FBF9FF] border-[#C9BDF0] shadow-sm' : 'bg-white border-slate-200 shadow-xs'}`}>
+            <div className={`p-3.5 rounded-lg border-2 flex flex-col gap-2 transition-all ${previewMode === 'gemini' ? 'bg-[#FBF9FF] border-[#C9BDF0] shadow-sm' : 'bg-white border-slate-200'}`}>
               <button
                 type="button"
                 onClick={() => launchAiCompanion('gemini')}
@@ -8111,7 +8111,7 @@ if (currentPath === '/privacy') {
             </div>
 
             {/* Grok Action Card */}
-            <div className={`p-3.5 rounded-lg border-2 flex flex-col gap-2 transition-all ${previewMode === 'grok' ? 'bg-[#F8F9FA] border-[#AEB4BD] shadow-sm' : 'bg-white border-slate-200 shadow-xs'}`}>
+            <div className={`p-3.5 rounded-lg border-2 flex flex-col gap-2 transition-all ${previewMode === 'grok' ? 'bg-[#F8F9FA] border-[#AEB4BD] shadow-sm' : 'bg-white border-slate-200'}`}>
               <button
                 type="button"
                 onClick={() => launchAiCompanion('grok')}
@@ -8137,7 +8137,7 @@ if (currentPath === '/privacy') {
           </div>
 
           {/* X (Twitter) Social Share & Caption Helper Card */}
-          <div className="mt-3.5 bg-white rounded-lg p-3.5 sm:p-4 border-2 border-slate-200/90 shadow-xs flex flex-col gap-2.5">
+          <div className="mt-3.5 bg-white rounded-lg p-3.5 sm:p-4 border-2 border-slate-200/90 flex flex-col gap-2.5">
             <div className="flex items-center justify-between gap-2 flex-wrap">
               <span className="text-[13px] sm:text-[14px] font-extrabold text-slate-900 flex items-center gap-2">
                 <span className="bg-[#EEF0F3] text-[#30343B] border border-[#C9CDD3] text-[11px] font-black px-1.5 py-0.5 rounded flex items-center justify-center leading-none">𝕏</span>
@@ -8172,7 +8172,7 @@ if (currentPath === '/privacy') {
               <button
                 type="button"
                 onClick={() => copySocialCaption(lang)}
-                className="interactive-control min-h-[38px] rounded-md bg-white hover:bg-slate-50 border border-slate-300 text-slate-800 font-bold text-[12.5px] sm:text-[13px] flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs transition-colors"
+                className="interactive-control min-h-[38px] rounded-md bg-white hover:bg-slate-50 border border-slate-300 text-slate-800 font-bold text-[12.5px] sm:text-[13px] flex items-center justify-center gap-1.5 cursor-pointer transition-colors"
               >
                 {copiedType === `social_${lang}` ? <CheckCircle2 size={15} className="text-[#2D7D64]" /> : <span>📋</span>}
                 <span>{copiedType === `social_${lang}` 
@@ -8182,7 +8182,7 @@ if (currentPath === '/privacy') {
               <button
                 type="button"
                 onClick={() => copySocialCaption('en')}
-                className="interactive-control min-h-[38px] rounded-md bg-white hover:bg-slate-50 border border-slate-300 text-slate-800 font-bold text-[12.5px] sm:text-[13px] flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs transition-colors"
+                className="interactive-control min-h-[38px] rounded-md bg-white hover:bg-slate-50 border border-slate-300 text-slate-800 font-bold text-[12.5px] sm:text-[13px] flex items-center justify-center gap-1.5 cursor-pointer transition-colors"
               >
                 {copiedType === 'social_en' ? <CheckCircle2 size={15} className="text-[#2D7D64]" /> : <span>📋</span>}
                 <span>{copiedType === 'social_en' 
@@ -8229,7 +8229,7 @@ if (currentPath === '/privacy') {
             <button
               type="button"
               onClick={() => setShowPhotoTips(prev => !prev)}
-              className="interactive-control mt-3 flex items-center justify-center gap-1.5 w-full py-2 px-3 rounded-lg bg-white/95 hover:bg-white text-[#C2410C] font-extrabold text-[12.5px] sm:text-[13.5px] border border-[#FCD3A1] shadow-xs hover:border-[#F97316]/50 transition-all text-center"
+              className="interactive-control mt-3 flex items-center justify-center gap-1.5 w-full py-2 px-3 rounded-lg bg-white/95 hover:bg-white text-[#C2410C] font-extrabold text-[12.5px] sm:text-[13.5px] border border-[#FCD3A1] hover:border-[#F97316]/50 transition-all text-center"
             >
               <span>{showPhotoTips ? '▲' : '💡'}</span>
               <span>
@@ -8342,7 +8342,7 @@ if (currentPath === '/privacy') {
               target="_blank"
               rel="noopener noreferrer"
               title="조코헌트 주간 1등 Top 3 위너"
-              className="inline-block transform hover:scale-105 transition-all duration-300 drop-shadow-xs hover:drop-shadow-sm"
+              className="inline-block transform hover:scale-105 transition-all duration-300 hover:drop-shadow-sm"
             >
               <img
                 src="https://jocohunt.com/images/badges/weekly-light.svg"
@@ -8454,7 +8454,7 @@ if (currentPath === '/privacy') {
                 </span>
                 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[12px] sm:text-[12.5px] text-slate-700 font-semibold">
-                  <div className="bg-white p-3 rounded-lg border border-slate-200 flex items-start gap-2 shadow-2xs">
+                  <div className="bg-white p-3 rounded-lg border border-slate-200 flex items-start gap-2">
                     <span className="text-[16px] shrink-0">🖼️</span>
                     <div>
                       <strong className="block text-slate-900">{lang === 'ko' ? '사이트 배너 광고' : 'Website Banners'}</strong>
@@ -8462,7 +8462,7 @@ if (currentPath === '/privacy') {
                     </div>
                   </div>
                   
-                  <div className="bg-white p-3 rounded-lg border border-slate-200 flex items-start gap-2 shadow-2xs">
+                  <div className="bg-white p-3 rounded-lg border border-slate-200 flex items-start gap-2">
                     <span className="text-[16px] shrink-0">🎁</span>
                     <div>
                       <strong className="block text-slate-900">{lang === 'ko' ? '굿즈·인쇄 업체 연계' : 'Merch & Print Links'}</strong>
@@ -8470,7 +8470,7 @@ if (currentPath === '/privacy') {
                     </div>
                   </div>
 
-                  <div className="bg-white p-3 rounded-lg border border-slate-200 flex items-start gap-2 shadow-2xs">
+                  <div className="bg-white p-3 rounded-lg border border-slate-200 flex items-start gap-2">
                     <span className="text-[16px] shrink-0">🏢</span>
                     <div>
                       <strong className="block text-slate-900">{lang === 'ko' ? '기업 판촉물 안내' : 'Corporate Promotional Merch'}</strong>
@@ -8478,7 +8478,7 @@ if (currentPath === '/privacy') {
                     </div>
                   </div>
 
-                  <div className="bg-white p-3 rounded-lg border border-slate-200 flex items-start gap-2 shadow-2xs">
+                  <div className="bg-white p-3 rounded-lg border border-slate-200 flex items-start gap-2">
                     <span className="text-[16px] shrink-0">💡</span>
                     <div>
                       <strong className="block text-slate-900">{lang === 'ko' ? '기타 파트너십' : 'Other Partnerships'}</strong>

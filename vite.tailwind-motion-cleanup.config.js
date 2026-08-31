@@ -18,11 +18,6 @@ function tailwindMotionCleanup() {
         'transition-[color,background-color,border-color,box-shadow,opacity,transform,filter]'
       )
 
-      // Tailwind 3.4 does not provide shadow-xs or shadow-2xs. They currently
-      // generate no CSS, so removing the tokens preserves the rendered UI while
-      // eliminating invalid utilities from the compiled App source.
-      transformed = transformed.replace(/\bshadow-(?:2xs|xs)\b/g, '')
-
       // Keep derived key arrays stable while the selected language dictionaries
       // are unchanged. This also makes the sorted theme memo effective.
       const keyAnchor = "  const themeKeys = Object.keys(currentThemes);\n  const categoryKeys = Object.keys(currentTags);"
