@@ -1763,7 +1763,7 @@ export default function BackgroundRemover({ lang = 'ko' }) {
                 {typeof progress === 'number' && <span className="text-xs text-[#897D6D]">{progress}%</span>}
               </div>
               {typeof progress === 'number' && (
-                <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-[#EFEAE2]"><div className="h-full rounded-full bg-[#7D9A75] transition-all" style={{ width: `${progress}%` }} /></div>
+                <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-[#EFEAE2]"><div className="h-full rounded-full bg-[#7D9A75] transition-[width]" style={{ width: `${progress}%` }} /></div>
               )}
             </div>
           )}
