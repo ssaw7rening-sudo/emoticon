@@ -1,4 +1,4 @@
-name: Temporary Transition All Audit
+name: Temporary Transition All Source Migration
 
 on:
   push:
@@ -6,36 +6,74 @@ on:
       - cleanup/transition-all-source
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
-  audit:
+  patch-build-and-cleanup:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
         with:
           ref: cleanup/transition-all-source
-      - name: Audit transition-all occurrences
+          fetch-depth: 0
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 20
+          cache: npm
+      - name: Move transition cleanup into source
         shell: bash
         run: |
           python - <<'PY'
           from pathlib import Path
           import re
 
-          path = Path('src/App.jsx')
-          text = path.read_text()
-          matches = list(re.finditer(r'\btransition-all\b', text))
-          print(f'total transition-all matches={len(matches)}')
+          app_path = Path('src/App.jsx')
+          vite_path = Path('vite.tailwind-motion-cleanup.config.js')
 
+          app = app_path.read_text()
+          pattern = re.compile(r'\btransition-all\b')
+          matches = list(pattern.finditer(app))
           token_pattern = re.compile(r'(?<![^\s"\'`])transition-all(?![^\s"\'`])')
-          token_matches = list(token_pattern.finditer(text))
-          print(f'class-token-like matches={len(token_matches)}')
+          token_matches = list(token_pattern.finditer(app))
+          print(f'transition-all matches={len(matches)} class-token-like={len(token_matches)}')
+          if len(matches) != 33 or len(token_matches) != 33:
+              raise SystemExit(f'Expected exactly 33 standalone transition-all tokens, found {len(matches)} total / {len(token_matches)} class-like')
 
-          lines = text.splitlines()
-          for i, line in enumerate(lines, 1):
-              if 'transition-all' in line:
-                  print(f'line {i}: {line.strip()}')
+          explicit = 'transition-[color,background-color,border-color,box-shadow,opacity,transform,filter]'
+          existing_explicit = app.count(explicit)
+          app, replaced = pattern.subn(explicit, app)
+          if replaced != 33:
+              raise SystemExit(f'Expected 33 replacements, got {replaced}')
+          if pattern.search(app):
+              raise SystemExit('transition-all remains after source migration')
+          if app.count(explicit) != existing_explicit + 33:
+              raise SystemExit('Explicit transition utility count did not increase by 33')
+          app_path.write_text(app)
 
-          if len(matches) != len(token_matches):
-              raise SystemExit('Not every transition-all occurrence is a standalone class-like token')
+          expected_vite = """import { defineConfig } from 'vite'\nimport baseConfig from './vite.ui-runtime-cleanup.config.js'\n\nfunction tailwindMotionCleanup() {\n  return {\n    name: 'tailwind-motion-cleanup-v6-dead-transform-cleanup',\n    enforce: 'pre',\n    transform(code, id) {\n      const normalizedId = id.replace(/\\\\/g, '/')\n      if (!normalizedId.endsWith('/src/App.jsx')) return null\n\n      let transformed = code.replace(/\\r\\n/g, '\\n')\n\n      // Avoid transition-all so layout-related properties are not accidentally\n      // animated. Preserve the visual interactions the UI actually uses.\n      transformed = transformed.replace(\n        /\\btransition-all\\b/g,\n        'transition-[color,background-color,border-color,box-shadow,opacity,transform,filter]'\n      )\n\n      return { code: transformed, map: null }\n    },\n  }\n}\n\nexport default defineConfig({\n  ...baseConfig,\n  plugins: [\n    ...(baseConfig.plugins || []),\n    tailwindMotionCleanup(),\n  ],\n})\n"""
+          vite = vite_path.read_text()
+          if vite != expected_vite:
+              raise SystemExit('Top-level Vite cleanup config no longer matches the expected transition-only wrapper')
+          vite_path.write_text("export { default } from './vite.ui-runtime-cleanup.config.js'\n")
           PY
+      - name: Verify intended diff only
+        shell: bash
+        run: |
+          git diff --check
+          test "$(git diff --name-only | sort | tr '\n' ' ')" = "src/App.jsx vite.tailwind-motion-cleanup.config.js "
+          ! grep -Fq 'transition-all' src/App.jsx
+          grep -Fq "export { default } from './vite.ui-runtime-cleanup.config.js'" vite.tailwind-motion-cleanup.config.js
+          test "$(wc -l < vite.tailwind-motion-cleanup.config.js)" = "1"
+      - name: Install dependencies
+        run: npm ci
+      - name: Build
+        run: npm run build
+      - name: Commit source migration
+        shell: bash
+        run: |
+          rm .github/workflows/temp-transition-all-audit.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/App.jsx vite.tailwind-motion-cleanup.config.js .github/workflows/temp-transition-all-audit.yml
+          git commit -m "Move transition cleanup into source [skip ci]"
+          git push origin HEAD:cleanup/transition-all-source
