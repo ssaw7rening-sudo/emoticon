@@ -1,0 +1,21 @@
+/* Accessibility refinements for compact interactive controls. */
+
+/* The golden-combo Undo pill was visually 25px high. Let its header row grow
+   only when the button exists so the real clickable box reaches 44px without
+   changing the empty-state spacing. */
+div[class~="h-[28px]"]:has(> button.interactive-control[class~="h-[25px]"]) {
+  height: auto;
+  min-height: 44px;
+}
+
+button.interactive-control[class~="h-[25px]"] {
+  min-height: 44px;
+}
+
+/* Desktop/tablet golden-combo arrow controls were 28px square. Keep their
+   appearance and behavior, but give each control a 44×44px interaction box. */
+div[aria-label="황금 조합 좌우 이동"] > button,
+div[aria-label="Golden combo navigation"] > button {
+  min-width: 44px;
+  min-height: 44px;
+}
