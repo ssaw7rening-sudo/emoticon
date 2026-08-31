@@ -21,5 +21,16 @@
     { "source": "/:tool(ai-sticker-maker|photo-to-sticker|sticker-sheet-splitter|transparent-png-maker|image-upscaler)/", "destination": "/:tool/index.html" },
     { "source": "/:lang(en|ja|zh)/:tool(ai-sticker-maker|photo-to-sticker|sticker-sheet-splitter|transparent-png-maker|image-upscaler)", "destination": "/:lang/:tool/index.html" },
     { "source": "/:lang(en|ja|zh)/:tool(ai-sticker-maker|photo-to-sticker|sticker-sheet-splitter|transparent-png-maker|image-upscaler)/", "destination": "/:lang/:tool/index.html" }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "X-Frame-Options", "value": "SAMEORIGIN" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+        { "key": "Strict-Transport-Security", "value": "max-age=31536000; includeSubDomains" }
+      ]
+    }
   ]
 }
