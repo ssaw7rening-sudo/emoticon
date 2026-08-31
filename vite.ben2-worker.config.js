@@ -3,7 +3,7 @@ import baseConfig from './vite.precise-sticker-split.config.js'
 
 function offloadBen2ToWorker() {
   return {
-    name: 'ben2-worker-offload-v4',
+    name: 'ben2-worker-offload-v5-single-flight',
     enforce: 'pre',
     transform(code, id) {
       const normalizedId = id.replace(/\\/g, '/')
@@ -99,6 +99,15 @@ function getBen2InferenceMaxSide() {
 async function runBen2Worker(file, onProgress) {
   if (typeof Worker !== 'function') {
     throw new Error('Web Worker is unavailable');
+  }
+
+  // Only one heavyweight WASM inference may exist at a time. Starting a new
+  // request terminates the previous worker first so a suspended/zombie run
+  // cannot keep consuming CPU or memory behind the replacement request.
+  if (typeof ben2WorkerActiveCancel === 'function') {
+    const cancelPrevious = ben2WorkerActiveCancel;
+    ben2WorkerActiveCancel = null;
+    cancelPrevious();
   }
 
   const worker = getBen2WorkerInstance();
@@ -201,6 +210,78 @@ async function removeWithBen2(file, onProgress) {
 }`
 
       transformed = transformed.replace(oldHelper, workerHelper)
+
+      // The BiRefNet fallback runs on the main thread. Keep model/processor caches,
+      // but explicitly release per-request tensors once the PNG has been produced.
+      // Optional dispose() calls keep this compatible if a tensor implementation
+      // does not expose explicit disposal on a particular platform.
+      const biRefStart = transformed.indexOf('async function removeWithBiRefNet(file, onProgress) {')
+      const biRefEnd = transformed.indexOf('\nfunction qualityRank(', biRefStart)
+      if (biRefStart < 0 || biRefEnd < 0) {
+        throw new Error('[ben2-worker] BiRefNet helper boundaries were not found')
+      }
+
+      const biRefHelper = `async function removeWithBiRefNet(file, onProgress) {
+  const { model, processor, RawImage } = await getBiRefNet(onProgress);
+  let pixelValues = null;
+  let outputTensor = null;
+  let sigmoidTensor = null;
+  let scaledTensor = null;
+  let uint8Tensor = null;
+
+  const disposeSafely = (value) => {
+    if (!value || typeof value.dispose !== 'function') return;
+    try {
+      value.dispose();
+    } catch (disposeError) {
+      console.warn('Tensor disposal skipped:', disposeError);
+    }
+  };
+
+  try {
+    const rawImage = await RawImage.fromBlob(file);
+    const processed = await processor(rawImage);
+    pixelValues = processed?.pixel_values || null;
+    if (!pixelValues) throw new Error('BiRefNet processor output is unavailable');
+
+    const output = await model({ input_image: pixelValues });
+    outputTensor = output?.output_image || output?.output || null;
+    const sourceTensor = outputTensor?.[0];
+    if (!sourceTensor) throw new Error('BiRefNet output is unavailable');
+
+    sigmoidTensor = sourceTensor.sigmoid();
+    scaledTensor = sigmoidTensor.mul(255);
+    uint8Tensor = scaledTensor.to('uint8');
+
+    const mask = await RawImage.fromTensor(uint8Tensor)
+      .resize(rawImage.width, rawImage.height);
+    const { canvas, ctx } = await drawFileToCanvas(file);
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const pixels = imageData.data;
+    const maskData = mask.data;
+    const maskChannels = Math.max(1, mask.channels || 1);
+    const total = canvas.width * canvas.height;
+    if (!maskData || mask.width !== canvas.width || mask.height !== canvas.height) {
+      throw new Error('BiRefNet mask size mismatch');
+    }
+    for (let i = 0; i < total; i += 1) {
+      const alpha = maskData[i * maskChannels];
+      pixels[i * 4 + 3] = Math.round((pixels[i * 4 + 3] * alpha) / 255);
+    }
+    ctx.putImageData(imageData, 0, 0);
+    return await canvasToPngBlob(canvas);
+  } finally {
+    const disposed = new Set();
+    for (const tensor of [uint8Tensor, scaledTensor, sigmoidTensor, outputTensor, pixelValues]) {
+      if (!tensor || disposed.has(tensor)) continue;
+      disposed.add(tensor);
+      disposeSafely(tensor);
+    }
+  }
+}
+`
+
+      transformed = transformed.slice(0, biRefStart) + biRefHelper + transformed.slice(biRefEnd + 1)
       return { code: transformed, map: null }
     },
   }
