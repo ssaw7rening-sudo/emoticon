@@ -1,8 +1,7 @@
-import { env, pipeline, RawImage } from '@huggingface/transformers';
+import { pipeline, RawImage } from '@huggingface/transformers';
 
 let removerPromise = null;
 let activeRequestId = null;
-let configuredThreads = null;
 
 function normalizeModelProgress(value) {
   if (typeof value !== 'number' || !Number.isFinite(value)) return null;
@@ -20,44 +19,23 @@ function sendProgress(id, progress, stage, detail = '') {
   });
 }
 
-function configureWasmRuntime(requestedThreads = 1) {
-  if (configuredThreads !== null) return configuredThreads;
-
-  // Multi-threaded WASM can monopolize mobile/browser CPU even though inference
-  // runs in a Worker. Without cross-origin isolation, force a single inference
-  // thread. On isolated desktop pages allow at most two threads.
-  const requested = Math.max(1, Math.min(2, Math.round(requestedThreads || 1)));
-  const threads = self.crossOriginIsolated === true ? requested : 1;
-  try {
-    if (env?.backends?.onnx?.wasm) {
-      env.backends.onnx.wasm.numThreads = threads;
-    }
-  } catch (error) {
-    console.warn('Unable to limit ONNX WASM threads:', error);
-  }
-  configuredThreads = threads;
-  return threads;
-}
-
-async function ensureRemover(id, requestedThreads) {
+async function ensureRemover(id) {
   if (!removerPromise) {
     removerPromise = (async () => {
-      const threads = configureWasmRuntime(requestedThreads);
-      sendProgress(id, 2, 'model', `BEN2 모델 준비 중 · CPU ${threads}스레드`);
+      sendProgress(id, 2, 'model', 'BEN2 모델 준비 중');
       const remover = await pipeline('background-removal', 'onnx-community/BEN2-ONNX', {
         device: 'wasm',
         progress_callback: (info) => {
           const raw = normalizeModelProgress(info?.progress);
           if (raw === null) return;
-          // Download/loading is only the first part. Never show 100% before
-          // inference itself has actually completed.
+          // Model download/loading is only the first part of the job. Never
+          // expose 100% here because inference still has to run afterwards.
           sendProgress(id, 3 + raw * 0.25, 'model', 'BEN2 모델 불러오는 중');
         },
       });
       return remover;
     })().catch((error) => {
       removerPromise = null;
-      configuredThreads = null;
       throw error;
     });
   }
@@ -98,7 +76,7 @@ async function resizeForInference(file, maxSide, id) {
     ctx.imageSmoothingQuality = 'high';
     ctx.drawImage(bitmap, 0, 0, targetWidth, targetHeight);
     const blob = await canvas.convertToBlob({ type: 'image/png' });
-    sendProgress(id, 38, 'resize', `정밀 분석용 이미지 준비 완료 · ${targetWidth}×${targetHeight}`);
+    sendProgress(id, 38, 'resize', '정밀 분석용 이미지 준비 완료');
     return {
       blob,
       resized: true,
@@ -112,13 +90,15 @@ async function resizeForInference(file, maxSide, id) {
   }
 }
 
-async function runBen2(file, maxSide, requestedThreads, id) {
-  const remover = await ensureRemover(id, requestedThreads);
+async function runBen2(file, maxSide, id) {
+  const remover = await ensureRemover(id);
   const prepared = await resizeForInference(file, maxSide, id);
 
   sendProgress(id, 42, 'decode', '이미지 분석 준비 중');
   const rawImage = await RawImage.fromBlob(prepared.blob);
 
+  // The expensive WASM inference happens inside this dedicated worker so the
+  // React/UI main thread can keep painting and responding to browser events.
   sendProgress(id, 48, 'inference', 'AI 정밀 분석 중');
   const output = await remover([rawImage]);
   sendProgress(id, 88, 'inference-done', 'AI 분석 완료');
@@ -143,7 +123,7 @@ self.onmessage = async (event) => {
   const id = data.id;
   activeRequestId = id;
   try {
-    const blob = await runBen2(data.file, data.maxSide, data.threads, id);
+    const blob = await runBen2(data.file, data.maxSide, id);
     if (activeRequestId !== id) return;
     self.postMessage({ type: 'result', id, blob });
   } catch (error) {
