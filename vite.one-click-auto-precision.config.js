@@ -1,74 +1,18 @@
 import { defineConfig } from 'vite'
 import baseConfig from './vite.hair-fur-precision-v3.config.js'
 
-function oneClickAutoPrecision() {
+function oneClickUiCleanup() {
   return {
-    name: 'one-click-auto-precision-v2-single-pass',
-    enforce: 'post',
+    name: 'one-click-auto-precision-ui-v3',
+    enforce: 'pre',
     transform(code, id) {
       const normalizedId = id.replace(/\\/g, '/')
       if (!normalizedId.endsWith('/src/components/BackgroundRemover.jsx')) return null
 
       let transformed = code.replace(/\r\n/g, '\n')
 
-      // Single-pass strategy:
-      // 1) Try the lightweight uniform-background path. This is only local pixel work.
-      // 2) If that path is unavailable or fails the quality gate, go directly to
-      //    BiRefNet precision once. Do not run ORMBG/MODNet first and do not retry
-      //    the same image with a second AI model afterwards.
-      const handlerAnchor = `  const removeBackground = async () => {`
-      const handlerStart = transformed.indexOf(handlerAnchor)
-      if (handlerStart < 0) {
-        throw new Error('[one-click-auto-precision] Background-removal handler was not found')
-      }
-
-      const aiRouteStart = transformed.indexOf(`      if (!blob) {`, handlerStart)
-      const finalizeAnchor = `      setStage('processing');\n      setProgress(null);\n      const url = URL.createObjectURL(blob);`
-      const finalizeStart = transformed.indexOf(finalizeAnchor, aiRouteStart)
-      if (aiRouteStart < 0 || finalizeStart < 0) {
-        throw new Error('[one-click-auto-precision] AI route/finalization anchor was not found')
-      }
-
-      const precisionRoute = `      if (!blob) {
-        method = 'birefnet';
-        setStage('precision');
-        setProgress(null);
-        if (typeof setProcessingDetail === 'function') {
-          setProcessingDetail(
-            typeof getHairFurText === 'function'
-              ? getHairFurText(lang).working
-              : t.precisionWorking
-          );
-        }
-        blob = await removeWithBiRefNet(file, (info) => {
-          if (typeof info?.progress === 'number') {
-            setProgress(Math.max(0, Math.min(100, Math.round(info.progress))));
-          }
-          if (info?.workerStage && typeof setProcessingWorkerStage === 'function') {
-            setProcessingWorkerStage(info.workerStage);
-          }
-          if (info?.detail && typeof setProcessingDetail === 'function') {
-            setProcessingDetail(info.detail);
-          }
-        });
-        blob = await refineHairBackgroundChannels(blob);
-        blob = await correctUnexpectedForegroundTransparency(blob);
-        blob = await cleanAiForegroundArtifacts(blob);
-        blob = await refineHairFurEdges(blob, file);
-        quality = await assessRemovalQuality(blob);
-        if (typeof setProcessingDetail === 'function') setProcessingDetail('');
-        if (typeof setProcessingWorkerStage === 'function') setProcessingWorkerStage('');
-      }
-
-`
-
-      transformed =
-        transformed.slice(0, aiRouteStart) +
-        precisionRoute +
-        transformed.slice(finalizeStart)
-
-      // Manual retry buttons are unnecessary because the default action now picks
-      // fast vs precision before any AI model is run.
+      // The default action already chooses the correct route automatically, so
+      // manual retry controls only make the flow look like two separate passes.
       const precisionUi = `          {resultUrl && ['ai', 'modnet'].includes(resultMethod) && (
             <div className="mt-3 rounded-xl border border-[#D8D0C5] bg-white px-3.5 py-3">
               <button type="button" disabled={busy} onClick={runPrecisionRetry} className="w-full rounded-xl bg-[#4B5868] px-4 py-3 text-sm font-extrabold text-white shadow-sm transition hover:bg-[#394554] disabled:cursor-wait disabled:opacity-60">
@@ -93,13 +37,8 @@ function oneClickAutoPrecision() {
 `
       if (transformed.includes(hairFurUi)) transformed = transformed.replace(hairFurUi, '')
 
-      // BiRefNet is now a normal final result, so keep the same quality warning UI
-      // used by the previous AI routes.
       transformed = transformed
         .replaceAll("['ai', 'modnet'].includes(resultMethod)", "['ai', 'modnet', 'birefnet'].includes(resultMethod)")
-
-      // User-facing copy: one action, one selected processing route, no "retry" wording.
-      transformed = transformed
         .replace("remove: '배경 제거하기'", "remove: '자동 배경 제거'")
         .replace("remove: 'Remove background'", "remove: 'Auto remove background'")
         .replace("remove: '背景を削除する'", "remove: '自動で背景を削除'")
@@ -130,7 +69,47 @@ function oneClickAutoPrecision() {
   }
 }
 
+function singlePassRouting() {
+  return {
+    name: 'single-pass-background-routing-v3',
+    enforce: 'post',
+    transform(code, id) {
+      const normalizedId = id.replace(/\\/g, '/')
+      if (!normalizedId.endsWith('/src/components/BackgroundRemover.jsx')) return null
+
+      let transformed = code.replace(/\r\n/g, '\n')
+
+      // The base routing plugin has already inserted the precision/mobile branch
+      // at this point. Force every non-uniform image through the precision branch
+      // once, rather than ORMBG -> MODNet -> BiRefNet or the reverse.
+      const portraitRoutePattern = /const\s+portraitFirst\s*=\s*!isMobileLikeDevice\(\);[^\n]*/
+      if (!portraitRoutePattern.test(transformed)) {
+        throw new Error('[single-pass-routing] Precision route marker was not found')
+      }
+      transformed = transformed.replace(
+        portraitRoutePattern,
+        `const portraitFirst = true; // uniform background => fast, otherwise one precision AI pass`
+      )
+
+      // Keep fallbacks only for a hard model failure (blob is missing). A merely
+      // imperfect quality score must not trigger a second full AI model pass.
+      const qualityFallback = "if (!blob || quality.status === 'fail') {"
+      const fallbackCount = transformed.split(qualityFallback).length - 1
+      if (fallbackCount < 2) {
+        throw new Error('[single-pass-routing] Precision fallback markers were not found')
+      }
+      transformed = transformed.replaceAll(qualityFallback, "if (!blob) {")
+
+      return { code: transformed, map: null }
+    },
+  }
+}
+
 export default defineConfig({
   ...baseConfig,
-  plugins: [...(baseConfig.plugins || []), oneClickAutoPrecision()],
+  plugins: [
+    ...(baseConfig.plugins || []),
+    oneClickUiCleanup(),
+    singlePassRouting(),
+  ],
 })
