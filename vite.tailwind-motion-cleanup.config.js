@@ -3,7 +3,7 @@ import baseConfig from './vite.ui-runtime-cleanup.config.js'
 
 function tailwindMotionCleanup() {
   return {
-    name: 'tailwind-motion-cleanup-v1',
+    name: 'tailwind-motion-cleanup-v2-sort-memoization',
     enforce: 'pre',
     transform(code, id) {
       const normalizedId = id.replace(/\\/g, '/')
@@ -27,6 +27,35 @@ function tailwindMotionCleanup() {
 
       // Remove no-op responsive duplicates. This changes no rendered size.
       transformed = transformed.replace(/text-\[13px\] sm:text-\[13px\]/g, 'text-[13px]')
+
+      // Keep derived key arrays stable while the selected language dictionaries
+      // are unchanged. This also makes the sorted theme memo effective.
+      const keyAnchor = "  const themeKeys = Object.keys(currentThemes);\n  const categoryKeys = Object.keys(currentTags);"
+      if (!transformed.includes(keyAnchor)) {
+        throw new Error('[sort-memoization] theme/category key anchor was not found')
+      }
+      transformed = transformed.replace(
+        keyAnchor,
+        "  const themeKeys = React.useMemo(() => Object.keys(currentThemes), [currentThemes]);\n  const categoryKeys = React.useMemo(() => Object.keys(currentTags), [currentTags]);"
+      )
+
+      const goldenAnchor = `  const sortedGoldenCombos = [...ALL_GOLDEN_COMBOS].sort((a, b) => {\n    const isSeasonA = (a.seasonMonths || []).includes(currentMonth) ? 100 : 0;\n    const isSeasonB = (b.seasonMonths || []).includes(currentMonth) ? 100 : 0;\n    const scoreA = (comboStats[a.id] || 0) + isSeasonA;\n    const scoreB = (comboStats[b.id] || 0) + isSeasonB;\n    return scoreB - scoreA;\n  });`
+      if (!transformed.includes(goldenAnchor)) {
+        throw new Error('[sort-memoization] golden combo sort anchor was not found')
+      }
+      transformed = transformed.replace(
+        goldenAnchor,
+        `  const sortedGoldenCombos = React.useMemo(() => [...ALL_GOLDEN_COMBOS].sort((a, b) => {\n    const isSeasonA = (a.seasonMonths || []).includes(currentMonth) ? 100 : 0;\n    const isSeasonB = (b.seasonMonths || []).includes(currentMonth) ? 100 : 0;\n    const scoreA = (comboStats[a.id] || 0) + isSeasonA;\n    const scoreB = (comboStats[b.id] || 0) + isSeasonB;\n    return scoreB - scoreA;\n  }), [comboStats, currentMonth]);`
+      )
+
+      const themeSortAnchor = `  const sortedThemeKeys = [...themeKeys].sort((a, b) => {\n    const scoreA = themeStats[a] || 0;\n    const scoreB = themeStats[b] || 0;\n    return scoreB - scoreA;\n  });`
+      if (!transformed.includes(themeSortAnchor)) {
+        throw new Error('[sort-memoization] theme sort anchor was not found')
+      }
+      transformed = transformed.replace(
+        themeSortAnchor,
+        `  const sortedThemeKeys = React.useMemo(() => [...themeKeys].sort((a, b) => {\n    const scoreA = themeStats[a] || 0;\n    const scoreB = themeStats[b] || 0;\n    return scoreB - scoreA;\n  }), [themeKeys, themeStats]);`
+      )
 
       return { code: transformed, map: null }
     },
