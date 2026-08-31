@@ -34,13 +34,16 @@ jobs:
           two_xs = app.count('shadow-2xs')
           total = xs + two_xs
           print(f'shadow-xs={xs}, shadow-2xs={two_xs}, total={total}')
-          if total == 0:
-              raise SystemExit('No invalid shadow tokens were found')
-          if total > 50:
-              raise SystemExit(f'Unexpectedly high shadow token count: {total}')
-          prefixed = app.count(' shadow-xs') + app.count(' shadow-2xs')
-          if prefixed != total:
-              raise SystemExit(f'Not every shadow token is a space-delimited class token: total={total}, prefixed={prefixed}')
+          if xs != 30 or two_xs != 47:
+              raise SystemExit(f'Expected shadow-xs=30 and shadow-2xs=47, found shadow-xs={xs}, shadow-2xs={two_xs}')
+          prefixed_xs = app.count(' shadow-xs')
+          prefixed_two_xs = app.count(' shadow-2xs')
+          print(f'prefixed shadow-xs={prefixed_xs}, prefixed shadow-2xs={prefixed_two_xs}')
+          if prefixed_xs != xs or prefixed_two_xs != two_xs:
+              raise SystemExit(
+                  f'Not every token is a space-delimited class token: '
+                  f'shadow-xs={xs}/{prefixed_xs}, shadow-2xs={two_xs}/{prefixed_two_xs}'
+              )
 
           app = app.replace(' shadow-2xs', '').replace(' shadow-xs', '')
           if 'shadow-xs' in app or 'shadow-2xs' in app:
