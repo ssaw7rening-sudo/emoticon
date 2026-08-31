@@ -25,26 +25,40 @@ jobs:
         run: |
           python - <<'PY'
           from pathlib import Path
+          import re
 
           app_path = Path('src/App.jsx')
           vite_path = Path('vite.tailwind-motion-cleanup.config.js')
 
           app = app_path.read_text()
-          app_anchor = """  const sortedThemeKeys = [...themeKeys].sort((a, b) => {
-            const scoreA = themeStats[a] || 0;
-            const scoreB = themeStats[b] || 0;
-            return scoreB - scoreA;
-          });""".replace('\n          ', '\n')
-          app_replacement = """  const sortedThemeKeys = React.useMemo(() => [...themeKeys].sort((a, b) => {
-            const scoreA = themeStats[a] || 0;
-            const scoreB = themeStats[b] || 0;
-            return scoreB - scoreA;
-          }), [themeKeys, themeStats]);""".replace('\n          ', '\n')
-          app_count = app.count(app_anchor)
-          print(f'app theme sort anchor count={app_count}')
-          if app_count != 1:
-              raise SystemExit(f'Expected exactly one App theme sort anchor, found {app_count}')
-          app = app.replace(app_anchor, app_replacement)
+          pattern = re.compile(
+              r'(?m)^(?P<indent>[ \t]*)const sortedThemeKeys = \[\.\.\.themeKeys\]\.sort\(\(a, b\) => \{\n'
+              r'(?P=indent)  const scoreA = themeStats\[a\] \|\| 0;\n'
+              r'(?P=indent)  const scoreB = themeStats\[b\] \|\| 0;\n'
+              r'(?P=indent)  return scoreB - scoreA;\n'
+              r'(?P=indent)\}\);$'
+          )
+          matches = list(pattern.finditer(app))
+          print(f'app theme sort structural matches={len(matches)}')
+          if len(matches) != 1:
+              for line_no, line in enumerate(app.splitlines(), 1):
+                  if 'sortedThemeKeys' in line:
+                      print(f'context line {line_no}: {line!r}')
+              raise SystemExit(f'Expected exactly one structural App theme sort block, found {len(matches)}')
+
+          match = matches[0]
+          original = match.group(0)
+          indent = match.group('indent')
+          replacement = original.replace(
+              'const sortedThemeKeys = [...themeKeys].sort(',
+              'const sortedThemeKeys = React.useMemo(() => [...themeKeys].sort(',
+              1,
+          )
+          suffix = f'\n{indent}}});'
+          if not replacement.endswith(suffix):
+              raise SystemExit('Theme sort source block closing suffix was unexpected')
+          replacement = replacement[:-len(suffix)] + f'\n{indent}}}), [themeKeys, themeStats]);'
+          app = app[:match.start()] + replacement + app[match.end():]
           if app.count('const sortedThemeKeys = React.useMemo(() => [...themeKeys].sort((a, b) => {') != 1:
               raise SystemExit('memoized sortedThemeKeys source block was not written exactly once')
           app_path.write_text(app)
