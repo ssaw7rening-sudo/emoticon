@@ -79,6 +79,20 @@ function uiRuntimeCleanup() {
         + safeToastHelper
         + transformed.slice(applyGoldenComboStart)
 
+      // Give the emotion-formula apply action a stable semantic CSS hook so its
+      // presentation does not depend on a Tailwind color utility class name.
+      const emotionFormulaAnchor = 'onClick={handleApply}\n            className="'
+      const emotionFormulaIndex = transformed.indexOf(emotionFormulaAnchor)
+      if (emotionFormulaIndex < 0) {
+        throw new Error('[ui-runtime-cleanup] emotion formula CTA anchor was not found')
+      }
+      const emotionFormulaClassStart = emotionFormulaIndex + emotionFormulaAnchor.length
+      if (!transformed.startsWith('emotion-formula-cta ', emotionFormulaClassStart)) {
+        transformed = transformed.slice(0, emotionFormulaClassStart)
+          + 'emotion-formula-cta '
+          + transformed.slice(emotionFormulaClassStart)
+      }
+
       return { code: transformed, map: null }
     },
   }
