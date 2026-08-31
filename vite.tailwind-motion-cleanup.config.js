@@ -18,15 +18,6 @@ function tailwindMotionCleanup() {
         'transition-[color,background-color,border-color,box-shadow,opacity,transform,filter]'
       )
 
-      const goldenAnchor = `  const sortedGoldenCombos = [...ALL_GOLDEN_COMBOS].sort((a, b) => {\n    const isSeasonA = (a.seasonMonths || []).includes(currentMonth) ? 100 : 0;\n    const isSeasonB = (b.seasonMonths || []).includes(currentMonth) ? 100 : 0;\n    const scoreA = (comboStats[a.id] || 0) + isSeasonA;\n    const scoreB = (comboStats[b.id] || 0) + isSeasonB;\n    return scoreB - scoreA;\n  });`
-      if (!transformed.includes(goldenAnchor)) {
-        throw new Error('[sort-memoization] golden combo sort anchor was not found')
-      }
-      transformed = transformed.replace(
-        goldenAnchor,
-        `  const sortedGoldenCombos = React.useMemo(() => [...ALL_GOLDEN_COMBOS].sort((a, b) => {\n    const isSeasonA = (a.seasonMonths || []).includes(currentMonth) ? 100 : 0;\n    const isSeasonB = (b.seasonMonths || []).includes(currentMonth) ? 100 : 0;\n    const scoreA = (comboStats[a.id] || 0) + isSeasonA;\n    const scoreB = (comboStats[b.id] || 0) + isSeasonB;\n    return scoreB - scoreA;\n  }), [comboStats, currentMonth]);`
-      )
-
       const themeSortAnchor = `  const sortedThemeKeys = [...themeKeys].sort((a, b) => {\n    const scoreA = themeStats[a] || 0;\n    const scoreB = themeStats[b] || 0;\n    return scoreB - scoreA;\n  });`
       if (!transformed.includes(themeSortAnchor)) {
         throw new Error('[sort-memoization] theme sort anchor was not found')
