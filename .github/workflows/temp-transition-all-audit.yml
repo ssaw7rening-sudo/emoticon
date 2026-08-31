@@ -1,0 +1,41 @@
+name: Temporary Transition All Audit
+
+on:
+  push:
+    branches:
+      - cleanup/transition-all-source
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: cleanup/transition-all-source
+      - name: Audit transition-all occurrences
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          path = Path('src/App.jsx')
+          text = path.read_text()
+          matches = list(re.finditer(r'\btransition-all\b', text))
+          print(f'total transition-all matches={len(matches)}')
+
+          token_pattern = re.compile(r'(?<![^\s"\'`])transition-all(?![^\s"\'`])')
+          token_matches = list(token_pattern.finditer(text))
+          print(f'class-token-like matches={len(token_matches)}')
+
+          lines = text.splitlines()
+          for i, line in enumerate(lines, 1):
+              if 'transition-all' in line:
+                  print(f'line {i}: {line.strip()}')
+
+          if len(matches) != len(token_matches):
+              raise SystemExit('Not every transition-all occurrence is a standalone class-like token')
+          PY
