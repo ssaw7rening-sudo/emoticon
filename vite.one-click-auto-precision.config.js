@@ -11,8 +11,6 @@ function oneClickUiCleanup() {
 
       let transformed = code.replace(/\r\n/g, '\n')
 
-      // The default action already chooses the processing route automatically.
-      // Hide manual retry controls so the UI matches the actual one-click flow.
       const precisionUi = `          {resultUrl && ['ai', 'modnet'].includes(resultMethod) && (
             <div className="mt-3 rounded-xl border border-[#D8D0C5] bg-white px-3.5 py-3">
               <button type="button" disabled={busy} onClick={runPrecisionRetry} className="w-full rounded-xl bg-[#4B5868] px-4 py-3 text-sm font-extrabold text-white shadow-sm transition hover:bg-[#394554] disabled:cursor-wait disabled:opacity-60">
@@ -71,7 +69,7 @@ function oneClickUiCleanup() {
 
 function saferStickerGridRouting() {
   return {
-    name: 'safer-sticker-grid-routing-v1',
+    name: 'safer-sticker-grid-routing-v2',
     enforce: 'pre',
     transform(code, id) {
       const normalizedId = id.replace(/\\/g, '/')
@@ -82,36 +80,13 @@ function saferStickerGridRouting() {
   const landscape = evaluate(5, 3);
   const best = portrait.score >= landscape.score ? portrait : landscape;`
 
-      if (!transformed.includes(oldSelection)) {
-        throw new Error('[safer-sticker-grid] Grid orientation selection was not found')
-      }
+      // New precise-sticker-split versions already lock the Prompt Maker sheet to
+      // its canonical 5 × 3 layout. Keep this transformer only for compatibility
+      // with older inherited configs; do nothing when that legacy selection is gone.
+      if (!transformed.includes(oldSelection)) return null
 
-      const safeSelection = `  const portrait = evaluate(3, 5);
-  const landscape = evaluate(5, 3);
-
-  // Generated 15-emoticon sheets are normally 5 columns × 3 rows even when
-  // the source canvas itself is square. The previous score-only decision could
-  // occasionally choose 3 × 5 on a square image and slice two neighboring
-  // stickers into the same output cell. Prefer 5 × 3 for square/landscape
-  // sheets, and use 3 × 5 only when the canvas is clearly portrait or when the
-  // alpha-grid evidence is overwhelmingly stronger.
-  const clearlyPortraitCanvas = sourceHeight >= sourceWidth * 1.16;
-  const clearlyLandscapeCanvas = sourceWidth >= sourceHeight * 1.16;
-  const portraitClearlyStronger =
-    portrait.nonEmpty >= 14 &&
-    landscape.nonEmpty <= 12 &&
-    portrait.score >= landscape.score + 0.14;
-  const landscapeClearlyStronger =
-    landscape.nonEmpty >= 14 &&
-    portrait.nonEmpty <= 12 &&
-    landscape.score >= portrait.score + 0.14;
-
-  let best;
-  if (clearlyPortraitCanvas) best = portrait;
-  else if (clearlyLandscapeCanvas) best = landscape;
-  else if (portraitClearlyStronger) best = portrait;
-  else if (landscapeClearlyStronger) best = landscape;
-  else best = landscape; // square sheets default to the expected 5 × 3 layout`
+      const safeSelection = `  const landscape = evaluate(5, 3);
+  const best = landscape; // Prompt Maker 15-sheet canonical layout: 5 × 3`
 
       transformed = transformed.replace(oldSelection, safeSelection)
       return { code: transformed, map: null }
@@ -129,10 +104,6 @@ function singlePassRouting() {
 
       let transformed = code.replace(/\r\n/g, '\n')
 
-      // BEN2 routing has already decided whether a device is low-power at this
-      // point. For the automatic flow, use the precision branch for every
-      // non-uniform image so we do not run a lightweight AI model first and then
-      // repeat the image with the precision model.
       const ben2RoutePattern = /const\s+portraitFirst\s*=\s*!lowPowerForBen2;[^\n]*/
       const baseRoutePattern = /const\s+portraitFirst\s*=\s*!isMobileLikeDevice\(\);[^\n]*/
 
@@ -150,9 +121,6 @@ function singlePassRouting() {
         throw new Error('[single-pass-routing] Precision route marker was not found')
       }
 
-      // Quality warnings are still shown, but they no longer launch a second full
-      // AI model. A fallback model is used only when the current model fails to
-      // produce any result blob at all.
       const qualityFallback = "if (!blob || quality.status === 'fail') {"
       const fallbackCount = transformed.split(qualityFallback).length - 1
       if (fallbackCount < 2) {
@@ -167,7 +135,7 @@ function singlePassRouting() {
 
 const inheritedPlugins = [...(baseConfig.plugins || [])]
 const preciseSplitIndex = inheritedPlugins.findIndex(
-  (plugin) => plugin?.name === 'precise-sticker-sheet-split-v2'
+  (plugin) => String(plugin?.name || '').startsWith('precise-sticker-sheet-split-')
 )
 const ben2RouteIndex = inheritedPlugins.findIndex(
   (plugin) => plugin?.name === 'prefer-ben2-precision-route'
@@ -175,13 +143,10 @@ const ben2RouteIndex = inheritedPlugins.findIndex(
 const qualityRoutingIndex = inheritedPlugins.findIndex(
   (plugin) => plugin?.name === 'background-quality-routing'
 )
-const insertionIndex = ben2RouteIndex >= 0 ? ben2RouteIndex : qualityRoutingIndex
 const finalPlugins = [...inheritedPlugins]
 
 if (preciseSplitIndex >= 0) {
   finalPlugins.splice(preciseSplitIndex + 1, 0, saferStickerGridRouting())
-} else {
-  finalPlugins.push(saferStickerGridRouting())
 }
 
 const adjustedBen2RouteIndex = finalPlugins.findIndex(
