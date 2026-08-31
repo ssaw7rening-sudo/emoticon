@@ -3,7 +3,7 @@ import baseConfig from './vite.hair-fur-precision-v3.config.js'
 
 function oneClickUiCleanup() {
   return {
-    name: 'one-click-auto-precision-ui-v3',
+    name: 'one-click-auto-precision-ui-v4',
     enforce: 'pre',
     transform(code, id) {
       const normalizedId = id.replace(/\\/g, '/')
@@ -11,8 +11,8 @@ function oneClickUiCleanup() {
 
       let transformed = code.replace(/\r\n/g, '\n')
 
-      // The default action already chooses the correct route automatically, so
-      // manual retry controls only make the flow look like two separate passes.
+      // The default action already chooses the processing route automatically.
+      // Hide manual retry controls so the UI matches the actual one-click flow.
       const precisionUi = `          {resultUrl && ['ai', 'modnet'].includes(resultMethod) && (
             <div className="mt-3 rounded-xl border border-[#D8D0C5] bg-white px-3.5 py-3">
               <button type="button" disabled={busy} onClick={runPrecisionRetry} className="w-full rounded-xl bg-[#4B5868] px-4 py-3 text-sm font-extrabold text-white shadow-sm transition hover:bg-[#394554] disabled:cursor-wait disabled:opacity-60">
@@ -38,7 +38,7 @@ function oneClickUiCleanup() {
       if (transformed.includes(hairFurUi)) transformed = transformed.replace(hairFurUi, '')
 
       transformed = transformed
-        .replaceAll("['ai', 'modnet'].includes(resultMethod)", "['ai', 'modnet', 'birefnet'].includes(resultMethod)")
+        .replaceAll("['ai', 'modnet'].includes(resultMethod)", "['ai', 'modnet', 'birefnet', 'ben2'].includes(resultMethod)")
         .replace("remove: '배경 제거하기'", "remove: '자동 배경 제거'")
         .replace("remove: 'Remove background'", "remove: 'Auto remove background'")
         .replace("remove: '背景を削除する'", "remove: '自動で背景を削除'")
@@ -71,7 +71,7 @@ function oneClickUiCleanup() {
 
 function singlePassRouting() {
   return {
-    name: 'single-pass-background-routing-v3',
+    name: 'single-pass-background-routing-v4',
     enforce: 'post',
     transform(code, id) {
       const normalizedId = id.replace(/\\/g, '/')
@@ -79,19 +79,30 @@ function singlePassRouting() {
 
       let transformed = code.replace(/\r\n/g, '\n')
 
-      // This plugin is inserted immediately after background-quality-routing,
-      // while its routing markers are still intact.
-      const portraitRoutePattern = /const\s+portraitFirst\s*=\s*!isMobileLikeDevice\(\);[^\n]*/
-      if (!portraitRoutePattern.test(transformed)) {
+      // BEN2 routing has already decided whether a device is low-power at this
+      // point. For the automatic flow, use the precision branch for every
+      // non-uniform image so we do not run a lightweight AI model first and then
+      // repeat the image with the precision model.
+      const ben2RoutePattern = /const\s+portraitFirst\s*=\s*!lowPowerForBen2;[^\n]*/
+      const baseRoutePattern = /const\s+portraitFirst\s*=\s*!isMobileLikeDevice\(\);[^\n]*/
+
+      if (ben2RoutePattern.test(transformed)) {
+        transformed = transformed.replace(
+          ben2RoutePattern,
+          `const portraitFirst = true; // uniform background => fast, otherwise one BEN2 precision pass`
+        )
+      } else if (baseRoutePattern.test(transformed)) {
+        transformed = transformed.replace(
+          baseRoutePattern,
+          `const portraitFirst = true; // uniform background => fast, otherwise one precision pass`
+        )
+      } else {
         throw new Error('[single-pass-routing] Precision route marker was not found')
       }
-      transformed = transformed.replace(
-        portraitRoutePattern,
-        `const portraitFirst = true; // uniform background => fast, otherwise one precision AI pass`
-      )
 
-      // A weak quality score no longer launches a second full AI model. Fallbacks
-      // remain available only when the current model produced no blob at all.
+      // Quality warnings are still shown, but they no longer launch a second full
+      // AI model. A fallback model is used only when the current model fails to
+      // produce any result blob at all.
       const qualityFallback = "if (!blob || quality.status === 'fail') {"
       const fallbackCount = transformed.split(qualityFallback).length - 1
       if (fallbackCount < 2) {
@@ -105,13 +116,17 @@ function singlePassRouting() {
 }
 
 const inheritedPlugins = [...(baseConfig.plugins || [])]
+const ben2RouteIndex = inheritedPlugins.findIndex(
+  (plugin) => plugin?.name === 'prefer-ben2-precision-route'
+)
 const qualityRoutingIndex = inheritedPlugins.findIndex(
   (plugin) => plugin?.name === 'background-quality-routing'
 )
+const insertionIndex = ben2RouteIndex >= 0 ? ben2RouteIndex : qualityRoutingIndex
 const finalPlugins = [...inheritedPlugins]
 
-if (qualityRoutingIndex >= 0) {
-  finalPlugins.splice(qualityRoutingIndex + 1, 0, singlePassRouting())
+if (insertionIndex >= 0) {
+  finalPlugins.splice(insertionIndex + 1, 0, singlePassRouting())
 } else {
   finalPlugins.push(singlePassRouting())
 }
