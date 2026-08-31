@@ -31,7 +31,7 @@ async function ensureRemover(id) {
   try {
     if (!removerPromise) {
       removerPromise = (async () => {
-        sendModelProgress(2, 'model', 'BEN2 모델 준비 중');
+        sendModelProgress(2, 'model', '정밀 AI 모델 준비 중');
         const remover = await pipeline('background-removal', 'onnx-community/BEN2-ONNX', {
           device: 'wasm',
           progress_callback: (info) => {
@@ -39,7 +39,7 @@ async function ensureRemover(id) {
             if (raw === null) return;
             // Model download/loading is only the first part of the job. Never
             // expose 100% here because inference still has to run afterwards.
-            sendModelProgress(3 + raw * 0.25, 'model', 'BEN2 모델 불러오는 중');
+            sendModelProgress(3 + raw * 0.25, 'model', '정밀 AI 모델 불러오는 중');
           },
         });
         return remover;
