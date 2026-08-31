@@ -69,6 +69,56 @@ function oneClickUiCleanup() {
   }
 }
 
+function saferStickerGridRouting() {
+  return {
+    name: 'safer-sticker-grid-routing-v1',
+    enforce: 'pre',
+    transform(code, id) {
+      const normalizedId = id.replace(/\\/g, '/')
+      if (!normalizedId.endsWith('/src/components/BackgroundRemover.jsx')) return null
+
+      let transformed = code.replace(/\r\n/g, '\n')
+      const oldSelection = `  const portrait = evaluate(3, 5);
+  const landscape = evaluate(5, 3);
+  const best = portrait.score >= landscape.score ? portrait : landscape;`
+
+      if (!transformed.includes(oldSelection)) {
+        throw new Error('[safer-sticker-grid] Grid orientation selection was not found')
+      }
+
+      const safeSelection = `  const portrait = evaluate(3, 5);
+  const landscape = evaluate(5, 3);
+
+  // Generated 15-emoticon sheets are normally 5 columns × 3 rows even when
+  // the source canvas itself is square. The previous score-only decision could
+  // occasionally choose 3 × 5 on a square image and slice two neighboring
+  // stickers into the same output cell. Prefer 5 × 3 for square/landscape
+  // sheets, and use 3 × 5 only when the canvas is clearly portrait or when the
+  // alpha-grid evidence is overwhelmingly stronger.
+  const clearlyPortraitCanvas = sourceHeight >= sourceWidth * 1.16;
+  const clearlyLandscapeCanvas = sourceWidth >= sourceHeight * 1.16;
+  const portraitClearlyStronger =
+    portrait.nonEmpty >= 14 &&
+    landscape.nonEmpty <= 12 &&
+    portrait.score >= landscape.score + 0.14;
+  const landscapeClearlyStronger =
+    landscape.nonEmpty >= 14 &&
+    portrait.nonEmpty <= 12 &&
+    landscape.score >= portrait.score + 0.14;
+
+  let best;
+  if (clearlyPortraitCanvas) best = portrait;
+  else if (clearlyLandscapeCanvas) best = landscape;
+  else if (portraitClearlyStronger) best = portrait;
+  else if (landscapeClearlyStronger) best = landscape;
+  else best = landscape; // square sheets default to the expected 5 × 3 layout`
+
+      transformed = transformed.replace(oldSelection, safeSelection)
+      return { code: transformed, map: null }
+    },
+  }
+}
+
 function singlePassRouting() {
   return {
     name: 'single-pass-background-routing-v4',
@@ -116,6 +166,9 @@ function singlePassRouting() {
 }
 
 const inheritedPlugins = [...(baseConfig.plugins || [])]
+const preciseSplitIndex = inheritedPlugins.findIndex(
+  (plugin) => plugin?.name === 'precise-sticker-sheet-split-v2'
+)
 const ben2RouteIndex = inheritedPlugins.findIndex(
   (plugin) => plugin?.name === 'prefer-ben2-precision-route'
 )
@@ -125,8 +178,22 @@ const qualityRoutingIndex = inheritedPlugins.findIndex(
 const insertionIndex = ben2RouteIndex >= 0 ? ben2RouteIndex : qualityRoutingIndex
 const finalPlugins = [...inheritedPlugins]
 
-if (insertionIndex >= 0) {
-  finalPlugins.splice(insertionIndex + 1, 0, singlePassRouting())
+if (preciseSplitIndex >= 0) {
+  finalPlugins.splice(preciseSplitIndex + 1, 0, saferStickerGridRouting())
+} else {
+  finalPlugins.push(saferStickerGridRouting())
+}
+
+const adjustedBen2RouteIndex = finalPlugins.findIndex(
+  (plugin) => plugin?.name === 'prefer-ben2-precision-route'
+)
+const adjustedQualityRoutingIndex = finalPlugins.findIndex(
+  (plugin) => plugin?.name === 'background-quality-routing'
+)
+const adjustedInsertionIndex = adjustedBen2RouteIndex >= 0 ? adjustedBen2RouteIndex : adjustedQualityRoutingIndex
+
+if (adjustedInsertionIndex >= 0) {
+  finalPlugins.splice(adjustedInsertionIndex + 1, 0, singlePassRouting())
 } else {
   finalPlugins.push(singlePassRouting())
 }
