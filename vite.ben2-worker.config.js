@@ -3,7 +3,7 @@ import baseConfig from './vite.precise-sticker-split.config.js'
 
 function offloadBen2ToWorker() {
   return {
-    name: 'ben2-worker-offload-v3',
+    name: 'ben2-worker-offload-v2',
     enforce: 'pre',
     transform(code, id) {
       const normalizedId = id.replace(/\\/g, '/')
@@ -50,114 +50,63 @@ function getBen2WorkerInstance() {
   return ben2WorkerInstance;
 }
 
-function getBen2InferencePlan() {
-  if (typeof navigator === 'undefined') {
-    return { primaryMaxSide: 1152, retryMaxSide: 896, threads: 1, inferenceTimeoutMs: 70000 };
-  }
-
+function getBen2InferenceMaxSide() {
+  if (typeof navigator === 'undefined') return 1440;
   const memory = typeof navigator.deviceMemory === 'number' ? navigator.deviceMemory : null;
   const cores = typeof navigator.hardwareConcurrency === 'number' ? navigator.hardwareConcurrency : null;
   const mobileLike = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent || '');
-  const lowPower =
-    (memory !== null && memory <= 4) ||
-    (memory === null && cores !== null && cores <= 4);
 
-  if (lowPower) {
-    return { primaryMaxSide: 768, retryMaxSide: 640, threads: 1, inferenceTimeoutMs: 45000 };
+  if ((memory !== null && memory <= 4) || (memory === null && cores !== null && cores <= 4)) {
+    return 1024;
   }
-  if (mobileLike) {
-    return { primaryMaxSide: 1024, retryMaxSide: 768, threads: 1, inferenceTimeoutMs: 60000 };
-  }
-  return { primaryMaxSide: 1280, retryMaxSide: 960, threads: 2, inferenceTimeoutMs: 75000 };
+  return mobileLike ? 1280 : 1600;
 }
 
-function makeBen2Error(message, code) {
-  const error = new Error(message);
-  error.code = code;
-  return error;
-}
-
-async function runBen2WorkerAttempt(file, onProgress, options) {
+async function runBen2Worker(file, onProgress) {
   if (typeof Worker !== 'function') {
-    throw makeBen2Error('Web Worker is unavailable', 'BEN2_WORKER_UNAVAILABLE');
+    throw new Error('Web Worker is unavailable');
   }
 
   const worker = getBen2WorkerInstance();
   const id = ++ben2WorkerRequestSequence;
-  const {
-    maxSide,
-    threads = 1,
-    inferenceTimeoutMs = 60000,
-    modelTimeoutMs = 240000
-  } = options;
+  const maxSide = getBen2InferenceMaxSide();
 
   return new Promise((resolve, reject) => {
     let settled = false;
     let cancelCurrent = null;
-    let modelTimeoutId = null;
-    let inferenceTimeoutId = null;
-
-    const clearTimers = () => {
-      if (modelTimeoutId) clearTimeout(modelTimeoutId);
-      if (inferenceTimeoutId) clearTimeout(inferenceTimeoutId);
-      modelTimeoutId = null;
-      inferenceTimeoutId = null;
-    };
 
     const cleanup = () => {
-      clearTimers();
+      clearTimeout(timeoutId);
       worker.removeEventListener('message', handleMessage);
       worker.removeEventListener('error', handleError);
       worker.removeEventListener('messageerror', handleMessageError);
       if (ben2WorkerActiveCancel === cancelCurrent) ben2WorkerActiveCancel = null;
     };
 
-    const failAndReset = (error) => {
+    cancelCurrent = () => {
       if (settled) return;
       settled = true;
       cleanup();
       resetBen2Worker();
-      reject(error);
-    };
-
-    cancelCurrent = () => {
-      const error = makeBen2Error('BEN2 processing cancelled', 'BEN2_CANCELLED');
+      const error = new Error('BEN2 processing cancelled');
       error.name = 'AbortError';
-      failAndReset(error);
+      reject(error);
     };
     ben2WorkerActiveCancel = cancelCurrent;
 
-    modelTimeoutId = setTimeout(() => {
-      failAndReset(makeBen2Error('BEN2 model loading timed out', 'BEN2_MODEL_TIMEOUT'));
-    }, modelTimeoutMs);
-
-    function startInferenceWatchdog() {
-      if (modelTimeoutId) {
-        clearTimeout(modelTimeoutId);
-        modelTimeoutId = null;
-      }
-      if (inferenceTimeoutId) return;
-      inferenceTimeoutId = setTimeout(() => {
-        failAndReset(makeBen2Error('BEN2 inference took too long', 'BEN2_INFERENCE_TIMEOUT'));
-      }, inferenceTimeoutMs);
-    }
+    const timeoutId = setTimeout(() => {
+      if (settled) return;
+      settled = true;
+      cleanup();
+      resetBen2Worker();
+      reject(new Error('BEN2 worker timed out'));
+    }, 240000);
 
     function handleMessage(event) {
       const data = event.data || {};
       if (data.id !== id || settled) return;
 
       if (data.type === 'progress') {
-        if (data.stage === 'model-ready') {
-          if (modelTimeoutId) {
-            clearTimeout(modelTimeoutId);
-            modelTimeoutId = null;
-          }
-        }
-        if (data.stage === 'inference') startInferenceWatchdog();
-        if (data.stage === 'inference-done' && inferenceTimeoutId) {
-          clearTimeout(inferenceTimeoutId);
-          inferenceTimeoutId = null;
-        }
         if (typeof data.progress === 'number') {
           onProgress?.({
             progress: Math.max(0, Math.min(96, data.progress)),
@@ -176,61 +125,44 @@ async function runBen2WorkerAttempt(file, onProgress, options) {
       }
 
       if (data.type === 'error') {
-        failAndReset(makeBen2Error(data.message || 'BEN2 worker failed', 'BEN2_WORKER_ERROR'));
+        settled = true;
+        cleanup();
+        reject(new Error(data.message || 'BEN2 worker failed'));
       }
     }
 
     function handleError(event) {
-      failAndReset(event?.error || makeBen2Error(event?.message || 'BEN2 worker crashed', 'BEN2_WORKER_CRASH'));
+      if (settled) return;
+      settled = true;
+      cleanup();
+      resetBen2Worker();
+      reject(event?.error || new Error(event?.message || 'BEN2 worker crashed'));
     }
 
     function handleMessageError() {
-      failAndReset(makeBen2Error('BEN2 worker message failed', 'BEN2_MESSAGE_ERROR'));
+      if (settled) return;
+      settled = true;
+      cleanup();
+      resetBen2Worker();
+      reject(new Error('BEN2 worker message failed'));
     }
 
     worker.addEventListener('message', handleMessage);
     worker.addEventListener('error', handleError);
     worker.addEventListener('messageerror', handleMessageError);
-    worker.postMessage({ type: 'process', id, file, maxSide, threads });
+    worker.postMessage({ type: 'process', id, file, maxSide });
   });
 }
 
 async function removeWithBen2(file, onProgress) {
-  const plan = getBen2InferencePlan();
   try {
-    return await runBen2WorkerAttempt(file, onProgress, {
-      maxSide: plan.primaryMaxSide,
-      threads: plan.threads,
-      inferenceTimeoutMs: plan.inferenceTimeoutMs
-    });
-  } catch (firstError) {
-    if (firstError?.name === 'AbortError') throw firstError;
-
-    if (firstError?.code === 'BEN2_INFERENCE_TIMEOUT') {
-      onProgress?.({
-        progress: 36,
-        workerStage: 'retry',
-        detail: '처리가 오래 걸려 가벼운 정밀 모드로 자동 재시도 중…'
-      });
-      await new Promise((resolve) => setTimeout(resolve, 80));
-
-      try {
-        return await runBen2WorkerAttempt(file, onProgress, {
-          maxSide: plan.retryMaxSide,
-          threads: 1,
-          inferenceTimeoutMs: Math.max(35000, Math.round(plan.inferenceTimeoutMs * 0.75))
-        });
-      } catch (retryError) {
-        if (retryError?.name === 'AbortError') throw retryError;
-        console.warn('BEN2 lightweight retry failed; using outer fallback route:', retryError);
-        throw retryError;
-      }
-    }
-
-    console.warn('BEN2 worker failed; using outer fallback route:', firstError);
-    // Do not automatically run a heavy precision model on the UI thread here.
-    // The surrounding route will choose MODNet/ORMBG as a safer fallback.
-    throw firstError;
+    return await runBen2Worker(file, onProgress);
+  } catch (workerError) {
+    if (workerError?.name === 'AbortError') throw workerError;
+    console.warn('BEN2 worker failed, using BiRefNet fallback:', workerError);
+    // Keep the UI responsive route as the default. Only if the worker itself is
+    // unavailable/crashes do we fall back to the smaller existing precision model.
+    return removeWithBiRefNet(file, onProgress);
   }
 }`
 
