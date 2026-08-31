@@ -1,23 +1,64 @@
 import { defineConfig } from 'vite'
-import baseConfig from './vite.ben2-test.config.js'
+import baseConfig from './vite.shadow-cleanup.config.js'
 
 function automaticBen2Routing() {
   return {
     name: 'automatic-ben2-routing',
-    enforce: 'post',
+    enforce: 'pre',
     transform(code, id) {
       const normalizedId = id.replace(/\\/g, '/')
       if (!normalizedId.endsWith('/src/components/BackgroundRemover.jsx')) return null
 
-      if (!code.includes('async function removeWithBen2(file, onProgress)')) {
-        throw new Error('[ben2-auto] BEN2 removal helper was not found')
+      let transformed = code
+
+      const promiseAnchor = 'let birefNetPromise = null;'
+      if (!transformed.includes(promiseAnchor)) {
+        throw new Error('[ben2-auto] BiRefNet promise anchor was not found')
       }
+      transformed = transformed.replace(
+        promiseAnchor,
+        `${promiseAnchor}\nlet ben2Promise = null;`
+      )
+
+      const getterAnchor = 'async function getBiRefNet(onProgress) {'
+      if (!transformed.includes(getterAnchor)) {
+        throw new Error('[ben2-auto] BiRefNet getter anchor was not found')
+      }
+      const ben2Getter = `async function getBen2Remover(onProgress) {
+  if (!ben2Promise) {
+    ben2Promise = (async () => {
+      const { pipeline, RawImage } = await import('@huggingface/transformers');
+      const remover = await pipeline('background-removal', 'onnx-community/BEN2-ONNX', {
+        device: 'wasm',
+        progress_callback: (info) => onProgress?.(info)
+      });
+      return { remover, RawImage };
+    })().catch((error) => {
+      ben2Promise = null;
+      throw error;
+    });
+  }
+  return ben2Promise;
+}
+
+`
+      transformed = transformed.replace(getterAnchor, `${ben2Getter}${getterAnchor}`)
+
+      const removeAnchor = 'async function removeWithBiRefNet(file, onProgress) {'
+      if (!transformed.includes(removeAnchor)) {
+        throw new Error('[ben2-auto] BiRefNet removal anchor was not found')
+      }
+      const ben2Remove = `async function removeWithBen2(file, onProgress) {
+  return pipelineRemovalToBlob(file, getBen2Remover, onProgress);
+}
+
+`
+      transformed = transformed.replace(removeAnchor, `${ben2Remove}${removeAnchor}`)
 
       const startAnchor = "      if (!blob) {\n        method = 'ai';"
       const endAnchor = "\n\n      setStage('processing');"
-      const start = code.indexOf(startAnchor)
-      const end = code.indexOf(endAnchor, start)
-
+      const start = transformed.indexOf(startAnchor)
+      const end = transformed.indexOf(endAnchor, start)
       if (start < 0 || end < 0) {
         throw new Error('[ben2-auto] AI routing block was not found')
       }
@@ -54,10 +95,9 @@ function automaticBen2Routing() {
           }
         };
 
-        // BEN2 is the preferred model for normal photos because it generally
-        // preserves detailed subject boundaries better. On memory-constrained
-        // devices we keep the lightweight path as the automatic default; the
-        // precision retry button can still load BEN2 explicitly when requested.
+        // Normal photos prefer BEN2. Devices that explicitly report limited
+        // memory stay on the lighter path automatically and can still request
+        // BEN2 through the precision retry button.
         if (!lowMemoryDevice) {
           try {
             setStage('preparing');
@@ -74,9 +114,8 @@ function automaticBen2Routing() {
           }
         }
 
-        // Only pay for the lightweight fallback when BEN2 is unavailable or its
-        // quality gate is not clean. This keeps normal high-quality BEN2 runs to
-        // a single model inference while retaining the existing safety net.
+        // A clean BEN2 result ends here. Only uncertain results pay the cost of
+        // additional models, preserving quality without running every model.
         if (!bestBlob || bestQuality.status !== 'pass') {
           try {
             setStage('preparing');
@@ -101,16 +140,41 @@ function automaticBen2Routing() {
           }
         }
 
-        if (!bestBlob) {
-          throw new Error('All background-removal models failed');
-        }
+        if (!bestBlob) throw new Error('All background-removal models failed');
 
         blob = bestBlob;
         quality = bestQuality;
         method = bestMethod;
       }`
 
-      const transformed = code.slice(0, start) + replacement + code.slice(end)
+      transformed = transformed.slice(0, start) + replacement + transformed.slice(end)
+
+      // Low-memory automatic runs still expose the existing precision retry.
+      // That retry now uses BEN2 instead of BiRefNet so users get the same
+      // high-quality path on demand.
+      const precisionStart = transformed.indexOf('const runPrecisionRetry = async () => {')
+      if (precisionStart < 0) {
+        throw new Error('[ben2-auto] Precision retry handler was not found')
+      }
+      const beforePrecision = transformed.slice(0, precisionStart)
+      let precisionSection = transformed.slice(precisionStart)
+      if (!precisionSection.includes('let precisionBlob = await removeWithBiRefNet(file,')) {
+        throw new Error('[ben2-auto] Precision BiRefNet call was not found')
+      }
+      precisionSection = precisionSection.replace(
+        'let precisionBlob = await removeWithBiRefNet(file,',
+        'let precisionBlob = await removeWithBen2(file,'
+      )
+      precisionSection = precisionSection.replace(
+        "setResultMethod('birefnet');",
+        "setResultMethod('ben2');"
+      )
+      precisionSection = precisionSection.replace(
+        "console.error('BiRefNet precision retry failed:', e);",
+        "console.error('BEN2 precision retry failed:', e);"
+      )
+
+      transformed = beforePrecision + precisionSection
       return { code: transformed, map: null }
     },
   }
@@ -118,5 +182,5 @@ function automaticBen2Routing() {
 
 export default defineConfig({
   ...baseConfig,
-  plugins: [...(baseConfig.plugins || []), automaticBen2Routing()],
+  plugins: [automaticBen2Routing(), ...(baseConfig.plugins || [])],
 })
