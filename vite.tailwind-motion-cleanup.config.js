@@ -3,7 +3,7 @@ import baseConfig from './vite.ui-runtime-cleanup.config.js'
 
 function tailwindMotionCleanup() {
   return {
-    name: 'tailwind-motion-cleanup-v2-sort-memoization',
+    name: 'tailwind-motion-cleanup-v3-invalid-shadow-cleanup',
     enforce: 'pre',
     transform(code, id) {
       const normalizedId = id.replace(/\\/g, '/')
@@ -27,6 +27,11 @@ function tailwindMotionCleanup() {
 
       // Remove no-op responsive duplicates. This changes no rendered size.
       transformed = transformed.replace(/text-\[13px\] sm:text-\[13px\]/g, 'text-[13px]')
+
+      // Tailwind 3.4 does not provide shadow-xs or shadow-2xs. They currently
+      // generate no CSS, so removing the tokens preserves the rendered UI while
+      // eliminating invalid utilities from the compiled App source.
+      transformed = transformed.replace(/\bshadow-(?:2xs|xs)\b/g, '')
 
       // Keep derived key arrays stable while the selected language dictionaries
       // are unchanged. This also makes the sorted theme memo effective.
