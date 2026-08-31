@@ -3,6 +3,8 @@ import { pipeline, RawImage } from '@huggingface/transformers';
 let removerPromise = null;
 let activeRequestId = null;
 const modelWaiters = new Set();
+const progressStateById = new Map();
+const PROGRESS_MIN_INTERVAL_MS = 80;
 
 function normalizeModelProgress(value) {
   if (typeof value !== 'number' || !Number.isFinite(value)) return null;
@@ -10,11 +12,37 @@ function normalizeModelProgress(value) {
   return Math.max(0, Math.min(100, normalized));
 }
 
+function clearProgressState(id) {
+  progressStateById.delete(id);
+}
+
 function sendProgress(id, progress, stage, detail = '') {
+  const rounded = Math.max(0, Math.min(99, Math.round(progress)));
+  const now = Date.now();
+  const previous = progressStateById.get(id);
+  const stageChanged = !previous || previous.stage !== stage || previous.detail !== detail;
+  const progressChanged = !previous || previous.progress !== rounded;
+  const enoughTimePassed = !previous || now - previous.sentAt >= PROGRESS_MIN_INTERVAL_MS;
+  const meaningfulJump = !previous || Math.abs(rounded - previous.progress) >= 4;
+
+  // Model download callbacks can fire dozens of times per second. Keep the UI
+  // responsive by suppressing duplicate/tiny updates while always allowing a
+  // stage change or a meaningful progress jump through immediately.
+  if (!stageChanged && (!progressChanged || (!enoughTimePassed && !meaningfulJump))) {
+    return;
+  }
+
+  progressStateById.set(id, {
+    progress: rounded,
+    stage,
+    detail,
+    sentAt: now,
+  });
+
   self.postMessage({
     type: 'progress',
     id,
-    progress: Math.max(0, Math.min(99, Math.round(progress))),
+    progress: rounded,
     stage,
     detail,
   });
@@ -68,7 +96,22 @@ async function resizeForInference(file, maxSide, id) {
   }
 
   sendProgress(id, 33, 'decode', '이미지 준비 중');
-  const bitmap = await createImageBitmap(file);
+
+  let bitmap = null;
+  try {
+    bitmap = await createImageBitmap(file);
+  } catch (bitmapError) {
+    // Some Android/iOS WebViews reject otherwise valid images here. Do not fail
+    // the whole removal job: RawImage.fromBlob can still decode the original.
+    console.warn('BEN2 worker createImageBitmap failed; using original image:', bitmapError);
+    sendProgress(id, 35, 'decode-fallback', '원본 이미지로 계속 처리 중');
+    return {
+      blob: file,
+      resized: false,
+      decodeFallback: true,
+    };
+  }
+
   try {
     const width = bitmap.width;
     const height = bitmap.height;
@@ -142,6 +185,8 @@ self.onmessage = async (event) => {
         id,
         message: error?.message || 'BEN2 warmup failed',
       });
+    } finally {
+      clearProgressState(id);
     }
     return;
   }
@@ -161,5 +206,7 @@ self.onmessage = async (event) => {
       id,
       message: error?.message || 'BEN2 worker failed',
     });
+  } finally {
+    clearProgressState(id);
   }
 };
