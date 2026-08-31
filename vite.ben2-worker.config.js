@@ -3,7 +3,7 @@ import baseConfig from './vite.precise-sticker-split.config.js'
 
 function offloadBen2ToWorker() {
   return {
-    name: 'ben2-worker-offload-v1',
+    name: 'ben2-worker-offload-v2',
     enforce: 'pre',
     transform(code, id) {
       const normalizedId = id.replace(/\\/g, '/')
@@ -20,12 +20,24 @@ function offloadBen2ToWorker() {
 
       const workerHelper = `let ben2WorkerInstance = null;
 let ben2WorkerRequestSequence = 0;
+let ben2WorkerActiveCancel = null;
 
 function resetBen2Worker() {
   if (ben2WorkerInstance) {
     try { ben2WorkerInstance.terminate(); } catch (error) { /* noop */ }
   }
   ben2WorkerInstance = null;
+}
+
+function cancelBen2Processing() {
+  if (typeof ben2WorkerActiveCancel === 'function') {
+    const cancel = ben2WorkerActiveCancel;
+    ben2WorkerActiveCancel = null;
+    cancel();
+    return true;
+  }
+  resetBen2Worker();
+  return false;
 }
 
 function getBen2WorkerInstance() {
@@ -61,6 +73,27 @@ async function runBen2Worker(file, onProgress) {
 
   return new Promise((resolve, reject) => {
     let settled = false;
+    let cancelCurrent = null;
+
+    const cleanup = () => {
+      clearTimeout(timeoutId);
+      worker.removeEventListener('message', handleMessage);
+      worker.removeEventListener('error', handleError);
+      worker.removeEventListener('messageerror', handleMessageError);
+      if (ben2WorkerActiveCancel === cancelCurrent) ben2WorkerActiveCancel = null;
+    };
+
+    cancelCurrent = () => {
+      if (settled) return;
+      settled = true;
+      cleanup();
+      resetBen2Worker();
+      const error = new Error('BEN2 processing cancelled');
+      error.name = 'AbortError';
+      reject(error);
+    };
+    ben2WorkerActiveCancel = cancelCurrent;
+
     const timeoutId = setTimeout(() => {
       if (settled) return;
       settled = true;
@@ -69,14 +102,7 @@ async function runBen2Worker(file, onProgress) {
       reject(new Error('BEN2 worker timed out'));
     }, 240000);
 
-    const cleanup = () => {
-      clearTimeout(timeoutId);
-      worker.removeEventListener('message', handleMessage);
-      worker.removeEventListener('error', handleError);
-      worker.removeEventListener('messageerror', handleMessageError);
-    };
-
-    const handleMessage = (event) => {
+    function handleMessage(event) {
       const data = event.data || {};
       if (data.id !== id || settled) return;
 
@@ -103,23 +129,23 @@ async function runBen2Worker(file, onProgress) {
         cleanup();
         reject(new Error(data.message || 'BEN2 worker failed'));
       }
-    };
+    }
 
-    const handleError = (event) => {
+    function handleError(event) {
       if (settled) return;
       settled = true;
       cleanup();
       resetBen2Worker();
       reject(event?.error || new Error(event?.message || 'BEN2 worker crashed'));
-    };
+    }
 
-    const handleMessageError = () => {
+    function handleMessageError() {
       if (settled) return;
       settled = true;
       cleanup();
       resetBen2Worker();
       reject(new Error('BEN2 worker message failed'));
-    };
+    }
 
     worker.addEventListener('message', handleMessage);
     worker.addEventListener('error', handleError);
@@ -132,6 +158,7 @@ async function removeWithBen2(file, onProgress) {
   try {
     return await runBen2Worker(file, onProgress);
   } catch (workerError) {
+    if (workerError?.name === 'AbortError') throw workerError;
     console.warn('BEN2 worker failed, using BiRefNet fallback:', workerError);
     // Keep the UI responsive route as the default. Only if the worker itself is
     // unavailable/crashes do we fall back to the smaller existing precision model.
