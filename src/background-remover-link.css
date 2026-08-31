@@ -51,8 +51,8 @@ html[data-page='prompt-maker'] a[href$='/background-remover/']:active {
   }
 }
 
-/* Background-remover primary download action: match its exact Tailwind class token. */
-#background-remover button[class~="bg-[#3E6B4B]"] {
+/* Background-remover primary download action: use a stable semantic hook. */
+#background-remover .background-remover-download {
   background-color: #FFF2C9;
   border: 1px solid #E4BE58;
   color: #744816;
@@ -60,14 +60,14 @@ html[data-page='prompt-maker'] a[href$='/background-remover/']:active {
 }
 
 @media (hover: hover) and (pointer: fine) {
-  #background-remover button[class~="bg-[#3E6B4B]"]:hover {
+  #background-remover .background-remover-download:hover {
     background-color: #FFE9AE;
     border-color: #D9AD3A;
   }
 }
 
 /* Keep disabled primary actions visibly disabled without becoming dark. */
-#background-remover button:disabled[class~="bg-[#3E6B4B]"] {
+#background-remover .background-remover-download:disabled {
   background-color: #F1ECE4;
   border-color: #D8D0C5;
   color: #9A9187;
