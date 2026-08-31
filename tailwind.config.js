@@ -1,3 +1,5 @@
+const PAPERLOGY_FONT = ["Paperlogy", "sans-serif"];
+
 export default {
   content: [
     "./index.html",
@@ -66,14 +68,14 @@ export default {
                   "xs": "8px"
           },
           "fontFamily": {
-                  "body-md": ["Paperlogy", "sans-serif"],
-                  "display-lg": ["Paperlogy", "sans-serif"],
-                  "label-sm": ["Paperlogy", "sans-serif"],
-                  "label-md": ["Paperlogy", "sans-serif"],
-                  "display-lg-mobile": ["Paperlogy", "sans-serif"],
-                  "body-lg": ["Paperlogy", "sans-serif"],
-                  "headline-sm": ["Paperlogy", "sans-serif"],
-                  "headline-md": ["Paperlogy", "sans-serif"]
+                  "body-md": PAPERLOGY_FONT,
+                  "display-lg": PAPERLOGY_FONT,
+                  "label-sm": PAPERLOGY_FONT,
+                  "label-md": PAPERLOGY_FONT,
+                  "display-lg-mobile": PAPERLOGY_FONT,
+                  "body-lg": PAPERLOGY_FONT,
+                  "headline-sm": PAPERLOGY_FONT,
+                  "headline-md": PAPERLOGY_FONT
           },
           "fontSize": {
                   "body-md": ["15px", {"lineHeight": "22px", "letterSpacing": "0", "fontWeight": "400"}],
