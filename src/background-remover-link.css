@@ -75,7 +75,7 @@ html[data-page='prompt-maker'] a[href$='/background-remover/']:active {
 }
 
 /* Emotion formula CTA: soft yellow/gold so it stands out without the strong orange tone. */
-html[data-page='prompt-maker'] button.bg-amber-600 {
+html[data-page='prompt-maker'] .emotion-formula-cta {
   background-color: #FFE8A3;
   border: 1px solid #E4BD45;
   color: #65490A;
@@ -83,7 +83,7 @@ html[data-page='prompt-maker'] button.bg-amber-600 {
 }
 
 @media (hover: hover) and (pointer: fine) {
-  html[data-page='prompt-maker'] button.bg-amber-600:hover {
+  html[data-page='prompt-maker'] .emotion-formula-cta:hover {
     background-color: #FFDF75;
     border-color: #D7AA2A;
     color: #5C4208;
