@@ -9,11 +9,11 @@ html[data-page='prompt-maker'] a[href$='/background-remover/'] {
   border-radius: 14px;
   background: #FFF8E8;
   padding: 0.72rem 1rem;
-  color: #7A4B22 !important;
+  color: #7A4B22;
   font-size: 13px;
   font-weight: 800;
   line-height: 1.25;
-  text-decoration: none !important;
+  text-decoration: none;
   box-shadow: 0 3px 10px rgba(137, 92, 42, 0.09);
   transition: transform 160ms ease, background-color 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
 }
@@ -27,7 +27,7 @@ html[data-page='prompt-maker'] a[href$='/background-remover/']::before {
 
 /* Keep the tool close to its dedicated-page button on the main page only. */
 html[data-page='prompt-maker'] #background-remover {
-  margin-top: 0.75rem !important;
+  margin-top: 0.75rem;
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -53,52 +53,52 @@ html[data-page='prompt-maker'] a[href$='/background-remover/']:active {
 
 /* Background-remover tools: keep actions bright and consistent with the cream/gold UI. */
 #background-remover button[class*="bg-[#3E6B4B]"] {
-  background-color: #FFF2C9 !important;
-  border: 1px solid #E4BE58 !important;
-  color: #744816 !important;
-  box-shadow: 0 2px 8px rgba(148, 105, 28, 0.10) !important;
+  background-color: #FFF2C9;
+  border: 1px solid #E4BE58;
+  color: #744816;
+  box-shadow: 0 2px 8px rgba(148, 105, 28, 0.10);
 }
 
 @media (hover: hover) and (pointer: fine) {
   #background-remover button[class*="bg-[#3E6B4B]"]:hover {
-    background-color: #FFE9AE !important;
-    border-color: #D9AD3A !important;
+    background-color: #FFE9AE;
+    border-color: #D9AD3A;
   }
 }
 
 #background-remover button[class*="bg-[#F3F8F0]"] {
-  background-color: #FFF9E8 !important;
-  border-color: #E8CB7A !important;
-  color: #7A5426 !important;
+  background-color: #FFF9E8;
+  border-color: #E8CB7A;
+  color: #7A5426;
 }
 
 #background-remover button[class*="bg-[#EEF5EA]"] {
-  background-color: #FFF3D6 !important;
-  border-color: #E1BB5C !important;
-  color: #754A17 !important;
+  background-color: #FFF3D6;
+  border-color: #E1BB5C;
+  color: #754A17;
 }
 
 /* Keep disabled primary actions visibly disabled without becoming dark. */
 #background-remover button:disabled[class*="bg-[#3E6B4B]"] {
-  background-color: #F1ECE4 !important;
-  border-color: #D8D0C5 !important;
-  color: #9A9187 !important;
-  box-shadow: none !important;
+  background-color: #F1ECE4;
+  border-color: #D8D0C5;
+  color: #9A9187;
+  box-shadow: none;
 }
 
 /* Emotion formula CTA: soft yellow/gold so it stands out without the strong orange tone. */
 html[data-page='prompt-maker'] button.bg-amber-600 {
-  background-color: #FFE8A3 !important;
-  border: 1px solid #E4BD45 !important;
-  color: #65490A !important;
-  box-shadow: 0 3px 10px rgba(135, 96, 18, 0.10) !important;
+  background-color: #FFE8A3;
+  border: 1px solid #E4BD45;
+  color: #65490A;
+  box-shadow: 0 3px 10px rgba(135, 96, 18, 0.10);
 }
 
 @media (hover: hover) and (pointer: fine) {
   html[data-page='prompt-maker'] button.bg-amber-600:hover {
-    background-color: #FFDF75 !important;
-    border-color: #D7AA2A !important;
-    color: #5C4208 !important;
-    box-shadow: 0 5px 14px rgba(135, 96, 18, 0.14) !important;
+    background-color: #FFDF75;
+    border-color: #D7AA2A;
+    color: #5C4208;
+    box-shadow: 0 5px 14px rgba(135, 96, 18, 0.14);
   }
 }
