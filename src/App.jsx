@@ -4138,11 +4138,11 @@ function App() {
     return scoreB - scoreA;
   }), [comboStats, currentMonth]);
 
-  const sortedThemeKeys = [...themeKeys].sort((a, b) => {
+  const sortedThemeKeys = React.useMemo(() => [...themeKeys].sort((a, b) => {
     const scoreA = themeStats[a] || 0;
     const scoreB = themeStats[b] || 0;
     return scoreB - scoreA;
-  });
+  }), [themeKeys, themeStats]);
 
   const [charManual, setCharManual] = useState('');
   const [characterSource, setCharacterSource] = useState('photo');
