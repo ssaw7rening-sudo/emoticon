@@ -1801,7 +1801,7 @@ export default function BackgroundRemover({ lang = 'ko' }) {
                 {busy ? (stage === 'precision' ? t.precisionWorking : (stage === 'preparing' ? t.preparing : t.processing)) : `✨ ${t.remove}`}
               </button>
             ) : (
-              <button type="button" disabled={qualityAssessment.status === 'fail'} onClick={download} className="flex-1 rounded-xl bg-[#3E6B4B] px-4 py-3 text-sm font-extrabold text-white shadow-sm transition hover:bg-[#31573D] disabled:cursor-not-allowed disabled:bg-[#9D9A94] disabled:shadow-none">{qualityAssessment.status === 'fail' ? `⚠️ ${t.qualityBlocked}` : `⬇️ ${t.download}`}</button>
+              <button type="button" disabled={qualityAssessment.status === 'fail'} onClick={download} className="background-remover-download flex-1 rounded-xl bg-[#3E6B4B] px-4 py-3 text-sm font-extrabold text-white shadow-sm transition hover:bg-[#31573D] disabled:cursor-not-allowed disabled:bg-[#9D9A94] disabled:shadow-none">{qualityAssessment.status === 'fail' ? `⚠️ ${t.qualityBlocked}` : `⬇️ ${t.download}`}</button>
             )}
             <button type="button" disabled={busy} onClick={resultUrl ? reset : () => inputRef.current?.click()} className="rounded-xl border border-[#D8D0C5] bg-white px-4 py-3 text-sm font-bold text-[#5F574E] transition hover:bg-[#F8F5EF] disabled:opacity-50">
               {resultUrl ? t.again : t.change}
