@@ -3,7 +3,7 @@ import baseConfig from './vite.always-split-menu.config.js'
 
 function backgroundRemovalResumeRecovery() {
   return {
-    name: 'background-removal-wake-lock-resume-v2',
+    name: 'background-removal-wake-lock-resume-v3',
     enforce: 'pre',
     transform(code, id) {
       const normalizedId = id.replace(/\\/g, '/')
@@ -146,22 +146,17 @@ function backgroundRemovalResumeRecovery() {
       const retryStartFinal = transformed.indexOf('  const runPrecisionRetry = async () => {', removeStart)
       transformed = transformed.slice(0, retryStartFinal) + '  removeBackgroundRef.current = removeBackground;\n\n' + transformed.slice(retryStartFinal)
 
-      replaceOnce(
-        `              {typeof progress === 'number' && (
-                <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-[#EFEAE2]"><div className="h-full rounded-full bg-[#7D9A75] transition-all" style={{ width: \`${'${progress}'}%\` }} /></div>
-              )}
-            </div>`,
-        `              {typeof progress === 'number' && (
-                <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-[#EFEAE2]"><div className="h-full rounded-full bg-[#7D9A75] transition-all" style={{ width: \`${'${progress}'}%\` }} /></div>
-              )}
-              <div className="mt-2 text-[11px] sm:text-xs font-semibold leading-5 text-[#7B7164]">
-                {resumeNotice
-                  ? (lang === 'ko' ? '↻ 다른 앱 사용으로 작업이 중단되어 자동으로 다시 시작했습니다.' : lang === 'ja' ? '↻ バックグラウンドで中断されたため、自動的に再開しました。' : lang === 'zh' ? '↻ 切换到其他应用后任务被暂停，现已自动重新开始。' : '↻ Processing was interrupted in the background and restarted automatically.')
-                  : (lang === 'ko' ? '☀ 처리 중에는 화면 꺼짐을 방지합니다. 다른 앱으로 이동하면 복귀 시 자동으로 다시 시작합니다.' : lang === 'ja' ? '☀ 処理中は画面のスリープを防ぎます。他のアプリから戻ると自動的に再開します。' : lang === 'zh' ? '☀ 处理期间会尽量保持屏幕唤醒；切换应用后返回时会自动重新开始。' : '☀ The screen is kept awake while processing when supported. If you switch apps, processing restarts automatically when you return.')}
-              </div>
-            </div>`,
-        'processing recovery notice'
-      )
+      const busyAnchor = '          {busy && ('
+      const recoveryNotice = `          {busy && (
+            <div className="mt-3 rounded-xl border border-[#E8DFD1] bg-[#FFFDF9] px-3.5 py-2.5 text-[11px] sm:text-xs font-semibold leading-5 text-[#7B7164]">
+              {resumeNotice
+                ? (lang === 'ko' ? '↻ 다른 앱 사용으로 작업이 중단되어 자동으로 다시 시작했습니다.' : lang === 'ja' ? '↻ バックグラウンドで中断されたため、自動的に再開しました。' : lang === 'zh' ? '↻ 切换到其他应用后任务被暂停，现已自动重新开始。' : '↻ Processing was interrupted in the background and restarted automatically.')
+                : (lang === 'ko' ? '☀ 처리 중에는 화면 꺼짐을 방지합니다. 다른 앱으로 이동하면 복귀 시 자동으로 다시 시작합니다.' : lang === 'ja' ? '☀ 処理中は画面のスリープを防ぎます。他のアプリから戻ると自動的に再開します。' : lang === 'zh' ? '☀ 处理期间会尽量保持屏幕唤醒；切换应用后返回时会自动重新开始。' : '☀ The screen is kept awake while processing when supported. If you switch apps, processing restarts automatically when you return.')}
+            </div>
+          )}
+
+          {busy && (`
+      replaceOnce(busyAnchor, recoveryNotice, 'processing recovery notice')
 
       return { code: transformed, map: null }
     },
