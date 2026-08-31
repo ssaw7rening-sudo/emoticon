@@ -3,7 +3,7 @@ import baseConfig from './vite.legal-notices.config.js'
 
 function preciseStickerSheetSplit() {
   return {
-    name: 'precise-sticker-sheet-split-v3',
+    name: 'precise-sticker-sheet-split-v4',
     enforce: 'pre',
     transform(code, id) {
       const normalizedId = id.replace(/\\/g, '/')
@@ -138,30 +138,16 @@ function preciseStickerSheetSplit() {
     const deviation = occupied.reduce((sum, value) => sum + Math.abs(value - mean), 0) / Math.max(1, occupied.length);
     const balance = mean > 0 ? Math.max(0, 1 - deviation / mean) : 0;
     const separatorScore = (xCuts.valleyScore + yCuts.valleyScore) / 2;
-
     const score = (nonEmpty / 15) * 0.64 + separatorScore * 0.24 + balance * 0.12;
     return { cols, rows, colBounds, rowBounds, nonEmpty, score, separatorScore, balance, width, height };
   };
 
-  const portrait = evaluate(3, 5);
-  const landscape = evaluate(5, 3);
-  const aspect = sourceWidth / Math.max(1, sourceHeight);
-
-  // The generated 15-emoticon sheets used by Prompt Maker are normally a 5×3
-  // layout, including square 1:1 outputs. The former score-only choice often
-  // mistook those square sheets for 3×5, which sliced every sticker horizontally
-  // across two rows. Keep 5×3 for square/landscape sheets; use 3×5 only when the
-  // source itself is clearly portrait-oriented.
-  let best;
-  if (aspect >= 0.84) {
-    best = landscape;
-  } else if (aspect <= 0.72) {
-    best = portrait;
-  } else {
-    // In the narrow ambiguous portrait band, require a meaningful score advantage
-    // before changing away from the expected 5×3 layout.
-    best = portrait.score > landscape.score + 0.16 ? portrait : landscape;
-  }
+  // Prompt Maker's 15-emoticon sheet specification is fixed at 5 columns × 3 rows.
+  // Do not infer orientation from canvas aspect ratio: image generators may return
+  // a portrait or square canvas while the actual sticker arrangement is still 5×3.
+  // Aspect-based switching was the cause of whole characters and captions being
+  // sliced into neighboring outputs.
+  const best = evaluate(5, 3);
 
   return {
     ...best,
@@ -218,9 +204,6 @@ async function splitIntoFifteen(blob) {
       let maxY = cellY0;
       let visible = 0;
 
-      // Scan the entire cell instead of selecting only one connected component.
-      // This keeps separated text, character parts, hearts, motion marks and
-      // other detached decoration in the same sticker crop.
       for (let y = cellY0; y <= cellY1; y += 1) {
         for (let x = cellX0; x <= cellX1; x += 1) {
           const alpha = pixels[(y * width + x) * 4 + 3];
@@ -243,7 +226,7 @@ async function splitIntoFifteen(blob) {
         maxY = cellY1;
       }
 
-      const padding = Math.max(8, Math.round(Math.min(cellWidth, cellHeight) * 0.065));
+      const padding = Math.max(8, Math.round(Math.min(cellWidth, cellHeight) * 0.07));
       minX = Math.max(cellX0, minX - padding);
       minY = Math.max(cellY0, minY - padding);
       maxX = Math.min(cellX1, maxX + padding);
