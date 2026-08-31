@@ -1385,6 +1385,23 @@ export default function BackgroundRemover({ lang = 'ko' }) {
   const [busy, setBusy] = useState(false);
   const [stage, setStage] = useState('');
   const [progress, setProgress] = useState(null);
+  const progressRenderRef = useRef({ value: null, time: 0 });
+  const updateRemovalProgress = (rawProgress) => {
+    const numericProgress = Number(rawProgress);
+    if (!Number.isFinite(numericProgress)) return;
+
+    const nextValue = Math.max(0, Math.min(100, Math.round(numericProgress)));
+    const now = typeof performance !== 'undefined' && typeof performance.now === 'function'
+      ? performance.now()
+      : Date.now();
+    const previous = progressRenderRef.current;
+    const isBoundary = nextValue === 0 || nextValue === 100;
+
+    if (!isBoundary && previous.value !== null && now - previous.time < 80) return;
+
+    progressRenderRef.current = { value: nextValue, time: now };
+    setProgress((current) => current === nextValue ? current : nextValue);
+  };
   const [error, setError] = useState('');
   const [comparePosition, setComparePosition] = useState(50);
   const [splitItems, setSplitItems] = useState([]);
@@ -1514,7 +1531,7 @@ export default function BackgroundRemover({ lang = 'ko' }) {
         setStage('preparing');
         blob = await removeWithAi(file, (info) => {
           if (typeof info?.progress === 'number') {
-            setProgress(Math.max(0, Math.min(100, Math.round(info.progress))));
+            updateRemovalProgress(info.progress);
           }
         });
         quality = await assessRemovalQuality(blob);
@@ -1528,7 +1545,7 @@ export default function BackgroundRemover({ lang = 'ko' }) {
             setProgress(null);
             const portraitBlob = await removeWithModnet(file, (info) => {
               if (typeof info?.progress === 'number') {
-                setProgress(Math.max(0, Math.min(100, Math.round(info.progress))));
+                updateRemovalProgress(info.progress);
               }
             });
             const portraitQuality = await assessRemovalQuality(portraitBlob);
@@ -1570,7 +1587,7 @@ export default function BackgroundRemover({ lang = 'ko' }) {
     try {
       let precisionBlob = await removeWithBiRefNet(file, (info) => {
         if (typeof info?.progress === 'number') {
-          setProgress(Math.max(0, Math.min(100, Math.round(info.progress))));
+          updateRemovalProgress(info.progress);
         }
       });
       precisionBlob = await refineHairBackgroundChannels(precisionBlob);
