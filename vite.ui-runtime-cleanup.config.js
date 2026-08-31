@@ -3,34 +3,10 @@ import baseConfig from './vite.app-runtime-resilience.config.js'
 
 function uiRuntimeCleanup() {
   return {
-    name: 'ui-runtime-cleanup-v1',
+    name: 'ui-runtime-cleanup-v2-source-css',
     enforce: 'pre',
     transform(code, id) {
       const normalizedId = id.replace(/\\/g, '/')
-
-      if (normalizedId.endsWith('/src/index.css')) {
-        let transformed = code.replace(/\r\n/g, '\n')
-        const oldMobileInputRule = `/* Phrase chips are compact controls; keep them slightly smaller than the
-   global 16px mobile input size while preserving their touch target. */
-@media (max-width: 640px) {
-  #emoticon-phrase-grid input[type="text"] {
-    font-size: 15px !important;
-  }
-}`
-        const safeMobileInputRule = `/* Keep text inputs at 16px on mobile so iOS Safari does not force-zoom
-   when a phrase field receives focus. */
-@media (max-width: 640px) {
-  #emoticon-phrase-grid input[type="text"] {
-    font-size: 16px !important;
-  }
-}`
-        if (!transformed.includes(oldMobileInputRule)) {
-          throw new Error('[ui-runtime-cleanup] mobile input font rule was not found')
-        }
-        transformed = transformed.replace(oldMobileInputRule, safeMobileInputRule)
-        return { code: transformed, map: null }
-      }
-
       if (!normalizedId.endsWith('/src/App.jsx')) return null
 
       let transformed = code.replace(/\r\n/g, '\n')
