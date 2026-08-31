@@ -20,60 +20,36 @@ jobs:
         with:
           node-version: 20
           cache: npm
-      - name: Count, patch source, and remove dead transform
+      - name: Diagnose non-space shadow token boundary
         shell: bash
         run: |
           python - <<'PY'
           from pathlib import Path
-
-          app_path = Path('src/App.jsx')
-          vite_path = Path('vite.tailwind-motion-cleanup.config.js')
-
-          app = app_path.read_text()
+          app = Path('src/App.jsx').read_text()
           xs = app.count('shadow-xs')
           two_xs = app.count('shadow-2xs')
-          total = xs + two_xs
-          print(f'shadow-xs={xs}, shadow-2xs={two_xs}, total={total}')
+          print(f'shadow-xs={xs}, shadow-2xs={two_xs}')
           if xs != 30 or two_xs != 47:
-              raise SystemExit(f'Expected shadow-xs=30 and shadow-2xs=47, found shadow-xs={xs}, shadow-2xs={two_xs}')
-          prefixed_xs = app.count(' shadow-xs')
-          prefixed_two_xs = app.count(' shadow-2xs')
-          print(f'prefixed shadow-xs={prefixed_xs}, prefixed shadow-2xs={prefixed_two_xs}')
-          if prefixed_xs != xs or prefixed_two_xs != two_xs:
-              raise SystemExit(
-                  f'Not every token is a space-delimited class token: '
-                  f'shadow-xs={xs}/{prefixed_xs}, shadow-2xs={two_xs}/{prefixed_two_xs}'
-              )
-
-          app = app.replace(' shadow-2xs', '').replace(' shadow-xs', '')
-          if 'shadow-xs' in app or 'shadow-2xs' in app:
-              raise SystemExit('Invalid shadow token remained after replacement')
-          app_path.write_text(app)
-
-          vite = vite_path.read_text()
-          block = """      // Tailwind 3.4 does not provide shadow-xs or shadow-2xs. They currently\n      // generate no CSS, so removing the tokens preserves the rendered UI while\n      // eliminating invalid utilities from the compiled App source.\n      transformed = transformed.replace(/\\bshadow-(?:2xs|xs)\\b/g, '')\n\n"""
-          if vite.count(block) != 1:
-              raise SystemExit(f'Expected one Vite invalid-shadow cleanup block, found {vite.count(block)}')
-          vite = vite.replace(block, '')
-          vite_path.write_text(vite)
+              raise SystemExit(f'Unexpected counts: shadow-xs={xs}, shadow-2xs={two_xs}')
+          needle = 'shadow-xs'
+          start = 0
+          unusual = []
+          while True:
+              idx = app.find(needle, start)
+              if idx < 0:
+                  break
+              prev = app[idx - 1] if idx > 0 else '<BOF>'
+              if prev != ' ':
+                  line = app.count('\n', 0, idx) + 1
+                  left = max(0, idx - 80)
+                  right = min(len(app), idx + len(needle) + 80)
+                  context = app[left:right].replace('\n', '\\n')
+                  unusual.append((line, repr(prev), context))
+              start = idx + len(needle)
+          print(f'unusual_count={len(unusual)}')
+          for line, prev, context in unusual:
+              print(f'line={line} prev={prev} context={context}')
+          if len(unusual) != 1:
+              raise SystemExit(f'Expected exactly one unusual shadow-xs boundary, found {len(unusual)}')
+          raise SystemExit('Diagnostic complete; no source changes made')
           PY
-      - name: Verify intended diff only
-        shell: bash
-        run: |
-          git diff --check
-          test "$(git diff --name-only | sort | tr '\n' ' ')" = "src/App.jsx vite.tailwind-motion-cleanup.config.js "
-          ! grep -qE 'shadow-(2xs|xs)' src/App.jsx
-          ! grep -q 'shadow-(?:2xs|xs)' vite.tailwind-motion-cleanup.config.js
-      - name: Install dependencies
-        run: npm ci
-      - name: Build
-        run: npm run build
-      - name: Commit source cleanup
-        shell: bash
-        run: |
-          rm .github/workflows/temp-shadow-token-source.yml
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add src/App.jsx vite.tailwind-motion-cleanup.config.js .github/workflows/temp-shadow-token-source.yml
-          git commit -m "Move invalid shadow cleanup into source [skip ci]"
-          git push origin HEAD:cleanup/shadow-token-source
