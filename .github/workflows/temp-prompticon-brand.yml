@@ -34,8 +34,6 @@ jobs:
                   raise SystemExit(f'{label}: expected 1 match, got {count}')
               p.write_text(text.replace(old, new, 1))
 
-          # Root SEO metadata: preserve the generic search phrase while making
-          # Prompticon the unique brand entity Google/Daum can associate.
           replace_once('index.html',
               '<meta name="apple-mobile-web-app-title" content="프롬프트 메이커" />',
               '<meta name="apple-mobile-web-app-title" content="프롬티콘" />',
@@ -73,13 +71,12 @@ jobs:
               '"name": "프롬티콘",\n          "alternateName": ["Prompticon", "프롬프트 메이커", "Prompt Maker", "프롬프트메이커", "KakaoTalk Emoticon Prompt Maker", "AI Emoticon Prompt Generator", "이모티콘 프롬프트 생성기"]',
               'webapp schema')
 
-          # Runtime SEO + visible brand identity.
           replace_once('src/App.jsx',
               "title: '프롬프트 메이커 | AI 카카오톡 이모티콘 프롬프트 생성기 (ChatGPT · Gemini · Grok)',\n    description: '사진 한 장이나 캐릭터 태그 선택으로 ChatGPT, Gemini, Grok 전용 15종 메신저 이모티콘 프롬프트를 만드는 무료 AI 프롬프트 메이커입니다.'",
               "title: '프롬티콘 | AI 이모티콘 프롬프트 메이커',\n    description: '프롬티콘(Prompticon)은 사진이나 캐릭터 태그로 ChatGPT, Gemini, Grok용 15종 메신저 이모티콘 프롬프트를 만드는 무료 AI 이모티콘 프롬프트 메이커입니다.'",
               'runtime seo')
           replace_once('src/App.jsx',
-              "? '✨ AI 이모티콘 프롬프트 메이커'",
+              "? '✨ AI 이모티콘 프롬프트 메이커' ",
               "? '✨ 프롬티콘 · AI 이모티콘 프롬프트 메이커'",
               'hero brand')
           replace_once('src/App.jsx',
@@ -107,13 +104,11 @@ jobs:
               "ko: '프롬티콘(Prompticon)은 사용자의 키워드 선택이나 사진을 바탕으로 ChatGPT(DALL-E 3), Google Gemini(Imagen 3), xAI Grok(Imagine Image 2.0)에 즉시 사용 가능한 15종 카카오톡·라인 이모티콘 프롬프트를 1초 만에 자동 생성해 주는 무료 AI 이모티콘 프롬프트 메이커입니다.',",
               'what is description')
 
-          # Installed/PWA name should match the visible and search brand.
           replace_once('public/manifest.webmanifest',
               '"name": "프롬프트 메이커 - AI 카카오톡 이모티콘 프롬프트 생성기",\n  "short_name": "프롬프트 메이커",',
               '"name": "프롬티콘 - AI 이모티콘 프롬프트 메이커",\n  "short_name": "프롬티콘",',
               'manifest brand')
 
-          # Signal current content freshness accurately.
           sitemap = Path('public/sitemap.xml')
           text = sitemap.read_text()
           if '<lastmod>2026-08-29</lastmod>' not in text and '<lastmod>2026-08-30</lastmod>' not in text:
