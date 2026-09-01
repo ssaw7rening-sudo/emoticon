@@ -21,67 +21,57 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build
-      - name: Inspect production browser output for vulnerable Node-only packages
+      - name: Classify sharp references in production output
         shell: bash
         run: |
           node <<'NODE'
           const fs = require('fs');
           const path = require('path');
-
-          const needles = [
-            'onnxruntime-node',
-            'adm-zip',
-            'sharp',
-            'node_modules/sharp',
-            'node_modules/onnxruntime-node',
-            'node_modules/adm-zip',
-          ];
           const textExt = new Set(['.js', '.css', '.html', '.json', '.txt', '.xml', '.map']);
-          const hits = [];
-          let files = 0;
-          let bytes = 0;
+          const packagePatterns = [
+            /onnxruntime-node/gi,
+            /adm-zip/gi,
+            /node_modules[\\/]sharp/gi,
+            /(?:require|import)\s*\(\s*['"]sharp['"]\s*\)/gi,
+            /from\s*['"]sharp['"]/gi,
+            /['"]sharp['"]\s*[:;,)]/gi,
+          ];
+          const sharpContexts = [];
+          const packageHits = [];
 
           function walk(dir) {
             for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
               const full = path.join(dir, entry.name);
               if (entry.isDirectory()) walk(full);
-              else {
-                files++;
-                const stat = fs.statSync(full);
-                bytes += stat.size;
-                if (!textExt.has(path.extname(entry.name))) continue;
+              else if (textExt.has(path.extname(entry.name))) {
                 let content;
                 try { content = fs.readFileSync(full, 'utf8'); } catch { continue; }
-                for (const needle of needles) {
-                  if (content.includes(needle)) hits.push({ file: full, needle });
+                for (const pattern of packagePatterns) {
+                  pattern.lastIndex = 0;
+                  let m;
+                  while ((m = pattern.exec(content))) {
+                    packageHits.push({ file: full, match: m[0], index: m.index });
+                    if (m[0].length === 0) break;
+                  }
+                }
+                const lower = content.toLowerCase();
+                let from = 0;
+                while (true) {
+                  const idx = lower.indexOf('sharp', from);
+                  if (idx < 0) break;
+                  sharpContexts.push({ file: full, context: content.slice(Math.max(0, idx - 120), Math.min(content.length, idx + 180)).replace(/\s+/g, ' ') });
+                  from = idx + 5;
                 }
               }
             }
           }
 
           walk('dist');
-          console.log('DIST_SUMMARY', JSON.stringify({ files, bytes, hits }));
-          if (hits.length) {
-            console.log('NODE_ONLY_PACKAGE_REFERENCES_FOUND');
-          } else {
-            console.log('NO_NODE_ONLY_PACKAGE_REFERENCES_IN_DIST');
+          console.log('PACKAGE_LIKE_HITS', JSON.stringify(packageHits));
+          console.log('SHARP_CONTEXT_COUNT', sharpContexts.length);
+          sharpContexts.slice(0, 20).forEach((x, i) => console.log(`SHARP_CONTEXT_${i + 1}`, JSON.stringify(x)));
+          if (packageHits.length) {
+            throw new Error(`Found ${packageHits.length} package-like vulnerable Node dependency references in dist`);
           }
-
-          const assetNames = fs.readdirSync('dist/assets').sort();
-          console.log('DIST_ASSETS', JSON.stringify(assetNames));
-          NODE
-      - name: Inspect transformers package export/dependency metadata
-        shell: bash
-        run: |
-          node <<'NODE'
-          const pkg = require('./node_modules/@huggingface/transformers/package.json');
-          console.log('TRANSFORMERS_METADATA', JSON.stringify({
-            version: pkg.version,
-            main: pkg.main,
-            module: pkg.module,
-            browser: pkg.browser,
-            exports: pkg.exports,
-            dependencies: pkg.dependencies,
-            optionalDependencies: pkg.optionalDependencies,
-          }));
+          console.log('NO_PACKAGE_LIKE_NODE_DEPENDENCY_REFERENCES_IN_DIST');
           NODE
