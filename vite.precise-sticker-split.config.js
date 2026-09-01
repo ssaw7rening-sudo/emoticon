@@ -363,11 +363,35 @@ async function splitIntoFifteen(blob) {
   const groupForSourcePixel = (x, y) => {
     const analysisX = Math.max(0, Math.min(analysis.width - 1, Math.floor(x / analysis.scaleX)));
     const analysisY = Math.max(0, Math.min(analysis.height - 1, Math.floor(y / analysis.scaleY)));
-    const label = analysis.labels[analysisY * analysis.width + analysisX];
-    if (label > 0) {
+    const readLabelGroup = (sampleX, sampleY) => {
+      if (sampleX < 0 || sampleY < 0 || sampleX >= analysis.width || sampleY >= analysis.height) return -1;
+      const label = analysis.labels[sampleY * analysis.width + sampleX];
+      if (label <= 0) return -1;
       const group = analysis.componentGroup[label];
-      if (group >= 0) return group;
+      return group >= 0 ? group : -1;
+    };
+
+    const directGroup = readLabelGroup(analysisX, analysisY);
+    if (directGroup >= 0) return directGroup;
+
+    // Full-resolution edge pixels can disappear when the analysis canvas is
+    // downscaled. Recover their nearby component label before falling back to
+    // the 15 centre Voronoi map, otherwise thin hands, hair, text or effects can
+    // be sliced at an old cell boundary.
+    let recoveredGroup = -1;
+    let recoveredDistance = Number.POSITIVE_INFINITY;
+    const recoveryRadius = 3;
+    for (let dy = -recoveryRadius; dy <= recoveryRadius; dy += 1) {
+      for (let dx = -recoveryRadius; dx <= recoveryRadius; dx += 1) {
+        const distance = dx * dx + dy * dy;
+        if (distance === 0 || distance >= recoveredDistance) continue;
+        const group = readLabelGroup(analysisX + dx, analysisY + dy);
+        if (group < 0) continue;
+        recoveredGroup = group;
+        recoveredDistance = distance;
+      }
     }
+    if (recoveredGroup >= 0) return recoveredGroup;
     return nearestFallback(analysisX, analysisY);
   };
 
@@ -393,7 +417,7 @@ async function splitIntoFifteen(blob) {
   if (detectedGroups < 12) throw new Error('Could not reliably separate sticker content groups');
 
   const items = [];
-  const basePadding = Math.max(10, Math.round(Math.min(width / 5, height / 3) * 0.09));
+  const basePadding = Math.max(14, Math.round(Math.min(width / 5, height / 3) * 0.12));
 
   for (let group = 0; group < 15; group += 1) {
     const bounds = groupBounds[group];
@@ -429,15 +453,19 @@ async function splitIntoFifteen(blob) {
       }
     }
 
+    // Keep a transparent safety border around every extracted sticker. This
+    // avoids a visually clipped result after later resize/export steps without
+    // shrinking the actual sticker pixels.
+    const outputSafetyMargin = Math.max(8, Math.round(Math.min(cropWidth, cropHeight) * 0.08));
     const output = document.createElement('canvas');
-    output.width = cropWidth;
-    output.height = cropHeight;
+    output.width = cropWidth + outputSafetyMargin * 2;
+    output.height = cropHeight + outputSafetyMargin * 2;
     const outputCtx = output.getContext('2d');
     if (!outputCtx) throw new Error('Canvas 2D is unavailable');
-    outputCtx.putImageData(imageData, 0, 0);
+    outputCtx.putImageData(imageData, outputSafetyMargin, outputSafetyMargin);
 
     const itemBlob = await canvasToPngBlob(output);
-    items.push({ index: group + 1, blob: itemBlob, width: cropWidth, height: cropHeight });
+    items.push({ index: group + 1, blob: itemBlob, width: output.width, height: output.height });
   }
 
   if (items.length !== 15) throw new Error('Could not create 15 sticker outputs');
