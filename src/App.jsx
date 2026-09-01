@@ -1,8 +1,8 @@
 // AI 이모티콘 프롬프트 메이커 메인 애플리케이션
 import React, { useState, useEffect, useRef } from "react";
 import { Shuffle, CheckCircle2, Bot, Sparkles, Zap, Trash2, RotateCcw } from "lucide-react";
-import BackgroundRemover from "./components/BackgroundRemover.jsx";
-import BackgroundRemoverLanding from "./components/BackgroundRemoverLanding.jsx";
+import DeferredBackgroundRemover from "./components/DeferredBackgroundRemover.jsx";
+const BackgroundRemoverLanding = React.lazy(() => import("./components/BackgroundRemoverLanding.jsx"));
 
 const THEMES_KO = {
   '일상/인사 ①': ['ㅋㅋㅋㅋ', '안녕!', '오늘도 화이팅', '좋아요', '고마워요', '사랑해요', '최고!', '오예', '미안해요', '수고했어요', '축하해요', '대박', '헐', '감동', '잘자요'],
@@ -6734,7 +6734,11 @@ Completely ERASE the incorrect lettering and reprint ONLY the exact clean text "
 
   const locationPath = typeof window !== 'undefined' ? window.location.pathname.toLowerCase() : '';
 if (/(^|\/)background-remover\/?$/.test(locationPath)) {
-  return <BackgroundRemoverLanding lang={lang} />;
+  return (
+    <React.Suspense fallback={<div className="min-h-screen bg-[#FFFDF8]" />}>
+      <BackgroundRemoverLanding lang={lang} />
+    </React.Suspense>
+  );
 }
 
 if (currentPath === '/privacy') {
@@ -8329,7 +8333,7 @@ if (currentPath === '/privacy') {
         {lang === 'en' ? 'Open dedicated Background Remover →' : lang === 'ja' ? '背景削除専用ページを開く →' : lang === 'zh' ? '打开背景移除专用页面 →' : '배경 제거 전용 페이지 열기 →'}
       </a>
     </div>
-    <BackgroundRemover lang={lang} />
+    <DeferredBackgroundRemover lang={lang} />
       </main>
 
       {/* Footer */}
