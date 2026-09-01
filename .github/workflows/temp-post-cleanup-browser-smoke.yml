@@ -1,0 +1,140 @@
+name: Temporary Post-Cleanup Browser Smoke
+
+on:
+  push:
+    branches:
+      - audit/post-cleanup-browser-smoke
+
+permissions:
+  contents: read
+
+jobs:
+  browser-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: audit/post-cleanup-browser-smoke
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 20
+          cache: npm
+      - name: Install app dependencies
+        run: npm ci
+      - name: Build production app
+        run: npm run build
+      - name: Install Chromium smoke-test runtime
+        run: |
+          npm install --no-save --package-lock=false playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Start production preview
+        shell: bash
+        run: |
+          nohup npx vite preview --config vite.tailwind-motion-cleanup.config.js --host 127.0.0.1 --port 4173 --strictPort >/tmp/emoticon-preview.log 2>&1 &
+          for i in {1..30}; do
+            if curl -fsS http://127.0.0.1:4173/ >/dev/null; then
+              echo "preview ready"
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/emoticon-preview.log
+          exit 1
+      - name: Run Chromium mobile and desktop smoke checks
+        shell: bash
+        run: |
+          node <<'NODE'
+          const { chromium } = require('playwright');
+          const assert = require('node:assert/strict');
+
+          async function inspect(label, viewport) {
+            const browser = await chromium.launch({ headless: true });
+            const page = await browser.newPage({ viewport });
+            const pageErrors = [];
+            const consoleErrors = [];
+            page.on('pageerror', error => pageErrors.push(String(error)));
+            page.on('console', msg => {
+              if (msg.type() === 'error') consoleErrors.push(msg.text());
+            });
+
+            const response = await page.goto('http://127.0.0.1:4173/', { waitUntil: 'domcontentloaded', timeout: 30000 });
+            assert(response && response.ok(), `${label}: root page did not return a successful response`);
+            await page.waitForLoadState('networkidle', { timeout: 10000 }).catch(() => {});
+            await page.waitForTimeout(800);
+
+            const summary = await page.evaluate(() => {
+              const visible = el => {
+                const r = el.getBoundingClientRect();
+                const s = getComputedStyle(el);
+                return r.width > 0 && r.height > 0 && s.display !== 'none' && s.visibility !== 'hidden';
+              };
+              const interactive = [...document.querySelectorAll('button,a,input,select,textarea')].filter(visible);
+              const smallInteractive = interactive
+                .map(el => {
+                  const r = el.getBoundingClientRect();
+                  return { tag: el.tagName, text: (el.innerText || el.getAttribute('aria-label') || el.getAttribute('placeholder') || '').trim().slice(0, 50), width: Math.round(r.width), height: Math.round(r.height) };
+                })
+                .filter(x => x.width < 32 || x.height < 32)
+                .slice(0, 20);
+              const visibleInputs = [...document.querySelectorAll('input,textarea,select')].filter(visible).map(el => ({
+                tag: el.tagName,
+                type: el.getAttribute('type') || '',
+                placeholder: el.getAttribute('placeholder') || '',
+                fontSize: getComputedStyle(el).fontSize,
+                height: Math.round(el.getBoundingClientRect().height),
+              }));
+              return {
+                title: document.title,
+                lang: document.documentElement.lang,
+                bodyChars: (document.body.innerText || '').trim().length,
+                buttons: document.querySelectorAll('button').length,
+                inputs: document.querySelectorAll('input,textarea,select').length,
+                interactiveVisible: interactive.length,
+                scrollWidth: document.documentElement.scrollWidth,
+                innerWidth: window.innerWidth,
+                overflow: document.documentElement.scrollWidth - window.innerWidth,
+                smallInteractive,
+                visibleInputs,
+              };
+            });
+
+            console.log(`SMOKE ${label}: ${JSON.stringify(summary)}`);
+            assert(summary.bodyChars > 1000, `${label}: page text looks unexpectedly empty`);
+            assert(summary.buttons >= 10, `${label}: too few buttons rendered (${summary.buttons})`);
+            assert(summary.inputs >= 1, `${label}: no input controls rendered`);
+            if (viewport.width <= 400) {
+              assert(summary.overflow <= 2, `${label}: document-level horizontal overflow ${summary.overflow}px`);
+            }
+
+            const randomButton = page.getByRole('button', { name: /랜덤|Random/i }).first();
+            if (await randomButton.count()) {
+              await randomButton.scrollIntoViewIfNeeded();
+              await randomButton.click({ timeout: 5000 });
+              await page.waitForTimeout(300);
+              console.log(`SMOKE ${label}: random button click succeeded`);
+            } else {
+              console.log(`SMOKE ${label}: random button not found; skipped interaction`);
+            }
+
+            if (pageErrors.length) {
+              throw new Error(`${label}: page errors: ${pageErrors.join(' | ')}`);
+            }
+            console.log(`SMOKE ${label}: consoleErrors=${consoleErrors.length}`);
+            consoleErrors.slice(0, 10).forEach((error, index) => console.log(`CONSOLE_ERROR ${label} ${index + 1}: ${error}`));
+            await browser.close();
+            return summary;
+          }
+
+          (async () => {
+            await inspect('mobile-390x844', { width: 390, height: 844 });
+            await inspect('desktop-1440x900', { width: 1440, height: 900 });
+            console.log('BROWSER_SMOKE_SUCCESS');
+          })().catch(error => {
+            console.error(error);
+            process.exit(1);
+          });
+          NODE
+      - name: Show preview log on failure
+        if: failure()
+        run: cat /tmp/emoticon-preview.log || true
