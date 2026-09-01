@@ -4462,11 +4462,11 @@ function App() {
   // 🔤 Responsive font scaling (Mobile compact + PC natural readable balance)
   const getDynamicPhraseFontSize = (str = '') => {
     const len = (str || '').trim().length;
-    if (len <= 5) return 'text-[12px] sm:text-[13.5px] md:text-[14px] font-bold tracking-normal';
-    if (len <= 8) return 'text-[11px] sm:text-[12.5px] md:text-[13px] font-bold tracking-tight';
-    if (len <= 11) return 'text-[10.5px] sm:text-[11.5px] md:text-[12px] font-bold tracking-tight';
-    if (len <= 14) return 'text-[10px] sm:text-[11px] md:text-[11.5px] font-bold tracking-tighter';
-    return 'text-[9.5px] sm:text-[10.5px] md:text-[11px] font-extrabold tracking-tighter';
+    if (len <= 5) return 'text-[11.5px] sm:text-[13px] md:text-[13.5px] font-semibold tracking-normal';
+    if (len <= 8) return 'text-[11.25px] sm:text-[12.5px] md:text-[13px] font-semibold tracking-tight';
+    if (len <= 11) return 'text-[11px] sm:text-[12px] md:text-[12.5px] font-semibold tracking-tight';
+    if (len <= 14) return 'text-[10.75px] sm:text-[11.5px] md:text-[12px] font-semibold tracking-tight';
+    return 'text-[10.5px] sm:text-[11px] md:text-[11.5px] font-semibold tracking-tighter';
   };
 
   const getDynamicBatchFontSize = (str = '') => {
@@ -7281,21 +7281,21 @@ if (currentPath === '/privacy' || currentPath === '/terms') {
             >
               <span className="flex items-center justify-between gap-3">
                 <span className="min-w-0">
-                  <span className="block text-[11px] sm:text-[11.5px] font-semibold text-mint-strong mb-0.5 uppercase tracking-wide">🎨 {t.activeThemeLabel || 'Active Theme'}</span>
-                  <strong className="block truncate text-[16px] sm:text-[18px] font-bold text-[#133E32] tracking-tight">
+                  <span className="block text-[12.5px] sm:text-[13px] font-semibold text-mint-strong mb-0.5 tracking-normal">🎨 {t.activeThemeLabel || 'Active Theme'}</span>
+                  <strong className="block truncate text-[15.5px] sm:text-[17px] font-semibold text-[#133E32] tracking-tight">
                     {activeTheme === 'custom' ? (t.customTheme || '✏️ Custom Theme') : activeTheme}
                   </strong>
                 </span>
-                <span className="inline-flex min-h-9 sm:min-h-9.5 items-center rounded-lg border border-[#A8D2C3] bg-[#E3F4ED] hover:bg-[#D5EFE5] px-3 sm:px-3.5 text-[12px] sm:text-[13px] font-bold text-[#1E5D4B] shrink-0">
+                <span className="inline-flex min-h-9 sm:min-h-9.5 items-center rounded-lg border border-[#A8D2C3] bg-[#E3F4ED] hover:bg-[#D5EFE5] px-3 sm:px-3.5 text-[12.5px] sm:text-[13.5px] font-semibold text-[#1E5D4B] shrink-0">
                   {lang === 'ko' ? '테마 변경 ›' : 'Change ›'}
                 </span>
               </span>
             </button>
 
             <div className="flex items-center gap-2 overflow-x-auto no-scrollbar" aria-label={lang === 'ko' ? '추천 테마' : 'Recommended themes'}>
-              <span className="text-[11px] sm:text-[11.5px] font-extrabold text-[#8A6048] shrink-0 whitespace-nowrap">🔥 {lang === 'ko' ? '인기 추천' : 'Popular'}</span>
+              <span className="text-[12.5px] sm:text-[13px] font-semibold text-[#8A6048] shrink-0 whitespace-nowrap">🔥 {lang === 'ko' ? '인기 추천' : 'Popular'}</span>
               {sortedThemeKeys.slice(0, 5).map((theme) => (
-                <button key={theme} type="button" onClick={() => selectPopularTheme(theme)} className={`touch-manipulation min-h-8 max-w-[180px] truncate rounded-full border px-3 text-[12.5px] sm:text-[13px] font-bold shrink-0 whitespace-nowrap ${activeTheme === theme ? 'bg-[#FFF0E3] border-[#E9B88E] text-[#9A4B22] font-black' : 'bg-white border-[#E8D8CA] text-[#7A5A46]'}`}>
+                <button key={theme} type="button" onClick={() => selectPopularTheme(theme)} className={`touch-manipulation min-h-8 max-w-[180px] truncate rounded-full border px-3 text-[12.5px] sm:text-[13.5px] font-semibold shrink-0 whitespace-nowrap ${activeTheme === theme ? 'bg-[#FFF0E3] border-[#E9B88E] text-[#9A4B22] font-bold' : 'bg-white border-[#E8D8CA] text-[#7A5A46]'}`}>
                   {activeTheme === theme ? '✓ ' : ''}{theme}
                 </button>
               ))}
@@ -7328,7 +7328,7 @@ if (currentPath === '/privacy' || currentPath === '/terms') {
                     ? 'col-span-2 max-w-[calc(50%_-_6px)] justify-self-center sm:col-span-1 sm:max-w-none'
                     : ''
                 }`}>
-                <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 z-10 flex h-[20px] w-[20px] items-center justify-center rounded-full bg-[#DDF3EA] text-[9.5px] sm:text-[10px] font-black text-[#2F7D68] shrink-0">{idx + 1}</span>
+                <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 z-10 flex h-[20px] w-[20px] items-center justify-center rounded-full bg-[#DDF3EA] text-[10.5px] sm:text-[11px] font-bold text-[#2F7D68] shrink-0">{idx + 1}</span>
                 <input
                   type="text"
                   value={text}
