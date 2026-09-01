@@ -43,6 +43,14 @@ const routeTarget = `if (currentPath === '/privacy' || currentPath === '/terms')
 text = text.replace(routeAnchor, routeTarget);
 if (text.includes('const PrivacyPage =') || text.includes('const TermsPage =')) throw new Error('inline legal components remain');
 fs.writeFileSync(appPath, text);
+
+const legalVitePath = 'vite.legal-notices.config.js';
+let legalVite = fs.readFileSync(legalVitePath, 'utf8');
+const viteAnchor = "      if (!normalizedId.endsWith('/src/App.jsx')) return null";
+const viteTarget = "      if (!normalizedId.endsWith('/src/components/LegalPages.jsx')) return null";
+if (legalVite.split(viteAnchor).length !== 2) throw new Error('legal notices Vite target anchor mismatch');
+legalVite = legalVite.replace(viteAnchor, viteTarget);
+fs.writeFileSync(legalVitePath, legalVite);
 run('git diff --check');
 
 run('npm run build');
@@ -56,6 +64,10 @@ if (savings < 1000) throw new Error(`legal lazy-load savings too small: ${saving
 if (legalChunks.length !== 1) throw new Error(`expected one LegalPages chunk, got ${legalChunks.length}`);
 const entryCode = fs.readFileSync(optimized.file, 'utf8');
 if (entryCode.includes('개인정보처리방침') || entryCode.includes('서비스 이용약관')) throw new Error('legal copy remains in initial entry');
+const legalChunkCode = fs.readFileSync(`dist/assets/${legalChunks[0]}`, 'utf8');
+if (!legalChunkCode.includes('2026년 8월 31일') || !legalChunkCode.includes('제3자 오픈소스 소프트웨어')) {
+  throw new Error('legal notices transform did not apply to LegalPages chunk');
+}
 
 run('npm install --no-save --no-package-lock playwright@1.55.0');
 run('npx playwright install chromium --with-deps');
@@ -103,6 +115,7 @@ try {
     termsPage.on('pageerror', e => termsErrors.push(String(e)));
     await termsPage.goto('http://127.0.0.1:4173/terms', { waitUntil: 'networkidle' });
     await termsPage.getByText('서비스 이용약관', { exact: true }).waitFor();
+    await termsPage.getByText('제3자 오픈소스 소프트웨어', { exact: true }).waitFor();
     if (termsErrors.length) throw new Error(`terms page errors: ${termsErrors.join(' | ')}`);
     await terms.close();
   } finally {
@@ -117,10 +130,10 @@ run('git restore package.json package-lock.json || true', { shell: '/bin/bash' }
 fs.rmSync('.github/workflows/temp-lazy-legal-pages.yml');
 fs.rmSync('scripts/temp-lazy-legal-pages.mjs');
 run('git diff --check');
-run('git add src/App.jsx src/components/LegalPages.jsx .github/workflows/temp-lazy-legal-pages.yml scripts/temp-lazy-legal-pages.mjs');
+run('git add src/App.jsx src/components/LegalPages.jsx vite.legal-notices.config.js .github/workflows/temp-lazy-legal-pages.yml scripts/temp-lazy-legal-pages.mjs');
 const changed = execSync("git diff --cached origin/main --name-only | sort | tr '\\n' ' '", { encoding: 'utf8', shell: '/bin/bash' });
 console.log(`FINAL_STAGED_FILES=${changed}`);
-if (changed !== 'src/App.jsx src/components/LegalPages.jsx ') throw new Error(`unexpected final staged files: ${changed}`);
+if (changed !== 'src/App.jsx src/components/LegalPages.jsx vite.legal-notices.config.js ') throw new Error(`unexpected final staged files: ${changed}`);
 run('git config user.name "github-actions[bot]"', { shell: '/bin/bash' });
 run('git config user.email "41898282+github-actions[bot]@users.noreply.github.com"', { shell: '/bin/bash' });
 run('git commit -m "Lazy-load legal pages [skip ci]"', { shell: '/bin/bash' });
