@@ -1,0 +1,136 @@
+name: Temporary Sticker Split Safety
+
+on:
+  push:
+    branches:
+      - fix/sticker-split-safety
+
+permissions:
+  contents: write
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: fix/sticker-split-safety
+          fetch-depth: 0
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - name: Apply safe split patch
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path('vite.precise-sticker-split.config.js')
+          text = path.read_text()
+
+          old_group = """  const groupForSourcePixel = (x, y) => {
+    const analysisX = Math.max(0, Math.min(analysis.width - 1, Math.floor(x / analysis.scaleX)));
+    const analysisY = Math.max(0, Math.min(analysis.height - 1, Math.floor(y / analysis.scaleY)));
+    const label = analysis.labels[analysisY * analysis.width + analysisX];
+    if (label > 0) {
+      const group = analysis.componentGroup[label];
+      if (group >= 0) return group;
+    }
+    return nearestFallback(analysisX, analysisY);
+  };"""
+          new_group = """  const groupForSourcePixel = (x, y) => {
+    const analysisX = Math.max(0, Math.min(analysis.width - 1, Math.floor(x / analysis.scaleX)));
+    const analysisY = Math.max(0, Math.min(analysis.height - 1, Math.floor(y / analysis.scaleY)));
+    const readLabelGroup = (sampleX, sampleY) => {
+      if (sampleX < 0 || sampleY < 0 || sampleX >= analysis.width || sampleY >= analysis.height) return -1;
+      const label = analysis.labels[sampleY * analysis.width + sampleX];
+      if (label <= 0) return -1;
+      const group = analysis.componentGroup[label];
+      return group >= 0 ? group : -1;
+    };
+
+    const directGroup = readLabelGroup(analysisX, analysisY);
+    if (directGroup >= 0) return directGroup;
+
+    // Full-resolution edge pixels can disappear when the analysis canvas is
+    // downscaled. Recover their nearby component label before falling back to
+    // the 15 centre Voronoi map, otherwise thin hands, hair, text or effects can
+    // be sliced at an old cell boundary.
+    let recoveredGroup = -1;
+    let recoveredDistance = Number.POSITIVE_INFINITY;
+    const recoveryRadius = 3;
+    for (let dy = -recoveryRadius; dy <= recoveryRadius; dy += 1) {
+      for (let dx = -recoveryRadius; dx <= recoveryRadius; dx += 1) {
+        const distance = dx * dx + dy * dy;
+        if (distance === 0 || distance >= recoveredDistance) continue;
+        const group = readLabelGroup(analysisX + dx, analysisY + dy);
+        if (group < 0) continue;
+        recoveredGroup = group;
+        recoveredDistance = distance;
+      }
+    }
+    if (recoveredGroup >= 0) return recoveredGroup;
+    return nearestFallback(analysisX, analysisY);
+  };"""
+          if text.count(old_group) != 1:
+              raise SystemExit(f'groupForSourcePixel anchor count={text.count(old_group)}')
+          text = text.replace(old_group, new_group, 1)
+
+          old_padding = "  const basePadding = Math.max(10, Math.round(Math.min(width / 5, height / 3) * 0.09));"
+          new_padding = "  const basePadding = Math.max(14, Math.round(Math.min(width / 5, height / 3) * 0.12));"
+          if text.count(old_padding) != 1:
+              raise SystemExit(f'basePadding anchor count={text.count(old_padding)}')
+          text = text.replace(old_padding, new_padding, 1)
+
+          old_output = """    const output = document.createElement('canvas');
+    output.width = cropWidth;
+    output.height = cropHeight;
+    const outputCtx = output.getContext('2d');
+    if (!outputCtx) throw new Error('Canvas 2D is unavailable');
+    outputCtx.putImageData(imageData, 0, 0);
+
+    const itemBlob = await canvasToPngBlob(output);
+    items.push({ index: group + 1, blob: itemBlob, width: cropWidth, height: cropHeight });"""
+          new_output = """    // Keep a transparent safety border around every extracted sticker. This
+    // avoids a visually clipped result after later resize/export steps without
+    // shrinking the actual sticker pixels.
+    const outputSafetyMargin = Math.max(8, Math.round(Math.min(cropWidth, cropHeight) * 0.08));
+    const output = document.createElement('canvas');
+    output.width = cropWidth + outputSafetyMargin * 2;
+    output.height = cropHeight + outputSafetyMargin * 2;
+    const outputCtx = output.getContext('2d');
+    if (!outputCtx) throw new Error('Canvas 2D is unavailable');
+    outputCtx.putImageData(imageData, outputSafetyMargin, outputSafetyMargin);
+
+    const itemBlob = await canvasToPngBlob(output);
+    items.push({ index: group + 1, blob: itemBlob, width: output.width, height: output.height });"""
+          if text.count(old_output) != 1:
+              raise SystemExit(f'output canvas anchor count={text.count(old_output)}')
+          text = text.replace(old_output, new_output, 1)
+
+          path.write_text(text)
+          PY
+
+          grep -Fq 'const recoveryRadius = 3;' vite.precise-sticker-split.config.js
+          grep -Fq '* 0.12));' vite.precise-sticker-split.config.js
+          grep -Fq 'const outputSafetyMargin = Math.max(8' vite.precise-sticker-split.config.js
+          grep -Fq 'width: output.width, height: output.height' vite.precise-sticker-split.config.js
+          git diff --check
+
+          npm ci
+          npm run build
+
+          rm .github/workflows/temp-split-safety.yml
+          git add vite.precise-sticker-split.config.js .github/workflows/temp-split-safety.yml
+          changed="$(git diff --cached --name-only origin/main)"
+          printf '%s\n' "$changed"
+          if [ "$changed" != "vite.precise-sticker-split.config.js" ]; then
+            echo 'Unexpected final changed files'
+            git diff --cached --name-only
+            exit 1
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'Reduce clipping in 15-sticker split [skip ci]'
+          git push origin HEAD:fix/sticker-split-safety
