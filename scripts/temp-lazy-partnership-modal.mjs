@@ -46,11 +46,13 @@ fs.writeFileSync('src/components/PartnershipModal.jsx', modalFile);
 
 const importAnchor = 'const LegalPages = React.lazy(() => import("./components/LegalPages.jsx"));';
 if (app.split(importAnchor).length !== 2) throw new Error('lazy import anchor count mismatch');
-app = app.replace(importAnchor, `${importAnchor}\nconst PartnershipModal = React.lazy(() => import("./components/PartnershipModal.jsx"));`);
+const lazyImport = 'const PartnershipModal = React.lazy(() => import("./components/PartnershipModal.jsx"));';
+app = app.replace(importAnchor, `${importAnchor}\n${lazyImport}`);
 
 const replacement = `      {/* Partnership & Sponsor Banner Advertising Modal */}\n      {showPartnershipModal && (\n        <React.Suspense fallback={null}>\n          <PartnershipModal\n            lang={lang}\n            onClose={() => setShowPartnershipModal(false)}\n            onInquire={() => {\n              trackEvent('click_partnership_form', { lang });\n              setShowPartnershipModal(false);\n            }}\n          />\n        </React.Suspense>\n      )}`;
 app = app.slice(0, start) + replacement + app.slice(end);
-if ((app.match(/PartnershipModal/g) || []).length !== 3) throw new Error('unexpected PartnershipModal reference count');
+if (app.split(lazyImport).length !== 2) throw new Error('PartnershipModal lazy import count mismatch');
+if (app.split('<PartnershipModal').length !== 2) throw new Error('PartnershipModal JSX count mismatch');
 fs.writeFileSync(appPath, app);
 run('git diff --check');
 
