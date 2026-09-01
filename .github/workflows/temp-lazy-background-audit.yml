@@ -1,0 +1,24 @@
+name: Temporary Lazy Background Audit
+
+on:
+  push:
+    branches:
+      - audit/lazy-background-tools
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Inspect background tool imports and render sites
+        shell: bash
+        run: |
+          echo '=== IMPORTS / USAGES ==='
+          grep -n -C 8 -E 'BackgroundRemover(Landing)?' src/App.jsx || true
+          echo '=== COMPONENT IMPORTS ==='
+          sed -n '1,20p' src/App.jsx
+          echo '=== BACKGROUND COMPONENT HEAVY IMPORTS ==='
+          grep -R -n -E '^import .*(@huggingface/transformers|onnxruntime|sharp)' src/components || true
