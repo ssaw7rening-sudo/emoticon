@@ -1,0 +1,115 @@
+name: Prompticon SEO Finalizer
+
+on:
+  push:
+    branches:
+      - seo/prompticon-brand
+
+permissions:
+  contents: write
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: seo/prompticon-brand
+          fetch-depth: 0
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - name: Apply and verify Prompticon branding
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          def replace_once(path, old, new, label):
+              p = Path(path)
+              text = p.read_text()
+              count = text.count(old)
+              if count != 1:
+                  raise SystemExit(f'{label}: expected 1 match, got {count}')
+              p.write_text(text.replace(old, new, 1))
+
+          # Static root metadata and structured brand entity.
+          pairs = [
+            ('<meta name="apple-mobile-web-app-title" content="프롬프트 메이커" />', '<meta name="apple-mobile-web-app-title" content="프롬티콘" />', 'apple-title'),
+            ('<title>프롬프트 메이커 | AI 카카오톡 이모티콘 프롬프트 생성기 (ChatGPT · Gemini · Grok)</title>', '<title>프롬티콘 | AI 이모티콘 프롬프트 메이커</title>', 'title'),
+            ('<meta name="description" content="프롬프트 메이커(Prompt Maker) - 사진 한 장이나 캐릭터 태그 선택으로 ChatGPT(DALL-E 3), Gemini(Imagen 3), Grok 전용 15종 카카오톡·라인 이모티콘 프롬프트를 1초 만에 자동 완성하는 무료 AI 프롬프트 메이커 도구입니다." />', '<meta name="description" content="프롬티콘(Prompticon)은 사진이나 캐릭터 태그로 ChatGPT, Gemini, Grok용 15종 이모티콘 프롬프트를 만드는 무료 AI 이모티콘 프롬프트 메이커입니다." />', 'description'),
+            ('<meta name="keywords" content="프롬프트 메이커, 프롬프트메이커, AI 프롬프트 메이커, Prompt Maker, 이모티콘 프롬프트 메이커, 카카오톡 이모티콘 메이커, ChatGPT 프롬프트 메이커, Gemini 프롬프트 메이커, Grok 프롬프트 메이커, 프롬프트 생성기, AI 프롬프트 생성기, 미드저니 프롬프트 메이커, DALL-E 3 이모티콘" />', '<meta name="keywords" content="프롬티콘, Prompticon, 프롬프트 메이커, 프롬프트메이커, AI 프롬프트 메이커, Prompt Maker, 이모티콘 프롬프트 메이커, 카카오톡 이모티콘 메이커, ChatGPT 프롬프트 메이커, Gemini 프롬프트 메이커, Grok 프롬프트 메이커, 프롬프트 생성기, AI 프롬프트 생성기, 미드저니 프롬프트 메이커, DALL-E 3 이모티콘" />', 'keywords'),
+            ('<meta property="og:title" content="프롬프트 메이커 | AI 카카오톡 이모티콘 프롬프트 생성기" />', '<meta property="og:title" content="프롬티콘 | AI 이모티콘 프롬프트 메이커" />', 'og-title'),
+            ('<meta property="og:site_name" content="프롬프트 메이커 (Prompt Maker)" />', '<meta property="og:site_name" content="프롬티콘 (Prompticon)" />', 'og-site-name'),
+            ('<meta name="twitter:title" content="프롬프트 메이커 | AI 카카오톡 이모티콘 프롬프트 생성기" />', '<meta name="twitter:title" content="프롬티콘 | AI 이모티콘 프롬프트 메이커" />', 'twitter-title'),
+            ('"name": "프롬프트 메이커 (Prompt Maker)",\n          "alternateName": ["프롬프트 메이커", "프롬프트메이커", "Prompt Maker", "이모티콘 프롬프트 메이커", "AI 카카오톡 이모티콘 프롬프트 생성기"]', '"name": "프롬티콘 (Prompticon)",\n          "alternateName": ["프롬티콘", "Prompticon", "프롬프트 메이커", "프롬프트메이커", "Prompt Maker", "이모티콘 프롬프트 메이커", "AI 카카오톡 이모티콘 프롬프트 생성기"]', 'website-schema'),
+            ('"name": "프롬프트 메이커",\n          "alternateName": ["Prompt Maker", "프롬프트메이커", "KakaoTalk Emoticon Prompt Maker", "AI Emoticon Prompt Generator", "이모티콘 프롬프트 생성기"]', '"name": "프롬티콘",\n          "alternateName": ["Prompticon", "프롬프트 메이커", "Prompt Maker", "프롬프트메이커", "KakaoTalk Emoticon Prompt Maker", "AI Emoticon Prompt Generator", "이모티콘 프롬프트 생성기"]', 'webapp-schema'),
+          ]
+          for old, new, label in pairs:
+              replace_once('index.html', old, new, label)
+
+          # Runtime metadata and visible homepage signals.
+          app_pairs = [
+            ("title: '프롬프트 메이커 | AI 카카오톡 이모티콘 프롬프트 생성기 (ChatGPT · Gemini · Grok)',\n    description: '사진 한 장이나 캐릭터 태그 선택으로 ChatGPT, Gemini, Grok 전용 15종 메신저 이모티콘 프롬프트를 만드는 무료 AI 프롬프트 메이커입니다.'", "title: '프롬티콘 | AI 이모티콘 프롬프트 메이커',\n    description: '프롬티콘(Prompticon)은 사진이나 캐릭터 태그로 ChatGPT, Gemini, Grok용 15종 메신저 이모티콘 프롬프트를 만드는 무료 AI 이모티콘 프롬프트 메이커입니다.'", 'runtime-meta'),
+            ("? '✨ AI 이모티콘 프롬프트 메이커' ", "? '✨ 프롬티콘 · AI 이모티콘 프롬프트 메이커'", 'hero'),
+            ('<span className="block">© {new Date().getFullYear()} Prompt Maker (프롬프트 메이커).</span>', '<span className="block">© {new Date().getFullYear()} Prompticon (프롬티콘).</span>', 'footer'),
+            ("guide1Q: '🤔 AI 이모티콘 프롬프트 메이커란?',", "guide1Q: '🤔 프롬티콘은 어떤 AI 이모티콘 프롬프트 메이커인가요?',", 'guide'),
+            ("title: '이모티콘 제작이 처음인가요? AI 프롬프트 메이커란?',", "title: '프롬티콘은 어떤 AI 이모티콘 프롬프트 메이커인가요?',", 'about'),
+            ("q: 'Q. 프롬프트 메이커 이용 요금은 무료인가요?',\n          a: '네! 프롬프트 메이커의 모든 기능(피사체 조합, 화풍 설정, 80종 테마, 다국어 프롬프트 복사, 캡션 생성기)은 100% 완전 무료로 무제한 이용하실 수 있습니다.'", "q: 'Q. 프롬티콘 이용 요금은 무료인가요?',\n          a: '네! 프롬티콘의 AI 이모티콘 프롬프트 메이커 기능(피사체 조합, 화풍 설정, 80종 테마, 다국어 프롬프트 복사, 캡션 생성기)은 100% 완전 무료로 무제한 이용하실 수 있습니다.'", 'faq'),
+            ("ko: '이모티콘 프롬프트 메이커란?',", "ko: '프롬티콘이란?',", 'what-title'),
+            ("ko: '이모티콘 프롬프트 메이커는 사용자의 키워드 선택이나 사진을 바탕으로 ChatGPT(DALL-E 3), Google Gemini(Imagen 3), xAI Grok(Imagine Image 2.0)에 즉시 사용 가능한 15종 카카오톡·라인 이모티콘 프롬프트를 1초 만에 자동 생성해 주는 무료 웹 도구입니다.',", "ko: '프롬티콘(Prompticon)은 사용자의 키워드 선택이나 사진을 바탕으로 ChatGPT(DALL-E 3), Google Gemini(Imagen 3), xAI Grok(Imagine Image 2.0)에 즉시 사용 가능한 15종 카카오톡·라인 이모티콘 프롬프트를 1초 만에 자동 생성해 주는 무료 AI 이모티콘 프롬프트 메이커입니다.',", 'what-description'),
+          ]
+          for old, new, label in app_pairs:
+              replace_once('src/App.jsx', old, new, label)
+
+          replace_once('public/manifest.webmanifest',
+              '"name": "프롬프트 메이커 - AI 카카오톡 이모티콘 프롬프트 생성기",\n  "short_name": "프롬프트 메이커",',
+              '"name": "프롬티콘 - AI 이모티콘 프롬프트 메이커",\n  "short_name": "프롬티콘",',
+              'manifest')
+
+          sitemap = Path('public/sitemap.xml')
+          sitemap_text = sitemap.read_text()
+          if '<lastmod>2026-08-29</lastmod>' not in sitemap_text and '<lastmod>2026-08-30</lastmod>' not in sitemap_text:
+              raise SystemExit('sitemap lastmod anchors missing')
+          sitemap.write_text(sitemap_text.replace('<lastmod>2026-08-29</lastmod>', '<lastmod>2026-09-01</lastmod>').replace('<lastmod>2026-08-30</lastmod>', '<lastmod>2026-09-01</lastmod>'))
+
+          # Keep the build-time runtime SEO transform aligned with the new source metadata.
+          replace_once('vite.config.js',
+              '"title: \'프롬프트 메이커 | AI 카카오톡 이모티콘 프롬프트 생성기 (ChatGPT · Gemini · Grok)\'",\n      "title: \'프롬프트 메이커 | AI 이모티콘·스티커 만들기, 배경 제거·15개 분리\'"',
+              '"title: \'프롬티콘 | AI 이모티콘 프롬프트 메이커\'",\n      "title: \'프롬티콘 | AI 이모티콘·스티커 만들기, 배경 제거·15개 분리\'"',
+              'vite-runtime-title')
+          replace_once('vite.config.js',
+              '"description: \'사진 한 장이나 캐릭터 태그 선택으로 ChatGPT, Gemini, Grok 전용 15종 메신저 이모티콘 프롬프트를 만드는 무료 AI 프롬프트 메이커입니다.\'",\n      "description: \'사진·캐릭터 설정으로 ChatGPT, Gemini, Grok용 15종 이모티콘 프롬프트를 만들고, 배경 제거·정밀 재처리·15개 자동 분리·360/720/1440px PNG·ZIP 저장까지 한 번에 이용하세요.\'"',
+              '"description: \'프롬티콘(Prompticon)은 사진이나 캐릭터 태그로 ChatGPT, Gemini, Grok용 15종 메신저 이모티콘 프롬프트를 만드는 무료 AI 이모티콘 프롬프트 메이커입니다.\'",\n      "description: \'프롬티콘(Prompticon)에서 사진·캐릭터 설정으로 ChatGPT, Gemini, Grok용 15종 이모티콘 프롬프트를 만들고, 배경 제거·정밀 재처리·15개 자동 분리·360/720/1440px PNG·ZIP 저장까지 한 번에 이용하세요.\'"',
+              'vite-runtime-description')
+          PY
+
+          grep -Fq '<title>프롬티콘 | AI 이모티콘 프롬프트 메이커</title>' index.html
+          grep -Fq '"name": "프롬티콘 (Prompticon)"' index.html
+          grep -Fq "✨ 프롬티콘 · AI 이모티콘 프롬프트 메이커" src/App.jsx
+          grep -Fq '"short_name": "프롬티콘"' public/manifest.webmanifest
+          grep -Fq "title: '프롬티콘 | AI 이모티콘·스티커 만들기, 배경 제거·15개 분리'" vite.config.js
+          git diff --check
+
+          npm ci
+          npm run build
+
+          rm -f .github/workflows/temp-prompticon-brand.yml .github/workflows/temp-prompticon-brand-v2.yml
+          git add index.html src/App.jsx public/manifest.webmanifest public/sitemap.xml vite.config.js .github/workflows/temp-prompticon-brand.yml .github/workflows/temp-prompticon-brand-v2.yml
+          changed="$(git diff --cached --name-only origin/main)"
+          printf '%s\n' "$changed"
+          expected="index.html
+          public/manifest.webmanifest
+          public/sitemap.xml
+          src/App.jsx
+          vite.config.js"
+          if [ "$changed" != "$expected" ]; then
+            echo 'Unexpected final changed files'
+            git diff --cached --name-only origin/main
+            exit 1
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'Brand site as Prompticon [skip ci]'
+          git push origin HEAD:seo/prompticon-brand
