@@ -3,7 +3,7 @@ import EmoticonPostProcessor from './EmoticonPostProcessor';
 
 let removerPromise = null;
 let modnetPromise = null;
-let birefNetPromise = null;
+const birefNetPromises = new Map();
 
 const COPY = {
   ko: {
@@ -22,7 +22,7 @@ const COPY = {
     splitMaybeTitle: '15개 이모티콘 시트인가요?', splitMaybeDesc: '자동 감지가 확실하지 않습니다. 이모티콘 시트라면 직접 분리를 실행할 수 있습니다.', splitMaybeAction: '이모티콘 시트 분리',
     qualityFailTitle: '결과 품질을 다시 확인해 주세요', qualityFailDesc: '복잡한 배경이 많이 남아 정확한 투명 PNG로 보기 어렵습니다. 배경이 더 단순한 다른 이미지를 사용하는 것을 권장합니다.', qualityBlocked: '품질 확인 필요',
     qualityWarnTitle: '일부 배경이 남아 있을 수 있어요', qualityWarnDesc: '슬라이더로 원본과 결과를 확인한 뒤 저장해 주세요.',
-    precisionRetry: '정밀 재처리', precisionHint: '첫 실행은 필요한 파일을 불러오는 과정으로 오래 걸릴 수 있습니다.', precisionWorking: '정밀 모델로 다시 처리하고 있어요…', precisionNoBetter: '정밀 재처리 결과가 현재 결과보다 좋아지지 않아 기존 결과를 유지했습니다.',
+    precisionRetry: '정밀 재처리', precisionHint: '정밀 처리 실패 시 지원 기기에서는 WebGPU와 고정밀 보조 모델을 자동 사용하며, 모바일·미지원 환경에서는 가벼운 모델로 안전하게 처리합니다. 첫 실행은 모델 파일을 불러와 오래 걸릴 수 있습니다.', precisionWorking: '정밀 모델로 다시 처리하고 있어요…', precisionNoBetter: '정밀 재처리 결과가 현재 결과보다 좋아지지 않아 기존 결과를 유지했습니다.',
     badType: 'PNG, JPG, WEBP 이미지만 사용할 수 있습니다.', tooLarge: '12MB 이하의 이미지를 사용해 주세요.', failed: '배경 제거에 실패했습니다. 브라우저를 새로고침한 뒤 다시 시도해 주세요.'
   },
   en: {
@@ -41,7 +41,7 @@ const COPY = {
     splitMaybeTitle: 'Is this a 15-emoticon sheet?', splitMaybeDesc: 'The layout is uncertain. If this is an emoticon sheet, you can run the splitter manually.', splitMaybeAction: 'Split emoticon sheet',
     qualityFailTitle: 'Please check the removal result', qualityFailDesc: 'Too much complex background appears to remain for a reliable transparent PNG. Try another image with a simpler background.', qualityBlocked: 'Quality check needed',
     qualityWarnTitle: 'Some background may remain', qualityWarnDesc: 'Compare the original and result with the slider before saving.',
-    precisionRetry: 'Precision retry', precisionHint: 'The first run may take longer while the required files are loaded.', precisionWorking: 'Retrying with the precision model…', precisionNoBetter: 'The precision retry was not better, so the current result was kept.',
+    precisionRetry: 'Precision retry', precisionHint: 'If precision processing needs a fallback, supported devices automatically use WebGPU and a higher-precision backup model; mobile or unsupported environments use the lighter fallback. The first run may take longer while model files load.', precisionWorking: 'Retrying with the precision model…', precisionNoBetter: 'The precision retry was not better, so the current result was kept.',
     badType: 'Please use a PNG, JPG, or WEBP image.', tooLarge: 'Please use an image under 12MB.', failed: 'Background removal failed. Refresh the page and try again.'
   },
   ja: {
@@ -60,7 +60,7 @@ const COPY = {
     splitMaybeTitle: '15個の絵文字シートですか？', splitMaybeDesc: '自動判定が確実ではありません。絵文字シートの場合は手動で分割を実行できます。', splitMaybeAction: '絵文字シートを分割',
     qualityFailTitle: '背景削除結果を確認してください', qualityFailDesc: '複雑な背景が多く残っており、正確な透過PNGとして保存するには不安定です。背景がより単純な別の画像をおすすめします。', qualityBlocked: '品質確認が必要',
     qualityWarnTitle: '背景が一部残っている可能性があります', qualityWarnDesc: 'スライダーで元画像と結果を確認してから保存してください。',
-    precisionRetry: '高精度で再処理', precisionHint: '初回は必要なファイルの読み込みに時間がかかる場合があります。', precisionWorking: '高精度モデルで再処理しています…', precisionNoBetter: '高精度処理でも改善しなかったため、現在の結果を維持しました。',
+    precisionRetry: '高精度で再処理', precisionHint: '高精度処理のフォールバックが必要な場合、対応端末ではWebGPUと高精度の補助モデルを自動使用し、モバイルや非対応環境では軽量モデルを使用します。初回はモデル読み込みに時間がかかる場合があります。', precisionWorking: '高精度モデルで再処理しています…', precisionNoBetter: '高精度処理でも改善しなかったため、現在の結果を維持しました。',
     badType: 'PNG、JPG、WEBP画像のみ使用できます。', tooLarge: '12MB以下の画像を使用してください。', failed: '背景の削除に失敗しました。ページを再読み込みしてもう一度お試しください。'
   },
   zh: {
@@ -79,7 +79,7 @@ const COPY = {
     splitMaybeTitle: '这是15个表情的图片合集吗？', splitMaybeDesc: '自动判断不够确定。如果这是表情合集，可以手动启动分割。', splitMaybeAction: '分割表情合集',
     qualityFailTitle: '请检查背景移除结果', qualityFailDesc: '复杂背景残留较多，当前结果不适合直接作为可靠的透明PNG保存。建议换用背景更简单的图片。', qualityBlocked: '需要检查质量',
     qualityWarnTitle: '可能仍有部分背景残留', qualityWarnDesc: '请先用滑块对比原图和结果，再决定是否保存。',
-    precisionRetry: '高精度重试', precisionHint: '首次运行需要加载必要文件，可能耗时较长。', precisionWorking: '正在使用高精度模型重新处理…', precisionNoBetter: '高精度重试没有改善，因此保留当前结果。',
+    precisionRetry: '高精度重试', precisionHint: '高精度处理需要回退时，支持的设备会自动使用WebGPU和更高精度的备用模型；移动端或不支持的环境会使用轻量备用模型。首次加载模型文件可能较慢。', precisionWorking: '正在使用高精度模型重新处理…', precisionNoBetter: '高精度重试没有改善，因此保留当前结果。',
     badType: '仅支持PNG、JPG、WEBP图片。', tooLarge: '请使用12MB以内的图片。', failed: '背景移除失败。请刷新页面后重试。'
   }
 };
@@ -302,26 +302,57 @@ async function getModnetRemover(onProgress) {
   return modnetPromise;
 }
 
-async function getBiRefNet(onProgress) {
-  if (!birefNetPromise) {
-    birefNetPromise = (async () => {
+const BIREFNET_LITE_MODEL = 'onnx-community/BiRefNet_lite-ONNX';
+const BIREFNET_FULL_MODEL = 'onnx-community/BiRefNet-ONNX';
+
+function isLikelyMobilePrecisionDevice() {
+  if (typeof navigator === 'undefined') return true;
+  return /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent || '');
+}
+
+async function getBiRefNetProfiles() {
+  const fallback = { key: 'lite-wasm-fp32', modelId: BIREFNET_LITE_MODEL, device: 'wasm', dtype: 'fp32' };
+  if (typeof navigator === 'undefined' || !navigator.gpu) return [fallback];
+
+  try {
+    const adapter = await navigator.gpu.requestAdapter({ powerPreference: 'high-performance' });
+    if (!adapter) return [fallback];
+  } catch (error) {
+    console.warn('WebGPU adapter check failed; using WASM precision model:', error);
+    return [fallback];
+  }
+
+  const deviceMemory = Number(navigator.deviceMemory || 0);
+  const canUseFullModel = !isLikelyMobilePrecisionDevice() && deviceMemory >= 8;
+  const profiles = [];
+  if (canUseFullModel) {
+    profiles.push({ key: 'full-webgpu-fp16', modelId: BIREFNET_FULL_MODEL, device: 'webgpu', dtype: 'fp16' });
+  }
+  profiles.push({ key: 'lite-webgpu-fp16', modelId: BIREFNET_LITE_MODEL, device: 'webgpu', dtype: 'fp16' });
+  profiles.push(fallback);
+  return profiles;
+}
+
+async function getBiRefNet(profile, onProgress) {
+  if (!birefNetPromises.has(profile.key)) {
+    const promise = (async () => {
       const { AutoModel, AutoProcessor, RawImage } = await import('@huggingface/transformers');
-      const modelId = 'onnx-community/BiRefNet_lite-ONNX';
-      const model = await AutoModel.from_pretrained(modelId, {
-        device: 'wasm',
-        dtype: 'fp32',
+      const model = await AutoModel.from_pretrained(profile.modelId, {
+        device: profile.device,
+        dtype: profile.dtype,
         progress_callback: (info) => onProgress?.(info)
       });
-      const processor = await AutoProcessor.from_pretrained(modelId, {
+      const processor = await AutoProcessor.from_pretrained(profile.modelId, {
         progress_callback: (info) => onProgress?.(info)
       });
       return { model, processor, RawImage };
     })().catch((error) => {
-      birefNetPromise = null;
+      birefNetPromises.delete(profile.key);
       throw error;
     });
+    birefNetPromises.set(profile.key, promise);
   }
-  return birefNetPromise;
+  return birefNetPromises.get(profile.key);
 }
 
 async function pipelineRemovalToBlob(file, loader, onProgress) {
@@ -341,30 +372,65 @@ async function removeWithModnet(file, onProgress) {
 }
 
 async function removeWithBiRefNet(file, onProgress) {
-  const { model, processor, RawImage } = await getBiRefNet(onProgress);
-  const rawImage = await RawImage.fromBlob(file);
-  const { pixel_values } = await processor(rawImage);
-  const output = await model({ input_image: pixel_values });
-  const tensor = output?.output_image || output?.output;
-  if (!tensor?.[0]) throw new Error('BiRefNet output is unavailable');
+  const profiles = await getBiRefNetProfiles();
+  let lastError = null;
 
-  const mask = await RawImage.fromTensor(tensor[0].sigmoid().mul(255).to('uint8'))
-    .resize(rawImage.width, rawImage.height);
-  const { canvas, ctx } = await drawFileToCanvas(file);
-  const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-  const pixels = imageData.data;
-  const maskData = mask.data;
-  const maskChannels = Math.max(1, mask.channels || 1);
-  const total = canvas.width * canvas.height;
-  if (!maskData || mask.width !== canvas.width || mask.height !== canvas.height) {
-    throw new Error('BiRefNet mask size mismatch');
+  const disposeSafely = (value) => {
+    if (!value || typeof value.dispose !== 'function') return;
+    try { value.dispose(); } catch (error) { console.warn('Tensor disposal skipped:', error); }
+  };
+
+  for (const profile of profiles) {
+    let pixelValues = null;
+    let outputTensor = null;
+    let sigmoidTensor = null;
+    let scaledTensor = null;
+    let uint8Tensor = null;
+    try {
+      const { model, processor, RawImage } = await getBiRefNet(profile, onProgress);
+      const rawImage = await RawImage.fromBlob(file);
+      const processed = await processor(rawImage);
+      pixelValues = processed?.pixel_values || null;
+      if (!pixelValues) throw new Error('BiRefNet processor output is unavailable');
+
+      const output = await model({ input_image: pixelValues });
+      outputTensor = output?.output_image || output?.output || null;
+      const sourceTensor = outputTensor?.[0];
+      if (!sourceTensor) throw new Error('BiRefNet output is unavailable');
+
+      sigmoidTensor = sourceTensor.sigmoid();
+      scaledTensor = sigmoidTensor.mul(255);
+      uint8Tensor = scaledTensor.to('uint8');
+      const mask = await RawImage.fromTensor(uint8Tensor).resize(rawImage.width, rawImage.height);
+      const { canvas, ctx } = await drawFileToCanvas(file);
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const pixels = imageData.data;
+      const maskData = mask.data;
+      const maskChannels = Math.max(1, mask.channels || 1);
+      const total = canvas.width * canvas.height;
+      if (!maskData || mask.width !== canvas.width || mask.height !== canvas.height) {
+        throw new Error('BiRefNet mask size mismatch');
+      }
+      for (let i = 0; i < total; i += 1) {
+        const alpha = maskData[i * maskChannels];
+        pixels[i * 4 + 3] = Math.round((pixels[i * 4 + 3] * alpha) / 255);
+      }
+      ctx.putImageData(imageData, 0, 0);
+      return await canvasToPngBlob(canvas);
+    } catch (error) {
+      lastError = error;
+      console.warn(`BiRefNet precision profile ${profile.key} failed; trying fallback:`, error);
+    } finally {
+      const disposed = new Set();
+      for (const tensor of [uint8Tensor, scaledTensor, sigmoidTensor, outputTensor, pixelValues]) {
+        if (!tensor || disposed.has(tensor)) continue;
+        disposed.add(tensor);
+        disposeSafely(tensor);
+      }
+    }
   }
-  for (let i = 0; i < total; i += 1) {
-    const alpha = maskData[i * maskChannels];
-    pixels[i * 4 + 3] = Math.round((pixels[i * 4 + 3] * alpha) / 255);
-  }
-  ctx.putImageData(imageData, 0, 0);
-  return canvasToPngBlob(canvas);
+
+  throw lastError || new Error('BiRefNet precision processing failed');
 }
 
 function qualityRank(quality) {
