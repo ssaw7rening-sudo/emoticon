@@ -83,7 +83,7 @@ try {
     page.on('pageerror', e => errors.push(String(e)));
     await page.goto('http://127.0.0.1:4173/', { waitUntil: 'networkidle' });
     if (scripts.some(url => /ThemePickerModal-/i.test(url))) throw new Error('ThemePickerModal loaded on initial main route');
-    await page.getByRole('button', { name: /테마 변경/ }).click();
+    await page.getByRole('button', { name: /현재 활성화된 테마.*테마 변경 ›/ }).click();
     const search = page.getByPlaceholder('테마 또는 문구 검색 (예: 수능, 회사, 할로윈)');
     await search.waitFor();
     if (!scripts.some(url => /ThemePickerModal-/i.test(url))) throw new Error('ThemePickerModal chunk did not load after opening');
