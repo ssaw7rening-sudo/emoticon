@@ -200,7 +200,7 @@ jobs:
           git restore package.json package-lock.json || true
           rm .github/workflows/temp-defer-background-tools.yml
           git diff --check
-          CHANGED="$(git diff --name-only | sort | tr '\n' ' ')"
+          CHANGED="$(git diff origin/main --name-only | sort | tr '\n' ' ')"
           test "$CHANGED" = "src/App.jsx src/components/DeferredBackgroundRemover.jsx "
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
