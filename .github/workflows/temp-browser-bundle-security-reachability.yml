@@ -1,0 +1,87 @@
+name: Temporary Browser Bundle Security Reachability
+
+on:
+  push:
+    branches:
+      - audit/browser-bundle-security-reachability
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: audit/browser-bundle-security-reachability
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - name: Inspect production browser output for vulnerable Node-only packages
+        shell: bash
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+          const path = require('path');
+
+          const needles = [
+            'onnxruntime-node',
+            'adm-zip',
+            'sharp',
+            'node_modules/sharp',
+            'node_modules/onnxruntime-node',
+            'node_modules/adm-zip',
+          ];
+          const textExt = new Set(['.js', '.css', '.html', '.json', '.txt', '.xml', '.map']);
+          const hits = [];
+          let files = 0;
+          let bytes = 0;
+
+          function walk(dir) {
+            for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+              const full = path.join(dir, entry.name);
+              if (entry.isDirectory()) walk(full);
+              else {
+                files++;
+                const stat = fs.statSync(full);
+                bytes += stat.size;
+                if (!textExt.has(path.extname(entry.name))) continue;
+                let content;
+                try { content = fs.readFileSync(full, 'utf8'); } catch { continue; }
+                for (const needle of needles) {
+                  if (content.includes(needle)) hits.push({ file: full, needle });
+                }
+              }
+            }
+          }
+
+          walk('dist');
+          console.log('DIST_SUMMARY', JSON.stringify({ files, bytes, hits }));
+          if (hits.length) {
+            console.log('NODE_ONLY_PACKAGE_REFERENCES_FOUND');
+          } else {
+            console.log('NO_NODE_ONLY_PACKAGE_REFERENCES_IN_DIST');
+          }
+
+          const assetNames = fs.readdirSync('dist/assets').sort();
+          console.log('DIST_ASSETS', JSON.stringify(assetNames));
+          NODE
+      - name: Inspect transformers package export/dependency metadata
+        shell: bash
+        run: |
+          node <<'NODE'
+          const pkg = require('./node_modules/@huggingface/transformers/package.json');
+          console.log('TRANSFORMERS_METADATA', JSON.stringify({
+            version: pkg.version,
+            main: pkg.main,
+            module: pkg.module,
+            browser: pkg.browser,
+            exports: pkg.exports,
+            dependencies: pkg.dependencies,
+            optionalDependencies: pkg.optionalDependencies,
+          }));
+          NODE
