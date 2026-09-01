@@ -11,7 +11,7 @@ function injectBen2Runtime() {
 
       let transformed = code.replace(/\r\n/g, '\n')
 
-      const promiseAnchor = 'let birefNetPromise = null;'
+      const promiseAnchor = 'const birefNetPromises = new Map();'
       if (!transformed.includes(promiseAnchor)) {
         throw new Error('[ben2-auto] BiRefNet promise anchor was not found')
       }
@@ -22,7 +22,7 @@ function injectBen2Runtime() {
         )
       }
 
-      const getterAnchor = 'async function getBiRefNet(onProgress) {'
+      const getterAnchor = 'async function getBiRefNet(profile, onProgress) {'
       if (!transformed.includes(getterAnchor)) {
         throw new Error('[ben2-auto] BiRefNet getter anchor was not found')
       }
