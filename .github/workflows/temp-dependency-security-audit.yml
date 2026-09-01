@@ -1,0 +1,65 @@
+name: Temporary Dependency Security Audit
+
+on:
+  push:
+    branches:
+      - audit/post-cleanup-dependency-security
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: audit/post-cleanup-dependency-security
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install locked dependencies
+        run: npm ci
+      - name: Audit all dependencies
+        shell: bash
+        run: |
+          npm audit --json > /tmp/audit-all.json || true
+          node <<'NODE'
+          const fs = require('fs');
+          const data = JSON.parse(fs.readFileSync('/tmp/audit-all.json', 'utf8'));
+          console.log('AUDIT_ALL_METADATA', JSON.stringify(data.metadata?.vulnerabilities || {}));
+          for (const [name, v] of Object.entries(data.vulnerabilities || {})) {
+            console.log('AUDIT_ALL_ITEM', JSON.stringify({
+              name,
+              severity: v.severity,
+              isDirect: v.isDirect,
+              range: v.range,
+              nodes: v.nodes,
+              via: (v.via || []).map(x => typeof x === 'string' ? x : ({ name: x.name, severity: x.severity, title: x.title, range: x.range, url: x.url })),
+              fixAvailable: v.fixAvailable,
+            }));
+          }
+          NODE
+      - name: Audit production dependencies only
+        shell: bash
+        run: |
+          npm audit --omit=dev --json > /tmp/audit-prod.json || true
+          node <<'NODE'
+          const fs = require('fs');
+          const data = JSON.parse(fs.readFileSync('/tmp/audit-prod.json', 'utf8'));
+          console.log('AUDIT_PROD_METADATA', JSON.stringify(data.metadata?.vulnerabilities || {}));
+          for (const [name, v] of Object.entries(data.vulnerabilities || {})) {
+            console.log('AUDIT_PROD_ITEM', JSON.stringify({
+              name,
+              severity: v.severity,
+              isDirect: v.isDirect,
+              range: v.range,
+              nodes: v.nodes,
+              via: (v.via || []).map(x => typeof x === 'string' ? x : ({ name: x.name, severity: x.severity, title: x.title, range: x.range, url: x.url })),
+              fixAvailable: v.fixAvailable,
+            }));
+          }
+          NODE
+      - name: Verify build under Node 22
+        run: npm run build
