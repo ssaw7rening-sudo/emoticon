@@ -7,7 +7,7 @@ function addThirdPartyNoticesToTerms() {
     enforce: 'pre',
     transform(code, id) {
       const normalizedId = id.replace(/\\/g, '/')
-      if (!normalizedId.endsWith('/src/App.jsx')) return null
+      if (!normalizedId.endsWith('/src/components/LegalPages.jsx')) return null
 
       let transformed = code.replace(/\r\n/g, '\n')
 
