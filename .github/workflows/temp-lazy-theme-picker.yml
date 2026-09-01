@@ -1,0 +1,25 @@
+name: Temporary Lazy Theme Picker
+
+on:
+  push:
+    branches:
+      - perf/lazy-theme-picker
+
+permissions:
+  contents: write
+
+jobs:
+  optimize:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: perf/lazy-theme-picker
+          fetch-depth: 0
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - name: Verify and apply theme picker lazy load
+        run: node scripts/temp-lazy-theme-picker.mjs
