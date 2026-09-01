@@ -50,7 +50,10 @@ const lazyImport = 'const PartnershipModal = React.lazy(() => import("./componen
 app = app.replace(importAnchor, `${importAnchor}\n${lazyImport}`);
 
 const replacement = `      {/* Partnership & Sponsor Banner Advertising Modal */}\n      {showPartnershipModal && (\n        <React.Suspense fallback={null}>\n          <PartnershipModal\n            lang={lang}\n            onClose={() => setShowPartnershipModal(false)}\n            onInquire={() => {\n              trackEvent('click_partnership_form', { lang });\n              setShowPartnershipModal(false);\n            }}\n          />\n        </React.Suspense>\n      )}`;
-app = app.slice(0, start) + replacement + app.slice(end);
+const updatedStart = app.indexOf(marker);
+const updatedEnd = app.indexOf(rootEnd, updatedStart);
+if (updatedStart < 0 || updatedEnd < 0) throw new Error('updated partnership modal boundaries not found');
+app = app.slice(0, updatedStart) + replacement + app.slice(updatedEnd);
 if (app.split(lazyImport).length !== 2) throw new Error('PartnershipModal lazy import count mismatch');
 if (app.split('<PartnershipModal').length !== 2) throw new Error('PartnershipModal JSX count mismatch');
 fs.writeFileSync(appPath, app);
