@@ -103,12 +103,12 @@ async function splitIntoFifteen(blob) {`
 function refreshRuntimeSeoMeta() {
   const replacements = [
     [
-      "title: '프롬프트 메이커 | AI 카카오톡 이모티콘 프롬프트 생성기 (ChatGPT · Gemini · Grok)'",
-      "title: '프롬프트 메이커 | AI 이모티콘·스티커 만들기, 배경 제거·15개 분리'"
+      "title: '프롬티콘 | AI 이모티콘 프롬프트 메이커'",
+      "title: '프롬티콘 | AI 이모티콘·스티커 만들기, 배경 제거·15개 분리'"
     ],
     [
-      "description: '사진 한 장이나 캐릭터 태그 선택으로 ChatGPT, Gemini, Grok 전용 15종 메신저 이모티콘 프롬프트를 만드는 무료 AI 프롬프트 메이커입니다.'",
-      "description: '사진·캐릭터 설정으로 ChatGPT, Gemini, Grok용 15종 이모티콘 프롬프트를 만들고, 배경 제거·정밀 재처리·15개 자동 분리·360/720/1440px PNG·ZIP 저장까지 한 번에 이용하세요.'"
+      "description: '프롬티콘(Prompticon)은 사진이나 캐릭터 태그로 ChatGPT, Gemini, Grok용 15종 메신저 이모티콘 프롬프트를 만드는 무료 AI 이모티콘 프롬프트 메이커입니다.'",
+      "description: '프롬티콘(Prompticon)에서 사진·캐릭터 설정으로 ChatGPT, Gemini, Grok용 15종 이모티콘 프롬프트를 만들고, 배경 제거·정밀 재처리·15개 자동 분리·360/720/1440px PNG·ZIP 저장까지 한 번에 이용하세요.'"
     ],
     [
       "title: 'Prompt Maker | AI Emoticon Prompt Generator (ChatGPT · Gemini · Grok)'",

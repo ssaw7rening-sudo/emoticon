@@ -617,7 +617,7 @@ const I18N = {
     forGemini: 'Gemini',
     forGrok: 'Grok',
     guideTitle: '활용 가이드',
-    guide1Q: '🤔 AI 이모티콘 프롬프트 메이커란?',
+    guide1Q: '🤔 프롬티콘은 어떤 AI 이모티콘 프롬프트 메이커인가요?',
     guide1A: '키워드만 찍으면 15종 이모티콘 프롬프트 1초 완성!\n카톡 톡방 짤, SNS 프로필, 블로그 스티커로 나만의 감정을 자유롭게 표현해 보세요.\n원하는 캐릭터와 상황을 고르면 ChatGPT·Gemini·Grok 맞춤형 프롬프트가 즉시 생성됩니다.',
     guide2Q: '💡 ChatGPT vs Gemini 어떤 것을 써야 할까요?',
     guide2A: '각 AI 이미지 생성 기능의 장점이 다르므로 목적에 맞게 골라 쓰세요!\n\n🟢 ChatGPT 추천: "이미지 안에 정확한 대사가 필요한 경우"\n• 문구를 포함한 이모티콘 시안을 만들 때 활용하기 좋습니다.\n• 문구가 길거나 중요한 경우 생성 후 철자를 꼭 확인하세요.\n\n🔵 Gemini 이미지 생성 추천: "표정과 행동 중심의 이모티콘"\n• 캐릭터의 표정, 몸짓과 시각 효과로 상황을 표현할 때 활용하기 좋습니다.\n• 시트 전체는 초안으로 만들고, 최종 결과는 15종 개별 분할에서 한 장씩 생성하면 캐릭터 일관성을 관리하기 쉽습니다.\n• 필요하면 Gemini용 글자 설정에서 문구 포함을 선택할 수 있습니다.',
@@ -1327,7 +1327,7 @@ const GUIDE_TEXTS = {
 const SectionAbout = ({ lang }) => {
   const data = {
     ko: {
-      title: '이모티콘 제작이 처음인가요? AI 프롬프트 메이커란?',
+      title: '프롬티콘은 어떤 AI 이모티콘 프롬프트 메이커인가요?',
       desc: '그림 실력이 없어도 사진 한 장 또는 태그 몇 개로 15종 이모티콘 시트를 1초 만에 기획합니다.',
       cards: [
         {
@@ -2099,8 +2099,8 @@ const SectionFAQ = ({ lang }) => {
           a: '말풍선에 한글 문구가 정확하게 적혀야 할 때는 ChatGPT(DALL-E 3)를 강력 추천합니다. 글자 없이 생동감 넘치는 표정과 동작 중심의 캐릭터를 원하실 때는 Google Gemini(Imagen 3)를 추천하며, 유머러스하고 개성 있는 코믹 연출에는 Grok이 뛰어난 성능을 보입니다.'
         },
         {
-          q: 'Q. 프롬프트 메이커 이용 요금은 무료인가요?',
-          a: '네! 프롬프트 메이커의 모든 기능(피사체 조합, 화풍 설정, 80종 테마, 다국어 프롬프트 복사, 캡션 생성기)은 100% 완전 무료로 무제한 이용하실 수 있습니다.'
+          q: 'Q. 프롬티콘 이용 요금은 무료인가요?',
+          a: '네! 프롬티콘의 AI 이모티콘 프롬프트 메이커 기능(피사체 조합, 화풍 설정, 80종 테마, 다국어 프롬프트 복사, 캡션 생성기)은 100% 완전 무료로 무제한 이용하실 수 있습니다.'
         }
       ]
     },
@@ -2804,7 +2804,7 @@ const InfoSection = ({ t, lang }) => {
             <div className="bg-[#FFF9EE] p-4 sm:p-5 rounded-lg border border-[#FFECA1] flex flex-col gap-2">
               <h3 className="font-headline-sm text-headline-sm text-primary-strong flex items-center gap-2">
                 <span>📌</span> {getText('whatIsTitle', {
-                  ko: '이모티콘 프롬프트 메이커란?',
+                  ko: '프롬티콘이란?',
                   ja: 'スタンププロンプトメーカーとは？',
                   zh: '什么是表情包提示词生成器？',
                   en: 'What is the Emoticon Prompt Maker?'
@@ -2812,7 +2812,7 @@ const InfoSection = ({ t, lang }) => {
               </h3>
               <p className="text-[14px] sm:text-[15px] leading-relaxed text-on-surface font-medium">
                 {getText('whatIsDesc', {
-                  ko: '이모티콘 프롬프트 메이커는 사용자의 키워드 선택이나 사진을 바탕으로 ChatGPT(DALL-E 3), Google Gemini(Imagen 3), xAI Grok(Imagine Image 2.0)에 즉시 사용 가능한 15종 카카오톡·라인 이모티콘 프롬프트를 1초 만에 자동 생성해 주는 무료 웹 도구입니다.',
+                  ko: '프롬티콘(Prompticon)은 사용자의 키워드 선택이나 사진을 바탕으로 ChatGPT(DALL-E 3), Google Gemini(Imagen 3), xAI Grok(Imagine Image 2.0)에 즉시 사용 가능한 15종 카카오톡·라인 이모티콘 프롬프트를 1초 만에 자동 생성해 주는 무료 AI 이모티콘 프롬프트 메이커입니다.',
                   ja: 'スタンププロンプトメーカーは、キーワード選択や写真をもとに、ChatGPT (DALL-E 3)、Google Gemini (Imagen 3)、xAI Grok (Imagine Image 2.0) で使える15種LINE・KakaoTalkスタンププロンプトを1秒で自動生成する無料Webツールです。',
                   zh: '表情包提示词生成器是一款免费在线工具，根据您选择的关键词或上传的照片，1秒内自动生成适用于 ChatGPT (DALL-E 3)、Google Gemini (Imagen 3) 和 xAI Grok (Imagine Image 2.0) 的15格全套表情包提示词。',
                   en: 'Emoticon Prompt Maker is a free web tool that instantly generates 15-sticker emoticon prompts for ChatGPT (DALL-E 3), Google Gemini (Imagen 3), and xAI Grok (Imagine Image 2.0) in 1 second based on your keywords or photos.'
@@ -3713,8 +3713,8 @@ const APP_LOCALE_PATHS = { ko: '/', en: '/en/', ja: '/ja/', zh: '/zh/' };
 const APP_HTML_LANGS = { ko: 'ko', en: 'en', ja: 'ja', zh: 'zh-CN' };
 const APP_SEO_META = {
   ko: {
-    title: '프롬프트 메이커 | AI 카카오톡 이모티콘 프롬프트 생성기 (ChatGPT · Gemini · Grok)',
-    description: '사진 한 장이나 캐릭터 태그 선택으로 ChatGPT, Gemini, Grok 전용 15종 메신저 이모티콘 프롬프트를 만드는 무료 AI 프롬프트 메이커입니다.',
+    title: '프롬티콘 | AI 이모티콘 프롬프트 메이커',
+    description: '프롬티콘(Prompticon)은 사진이나 캐릭터 태그로 ChatGPT, Gemini, Grok용 15종 메신저 이모티콘 프롬프트를 만드는 무료 AI 이모티콘 프롬프트 메이커입니다.',
     canonical: 'https://emoticon-beige.vercel.app/'
   },
   en: {
@@ -6647,7 +6647,7 @@ if (currentPath === '/privacy' || currentPath === '/terms') {
           <div className="z-10 flex flex-col gap-2 sm:gap-3 w-full max-w-full px-1">
             <span className="brand-logo inline-block bg-white/70 text-[#5C3A21] font-black text-[12px] sm:text-[14px] tracking-wider px-3.5 sm:px-4.5 py-1.5 rounded-full backdrop-blur-sm border border-white/90 mx-auto shadow-sm max-w-full text-ellipsis overflow-hidden">
               {lang === 'ko' 
-                ? '✨ AI 이모티콘 프롬프트 메이커' 
+                ? '✨ 프롬티콘 · AI 이모티콘 프롬프트 메이커'
                 : lang === 'ja' 
                 ? '✨ AIスタンププロンプトメーカー' 
                 : lang === 'zh' 
@@ -8163,7 +8163,7 @@ if (currentPath === '/privacy' || currentPath === '/terms') {
           </div>
 
           <p className="footer-copyright text-[13.5px] text-[#8C7A6B] font-bold mt-1">
-            <span className="block">© {new Date().getFullYear()} Prompt Maker (프롬프트 메이커).</span>
+            <span className="block">© {new Date().getFullYear()} Prompticon (프롬티콘).</span>
   <span className="block whitespace-nowrap">All rights reserved.</span>
           </p>
           <p className="text-[12.5px] text-[#A69B8F] leading-relaxed max-w-2xl break-keep">
