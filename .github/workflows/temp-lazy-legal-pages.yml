@@ -2,28 +2,29 @@ name: Temporary Lazy Legal Pages
 
 on:
   push:
-    branches: [perf/lazy-legal-pages]
+    branches:
+      - perf/lazy-legal-pages
 
 permissions:
   contents: write
 
 jobs:
   optimize:
+    if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
         with:
           ref: perf/lazy-legal-pages
           fetch-depth: 0
-
       - uses: actions/setup-node@v5
         with:
           node-version: 22
           cache: npm
-
       - run: npm ci
 
       - name: Build baseline
+        shell: bash
         run: |
           npm run build
           node <<'NODE'
@@ -34,10 +35,11 @@ jobs:
           const file = `dist/${match[1].replace(/^\//, '')}`;
           const size = fs.statSync(file).size;
           fs.writeFileSync('/tmp/legal-baseline.json', JSON.stringify({ file, size }));
-          console.log('LEGAL_BASELINE', { file, size });
+          console.log('LEGAL_BASELINE', JSON.stringify({ file, size }));
           NODE
 
       - name: Extract legal pages and lazy-load routes
+        shell: bash
         run: |
           python <<'PY'
           from pathlib import Path
@@ -58,27 +60,14 @@ jobs:
           if legal_block.count("const PrivacyPage =") != 1 or legal_block.count("const TermsPage =") != 1:
               raise SystemExit('legal block did not contain exactly one privacy and terms component')
 
-          legal_file = """import React from 'react';
-
-""" + legal_block + """
-
-export default function LegalPages({ page, lang, onBack }) {
-  return page === 'terms'
-    ? <TermsPage lang={lang} onBack={onBack} />
-    : <PrivacyPage lang={lang} onBack={onBack} />;
-}
-"""
+          legal_file = "import React from 'react';\n\n" + legal_block + "\n\nexport default function LegalPages({ page, lang, onBack }) {\n  return page === 'terms'\n    ? <TermsPage lang={lang} onBack={onBack} />\n    : <PrivacyPage lang={lang} onBack={onBack} />;\n}\n"
           Path('src/components/LegalPages.jsx').write_text(legal_file, encoding='utf-8')
           text = text[:start] + text[end:]
 
           import_anchor = 'const BackgroundRemoverLanding = React.lazy(() => import("./components/BackgroundRemoverLanding.jsx"));'
           if text.count(import_anchor) != 1:
               raise SystemExit(f'import anchor count: {text.count(import_anchor)}')
-          text = text.replace(
-              import_anchor,
-              import_anchor + '\nconst LegalPages = React.lazy(() => import("./components/LegalPages.jsx"));',
-              1,
-          )
+          text = text.replace(import_anchor, import_anchor + '\nconst LegalPages = React.lazy(() => import("./components/LegalPages.jsx"));', 1)
 
           route_anchor = """if (currentPath === '/privacy') {
     return <PrivacyPage lang={lang} onBack={() => navigateTo('/')} />;
@@ -109,6 +98,7 @@ export default function LegalPages({ page, lang, onBack }) {
           git diff --check
 
       - name: Build optimized app and verify split
+        shell: bash
         run: |
           npm run build
           node <<'NODE'
@@ -123,16 +113,15 @@ export default function LegalPages({ page, lang, onBack }) {
           const pct = Number(((savings / baseline.size) * 100).toFixed(2));
           const assets = fs.readdirSync('dist/assets');
           const legalChunks = assets.filter(name => /^LegalPages-/i.test(name));
-          console.log('LEGAL_OPTIMIZED', { file, size, baselineSize: baseline.size, savings, pct, legalChunks });
+          console.log('LEGAL_OPTIMIZED', JSON.stringify({ file, size, baselineSize: baseline.size, savings, pct, legalChunks }));
           if (savings < 1000) throw new Error(`legal lazy-load savings too small: ${savings}`);
           if (legalChunks.length !== 1) throw new Error(`expected one LegalPages chunk, got ${legalChunks.length}`);
           const entry = fs.readFileSync(file, 'utf8');
-          if (entry.includes('개인정보처리방침') || entry.includes('서비스 이용약관')) {
-            throw new Error('legal page copy remains in initial entry');
-          }
+          if (entry.includes('개인정보처리방침') || entry.includes('서비스 이용약관')) throw new Error('legal page copy remains in initial entry');
           NODE
 
       - name: Browser smoke legal routes
+        shell: bash
         run: |
           npm install --no-save --no-package-lock playwright@1.55.0
           npx playwright install chromium --with-deps
@@ -147,7 +136,6 @@ export default function LegalPages({ page, lang, onBack }) {
           const { chromium } = require('playwright');
           (async () => {
             const browser = await chromium.launch({ headless: true });
-
             const main = await browser.newContext({ viewport: { width: 390, height: 844 } });
             const mainPage = await main.newPage();
             const mainScripts = [];
@@ -179,13 +167,13 @@ export default function LegalPages({ page, lang, onBack }) {
             await termsPage.getByText('서비스 이용약관', { exact: true }).waitFor();
             if (termsErrors.length) throw new Error(`terms page errors: ${termsErrors.join(' | ')}`);
             await terms.close();
-
             await browser.close();
             console.log('LEGAL_BROWSER_SMOKE_OK');
           })().catch(err => { console.error(err); process.exit(1); });
           NODE
 
       - name: Commit exact final tree
+        shell: bash
         run: |
           git restore package.json package-lock.json || true
           rm .github/workflows/temp-lazy-legal-pages.yml
