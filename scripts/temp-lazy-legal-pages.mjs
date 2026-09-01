@@ -113,7 +113,7 @@ try {
     termsPage.on('pageerror', e => termsErrors.push(String(e)));
     await termsPage.goto('http://127.0.0.1:4173/terms', { waitUntil: 'networkidle' });
     await termsPage.getByText('서비스 이용약관', { exact: true }).waitFor();
-    await termsPage.getByText('제3자 오픈소스 소프트웨어', { exact: true }).waitFor();
+    await termsPage.getByText('제4조 (제3자 오픈소스 소프트웨어)', { exact: true }).waitFor();
     if (termsErrors.length) throw new Error(`terms page errors: ${termsErrors.join(' | ')}`);
     await terms.close();
   } finally {
