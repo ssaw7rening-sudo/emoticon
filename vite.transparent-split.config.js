@@ -46,13 +46,13 @@ function transparentStickerSheetDirectSplit() {
         `${stateAnchor}\n  const [sourceAlreadyTransparent, setSourceAlreadyTransparent] = useState(false);`
       )
 
-      const clearAnchor = "    setPrecisionMessage('');\n    setEraserOpen(false);\n    setError('');"
+      const clearAnchor = "    setPrecisionMessage('');"
       if (!transformed.includes(clearAnchor)) {
         throw new Error('[transparent-split] clearResult anchor was not found')
       }
       transformed = transformed.replace(
         clearAnchor,
-        "    setPrecisionMessage('');\n    setEraserOpen(false);\n    setSourceAlreadyTransparent(false);\n    setError('');"
+        "    setPrecisionMessage('');\n    setSourceAlreadyTransparent(false);"
       )
 
       const transparentRejectBlock = `    if (nextFile.type === 'image/png') {
