@@ -25,10 +25,8 @@ jobs:
       - name: Guard initial diff
         run: |
           git diff --check
-          changed="$(git diff --name-only origin/main | sort)"
-          expected="vite.hair-fur-precision-v3.config.js
-vite.hybrid-edge-refine.config.js"
-          test "$changed" = "$expected"
+          changed="$(git diff --name-only origin/main | sort | tr '\n' ' ')"
+          test "$changed" = "vite.hair-fur-precision-v3.config.js vite.hybrid-edge-refine.config.js "
           grep -q "HAIR_FUR_FINE_DETAIL_PRECISION_V6" vite.hair-fur-precision-v3.config.js
           grep -q "gapFactor = gapSpan >= 8" vite.hair-fur-precision-v3.config.js
           grep -q "ADAPTIVE_ALPHA_EDGE_SMOOTHING_V4" vite.hybrid-edge-refine.config.js
@@ -42,10 +40,8 @@ vite.hybrid-edge-refine.config.js"
       - name: Guard final diff after build
         run: |
           git diff --check
-          changed="$(git diff --name-only origin/main | sort)"
-          expected="vite.hair-fur-precision-v3.config.js
-vite.hybrid-edge-refine.config.js"
-          test "$changed" = "$expected"
+          changed="$(git diff --name-only origin/main | sort | tr '\n' ' ')"
+          test "$changed" = "vite.hair-fur-precision-v3.config.js vite.hybrid-edge-refine.config.js "
       - name: Commit verified edge and hair change
         run: |
           git config user.name "github-actions[bot]"
