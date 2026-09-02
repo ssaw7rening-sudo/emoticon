@@ -1782,7 +1782,6 @@ export default function BackgroundRemover({ lang = 'ko' }) {
   const [qualityAssessment, setQualityAssessment] = useState({ status: 'idle', score: 0 });
   const [resultMethod, setResultMethod] = useState('');
   const [precisionMessage, setPrecisionMessage] = useState('');
-  const [textCleanupMessage, setTextCleanupMessage] = useState('');
 
   useEffect(() => () => {
     if (sourceUrl) URL.revokeObjectURL(sourceUrl);
@@ -1829,7 +1828,6 @@ export default function BackgroundRemover({ lang = 'ko' }) {
     setResultMethod('');
     setPrecisionMessage('');
     setError('');
-    setTextCleanupMessage('');
     setProgress(null);
     setStage('');
     setComparePosition(50);
@@ -1935,7 +1933,7 @@ export default function BackgroundRemover({ lang = 'ko' }) {
 
       setStage('processing');
       setProgress(null);
-      blob = await removeEnclosedBackdropPockets(blob, file);
+      blob = await removeEnclosedBackdropPockets(blob, file, true);
       quality = await assessRemovalQuality(blob);
       const url = URL.createObjectURL(blob);
       setResultMethod(method);
@@ -1969,7 +1967,7 @@ export default function BackgroundRemover({ lang = 'ko' }) {
       precisionBlob = await correctUnexpectedForegroundTransparency(precisionBlob);
       precisionBlob = await cleanAiForegroundArtifacts(precisionBlob);
       precisionBlob = await refinePrecisionEdges(precisionBlob);
-      precisionBlob = await removeEnclosedBackdropPockets(precisionBlob, file);
+      precisionBlob = await removeEnclosedBackdropPockets(precisionBlob, file, true);
       const precisionQuality = await assessRemovalQuality(precisionBlob);
       if (qualityRank(precisionQuality) <= qualityRank(qualityAssessment)) {
         const url = URL.createObjectURL(precisionBlob);
@@ -1988,39 +1986,6 @@ export default function BackgroundRemover({ lang = 'ko' }) {
       setBusy(false);
       setStage('');
       setProgress(null);
-    }
-  };
-
-  const applyEditedBlob = async (editedBlob) => {
-    if (!editedBlob) return;
-    if (resultUrl) URL.revokeObjectURL(resultUrl);
-    clearSplitItems();
-    const nextUrl = URL.createObjectURL(editedBlob);
-    setResultBlob(editedBlob);
-    setResultUrl(nextUrl);
-    setQualityAssessment(await assessRemovalQuality(editedBlob));
-    setComparePosition(0);
-    setTextCleanupMessage('');
-  };
-
-  const runAggressiveTextCleanup = async () => {
-    if (!resultBlob || !file || busy) return;
-    setBusy(true);
-    setStage('processing');
-    setError('');
-    setTextCleanupMessage('');
-    try {
-      const cleaned = await removeEnclosedBackdropPockets(resultBlob, file, true);
-      await applyEditedBlob(cleaned);
-      setTextCleanupMessage(cleaned === resultBlob
-        ? (lang === 'ko' ? '추가로 정리할 문자 사이 배경을 찾지 못했습니다.' : lang === 'ja' ? '追加で整理できる文字間の背景は見つかりませんでした。' : lang === 'zh' ? '未找到可进一步清理的文字间背景。' : 'No additional text-gap background was found.')
-        : (lang === 'ko' ? '문자 사이에 남은 배경을 투명하게 정리했습니다.' : lang === 'ja' ? '文字間に残った背景を透明にしました。' : lang === 'zh' ? '已将文字间残留背景清理为透明。' : 'The remaining background between letters was made transparent.'));
-    } catch (error) {
-      console.warn('Aggressive text cleanup failed:', error);
-      setError(t.failed);
-    } finally {
-      setBusy(false);
-      setStage('');
     }
   };
 
@@ -2192,24 +2157,6 @@ export default function BackgroundRemover({ lang = 'ko' }) {
               <div className="border-t border-[#E7ECE3] bg-[#FBFCFA] px-3 py-2.5 text-center text-xs font-semibold leading-5 text-[#6B7467]">
                 ↔ {t.compareHint}
               </div>
-            </div>
-          )}
-
-          {resultUrl && (
-            <div className="mt-4 rounded-2xl border border-[#D7E2D5] bg-[#F7FAF5] p-3.5">
-              <div className="text-sm font-extrabold text-[#3F5E43]">
-                {lang === 'ko' ? '남은 배경 마무리' : lang === 'ja' ? '残った背景を仕上げる' : lang === 'zh' ? '清理残留背景' : 'Finish remaining background'}
-              </div>
-              <div className="mt-3">
-                <button type="button" disabled={busy} onClick={runAggressiveTextCleanup} className="w-full rounded-xl border border-[#95B59B] bg-white px-3 py-3 text-xs sm:text-sm font-extrabold text-[#31573D] disabled:opacity-50">
-                  ✨ {lang === 'ko' ? '문자 사이 정리' : lang === 'ja' ? '文字間を整理' : lang === 'zh' ? '清理文字间隙' : 'Clean text gaps'}
-                </button>
-              </div>
-              {textCleanupMessage && (
-                <div className="mt-2 rounded-lg bg-white px-3 py-2 text-center text-[11px] font-bold leading-5 text-[#61705D]">
-                  {textCleanupMessage}
-                </div>
-              )}
             </div>
           )}
 
