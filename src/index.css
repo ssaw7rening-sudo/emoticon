@@ -188,6 +188,15 @@ body,
   word-break: keep-all !important;
 }
 
+/* The general 16px mobile input rule prevents browser zoom, but it also made
+   the 15 phrase fields ignore their compact text sizing. Keep this exception
+   scoped to the phrase grid only. */
+@media (max-width: 639px) {
+  #emoticon-phrase-grid .emoticon-phrase-input {
+    font-size: 13px !important;
+  }
+}
+
 @layer utilities {
   .shadow-diffused {
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
