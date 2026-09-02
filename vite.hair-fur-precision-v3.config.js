@@ -3,7 +3,7 @@ import baseConfig from './vite.hybrid-edge-refine.config.js'
 
 function hairFurPrecisionPre() {
   return {
-    name: 'hair-fur-fine-detail-precision-v3',
+    name: 'hair-fur-fine-detail-precision-v4',
     enforce: 'pre',
     transform(code, id) {
       const normalizedId = id.replace(/\\/g, '/')
@@ -15,7 +15,7 @@ function hairFurPrecisionPre() {
         throw new Error('[hair-fur-v3] Quality-assessment anchor was not found')
       }
 
-      const helper = `// HAIR_FUR_FINE_DETAIL_PRECISION_V3
+      const helper = `// HAIR_FUR_FINE_DETAIL_PRECISION_V4
 function getHairFurText(lang) {
   const copy = {
     ko: {
@@ -78,7 +78,7 @@ async function refineHairFurEdges(matteBlob, sourceFile) {
   maskCtx.drawImage(matteCanvas, 0, 0, width, height);
 
   const mobileLike = typeof isMobileLikeDevice === 'function' ? isMobileLikeDevice() : false;
-  const analysisMax = mobileLike ? 760 : 1100;
+  const analysisMax = mobileLike ? 840 : 1280;
   const analysisScale = Math.min(1, analysisMax / Math.max(width, height));
   const analysisWidth = Math.max(1, Math.round(width * analysisScale));
   const analysisHeight = Math.max(1, Math.round(height * analysisScale));
@@ -167,6 +167,36 @@ async function refineHairFurEdges(matteBlob, sourceFile) {
       const currentAlpha = alphaOut[index];
       if (currentAlpha >= 250) continue;
 
+      // HAIR_FUR_CONTINUITY_RESCUE_V4
+      // A one-pixel gap inside a real strand should have foreground support on
+      // opposite sides. This lets us rescue broken hairs without reviving isolated
+      // background speckles that happen to have a similar colour.
+      const leftAlpha = alphaOut[index - 1];
+      const rightAlpha = alphaOut[index + 1];
+      const upAlpha = alphaOut[index - width];
+      const downAlpha = alphaOut[index + width];
+      const upLeftAlpha = alphaOut[index - width - 1];
+      const upRightAlpha = alphaOut[index - width + 1];
+      const downLeftAlpha = alphaOut[index + width - 1];
+      const downRightAlpha = alphaOut[index + width + 1];
+      const continuitySupport = Math.max(
+        Math.min(leftAlpha, rightAlpha),
+        Math.min(upAlpha, downAlpha),
+        Math.min(upLeftAlpha, downRightAlpha),
+        Math.min(upRightAlpha, downLeftAlpha)
+      );
+      let nearbyStrandSupport = 0;
+      if (leftAlpha >= 42) nearbyStrandSupport += 1;
+      if (rightAlpha >= 42) nearbyStrandSupport += 1;
+      if (upAlpha >= 42) nearbyStrandSupport += 1;
+      if (downAlpha >= 42) nearbyStrandSupport += 1;
+      if (upLeftAlpha >= 42) nearbyStrandSupport += 1;
+      if (upRightAlpha >= 42) nearbyStrandSupport += 1;
+      if (downLeftAlpha >= 42) nearbyStrandSupport += 1;
+      if (downRightAlpha >= 42) nearbyStrandSupport += 1;
+      const bridgeLike = currentAlpha <= 18 && continuitySupport >= 64;
+      const supportedStrand = nearbyStrandSupport >= 2 || continuitySupport >= 48;
+
       let fgR = 0, fgG = 0, fgB = 0, fgCount = 0;
       let bgR = 0, bgG = 0, bgB = 0, bgCount = 0;
       for (const radius of sampleRadii) {
@@ -200,11 +230,16 @@ async function refineHairFurEdges(matteBlob, sourceFile) {
       const confidence = Math.min(1, Math.abs(dBg - dFg) / Math.max(1, distanceTotal));
       let nextAlpha = currentAlpha;
 
-      // Rescue a nearly-lost filament only when original RGB is clearly closer to
-      // foreground than background. This avoids restoring broad background halos.
-      if (currentAlpha <= 24 && fgAdvantage >= 1.55 && colorAlpha >= 110) {
-        const rescueStrength = 0.56 + confidence * 0.20;
-        nextAlpha = Math.max(currentAlpha, Math.min(188, Math.round(colorAlpha * rescueStrength)));
+      // Rescue nearly-lost filaments using both source colour and local strand
+      // continuity. Supported one-pixel gaps may use a lower colour threshold; an
+      // isolated pixel still needs very strong foreground evidence.
+      const bridgeRescue = bridgeLike && fgAdvantage >= 1.28 && colorAlpha >= 82;
+      const supportedRescue = currentAlpha <= 30 && supportedStrand && fgAdvantage >= 1.38 && colorAlpha >= 92;
+      const isolatedStrongRescue = currentAlpha <= 24 && fgAdvantage >= 1.72 && colorAlpha >= 118;
+      if (bridgeRescue || supportedRescue || isolatedStrongRescue) {
+        const continuityBoost = bridgeRescue ? 0.12 : (supportedRescue ? 0.07 : 0);
+        const rescueStrength = Math.min(0.88, 0.60 + confidence * 0.22 + continuityBoost);
+        nextAlpha = Math.max(currentAlpha, Math.min(202, Math.round(colorAlpha * rescueStrength)));
       } else if (currentAlpha < 220) {
         let blend = 0.48 + confidence * 0.28;
         if (currentAlpha <= 6) blend *= 0.72;
@@ -216,7 +251,13 @@ async function refineHairFurEdges(matteBlob, sourceFile) {
       alphaOut[index] = nextAlpha;
 
       if (nextAlpha > 7 && nextAlpha < 244) {
-        const pull = Math.min(0.30, (1 - nextAlpha / 255) * 0.34);
+        // Low-alpha supported strands carry more of the old background colour, so
+        // decontaminate them a little more while leaving ordinary edges unchanged.
+        const fineStrand = nextAlpha < 136 && supportedStrand;
+        const pull = Math.min(
+          fineStrand ? 0.38 : 0.30,
+          (1 - nextAlpha / 255) * (fineStrand ? 0.44 : 0.34)
+        );
         sourcePixels[p] = Math.round(sourcePixels[p] * (1 - pull) + fgR * pull);
         sourcePixels[p + 1] = Math.round(sourcePixels[p + 1] * (1 - pull) + fgG * pull);
         sourcePixels[p + 2] = Math.round(sourcePixels[p + 2] * (1 - pull) + fgB * pull);
