@@ -3,7 +3,7 @@ import baseConfig from './vite.background-hole-aware.config.js'
 
 function alwaysAvailableStickerSplitMenu() {
   return {
-    name: 'always-available-sticker-split-menu-v2-force-manual',
+    name: 'always-available-sticker-split-menu-v3-watershed-compatible',
     enforce: 'pre',
     transform(code, id) {
       const normalizedId = id.replace(/\\/g, '/')
@@ -38,11 +38,10 @@ function alwaysAvailableStickerSplitMenu() {
       replaceOnce(badgeAnchor, adaptiveBadge, 'split badge')
 
       // Manual split is an explicit user instruction. It must not be blocked by
-      // the automatic sheet-classifier thresholds. Keep the same content/pixel
-      // ownership splitter, but use the canonical 5×3 seed centres when forcing
-      // a split. This is still not rectangular cell cropping: each foreground
-      // pixel is assigned to its nearest seed and the final PNG is cropped only
-      // to that group's actual content bounds.
+      // the automatic sheet-classifier thresholds. Keep the same object-aware
+      // watershed ownership for both automatic and manual splitting; force mode
+      // only bypasses classifier reliability gates and never downgrades ownership
+      // to rectangular cells or nearest-centre Voronoi slicing.
       replaceOnce(
         'async function splitIntoFifteen(blob) {',
         'async function splitIntoFifteen(blob, { force = false } = {}) {',
@@ -53,26 +52,11 @@ function alwaysAvailableStickerSplitMenu() {
   if (!analysis || analysis.nonEmpty < 12) throw new Error('Could not reliably detect 15 sticker groups');`
       const forceAwareAnalysisGate = `  const analysis = analyzeStickerContentGroups(canvas);
   if (!analysis) throw new Error('Could not analyze sticker layout');
-  if (!force && analysis.nonEmpty < 12) throw new Error('Could not reliably detect 15 sticker groups');
-  const ownershipCenters = force ? analysis.nominalCenters : analysis.centers;`
+  if (!force && analysis.nonEmpty < 12) throw new Error('Could not reliably detect 15 sticker groups');`
       replaceOnce(analysisGate, forceAwareAnalysisGate, 'automatic detection gate')
 
-      const pixelOwnerCenters = `    return nearestStickerGroup(
-      analysisX,
-      analysisY,
-      analysis.centers,
-      analysis.cellWidth,
-      analysis.cellHeight
-    );`
-      const forceAwarePixelOwnerCenters = `    return nearestStickerGroup(
-      analysisX,
-      analysisY,
-      ownershipCenters,
-      analysis.cellWidth,
-      analysis.cellHeight
-    );`
-      replaceOnce(pixelOwnerCenters, forceAwarePixelOwnerCenters, 'pixel ownership centres')
-
+      // Object ownership is supplied by the precise splitter's watershed map.
+      // Do not rewrite it for force/manual mode.
       replaceOnce(
         "  if (detectedGroups < 12) throw new Error('Could not reliably separate sticker content groups');",
         "  if (!force && detectedGroups < 12) throw new Error('Could not reliably separate sticker content groups');",
@@ -85,11 +69,11 @@ function alwaysAvailableStickerSplitMenu() {
       try {
         items = await splitIntoFifteen(resultBlob, { force: directSplit });
       } catch (primarySplitError) {
-        // If automatic classification said “sheet” but its adaptive centres still
-        // produce an unreliable grouping, retry once with the stable 5×3 seeds.
-        // A direct/manual split already uses those seeds, so do not repeat it.
+        // If automatic classification said “sheet” but reliability gating still
+        // rejects the split, retry once in force mode. Ownership remains the same
+        // object-aware watershed map; only the classifier gate is bypassed.
         if (directSplit) throw primarySplitError;
-        console.warn('Adaptive sticker split failed; retrying with direct 5x3 pixel ownership:', primarySplitError);
+        console.warn('Adaptive sticker split failed; retrying with forced object-aware ownership:', primarySplitError);
         items = await splitIntoFifteen(resultBlob, { force: true });
       }`
       replaceOnce(autoSplitCall, forceAwareAutoSplitCall, 'autoSplit invocation')
