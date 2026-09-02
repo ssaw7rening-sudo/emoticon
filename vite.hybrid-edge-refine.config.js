@@ -216,8 +216,11 @@ async function refineHybridPrecisionEdges(matteBlob, sourceFile) {
     }
   }
 
-  // One very light alpha-only smoothing pass removes staircase artifacts without
-  // turning fine strands into a blurred halo.
+  // ADAPTIVE_ALPHA_EDGE_SMOOTHING_V2
+  // Smooth only the narrow detected contour. Existing partial alpha receives a
+  // stronger edge-aware blend, while a hard 0/255 staircase may gain at most one
+  // anti-aliased contour pixel. Fine isolated strands are protected by requiring
+  // local foreground support before a hard transparent pixel can be softened.
   const smoothedAlpha = alphaOut.slice();
   for (let y = 1; y < height - 1; y += 1) {
     const ay = Math.min(analysisHeight - 1, Math.floor(y * yScale));
@@ -226,14 +229,59 @@ async function refineHybridPrecisionEdges(matteBlob, sourceFile) {
       if (!edgeBand[ay * analysisWidth + ax]) continue;
       const index = y * width + x;
       const a = alphaOut[index];
-      if (a <= 3 || a >= 252) continue;
-      const neighborMean = (
-        alphaOut[index - 1] +
-        alphaOut[index + 1] +
-        alphaOut[index - width] +
-        alphaOut[index + width]
-      ) / 4;
-      smoothedAlpha[index] = Math.max(0, Math.min(255, Math.round(a * 0.72 + neighborMean * 0.28)));
+      const neighbours = [
+        alphaOut[index - 1], alphaOut[index + 1],
+        alphaOut[index - width], alphaOut[index + width],
+        alphaOut[index - width - 1], alphaOut[index - width + 1],
+        alphaOut[index + width - 1], alphaOut[index + width + 1]
+      ];
+      let localMin = 255;
+      let localMax = 0;
+      let opaqueSupport = 0;
+      let transparentSupport = 0;
+      let orthogonalSum = 0;
+      let diagonalSum = 0;
+      for (let n = 0; n < neighbours.length; n += 1) {
+        const value = neighbours[n];
+        if (value < localMin) localMin = value;
+        if (value > localMax) localMax = value;
+        if (value >= 224) opaqueSupport += 1;
+        if (value <= 31) transparentSupport += 1;
+        if (n < 4) orthogonalSum += value;
+        else diagonalSum += value;
+      }
+
+      const mixedBoundary = localMin <= 28 && localMax >= 227;
+      const targetAlpha = (orthogonalSum / 4) * 0.72 + (diagonalSum / 4) * 0.28;
+
+      // Existing feathered pixels: remove staircase wobble while preserving
+      // low-alpha hair/fur texture. Medium-alpha clothing/skin edges can accept
+      // a little more smoothing than very fine strands.
+      if (a > 3 && a < 252) {
+        const localSpan = localMax - localMin;
+        const strandLike = a < 72 || (opaqueSupport <= 2 && transparentSupport >= 4);
+        let smoothing = strandLike ? 0.16 : 0.30;
+        if (!strandLike && localSpan >= 96) smoothing = 0.38;
+        if (!strandLike && a >= 72 && a <= 216 && localSpan >= 144) smoothing = 0.42;
+        const blended = Math.round(a * (1 - smoothing) + targetAlpha * smoothing);
+        const maxDelta = strandLike ? 18 : 34;
+        smoothedAlpha[index] = Math.max(0, Math.min(255, Math.max(a - maxDelta, Math.min(a + maxDelta, blended))));
+        continue;
+      }
+
+      // Hard matte staircases previously stayed perfectly binary. Create only a
+      // restrained one-pixel AA contour. Transparent pixels need at least two
+      // confident foreground neighbours so isolated hairs are not thickened.
+      if (!mixedBoundary) continue;
+      if (a <= 3) {
+        if (opaqueSupport < 2) continue;
+        const softened = Math.round(targetAlpha * 0.18);
+        smoothedAlpha[index] = Math.max(0, Math.min(42, softened));
+      } else if (a >= 252) {
+        if (transparentSupport < 2) continue;
+        const softened = Math.round(255 * 0.82 + targetAlpha * 0.18);
+        smoothedAlpha[index] = Math.max(214, Math.min(255, softened));
+      }
     }
   }
 
