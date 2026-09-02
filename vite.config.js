@@ -306,6 +306,86 @@ function refreshBackgroundGuide() {
   }
 }
 
+function alignModelBackgroundOptions() {
+  const replacements = [
+    [
+      "gptSolid: '단색 배경'",
+      "gptSolid: '순백색 배경'"
+    ],
+    [
+      "gptSolid: 'Solid color'",
+      "gptSolid: 'Pure white'"
+    ],
+    [
+      "gptSolid: '単色背景'",
+      "gptSolid: '純白背景'"
+    ],
+    [
+      "gptSolid: '单色背景'",
+      "gptSolid: '纯白背景'"
+    ],
+    [
+      "ko: '캐릭터와 충분히 대비되는 하나의 깨끗한 단색 배경을 사용해주세요. 그라데이션, 질감과 배경 사물은 넣지 마세요.'",
+      "ko: '하나의 연속된 순수 단색 순백색 배경(#FFFFFF)을 사용해주세요. 그라데이션, 질감, 배경 사물, 체커보드 패턴은 넣지 마세요.'"
+    ],
+    [
+      "en: 'Use one clean solid background color with strong contrast against the character. No gradient, texture, or background objects.'",
+      "en: 'Use one continuous pure solid white (#FFFFFF) background. No gradient, texture, background objects, or checkerboard pattern.'"
+    ],
+    [
+      "const [geminiBackgroundMode, setGeminiBackgroundMode] = useState('transparent');",
+      "const [geminiBackgroundMode, setGeminiBackgroundMode] = useState('solid');"
+    ],
+    [
+      "const [grokBackgroundMode, setGrokBackgroundMode] = useState('transparent');",
+      "const [grokBackgroundMode, setGrokBackgroundMode] = useState('solid');"
+    ],
+    [
+      "    setGeminiBackgroundMode('transparent');",
+      "    setGeminiBackgroundMode('solid');"
+    ],
+    [
+      "    setGrokTextMode('text');",
+      "    setGrokTextMode('text');\n    setGrokBackgroundMode('solid');"
+    ],
+    [
+      '<div className="grid grid-cols-2 gap-1 sm:gap-2 w-full sm:w-auto" role="group" aria-label={t.geminiBackgroundMode}>',
+      '<div className="grid grid-cols-1 gap-1 sm:gap-2 w-full sm:w-auto" role="group" aria-label={t.geminiBackgroundMode}>'
+    ],
+    [
+      "                  {[\n                    ['transparent', t.geminiTransparent],\n                    ['solid', t.geminiSolid],\n                  ].map(([mode, label]) => (",
+      "                  {[\n                    ['solid', t.geminiSolid],\n                  ].map(([mode, label]) => ("
+    ],
+    [
+      '<div className="grid grid-cols-2 gap-1 sm:gap-2 w-full sm:w-auto" role="group" aria-label={t.grokBackgroundMode}>',
+      '<div className="grid grid-cols-1 gap-1 sm:gap-2 w-full sm:w-auto" role="group" aria-label={t.grokBackgroundMode}>'
+    ],
+    [
+      "                  {[\n                    ['transparent', t.grokTransparent],\n                    ['solid', t.grokSolid],\n                  ].map(([mode, label]) => (",
+      "                  {[\n                    ['solid', t.grokSolid],\n                  ].map(([mode, label]) => ("
+    ]
+  ]
+
+  return {
+    name: 'align-model-background-options',
+    enforce: 'pre',
+    transform(code, id) {
+      const normalizedId = id.replace(/\\/g, '/')
+      if (!normalizedId.endsWith('/src/App.jsx')) return null
+
+      let transformed = code.replace(/\r\n/g, '\n')
+      for (const [from, to] of replacements) {
+        if (!transformed.includes(from)) {
+          throw new Error(`[background-options] Expected App source pattern was not found: ${from}`)
+        }
+        transformed = transformed.replace(from, to)
+      }
+
+      return { code: transformed, map: null }
+    }
+  }
+}
+
 export default defineConfig({
-  plugins: [preservePrecisionBackgroundRemovalRgb(), refreshRuntimeSeoMeta(), refreshBackgroundGuide(), react()],
+  plugins: [preservePrecisionBackgroundRemovalRgb(), refreshRuntimeSeoMeta(), refreshBackgroundGuide(), alignModelBackgroundOptions(), react()],
 })
