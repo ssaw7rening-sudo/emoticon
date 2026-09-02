@@ -499,6 +499,146 @@ async function correctUnexpectedForegroundTransparency(blob) {
   return canvasToPngBlob(canvas);
 }
 
+async function removeEnclosedBackdropPockets(blob, sourceFile) {
+  try {
+    const source = await drawFileToCanvas(sourceFile);
+    const result = await drawFileToCanvas(blob);
+    const { width, height } = result.canvas;
+    if (!width || !height) return blob;
+
+    let sourceCtx = source.ctx;
+    if (source.canvas.width !== width || source.canvas.height !== height) {
+      const scaled = document.createElement('canvas');
+      scaled.width = width;
+      scaled.height = height;
+      const scaledCtx = scaled.getContext('2d', { willReadFrequently: true });
+      if (!scaledCtx) return blob;
+      scaledCtx.drawImage(source.canvas, 0, 0, width, height);
+      sourceCtx = scaledCtx;
+    }
+
+    const sourceData = sourceCtx.getImageData(0, 0, width, height);
+    const estimate = estimateUniformEdgeBackground(sourceData.data, width, height);
+    if (!estimate) return blob;
+
+    const resultData = result.ctx.getImageData(0, 0, width, height);
+    const pixels = resultData.data;
+    const original = sourceData.data;
+    const { bg, tolerance } = estimate;
+    const total = width * height;
+    const visited = new Uint8Array(total);
+    const queue = new Int32Array(total);
+    const sourceTolerance = Math.max(16, Math.min(32, tolerance * 0.62));
+    const resultTolerance = Math.max(22, Math.min(42, tolerance * 0.9));
+    const boundaryDistance = Math.max(30, tolerance * 1.05);
+    const minArea = Math.max(8, Math.round(total * 0.000004));
+    const maxArea = Math.max(minArea + 1, Math.round(total * 0.008));
+    const maxWidth = Math.max(8, Math.round(width * 0.17));
+    const maxHeight = Math.max(8, Math.round(height * 0.14));
+    let changed = false;
+
+    const isCandidate = (index) => {
+      if (index < 0 || index >= total || visited[index]) return false;
+      const p = index * 4;
+      if (pixels[p + 3] < 128 || original[p + 3] < 220) return false;
+      return (
+        colorDistance([original[p], original[p + 1], original[p + 2]], bg) <= sourceTolerance &&
+        colorDistance([pixels[p], pixels[p + 1], pixels[p + 2]], bg) <= resultTolerance
+      );
+    };
+
+    for (let seed = 0; seed < total; seed += 1) {
+      if (!isCandidate(seed)) continue;
+
+      let head = 0;
+      let tail = 0;
+      visited[seed] = 1;
+      queue[tail++] = seed;
+      let area = 0;
+      let minX = width;
+      let minY = height;
+      let maxX = -1;
+      let maxY = -1;
+      let touchesEdge = false;
+
+      while (head < tail) {
+        const index = queue[head++];
+        const x = index % width;
+        const y = Math.floor(index / width);
+        area += 1;
+        minX = Math.min(minX, x);
+        minY = Math.min(minY, y);
+        maxX = Math.max(maxX, x);
+        maxY = Math.max(maxY, y);
+        if (x === 0 || y === 0 || x === width - 1 || y === height - 1) touchesEdge = true;
+
+        const enqueue = (next) => {
+          if (!isCandidate(next)) return;
+          visited[next] = 1;
+          queue[tail++] = next;
+        };
+        if (x > 0) enqueue(index - 1);
+        if (x + 1 < width) enqueue(index + 1);
+        if (y > 0) enqueue(index - width);
+        if (y + 1 < height) enqueue(index + width);
+      }
+
+      const componentWidth = maxX - minX + 1;
+      const componentHeight = maxY - minY + 1;
+      if (
+        touchesEdge ||
+        area < minArea ||
+        area > maxArea ||
+        componentWidth > maxWidth ||
+        componentHeight > maxHeight
+      ) continue;
+
+      let boundarySamples = 0;
+      let strongBoundarySamples = 0;
+      for (let i = 0; i < tail; i += 1) {
+        const index = queue[i];
+        const x = index % width;
+        const y = Math.floor(index / width);
+        const neighbours = [];
+        if (x > 0) neighbours.push(index - 1);
+        if (x + 1 < width) neighbours.push(index + 1);
+        if (y > 0) neighbours.push(index - width);
+        if (y + 1 < height) neighbours.push(index + width);
+
+        for (const next of neighbours) {
+          if (visited[next]) continue;
+          const p = next * 4;
+          if (pixels[p + 3] < 48) continue;
+          boundarySamples += 1;
+          if (colorDistance([pixels[p], pixels[p + 1], pixels[p + 2]], bg) >= boundaryDistance) {
+            strongBoundarySamples += 1;
+          }
+        }
+      }
+
+      const fillRatio = area / Math.max(1, componentWidth * componentHeight);
+      const boundaryRatio = strongBoundarySamples / Math.max(1, boundarySamples);
+      const isTrappedBackdrop =
+        fillRatio >= 0.16 &&
+        boundarySamples >= 6 &&
+        boundaryRatio >= 0.68;
+
+      if (!isTrappedBackdrop) continue;
+      for (let i = 0; i < tail; i += 1) {
+        pixels[queue[i] * 4 + 3] = 0;
+      }
+      changed = true;
+    }
+
+    if (!changed) return blob;
+    result.ctx.putImageData(resultData, 0, 0);
+    return await canvasToPngBlob(result.canvas);
+  } catch (error) {
+    console.warn('Enclosed backdrop cleanup skipped:', error);
+    return blob;
+  }
+}
+
 async function refineHairBackgroundChannels(blob) {
   const { canvas, ctx } = await drawFileToCanvas(blob);
   const { width, height } = canvas;
@@ -1638,6 +1778,8 @@ export default function BackgroundRemover({ lang = 'ko' }) {
 
       setStage('processing');
       setProgress(null);
+      blob = await removeEnclosedBackdropPockets(blob, file);
+      quality = await assessRemovalQuality(blob);
       const url = URL.createObjectURL(blob);
       setResultMethod(method);
       setQualityAssessment(quality);
@@ -1670,6 +1812,7 @@ export default function BackgroundRemover({ lang = 'ko' }) {
       precisionBlob = await correctUnexpectedForegroundTransparency(precisionBlob);
       precisionBlob = await cleanAiForegroundArtifacts(precisionBlob);
       precisionBlob = await refinePrecisionEdges(precisionBlob);
+      precisionBlob = await removeEnclosedBackdropPockets(precisionBlob, file);
       const precisionQuality = await assessRemovalQuality(precisionBlob);
       if (qualityRank(precisionQuality) <= qualityRank(qualityAssessment)) {
         const url = URL.createObjectURL(precisionBlob);
