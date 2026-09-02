@@ -310,33 +310,39 @@ export default function EmoticonPostProcessor({ items = [], sourceName = 'emotic
         <p className="mt-2 text-[10px] font-medium leading-4 text-[#817970] sm:text-[11px]">{t.qualityNote}</p>
       </div>
 
-      <div className="mt-2.5 flex flex-wrap gap-2">
-        <button type="button" disabled={working} onClick={normalizeAll} className="rounded-xl border border-[#BFCDBA] bg-[#F3F8F0] px-3 py-2 text-xs font-extrabold text-[#4F684A] disabled:opacity-50">▣ {working ? t.working : normalizeLabel}</button>
-        <button type="button" disabled={working} onClick={downloadZip} className="rounded-xl bg-[#3E6B4B] px-3 py-2 text-xs font-extrabold text-white shadow-sm disabled:opacity-50">📦 {working ? t.working : t.zip}</button>
+      <div className="mt-2.5 grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
+        <button type="button" disabled={working} onClick={normalizeAll} className="min-h-11 rounded-xl border border-[#BFCDBA] bg-[#F3F8F0] px-2.5 py-2 text-xs font-extrabold leading-5 text-[#4F684A] disabled:opacity-50 sm:px-3">▣ {working ? t.working : normalizeLabel}</button>
+        <button type="button" disabled={working} onClick={downloadZip} className="min-h-11 rounded-xl bg-[#3E6B4B] px-2.5 py-2 text-xs font-extrabold leading-5 text-white shadow-sm disabled:opacity-50 sm:px-3">📦 {working ? t.working : t.zip}</button>
       </div>
 
       {error && <div className="mt-3 rounded-xl bg-[#FFF1EE] px-3 py-2.5 text-xs font-semibold text-[#A64D3D]">{error}</div>}
 
-      <div className="mt-3 grid grid-cols-3 gap-2 sm:grid-cols-5 sm:gap-2.5">
+      <div className="mt-3 grid min-w-0 grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5 lg:gap-2.5">
         {processed.map((item) => (
-          <div key={item.index} className="overflow-hidden rounded-xl border border-[#E2DDD5] bg-white shadow-sm">
-            <div className="flex h-7 items-center justify-between gap-1 border-b border-[#EEEAE3] bg-[#FBFAF7] px-1.5">
-              <span className="text-[9px] font-black leading-none text-[#5B554E] sm:text-[10px]">{String(item.index).padStart(2, '0')}</span>
+          <div key={item.index} className="min-w-0 overflow-hidden rounded-xl border border-[#E2DDD5] bg-white shadow-sm">
+            <div className="flex h-8 items-center justify-between gap-1 border-b border-[#EEEAE3] bg-[#FBFAF7] px-2">
+              <span className="text-xs font-black leading-none text-[#5B554E]">{String(item.index).padStart(2, '0')}</span>
               <div className="flex min-w-0 items-center gap-1">
-                <span className="rounded-md bg-[#EEF4EA] px-1.5 py-0.5 text-[8px] font-extrabold leading-none text-[#5B6E56]">{item.finalBlob ? outputSize : t.raw}</span>
-                {item.finalBlob && outputScale > 1 && <span className="rounded-md bg-[#F1ECE5] px-1 py-0.5 text-[8px] font-extrabold leading-none text-[#75644E]">↑{outputScale}×</span>}
+                <span className="rounded-md bg-[#EEF4EA] px-1.5 py-1 text-[10px] font-extrabold leading-none text-[#5B6E56]">{item.finalBlob ? outputSize : t.raw}</span>
+                {item.finalBlob && outputScale > 1 && <span className="rounded-md bg-[#F1ECE5] px-1 py-1 text-[10px] font-extrabold leading-none text-[#75644E]">↑{outputScale}×</span>}
               </div>
             </div>
-            <div className="aspect-square overflow-hidden" style={checkerStyle}>
+            <button
+              type="button"
+              onClick={() => openEditor(item)}
+              aria-label={`${String(item.index).padStart(2, '0')} ${t.edit}`}
+              className="block aspect-square w-full touch-manipulation overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#6F8C68]"
+              style={checkerStyle}
+            >
               {item.finalUrl ? (
                 <img src={item.finalUrl} alt={`emoticon ${item.index}`} className="h-full w-full object-contain" />
               ) : (
                 <img src={item.url} alt={`emoticon ${item.index}`} className="h-full w-full object-contain p-1.5" />
               )}
-            </div>
+            </button>
             <div className="grid grid-cols-2 border-t border-[#EEEAE3] bg-white">
-              <button type="button" onClick={() => openEditor(item)} className="whitespace-nowrap border-r border-[#EEEAE3] px-1 py-1.5 text-[9px] font-extrabold leading-5 text-[#6A5A46] hover:bg-[#FFF9F0] sm:text-[10px]">✏️ {t.edit}</button>
-              <button type="button" onClick={() => downloadItem(item)} className="whitespace-nowrap px-1 py-1.5 text-[9px] font-extrabold leading-5 text-[#4E664A] hover:bg-[#F8FBF6] sm:text-[10px]">↓ {t.save}</button>
+              <button type="button" onClick={() => openEditor(item)} className="min-h-10 touch-manipulation whitespace-nowrap border-r border-[#EEEAE3] px-1.5 py-2 text-xs font-extrabold leading-5 text-[#6A5A46] hover:bg-[#FFF9F0]">✏️ {t.edit}</button>
+              <button type="button" onClick={() => downloadItem(item)} className="min-h-10 touch-manipulation whitespace-nowrap px-1.5 py-2 text-xs font-extrabold leading-5 text-[#4E664A] hover:bg-[#F8FBF6]">↓ {t.save}</button>
             </div>
           </div>
         ))}
