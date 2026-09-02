@@ -14,11 +14,11 @@ const mainPages = {
     dir: '',
     canonical: `${origin}/`,
     ogLocale: 'ko_KR',
-    title: '프롬프트 메이커 | AI 카카오톡 이모티콘 프롬프트 생성기 (ChatGPT · Gemini · Grok)',
-    description: '사진 한 장이나 캐릭터 태그 선택으로 ChatGPT, Gemini, Grok 전용 15종 메신저 이모티콘 프롬프트를 만드는 무료 AI 프롬프트 메이커입니다.',
+    title: '프롬프트 메이커 | AI 카카오톡 이모티콘 프롬프트 생성기',
+    description: '사진이나 캐릭터 설정으로 ChatGPT·Gemini·Grok용 15종 카카오톡 이모티콘 프롬프트를 만들고, 배경 제거·자동 분할·투명 PNG 저장까지 지원하는 무료 도구입니다.',
     keywords: 'AI 이모티콘 만들기, 이모티콘 제작, AI 스티커 만들기, 카카오톡 이모티콘, 이모티콘 프롬프트, 프롬프트 메이커, 사진 이모티콘, 15종 이모티콘, AI 캐릭터 만들기',
     schemaName: '프롬프트 메이커',
-    schemaDescription: '사진 또는 캐릭터 설정으로 AI 이모티콘 프롬프트를 만들고, 배경 제거·15개 시트 분리·투명 PNG 저장까지 지원하는 무료 웹 도구입니다.',
+    schemaDescription: '사진이나 캐릭터 설정으로 ChatGPT·Gemini·Grok용 15종 카카오톡 이모티콘 프롬프트를 만들고, 배경 제거·자동 분할·투명 PNG 저장까지 지원하는 무료 도구입니다.',
     features: ['AI 이모티콘 프롬프트 생성', '사진 기반 캐릭터 프롬프트', '15종 이모티콘 시트 제작 지원', '이미지 배경 제거', '투명 PNG 저장', '15개 이모티콘 자동 분리', '360·720·1440px 변환', 'ZIP 일괄 저장']
   },
   en: {
