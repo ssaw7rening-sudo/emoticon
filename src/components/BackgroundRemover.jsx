@@ -1376,6 +1376,14 @@ async function detectEmoticonSheet(blob) {
   const { width, height } = canvas;
   if (!width || !height) return { status: 'not-sheet', confidence: 0 };
 
+  // Prompt Maker sticker sheets are laid out on a wide 5 x 3 canvas.
+  // Reject portrait and near-square photos before component analysis so an
+  // ordinary person/product photo can never expose the sheet-split controls.
+  const aspectRatio = width / height;
+  if (aspectRatio < 1.15 || aspectRatio > 2.4) {
+    return { status: 'not-sheet', confidence: 0 };
+  }
+
   // Layout detection does not need full-resolution pixels. Analyze a bounded
   // preview so high-resolution phone photos do not allocate a huge BFS queue.
   const maxDimension = 900;
@@ -1434,33 +1442,6 @@ async function splitIntoFifteen(blob) {
   return items;
 }
 
-async function splitByGrid(blob, rows, columns) {
-  const { canvas } = await drawFileToCanvas(blob);
-  const { width, height } = canvas;
-  if (!width || !height || rows < 1 || columns < 1) throw new Error('Invalid grid');
-
-  const items = [];
-  for (let row = 0; row < rows; row += 1) {
-    for (let column = 0; column < columns; column += 1) {
-      const left = Math.round((column * width) / columns);
-      const top = Math.round((row * height) / rows);
-      const right = Math.round(((column + 1) * width) / columns);
-      const bottom = Math.round(((row + 1) * height) / rows);
-      const cropWidth = Math.max(1, right - left);
-      const cropHeight = Math.max(1, bottom - top);
-      const output = document.createElement('canvas');
-      output.width = cropWidth;
-      output.height = cropHeight;
-      const outputCtx = output.getContext('2d');
-      if (!outputCtx) throw new Error('Canvas 2D is unavailable');
-      outputCtx.drawImage(canvas, left, top, cropWidth, cropHeight, 0, 0, cropWidth, cropHeight);
-      const itemBlob = await canvasToPngBlob(output);
-      items.push({ index: items.length + 1, blob: itemBlob, width: cropWidth, height: cropHeight });
-    }
-  }
-  return items;
-}
-
 async function hasRealTransparency(file) {
   if (file?.type !== 'image/png') return false;
   const { canvas, ctx } = await drawFileToCanvas(file);
@@ -1509,9 +1490,6 @@ export default function BackgroundRemover({ lang = 'ko' }) {
   const [splitting, setSplitting] = useState(false);
   const [splitError, setSplitError] = useState('');
   const [sheetDetection, setSheetDetection] = useState({ status: 'idle', confidence: 0 });
-  const [gridRows, setGridRows] = useState(3);
-  const [gridColumns, setGridColumns] = useState(5);
-  const [customGrid, setCustomGrid] = useState(false);
   const automaticSplitBlobRef = useRef(null);
   const autoSplitCallbackRef = useRef(null);
   const [qualityAssessment, setQualityAssessment] = useState({ status: 'idle', score: 0 });
@@ -1541,7 +1519,7 @@ export default function BackgroundRemover({ lang = 'ko' }) {
       })
       .catch((error) => {
         console.warn('Emoticon sheet detection failed:', error);
-        if (!cancelled) setSheetDetection({ status: 'ambiguous', confidence: 0 });
+        if (!cancelled) setSheetDetection({ status: 'not-sheet', confidence: 0 });
       });
 
     return () => { cancelled = true; };
@@ -1767,24 +1745,6 @@ export default function BackgroundRemover({ lang = 'ko' }) {
     autoSplitCallbackRef.current?.();
   }, [sheetDetection.status, resultBlob, qualityAssessment.status, splitItems.length, splitting]);
 
-  const manualGridSplit = async () => {
-    if (!resultBlob || splitting || qualityAssessment.status === 'fail') return;
-    clearSplitItems();
-    setSplitting(true);
-    setSplitError('');
-    try {
-      const rows = Math.max(1, Math.min(10, Number(gridRows) || 1));
-      const columns = Math.max(1, Math.min(10, Number(gridColumns) || 1));
-      const items = await splitByGrid(resultBlob, rows, columns);
-      setSplitItems(items.map((item) => ({ ...item, url: URL.createObjectURL(item.blob) })));
-    } catch (e) {
-      console.error('Sticker grid split failed:', e);
-      setSplitError(t.splitGridFailed);
-    } finally {
-      setSplitting(false);
-    }
-  };
-
   const downloadSplitItem = (item) => {
     const base = (file?.name || 'emoticon').replace(/\.[^.]+$/, '').replace(/[^a-zA-Z0-9가-힣ぁ-んァ-ン一-龥_-]+/g, '-');
     downloadBlob(item.blob, `${base || 'emoticon'}-${String(item.index).padStart(2, '0')}.png`);
@@ -1998,35 +1958,6 @@ export default function BackgroundRemover({ lang = 'ko' }) {
             </div>
           )}
 
-          {resultUrl && qualityAssessment.status !== 'fail' && ['ambiguous', 'not-sheet'].includes(sheetDetection.status) && splitItems.length === 0 && (
-            <div className="mt-4 rounded-2xl border border-[#E5DED3] bg-[#FCFBF8] px-3.5 py-3.5 sm:px-4">
-              <div className="flex flex-wrap items-center justify-between gap-2">
-                <div className="text-sm sm:text-base font-extrabold text-[#4A453F]">✂️ {t.splitChooseTitle}</div>
-              </div>
-              <p className="mt-1 text-xs sm:text-[13px] leading-5 text-[#7A736B]">{t.splitChooseDesc}</p>
-              <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3">
-                {[[2, 2], [2, 3], [3, 3], [3, 4], [3, 5], [4, 4]].map(([rows, columns]) => {
-                  const selected = !customGrid && gridRows === rows && gridColumns === columns;
-                  return (
-                    <button key={`${rows}x${columns}`} type="button" onClick={() => { setGridRows(rows); setGridColumns(columns); setCustomGrid(false); }} className={`rounded-xl border px-3 py-2.5 text-xs font-extrabold transition ${selected ? 'border-[#688360] bg-[#EEF4EA] text-[#486044]' : 'border-[#D8D0C5] bg-white text-[#625B52] hover:bg-[#FFF8ED]'}`}>
-                      {rows}{t.splitRows} × {columns}{t.splitColumns} · {rows * columns}
-                    </button>
-                  );
-                })}
-              </div>
-              <button type="button" onClick={() => setCustomGrid((value) => !value)} className="mt-2 w-full rounded-xl border border-dashed border-[#CFC5B7] bg-white px-3 py-2.5 text-xs font-extrabold text-[#625544] transition hover:bg-[#FFF8ED]">{t.splitCustom}</button>
-              {customGrid && (
-                <div className="mt-2 grid grid-cols-2 gap-2 rounded-xl bg-[#F5F2EC] p-2.5">
-                  <label className="text-[11px] font-bold text-[#6C645B]">{t.splitRows}<input type="number" min="1" max="10" value={gridRows} onChange={(e) => setGridRows(e.target.value)} className="mt-1 w-full rounded-lg border border-[#D6CEC2] bg-white px-3 py-2 text-sm font-bold text-[#403A34]" /></label>
-                  <label className="text-[11px] font-bold text-[#6C645B]">{t.splitColumns}<input type="number" min="1" max="10" value={gridColumns} onChange={(e) => setGridColumns(e.target.value)} className="mt-1 w-full rounded-lg border border-[#D6CEC2] bg-white px-3 py-2 text-sm font-bold text-[#403A34]" /></label>
-                </div>
-              )}
-              <button type="button" disabled={splitting} onClick={manualGridSplit} className="mt-3 w-full rounded-xl bg-[#4F6949] px-4 py-3 text-sm font-extrabold text-white transition hover:bg-[#3F583A] disabled:cursor-wait disabled:opacity-60">
-                {splitting ? `⏳ ${t.splitting}` : `✂️ ${t.splitSelected}`}
-              </button>
-              {splitError && <div className="mt-2 rounded-lg bg-[#FFF1EE] px-3 py-2 text-xs font-semibold leading-5 text-[#A64D3D]">{splitError}</div>}
-            </div>
-          )}
         </div>
       )}
 
