@@ -11,14 +11,14 @@ const locales = {
     home: '/',
     homeName: 'Prompt Maker',
     main: {
-      title: '프롬프트 메이커 | AI 이모티콘·스티커 만들기, 배경 제거·15개 분리',
-      description: '사진·캐릭터 설정으로 ChatGPT, Gemini, Grok용 15종 이모티콘 프롬프트를 만들고, 배경 제거·정밀 재처리·15개 자동 분리·360/720/1440px PNG·ZIP 저장까지 한 번에 이용하세요.',
+      title: '프롬티콘 | AI 이모티콘 프롬프트·배경 제거',
+      description: '사진과 캐릭터 설정으로 AI 이모티콘 프롬프트를 만들고 배경 제거, 15개 자동 분할, 투명 PNG 저장까지 이용해 보세요.',
       keywords: 'AI 이모티콘 만들기, AI 스티커 메이커, 사진 이모티콘, 카카오톡 이모티콘, 배경 제거, 정밀 누끼, 15개 이모티콘 분리, 투명 PNG, 이미지 업스케일, ZIP 저장'
     },
     removerName: '배경 제거·이모티콘 분리',
     remover: {
       title: '무료 이미지 배경 제거 | 정밀 누끼·15개 분리·투명 PNG',
-      description: '이미지 배경을 브라우저에서 무료로 제거하고 정밀 재처리로 외곽선을 다듬으세요. 15개 이모티콘 자동 분리, 360/720/1440px 변환, 투명 PNG·ZIP 저장까지 지원합니다.'
+      description: '이미지 배경을 무료로 제거하고 외곽선을 정밀하게 다듬으세요. 15개 이모티콘 자동 분리와 투명 PNG·ZIP 저장을 지원합니다.'
     }
   },
   en: {
@@ -131,6 +131,17 @@ const injectBreadcrumb = (html, canonical, homeUrl, homeName, currentName) => {
   return html.replace('</head>', `    <script type="application/ld+json">${JSON.stringify(schema)}</script>\n  </head>`);
 };
 
+const createLegalPage = (sourceHtml, slug, title, description) => {
+  const canonical = `${origin}/${slug}`;
+  let html = setMeta(sourceHtml, { title, description }, slug);
+  html = replaceRequired(html, /<link rel="canonical" href="[^"]*" \/>/, `<link rel="canonical" href="${canonical}" />`, 'canonical', slug);
+  html = replaceRequired(html, /<meta property="og:url" content="[^"]*" \/>/, `<meta property="og:url" content="${canonical}" />`, 'og:url', slug);
+  html = html.replace('</head>', '    <meta name="robots" content="noindex,follow" />\n  </head>');
+  const targetDir = path.join(distDir, slug);
+  fs.mkdirSync(targetDir, { recursive: true });
+  fs.writeFileSync(path.join(targetDir, 'index.html'), html, 'utf8');
+};
+
 for (const [lang, locale] of Object.entries(locales)) {
   const mainFile = path.join(distDir, relativePath(lang));
   if (!fs.existsSync(mainFile)) throw new Error(`[finalize-seo] Missing ${mainFile}`);
@@ -165,6 +176,10 @@ for (const [lang, locale] of Object.entries(locales)) {
     fs.writeFileSync(featureFile, featureHtml, 'utf8');
   }
 }
+
+const koHomeHtml = fs.readFileSync(path.join(distDir, 'index.html'), 'utf8');
+createLegalPage(koHomeHtml, 'privacy', '개인정보처리방침 | 프롬티콘', '프롬티콘의 개인정보 처리 기준과 이용자 정보 보호 정책을 안내합니다.');
+createLegalPage(koHomeHtml, 'terms', '이용약관 | 프롬티콘', '프롬티콘 서비스 이용 조건과 이용자 권리 및 책임을 안내합니다.');
 
 const notFoundHtml = `<!doctype html>
 <html lang="ko">
