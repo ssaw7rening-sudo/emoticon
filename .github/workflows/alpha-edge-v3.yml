@@ -1,0 +1,43 @@
+name: Alpha Edge V3
+
+on:
+  push:
+    branches: [improve/alpha-edge-smoothing-v3]
+
+permissions:
+  contents: write
+
+jobs:
+  patch-and-verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - name: Apply alpha edge v3 patch
+        run: node .github/scripts/patch-alpha-edge-v3.mjs
+      - name: Remove temporary patch files
+        run: rm .github/scripts/patch-alpha-edge-v3.mjs .github/workflows/alpha-edge-v3.yml
+      - name: Guard final diff
+        run: |
+          git diff --check
+          changed="$(git diff --name-only origin/main | sort)"
+          test "$changed" = "vite.hybrid-edge-refine.config.js"
+          grep -q "ADAPTIVE_ALPHA_EDGE_SMOOTHING_V3" vite.hybrid-edge-refine.config.js
+          grep -q "strandLike ? 0.16 : 0.34" vite.hybrid-edge-refine.config.js
+          grep -q "smoothing = 0.46" vite.hybrid-edge-refine.config.js
+          grep -q "Math.min(48, softened)" vite.hybrid-edge-refine.config.js
+      - run: npm ci
+      - run: npm run build
+      - name: Commit verified edge change
+        run: |
+          git clean -fd public/og || true
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add vite.hybrid-edge-refine.config.js
+          git commit -m "Smooth cutout edges a little more [skip ci]"
+          git push origin HEAD
