@@ -1376,14 +1376,6 @@ async function detectEmoticonSheet(blob) {
   const { width, height } = canvas;
   if (!width || !height) return { status: 'not-sheet', confidence: 0 };
 
-  // Prompt Maker sticker sheets are laid out on a wide 5 x 3 canvas.
-  // Reject portrait and near-square photos before component analysis so an
-  // ordinary person/product photo can never expose the sheet-split controls.
-  const aspectRatio = width / height;
-  if (aspectRatio < 1.15 || aspectRatio > 2.4) {
-    return { status: 'not-sheet', confidence: 0 };
-  }
-
   // Layout detection does not need full-resolution pixels. Analyze a bounded
   // preview so high-resolution phone photos do not allocate a huge BFS queue.
   const maxDimension = 900;
