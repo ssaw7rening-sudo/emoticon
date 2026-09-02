@@ -657,7 +657,7 @@ const I18N = {
     geminiRepairIdentity: '얼굴·캐릭터',
     geminiRepairCrop: '이미지 결함',
     geminiRepairText: '글자 오류',
-    geminiWorkflowTip: 'Gemini 팁: 알파 투명 배경을 직접 지원하지 않습니다. 투명 PNG가 필요하면 [누끼용 흰 배경] 또는 [크로마키]로 생성한 뒤 배경을 제거하세요. 시트 전체는 초안용, 최종 이미지는 15종 개별 분할을 권장합니다.',
+    geminiWorkflowTip: 'Gemini 팁: 알파 투명 배경을 직접 지원하지 않습니다. 투명 PNG가 필요하면 [누끼용 흰 배경]으로 생성한 뒤 배경을 제거하세요. 시트 전체는 초안용, 최종 이미지는 15종 개별 분할을 권장합니다.',
     grokTextMode: 'Grok 이미지 글자',
     grokNoText: '글자 없이',
     grokIncludeText: '문구 포함',
@@ -761,7 +761,7 @@ const I18N = {
     geminiRepairIdentity: 'Character',
     geminiRepairCrop: 'Image defects',
     geminiRepairText: 'Text errors',
-    geminiWorkflowTip: 'Gemini tip: Native alpha transparency is not supported. For a transparent PNG, generate with [White BG for removal] or [Chroma key], then remove the background. Use the full sheet as a draft and Batch Split for finals.',
+    geminiWorkflowTip: 'Gemini tip: Native alpha transparency is not supported. For a transparent PNG, generate with [White BG for removal], then remove the background. Use the full sheet as a draft and Batch Split for finals.',
     grokTextMode: 'Grok image text',
     grokNoText: 'No text',
     grokIncludeText: 'Include text',
@@ -867,7 +867,7 @@ const I18N = {
     geminiRepairIdentity: '顔・キャラ',
     geminiRepairCrop: '画像の不具合',
     geminiRepairText: '文字の誤り',
-    geminiWorkflowTip: 'Geminiヒント: アルファ透過背景は直接生成できません。透過PNGが必要な場合は[切り抜き用白背景]または[クロマキー]で生成後、背景を削除してください。最終画像は個別分割を推奨します。',
+    geminiWorkflowTip: 'Geminiヒント: アルファ透過背景は直接生成できません。透過PNGが必要な場合は[切り抜き用白背景]で生成後、背景を削除してください。最終画像は個別分割を推奨します。',
     grokTextMode: 'Grok画像文字',
     grokNoText: '文字なし',
     grokIncludeText: '文字あり',
@@ -973,7 +973,7 @@ const I18N = {
     geminiRepairIdentity: '面部与角色',
     geminiRepairCrop: '图像缺陷',
     geminiRepairText: '文字错误',
-    geminiWorkflowTip: 'Gemini提示：不直接支持Alpha透明背景。需要透明PNG时，请使用[抠图用白背景]或[绿幕抠图]生成后再移除背景；最终成品建议逐张拆分生成。',
+    geminiWorkflowTip: 'Gemini提示：不直接支持Alpha透明背景。需要透明PNG时，请使用[抠图用白背景]生成后再移除背景；最终成品建议逐张拆分生成。',
     grokTextMode: 'Grok文字模式',
     grokNoText: '纯图无字',
     grokIncludeText: '包含文字',
@@ -7488,11 +7488,10 @@ if (currentPath === '/privacy' || currentPath === '/terms') {
               </div>
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                 <span className="text-[13px] font-bold text-[#795B16]">{t.gptBackgroundMode}</span>
-                <div className="grid grid-cols-3 gap-1 sm:gap-2 w-full sm:w-auto" role="group" aria-label={t.gptBackgroundMode}>
+                <div className="grid grid-cols-2 gap-1 sm:gap-2 w-full sm:w-auto" role="group" aria-label={t.gptBackgroundMode}>
                   {[
                     ['transparent', t.gptTransparent],
                     ['solid', t.gptSolid],
-                    ['chroma', t.gptChroma],
                   ].map(([mode, label]) => (
                     <button
                       key={mode}
@@ -7562,11 +7561,10 @@ if (currentPath === '/privacy' || currentPath === '/terms') {
               </div>
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                 <span className="text-[13px] font-bold text-[#795B16]">{t.geminiBackgroundMode}</span>
-                <div className="grid grid-cols-3 gap-1 sm:gap-2 w-full sm:w-auto" role="group" aria-label={t.geminiBackgroundMode}>
+                <div className="grid grid-cols-2 gap-1 sm:gap-2 w-full sm:w-auto" role="group" aria-label={t.geminiBackgroundMode}>
                   {[
                     ['transparent', t.geminiTransparent],
                     ['solid', t.geminiSolid],
-                    ['chroma', t.geminiChroma],
                   ].map(([mode, label]) => (
                     <button
                       key={mode}
@@ -7636,11 +7634,10 @@ if (currentPath === '/privacy' || currentPath === '/terms') {
               </div>
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                 <span className="text-[13px] font-bold text-[#795B16]">{t.grokBackgroundMode}</span>
-                <div className="grid grid-cols-3 gap-1 sm:gap-2 w-full sm:w-auto" role="group" aria-label={t.grokBackgroundMode}>
+                <div className="grid grid-cols-2 gap-1 sm:gap-2 w-full sm:w-auto" role="group" aria-label={t.grokBackgroundMode}>
                   {[
                     ['transparent', t.grokTransparent],
                     ['solid', t.grokSolid],
-                    ['chroma', t.grokChroma],
                   ].map(([mode, label]) => (
                     <button
                       key={mode}
