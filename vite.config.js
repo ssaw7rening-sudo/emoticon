@@ -96,11 +96,43 @@ function refreshRuntimeSeoMeta() {
   const replacements = [
     [
       "title: '프롬티콘 | AI 이모티콘 프롬프트 메이커'",
-      "title: '프롬티콘 | AI 이모티콘·스티커 만들기, 배경 제거·15개 분리'"
+      "title: '프롬프트 메이커 | AI 이모티콘·스티커 만들기, 배경 제거·15개 분리'"
     ],
     [
       "description: '프롬티콘(Prompticon)은 사진이나 캐릭터 태그로 ChatGPT, Gemini, Grok용 15종 메신저 이모티콘 프롬프트를 만드는 무료 AI 이모티콘 프롬프트 메이커입니다.'",
-      "description: '프롬티콘(Prompticon)에서 사진·캐릭터 설정으로 ChatGPT, Gemini, Grok용 15종 이모티콘 프롬프트를 만들고, 배경 제거·정밀 재처리·15개 자동 분리·360/720/1440px PNG·ZIP 저장까지 한 번에 이용하세요.'"
+      "description: '프롬프트 메이커에서 사진·캐릭터 설정으로 ChatGPT, Gemini, Grok용 15종 이모티콘 프롬프트를 만들고, 배경 제거·정밀 재처리·15개 자동 분리·360/720/1440px PNG·ZIP 저장까지 한 번에 이용하세요.'"
+    ],
+    [
+      "guide1Q: '🤔 프롬티콘은 어떤 AI 이모티콘 프롬프트 메이커인가요?'",
+      "guide1Q: '🤔 프롬프트 메이커는 어떤 AI 이모티콘 도구인가요?'"
+    ],
+    [
+      "title: '프롬티콘은 어떤 AI 이모티콘 프롬프트 메이커인가요?'",
+      "title: '프롬프트 메이커는 어떤 AI 이모티콘 도구인가요?'"
+    ],
+    [
+      "q: 'Q. 프롬티콘 이용 요금은 무료인가요?'",
+      "q: 'Q. 프롬프트 메이커 이용 요금은 무료인가요?'"
+    ],
+    [
+      "a: '네! 프롬티콘의 AI 이모티콘 프롬프트 메이커 기능(피사체 조합, 화풍 설정, 80종 테마, 다국어 프롬프트 복사, 캡션 생성기)은 100% 완전 무료로 무제한 이용하실 수 있습니다.'",
+      "a: '네! 프롬프트 메이커의 AI 이모티콘 기능(피사체 조합, 화풍 설정, 80종 테마, 다국어 프롬프트 복사, 캡션 생성기)은 100% 완전 무료로 무제한 이용하실 수 있습니다.'"
+    ],
+    [
+      "ko: '프롬티콘이란?'",
+      "ko: '프롬프트 메이커란?'"
+    ],
+    [
+      "ko: '프롬티콘(Prompticon)은 사용자의 키워드 선택이나 사진을 바탕으로 ChatGPT(DALL-E 3), Google Gemini(Imagen 3), xAI Grok(Imagine Image 2.0)에 즉시 사용 가능한 15종 카카오톡·라인 이모티콘 프롬프트를 1초 만에 자동 생성해 주는 무료 AI 이모티콘 프롬프트 메이커입니다.'",
+      "ko: '프롬프트 메이커는 사용자의 키워드 선택이나 사진을 바탕으로 ChatGPT(DALL-E 3), Google Gemini(Imagen 3), xAI Grok(Imagine Image 2.0)에 즉시 사용할 수 있는 15종 카카오톡·라인 이모티콘 프롬프트를 1초 만에 자동 생성해 주는 무료 AI 이모티콘 도구입니다.'"
+    ],
+    [
+      "? '✨ 프롬티콘 · AI 이모티콘 프롬프트 메이커'",
+      "? '✨ 프롬프트 메이커 · AI 이모티콘 생성기'"
+    ],
+    [
+      '<span className="block">© {new Date().getFullYear()} Prompticon (프롬티콘).</span>',
+      '<span className="block">© {new Date().getFullYear()} Prompt Maker (프롬프트 메이커).</span>'
     ],
     [
       "title: 'Prompt Maker | AI Emoticon Prompt Generator (ChatGPT · Gemini · Grok)'",
