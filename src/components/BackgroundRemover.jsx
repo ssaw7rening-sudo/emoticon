@@ -499,7 +499,7 @@ async function correctUnexpectedForegroundTransparency(blob) {
   return canvasToPngBlob(canvas);
 }
 
-async function removeEnclosedBackdropPockets(blob, sourceFile) {
+async function removeEnclosedBackdropPockets(blob, sourceFile, aggressive = false) {
   try {
     const source = await drawFileToCanvas(sourceFile);
     const result = await drawFileToCanvas(blob);
@@ -635,7 +635,7 @@ async function removeEnclosedBackdropPockets(blob, sourceFile) {
     // pixel is removed when saturated text strokes bracket it horizontally or vertically.
     // Low-saturation boundaries (eyes, skin highlights and white clothing) are excluded.
     const glyphGapMask = new Uint8Array(total);
-    const maxGlyphSpan = Math.max(8, Math.min(34, Math.round(Math.min(width, height) * 0.032)));
+    const maxGlyphSpan = aggressive ? Math.max(14, Math.min(56, Math.round(Math.min(width, height) * 0.052))) : Math.max(8, Math.min(34, Math.round(Math.min(width, height) * 0.032)));
     const isBackdropPixel = (index) => {
       if (index < 0 || index >= total) return false;
       const p = index * 4;
@@ -652,8 +652,8 @@ async function removeEnclosedBackdropPockets(blob, sourceFile) {
       const g = pixels[p + 1];
       const b = pixels[p + 2];
       return (
-        Math.max(r, g, b) - Math.min(r, g, b) >= 34 &&
-        colorDistance([r, g, b], bg) >= Math.max(42, boundaryDistance)
+        Math.max(r, g, b) - Math.min(r, g, b) >= (aggressive ? 20 : 34) &&
+        colorDistance([r, g, b], bg) >= (aggressive ? 34 : Math.max(42, boundaryDistance))
       );
     };
     const hasStroke = (x, y, dx, dy) => {
@@ -1659,6 +1659,125 @@ async function hasRealTransparency(file) {
   return false;
 }
 
+function TransparencyEraser({ blob, lang, onApply, onCancel }) {
+  const canvasRef = useRef(null);
+  const drawingRef = useRef(false);
+  const lastPointRef = useRef(null);
+  const [brushSize, setBrushSize] = useState(30);
+  const [ready, setReady] = useState(false);
+
+  const labels = {
+    ko: { title: '투명 지우개', hint: '남은 배경을 손가락으로 문질러 지우세요.', size: '지우개 크기', reset: '처음으로', cancel: '취소', apply: '지우기 적용' },
+    en: { title: 'Transparency eraser', hint: 'Rub over any remaining background.', size: 'Eraser size', reset: 'Reset', cancel: 'Cancel', apply: 'Apply erasing' },
+    ja: { title: '透明消しゴム', hint: '残った背景を指でなぞって消してください。', size: '消しゴムサイズ', reset: 'リセット', cancel: 'キャンセル', apply: '適用' },
+    zh: { title: '透明橡皮擦', hint: '用手指擦除残留背景。', size: '橡皮擦大小', reset: '重置', cancel: '取消', apply: '应用' }
+  };
+  const copy = labels[lang] || labels.ko;
+
+  const loadCanvas = async () => {
+    if (!blob || !canvasRef.current) return;
+    const source = await drawFileToCanvas(blob);
+    const canvas = canvasRef.current;
+    canvas.width = source.canvas.width;
+    canvas.height = source.canvas.height;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(source.canvas, 0, 0);
+    setReady(true);
+  };
+
+  useEffect(() => {
+    setReady(false);
+    loadCanvas().catch((error) => console.warn('Eraser canvas load failed:', error));
+  }, [blob]);
+
+  const pointFromEvent = (event) => {
+    const canvas = canvasRef.current;
+    const rect = canvas.getBoundingClientRect();
+    return {
+      x: (event.clientX - rect.left) * (canvas.width / Math.max(1, rect.width)),
+      y: (event.clientY - rect.top) * (canvas.height / Math.max(1, rect.height))
+    };
+  };
+
+  const eraseTo = (point) => {
+    const canvas = canvasRef.current;
+    const ctx = canvas?.getContext('2d');
+    if (!ctx) return;
+    const scale = canvas.width / Math.max(1, canvas.getBoundingClientRect().width);
+    const previous = lastPointRef.current || point;
+    ctx.save();
+    ctx.globalCompositeOperation = 'destination-out';
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.lineWidth = brushSize * scale;
+    ctx.beginPath();
+    ctx.moveTo(previous.x, previous.y);
+    ctx.lineTo(point.x, point.y);
+    ctx.stroke();
+    ctx.restore();
+    lastPointRef.current = point;
+  };
+
+  const pointerDown = (event) => {
+    if (!ready) return;
+    event.preventDefault();
+    event.currentTarget.setPointerCapture?.(event.pointerId);
+    drawingRef.current = true;
+    const point = pointFromEvent(event);
+    lastPointRef.current = point;
+    eraseTo(point);
+  };
+
+  const pointerMove = (event) => {
+    if (!drawingRef.current) return;
+    event.preventDefault();
+    eraseTo(pointFromEvent(event));
+  };
+
+  const pointerUp = (event) => {
+    drawingRef.current = false;
+    lastPointRef.current = null;
+    event.currentTarget.releasePointerCapture?.(event.pointerId);
+  };
+
+  const apply = async () => {
+    if (!canvasRef.current) return;
+    const edited = await canvasToPngBlob(canvasRef.current);
+    onApply(edited);
+  };
+
+  return (
+    <div className="mt-4 rounded-2xl border-2 border-[#8FB49A] bg-[#F5FAF6] p-3.5">
+      <div className="text-sm font-extrabold text-[#31573D]">🧽 {copy.title}</div>
+      <p className="mt-1 text-xs font-semibold leading-5 text-[#647164]">{copy.hint}</p>
+      <div className="mt-3 overflow-hidden rounded-xl border border-[#C9D8CB]" style={checkerStyle}>
+        <canvas
+          ref={canvasRef}
+          onPointerDown={pointerDown}
+          onPointerMove={pointerMove}
+          onPointerUp={pointerUp}
+          onPointerCancel={pointerUp}
+          className="block h-auto w-full cursor-crosshair"
+          style={{ touchAction: 'none' }}
+          aria-label={copy.title}
+        />
+      </div>
+      <label className="mt-3 flex items-center gap-3 text-xs font-bold text-[#536052]">
+        <span className="shrink-0">{copy.size}</span>
+        <input type="range" min="12" max="72" step="2" value={brushSize} onChange={(event) => setBrushSize(Number(event.target.value))} className="w-full accent-[#3E6B4B]" />
+      </label>
+      <div className="mt-3 grid grid-cols-3 gap-2">
+        <button type="button" onClick={loadCanvas} className="rounded-xl border border-[#CFC8BD] bg-white px-2 py-2.5 text-xs font-bold text-[#615B53]">{copy.reset}</button>
+        <button type="button" onClick={onCancel} className="rounded-xl border border-[#CFC8BD] bg-white px-2 py-2.5 text-xs font-bold text-[#615B53]">{copy.cancel}</button>
+        <button type="button" onClick={apply} className="rounded-xl bg-[#3E6B4B] px-2 py-2.5 text-xs font-extrabold text-white">{copy.apply}</button>
+      </div>
+    </div>
+  );
+}
+
 export default function BackgroundRemover({ lang = 'ko' }) {
   const t = COPY[lang] || COPY.ko;
   const inputRef = useRef(null);
@@ -1697,6 +1816,7 @@ export default function BackgroundRemover({ lang = 'ko' }) {
   const [qualityAssessment, setQualityAssessment] = useState({ status: 'idle', score: 0 });
   const [resultMethod, setResultMethod] = useState('');
   const [precisionMessage, setPrecisionMessage] = useState('');
+  const [eraserOpen, setEraserOpen] = useState(false);
 
   useEffect(() => () => {
     if (sourceUrl) URL.revokeObjectURL(sourceUrl);
@@ -1742,6 +1862,7 @@ export default function BackgroundRemover({ lang = 'ko' }) {
     setQualityAssessment({ status: 'idle', score: 0 });
     setResultMethod('');
     setPrecisionMessage('');
+    setEraserOpen(false);
     setError('');
     setProgress(null);
     setStage('');
@@ -1901,6 +2022,34 @@ export default function BackgroundRemover({ lang = 'ko' }) {
       setBusy(false);
       setStage('');
       setProgress(null);
+    }
+  };
+
+  const applyEditedBlob = async (editedBlob) => {
+    if (!editedBlob) return;
+    if (resultUrl) URL.revokeObjectURL(resultUrl);
+    clearSplitItems();
+    const nextUrl = URL.createObjectURL(editedBlob);
+    setResultBlob(editedBlob);
+    setResultUrl(nextUrl);
+    setQualityAssessment(await assessRemovalQuality(editedBlob));
+    setComparePosition(0);
+    setEraserOpen(false);
+  };
+
+  const runAggressiveTextCleanup = async () => {
+    if (!resultBlob || !file || busy) return;
+    setBusy(true);
+    setStage('processing');
+    try {
+      const cleaned = await removeEnclosedBackdropPockets(resultBlob, file, true);
+      await applyEditedBlob(cleaned);
+    } catch (error) {
+      console.warn('Aggressive text cleanup failed:', error);
+      setError(t.failed);
+    } finally {
+      setBusy(false);
+      setStage('');
     }
   };
 
@@ -2073,6 +2222,26 @@ export default function BackgroundRemover({ lang = 'ko' }) {
                 ↔ {t.compareHint}
               </div>
             </div>
+          )}
+
+          {resultUrl && !eraserOpen && (
+            <div className="mt-4 rounded-2xl border border-[#D7E2D5] bg-[#F7FAF5] p-3.5">
+              <div className="text-sm font-extrabold text-[#3F5E43]">
+                {lang === 'ko' ? '남은 배경 마무리' : lang === 'ja' ? '残った背景を仕上げる' : lang === 'zh' ? '清理残留背景' : 'Finish remaining background'}
+              </div>
+              <div className="mt-3 grid grid-cols-2 gap-2">
+                <button type="button" disabled={busy} onClick={runAggressiveTextCleanup} className="rounded-xl border border-[#95B59B] bg-white px-3 py-3 text-xs sm:text-sm font-extrabold text-[#31573D] disabled:opacity-50">
+                  ✨ {lang === 'ko' ? '문자 사이 정리' : lang === 'ja' ? '文字間を整理' : lang === 'zh' ? '清理文字间隙' : 'Clean text gaps'}
+                </button>
+                <button type="button" disabled={busy} onClick={() => setEraserOpen(true)} className="rounded-xl bg-[#3E6B4B] px-3 py-3 text-xs sm:text-sm font-extrabold text-white disabled:opacity-50">
+                  🧽 {lang === 'ko' ? '투명 지우개' : lang === 'ja' ? '透明消しゴム' : lang === 'zh' ? '透明橡皮擦' : 'Transparency eraser'}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {resultUrl && eraserOpen && (
+            <TransparencyEraser blob={resultBlob} lang={lang} onApply={applyEditedBlob} onCancel={() => setEraserOpen(false)} />
           )}
 
           {busy && (
