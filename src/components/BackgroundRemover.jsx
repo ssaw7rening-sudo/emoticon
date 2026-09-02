@@ -10,6 +10,7 @@ const COPY = {
     title: '배경 제거', badge: 'BETA', desc: '이미지의 배경을 지우고 투명 PNG로 저장해 보세요.',
     privacy: '이미지는 서버에 업로드하지 않고 이 기기에서 처리됩니다.', first: '균일한 단색 배경은 빠르게 처리하며, 복잡한 배경은 AI 모델을 사용해 처음 실행이 조금 오래 걸릴 수 있습니다.',
     upload: '이미지를 선택하거나 여기에 끌어놓으세요', format: 'PNG · JPG · WEBP / 최대 12MB', change: '이미지 변경',
+    sheetUploadHint: '15개 이모티콘 시트는 배경 제거 후 자동으로 감지해 각각 분리합니다.', sheetSelectedHint: '15개 시트로 확인되면 배경 제거 완료 후 자동 분할됩니다.',
     remove: '배경 제거하기', preparing: '이미지 분석 중…', processing: '배경을 제거하고 있어요…',
     original: '원본', result: '투명 배경', download: '투명 PNG 저장', again: '다른 이미지',
     compareHint: '가운데 슬라이더를 좌우로 움직여 원본과 결과를 비교하세요.',
@@ -30,6 +31,7 @@ const COPY = {
     title: 'Remove Background', badge: 'BETA', desc: 'Remove an image background and save it as a transparent PNG.',
     privacy: 'Your image is processed on this device and is not uploaded to our server.', first: 'Uniform solid-color backgrounds are handled quickly. Complex backgrounds use an AI model, so the first run may take longer.',
     upload: 'Choose an image or drop it here', format: 'PNG · JPG · WEBP / up to 12MB', change: 'Change image',
+    sheetUploadHint: 'A 15-emoticon sheet is detected and split automatically after background removal.', sheetSelectedHint: 'If this is a 15-emoticon sheet, it will be split automatically after background removal.',
     remove: 'Remove background', preparing: 'Analyzing image…', processing: 'Removing background…',
     original: 'Original', result: 'Transparent', download: 'Save transparent PNG', again: 'Try another image',
     compareHint: 'Drag the center slider left or right to compare the original and result.',
@@ -50,6 +52,7 @@ const COPY = {
     title: '背景を削除', badge: 'BETA', desc: '画像の背景を削除し、透過PNGとして保存できます。',
     privacy: '画像はサーバーへ送信せず、この端末内で処理します。', first: '均一な単色背景は高速処理し、複雑な背景ではAIモデルを使用するため初回は少し時間がかかる場合があります。',
     upload: '画像を選択するか、ここにドロップしてください', format: 'PNG · JPG · WEBP / 最大12MB', change: '画像を変更',
+    sheetUploadHint: '15個の絵文字シートは背景削除後に自動検出し、個別に分割します。', sheetSelectedHint: '15個のシートと確認されると、背景削除後に自動分割されます。',
     remove: '背景を削除する', preparing: '画像を解析中…', processing: '背景を削除しています…',
     original: '元画像', result: '透過背景', download: '透過PNGを保存', again: '別の画像',
     compareHint: '中央のスライダーを左右に動かして元画像と結果を比較できます。',
@@ -70,6 +73,7 @@ const COPY = {
     title: '移除背景', badge: 'BETA', desc: '移除图片背景，并保存为透明PNG。',
     privacy: '图片不会上传到服务器，而是在当前设备中处理。', first: '均匀的纯色背景会快速处理；复杂背景会使用AI模型，因此首次使用可能稍慢。',
     upload: '选择图片或将图片拖到这里', format: 'PNG · JPG · WEBP / 最大12MB', change: '更换图片',
+    sheetUploadHint: '包含15个表情的图片将在移除背景后自动识别并分别分割。', sheetSelectedHint: '如果识别为15个表情的图片，移除背景后将自动分割。',
     remove: '移除背景', preparing: '正在分析图片…', processing: '正在移除背景…',
     original: '原图', result: '透明背景', download: '保存透明PNG', again: '换一张图片',
     compareHint: '左右拖动中间滑块即可对比原图和处理结果。',
@@ -1834,9 +1838,11 @@ export default function BackgroundRemover({ lang = 'ko' }) {
           <div className="text-3xl">🖼️</div>
           <div className="mt-2 text-sm sm:text-base font-bold text-[#3E3A35]">{t.upload}</div>
           <div className="mt-1 text-xs text-[#8A837A]">{t.format}</div>
+          <div className="mx-auto mt-3 max-w-md rounded-xl bg-[#F2F7EE] px-3 py-2 text-xs font-bold leading-5 text-[#587052]">✂️ {t.sheetUploadHint}</div>
         </button>
       ) : (
         <div className="mt-4">
+          {!resultUrl && <div className="mb-3 rounded-xl border border-[#DCE8D5] bg-[#F4F8F1] px-3.5 py-2.5 text-xs sm:text-[13px] font-bold leading-5 text-[#587052]">✂️ {t.sheetSelectedHint}</div>}
           {!resultUrl ? (
             <div className="overflow-hidden rounded-2xl border border-[#E2DDD5] bg-white">
               <div className="border-b border-[#EEE9E1] px-3 py-2 text-xs font-bold text-[#716A62]">{t.original}</div>
