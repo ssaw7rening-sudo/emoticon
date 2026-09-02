@@ -630,6 +630,76 @@ async function removeEnclosedBackdropPockets(blob, sourceFile) {
       changed = true;
     }
 
+    // Text labels often use a white outline that joins the remaining white gaps into
+    // one large component. Detect those glyph gaps separately: a backdrop-coloured
+    // pixel is removed when saturated text strokes bracket it horizontally or vertically.
+    // Low-saturation boundaries (eyes, skin highlights and white clothing) are excluded.
+    const glyphGapMask = new Uint8Array(total);
+    const maxGlyphSpan = Math.max(8, Math.min(34, Math.round(Math.min(width, height) * 0.032)));
+    const isBackdropPixel = (index) => {
+      if (index < 0 || index >= total) return false;
+      const p = index * 4;
+      if (pixels[p + 3] < 128 || original[p + 3] < 220) return false;
+      return (
+        colorDistance([original[p], original[p + 1], original[p + 2]], bg) <= sourceTolerance &&
+        colorDistance([pixels[p], pixels[p + 1], pixels[p + 2]], bg) <= resultTolerance
+      );
+    };
+    const isSaturatedStroke = (index) => {
+      const p = index * 4;
+      if (pixels[p + 3] < 96) return false;
+      const r = pixels[p];
+      const g = pixels[p + 1];
+      const b = pixels[p + 2];
+      return (
+        Math.max(r, g, b) - Math.min(r, g, b) >= 34 &&
+        colorDistance([r, g, b], bg) >= Math.max(42, boundaryDistance)
+      );
+    };
+    const hasStroke = (x, y, dx, dy) => {
+      for (let step = 1; step <= maxGlyphSpan; step += 1) {
+        const nx = x + dx * step;
+        const ny = y + dy * step;
+        if (nx < 0 || ny < 0 || nx >= width || ny >= height) return false;
+        const next = ny * width + nx;
+        const p = next * 4;
+        if (pixels[p + 3] < 40) return false;
+        if (isSaturatedStroke(next)) return true;
+        if (!isBackdropPixel(next)) return false;
+      }
+      return false;
+    };
+
+    for (let index = 0; index < total; index += 1) {
+      if (!isBackdropPixel(index)) continue;
+      const x = index % width;
+      const y = Math.floor(index / width);
+      const horizontallyBracketed = hasStroke(x, y, -1, 0) && hasStroke(x, y, 1, 0);
+      const verticallyBracketed = hasStroke(x, y, 0, -1) && hasStroke(x, y, 0, 1);
+      if (horizontallyBracketed || verticallyBracketed) glyphGapMask[index] = 1;
+    }
+
+    // Include one antialiased backdrop pixel around confirmed glyph gaps so a thin
+    // white fringe is not left behind.
+    for (let index = 0; index < total; index += 1) {
+      if (!glyphGapMask[index]) continue;
+      const x = index % width;
+      const y = Math.floor(index / width);
+      const neighbours = [];
+      if (x > 0) neighbours.push(index - 1);
+      if (x + 1 < width) neighbours.push(index + 1);
+      if (y > 0) neighbours.push(index - width);
+      if (y + 1 < height) neighbours.push(index + width);
+      for (const next of neighbours) {
+        if (isBackdropPixel(next)) glyphGapMask[next] = 2;
+      }
+    }
+    for (let index = 0; index < total; index += 1) {
+      if (!glyphGapMask[index]) continue;
+      pixels[index * 4 + 3] = 0;
+      changed = true;
+    }
+
     if (!changed) return blob;
     result.ctx.putImageData(resultData, 0, 0);
     return await canvasToPngBlob(result.canvas);
