@@ -22,18 +22,26 @@ replaceOnce(
   'manual split ownership comment'
 );
 
-replaceOnce(
-  `  const analysis = analyzeStickerContentGroups(canvas);\n  if (!analysis || analysis.nonEmpty < 12) throw new Error('Could not reliably detect 15 sticker groups');`,
-  `  const analysis = analyzeStickerContentGroups(canvas);\n  if (!analysis) throw new Error('Could not analyze sticker layout');\n  if (!force && analysis.nonEmpty < 12) throw new Error('Could not reliably detect 15 sticker groups');`,
-  'analysis gate'
-);
+const analysisBlockStart = source.indexOf('      const analysisGate = `');
+const reliabilityGateMarker = `      replaceOnce(\n        "  if (detectedGroups < 12) throw new Error('Could not reliably separate sticker content groups');"`;
+const analysisBlockEnd = source.indexOf(reliabilityGateMarker, analysisBlockStart);
+if (analysisBlockStart < 0 || analysisBlockEnd < 0) {
+  throw new Error('Could not locate split-menu analysis compatibility block');
+}
 
-const oldPixelRewrite = `      const pixelOwnerCenters = \`    return nearestStickerGroup(\n      analysisX,\n      analysisY,\n      analysis.centers,\n      analysis.cellWidth,\n      analysis.cellHeight\n    );\`\n      const forceAwarePixelOwnerCenters = \`    return nearestStickerGroup(\n      analysisX,\n      analysisY,\n      ownershipCenters,\n      analysis.cellWidth,\n      analysis.cellHeight\n    );\`\n      replaceOnce(pixelOwnerCenters, forceAwarePixelOwnerCenters, 'pixel ownership centres')\n\n`;
-replaceOnce(
-  oldPixelRewrite,
-  `      // Object ownership is supplied by the precise splitter's watershed map.\n      // Do not rewrite it for force/manual mode.\n\n`,
-  'legacy pixel ownership rewrite'
-);
+const newAnalysisBlock = [
+  '      const analysisGate = `  const analysis = analyzeStickerContentGroups(canvas);',
+  "  if (!analysis || analysis.nonEmpty < 12) throw new Error('Could not reliably detect 15 sticker groups');`",
+  '      const forceAwareAnalysisGate = `  const analysis = analyzeStickerContentGroups(canvas);',
+  "  if (!analysis) throw new Error('Could not analyze sticker layout');",
+  "  if (!force && analysis.nonEmpty < 12) throw new Error('Could not reliably detect 15 sticker groups');`",
+  "      replaceOnce(analysisGate, forceAwareAnalysisGate, 'automatic detection gate')",
+  '',
+  "      // Object ownership is supplied by the precise splitter's watershed map.",
+  '      // Do not rewrite it for force/manual mode.',
+  '',
+].join('\n');
+source = source.slice(0, analysisBlockStart) + newAnalysisBlock + source.slice(analysisBlockEnd);
 
 replaceOnce(
   `        // If automatic classification said “sheet” but its adaptive centres still\n        // produce an unreliable grouping, retry once with the stable 5×3 seeds.\n        // A direct/manual split already uses those seeds, so do not repeat it.`,
@@ -48,7 +56,8 @@ replaceOnce(
 );
 
 if (!source.includes("always-available-sticker-split-menu-v3-watershed-compatible")) throw new Error('Version marker was not applied');
-if (source.includes('pixel ownership centres')) throw new Error('Legacy pixel ownership rewrite still exists');
+if (source.includes("'pixel ownership centres'")) throw new Error('Legacy pixel ownership rewrite still exists');
 if (source.includes('ownershipCenters')) throw new Error('Legacy ownershipCenters variable still exists');
+if (!source.includes('Object ownership is supplied by the precise splitter')) throw new Error('Watershed compatibility comment missing');
 
 fs.writeFileSync(file, source);
