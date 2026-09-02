@@ -27,9 +27,9 @@ const locales = {
     home: '/en/',
     homeName: 'Prompt Maker',
     main: {
-      title: 'Prompt Maker | AI Sticker Maker, Background Remover & Sheet Splitter',
-      description: 'Create 15-sticker prompts for ChatGPT, Gemini and Grok from photos or character settings, then remove backgrounds, auto-split sticker sheets, export transparent PNGs at 360/720/1440px, and download ZIP files.',
-      keywords: 'AI sticker maker, AI emoji maker, photo to sticker, background remover, transparent PNG maker, sticker sheet splitter, 15 sticker splitter, image upscaler, ZIP export'
+      title: 'Prompt Maker | AI Messenger Sticker Prompt Generator',
+      description: 'Create 15 AI sticker prompts for ChatGPT, Gemini and Grok from photos or character settings, then remove backgrounds, auto-split sheets, and export transparent PNGs for WhatsApp, Telegram and other messengers.',
+      keywords: 'AI sticker maker, AI messenger sticker prompt generator, WhatsApp sticker maker, Telegram sticker maker, photo to sticker, background remover, transparent PNG maker, sticker sheet splitter, ZIP export'
     },
     removerName: 'Background Remover & Sticker Splitter',
     remover: {
@@ -43,8 +43,8 @@ const locales = {
     home: '/ja/',
     homeName: 'Prompt Maker',
     main: {
-      title: 'Prompt Maker | AIスタンプ作成・背景透過・15個自動分割',
-      description: '写真やキャラクター設定からChatGPT・Gemini・Grok向け15種類のAIスタンププロンプトを作成し、背景透過・精密再処理・15個自動分割・360/720/1440px PNG・ZIP保存まで一括で利用できます。',
+      title: 'Prompt Maker | AIメッセージスタンプ用プロンプト生成',
+      description: '写真やキャラクター設定からChatGPT・Gemini・Grok向けの15種スタンプ用プロンプトを作成し、背景透過・自動分割・透過PNG保存まで対応。LINEなどのメッセージスタンプ制作に活用できます。',
       keywords: 'AIスタンプ作成, AIスタンプメーカー, 写真からスタンプ, LINEスタンプ作成, 背景透過, 精密切り抜き, 15個スタンプ分割, 透過PNG, 画像高画質化, ZIP保存'
     },
     removerName: '背景削除・スタンプ分割',
@@ -59,9 +59,9 @@ const locales = {
     home: '/zh/',
     homeName: 'Prompt Maker',
     main: {
-      title: 'Prompt Maker | AI表情包生成・去背景・15张自动分割',
-      description: '根据照片或角色设置生成适用于ChatGPT、Gemini和Grok的15张AI表情包提示词，并完成去背景、精细处理、15张自动分割、360/720/1440px透明PNG与ZIP批量导出。',
-      keywords: 'AI表情包生成器, AI贴纸生成器, 照片转表情包, 图片去背景, 精细抠图, 15张表情分割, 透明PNG, 图片放大, ZIP批量导出'
+      title: 'Prompt Maker | AI聊天表情包提示词生成器',
+      description: '根据照片或角色设置，为ChatGPT、Gemini和Grok生成15款AI表情包提示词，并支持去背景、自动分割和透明PNG导出，适用于微信等聊天平台。',
+      keywords: 'AI表情包生成器, AI聊天表情包提示词生成器, 微信表情包, 照片转表情包, 图片去背景, 15张表情分割, 透明PNG, ZIP批量导出'
     },
     removerName: '背景移除与表情包分割',
     remover: {
