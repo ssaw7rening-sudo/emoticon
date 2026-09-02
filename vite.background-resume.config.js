@@ -232,15 +232,19 @@ function backgroundRemovalResumeRecovery() {
         'removeBackground signature'
       )
 
+      const cleanupCall = transformed.includes('blob = await removeEnclosedBackdropPockets(blob, file, true);')
+        ? 'blob = await removeEnclosedBackdropPockets(blob, file, true);'
+        : 'blob = await removeEnclosedBackdropPockets(blob, file);'
+
       replaceOnce(
         `      setStage('processing');
       setProgress(null);
-      blob = await removeEnclosedBackdropPockets(blob, file);
+      ${cleanupCall}
       quality = await assessRemovalQuality(blob);
       const url = URL.createObjectURL(blob);`,
         `      setStage('processing');
       setProgress(null);
-      blob = await removeEnclosedBackdropPockets(blob, file);
+      ${cleanupCall}
       quality = await assessRemovalQuality(blob);
       if (operationIdRef.current !== operationId) return;
       const url = URL.createObjectURL(blob);`,
