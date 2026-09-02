@@ -136,27 +136,27 @@ function refreshRuntimeSeoMeta() {
     ],
     [
       "title: 'Prompt Maker | AI Emoticon Prompt Generator (ChatGPT · Gemini · Grok)'",
-      "title: 'Prompt Maker | AI Sticker Maker, Background Remover & Sheet Splitter'"
+      "title: 'Prompt Maker | AI Messenger Sticker Prompt Generator'"
     ],
     [
       "description: 'Create 15-expression AI messenger emoticon prompts from a photo or character tags for ChatGPT, Gemini and Grok. Free prompt maker with multiple art styles and themes.'",
-      "description: 'Create 15-sticker prompts for ChatGPT, Gemini and Grok from photos or character settings, then remove backgrounds, auto-split sticker sheets, export transparent PNGs at 360/720/1440px, and download ZIP files.'"
+      "description: 'Create 15 AI sticker prompts for ChatGPT, Gemini and Grok from photos or character settings, then remove backgrounds, auto-split sheets, and export transparent PNGs for WhatsApp, Telegram and other messengers.'"
     ],
     [
       "title: 'プロンプトメーカー | AI絵文字プロンプト生成ツール (ChatGPT・Gemini・Grok)'",
-      "title: 'Prompt Maker | AIスタンプ作成・背景透過・15個自動分割'"
+      "title: 'Prompt Maker | AIメッセージスタンプ用プロンプト生成'"
     ],
     [
       "description: '写真やキャラクタータグからChatGPT・Gemini・Grok向けの15種類のメッセンジャー絵文字プロンプトを作成できる無料AIプロンプトメーカーです。'",
-      "description: '写真やキャラクター設定からChatGPT・Gemini・Grok向け15種類のAIスタンププロンプトを作成し、背景透過・精密再処理・15個自動分割・360/720/1440px PNG・ZIP保存まで一括で利用できます。'"
+      "description: '写真やキャラクター設定からChatGPT・Gemini・Grok向けの15種スタンプ用プロンプトを作成し、背景透過・自動分割・透過PNG保存まで対応。LINEなどのメッセージスタンプ制作に活用できます。'"
     ],
     [
       "title: '提示词生成器 | AI表情包提示词工具 (ChatGPT · Gemini · Grok)'",
-      "title: 'Prompt Maker | AI表情包生成・去背景・15张自动分割'"
+      "title: 'Prompt Maker | AI聊天表情包提示词生成器'"
     ],
     [
       "description: '通过照片或角色标签，为ChatGPT、Gemini和Grok生成15种聊天表情包提示词。支持多种画风与主题的免费AI提示词工具。'",
-      "description: '根据照片或角色设置生成适用于ChatGPT、Gemini和Grok的15张AI表情包提示词，并完成去背景、精细处理、15张自动分割、360/720/1440px透明PNG与ZIP批量导出。'"
+      "description: '根据照片或角色设置，为ChatGPT、Gemini和Grok生成15款AI表情包提示词，并支持去背景、自动分割和透明PNG导出，适用于微信等聊天平台。'"
     ],
     [
       "description: '사진·이미지 배경을 무료로 제거하고 투명 PNG로 저장하세요. 360·720·1440px 저장과 2×·4× 고화질 업스케일도 지원합니다.'",
