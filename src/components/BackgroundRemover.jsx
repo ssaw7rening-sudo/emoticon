@@ -1744,306 +1744,6 @@ async function hasRealTransparency(file) {
   return false;
 }
 
-let smartEraserPromise = null;
-
-async function getSmartEraser(onProgress) {
-  if (!smartEraserPromise) {
-    smartEraserPromise = (async () => {
-      const { SamModel, AutoProcessor, RawImage } = await import('@huggingface/transformers');
-      const modelId = 'Xenova/slimsam-77-uniform';
-      const baseOptions = {
-        dtype: 'q8',
-        progress_callback: onProgress
-      };
-      let model;
-      if (typeof navigator !== 'undefined' && navigator.gpu) {
-        try {
-          model = await SamModel.from_pretrained(modelId, { ...baseOptions, device: 'webgpu' });
-        } catch (webgpuError) {
-          console.warn('Smart eraser WebGPU load failed; using WASM:', webgpuError);
-        }
-      }
-      if (!model) model = await SamModel.from_pretrained(modelId, baseOptions);
-      const processor = await AutoProcessor.from_pretrained(modelId, { progress_callback: onProgress });
-      return { model, processor, RawImage };
-    })().catch((error) => {
-      smartEraserPromise = null;
-      throw error;
-    });
-  }
-  return smartEraserPromise;
-}
-
-function getBestSamMask(masks, scoreValues) {
-  const group = masks?.[0] ?? masks;
-  if (!group) return null;
-
-  const scores = Array.from(scoreValues || []);
-  if (Array.isArray(group)) {
-    if (!group.length) return null;
-    let bestIndex = 0;
-    for (let index = 1; index < group.length; index += 1) {
-      if ((scores[index] ?? -Infinity) > (scores[bestIndex] ?? -Infinity)) bestIndex = index;
-    }
-    const mask = group[bestIndex];
-    const dims = Array.from(mask?.dims || []);
-    return { data: mask?.data, offset: 0, width: dims.at(-1), height: dims.at(-2) };
-  }
-
-  const dims = Array.from(group.dims || []);
-  const data = group.data;
-  const width = dims.at(-1);
-  const height = dims.at(-2);
-  if (!data || !width || !height) return null;
-
-  const planeSize = width * height;
-  const channelCount = Math.max(1, Math.min(Math.floor(data.length / planeSize), dims.at(-3) || 1));
-  let bestIndex = 0;
-  for (let index = 1; index < channelCount; index += 1) {
-    if ((scores[index] ?? -Infinity) > (scores[bestIndex] ?? -Infinity)) bestIndex = index;
-  }
-  return { data, offset: bestIndex * planeSize, width, height };
-}
-
-function eraseSimilarConnectedRegion(canvas, point) {
-  const ctx = canvas?.getContext('2d', { willReadFrequently: true });
-  if (!ctx || !canvas.width || !canvas.height) return false;
-
-  const width = canvas.width;
-  const height = canvas.height;
-  const total = width * height;
-  const seedX = Math.max(0, Math.min(width - 1, Math.round(point.x)));
-  const seedY = Math.max(0, Math.min(height - 1, Math.round(point.y)));
-  const seed = seedY * width + seedX;
-  const imageData = ctx.getImageData(0, 0, width, height);
-  const pixels = imageData.data;
-  const seedPixel = seed * 4;
-  if (pixels[seedPixel + 3] < 18) return false;
-
-  const seedColour = [pixels[seedPixel], pixels[seedPixel + 1], pixels[seedPixel + 2]];
-  const seedChroma = Math.max(...seedColour) - Math.min(...seedColour);
-  const seedLuminance = seedColour[0] * 0.299 + seedColour[1] * 0.587 + seedColour[2] * 0.114;
-  const tolerance = seedChroma <= 48 && seedLuminance >= 135 ? 46 : 30;
-  const visited = new Uint8Array(total);
-  const queue = new Int32Array(total);
-  let head = 0;
-  let tail = 0;
-  visited[seed] = 1;
-  queue[tail++] = seed;
-
-  const enqueue = (index) => {
-    if (index < 0 || index >= total || visited[index]) return;
-    const p = index * 4;
-    if (pixels[p + 3] < 18) return;
-    if (colorDistance([pixels[p], pixels[p + 1], pixels[p + 2]], seedColour) > tolerance) return;
-    visited[index] = 1;
-    queue[tail++] = index;
-  };
-
-  while (head < tail) {
-    const index = queue[head++];
-    const x = index % width;
-    const y = Math.floor(index / width);
-    if (x > 0) enqueue(index - 1);
-    if (x + 1 < width) enqueue(index + 1);
-    if (y > 0) enqueue(index - width);
-    if (y + 1 < height) enqueue(index + width);
-    if (tail > total * 0.58) return false;
-  }
-
-  if (tail < 3) return false;
-  for (let index = 0; index < tail; index += 1) pixels[queue[index] * 4 + 3] = 0;
-  ctx.putImageData(imageData, 0, 0);
-  return true;
-}
-
-function TransparencyEraser({ blob, lang, onApply, onCancel }) {
-  const canvasRef = useRef(null);
-  const drawingRef = useRef(false);
-  const lastPointRef = useRef(null);
-  const [brushSize, setBrushSize] = useState(30);
-  const [ready, setReady] = useState(false);
-  const [smartMode, setSmartMode] = useState(true);
-  const [smartStatus, setSmartStatus] = useState('');
-  const [smartBusy, setSmartBusy] = useState(false);
-
-  const labels = {
-    ko: { title: '투명 지우개', hint: '직접 문지르거나 AI 선택 모드에서 지울 부분을 한 번 누르세요.', size: '지우개 크기', reset: '처음으로', cancel: '취소', apply: '지우기 적용', smart: 'AI 선택', manual: '직접 지우기', loading: 'AI 모델 준비 중…', selecting: '영역을 찾는 중…', fallback: 'AI 대신 스마트 영역 선택으로 지웠습니다.', failed: '선택 영역을 찾지 못했습니다. 직접 지우기를 사용해 주세요.' },
-    en: { title: 'Transparency eraser', hint: 'Rub directly, or tap an area once in AI Select mode.', size: 'Eraser size', reset: 'Reset', cancel: 'Cancel', apply: 'Apply erasing', smart: 'AI Select', manual: 'Manual erase', loading: 'Loading AI model…', selecting: 'Finding the area…', fallback: 'Erased with smart region selection.', failed: 'No safe area was found. Please use manual erase.' },
-    ja: { title: '透明消しゴム', hint: '直接なぞるか、AI選択モードで消す部分を一度タップしてください。', size: '消しゴムサイズ', reset: 'リセット', cancel: 'キャンセル', apply: '適用', smart: 'AI選択', manual: '手動で消す', loading: 'AIモデル準備中…', selecting: '領域を検出中…', fallback: 'スマート領域選択で消去しました。', failed: '安全に消せる領域が見つかりません。手動消去をご利用ください。' },
-    zh: { title: '透明橡皮擦', hint: '可直接涂抹，或在AI选择模式下点击要删除的区域。', size: '橡皮擦大小', reset: '重置', cancel: '取消', apply: '应用', smart: 'AI选择', manual: '手动擦除', loading: '正在加载AI模型…', selecting: '正在识别区域…', fallback: '已使用智能区域选择擦除。', failed: '未找到可安全擦除的区域，请使用手动擦除。' }
-  };
-  const copy = labels[lang] || labels.ko;
-
-  const loadCanvas = async () => {
-    if (!blob || !canvasRef.current) return;
-    const source = await drawFileToCanvas(blob);
-    const canvas = canvasRef.current;
-    canvas.width = source.canvas.width;
-    canvas.height = source.canvas.height;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-    ctx.globalCompositeOperation = 'source-over';
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(source.canvas, 0, 0);
-    setReady(true);
-  };
-
-  useEffect(() => {
-    setReady(false);
-    loadCanvas().catch((error) => console.warn('Eraser canvas load failed:', error));
-  }, [blob]);
-
-  const pointFromEvent = (event) => {
-    const canvas = canvasRef.current;
-    const rect = canvas.getBoundingClientRect();
-    return {
-      x: (event.clientX - rect.left) * (canvas.width / Math.max(1, rect.width)),
-      y: (event.clientY - rect.top) * (canvas.height / Math.max(1, rect.height))
-    };
-  };
-
-  const eraseTo = (point) => {
-    const canvas = canvasRef.current;
-    const ctx = canvas?.getContext('2d');
-    if (!ctx) return;
-    const scale = canvas.width / Math.max(1, canvas.getBoundingClientRect().width);
-    const previous = lastPointRef.current || point;
-    ctx.save();
-    ctx.globalCompositeOperation = 'destination-out';
-    ctx.lineCap = 'round';
-    ctx.lineJoin = 'round';
-    ctx.lineWidth = brushSize * scale;
-    ctx.beginPath();
-    ctx.moveTo(previous.x, previous.y);
-    ctx.lineTo(point.x, point.y);
-    ctx.stroke();
-    ctx.restore();
-    lastPointRef.current = point;
-  };
-
-  const smartEraseAt = async (point) => {
-    const canvas = canvasRef.current;
-    if (!canvas || smartBusy) return;
-    setSmartBusy(true);
-    setSmartStatus(copy.loading);
-    try {
-      const currentBlob = await canvasToPngBlob(canvas);
-      const { model, processor, RawImage } = await getSmartEraser((info) => {
-        if (typeof info?.progress === 'number') {
-          setSmartStatus(`${copy.loading} ${Math.round(info.progress)}%`);
-        }
-      });
-      setSmartStatus(copy.selecting);
-      const rawImage = await RawImage.fromBlob(currentBlob);
-      const inputs = await processor(rawImage, { input_points: [[[point.x, point.y]]] });
-      const outputs = await model(inputs);
-      const masks = await processor.post_process_masks(
-        outputs.pred_masks,
-        inputs.original_sizes,
-        inputs.reshaped_input_sizes
-      );
-      const mask = getBestSamMask(masks, outputs.iou_scores?.data);
-      if (!mask?.data || !mask.width || !mask.height) throw new Error('No segmentation mask');
-
-      let selected = 0;
-      const maskArea = mask.width * mask.height;
-      for (let i = 0; i < maskArea; i += 1) {
-        if (mask.data[mask.offset + i] > 0) selected += 1;
-      }
-      if (selected < 2 || selected > maskArea * 0.72) {
-        throw new Error('Unsafe segmentation area');
-      }
-
-      const ctx = canvas.getContext('2d');
-      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      for (let y = 0; y < canvas.height; y += 1) {
-        const maskY = Math.min(mask.height - 1, Math.floor((y * mask.height) / canvas.height));
-        for (let x = 0; x < canvas.width; x += 1) {
-          const maskX = Math.min(mask.width - 1, Math.floor((x * mask.width) / canvas.width));
-          if (mask.data[mask.offset + maskY * mask.width + maskX] > 0) {
-            imageData.data[(y * canvas.width + x) * 4 + 3] = 0;
-          }
-        }
-      }
-      ctx.putImageData(imageData, 0, 0);
-      setSmartStatus('');
-    } catch (error) {
-      console.warn('AI selection erase failed:', error);
-      setSmartStatus(eraseSimilarConnectedRegion(canvas, point) ? copy.fallback : copy.failed);
-    } finally {
-      setSmartBusy(false);
-    }
-  };
-
-  const pointerDown = (event) => {
-    if (!ready || smartBusy) return;
-    event.preventDefault();
-    const point = pointFromEvent(event);
-    if (smartMode) {
-      smartEraseAt(point);
-      return;
-    }
-    event.currentTarget.setPointerCapture?.(event.pointerId);
-    drawingRef.current = true;
-    lastPointRef.current = point;
-    eraseTo(point);
-  };
-
-  const pointerMove = (event) => {
-    if (!drawingRef.current) return;
-    event.preventDefault();
-    eraseTo(pointFromEvent(event));
-  };
-
-  const pointerUp = (event) => {
-    drawingRef.current = false;
-    lastPointRef.current = null;
-    event.currentTarget.releasePointerCapture?.(event.pointerId);
-  };
-
-  const apply = async () => {
-    if (!canvasRef.current) return;
-    const edited = await canvasToPngBlob(canvasRef.current);
-    onApply(edited);
-  };
-
-  return (
-    <div className="mt-4 rounded-2xl border-2 border-[#8FB49A] bg-[#F5FAF6] p-3.5">
-      <div className="text-sm font-extrabold text-[#31573D]">🧽 {copy.title}</div>
-      <p className="mt-1 text-xs font-semibold leading-5 text-[#647164]">{copy.hint}</p>
-      <div className="mt-3 grid grid-cols-2 gap-2 rounded-xl bg-white p-1.5">
-        <button type="button" disabled={smartBusy} onClick={() => { setSmartMode(true); setSmartStatus(''); }} className={`rounded-lg px-3 py-2.5 text-xs font-extrabold transition ${smartMode ? 'bg-[#3E6B4B] text-white' : 'text-[#536052]'}`}>✨ {copy.smart}</button>
-        <button type="button" disabled={smartBusy} onClick={() => { setSmartMode(false); setSmartStatus(''); }} className={`rounded-lg px-3 py-2.5 text-xs font-extrabold transition ${!smartMode ? 'bg-[#6B6258] text-white' : 'text-[#665F57]'}`}>🧽 {copy.manual}</button>
-      </div>
-      {smartStatus && <div className="mt-2 rounded-lg bg-white px-3 py-2 text-center text-[11px] font-bold leading-5 text-[#61705D]">{smartBusy && <span className="mr-1 inline-block h-3 w-3 animate-spin rounded-full border-2 border-[#B8C8B2] border-t-[#3E6B4B]" />}{smartStatus}</div>}
-      <div className="mt-3 overflow-hidden rounded-xl border border-[#C9D8CB]" style={checkerStyle}>
-        <canvas
-          ref={canvasRef}
-          onPointerDown={pointerDown}
-          onPointerMove={pointerMove}
-          onPointerUp={pointerUp}
-          onPointerCancel={pointerUp}
-          className={`block h-auto w-full ${smartMode ? 'cursor-pointer' : 'cursor-crosshair'}`}
-          style={{ touchAction: 'none', opacity: smartBusy ? 0.72 : 1 }}
-          aria-label={copy.title}
-        />
-      </div>
-      {!smartMode && (
-        <label className="mt-3 flex items-center gap-3 text-xs font-bold text-[#536052]">
-          <span className="shrink-0">{copy.size}</span>
-          <input type="range" min="12" max="72" step="2" value={brushSize} onChange={(event) => setBrushSize(Number(event.target.value))} className="w-full accent-[#3E6B4B]" />
-        </label>
-      )}
-      <div className="mt-3 grid grid-cols-3 gap-2">
-        <button type="button" onClick={loadCanvas} className="rounded-xl border border-[#CFC8BD] bg-white px-2 py-2.5 text-xs font-bold text-[#615B53]">{copy.reset}</button>
-        <button type="button" onClick={onCancel} className="rounded-xl border border-[#CFC8BD] bg-white px-2 py-2.5 text-xs font-bold text-[#615B53]">{copy.cancel}</button>
-        <button type="button" onClick={apply} className="rounded-xl bg-[#3E6B4B] px-2 py-2.5 text-xs font-extrabold text-white">{copy.apply}</button>
-      </div>
-    </div>
-  );
-}
-
 export default function BackgroundRemover({ lang = 'ko' }) {
   const t = COPY[lang] || COPY.ko;
   const inputRef = useRef(null);
@@ -2082,7 +1782,6 @@ export default function BackgroundRemover({ lang = 'ko' }) {
   const [qualityAssessment, setQualityAssessment] = useState({ status: 'idle', score: 0 });
   const [resultMethod, setResultMethod] = useState('');
   const [precisionMessage, setPrecisionMessage] = useState('');
-  const [eraserOpen, setEraserOpen] = useState(false);
   const [textCleanupMessage, setTextCleanupMessage] = useState('');
 
   useEffect(() => () => {
@@ -2129,7 +1828,6 @@ export default function BackgroundRemover({ lang = 'ko' }) {
     setQualityAssessment({ status: 'idle', score: 0 });
     setResultMethod('');
     setPrecisionMessage('');
-    setEraserOpen(false);
     setError('');
     setTextCleanupMessage('');
     setProgress(null);
@@ -2302,7 +2000,6 @@ export default function BackgroundRemover({ lang = 'ko' }) {
     setResultUrl(nextUrl);
     setQualityAssessment(await assessRemovalQuality(editedBlob));
     setComparePosition(0);
-    setEraserOpen(false);
     setTextCleanupMessage('');
   };
 
@@ -2498,17 +2195,14 @@ export default function BackgroundRemover({ lang = 'ko' }) {
             </div>
           )}
 
-          {resultUrl && !eraserOpen && (
+          {resultUrl && (
             <div className="mt-4 rounded-2xl border border-[#D7E2D5] bg-[#F7FAF5] p-3.5">
               <div className="text-sm font-extrabold text-[#3F5E43]">
                 {lang === 'ko' ? '남은 배경 마무리' : lang === 'ja' ? '残った背景を仕上げる' : lang === 'zh' ? '清理残留背景' : 'Finish remaining background'}
               </div>
-              <div className="mt-3 grid grid-cols-2 gap-2">
-                <button type="button" disabled={busy} onClick={runAggressiveTextCleanup} className="rounded-xl border border-[#95B59B] bg-white px-3 py-3 text-xs sm:text-sm font-extrabold text-[#31573D] disabled:opacity-50">
+              <div className="mt-3">
+                <button type="button" disabled={busy} onClick={runAggressiveTextCleanup} className="w-full rounded-xl border border-[#95B59B] bg-white px-3 py-3 text-xs sm:text-sm font-extrabold text-[#31573D] disabled:opacity-50">
                   ✨ {lang === 'ko' ? '문자 사이 정리' : lang === 'ja' ? '文字間を整理' : lang === 'zh' ? '清理文字间隙' : 'Clean text gaps'}
-                </button>
-                <button type="button" disabled={busy} onClick={() => { setTextCleanupMessage(''); setEraserOpen(true); }} className="rounded-xl bg-[#3E6B4B] px-3 py-3 text-xs sm:text-sm font-extrabold text-white disabled:opacity-50">
-                  ✨ {lang === 'ko' ? 'AI 선택 지우개' : lang === 'ja' ? 'AI選択消しゴム' : lang === 'zh' ? 'AI选择橡皮擦' : 'AI selection eraser'}
                 </button>
               </div>
               {textCleanupMessage && (
@@ -2517,10 +2211,6 @@ export default function BackgroundRemover({ lang = 'ko' }) {
                 </div>
               )}
             </div>
-          )}
-
-          {resultUrl && eraserOpen && (
-            <TransparencyEraser blob={resultBlob} lang={lang} onApply={applyEditedBlob} onCancel={() => setEraserOpen(false)} />
           )}
 
           {busy && (
