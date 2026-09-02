@@ -26,11 +26,11 @@ const mainPages = {
     dir: 'en',
     canonical: `${origin}/en/`,
     ogLocale: 'en_US',
-    title: 'Prompt Maker | AI Emoticon Prompt Generator (ChatGPT · Gemini · Grok)',
-    description: 'Create 15-expression AI messenger emoticon prompts from a photo or character tags for ChatGPT, Gemini and Grok. Free prompt maker with multiple art styles and themes.',
-    keywords: 'AI sticker maker, AI emoji maker, emoticon maker, custom sticker generator, photo to sticker, AI sticker prompts, sticker sheet maker, transparent PNG, background remover',
+    title: 'Prompt Maker | AI Messenger Sticker Prompt Generator',
+    description: 'Create 15 AI sticker prompts for ChatGPT, Gemini and Grok from photos or character settings, then remove backgrounds, auto-split sheets, and export transparent PNGs for WhatsApp, Telegram and other messengers.',
+    keywords: 'AI sticker maker, AI messenger sticker prompt generator, WhatsApp sticker maker, Telegram sticker maker, photo to sticker, AI sticker prompts, sticker sheet maker, transparent PNG, background remover',
     schemaName: 'Prompt Maker',
-    schemaDescription: 'A free web tool for creating AI sticker and emoticon prompts from photos or character settings, with background removal, 15-sticker sheet splitting and transparent PNG export.',
+    schemaDescription: 'Create 15 AI sticker prompts for ChatGPT, Gemini and Grok from photos or character settings, then remove backgrounds, auto-split sheets, and export transparent PNGs for WhatsApp, Telegram and other messengers.',
     features: ['AI sticker and emoticon prompt generation', 'Photo-based character prompts', '15-sticker sheet workflow', 'Background removal', 'Transparent PNG export', '15-sticker auto split', '360px, 720px and 1440px export', 'ZIP batch download']
   },
   ja: {
@@ -38,11 +38,11 @@ const mainPages = {
     dir: 'ja',
     canonical: `${origin}/ja/`,
     ogLocale: 'ja_JP',
-    title: 'プロンプトメーカー | AI絵文字プロンプト生成ツール (ChatGPT・Gemini・Grok)',
-    description: '写真やキャラクタータグからChatGPT・Gemini・Grok向けの15種類のメッセンジャー絵文字プロンプトを作成できる無料AIプロンプトメーカーです。',
+    title: 'Prompt Maker | AIメッセージスタンプ用プロンプト生成',
+    description: '写真やキャラクター設定からChatGPT・Gemini・Grok向けの15種スタンプ用プロンプトを作成し、背景透過・自動分割・透過PNG保存まで対応。LINEなどのメッセージスタンプ制作に活用できます。',
     keywords: 'AIスタンプ作成, AIスタンプメーカー, LINEスタンプ作成, 絵文字メーカー, 写真からスタンプ, スタンプシート, 背景透過, 透過PNG, AIプロンプト',
     schemaName: 'Prompt Maker - AIスタンププロンプトメーカー',
-    schemaDescription: '写真やキャラクター設定からAIスタンプ用プロンプトを作成し、背景透過・15個の自動分割・透過PNG保存まで行える無料Webツールです。',
+    schemaDescription: '写真やキャラクター設定からChatGPT・Gemini・Grok向けの15種スタンプ用プロンプトを作成し、背景透過・自動分割・透過PNG保存まで対応。LINEなどのメッセージスタンプ制作に活用できます。',
     features: ['AIスタンププロンプト生成', '写真ベースのキャラクター設定', '15個スタンプシート対応', '背景削除・透過', '透過PNG保存', '15個自動分割', '360・720・1440px出力', 'ZIP一括保存']
   },
   zh: {
@@ -50,11 +50,11 @@ const mainPages = {
     dir: 'zh',
     canonical: `${origin}/zh/`,
     ogLocale: 'zh_CN',
-    title: '提示词生成器 | AI表情包提示词工具 (ChatGPT · Gemini · Grok)',
-    description: '通过照片或角色标签，为ChatGPT、Gemini和Grok生成15种聊天表情包提示词。支持多种画风与主题的免费AI提示词工具。',
-    keywords: 'AI表情包生成器, AI贴纸生成器, 表情包制作, 照片转贴纸, AI提示词, 表情包提示词, 图片去背景, 透明PNG, 表情包分割',
+    title: 'Prompt Maker | AI聊天表情包提示词生成器',
+    description: '根据照片或角色设置，为ChatGPT、Gemini和Grok生成15款AI表情包提示词，并支持去背景、自动分割和透明PNG导出，适用于微信等聊天平台。',
+    keywords: 'AI表情包生成器, AI聊天表情包提示词生成器, 微信表情包, 表情包制作, 照片转贴纸, AI提示词, 图片去背景, 透明PNG, 表情包分割',
     schemaName: 'Prompt Maker AI表情包提示词生成器',
-    schemaDescription: '可根据照片或角色设置生成AI表情包提示词，并支持背景移除、15张表情自动分割和透明PNG导出的免费网页工具。',
+    schemaDescription: '根据照片或角色设置，为ChatGPT、Gemini和Grok生成15款AI表情包提示词，并支持去背景、自动分割和透明PNG导出，适用于微信等聊天平台。',
     features: ['AI表情包提示词生成', '照片角色提示词', '15张表情包工作流', '图片背景移除', '透明PNG导出', '15张自动分割', '360/720/1440px导出', 'ZIP批量保存']
   }
 };
