@@ -11,7 +11,7 @@ const locales = {
     home: '/',
     homeName: 'Prompt Maker',
     main: {
-      title: '프롬티콘 | AI 이모티콘 프롬프트·배경 제거',
+      title: '프롬프트 메이커 | 프롬티콘 AI 이모티콘 만들기',
       description: '사진과 캐릭터 설정으로 AI 이모티콘 프롬프트를 만들고 배경 제거, 15개 자동 분할, 투명 PNG 저장까지 이용해 보세요.',
       keywords: 'AI 이모티콘 만들기, AI 스티커 메이커, 사진 이모티콘, 카카오톡 이모티콘, 배경 제거, 정밀 누끼, 15개 이모티콘 분리, 투명 PNG, 이미지 업스케일, ZIP 저장'
     },
