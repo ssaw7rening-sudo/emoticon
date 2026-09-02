@@ -1,0 +1,53 @@
+name: Hair Fur V5
+
+on:
+  push:
+    branches: [fix/hair-strand-gap-tracing-v5]
+
+permissions:
+  contents: write
+
+jobs:
+  patch-and-verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - name: Apply hair fur v5 patch
+        run: node .github/scripts/patch-hair-fur-v5.mjs
+      - name: Remove temporary patch files
+        run: rm .github/scripts/patch-hair-fur-v5.mjs .github/workflows/hair-fur-v5.yml
+      - name: Guard initial diff
+        run: |
+          git diff --check
+          changed="$(git diff --name-only origin/main | sort)"
+          expected="$(printf '%s\n' vite.hair-fur-precision-v3.config.js vite.one-click-auto-precision.config.js | sort)"
+          test "$changed" = "$expected"
+          grep -q "HAIR_FUR_FINE_DETAIL_PRECISION_V5" vite.hair-fur-precision-v3.config.js
+          grep -q "HAIR_FUR_DIRECTIONAL_TRACE_V5" vite.hair-fur-precision-v3.config.js
+          grep -q "one-click-auto-hair-fur-v1" vite.one-click-auto-precision.config.js
+          grep -q "alreadyBalanced: true, mode: 'auto'" vite.one-click-auto-precision.config.js
+      - run: npm ci
+      - run: npm run build
+      - name: Restore generated build artifacts
+        run: |
+          git restore --source=HEAD --worktree --staged public/og 2>/dev/null || true
+          git clean -fd public/og || true
+      - name: Guard final diff after build
+        run: |
+          git diff --check
+          changed="$(git diff --name-only origin/main | sort)"
+          expected="$(printf '%s\n' vite.hair-fur-precision-v3.config.js vite.one-click-auto-precision.config.js | sort)"
+          test "$changed" = "$expected"
+      - name: Commit verified production hair fix
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add vite.hair-fur-precision-v3.config.js vite.one-click-auto-precision.config.js
+          git commit -m "Run hair/fur refinement in one-click production [skip ci]"
+          git push origin HEAD
