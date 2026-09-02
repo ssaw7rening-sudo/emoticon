@@ -3,7 +3,7 @@ import baseConfig from './vite.one-click-auto-precision.config.js'
 
 function pixelOwnershipStickerSplit() {
   return {
-    name: 'pixel-ownership-sticker-split-v7',
+    name: 'pixel-ownership-sticker-split-v8-watershed-compatible',
     // Keep this in the pre-transform chain so it sees the BackgroundRemover
     // function injected by precise-sticker-sheet-split-v6 before React/Rolldown
     // compiles and rewrites the source structure.
@@ -17,9 +17,18 @@ function pixelOwnershipStickerSplit() {
       const groupForSourcePixelPattern = /  const groupForSourcePixel = \(x, y\) => \{[\s\S]*?\n  \};/
       const currentBlock = transformed.match(groupForSourcePixelPattern)?.[0] || ''
 
-      // Only replace the v6 content-group ownership path. If another unrelated
-      // function with the same local name ever appears, leave it untouched.
-      if (!currentBlock || !currentBlock.includes('analysis.componentGroup')) {
+      // The precise splitter v7 already provides an object-aware watershed
+      // ownership map. Preserve it exactly; this legacy compatibility transform
+      // must never downgrade it back to nearest-centre Voronoi ownership.
+      if (!currentBlock) {
+        throw new Error('[pixel-owner-split] Sticker ownership function was not found')
+      }
+      if (currentBlock.includes('analysis.pixelGroup')) {
+        return null
+      }
+
+      // Backward compatibility only for the older v6 component-group path.
+      if (!currentBlock.includes('analysis.componentGroup')) {
         throw new Error('[pixel-owner-split] Component ownership function was not found')
       }
 
