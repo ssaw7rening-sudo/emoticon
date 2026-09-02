@@ -133,6 +133,33 @@ function singlePassRouting() {
   }
 }
 
+function autoHairFurOneClick() {
+  return {
+    name: 'one-click-auto-hair-fur-v1',
+    enforce: 'post',
+    transform(code, id) {
+      const normalizedId = id.replace(/\\/g, '/');
+      if (!normalizedId.endsWith('/src/components/BackgroundRemover.jsx')) return null;
+
+      if (!code.includes('async function refineHairFurEdges')) {
+        throw new Error('[auto-hair-fur] Hair/fur helper was not found');
+      }
+
+      const anchor = 'blob = await refineHybridPrecisionEdges(blob, file);';
+      const count = code.split(anchor).length - 1;
+      if (count !== 1) {
+        throw new Error(`[auto-hair-fur] Expected one automatic hybrid blob anchor, found ${count}`);
+      }
+
+      const transformed = code.replace(
+        anchor,
+        `${anchor}\n            blob = await refineHairFurEdges(blob, file, { alreadyBalanced: true, mode: 'auto' });`
+      );
+      return { code: transformed, map: null };
+    },
+  };
+}
+
 const inheritedPlugins = [...(baseConfig.plugins || [])]
 const preciseSplitIndex = inheritedPlugins.findIndex(
   (plugin) => String(plugin?.name || '').startsWith('precise-sticker-sheet-split-')
@@ -162,6 +189,7 @@ if (adjustedInsertionIndex >= 0) {
 } else {
   finalPlugins.push(singlePassRouting())
 }
+finalPlugins.push(autoHairFurOneClick())
 finalPlugins.push(oneClickUiCleanup())
 
 export default defineConfig({

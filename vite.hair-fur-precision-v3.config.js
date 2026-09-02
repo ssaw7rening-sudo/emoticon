@@ -3,7 +3,7 @@ import baseConfig from './vite.hybrid-edge-refine.config.js'
 
 function hairFurPrecisionPre() {
   return {
-    name: 'hair-fur-fine-detail-precision-v4',
+    name: 'hair-fur-fine-detail-precision-v5',
     enforce: 'pre',
     transform(code, id) {
       const normalizedId = id.replace(/\\/g, '/')
@@ -15,7 +15,7 @@ function hairFurPrecisionPre() {
         throw new Error('[hair-fur-v3] Quality-assessment anchor was not found')
       }
 
-      const helper = `// HAIR_FUR_FINE_DETAIL_PRECISION_V4
+      const helper = `// HAIR_FUR_FINE_DETAIL_PRECISION_V5
 function getHairFurText(lang) {
   const copy = {
     ko: {
@@ -50,15 +50,20 @@ function getHairFurText(lang) {
   return copy[lang] || copy.ko;
 }
 
-async function refineHairFurEdges(matteBlob, sourceFile) {
+async function refineHairFurEdges(matteBlob, sourceFile, options = {}) {
   if (!sourceFile) return matteBlob;
 
-  // The hybrid helper is injected by the existing post-build refinement plugin.
-  // Function declarations are resolved at runtime, so this pre-stage helper can
-  // safely call it after all Vite transforms have completed.
-  const balancedBlob = typeof refineHybridPrecisionEdges === 'function'
-    ? await refineHybridPrecisionEdges(matteBlob, sourceFile)
-    : matteBlob;
+  const autoMode = options?.mode === 'auto';
+  const alreadyBalanced = options?.alreadyBalanced === true;
+
+  // Automatic one-click processing reaches this helper after the hybrid pass.
+  // Manual/detail routes may still enter with a raw precision matte, so keep the
+  // existing hybrid refinement as the default without running it twice.
+  const balancedBlob = alreadyBalanced
+    ? matteBlob
+    : (typeof refineHybridPrecisionEdges === 'function'
+      ? await refineHybridPrecisionEdges(matteBlob, sourceFile)
+      : matteBlob);
 
   const [{ canvas: sourceCanvas, ctx: sourceCtx }, { canvas: matteCanvas }] = await Promise.all([
     drawFileToCanvas(sourceFile),
@@ -133,6 +138,31 @@ async function refineHairFurEdges(matteBlob, sourceFile) {
     edgeBand = expanded;
   }
 
+  // HAIR_FUR_TRACE_BAND_V5
+  // The matte itself can contain a fully transparent 2-3 px break, so a second
+  // slightly wider candidate band is needed. It is still derived from the matte
+  // contour and never scans unrelated image interiors.
+  let traceBand = edgeBand.slice();
+  const traceExpandIterations = mobileLike ? 2 : 3;
+  for (let iteration = 0; iteration < traceExpandIterations; iteration += 1) {
+    const expanded = traceBand.slice();
+    for (let y = 1; y < analysisHeight - 1; y += 1) {
+      for (let x = 1; x < analysisWidth - 1; x += 1) {
+        const index = y * analysisWidth + x;
+        if (!traceBand[index]) continue;
+        expanded[index - 1] = 1;
+        expanded[index + 1] = 1;
+        expanded[index - analysisWidth] = 1;
+        expanded[index + analysisWidth] = 1;
+        expanded[index - analysisWidth - 1] = 1;
+        expanded[index - analysisWidth + 1] = 1;
+        expanded[index + analysisWidth - 1] = 1;
+        expanded[index + analysisWidth + 1] = 1;
+      }
+    }
+    traceBand = expanded;
+  }
+
   const sourceImageData = sourceCtx.getImageData(0, 0, width, height);
   const sourcePixels = sourceImageData.data;
   const maskImageData = maskCtx.getImageData(0, 0, width, height);
@@ -196,6 +226,10 @@ async function refineHairFurEdges(matteBlob, sourceFile) {
       if (downRightAlpha >= 42) nearbyStrandSupport += 1;
       const bridgeLike = currentAlpha <= 18 && continuitySupport >= 64;
       const supportedStrand = nearbyStrandSupport >= 2 || continuitySupport >= 48;
+      const autoStrandCandidate =
+        bridgeLike ||
+        (currentAlpha <= 104 && nearbyStrandSupport >= 1 && nearbyStrandSupport <= 4);
+      if (autoMode && !autoStrandCandidate) continue;
 
       let fgR = 0, fgG = 0, fgB = 0, fgCount = 0;
       let bgR = 0, bgG = 0, bgB = 0, bgCount = 0;
@@ -264,6 +298,138 @@ async function refineHairFurEdges(matteBlob, sourceFile) {
       }
     }
   }
+
+  // HAIR_FUR_DIRECTIONAL_TRACE_V5
+  // V4 could only restore a one-pixel hole whose immediate opposite neighbours
+  // were already visible. V5 traces the original RGB along four axes so a short
+  // fully transparent break (or the first pixels past a thin strand tip) can be
+  // recovered without widening broad skin/clothing silhouettes.
+  let tracedAlpha = alphaOut.slice();
+  const traceAxes = [[1, 0], [0, 1], [1, 1], [1, -1]];
+  const traceDirections = [
+    [1, 0], [-1, 0], [0, 1], [0, -1],
+    [1, 1], [-1, -1], [1, -1], [-1, 1]
+  ];
+  const alphaAt = (map, x, y) => {
+    if (x < 0 || y < 0 || x >= width || y >= height) return 0;
+    return map[y * width + x];
+  };
+  const findSupport = (map, x, y, dx, dy, maxStep = 3) => {
+    for (let step = 1; step <= maxStep; step += 1) {
+      const nx = x + dx * step;
+      const ny = y + dy * step;
+      if (nx < 0 || ny < 0 || nx >= width || ny >= height) break;
+      const index = ny * width + nx;
+      const alpha = map[index];
+      if (alpha >= 42) return { index, x: nx, y: ny, alpha, step };
+    }
+    return null;
+  };
+  const sourceColor = (index) => {
+    const p = index * 4;
+    return [sourcePixels[p], sourcePixels[p + 1], sourcePixels[p + 2]];
+  };
+  const colorDistanceTo = (index, color) => {
+    const p = index * 4;
+    return colorDistanceSq(sourcePixels[p], sourcePixels[p + 1], sourcePixels[p + 2], color[0], color[1], color[2]);
+  };
+  const tracePasses = autoMode ? 2 : 3;
+
+  for (let pass = 0; pass < tracePasses; pass += 1) {
+    const nextTrace = tracedAlpha.slice();
+    for (let y = 3; y < height - 3; y += 1) {
+      const ay = Math.min(analysisHeight - 1, Math.floor(y * yScale));
+      for (let x = 3; x < width - 3; x += 1) {
+        const ax = Math.min(analysisWidth - 1, Math.floor(x * xScale));
+        if (!traceBand[ay * analysisWidth + ax]) continue;
+
+        const index = y * width + x;
+        const currentAlpha = tracedAlpha[index];
+        if (currentAlpha > 38) continue;
+
+        let nearbySupport = 0;
+        for (const [dx, dy] of traceDirections) {
+          if (alphaAt(tracedAlpha, x + dx, y + dy) >= 38) nearbySupport += 1;
+        }
+
+        let bestAlpha = currentAlpha;
+        let bestColor = null;
+
+        // Bridge a short transparent gap only when both ends line up and their
+        // source colours agree. This is the main fix for visibly broken hairs.
+        for (const [dx, dy] of traceAxes) {
+          const positive = findSupport(tracedAlpha, x, y, dx, dy, 3);
+          const negative = findSupport(tracedAlpha, x, y, -dx, -dy, 3);
+          if (!positive || !negative) continue;
+          if (positive.step + negative.step > 7) continue;
+
+          const positiveColor = sourceColor(positive.index);
+          const negativeColor = sourceColor(negative.index);
+          const endDistance = colorDistanceSq(
+            positiveColor[0], positiveColor[1], positiveColor[2],
+            negativeColor[0], negativeColor[1], negativeColor[2]
+          );
+          if (endDistance > (autoMode ? 3200 : 4600)) continue;
+
+          const meanColor = [
+            (positiveColor[0] + negativeColor[0]) / 2,
+            (positiveColor[1] + negativeColor[1]) / 2,
+            (positiveColor[2] + negativeColor[2]) / 2
+          ];
+          if (colorDistanceTo(index, meanColor) > (autoMode ? 3600 : 5200)) continue;
+
+          const endpointAlpha = (positive.alpha + negative.alpha) / 2;
+          const candidateAlpha = Math.min(autoMode ? 156 : 182, Math.round(endpointAlpha * 0.64));
+          if (candidateAlpha > bestAlpha) {
+            bestAlpha = candidateAlpha;
+            bestColor = meanColor;
+          }
+        }
+
+        // Also extend a genuinely thin visible tip by at most two iterative pixels.
+        // Broad object boundaries have too many adjacent foreground pixels and are
+        // therefore excluded from this one-sided continuation rule.
+        if (bestAlpha === currentAlpha && currentAlpha <= 12 && nearbySupport <= 2) {
+          for (const [dx, dy] of traceDirections) {
+            const back1X = x - dx;
+            const back1Y = y - dy;
+            const back2X = x - dx * 2;
+            const back2Y = y - dy * 2;
+            const back1Alpha = alphaAt(tracedAlpha, back1X, back1Y);
+            const back2Alpha = alphaAt(tracedAlpha, back2X, back2Y);
+            if (back1Alpha < 48 || back2Alpha < 38) continue;
+
+            const back1Index = back1Y * width + back1X;
+            const back2Index = back2Y * width + back2X;
+            const c1 = sourceColor(back1Index);
+            const c2 = sourceColor(back2Index);
+            if (colorDistanceSq(c1[0], c1[1], c1[2], c2[0], c2[1], c2[2]) > (autoMode ? 2400 : 3400)) continue;
+            const meanColor = [(c1[0] + c2[0]) / 2, (c1[1] + c2[1]) / 2, (c1[2] + c2[2]) / 2];
+            if (colorDistanceTo(index, meanColor) > (autoMode ? 2800 : 4000)) continue;
+
+            const candidateAlpha = Math.min(autoMode ? 96 : 120, Math.round(Math.min(back1Alpha, back2Alpha) * 0.54));
+            if (candidateAlpha > bestAlpha) {
+              bestAlpha = candidateAlpha;
+              bestColor = meanColor;
+            }
+          }
+        }
+
+        if (bestAlpha <= currentAlpha) continue;
+        nextTrace[index] = bestAlpha;
+        if (bestColor) {
+          const p = index * 4;
+          const mix = autoMode ? 0.24 : 0.30;
+          sourcePixels[p] = Math.round(sourcePixels[p] * (1 - mix) + bestColor[0] * mix);
+          sourcePixels[p + 1] = Math.round(sourcePixels[p + 1] * (1 - mix) + bestColor[1] * mix);
+          sourcePixels[p + 2] = Math.round(sourcePixels[p + 2] * (1 - mix) + bestColor[2] * mix);
+        }
+      }
+    }
+    tracedAlpha = nextTrace;
+  }
+
+  alphaOut.set(tracedAlpha);
 
   // Minimal alpha stabilization retains strand texture instead of feathering it away.
   const stabilized = alphaOut.slice();
