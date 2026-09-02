@@ -3,7 +3,7 @@ import baseConfig from './vite.legal-notices.config.js'
 
 function preciseStickerSheetSplit() {
   return {
-    name: 'precise-sticker-sheet-split-v8-floating-component-reattach',
+    name: 'precise-sticker-sheet-split-v9-safe-component-fallback',
     enforce: 'pre',
     transform(code, id) {
       const normalizedId = id.replace(/\\/g, '/')
@@ -545,6 +545,8 @@ async function splitIntoFifteen(blob) {
     }
   }
 
+  const legacyGroupBounds = groupBounds.map((bounds) => ({ ...bounds }));
+
   // Re-evaluate small disconnected captions/effects at source resolution. The
   // watershed remains authoritative for large/touching bodies; only compact
   // connected components are allowed to move as a whole. This protects labels
@@ -567,17 +569,28 @@ async function splitIntoFifteen(blob) {
 
   const componentOwner = new Int16Array(sourceLabelled.componentCount + 1);
   componentOwner.fill(-1);
+  const componentOwnerConfidence = new Float32Array(sourceLabelled.componentCount + 1);
+  const componentOwnerDominance = new Float32Array(sourceLabelled.componentCount + 1);
   for (const component of sourceLabelled.components) {
     let bestGroup = -1;
     let bestVotes = -1;
+    let secondVotes = -1;
     const voteOffset = component.id * 15;
     for (let group = 0; group < 15; group += 1) {
       const votes = componentVotes[voteOffset + group];
-      if (votes <= bestVotes) continue;
-      bestVotes = votes;
-      bestGroup = group;
+      if (votes > bestVotes) {
+        secondVotes = bestVotes;
+        bestVotes = votes;
+        bestGroup = group;
+      } else if (votes > secondVotes) {
+        secondVotes = votes;
+      }
     }
     componentOwner[component.id] = bestGroup;
+    componentOwnerConfidence[component.id] = bestVotes > 0 ? bestVotes / Math.max(1, component.area) : 0;
+    componentOwnerDominance[component.id] = bestVotes > 0
+      ? (bestVotes - Math.max(0, secondVotes)) / Math.max(1, component.area)
+      : 0;
   }
 
   const sourceCellWidth = width / 5;
@@ -682,30 +695,50 @@ async function splitIntoFifteen(blob) {
     floatingReassigned += 1;
   }
 
-  const finalGroupForSourcePixel = (x, y) => {
+  // Build a component-aware candidate, but never force it. Large/touching bodies
+  // always stay on the watershed pixel map. Compact islands are collapsed to one
+  // owner only when their legacy vote is decisive, or when the guarded floating
+  // reassignment above found a clearly better body.
+  const candidateComponentOwner = new Int16Array(sourceLabelled.componentCount + 1);
+  candidateComponentOwner.fill(-1);
+
+  for (const component of sourceLabelled.components) {
+    if (!isFloatingCandidate(component)) continue;
+    const currentOwner = componentOwner[component.id];
+    const override = floatingOverride[component.id];
+    if (override >= 0) {
+      candidateComponentOwner[component.id] = override;
+      continue;
+    }
+    if (currentOwner < 0) continue;
+    const stableBounds = bodyBounds[currentOwner].count > 0 ? bodyBounds[currentOwner] : legacyGroupBounds[currentOwner];
+    const bodyDistance = distanceToBounds(component.cx, component.cy, stableBounds);
+    const confidence = componentOwnerConfidence[component.id];
+    const dominance = componentOwnerDominance[component.id];
+    if (confidence >= 0.68 && dominance >= 0.14 && bodyDistance <= 0.82) {
+      candidateComponentOwner[component.id] = currentOwner;
+    }
+  }
+
+  const ownerWithComponents = (x, y, resolvedOwners) => {
     const sourceIndex = y * width + x;
     const label = sourceLabelled.labels[sourceIndex];
     if (label > 0) {
-      const override = floatingOverride[label];
-      if (override >= 0) return override;
+      const owner = resolvedOwners[label];
+      if (owner >= 0) return owner;
     }
     return groupForSourcePixel(x, y);
   };
 
-  if (floatingReassigned > 0) {
-    for (const bounds of groupBounds) {
-      bounds.minX = width;
-      bounds.minY = height;
-      bounds.maxX = -1;
-      bounds.maxY = -1;
-      bounds.count = 0;
-    }
+  const measureBounds = (ownerForPixel) => {
+    const measured = Array.from({ length: 15 }, () => ({ minX: width, minY: height, maxX: -1, maxY: -1, count: 0 }));
     for (let y = 0; y < height; y += 1) {
       for (let x = 0; x < width; x += 1) {
         const sourceIndex = y * width + x;
         if (!sourceForeground.mask[sourceIndex]) continue;
-        const group = finalGroupForSourcePixel(x, y);
-        const bounds = groupBounds[group];
+        const group = ownerForPixel(x, y);
+        if (group < 0 || group >= 15) continue;
+        const bounds = measured[group];
         bounds.count += 1;
         if (x < bounds.minX) bounds.minX = x;
         if (x > bounds.maxX) bounds.maxX = x;
@@ -713,6 +746,65 @@ async function splitIntoFifteen(blob) {
         if (y > bounds.maxY) bounds.maxY = y;
       }
     }
+    return measured;
+  };
+
+  const candidateBounds = measureBounds((x, y) => ownerWithComponents(x, y, candidateComponentOwner));
+  const safeCandidateGroup = new Uint8Array(15);
+  safeCandidateGroup.fill(1);
+
+  for (let group = 0; group < 15; group += 1) {
+    const legacy = legacyGroupBounds[group];
+    const candidate = candidateBounds[group];
+    if (!legacy || !candidate || legacy.count <= 0 || candidate.count <= 0) {
+      safeCandidateGroup[group] = 0;
+      continue;
+    }
+    const legacyWidth = legacy.maxX - legacy.minX + 1;
+    const legacyHeight = legacy.maxY - legacy.minY + 1;
+    const candidateWidth = candidate.maxX - candidate.minX + 1;
+    const candidateHeight = candidate.maxY - candidate.minY + 1;
+    const legacyCx = (legacy.minX + legacy.maxX) * 0.5;
+    const legacyCy = (legacy.minY + legacy.maxY) * 0.5;
+    const candidateCx = (candidate.minX + candidate.maxX) * 0.5;
+    const candidateCy = (candidate.minY + candidate.maxY) * 0.5;
+    const centerShift = Math.hypot(
+      (candidateCx - legacyCx) / Math.max(1, sourceCellWidth),
+      (candidateCy - legacyCy) / Math.max(1, sourceCellHeight)
+    );
+    const losesTooMuch = candidate.count < legacy.count * 0.82;
+    const gainsTooMuch = candidate.count > legacy.count * 1.28;
+    const expandsTooWide = candidateWidth > Math.max(legacyWidth * 1.38, legacyWidth + sourceCellWidth * 0.30);
+    const expandsTooTall = candidateHeight > Math.max(legacyHeight * 1.38, legacyHeight + sourceCellHeight * 0.30);
+    const shiftsTooFar = centerShift > 0.24;
+    if (losesTooMuch || gainsTooMuch || expandsTooWide || expandsTooTall || shiftsTooFar) {
+      safeCandidateGroup[group] = 0;
+    }
+  }
+
+  // Per-component rollback: if either the source or destination sticker became
+  // suspicious under the candidate ownership, that component immediately falls
+  // back to the legacy pixel ownership. This prevents a single bad caption guess
+  // from making an otherwise-good sheet worse.
+  const finalComponentOwner = new Int16Array(sourceLabelled.componentCount + 1);
+  finalComponentOwner.fill(-1);
+  for (const component of sourceLabelled.components) {
+    const candidateOwner = candidateComponentOwner[component.id];
+    if (candidateOwner < 0) continue;
+    const legacyOwner = componentOwner[component.id];
+    if (!safeCandidateGroup[candidateOwner]) continue;
+    if (legacyOwner >= 0 && legacyOwner !== candidateOwner && !safeCandidateGroup[legacyOwner]) continue;
+    finalComponentOwner[component.id] = candidateOwner;
+  }
+
+  const finalGroupForSourcePixel = (x, y) => ownerWithComponents(x, y, finalComponentOwner);
+  const finalBounds = measureBounds(finalGroupForSourcePixel);
+  for (let group = 0; group < 15; group += 1) {
+    groupBounds[group].minX = finalBounds[group].minX;
+    groupBounds[group].minY = finalBounds[group].minY;
+    groupBounds[group].maxX = finalBounds[group].maxX;
+    groupBounds[group].maxY = finalBounds[group].maxY;
+    groupBounds[group].count = finalBounds[group].count;
   }
 
   const totalVisible = sourceForeground.visibleTotal;
