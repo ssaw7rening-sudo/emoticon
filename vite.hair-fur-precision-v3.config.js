@@ -3,7 +3,7 @@ import baseConfig from './vite.hybrid-edge-refine.config.js'
 
 function hairFurPrecisionPre() {
   return {
-    name: 'hair-fur-fine-detail-precision-v5',
+    name: 'hair-fur-fine-detail-precision-v6',
     enforce: 'pre',
     transform(code, id) {
       const normalizedId = id.replace(/\\/g, '/')
@@ -15,7 +15,7 @@ function hairFurPrecisionPre() {
         throw new Error('[hair-fur-v3] Quality-assessment anchor was not found')
       }
 
-      const helper = `// HAIR_FUR_FINE_DETAIL_PRECISION_V5
+      const helper = `// HAIR_FUR_FINE_DETAIL_PRECISION_V6
 function getHairFurText(lang) {
   const copy = {
     ko: {
@@ -143,7 +143,7 @@ async function refineHairFurEdges(matteBlob, sourceFile, options = {}) {
   // slightly wider candidate band is needed. It is still derived from the matte
   // contour and never scans unrelated image interiors.
   let traceBand = edgeBand.slice();
-  const traceExpandIterations = mobileLike ? 2 : 3;
+  const traceExpandIterations = mobileLike ? 3 : 4;
   for (let iteration = 0; iteration < traceExpandIterations; iteration += 1) {
     const expanded = traceBand.slice();
     for (let y = 1; y < analysisHeight - 1; y += 1) {
@@ -289,8 +289,8 @@ async function refineHairFurEdges(matteBlob, sourceFile, options = {}) {
         // decontaminate them a little more while leaving ordinary edges unchanged.
         const fineStrand = nextAlpha < 136 && supportedStrand;
         const pull = Math.min(
-          fineStrand ? 0.38 : 0.30,
-          (1 - nextAlpha / 255) * (fineStrand ? 0.44 : 0.34)
+          fineStrand ? 0.42 : 0.30,
+          (1 - nextAlpha / 255) * (fineStrand ? 0.48 : 0.34)
         );
         sourcePixels[p] = Math.round(sourcePixels[p] * (1 - pull) + fgR * pull);
         sourcePixels[p + 1] = Math.round(sourcePixels[p + 1] * (1 - pull) + fgG * pull);
@@ -314,7 +314,7 @@ async function refineHairFurEdges(matteBlob, sourceFile, options = {}) {
     if (x < 0 || y < 0 || x >= width || y >= height) return 0;
     return map[y * width + x];
   };
-  const findSupport = (map, x, y, dx, dy, maxStep = 3) => {
+  const findSupport = (map, x, y, dx, dy, maxStep = 4) => {
     for (let step = 1; step <= maxStep; step += 1) {
       const nx = x + dx * step;
       const ny = y + dy * step;
@@ -358,10 +358,10 @@ async function refineHairFurEdges(matteBlob, sourceFile, options = {}) {
         // Bridge a short transparent gap only when both ends line up and their
         // source colours agree. This is the main fix for visibly broken hairs.
         for (const [dx, dy] of traceAxes) {
-          const positive = findSupport(tracedAlpha, x, y, dx, dy, 3);
-          const negative = findSupport(tracedAlpha, x, y, -dx, -dy, 3);
+          const positive = findSupport(tracedAlpha, x, y, dx, dy, 4);
+          const negative = findSupport(tracedAlpha, x, y, -dx, -dy, 4);
           if (!positive || !negative) continue;
-          if (positive.step + negative.step > 7) continue;
+          if (positive.step + negative.step > 9) continue;
 
           const positiveColor = sourceColor(positive.index);
           const negativeColor = sourceColor(negative.index);
@@ -369,17 +369,19 @@ async function refineHairFurEdges(matteBlob, sourceFile, options = {}) {
             positiveColor[0], positiveColor[1], positiveColor[2],
             negativeColor[0], negativeColor[1], negativeColor[2]
           );
-          if (endDistance > (autoMode ? 3200 : 4600)) continue;
+          if (endDistance > (autoMode ? 2800 : 4200)) continue;
 
           const meanColor = [
             (positiveColor[0] + negativeColor[0]) / 2,
             (positiveColor[1] + negativeColor[1]) / 2,
             (positiveColor[2] + negativeColor[2]) / 2
           ];
-          if (colorDistanceTo(index, meanColor) > (autoMode ? 3600 : 5200)) continue;
+          if (colorDistanceTo(index, meanColor) > (autoMode ? 3300 : 4800)) continue;
 
           const endpointAlpha = (positive.alpha + negative.alpha) / 2;
-          const candidateAlpha = Math.min(autoMode ? 156 : 182, Math.round(endpointAlpha * 0.64));
+          const gapSpan = positive.step + negative.step;
+          const gapFactor = gapSpan >= 8 ? 0.48 : (gapSpan >= 6 ? 0.56 : 0.64);
+          const candidateAlpha = Math.min(autoMode ? 156 : 182, Math.round(endpointAlpha * gapFactor));
           if (candidateAlpha > bestAlpha) {
             bestAlpha = candidateAlpha;
             bestColor = meanColor;
@@ -442,7 +444,8 @@ async function refineHairFurEdges(matteBlob, sourceFile, options = {}) {
       const a = alphaOut[index];
       if (a <= 4 || a >= 251) continue;
       const neighborMean = (alphaOut[index - 1] + alphaOut[index + 1] + alphaOut[index - width] + alphaOut[index + width]) / 4;
-      stabilized[index] = Math.max(0, Math.min(255, Math.round(a * 0.88 + neighborMean * 0.12)));
+      const stabilizeMix = a < 96 ? 0.06 : 0.12;
+      stabilized[index] = Math.max(0, Math.min(255, Math.round(a * (1 - stabilizeMix) + neighborMean * stabilizeMix)));
     }
   }
 
