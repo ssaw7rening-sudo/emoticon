@@ -216,7 +216,7 @@ async function refineHybridPrecisionEdges(matteBlob, sourceFile) {
     }
   }
 
-  // ADAPTIVE_ALPHA_EDGE_SMOOTHING_V3
+  // ADAPTIVE_ALPHA_EDGE_SMOOTHING_V4
   // Smooth only the narrow detected contour. Existing partial alpha receives a
   // stronger edge-aware blend, while a hard 0/255 staircase may gain at most one
   // anti-aliased contour pixel. Fine isolated strands are protected by requiring
@@ -260,11 +260,11 @@ async function refineHybridPrecisionEdges(matteBlob, sourceFile) {
       if (a > 3 && a < 252) {
         const localSpan = localMax - localMin;
         const strandLike = a < 72 || (opaqueSupport <= 2 && transparentSupport >= 4);
-        let smoothing = strandLike ? 0.16 : 0.34;
-        if (!strandLike && localSpan >= 96) smoothing = 0.42;
-        if (!strandLike && a >= 72 && a <= 216 && localSpan >= 144) smoothing = 0.46;
+        let smoothing = strandLike ? 0.16 : 0.36;
+        if (!strandLike && localSpan >= 96) smoothing = 0.45;
+        if (!strandLike && a >= 72 && a <= 216 && localSpan >= 144) smoothing = 0.50;
         const blended = Math.round(a * (1 - smoothing) + targetAlpha * smoothing);
-        const maxDelta = strandLike ? 18 : 38;
+        const maxDelta = strandLike ? 18 : 40;
         smoothedAlpha[index] = Math.max(0, Math.min(255, Math.max(a - maxDelta, Math.min(a + maxDelta, blended))));
         continue;
       }
@@ -275,12 +275,12 @@ async function refineHybridPrecisionEdges(matteBlob, sourceFile) {
       if (!mixedBoundary) continue;
       if (a <= 3) {
         if (opaqueSupport < 2) continue;
-        const softened = Math.round(targetAlpha * 0.22);
-        smoothedAlpha[index] = Math.max(0, Math.min(48, softened));
+        const softened = Math.round(targetAlpha * 0.24);
+        smoothedAlpha[index] = Math.max(0, Math.min(52, softened));
       } else if (a >= 252) {
         if (transparentSupport < 2) continue;
-        const softened = Math.round(255 * 0.78 + targetAlpha * 0.22);
-        smoothedAlpha[index] = Math.max(207, Math.min(255, softened));
+        const softened = Math.round(255 * 0.76 + targetAlpha * 0.24);
+        smoothedAlpha[index] = Math.max(202, Math.min(255, softened));
       }
     }
   }
