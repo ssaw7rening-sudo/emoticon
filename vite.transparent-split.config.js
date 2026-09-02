@@ -92,29 +92,28 @@ function transparentStickerSheetDirectSplit() {
       setQualityAssessment({ status: 'pass', score: 0 });
       setComparePosition(50);
 
-      // Transparent sticker sheets need no matting pass. Detect the existing
-      // alpha layout directly and auto-split only when the 3x5 structure is
-      // confident. Ambiguous layouts keep the manual split option as fallback.
+      // Transparent PNGs need no matting pass. Open the automatic split card
+      // immediately and try the existing alpha layout directly. This avoids
+      // hiding the split workflow when a valid sheet receives an uncertain
+      // layout score.
       try {
         setSheetDetection({ status: 'checking', confidence: 0 });
         const detection = await detectEmoticonSheet(nextFile);
-        setSheetDetection(detection);
-        if (detection.status === 'sheet') {
-          setSplitting(true);
-          try {
-            const items = await splitIntoFifteen(nextFile);
-            const withUrls = items.map((item) => ({ ...item, url: URL.createObjectURL(item.blob) }));
-            setSplitItems(withUrls);
-          } catch (splitError) {
-            console.warn('Transparent sticker auto split failed:', splitError);
-            setSplitError(t.splitFailed);
-          } finally {
-            setSplitting(false);
-          }
+        setSheetDetection({ status: 'sheet', confidence: detection.confidence || 0 });
+        setSplitting(true);
+        try {
+          const items = await splitIntoFifteen(nextFile);
+          const withUrls = items.map((item) => ({ ...item, url: URL.createObjectURL(item.blob) }));
+          setSplitItems(withUrls);
+        } catch (splitError) {
+          console.warn('Transparent sticker auto split failed:', splitError);
+          setSplitError(t.splitFailed);
+        } finally {
+          setSplitting(false);
         }
       } catch (detectionError) {
         console.warn('Transparent sticker sheet detection failed:', detectionError);
-        setSheetDetection({ status: 'ambiguous', confidence: 0 });
+        setSheetDetection({ status: 'sheet', confidence: 0 });
       }
     }`
 
