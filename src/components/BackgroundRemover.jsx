@@ -1695,7 +1695,7 @@ function TransparencyEraser({ blob, lang, onApply, onCancel }) {
   const lastPointRef = useRef(null);
   const [brushSize, setBrushSize] = useState(30);
   const [ready, setReady] = useState(false);
-  const [smartMode, setSmartMode] = useState(false);
+  const [smartMode, setSmartMode] = useState(true);
   const [smartStatus, setSmartStatus] = useState('');
   const [smartBusy, setSmartBusy] = useState(false);
 
@@ -2336,7 +2336,7 @@ export default function BackgroundRemover({ lang = 'ko' }) {
                   ✨ {lang === 'ko' ? '문자 사이 정리' : lang === 'ja' ? '文字間を整理' : lang === 'zh' ? '清理文字间隙' : 'Clean text gaps'}
                 </button>
                 <button type="button" disabled={busy} onClick={() => setEraserOpen(true)} className="rounded-xl bg-[#3E6B4B] px-3 py-3 text-xs sm:text-sm font-extrabold text-white disabled:opacity-50">
-                  🧽 {lang === 'ko' ? '투명 지우개' : lang === 'ja' ? '透明消しゴム' : lang === 'zh' ? '透明橡皮擦' : 'Transparency eraser'}
+                  ✨ {lang === 'ko' ? 'AI 선택 지우개' : lang === 'ja' ? 'AI選択消しゴム' : lang === 'zh' ? 'AI选择橡皮擦' : 'AI selection eraser'}
                 </button>
               </div>
             </div>
