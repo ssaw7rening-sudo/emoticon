@@ -6,8 +6,8 @@
     { "source": "/terms/", "destination": "/terms", "permanent": true }
   ],
   "rewrites": [
-    { "source": "/privacy", "destination": "/index.html" },
-    { "source": "/terms", "destination": "/index.html" },
+    { "source": "/privacy", "destination": "/privacy/index.html" },
+    { "source": "/terms", "destination": "/terms/index.html" },
 
     { "source": "/:lang(en|ja|zh)", "destination": "/:lang/index.html" },
     { "source": "/:lang(en|ja|zh)/", "destination": "/:lang/index.html" },
