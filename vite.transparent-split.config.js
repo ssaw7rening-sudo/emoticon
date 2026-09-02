@@ -85,9 +85,13 @@ function transparentStickerSheetDirectSplit() {
     setSourceUrl(URL.createObjectURL(nextFile));
 
     if (alreadyTransparent) {
+      // A transparent sheet can still contain opaque white pockets trapped
+      // between text strokes. Clean those high-confidence pockets before the
+      // preview and automatic split so no separate cleanup action is needed.
+      const transparentResult = await removeEnclosedBackdropPockets(nextFile, nextFile, true);
       setSourceAlreadyTransparent(true);
-      setResultBlob(nextFile);
-      setResultUrl(URL.createObjectURL(nextFile));
+      setResultBlob(transparentResult);
+      setResultUrl(URL.createObjectURL(transparentResult));
       setResultMethod('transparent');
       setQualityAssessment({ status: 'pass', score: 0 });
       setComparePosition(50);
@@ -98,11 +102,11 @@ function transparentStickerSheetDirectSplit() {
       // layout score.
       try {
         setSheetDetection({ status: 'checking', confidence: 0 });
-        const detection = await detectEmoticonSheet(nextFile);
+        const detection = await detectEmoticonSheet(transparentResult);
         setSheetDetection({ status: 'sheet', confidence: detection.confidence || 0 });
         setSplitting(true);
         try {
-          const items = await splitIntoFifteen(nextFile);
+          const items = await splitIntoFifteen(transparentResult);
           const withUrls = items.map((item) => ({ ...item, url: URL.createObjectURL(item.blob) }));
           setSplitItems(withUrls);
         } catch (splitError) {
