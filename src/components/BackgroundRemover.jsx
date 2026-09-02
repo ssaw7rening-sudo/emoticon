@@ -499,6 +499,64 @@ async function correctUnexpectedForegroundTransparency(blob) {
   return canvasToPngBlob(canvas);
 }
 
+function estimateOpaqueCleanupBackdrop(sourcePixels, resultPixels, width, height) {
+  const total = width * height;
+  if (!total) return null;
+
+  // A PNG may already be transparent around the stickers while small pieces of the
+  // old white/cream backdrop remain trapped inside lettering. In that case the
+  // normal edge sampler has no opaque border from which to estimate a backdrop.
+  // Find the dominant bright, low-chroma colour touching transparency instead.
+  const bins = new Map();
+  const searchRadius = Math.max(1, Math.min(4, Math.round(Math.min(width, height) / 420)));
+
+  for (let index = 0; index < total; index += 1) {
+    const p = index * 4;
+    if (resultPixels[p + 3] < 128 || sourcePixels[p + 3] < 128) continue;
+
+    const r = sourcePixels[p];
+    const g = sourcePixels[p + 1];
+    const b = sourcePixels[p + 2];
+    const max = Math.max(r, g, b);
+    const min = Math.min(r, g, b);
+    const luminance = r * 0.299 + g * 0.587 + b * 0.114;
+    if (luminance < 150 || max - min > 54) continue;
+
+    const x = index % width;
+    const y = Math.floor(index / width);
+    let nearTransparency = false;
+    for (let offset = 1; offset <= searchRadius && !nearTransparency; offset += 1) {
+      const neighbours = [
+        x >= offset ? index - offset : -1,
+        x + offset < width ? index + offset : -1,
+        y >= offset ? index - width * offset : -1,
+        y + offset < height ? index + width * offset : -1
+      ];
+      nearTransparency = neighbours.some((next) => next >= 0 && resultPixels[next * 4 + 3] < 36);
+    }
+    if (!nearTransparency) continue;
+
+    const key = `${r >> 4}:${g >> 4}:${b >> 4}`;
+    const bin = bins.get(key) || { count: 0, r: 0, g: 0, b: 0 };
+    bin.count += 1;
+    bin.r += r;
+    bin.g += g;
+    bin.b += b;
+    bins.set(key, bin);
+  }
+
+  let best = null;
+  for (const bin of bins.values()) {
+    if (!best || bin.count > best.count) best = bin;
+  }
+  if (!best || best.count < Math.max(18, Math.round(total * 0.00002))) return null;
+
+  return {
+    bg: [Math.round(best.r / best.count), Math.round(best.g / best.count), Math.round(best.b / best.count)],
+    tolerance: 44
+  };
+}
+
 async function removeEnclosedBackdropPockets(blob, sourceFile, aggressive = false) {
   try {
     const source = await drawFileToCanvas(sourceFile);
@@ -517,13 +575,18 @@ async function removeEnclosedBackdropPockets(blob, sourceFile, aggressive = fals
       sourceCtx = scaledCtx;
     }
 
-    const sourceData = sourceCtx.getImageData(0, 0, width, height);
-    const estimate = estimateUniformEdgeBackground(sourceData.data, width, height);
-    if (!estimate) return blob;
-
     const resultData = result.ctx.getImageData(0, 0, width, height);
+    const sourceData = sourceCtx.getImageData(0, 0, width, height);
     const pixels = resultData.data;
     const original = sourceData.data;
+    let estimate = estimateUniformEdgeBackground(original, width, height);
+    let usedTransparentFallback = false;
+    if (!estimate) {
+      estimate = estimateOpaqueCleanupBackdrop(original, pixels, width, height);
+      usedTransparentFallback = Boolean(estimate);
+    }
+    if (!estimate) return blob;
+
     const { bg, tolerance } = estimate;
     const total = width * height;
     const visited = new Uint8Array(total);
@@ -547,7 +610,10 @@ async function removeEnclosedBackdropPockets(blob, sourceFile, aggressive = fals
       );
     };
 
-    for (let seed = 0; seed < total; seed += 1) {
+    // On an already-transparent PNG, the fallback colour is usually also the
+    // sticker's white outline. Skip broad component deletion and only use the
+    // much safer, stroke-bracketed text-gap pass below.
+    for (let seed = 0; seed < total && !usedTransparentFallback; seed += 1) {
       if (!isCandidate(seed)) continue;
 
       let head = 0;
@@ -651,9 +717,13 @@ async function removeEnclosedBackdropPockets(blob, sourceFile, aggressive = fals
       const r = pixels[p];
       const g = pixels[p + 1];
       const b = pixels[p + 2];
+      const chroma = Math.max(r, g, b) - Math.min(r, g, b);
+      const luminance = r * 0.299 + g * 0.587 + b * 0.114;
+      const backgroundLuminance = bg[0] * 0.299 + bg[1] * 0.587 + bg[2] * 0.114;
+      const contrast = colorDistance([r, g, b], bg);
       return (
-        Math.max(r, g, b) - Math.min(r, g, b) >= (aggressive ? 20 : 34) &&
-        colorDistance([r, g, b], bg) >= (aggressive ? 34 : Math.max(42, boundaryDistance))
+        contrast >= (aggressive ? 34 : Math.max(42, boundaryDistance)) &&
+        (chroma >= (aggressive ? 18 : 34) || (aggressive && backgroundLuminance - luminance >= 54))
       );
     };
     const hasStroke = (x, y, dx, dy) => {
@@ -676,23 +746,38 @@ async function removeEnclosedBackdropPockets(blob, sourceFile, aggressive = fals
       const y = Math.floor(index / width);
       const horizontallyBracketed = hasStroke(x, y, -1, 0) && hasStroke(x, y, 1, 0);
       const verticallyBracketed = hasStroke(x, y, 0, -1) && hasStroke(x, y, 0, 1);
-      if (horizontallyBracketed || verticallyBracketed) glyphGapMask[index] = 1;
+      const diagonalDownBracketed = aggressive && hasStroke(x, y, -1, -1) && hasStroke(x, y, 1, 1);
+      const diagonalUpBracketed = aggressive && hasStroke(x, y, -1, 1) && hasStroke(x, y, 1, -1);
+      if (horizontallyBracketed || verticallyBracketed || diagonalDownBracketed || diagonalUpBracketed) {
+        glyphGapMask[index] = 1;
+      }
     }
 
-    // Include one antialiased backdrop pixel around confirmed glyph gaps so a thin
-    // white fringe is not left behind.
-    for (let index = 0; index < total; index += 1) {
-      if (!glyphGapMask[index]) continue;
-      const x = index % width;
-      const y = Math.floor(index / width);
-      const neighbours = [];
-      if (x > 0) neighbours.push(index - 1);
-      if (x + 1 < width) neighbours.push(index + 1);
-      if (y > 0) neighbours.push(index - width);
-      if (y + 1 < height) neighbours.push(index + width);
-      for (const next of neighbours) {
-        if (isBackdropPixel(next)) glyphGapMask[next] = 2;
+    // Grow confirmed seeds only a few pixels through matching backdrop colour.
+    // This clears the full antialiased gap without following that colour around
+    // the entire white sticker outline.
+    const expansionPasses = aggressive ? 4 : 1;
+    for (let pass = 0; pass < expansionPasses; pass += 1) {
+      const additions = [];
+      for (let index = 0; index < total; index += 1) {
+        if (!glyphGapMask[index]) continue;
+        const x = index % width;
+        const y = Math.floor(index / width);
+        const neighbours = [];
+        if (x > 0) neighbours.push(index - 1);
+        if (x + 1 < width) neighbours.push(index + 1);
+        if (y > 0) neighbours.push(index - width);
+        if (y + 1 < height) neighbours.push(index + width);
+        if (aggressive && x > 0 && y > 0) neighbours.push(index - width - 1);
+        if (aggressive && x + 1 < width && y > 0) neighbours.push(index - width + 1);
+        if (aggressive && x > 0 && y + 1 < height) neighbours.push(index + width - 1);
+        if (aggressive && x + 1 < width && y + 1 < height) neighbours.push(index + width + 1);
+        for (const next of neighbours) {
+          if (!glyphGapMask[next] && isBackdropPixel(next)) additions.push(next);
+        }
       }
+      if (!additions.length) break;
+      for (const next of additions) glyphGapMask[next] = 2;
     }
     for (let index = 0; index < total; index += 1) {
       if (!glyphGapMask[index]) continue;
@@ -1689,6 +1774,89 @@ async function getSmartEraser(onProgress) {
   return smartEraserPromise;
 }
 
+function getBestSamMask(masks, scoreValues) {
+  const group = masks?.[0] ?? masks;
+  if (!group) return null;
+
+  const scores = Array.from(scoreValues || []);
+  if (Array.isArray(group)) {
+    if (!group.length) return null;
+    let bestIndex = 0;
+    for (let index = 1; index < group.length; index += 1) {
+      if ((scores[index] ?? -Infinity) > (scores[bestIndex] ?? -Infinity)) bestIndex = index;
+    }
+    const mask = group[bestIndex];
+    const dims = Array.from(mask?.dims || []);
+    return { data: mask?.data, offset: 0, width: dims.at(-1), height: dims.at(-2) };
+  }
+
+  const dims = Array.from(group.dims || []);
+  const data = group.data;
+  const width = dims.at(-1);
+  const height = dims.at(-2);
+  if (!data || !width || !height) return null;
+
+  const planeSize = width * height;
+  const channelCount = Math.max(1, Math.min(Math.floor(data.length / planeSize), dims.at(-3) || 1));
+  let bestIndex = 0;
+  for (let index = 1; index < channelCount; index += 1) {
+    if ((scores[index] ?? -Infinity) > (scores[bestIndex] ?? -Infinity)) bestIndex = index;
+  }
+  return { data, offset: bestIndex * planeSize, width, height };
+}
+
+function eraseSimilarConnectedRegion(canvas, point) {
+  const ctx = canvas?.getContext('2d', { willReadFrequently: true });
+  if (!ctx || !canvas.width || !canvas.height) return false;
+
+  const width = canvas.width;
+  const height = canvas.height;
+  const total = width * height;
+  const seedX = Math.max(0, Math.min(width - 1, Math.round(point.x)));
+  const seedY = Math.max(0, Math.min(height - 1, Math.round(point.y)));
+  const seed = seedY * width + seedX;
+  const imageData = ctx.getImageData(0, 0, width, height);
+  const pixels = imageData.data;
+  const seedPixel = seed * 4;
+  if (pixels[seedPixel + 3] < 18) return false;
+
+  const seedColour = [pixels[seedPixel], pixels[seedPixel + 1], pixels[seedPixel + 2]];
+  const seedChroma = Math.max(...seedColour) - Math.min(...seedColour);
+  const seedLuminance = seedColour[0] * 0.299 + seedColour[1] * 0.587 + seedColour[2] * 0.114;
+  const tolerance = seedChroma <= 48 && seedLuminance >= 135 ? 46 : 30;
+  const visited = new Uint8Array(total);
+  const queue = new Int32Array(total);
+  let head = 0;
+  let tail = 0;
+  visited[seed] = 1;
+  queue[tail++] = seed;
+
+  const enqueue = (index) => {
+    if (index < 0 || index >= total || visited[index]) return;
+    const p = index * 4;
+    if (pixels[p + 3] < 18) return;
+    if (colorDistance([pixels[p], pixels[p + 1], pixels[p + 2]], seedColour) > tolerance) return;
+    visited[index] = 1;
+    queue[tail++] = index;
+  };
+
+  while (head < tail) {
+    const index = queue[head++];
+    const x = index % width;
+    const y = Math.floor(index / width);
+    if (x > 0) enqueue(index - 1);
+    if (x + 1 < width) enqueue(index + 1);
+    if (y > 0) enqueue(index - width);
+    if (y + 1 < height) enqueue(index + width);
+    if (tail > total * 0.58) return false;
+  }
+
+  if (tail < 3) return false;
+  for (let index = 0; index < tail; index += 1) pixels[queue[index] * 4 + 3] = 0;
+  ctx.putImageData(imageData, 0, 0);
+  return true;
+}
+
 function TransparencyEraser({ blob, lang, onApply, onCancel }) {
   const canvasRef = useRef(null);
   const drawingRef = useRef(false);
@@ -1700,10 +1868,10 @@ function TransparencyEraser({ blob, lang, onApply, onCancel }) {
   const [smartBusy, setSmartBusy] = useState(false);
 
   const labels = {
-    ko: { title: '투명 지우개', hint: '직접 문지르거나 AI 선택 모드에서 지울 부분을 한 번 누르세요.', size: '지우개 크기', reset: '처음으로', cancel: '취소', apply: '지우기 적용', smart: 'AI 선택', manual: '직접 지우기', loading: 'AI 모델 준비 중…', selecting: '영역을 찾는 중…', failed: 'AI 선택에 실패했습니다. 직접 지우기를 사용해 주세요.' },
-    en: { title: 'Transparency eraser', hint: 'Rub directly, or tap an area once in AI Select mode.', size: 'Eraser size', reset: 'Reset', cancel: 'Cancel', apply: 'Apply erasing', smart: 'AI Select', manual: 'Manual erase', loading: 'Loading AI model…', selecting: 'Finding the area…', failed: 'AI selection failed. Please use manual erase.' },
-    ja: { title: '透明消しゴム', hint: '直接なぞるか、AI選択モードで消す部分を一度タップしてください。', size: '消しゴムサイズ', reset: 'リセット', cancel: 'キャンセル', apply: '適用', smart: 'AI選択', manual: '手動で消す', loading: 'AIモデル準備中…', selecting: '領域を検出中…', failed: 'AI選択に失敗しました。手動消去をご利用ください。' },
-    zh: { title: '透明橡皮擦', hint: '可直接涂抹，或在AI选择模式下点击要删除的区域。', size: '橡皮擦大小', reset: '重置', cancel: '取消', apply: '应用', smart: 'AI选择', manual: '手动擦除', loading: '正在加载AI模型…', selecting: '正在识别区域…', failed: 'AI选择失败，请使用手动擦除。' }
+    ko: { title: '투명 지우개', hint: '직접 문지르거나 AI 선택 모드에서 지울 부분을 한 번 누르세요.', size: '지우개 크기', reset: '처음으로', cancel: '취소', apply: '지우기 적용', smart: 'AI 선택', manual: '직접 지우기', loading: 'AI 모델 준비 중…', selecting: '영역을 찾는 중…', fallback: 'AI 대신 스마트 영역 선택으로 지웠습니다.', failed: '선택 영역을 찾지 못했습니다. 직접 지우기를 사용해 주세요.' },
+    en: { title: 'Transparency eraser', hint: 'Rub directly, or tap an area once in AI Select mode.', size: 'Eraser size', reset: 'Reset', cancel: 'Cancel', apply: 'Apply erasing', smart: 'AI Select', manual: 'Manual erase', loading: 'Loading AI model…', selecting: 'Finding the area…', fallback: 'Erased with smart region selection.', failed: 'No safe area was found. Please use manual erase.' },
+    ja: { title: '透明消しゴム', hint: '直接なぞるか、AI選択モードで消す部分を一度タップしてください。', size: '消しゴムサイズ', reset: 'リセット', cancel: 'キャンセル', apply: '適用', smart: 'AI選択', manual: '手動で消す', loading: 'AIモデル準備中…', selecting: '領域を検出中…', fallback: 'スマート領域選択で消去しました。', failed: '安全に消せる領域が見つかりません。手動消去をご利用ください。' },
+    zh: { title: '透明橡皮擦', hint: '可直接涂抹，或在AI选择模式下点击要删除的区域。', size: '橡皮擦大小', reset: '重置', cancel: '取消', apply: '应用', smart: 'AI选择', manual: '手动擦除', loading: '正在加载AI模型…', selecting: '正在识别区域…', fallback: '已使用智能区域选择擦除。', failed: '未找到可安全擦除的区域，请使用手动擦除。' }
   };
   const copy = labels[lang] || labels.ko;
 
@@ -1768,45 +1936,41 @@ function TransparencyEraser({ blob, lang, onApply, onCancel }) {
       });
       setSmartStatus(copy.selecting);
       const rawImage = await RawImage.fromBlob(currentBlob);
-      const inputs = await processor(rawImage, [[[point.x, point.y]]]);
+      const inputs = await processor(rawImage, { input_points: [[[point.x, point.y]]] });
       const outputs = await model(inputs);
       const masks = await processor.post_process_masks(
         outputs.pred_masks,
         inputs.original_sizes,
         inputs.reshaped_input_sizes
       );
-      const candidates = masks?.[0] || [];
-      if (!candidates.length) throw new Error('No segmentation mask');
-
-      const scores = Array.from(outputs.iou_scores?.data || []);
-      let bestIndex = 0;
-      for (let i = 1; i < candidates.length; i += 1) {
-        if ((scores[i] ?? -Infinity) > (scores[bestIndex] ?? -Infinity)) bestIndex = i;
-      }
-      const mask = candidates[bestIndex];
-      const maskData = mask?.data;
-      if (!maskData || maskData.length !== canvas.width * canvas.height) {
-        throw new Error('Unexpected segmentation mask size');
-      }
+      const mask = getBestSamMask(masks, outputs.iou_scores?.data);
+      if (!mask?.data || !mask.width || !mask.height) throw new Error('No segmentation mask');
 
       let selected = 0;
-      for (let i = 0; i < maskData.length; i += 1) {
-        if (maskData[i] > 0) selected += 1;
+      const maskArea = mask.width * mask.height;
+      for (let i = 0; i < maskArea; i += 1) {
+        if (mask.data[mask.offset + i] > 0) selected += 1;
       }
-      if (selected < 2 || selected > maskData.length * 0.55) {
+      if (selected < 2 || selected > maskArea * 0.72) {
         throw new Error('Unsafe segmentation area');
       }
 
       const ctx = canvas.getContext('2d');
       const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      for (let i = 0; i < maskData.length; i += 1) {
-        if (maskData[i] > 0) imageData.data[i * 4 + 3] = 0;
+      for (let y = 0; y < canvas.height; y += 1) {
+        const maskY = Math.min(mask.height - 1, Math.floor((y * mask.height) / canvas.height));
+        for (let x = 0; x < canvas.width; x += 1) {
+          const maskX = Math.min(mask.width - 1, Math.floor((x * mask.width) / canvas.width));
+          if (mask.data[mask.offset + maskY * mask.width + maskX] > 0) {
+            imageData.data[(y * canvas.width + x) * 4 + 3] = 0;
+          }
+        }
       }
       ctx.putImageData(imageData, 0, 0);
       setSmartStatus('');
     } catch (error) {
       console.warn('AI selection erase failed:', error);
-      setSmartStatus(copy.failed);
+      setSmartStatus(eraseSimilarConnectedRegion(canvas, point) ? copy.fallback : copy.failed);
     } finally {
       setSmartBusy(false);
     }
@@ -1919,6 +2083,7 @@ export default function BackgroundRemover({ lang = 'ko' }) {
   const [resultMethod, setResultMethod] = useState('');
   const [precisionMessage, setPrecisionMessage] = useState('');
   const [eraserOpen, setEraserOpen] = useState(false);
+  const [textCleanupMessage, setTextCleanupMessage] = useState('');
 
   useEffect(() => () => {
     if (sourceUrl) URL.revokeObjectURL(sourceUrl);
@@ -1966,6 +2131,7 @@ export default function BackgroundRemover({ lang = 'ko' }) {
     setPrecisionMessage('');
     setEraserOpen(false);
     setError('');
+    setTextCleanupMessage('');
     setProgress(null);
     setStage('');
     setComparePosition(50);
@@ -2137,15 +2303,21 @@ export default function BackgroundRemover({ lang = 'ko' }) {
     setQualityAssessment(await assessRemovalQuality(editedBlob));
     setComparePosition(0);
     setEraserOpen(false);
+    setTextCleanupMessage('');
   };
 
   const runAggressiveTextCleanup = async () => {
     if (!resultBlob || !file || busy) return;
     setBusy(true);
     setStage('processing');
+    setError('');
+    setTextCleanupMessage('');
     try {
       const cleaned = await removeEnclosedBackdropPockets(resultBlob, file, true);
       await applyEditedBlob(cleaned);
+      setTextCleanupMessage(cleaned === resultBlob
+        ? (lang === 'ko' ? '추가로 정리할 문자 사이 배경을 찾지 못했습니다.' : lang === 'ja' ? '追加で整理できる文字間の背景は見つかりませんでした。' : lang === 'zh' ? '未找到可进一步清理的文字间背景。' : 'No additional text-gap background was found.')
+        : (lang === 'ko' ? '문자 사이에 남은 배경을 투명하게 정리했습니다.' : lang === 'ja' ? '文字間に残った背景を透明にしました。' : lang === 'zh' ? '已将文字间残留背景清理为透明。' : 'The remaining background between letters was made transparent.'));
     } catch (error) {
       console.warn('Aggressive text cleanup failed:', error);
       setError(t.failed);
@@ -2335,10 +2507,15 @@ export default function BackgroundRemover({ lang = 'ko' }) {
                 <button type="button" disabled={busy} onClick={runAggressiveTextCleanup} className="rounded-xl border border-[#95B59B] bg-white px-3 py-3 text-xs sm:text-sm font-extrabold text-[#31573D] disabled:opacity-50">
                   ✨ {lang === 'ko' ? '문자 사이 정리' : lang === 'ja' ? '文字間を整理' : lang === 'zh' ? '清理文字间隙' : 'Clean text gaps'}
                 </button>
-                <button type="button" disabled={busy} onClick={() => setEraserOpen(true)} className="rounded-xl bg-[#3E6B4B] px-3 py-3 text-xs sm:text-sm font-extrabold text-white disabled:opacity-50">
+                <button type="button" disabled={busy} onClick={() => { setTextCleanupMessage(''); setEraserOpen(true); }} className="rounded-xl bg-[#3E6B4B] px-3 py-3 text-xs sm:text-sm font-extrabold text-white disabled:opacity-50">
                   ✨ {lang === 'ko' ? 'AI 선택 지우개' : lang === 'ja' ? 'AI選択消しゴム' : lang === 'zh' ? 'AI选择橡皮擦' : 'AI selection eraser'}
                 </button>
               </div>
+              {textCleanupMessage && (
+                <div className="mt-2 rounded-lg bg-white px-3 py-2 text-center text-[11px] font-bold leading-5 text-[#61705D]">
+                  {textCleanupMessage}
+                </div>
+              )}
             </div>
           )}
 
