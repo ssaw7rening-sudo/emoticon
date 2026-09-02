@@ -20,6 +20,7 @@ const COPY = {
     splitReady: '분리 완료 · 각 이미지를 눌러 개별 PNG로 저장할 수 있습니다.',
     splitAgain: '다시 분리', splitDownload: 'PNG 저장', splitFailed: '자동 분리에 실패했습니다. 이미지를 다시 처리한 뒤 시도해 주세요.',
     splitMaybeTitle: '15개 이모티콘 시트인가요?', splitMaybeDesc: '자동 감지가 확실하지 않습니다. 이모티콘 시트라면 직접 분리를 실행할 수 있습니다.', splitMaybeAction: '이모티콘 시트 분리',
+    splitChooseTitle: '분할 방식 선택', splitChooseDesc: '시트의 행과 열에 맞는 구성을 선택해 주세요.', splitRows: '행', splitColumns: '열', splitCustom: '직접 설정', splitSelected: '선택한 방식으로 분할', splitGridFailed: '선택한 행·열로 분할하지 못했습니다.',
     qualityFailTitle: '결과 품질을 다시 확인해 주세요', qualityFailDesc: '복잡한 배경이 많이 남아 정확한 투명 PNG로 보기 어렵습니다. 배경이 더 단순한 다른 이미지를 사용하는 것을 권장합니다.', qualityBlocked: '품질 확인 필요',
     qualityWarnTitle: '일부 배경이 남아 있을 수 있어요', qualityWarnDesc: '슬라이더로 원본과 결과를 확인한 뒤 저장해 주세요.',
     precisionRetry: '정밀 재처리', precisionHint: '정밀 처리 실패 시 지원 기기에서는 WebGPU와 고정밀 보조 모델을 자동 사용하며, 모바일·미지원 환경에서는 가벼운 모델로 안전하게 처리합니다. 첫 실행은 모델 파일을 불러와 오래 걸릴 수 있습니다.', precisionWorking: '정밀 모델로 다시 처리하고 있어요…', precisionNoBetter: '정밀 재처리 결과가 현재 결과보다 좋아지지 않아 기존 결과를 유지했습니다.',
@@ -39,6 +40,7 @@ const COPY = {
     splitReady: 'Split complete · Save each emoticon as an individual PNG.',
     splitAgain: 'Split again', splitDownload: 'Save PNG', splitFailed: 'Auto split failed. Process the image again and retry.',
     splitMaybeTitle: 'Is this a 15-emoticon sheet?', splitMaybeDesc: 'The layout is uncertain. If this is an emoticon sheet, you can run the splitter manually.', splitMaybeAction: 'Split emoticon sheet',
+    splitChooseTitle: 'Choose a split layout', splitChooseDesc: 'Select the rows and columns that match your sheet.', splitRows: 'Rows', splitColumns: 'Columns', splitCustom: 'Custom', splitSelected: 'Split with this layout', splitGridFailed: 'Could not split with the selected rows and columns.',
     qualityFailTitle: 'Please check the removal result', qualityFailDesc: 'Too much complex background appears to remain for a reliable transparent PNG. Try another image with a simpler background.', qualityBlocked: 'Quality check needed',
     qualityWarnTitle: 'Some background may remain', qualityWarnDesc: 'Compare the original and result with the slider before saving.',
     precisionRetry: 'Precision retry', precisionHint: 'If precision processing needs a fallback, supported devices automatically use WebGPU and a higher-precision backup model; mobile or unsupported environments use the lighter fallback. The first run may take longer while model files load.', precisionWorking: 'Retrying with the precision model…', precisionNoBetter: 'The precision retry was not better, so the current result was kept.',
@@ -58,6 +60,7 @@ const COPY = {
     splitReady: '分割完了 · 各画像を個別PNGとして保存できます。',
     splitAgain: '再分割', splitDownload: 'PNG保存', splitFailed: '自動分割に失敗しました。画像を再処理してお試しください。',
     splitMaybeTitle: '15個の絵文字シートですか？', splitMaybeDesc: '自動判定が確実ではありません。絵文字シートの場合は手動で分割を実行できます。', splitMaybeAction: '絵文字シートを分割',
+    splitChooseTitle: '分割方法を選択', splitChooseDesc: 'シートに合う行数と列数を選択してください。', splitRows: '行', splitColumns: '列', splitCustom: '直接設定', splitSelected: '選択した方法で分割', splitGridFailed: '選択した行・列では分割できませんでした。',
     qualityFailTitle: '背景削除結果を確認してください', qualityFailDesc: '複雑な背景が多く残っており、正確な透過PNGとして保存するには不安定です。背景がより単純な別の画像をおすすめします。', qualityBlocked: '品質確認が必要',
     qualityWarnTitle: '背景が一部残っている可能性があります', qualityWarnDesc: 'スライダーで元画像と結果を確認してから保存してください。',
     precisionRetry: '高精度で再処理', precisionHint: '高精度処理のフォールバックが必要な場合、対応端末ではWebGPUと高精度の補助モデルを自動使用し、モバイルや非対応環境では軽量モデルを使用します。初回はモデル読み込みに時間がかかる場合があります。', precisionWorking: '高精度モデルで再処理しています…', precisionNoBetter: '高精度処理でも改善しなかったため、現在の結果を維持しました。',
@@ -77,6 +80,7 @@ const COPY = {
     splitReady: '分割完成 · 可将每个表情单独保存为PNG。',
     splitAgain: '重新分割', splitDownload: '保存PNG', splitFailed: '自动分割失败，请重新处理图片后再试。',
     splitMaybeTitle: '这是15个表情的图片合集吗？', splitMaybeDesc: '自动判断不够确定。如果这是表情合集，可以手动启动分割。', splitMaybeAction: '分割表情合集',
+    splitChooseTitle: '选择分割方式', splitChooseDesc: '请选择与图片合集相符的行数和列数。', splitRows: '行', splitColumns: '列', splitCustom: '自定义', splitSelected: '按所选方式分割', splitGridFailed: '无法按所选行列完成分割。',
     qualityFailTitle: '请检查背景移除结果', qualityFailDesc: '复杂背景残留较多，当前结果不适合直接作为可靠的透明PNG保存。建议换用背景更简单的图片。', qualityBlocked: '需要检查质量',
     qualityWarnTitle: '可能仍有部分背景残留', qualityWarnDesc: '请先用滑块对比原图和结果，再决定是否保存。',
     precisionRetry: '高精度重试', precisionHint: '高精度处理需要回退时，支持的设备会自动使用WebGPU和更高精度的备用模型；移动端或不支持的环境会使用轻量备用模型。首次加载模型文件可能较慢。', precisionWorking: '正在使用高精度模型重新处理…', precisionNoBetter: '高精度重试没有改善，因此保留当前结果。',
@@ -1426,6 +1430,33 @@ async function splitIntoFifteen(blob) {
   return items;
 }
 
+async function splitByGrid(blob, rows, columns) {
+  const { canvas } = await drawFileToCanvas(blob);
+  const { width, height } = canvas;
+  if (!width || !height || rows < 1 || columns < 1) throw new Error('Invalid grid');
+
+  const items = [];
+  for (let row = 0; row < rows; row += 1) {
+    for (let column = 0; column < columns; column += 1) {
+      const left = Math.round((column * width) / columns);
+      const top = Math.round((row * height) / rows);
+      const right = Math.round(((column + 1) * width) / columns);
+      const bottom = Math.round(((row + 1) * height) / rows);
+      const cropWidth = Math.max(1, right - left);
+      const cropHeight = Math.max(1, bottom - top);
+      const output = document.createElement('canvas');
+      output.width = cropWidth;
+      output.height = cropHeight;
+      const outputCtx = output.getContext('2d');
+      if (!outputCtx) throw new Error('Canvas 2D is unavailable');
+      outputCtx.drawImage(canvas, left, top, cropWidth, cropHeight, 0, 0, cropWidth, cropHeight);
+      const itemBlob = await canvasToPngBlob(output);
+      items.push({ index: items.length + 1, blob: itemBlob, width: cropWidth, height: cropHeight });
+    }
+  }
+  return items;
+}
+
 async function hasRealTransparency(file) {
   if (file?.type !== 'image/png') return false;
   const { canvas, ctx } = await drawFileToCanvas(file);
@@ -1474,6 +1505,11 @@ export default function BackgroundRemover({ lang = 'ko' }) {
   const [splitting, setSplitting] = useState(false);
   const [splitError, setSplitError] = useState('');
   const [sheetDetection, setSheetDetection] = useState({ status: 'idle', confidence: 0 });
+  const [gridRows, setGridRows] = useState(3);
+  const [gridColumns, setGridColumns] = useState(5);
+  const [customGrid, setCustomGrid] = useState(false);
+  const automaticSplitBlobRef = useRef(null);
+  const autoSplitCallbackRef = useRef(null);
   const [qualityAssessment, setQualityAssessment] = useState({ status: 'idle', score: 0 });
   const [resultMethod, setResultMethod] = useState('');
   const [precisionMessage, setPrecisionMessage] = useState('');
@@ -1715,6 +1751,35 @@ export default function BackgroundRemover({ lang = 'ko' }) {
       setSplitting(false);
     }
   };
+  autoSplitCallbackRef.current = autoSplit;
+
+  useEffect(() => {
+    if (
+      sheetDetection.status !== 'sheet' || !resultBlob ||
+      qualityAssessment.status === 'fail' || splitItems.length > 0 ||
+      splitting || automaticSplitBlobRef.current === resultBlob
+    ) return;
+    automaticSplitBlobRef.current = resultBlob;
+    autoSplitCallbackRef.current?.();
+  }, [sheetDetection.status, resultBlob, qualityAssessment.status, splitItems.length, splitting]);
+
+  const manualGridSplit = async () => {
+    if (!resultBlob || splitting || qualityAssessment.status === 'fail') return;
+    clearSplitItems();
+    setSplitting(true);
+    setSplitError('');
+    try {
+      const rows = Math.max(1, Math.min(10, Number(gridRows) || 1));
+      const columns = Math.max(1, Math.min(10, Number(gridColumns) || 1));
+      const items = await splitByGrid(resultBlob, rows, columns);
+      setSplitItems(items.map((item) => ({ ...item, url: URL.createObjectURL(item.blob) })));
+    } catch (e) {
+      console.error('Sticker grid split failed:', e);
+      setSplitError(t.splitGridFailed);
+    } finally {
+      setSplitting(false);
+    }
+  };
 
   const downloadSplitItem = (item) => {
     const base = (file?.name || 'emoticon').replace(/\.[^.]+$/, '').replace(/[^a-zA-Z0-9가-힣ぁ-んァ-ン一-龥_-]+/g, '-');
@@ -1927,22 +1992,32 @@ export default function BackgroundRemover({ lang = 'ko' }) {
             </div>
           )}
 
-          {resultUrl && qualityAssessment.status !== 'fail' && sheetDetection.status === 'ambiguous' && splitItems.length === 0 && (
-            <div className="mt-4 rounded-xl border border-[#E5DED3] bg-[#FCFBF8] px-3.5 py-3">
+          {resultUrl && qualityAssessment.status !== 'fail' && ['ambiguous', 'not-sheet'].includes(sheetDetection.status) && splitItems.length === 0 && (
+            <div className="mt-4 rounded-2xl border border-[#E5DED3] bg-[#FCFBF8] px-3.5 py-3.5 sm:px-4">
               <div className="flex flex-wrap items-center justify-between gap-2">
-                <div className="min-w-0 flex-1">
-                  <div className="text-xs sm:text-sm font-extrabold text-[#4A453F]">✂️ {t.splitMaybeTitle}</div>
-                  <p className="mt-1 text-[11px] sm:text-xs leading-5 text-[#7A736B]">{t.splitMaybeDesc}</p>
-                </div>
-                <button
-                  type="button"
-                  disabled={splitting}
-                  onClick={autoSplit}
-                  className="shrink-0 rounded-lg border border-[#D8CDBD] bg-white px-3 py-2 text-xs font-extrabold text-[#625544] transition hover:bg-[#FFF8ED] disabled:cursor-wait disabled:opacity-60"
-                >
-                  {splitting ? `⏳ ${t.splitting}` : `✂️ ${t.splitMaybeAction}`}
-                </button>
+                <div className="text-sm sm:text-base font-extrabold text-[#4A453F]">✂️ {t.splitChooseTitle}</div>
               </div>
+              <p className="mt-1 text-xs sm:text-[13px] leading-5 text-[#7A736B]">{t.splitChooseDesc}</p>
+              <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3">
+                {[[2, 2], [2, 3], [3, 3], [3, 4], [3, 5], [4, 4]].map(([rows, columns]) => {
+                  const selected = !customGrid && gridRows === rows && gridColumns === columns;
+                  return (
+                    <button key={`${rows}x${columns}`} type="button" onClick={() => { setGridRows(rows); setGridColumns(columns); setCustomGrid(false); }} className={`rounded-xl border px-3 py-2.5 text-xs font-extrabold transition ${selected ? 'border-[#688360] bg-[#EEF4EA] text-[#486044]' : 'border-[#D8D0C5] bg-white text-[#625B52] hover:bg-[#FFF8ED]'}`}>
+                      {rows}{t.splitRows} × {columns}{t.splitColumns} · {rows * columns}
+                    </button>
+                  );
+                })}
+              </div>
+              <button type="button" onClick={() => setCustomGrid((value) => !value)} className="mt-2 w-full rounded-xl border border-dashed border-[#CFC5B7] bg-white px-3 py-2.5 text-xs font-extrabold text-[#625544] transition hover:bg-[#FFF8ED]">{t.splitCustom}</button>
+              {customGrid && (
+                <div className="mt-2 grid grid-cols-2 gap-2 rounded-xl bg-[#F5F2EC] p-2.5">
+                  <label className="text-[11px] font-bold text-[#6C645B]">{t.splitRows}<input type="number" min="1" max="10" value={gridRows} onChange={(e) => setGridRows(e.target.value)} className="mt-1 w-full rounded-lg border border-[#D6CEC2] bg-white px-3 py-2 text-sm font-bold text-[#403A34]" /></label>
+                  <label className="text-[11px] font-bold text-[#6C645B]">{t.splitColumns}<input type="number" min="1" max="10" value={gridColumns} onChange={(e) => setGridColumns(e.target.value)} className="mt-1 w-full rounded-lg border border-[#D6CEC2] bg-white px-3 py-2 text-sm font-bold text-[#403A34]" /></label>
+                </div>
+              )}
+              <button type="button" disabled={splitting} onClick={manualGridSplit} className="mt-3 w-full rounded-xl bg-[#4F6949] px-4 py-3 text-sm font-extrabold text-white transition hover:bg-[#3F583A] disabled:cursor-wait disabled:opacity-60">
+                {splitting ? `⏳ ${t.splitting}` : `✂️ ${t.splitSelected}`}
+              </button>
               {splitError && <div className="mt-2 rounded-lg bg-[#FFF1EE] px-3 py-2 text-xs font-semibold leading-5 text-[#A64D3D]">{splitError}</div>}
             </div>
           )}

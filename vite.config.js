@@ -69,14 +69,6 @@ async function splitIntoFifteen(blob) {`
     const minY = Math.max(cell.minY, Math.min(...cropGroup.map((item) => item.minY)) - padding);
     const maxX = Math.min(cell.maxX, Math.max(...cropGroup.map((item) => item.maxX)) + padding);
     const maxY = Math.min(cell.maxY, Math.max(...cropGroup.map((item) => item.maxY)) + padding);`
-    ],
-    [
-      'className="flex flex-wrap items-center justify-between gap-2"',
-      'className="flex flex-col items-stretch gap-3"'
-    ],
-    [
-      'className="shrink-0 rounded-lg border border-[#D8CDBD] bg-white px-3 py-2 text-xs font-extrabold text-[#625544] transition hover:bg-[#FFF8ED] disabled:cursor-wait disabled:opacity-60"',
-      'className="w-full rounded-xl border border-[#E8C66E] bg-[#FFF8E8] px-4 py-3 text-sm font-extrabold text-[#7A4B22] transition hover:bg-[#FFF2D2] disabled:cursor-wait disabled:opacity-60"'
     ]
   ]
 
