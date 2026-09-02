@@ -18,19 +18,24 @@ jobs:
         with:
           node-version: 22
           cache: npm
-      - name: Apply object-aware splitter patch
-        run: node .github/scripts/patch-object-watershed.mjs
+      - name: Apply object-aware splitter patches
+        run: |
+          node .github/scripts/patch-object-watershed.mjs
+          node .github/scripts/patch-pixel-owner-compat.mjs
       - name: Remove temporary patch files
-        run: rm .github/scripts/patch-object-watershed.mjs .github/workflows/object-watershed-patch.yml
+        run: rm .github/scripts/patch-object-watershed.mjs .github/scripts/patch-pixel-owner-compat.mjs .github/workflows/object-watershed-patch.yml
       - name: Guard final diff
         run: |
           git diff --check
           changed="$(git diff --name-only origin/main | sort)"
-          test "$changed" = "vite.precise-sticker-split.config.js"
+          expected="$(printf '%s\n%s' 'vite.pixel-owner-split.config.js' 'vite.precise-sticker-split.config.js')"
+          test "$changed" = "$expected"
           grep -q "precise-sticker-sheet-split-v7-object-watershed" vite.precise-sticker-split.config.js
           grep -q "buildStickerOwnershipMap" vite.precise-sticker-split.config.js
           grep -q "pixelGroup: ownership.pixelGroup" vite.precise-sticker-split.config.js
           grep -q "const recoveryRadius = 4" vite.precise-sticker-split.config.js
+          grep -q "pixel-ownership-sticker-split-v8-watershed-compatible" vite.pixel-owner-split.config.js
+          grep -q "currentBlock.includes('analysis.pixelGroup')" vite.pixel-owner-split.config.js
       - run: npm ci
       - run: npm run build
       - name: Commit verified source change
