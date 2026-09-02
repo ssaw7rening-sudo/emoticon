@@ -1,0 +1,42 @@
+name: Object Watershed Patch
+
+on:
+  push:
+    branches: [fix/object-aware-sticker-watershed]
+
+permissions:
+  contents: write
+
+jobs:
+  patch-and-verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - name: Apply object-aware splitter patch
+        run: node .github/scripts/patch-object-watershed.mjs
+      - name: Remove temporary patch files
+        run: rm .github/scripts/patch-object-watershed.mjs .github/workflows/object-watershed-patch.yml
+      - name: Guard final diff
+        run: |
+          git diff --check
+          changed="$(git diff --name-only origin/main | sort)"
+          test "$changed" = "vite.precise-sticker-split.config.js"
+          grep -q "precise-sticker-sheet-split-v7-object-watershed" vite.precise-sticker-split.config.js
+          grep -q "buildStickerOwnershipMap" vite.precise-sticker-split.config.js
+          grep -q "pixelGroup: ownership.pixelGroup" vite.precise-sticker-split.config.js
+          grep -q "const recoveryRadius = 4" vite.precise-sticker-split.config.js
+      - run: npm ci
+      - run: npm run build
+      - name: Commit verified source change
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Use object-aware watershed for sticker splitting [skip ci]"
+          git push origin HEAD
