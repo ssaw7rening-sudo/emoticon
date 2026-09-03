@@ -1690,43 +1690,123 @@ async function detectEmoticonSheet(blob) {
   return classifyEmoticonSheetComponents(components, analysisWidth, analysisHeight);
 }
 
+async function splitBySmartGrid(canvas, rows = 3, columns = 5) {
+  const { width, height } = canvas;
+  const ctx = canvas.getContext('2d', { willReadFrequently: true });
+  if (!ctx || !width || !height) throw new Error('Canvas unavailable for smart grid');
+
+  const items = [];
+  const cellW = width / columns;
+  const cellH = height / rows;
+  const padding = Math.max(6, Math.round(Math.min(cellW, cellH) * 0.04));
+
+  for (let r = 0; r < rows; r += 1) {
+    for (let c = 0; c < columns; c += 1) {
+      const cellLeft = Math.floor(c * cellW);
+      const cellTop = Math.floor(r * cellH);
+      const cellRight = Math.min(width, Math.ceil((c + 1) * cellW));
+      const cellBottom = Math.min(height, Math.ceil((r + 1) * cellH));
+      const cellWidth = cellRight - cellLeft;
+      const cellHeight = cellBottom - cellTop;
+
+      const imgData = ctx.getImageData(cellLeft, cellTop, cellWidth, cellHeight);
+      const data = imgData.data;
+
+      let minX = cellWidth, minY = cellHeight, maxX = 0, maxY = 0;
+      let hasPixels = false;
+
+      for (let y = 0; y < cellHeight; y += 1) {
+        for (let x = 0; x < cellWidth; x += 1) {
+          const alpha = data[(y * cellWidth + x) * 4 + 3];
+          if (alpha > 15) {
+            hasPixels = true;
+            if (x < minX) minX = x;
+            if (x > maxX) maxX = x;
+            if (y < minY) minY = y;
+            if (y > maxY) maxY = y;
+          }
+        }
+      }
+
+      let cropX, cropY, cropW, cropH;
+      if (hasPixels && minX <= maxX && minY <= maxY) {
+        const absMinX = Math.max(0, cellLeft + minX - padding);
+        const absMinY = Math.max(0, cellTop + minY - padding);
+        const absMaxX = Math.min(width, cellLeft + maxX + 1 + padding);
+        const absMaxY = Math.min(height, cellTop + maxY + 1 + padding);
+        cropX = absMinX;
+        cropY = absMinY;
+        cropW = Math.max(1, absMaxX - absMinX);
+        cropH = Math.max(1, absMaxY - absMinY);
+      } else {
+        cropX = cellLeft;
+        cropY = cellTop;
+        cropW = cellWidth;
+        cropH = cellHeight;
+      }
+
+      const output = document.createElement('canvas');
+      output.width = cropW;
+      output.height = cropH;
+      const outCtx = output.getContext('2d');
+      if (outCtx) {
+        outCtx.drawImage(canvas, cropX, cropY, cropW, cropH, 0, 0, cropW, cropH);
+      }
+      const itemBlob = await canvasToPngBlob(output);
+      items.push({
+        index: items.length + 1,
+        blob: itemBlob,
+        width: cropW,
+        height: cropH
+      });
+    }
+  }
+  return items;
+}
+
 async function splitIntoFifteen(blob) {
   const { canvas, ctx } = await drawFileToCanvas(blob);
   const { width, height } = canvas;
-  const components = extractConnectedComponents(ctx, width, height);
-  const primaries = orderPrimaryStickerComponents(components, width, height);
-  const groups = assignComponentsToStickers(components, primaries, width, height);
-  const items = [];
-  const padding = Math.max(8, Math.round(Math.min(width / 5, height / 3) * 0.035));
+  try {
+    const components = extractConnectedComponents(ctx, width, height);
+    const primaries = orderPrimaryStickerComponents(components, width, height);
+    const groups = assignComponentsToStickers(components, primaries, width, height);
+    const items = [];
+    const padding = Math.max(8, Math.round(Math.min(width / 5, height / 3) * 0.035));
 
-  for (let index = 0; index < primaries.length; index += 1) {
+    for (let index = 0; index < primaries.length; index += 1) {
     const primary = primaries[index];
     const group = groups.get(primary.id) || [primary];
     const minX = Math.max(0, Math.min(...group.map((item) => item.minX)) - padding);
     const minY = Math.max(0, Math.min(...group.map((item) => item.minY)) - padding);
     const maxX = Math.min(width - 1, Math.max(...group.map((item) => item.maxX)) + padding);
     const maxY = Math.min(height - 1, Math.max(...group.map((item) => item.maxY)) + padding);
-    const cropWidth = Math.max(1, maxX - minX + 1);
-    const cropHeight = Math.max(1, maxY - minY + 1);
+      const cropWidth = Math.max(1, maxX - minX + 1);
+      const cropHeight = Math.max(1, maxY - minY + 1);
 
-    const output = document.createElement('canvas');
-    output.width = cropWidth;
-    output.height = cropHeight;
-    const outputCtx = output.getContext('2d');
-    if (!outputCtx) throw new Error('Canvas 2D is unavailable');
-    outputCtx.drawImage(canvas, minX, minY, cropWidth, cropHeight, 0, 0, cropWidth, cropHeight);
+      const output = document.createElement('canvas');
+      output.width = cropWidth;
+      output.height = cropHeight;
+      const outputCtx = output.getContext('2d');
+      if (!outputCtx) throw new Error('Canvas 2D is unavailable');
+      outputCtx.drawImage(canvas, minX, minY, cropWidth, cropHeight, 0, 0, cropWidth, cropHeight);
 
-    const itemBlob = await canvasToPngBlob(output);
-    items.push({
-      index: index + 1,
-      blob: itemBlob,
-      width: cropWidth,
-      height: cropHeight
-    });
+      const itemBlob = await canvasToPngBlob(output);
+      items.push({
+        index: index + 1,
+        blob: itemBlob,
+        width: cropWidth,
+        height: cropHeight
+      });
+    }
+
+    if (items.length === 15) return items;
+  } catch (err) {
+    console.warn('Component-based split failed, using smart grid fallback:', err);
   }
 
-  if (items.length !== 15) throw new Error('Could not detect 15 sticker groups');
-  return items;
+  // 100% Guaranteed Fallback: 3 rows x 5 columns Smart Tight-Crop Grid
+  return splitBySmartGrid(canvas, 3, 5);
 }
 
 async function hasRealTransparency(file) {
@@ -2212,11 +2292,15 @@ export default function BackgroundRemover({ lang = 'ko' }) {
             </button>
           </div>
 
-          {resultUrl && qualityAssessment.status !== 'fail' && (sheetDetection.status === 'sheet' || splitItems.length > 0) && (
-            <div className="mt-5 rounded-2xl border border-[#DDD8CE] bg-white p-3.5 sm:p-4">
+          {resultUrl && qualityAssessment.status !== 'fail' && (
+            <div className="mt-5 rounded-2xl border border-[#DDD8CE] bg-white p-3.5 sm:p-4 shadow-sm">
               <div className="flex flex-wrap items-center gap-2">
                 <h3 className="text-sm sm:text-base font-extrabold text-[#35312C]">✂️ {t.splitTitle}</h3>
-                <span className="rounded-full bg-[#EEF4EA] px-2.5 py-1 text-[11px] font-extrabold text-[#597153]">{t.splitBadge}</span>
+                <span className="rounded-full bg-[#EEF4EA] px-2.5 py-1 text-[11px] font-extrabold text-[#597153]">
+                  {sheetDetection.status === 'sheet'
+                    ? t.splitBadge
+                    : (lang === 'ko' ? '15컷 분리' : lang === 'ja' ? '15分割' : lang === 'zh' ? '15图分割' : '15-Sticker Split')}
+                </span>
               </div>
               <p className="mt-2 text-xs sm:text-[13px] leading-5 text-[#746E65]">{t.splitDesc}</p>
 
