@@ -232,9 +232,15 @@ function backgroundRemovalResumeRecovery() {
         'removeBackground signature'
       )
 
-      const cleanupCall = transformed.includes('blob = await removeEnclosedBackdropPockets(blob, file, true);')
-        ? 'blob = await removeEnclosedBackdropPockets(blob, file, true);'
-        : 'blob = await removeEnclosedBackdropPockets(blob, file);'
+      const sheetSafeCleanupBlock = `const sheetBeforeCleanup = await detectEmoticonSheet(blob);
+      if (sheetBeforeCleanup.status === 'not-sheet') {
+        blob = await removeEnclosedBackdropPockets(blob, file, true);
+      }`
+      const cleanupCall = transformed.includes(sheetSafeCleanupBlock)
+        ? sheetSafeCleanupBlock
+        : transformed.includes('blob = await removeEnclosedBackdropPockets(blob, file, true);')
+          ? 'blob = await removeEnclosedBackdropPockets(blob, file, true);'
+          : 'blob = await removeEnclosedBackdropPockets(blob, file);'
       const opacityProtectionCalls = transformed.includes('blob = await protectLightForegroundOpacity(blob, file);')
         ? `blob = await correctUnexpectedForegroundTransparency(blob);
       blob = await protectLightForegroundOpacity(blob, file);`

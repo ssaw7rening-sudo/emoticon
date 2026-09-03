@@ -2294,7 +2294,17 @@ export default function BackgroundRemover({ lang = 'ko' }) {
         try {
           const fastQuality = await assessRemovalQuality(blob);
           if (fastQuality.status === 'pass') {
-            quality = fastQuality;
+            const fastSheetDetection = await detectEmoticonSheet(blob);
+            if (fastSheetDetection.status === 'sheet' || fastSheetDetection.status === 'ambiguous') {
+              // Uniform-colour flood fill cannot reliably distinguish a white
+              // character face from a white sheet background when their
+              // outlines contain tiny openings. Route sticker sheets through
+              // the semantic model instead of risking permanent alpha loss.
+              blob = null;
+              quality = { status: 'idle', score: 0 };
+            } else {
+              quality = fastQuality;
+            }
           } else {
             console.warn('Fast background removal rejected by quality gate:', fastQuality);
             blob = null;
@@ -2343,7 +2353,10 @@ export default function BackgroundRemover({ lang = 'ko' }) {
 
       setStage('processing');
       setProgress(null);
-      blob = await removeEnclosedBackdropPockets(blob, file, true);
+      const sheetBeforeCleanup = await detectEmoticonSheet(blob);
+      if (sheetBeforeCleanup.status === 'not-sheet') {
+        blob = await removeEnclosedBackdropPockets(blob, file, true);
+      }
       blob = await correctUnexpectedForegroundTransparency(blob);
       blob = await protectLightForegroundOpacity(blob, file);
       quality = await assessRemovalQuality(blob);
@@ -2379,7 +2392,10 @@ export default function BackgroundRemover({ lang = 'ko' }) {
       precisionBlob = await correctUnexpectedForegroundTransparency(precisionBlob);
       precisionBlob = await cleanAiForegroundArtifacts(precisionBlob);
       precisionBlob = await refinePrecisionEdges(precisionBlob);
-      precisionBlob = await removeEnclosedBackdropPockets(precisionBlob, file, true);
+      const precisionSheetBeforeCleanup = await detectEmoticonSheet(precisionBlob);
+      if (precisionSheetBeforeCleanup.status === 'not-sheet') {
+        precisionBlob = await removeEnclosedBackdropPockets(precisionBlob, file, true);
+      }
       precisionBlob = await protectLightForegroundOpacity(precisionBlob, file);
       const precisionQuality = await assessRemovalQuality(precisionBlob);
       if (qualityRank(precisionQuality) <= qualityRank(qualityAssessment)) {
