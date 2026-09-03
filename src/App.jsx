@@ -122,6 +122,10 @@ const THEMES_KO = {
   'K-직장인 생존기 ①': ['넵!', '네...(영혼 가출)', '탕비실 털러 감', '금융치료 시급', '퇴근각 재는 중', '넵 알겠습니다!', '월급 로그아웃', '회의가 끝이 안 나', '카페인 긴급 수혈', '시말서 각인가', '법카로 긁자', '살려주세요...', '칼퇴 10초 전', '주말만 바라보고 산다', '내일 연차 씁니다'],
   '러닝/마라톤 ①': ['오늘 러닝 完', '5km 완주!', '페이스 조절 중', '러닝화 개시', '심장이 쿵쾅쿵쾅', '러닝 크루 모여라', '아침 조깅 상쾌', '발목 스트레칭', '수분 보충 꿀꺽', 'PB(개인신기록) 달성!', '비 맞으며 우중런', '호흡 가다듬기', '10km 마라톤 도전', '땀 흘리니 개운해', '내일도 달린다!'],
   '성수동/팝업스토어 ①': ['오픈런 대기 중', '웨이팅 100번째', '굿즈 품절 ㅠㅠ', '한정판 겟 완료!', '인생샷 명소 발견', '감성 카페 도착', '핫플 정복 완료', '지갑 열린다 활짝', '포토존에서 찰칵', '대기 번호 호출!', '굿즈 풀세트 구매', '사람 대폭발', '성수동 투어 중', '카드 슬래시!', '다음 팝업 어디?'],
+  '럭키비키/초긍정 ②': ['오히려 기회야!', '이게 바로 럭키지~', '완전 이득 봤네', '내 인생 레전드', '행운 만땅 충전!', '오늘 하루도 대성공', '마음먹기 나름이야', '웃으니까 복이 굴러옴', '우주가 날 돕는 중', '긍정 에너지 발사!', '꽃길 예약 완료', '하늘도 내 편이야', '스트레스 훌훌 털기', '행복은 가까이에', '내일도 럭키데이!'],
+  'K-직장인 생존기 ②': ['넵 병 걸렸음 (넵!)', '월급날 스쳐 지나감', '아이스 아메리카노 필수', '보고서 반려 (눈물)', '이게 최선입니다', '메일 수신확인 집착', '회의실 탈출 시도', '화장실에서 은신 중', '퇴근길 발걸음 날아감', '오늘 저녁은 소고기?', '모니터 쳐다보며 멍', '연차 쓸 명분 탐색', '출근하자마자 퇴근 생각', '통장 보고 심신안정', '오늘도 생존 완료!'],
+  '러닝/마라톤 ②': ['러닝화 끈 꽉 매기', '심박수 체크 완료', '오늘 코스 완벽했다', '러너스 하이(Runner\'s High)!', '나이트런 감성 충전', '마라톤 완주 메달 찰칵', '페이스 처지지 말자', '시원한 스포츠음료 원샷', '폼롤러로 하체 풀기', '달릴 때가 제일 자유로워', '새벽 공기 마시며 질주', '카보로딩 핑계로 폭식', '발바닥 물집 투혼', '달리기 중독인가 봐', '내일 아침 러닝 예약!'],
+  '성수동/팝업스토어 ②': ['웨이팅 등록 성공!', '쇼룸 포토존 도착', '영수증 보고 기절각', '선착순 한정 굿즈 사수', '성수동 카페 핫플 정복', '감성 엽서 & 스티커 겟', '입장 순서 다가오는 중', '친구랑 인증샷 찰칵', '팝업 부스 체험 완료', '쇼핑백 두 손 가득', '여기가 바로 감성 맛집', '웨이팅이 아깝지 않아', '성수 골목길 산책', '다음 시즌 팝업도 무조건!', '오늘 하루 완전 핫플러'],
 };
 
 const THEMES_EN = {
@@ -239,6 +243,10 @@ const THEMES_EN = {
   'Office Survival Mode ①': ['Got it!', 'Yes... (soul left body)', 'Raiding the pantry', 'Urgent financial healing needed', 'Timing my clock-out', 'Yes sir, understood!', 'Paycheck logged out', 'Meeting never ends', 'Emergency caffeine drip', 'Is this write-up worthy?', 'Put it on corporate card', 'Save me please...', '10s before clock-out', 'Living just for the weekend', 'Taking PTO tomorrow'],
   'Running/Marathon Crew ①': ['Today\'s run complete', 'Finished 5k!', 'Pacing myself', 'First time in new running shoes', 'Heart pounding fast', 'Running crew assemble', 'Refreshing morning jog', 'Stretching ankles', 'Gulping down hydration', 'New Personal Best (PB)!', 'Running in the rain', 'Regulating my breathing', 'Challenging 10k marathon', 'Sweating feels so refreshing', 'Running again tomorrow!'],
   'Pop-up Store/Hot Place ①': ['Waiting for open run', 'Queue number 100', 'Merch sold out ㅠㅠ', 'Limited edition secured!', 'Found photo spot of my life', 'Arrived at aesthetic cafe', 'Conquered the hot place', 'Wallet wide open', 'Snapping at photo zone', 'Queue number called!', 'Bought full merch set', 'Packed with people', 'Touring Seongsu hot spots', 'Card swiped!', 'Where is next pop-up?'],
+  'Lucky Vicky/Ultra Positive ②': ['Blessing in disguise!', 'This is pure luck~', 'Totally won big here', 'My legendary life', 'Luck fully recharged!', 'Huge success today', 'Mindset is everything', 'Smiling brings fortune', 'Universe is helping me', 'Positive energy beam!', 'Walk on flower paths', 'Heavens on my side', 'Shake off the stress', 'Happiness is right here', 'Tomorrow is lucky day!'],
+  'Office Survival Mode ②': ['Got it fever (Yes sir!)', 'Paycheck vanished already', 'Iced Americano mandatory', 'Report rejected (crying)', 'This is my best effort', 'Obsessed with email reads', 'Attempting meeting escape', 'Hiding out in restroom', 'Flying steps heading home', 'Steak dinner tonight?', 'Zoning out at monitor', 'Searching excuse for PTO', 'Wanting clock-out right now', 'Bank account inner peace', 'Survived another day!'],
+  'Running/Marathon Crew ②': ['Tying laces tight', 'Heart rate verified', 'Course was absolute perfection', 'Runner\'s High achieved!', 'Night run aesthetic vibe', 'Snapping marathon medal', 'Don\'t drop the pace', 'Chugging sports drink', 'Foam rolling my legs', 'Most free when running', 'Sprinting in dawn air', 'Feasting for carb-loading', 'Blister fighting spirit', 'Must be addicted to run', 'Booked tomorrow morning run!'],
+  'Pop-up Store/Hot Place ②': ['Waitlist registered!', 'Arrived at showroom photo zone', 'Shocked seeing receipt', 'Secured first-come merch', 'Conquered Seongsu cafe', 'Got cute postcard & stickers', 'Turn is coming up!', 'Snapping photo with bestie', 'Finished booth experience', 'Hands full of bags', 'Top tier aesthetic vibe here', 'Worth every minute of wait', 'Strolling Seongsu alleys', 'Coming to next season for sure!', 'Ultimate hot place explorer'],
 };
 
 const THEMES_JA = {
@@ -356,6 +364,10 @@ const THEMES_JA = {
   'リアル会社員・サバイバル ①': ['承知しました！', 'はい…（魂抜け）', '給湯室あさりに行く', '緊急の金銭治療が必要', '退勤のタイミング計算中', '了解いたしました！', '給料が一瞬で消えた', '会議が終わらない', '緊急カフェイン点滴', '始末書案件かも', '経費で落とそう', '助けてください…', '定時10秒前カウント', '週末だけを楽しみに生きてる', '明日有休使います'],
   'ランニング・マラソン ①': ['今日のラン完了', '5km完走！', 'ペース調整中', '新しいランニングシューズ', '心臓バクバク', 'ランニング仲間集合', '朝ジョギング爽快', '足首ストレッチ', '水分ごくごく補給', '自己ベスト(PB)更新！', '雨の中のシャワーラン', '呼吸を整える', '10kmマラソン挑戦', '汗かいてスッキリ', '明日も走るぞ！'],
   'ポップアップ・ホットプレイス ①': ['オープンラン待機中', '順番待ち100番目', 'グッズ完売（涙）', '限定品ゲット完了！', '映えスポット発見', 'おしゃれカフェ到着', '人気スポット制覇', '財布の紐ゆるみっぱなし', 'フォトゾーンでパシャリ', '呼び出し番号キター！', 'グッズフルコンプ', '人が多すぎる', '聖水（ソンス）ツアー中', 'カード一括払い！', '次のポップアップどこ？'],
+  '超ポジティブ・幸運 ②': ['むしろチャンス！', 'これぞラッキー！', '完全に得しちゃった', '私の人生最高伝説', '幸運フル充電完了！', '今日も大成功の一日', '気持ちの持ちようさ', '笑顔に福が舞い込む', '宇宙が味方してる', 'ポジティブ光線発射！', '花道確定予約！', '神様も味方してる', 'ストレス吹き飛ばせ', '幸せはすぐそばに', '明日もラッキーデイ！'],
+  'リアル会社員・サバイバル ②': ['了解botと化す（はい！）', '給料一瞬で右から左へ', 'アイスコーヒー命', '企画書差し戻し（涙）', 'これが限界です…', 'メール既読確認執着中', '会議室から脱出試行', 'トイレに籠城中', '帰り道の足取り軽やか', '今夜はご馳走にしよ？', '画面見つめてフリーズ', '有休の口実探し中', '出社即帰りたい病', '通帳見て精神安定', '今日も生存確認完了！'],
+  'ランニング・マラソン ②': ['靴ひもをキュッと結ぶ', '心拍数チェック完了', '今日のコース最高だった', 'ランナーズハイ突入！', 'ナイトランのチルな夜', 'マラソン完走メダルパシャリ', 'ペース落とさないぞ', 'スポーツドリンク一気飲み', 'フォームローラーでケア', '走ってる時が一番自由', '澄んだ朝の空気疾走', 'カーボローディングで爆食', '足の豆も勲章さ', 'ランニング中毒かも', '明日の朝ラン確定！'],
+  'ポップアップ・ホットプレイス ②': ['ウェイティング登録完了！', 'フォトスポット到着', 'レシート見て目ん玉飛び出る', '先着限定グッズ死守！', '聖水（ソンス）映えカフェ制覇', '可愛いポストカード＆シール', 'もうすぐ入場順番！', '友達とパシャリ記念撮影', 'ポップアップ体験満喫', '両手にショッパーずっしり', 'ここがウワサのおしゃれ空間', '待った甲斐があった！', '聖水の路地裏をお散歩', '次のシーズンも絶対行く！', '完璧なホットプレイス巡り'],
 };
 
 const THEMES_ZH = {
@@ -473,6 +485,10 @@ const THEMES_ZH = {
   '打工人求生日常 ①': ['收到！', '好的…（灵魂出窍）', '去茶水间搜刮零食', '急需金钱疗法回血', '暗戳戳计算下班时间', '好的明白！马上办', '刚发工资又清零', '开不完的马拉松会议', '紧急注入咖啡因续命', '该不会要写检讨吧', '刷公司公账冲', '救命啊打工魂…', '下班倒计时10秒', '全靠周末这口气吊着', '明天我要休年假'],
   '跑步・马拉松跑团 ①': ['今日跑步打卡完', '5公里顺利完赛！', '稳住配速不慌', '新跑鞋初上脚', '心跳加速噗通噗通', '跑团小伙伴集结', '晨跑空气太清新', '脚踝拉伸做起来', '咕嘟咕嘟补充水分', '刷新个人最好成绩(PB)！', '迎风冒雨雨中跑', '调整均匀呼吸节奏', '挑战10公里半马', '大汗淋漓太痛快', '明天继续跑起来！'],
   '网红快闪店・潮玩探店 ①': ['提前排队抢首发', '前面排了100位', '周边售罄哭泣 ㅠㅠ', '限量版成功拿下！', '拍到人生绝美机位', '打卡格调咖啡馆', '网红热门地标征服', '钱包彻底打开啦', '在拍照打卡点咔嚓', '叫到我的号码啦！', '周边豪华全套入手', '现场人山人海', '圣水洞探店漫步', '直接刷卡买单！', '下一站快闪去哪里？'],
+  '超幸运・积极满满 ②': ['塞翁失马焉知非福！', '这就是纯正的好运~', '简直赚大发啦！', '我的人生大女主剧本', '好运电量彻底拉满！', '今天也是大胜利的一天', '心态好一切都好', '爱笑的人运气不会差', '全宇宙都在帮我', '发射正能量光波！', '未来一路走花路', '老天爷都在眷顾我', '把烦恼统统甩掉', '幸福就在身边呀', '明天也是超级幸运日！'],
+  '打工人求生日常 ②': ['收到回复肌肉记忆（好的！）', '工资刚到账就秒没', '冰美式强行续命', '方案又被打回重改（暴风哭泣）', '这已经是我的极限了', '疯狂刷新邮件已读状态', '试图逃离无意义开会', '在洗手间带薪摸鱼避难', '下班脚步轻盈如飞', '今晚犒劳自己吃顿好的？', '盯着电脑屏幕日常发呆', '苦思冥想请年假的借口', '刚踏进公司就想下班', '看了眼存款稍微安心', '今日打工渡劫成功！'],
+  '跑步・马拉松跑团 ②': ['跑鞋鞋带系紧系牢', '实时心率监测正常', '今天的跑步路线绝美', '跑者高潮多巴胺爆发！', '夜跑吹风氛围感拉满', '马拉松完赛奖牌拍照打卡', '稳住核心配速别掉', '冰镇电解质水大口畅饮', '泡沫轴狠狠放松下肢', '奔跑时感受风的自由', '呼吸清晨第一缕阳光', '借糖原储备大吃大喝', '脚底水泡也是英雄勋章', '大概是爱上跑步上瘾了', '预约好明早晨跑打卡！'],
+  '网红快闪店・潮玩探店 ②': ['排队扫码取号成功！', '抵达品牌展厅神仙机位', '看到小票直接瞳孔地震', '先到先得限定周边拿下！', '打卡圣水洞超火网红咖啡', '收罗高颜值明信片贴纸', '马上就要轮到我入场啦！', '和好姐妹开心自拍合影', '快闪互动体验全部集章', '满载而归双手提满购物袋', '这里真的是氛围感天花板', '排这么久队完全值得！', '漫步探寻圣水洞特色街区', '下一季快闪我也必须冲！', '今天也是合格的潮流探店达人'],
 };
 
 const CHARACTER_TAGS_KO = {
