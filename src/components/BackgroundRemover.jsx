@@ -560,11 +560,30 @@ async function protectLightForegroundOpacity(blob, sourceFile = null) {
   const backgroundEstimate = estimateUniformEdgeBackground(sourcePixels, width, height);
   let changed = false;
 
-  // Some removal masks delete a white/ivory face completely (alpha 0), so an
-  // opacity floor cannot recover it. Mark only transparency connected to the
-  // outer canvas as true background, then restore sufficiently large, light
-  // holes enclosed by foreground from the original image. Small enclosed
-  // counters inside lettering remain transparent.
+  // Some removal masks reduce a white/ivory face to zero or near-zero alpha,
+  // so an opacity floor cannot recover it. A small dilation seals tiny gaps in
+  // the retained outline while detecting exterior transparency. We then
+  // restore sufficiently large, light interior regions from the original.
+  // Small enclosed counters inside lettering remain transparent.
+  const holeAlphaThreshold = 48;
+  const sealingAlphaThreshold = 96;
+  const sealRadius = Math.max(1, Math.min(3, Math.round(Math.min(width, height) / 500)));
+  const foregroundSeal = new Uint8Array(total);
+  for (let index = 0; index < total; index += 1) {
+    if (pixels[index * 4 + 3] < sealingAlphaThreshold) continue;
+    const x = index % width;
+    const y = Math.floor(index / width);
+    for (let dy = -sealRadius; dy <= sealRadius; dy += 1) {
+      const ny = y + dy;
+      if (ny < 0 || ny >= height) continue;
+      for (let dx = -sealRadius; dx <= sealRadius; dx += 1) {
+        const nx = x + dx;
+        if (nx < 0 || nx >= width) continue;
+        foregroundSeal[ny * width + nx] = 1;
+      }
+    }
+  }
+
   const exteriorTransparency = new Uint8Array(total);
   const transparencyQueue = new Int32Array(total);
   let exteriorHead = 0;
@@ -572,7 +591,7 @@ async function protectLightForegroundOpacity(blob, sourceFile = null) {
   const enqueueExterior = (index) => {
     if (
       index < 0 || index >= total || exteriorTransparency[index] ||
-      pixels[index * 4 + 3] > 2
+      foregroundSeal[index] || pixels[index * 4 + 3] > holeAlphaThreshold
     ) return;
     exteriorTransparency[index] = 1;
     transparencyQueue[exteriorTail++] = index;
@@ -597,14 +616,14 @@ async function protectLightForegroundOpacity(blob, sourceFile = null) {
   }
 
   const visitedHoles = new Uint8Array(total);
-  const holeQueue = new Int32Array(total);
+  const holeQueue = transparencyQueue;
   const minimumHoleArea = Math.max(36, Math.round(total * 0.00006));
   const minimumHoleSpan = Math.max(8, Math.round(Math.min(width, height) * 0.016));
 
   for (let seed = 0; seed < total; seed += 1) {
     if (
       visitedHoles[seed] || exteriorTransparency[seed] ||
-      pixels[seed * 4 + 3] > 2
+      pixels[seed * 4 + 3] > holeAlphaThreshold
     ) continue;
 
     let head = 0;
@@ -621,7 +640,7 @@ async function protectLightForegroundOpacity(blob, sourceFile = null) {
     const enqueueHole = (index) => {
       if (
         index < 0 || index >= total || visitedHoles[index] ||
-        exteriorTransparency[index] || pixels[index * 4 + 3] > 2
+        exteriorTransparency[index] || pixels[index * 4 + 3] > holeAlphaThreshold
       ) return;
       visitedHoles[index] = 1;
       holeQueue[tail++] = index;
