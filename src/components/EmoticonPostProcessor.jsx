@@ -6,28 +6,36 @@ const COPY = {
     sizeLabel: '출력 크기', qualityNote: '2×·4×는 고품질 확대와 선명도 보정을 적용합니다.',
     normalizeAll: '전체 {size}×{size} 변환', zip: 'ZIP 일괄 저장', working: '처리 중…', edit: '수정', save: '저장',
     editorTitle: '미세조정', zoom: '크기', x: '좌우 위치', y: '상하 위치', reset: '초기화', cancel: '취소', apply: '수정 적용',
-    raw: '자동', basic: '기본', upscale: '업스케일', zipName: 'emoticon', failed: '이미지 처리 중 오류가 발생했습니다.'
+    raw: '자동', review: '확인 필요', reviewSummary: (count) => `${count}개 결과에서 글자·효과가 이웃 영역과 맞닿았을 가능성이 있습니다. 표시된 이미지만 확대해 확인해 주세요.`,
+    reviewHint: '자동 분할은 완료되었습니다. 글자 끝, 문장부호, 손·소품이 빠지거나 이웃 이미지가 섞이지 않았는지 확인해 주세요.',
+    basic: '기본', upscale: '업스케일', zipName: 'emoticon', failed: '이미지 처리 중 오류가 발생했습니다.'
   },
   en: {
     title: 'Finish emoticons', ready: 'Fine-tune the 15 split images and export high-quality PNGs from 360 to 1440px.',
     sizeLabel: 'Output size', qualityNote: '2× and 4× use high-quality scaling with light sharpening.',
     normalizeAll: 'Convert all to {size}×{size}', zip: 'Download ZIP', working: 'Processing…', edit: 'Edit', save: 'Save',
     editorTitle: 'Fine-tune', zoom: 'Size', x: 'Horizontal', y: 'Vertical', reset: 'Reset', cancel: 'Cancel', apply: 'Apply edit',
-    raw: 'Auto', basic: 'Base', upscale: 'Upscale', zipName: 'emoticon', failed: 'An error occurred while processing the image.'
+    raw: 'Auto', review: 'Review', reviewSummary: (count) => `${count} result(s) may contain text or effects touching a neighboring region. Please inspect only the marked images.`,
+    reviewHint: 'Auto-splitting is complete. Check that text endings, punctuation, hands, and props are intact and that neighboring artwork was not included.',
+    basic: 'Base', upscale: 'Upscale', zipName: 'emoticon', failed: 'An error occurred while processing the image.'
   },
   ja: {
     title: '絵文字の仕上げ', ready: '分割した15枚を微調整し、360〜1440pxの高画質PNGで保存できます。',
     sizeLabel: '出力サイズ', qualityNote: '2×・4×は高品質拡大と軽いシャープ補正を適用します。',
     normalizeAll: 'すべて{size}×{size}に変換', zip: 'ZIP一括保存', working: '処理中…', edit: '編集', save: '保存',
     editorTitle: '微調整', zoom: 'サイズ', x: '左右位置', y: '上下位置', reset: 'リセット', cancel: 'キャンセル', apply: '編集を適用',
-    raw: '自動', basic: '基本', upscale: 'アップスケール', zipName: 'emoticon', failed: '画像処理中にエラーが発生しました。'
+    raw: '自動', review: '要確認', reviewSummary: (count) => `${count}件で文字や効果が隣接領域に触れている可能性があります。印のある画像だけ拡大して確認してください。`,
+    reviewHint: '自動分割は完了しています。文字の末尾、句読点、手や小物の欠け、隣の画像の混入がないか確認してください。',
+    basic: '基本', upscale: 'アップスケール', zipName: 'emoticon', failed: '画像処理中にエラーが発生しました。'
   },
   zh: {
     title: '表情包收尾', ready: '可微调已分割的15张图片，并保存为360到1440px的高画质PNG。',
     sizeLabel: '输出尺寸', qualityNote: '2×和4×会使用高质量放大并进行轻度锐化。',
     normalizeAll: '全部转换为{size}×{size}', zip: 'ZIP批量保存', working: '处理中…', edit: '调整', save: '保存',
     editorTitle: '微调', zoom: '大小', x: '左右位置', y: '上下位置', reset: '重置', cancel: '取消', apply: '应用调整',
-    raw: '自动', basic: '基础', upscale: '放大', zipName: 'emoticon', failed: '图片处理时发生错误。'
+    raw: '自动', review: '需要检查', reviewSummary: (count) => `${count}个结果中的文字或效果可能接近相邻区域，请只放大检查已标记的图片。`,
+    reviewHint: '自动分割已完成。请确认文字末尾、标点、手部和道具没有缺失，也没有混入相邻图片。',
+    basic: '基础', upscale: '放大', zipName: 'emoticon', failed: '图片处理时发生错误。'
   }
 };
 
@@ -152,6 +160,7 @@ export default function EmoticonPostProcessor({ items = [], sourceName = 'emotic
   }, []);
 
   const current = useMemo(() => processed.find((item) => item.index === editingIndex) || null, [processed, editingIndex]);
+  const reviewCount = useMemo(() => processed.filter((item) => item.needsReview).length, [processed]);
   const base = safeBaseName(sourceName);
   const outputSize = 360 * outputScale;
   const normalizeLabel = t.normalizeAll.replace('{size}', String(outputSize));
@@ -317,13 +326,19 @@ export default function EmoticonPostProcessor({ items = [], sourceName = 'emotic
 
       {error && <div className="mt-3 rounded-xl bg-[#FFF1EE] px-3 py-2.5 text-xs font-semibold text-[#A64D3D]">{error}</div>}
 
+      {reviewCount > 0 && (
+        <div className="mt-3 rounded-xl border border-[#F0D29A] bg-[#FFF8E8] px-3 py-2.5 text-[11px] font-semibold leading-5 text-[#7A5925] sm:text-xs" role="status">
+          ⚠️ {t.reviewSummary(reviewCount)}
+        </div>
+      )}
+
       <div className="mt-3 grid min-w-0 grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5 lg:gap-2.5">
         {processed.map((item) => (
-          <div key={item.index} className="min-w-0 overflow-hidden rounded-xl border border-[#E2DDD5] bg-white shadow-sm">
+          <div key={item.index} className={`min-w-0 overflow-hidden rounded-xl border bg-white shadow-sm ${item.needsReview ? 'border-[#E7B85F] ring-1 ring-[#F5D99F]' : 'border-[#E2DDD5]'}`}>
             <div className="flex h-8 items-center justify-between gap-1 border-b border-[#EEEAE3] bg-[#FBFAF7] px-2">
               <span className="text-xs font-black leading-none text-[#5B554E]">{String(item.index).padStart(2, '0')}</span>
               <div className="flex min-w-0 items-center gap-1">
-                <span className="rounded-md bg-[#EEF4EA] px-1.5 py-1 text-[10px] font-extrabold leading-none text-[#5B6E56]">{item.finalBlob ? outputSize : t.raw}</span>
+                <span className={`rounded-md px-1.5 py-1 text-[10px] font-extrabold leading-none ${item.needsReview ? 'bg-[#FFF0CC] text-[#8A5A11]' : 'bg-[#EEF4EA] text-[#5B6E56]'}`}>{item.needsReview ? `⚠ ${t.review}` : (item.finalBlob ? outputSize : t.raw)}</span>
                 {item.finalBlob && outputScale > 1 && <span className="rounded-md bg-[#F1ECE5] px-1 py-1 text-[10px] font-extrabold leading-none text-[#75644E]">↑{outputScale}×</span>}
               </div>
             </div>
@@ -361,6 +376,12 @@ export default function EmoticonPostProcessor({ items = [], sourceName = 'emotic
                 <img src={current.url} alt={`edit ${current.index}`} draggable={false} className="absolute object-contain" style={previewStyle(current, editor)} />
               </div>
             </div>
+
+            {current.needsReview && (
+              <div className="mt-3 rounded-xl border border-[#F0D29A] bg-[#FFF8E8] px-3 py-2 text-[11px] font-semibold leading-5 text-[#7A5925]">
+                ⚠️ {t.reviewHint}
+              </div>
+            )}
 
             <div className="mt-4 space-y-3">
               <label className="block text-xs font-bold text-[#635D55]">{t.zoom} · {Math.round(editor.zoom * 100)}%

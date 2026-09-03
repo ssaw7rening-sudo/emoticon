@@ -812,6 +812,52 @@ async function splitIntoFifteen(blob) {
   const detectedGroups = groupBounds.filter((bounds) => bounds.count >= minimumGroupPixels).length;
   if (detectedGroups < 12) throw new Error('Could not reliably separate sticker content groups');
 
+  // Surface only genuinely risky groups for human review. The splitter keeps
+  // its pixel-ownership result; these flags never delete text or effects.
+  const reviewReasonSets = Array.from({ length: 15 }, () => new Set());
+  for (let group = 0; group < 15; group += 1) {
+    const bounds = groupBounds[group];
+    if (!safeCandidateGroup[group]) reviewReasonSets[group].add('ownership');
+    if (!bounds || bounds.maxX < bounds.minX || bounds.maxY < bounds.minY) continue;
+    const contentWidth = bounds.maxX - bounds.minX + 1;
+    const contentHeight = bounds.maxY - bounds.minY + 1;
+    if (contentWidth > sourceCellWidth * 1.12 || contentHeight > sourceCellHeight * 1.16) {
+      reviewReasonSets[group].add('wide-content');
+    }
+    const edgeTolerance = Math.max(2, Math.round(Math.min(width, height) * 0.002));
+    if (bounds.minX <= edgeTolerance || bounds.minY <= edgeTolerance ||
+        bounds.maxX >= width - 1 - edgeTolerance || bounds.maxY >= height - 1 - edgeTolerance) {
+      reviewReasonSets[group].add('source-edge');
+    }
+  }
+
+  // A connected foreground island receiving meaningful votes from two sticker
+  // owners means captions/bodies are touching at the ownership seam. Mark both
+  // affected stickers instead of guessing that the disconnected text is noise.
+  const minimumAmbiguousComponentArea = Math.max(12, Math.round(sourceCellArea * 0.00045));
+  for (const component of sourceLabelled.components) {
+    if (component.area < minimumAmbiguousComponentArea) continue;
+    const voteOffset = component.id * 15;
+    let bestVotes = 0;
+    let secondVotes = 0;
+    for (let group = 0; group < 15; group += 1) {
+      const votes = componentVotes[voteOffset + group];
+      if (votes > bestVotes) {
+        secondVotes = bestVotes;
+        bestVotes = votes;
+      } else if (votes > secondVotes) {
+        secondVotes = votes;
+      }
+    }
+    const sharedVoteThreshold = Math.max(10, Math.round(component.area * 0.10));
+    if (secondVotes < sharedVoteThreshold) continue;
+    for (let group = 0; group < 15; group += 1) {
+      if (componentVotes[voteOffset + group] >= sharedVoteThreshold) {
+        reviewReasonSets[group].add('touching-content');
+      }
+    }
+  }
+
   const items = [];
   const basePadding = Math.max(14, Math.round(Math.min(width / 5, height / 3) * 0.12));
 
@@ -861,7 +907,15 @@ async function splitIntoFifteen(blob) {
     outputCtx.putImageData(imageData, outputSafetyMargin, outputSafetyMargin);
 
     const itemBlob = await canvasToPngBlob(output);
-    items.push({ index: group + 1, blob: itemBlob, width: output.width, height: output.height });
+    const reviewReasons = Array.from(reviewReasonSets[group]);
+    items.push({
+      index: group + 1,
+      blob: itemBlob,
+      width: output.width,
+      height: output.height,
+      needsReview: reviewReasons.length > 0,
+      reviewReasons
+    });
   }
 
   if (items.length !== 15) throw new Error('Could not create 15 sticker outputs');

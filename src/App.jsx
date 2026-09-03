@@ -3911,22 +3911,22 @@ const APP_SEO_META = {
   ko: {
     title: '프롬티콘 | AI 이모티콘 프롬프트 메이커',
     description: '프롬티콘(Prompticon)은 사진이나 캐릭터 태그로 ChatGPT, Gemini, Grok용 15종 메신저 이모티콘 프롬프트를 만드는 무료 AI 이모티콘 프롬프트 메이커입니다.',
-    canonical: 'https://emoticon-beige.vercel.app/'
+    canonical: 'https://emoticonpromptmaker.com/'
   },
   en: {
     title: 'Prompt Maker | AI Emoticon Prompt Generator (ChatGPT · Gemini · Grok)',
     description: 'Create 15-expression AI messenger emoticon prompts from a photo or character tags for ChatGPT, Gemini and Grok. Free prompt maker with multiple art styles and themes.',
-    canonical: 'https://emoticon-beige.vercel.app/en/'
+    canonical: 'https://emoticonpromptmaker.com/en/'
   },
   ja: {
     title: 'プロンプトメーカー | AI絵文字プロンプト生成ツール (ChatGPT・Gemini・Grok)',
     description: '写真やキャラクタータグからChatGPT・Gemini・Grok向けの15種類のメッセンジャー絵文字プロンプトを作成できる無料AIプロンプトメーカーです。',
-    canonical: 'https://emoticon-beige.vercel.app/ja/'
+    canonical: 'https://emoticonpromptmaker.com/ja/'
   },
   zh: {
     title: '提示词生成器 | AI表情包提示词工具 (ChatGPT · Gemini · Grok)',
     description: '通过照片或角色标签，为ChatGPT、Gemini和Grok生成15种聊天表情包提示词。支持多种画风与主题的免费AI提示词工具。',
-    canonical: 'https://emoticon-beige.vercel.app/zh/'
+    canonical: 'https://emoticonpromptmaker.com/zh/'
   }
 };
 
@@ -3945,22 +3945,22 @@ const syncClientSeoMeta = (lang) => {
   ko: {
     title: '무료 이미지 배경 제거 | 누끼 따기 · 투명 PNG · 업스케일',
     description: '사진·이미지 배경을 무료로 제거하고 투명 PNG로 저장하세요. 360·720·1440px 저장과 2×·4× 고화질 업스케일도 지원합니다.',
-    canonical: 'https://emoticon-beige.vercel.app/background-remover/'
+    canonical: 'https://emoticonpromptmaker.com/background-remover/'
   },
   en: {
     title: 'Free Background Remover | Transparent PNG & Image Upscaler',
     description: 'Remove backgrounds for free, export transparent PNGs, and upscale to 720px (2×) or 1440px (4×) with high-quality scaling.',
-    canonical: 'https://emoticon-beige.vercel.app/en/background-remover/'
+    canonical: 'https://emoticonpromptmaker.com/en/background-remover/'
   },
   ja: {
     title: '無料の画像背景削除 | 透過PNG・高画質アップスケール',
     description: '写真や画像の背景を無料で削除して透過PNGとして保存し、720px（2×）・1440px（4×）へ高品質アップスケールできます。',
-    canonical: 'https://emoticon-beige.vercel.app/ja/background-remover/'
+    canonical: 'https://emoticonpromptmaker.com/ja/background-remover/'
   },
   zh: {
     title: '免费图片背景移除 | 透明PNG・高清图片放大',
     description: '免费移除图片背景并保存透明PNG，还可高质量放大至720px（2×）或1440px（4×）。',
-    canonical: 'https://emoticon-beige.vercel.app/zh/background-remover/'
+    canonical: 'https://emoticonpromptmaker.com/zh/background-remover/'
   }
 };
 const pathname = typeof window !== 'undefined' ? window.location.pathname.toLowerCase() : '';
@@ -5838,9 +5838,11 @@ ${lockLines}
 Immutable source phrase: "${targetPhrase}"
 1. Copy the immutable Korean source phrase exactly once, character for character. Do not translate, paraphrase, respell, omit, duplicate, merge, or invent any character.
 2. Place it beside or above the character in readable, bold 2D pop-art sticker lettering with neat print-style Korean handwriting. Keep it warm and naturally hand-drawn; do not replace it with a mechanical Gothic/sans-serif typeface and do not use connected cursive strokes.
-3. Add a crisp, thick pure-white die-cut outline outside the complete lettering and a subtle shadow without covering internal Hangul strokes.
-4. Add at most one small emotion-matching accent near the phrase, such as a heart, crown, thumbs-up, confetti, bouquet, sweat drop, sparkle, or zZ. It must not touch or obscure any glyph.
-5. Never add a text box, speech bubble, parentheses, brackets, quotation marks, sticker number, or additional text.
+3. Keep each line to 4–7 Korean characters when possible. If the phrase is longer, break it naturally by meaning into no more than two compact lines without shortening or changing the source text.
+4. Keep the complete lettering inside the sticker safe area with at least 10% empty margin; no glyph, punctuation, outline, or accent may touch the canvas edge.
+5. Add a crisp, thick pure-white die-cut outline outside the complete lettering and a subtle shadow without covering internal Hangul strokes.
+6. Add at most one small emotion-matching accent near the phrase, such as a heart, crown, thumbs-up, confetti, bouquet, sweat drop, sparkle, or zZ. It must not touch or obscure any glyph.
+7. Never add a text box, speech bubble, parentheses, brackets, quotation marks, sticker number, or additional text.
 ${glyphProtection}`
           : `문구 "${targetPhrase}"는 장면을 정하는 참고 맥락으로만 사용하세요. 이미지에는 글자, 숫자, 타이포그래피를 그리지 마세요.`;
         const textExclusion = gptTextMode === 'text'
@@ -5883,7 +5885,7 @@ ${textExclusion} 워터마크, 프레임, 중복 캐릭터, 추가 팔다리, �
       } else {
         const textPolicy = gptTextMode === 'text'
           ? `[VIBRANT POP-ART STICKER TYPOGRAPHY DIRECTIVE]
-Render the exact phrase "${targetPhrase}" once in bold, bubbly comic sticker typography with a thick crisp white die-cut sticker outline, subtle drop shadow, and vibrant pop colors (yellow, pink, cyan, orange). Decoratively integrate matching cute mini comic icons/effects (e.g. mini hearts ❤️, sparkles ✨, crown 👑, sweat drops 💦, thumbs up 👍, confetti 🎉, zZ) beside the text. No rectangular text boxes.`
+Render the exact phrase "${targetPhrase}" once in bold, bubbly comic sticker typography with a thick crisp white die-cut sticker outline, subtle drop shadow, and vibrant pop colors (yellow, pink, cyan, orange). Keep Korean lettering to 4–7 characters per line when possible; wrap longer text naturally into no more than two compact lines without changing the source phrase. Keep the full lettering and accents inside a 10% safe margin. Decoratively integrate at most one matching cute mini comic icon/effect beside the text. No rectangular text boxes.`
           : `Use "${targetPhrase}" only as visual context. Do not render text, letters, numbers, or typography.`;
         const textExclusion = gptTextMode === 'text'
           ? 'No extra words, altered spelling, random letters, numbers, quotation marks, or text box.'
@@ -5933,9 +5935,11 @@ ${textExclusion} No watermark, frame, duplicate character, extra limbs, cropped 
 The Korean phrases listed in the panel plan are immutable source text.
 1. Copy the assigned source phrase into its matching cell exactly once, character for character. Do not translate, paraphrase, respell, omit, duplicate, merge, or invent any character.
 2. Place each phrase beside or above its character in readable, bold 2D pop-art sticker lettering with neat print-style Korean handwriting. Keep it warm and naturally hand-drawn; do not replace it with a mechanical Gothic/sans-serif typeface and do not use connected cursive strokes.
-3. Add a crisp, thick pure-white die-cut outline outside the complete lettering and a subtle shadow without covering internal Hangul strokes.
-4. Use at most one small emotion-matching accent per phrase, such as a heart, crown, thumbs-up, confetti, bouquet, sweat drop, sparkle, or zZ. It must not touch or obscure any glyph.
-5. Never add text boxes, speech bubbles, parentheses, brackets, quotation marks, sticker numbers, or additional text.
+3. Keep each line to 4–7 Korean characters when possible. For a longer phrase, wrap it naturally by meaning into no more than two compact lines without shortening or changing the source text.
+4. Reserve at least 10% empty safe space along every side of each visual cell. The complete phrase, punctuation, outline, character, prop, and accent must stay inside its own safe area and never cross toward a neighboring sticker.
+5. Add a crisp, thick pure-white die-cut outline outside the complete lettering and a subtle shadow without covering internal Hangul strokes.
+6. Use at most one small emotion-matching accent per phrase, such as a heart, crown, thumbs-up, confetti, bouquet, sweat drop, sparkle, or zZ. It must not touch or obscure any glyph.
+7. Never add text boxes, speech bubbles, parentheses, brackets, quotation marks, sticker numbers, or additional text.
 ${glyphProtection}`
         : '각 문구는 해당 셀의 표정, 자세와 행동을 정하는 맥락으로만 사용하세요. 이미지에는 문구나 다른 글자를 그리지 마세요.';
       const textExclusion = gptTextMode === 'text'
@@ -5981,8 +5985,10 @@ ${textExclusion} 격자선, 셀 경계선, 구별선, 테두리선, 워터마크
         ? `[HIGH-PRECISION KOREAN TYPOGRAPHY DIRECTIVE] ${getEmotionTextColorGuideEn(emoticons)}
 1. Render each text in a clean 2D commercial messenger pop sticker font.
 2. Text Style: Bold handwritten font filled with vibrant color (yellow, pink, red, mint, orange, purple, sky blue) + crisp inner stroke + heavy white die-cut sticker outline around the entire text.
-3. Cute Accent Icons: Decoratively integrate matching cute mini comic icons/effects (e.g. mini hearts ❤️, sparkles ✨, crown 👑, sweat drops 💦, thumbs up 👍, confetti 🎉, flower bouquet 💐, zZ) around the lettering matching each emotion.
-4. No text boxes, no speech bubbles, no parentheses, no quotes, no sticker numbers.`
+3. Keep Korean lettering to 4–7 characters per line when possible. Wrap longer phrases naturally into no more than two compact lines without changing the source text.
+4. Reserve a 10% empty safe zone on every side of each visual cell. Keep the character, phrase, punctuation, outline, prop, and accent entirely inside its own cell.
+5. Cute Accent Icons: Use at most one matching mini comic icon/effect beside the lettering without touching any glyph.
+6. No text boxes, no speech bubbles, no parentheses, no quotes, no sticker numbers.`
         : 'Use each phrase only as context for its cell\'s expression, pose, and action. Do not render any phrase or other text.';
       const textExclusion = gptTextMode === 'text'
         ? 'No extra words, altered spelling, random letters, cell numbers, quotation marks, or text boxes.'
@@ -6162,8 +6168,10 @@ SOURCE TEXT = "${targetPhrase}"
 1. 위 SOURCE TEXT는 의미를 해석해 바꾸는 문장이 아니라 수정 불가능한 원본 문자열 데이터입니다. 글자 순서, 띄어쓰기, 문장부호를 포함해 문자 단위로 정확히 복사하세요.
 2. 번역, 교정, 축약, 의역, 철자 변경, 글자 추가/삭제/중복, 비슷한 자모로 교체를 절대 하지 마세요.
 3. 이미지에는 SOURCE TEXT를 정확히 1회만 렌더링하세요. 머리 위 또는 얼굴/어깨 옆 한 곳에만 배치하고 캐릭터 아래에는 반복하지 마세요.
-4. 이번 문구의 디자인 프리셋: ${singleTypographyKo}. 장식 때문에 글자 획이 가려질 가능성이 있으면 장식을 줄이고 원문 정확도를 우선하세요.
-5. 최종 렌더링 직전과 직후에 SOURCE TEXT와 출력 글자의 문자 개수와 순서를 대조하고, 다르면 장식이 적은 단순한 글자 형태로 다시 정확히 렌더링하세요.
+4. 한 줄은 가급적 4~7자로 구성하고 긴 문구는 의미 단위로 나눠 최대 2줄로 배치하세요. 원문은 축약하거나 바꾸지 마세요.
+5. 완성된 글자와 외곽선 전체가 캔버스 사방 10% 안전영역 안에 들어가야 하며, 문장부호와 장식도 가장자리에 닿으면 안 됩니다.
+6. 이번 문구의 디자인 프리셋: ${singleTypographyKo}. 장식 때문에 글자 획이 가려질 가능성이 있으면 장식을 줄이고 원문 정확도를 우선하세요.
+7. 최종 렌더링 직전과 직후에 SOURCE TEXT와 출력 글자의 문자 개수와 순서를 대조하고, 다르면 장식이 적은 단순한 글자 형태로 다시 정확히 렌더링하세요.
 ${singleGlyphProtection}`
           : `[텍스트 규칙]
 문구 "${targetPhrase}"는 표정과 자세를 정하는 감정 맥락으로만 사용하세요. 이미지에는 텍스트, 글자, 숫자, 말풍선을 렌더링하지 마세요.`;
@@ -6221,8 +6229,10 @@ ${textExclusionKo}${styleDirectives.negativeExtra ? ` ${styleDirectives.negative
 1. 아래 15개의 원문은 수정 불가능한 문자열 데이터입니다. 각 셀에 배정된 원문을 문자 단위로 그대로 복사하고 번역, 교정, 축약, 의역, 철자 변경을 하지 마세요.
 2. 각 셀의 원문은 정확히 1회만 머리 위 또는 얼굴/어깨 옆에 렌더링하세요. 캐릭터 아래쪽에는 어떤 문구도 반복하지 마세요.
 3. 글자 추가/삭제/중복, 자음·모음 교체, 비슷한 한글 글리프 대체, 다른 셀 문구 혼합을 금지합니다.
-4. 타이포그래피 장식보다 철자 정확도가 우선입니다. 글자 획이 복잡해지거나 장식과 겹치면 장식을 줄이고 글자를 단순하고 또렷하게 만드세요.
-5. 각 셀 완성 후 원문과 출력 문자의 개수·순서를 대조하세요. 정확하지 않은 셀은 디자인을 단순화해서라도 원문 그대로 수정하세요.
+4. 한 줄은 가급적 4~7자로 구성하고 긴 문구는 의미 단위로 나눠 최대 2줄로 배치하세요. 원문을 축약하거나 바꾸면 안 됩니다.
+5. 각 셀 사방에 최소 10%의 빈 안전 여백을 확보하세요. 캐릭터, 문구, 문장부호, 흰색 외곽선, 소품과 효과 전체가 자기 셀 안에 있어야 하며 이웃 셀 방향으로 넘어가면 안 됩니다.
+6. 타이포그래피 장식보다 철자 정확도가 우선입니다. 글자 획이 복잡해지거나 장식과 겹치면 장식을 줄이고 글자를 단순하고 또렷하게 만드세요.
+7. 각 셀 완성 후 원문과 출력 문자의 개수·순서를 대조하세요. 정확하지 않은 셀은 디자인을 단순화해서라도 원문 그대로 수정하세요.
 ${sheetGlyphProtection}`
         : `[텍스트 규칙]
 아래 15개 문구는 각 셀의 감정, 표정, 자세와 행동을 정하는 맥락으로만 사용하세요. 이미지에는 텍스트, 글자, 숫자, 말풍선을 렌더링하지 마세요.`;
@@ -6293,8 +6303,10 @@ SOURCE TEXT = "${targetPhrase}"
 1. Treat SOURCE TEXT as immutable character data, not semantic text to rewrite. Copy it character-for-character in the original writing system, preserving order, spacing, and punctuation.
 2. Do not translate, normalize, correct, paraphrase, shorten, add, omit, duplicate, or substitute any character.
 3. Render SOURCE TEXT exactly ONCE in one location above the head or beside the face/shoulders. Never repeat text below the character.
-4. Typography preset: ${singleTypographyEn}. If decoration threatens glyph accuracy, simplify decoration and preserve the exact source text.
-5. Before final output, compare the rendered character count and sequence against SOURCE TEXT. If mismatched, redraw the lettering more simply and exactly.`
+4. Keep Korean lettering to 4–7 characters per line when possible; wrap longer text naturally into no more than two compact lines without changing the source phrase.
+5. Keep the full character, lettering, punctuation, outline, prop, and accent inside a 10% safe margin.
+6. Typography preset: ${singleTypographyEn}. If decoration threatens glyph accuracy, simplify decoration and preserve the exact source text.
+7. Before final output, compare the rendered character count and sequence against SOURCE TEXT. If mismatched, redraw the lettering more simply and exactly.`
         : `[TEXT RULE]
 Use "${targetPhrase}" only as emotional context for expression and pose. Render no text, letters, numbers, labels, or speech bubbles.`;
 
@@ -6351,8 +6363,10 @@ ${textExclusionEn}${styleDirectives.negativeExtra ? ` ${styleDirectives.negative
 1. Every source phrase below is immutable character data. Copy the phrase assigned to each sticker exactly in its original writing system; do not translate, normalize, correct, paraphrase, shorten, or respell it.
 2. Render each source phrase exactly ONCE above the head or beside the face/shoulders of its own sticker. Never repeat text beneath a character.
 3. No added, omitted, duplicated, or substituted characters; never mix text from neighboring stickers.
-4. Text accuracy outranks decorative complexity. If lettering becomes ambiguous, reduce effects and redraw with simpler, highly legible forms.
-5. Verify the character count and order against the source phrase for every sticker before final output.`
+4. Keep Korean lettering to 4–7 characters per line when possible; wrap longer text naturally into no more than two compact lines without changing the source phrase.
+5. Reserve at least 10% empty safe space on every side of each visual cell. Keep the complete character, phrase, punctuation, outline, prop, and effect inside its own area.
+6. Text accuracy outranks decorative complexity. If lettering becomes ambiguous, reduce effects and redraw with simpler, highly legible forms.
+7. Verify the character count and order against the source phrase for every sticker before final output.`
       : `[TEXT RULE]
 Use each phrase only as visual context for its sticker's expression, pose, and action. Render no text, letters, numbers, labels, or speech bubbles.`;
 
@@ -6539,7 +6553,7 @@ FUSION RULE: Keep every useful selected tag and theme cue, but assign it a role.
 
     const textSection = grokTextMode === 'text'
       ? `\nTEXT:
-Render only the specified Korean messenger phrases in clean, bold 2D pop-art handwritten font with a thick pure white die-cut outline. Text appears clearly once per sticker beside or above the character. No speech bubbles, no quotation marks, no meaningless random letters.`
+Render only the specified Korean messenger phrases in clean, bold 2D pop-art handwritten font with a thick pure white die-cut outline. Text appears clearly once per sticker beside or above the character. Keep Korean lettering to 4–7 characters per line when possible, and wrap a longer phrase naturally into no more than two compact lines without shortening or changing it. Keep the complete text, punctuation, outline, character, prop, and accent inside a 10% safe margin. No speech bubbles, no quotation marks, no meaningless random letters.`
       : `\nTEXT:
 Pure graphic artwork with NO text, NO letters, NO numbers, and NO speech bubbles. Expressions and body gestures communicate 100% of the emotion.`;
 
@@ -6598,7 +6612,7 @@ BODY PROPORTIONS:
 Follow the selected art style and selected tags for proportions consistently across the sheet. In photo mode, body simplification or chibi exaggeration is allowed only while recognizable face and signature identity anchors remain stable.
 
 SHEET COMPOSITION:
-Arrange exactly 15 stickers in a clean 3-row by 5-column grid (5 stickers per row, 3 rows total), evenly and naturally spaced, floating freely within the white margins. No grid lines, cell borders, numbers, frames, or crop marks.
+Arrange exactly 15 stickers in a clean 3-row by 5-column grid (5 stickers per row, 3 rows total), evenly and naturally spaced. Reserve at least 10% empty space on every side of each visual cell. Keep each complete character, phrase, punctuation, outline, prop, and effect entirely inside its own safe area; nothing may cross toward a neighboring sticker. No grid lines, cell borders, numbers, frames, or crop marks.
 ${textSection}
 DIE-CUT OUTLINE:
 Each sticker has a thick, crisp, clean white outline around its full silhouette + very faint subtle contact shadow along the outline edge so the sticker shape is distinct on pure white background without changing border color.
@@ -6631,10 +6645,10 @@ After generating the sticker sheet, also prepare a short, engaging Korean captio
 
   const copySocialCaption = (mode = 'ko') => {
     const captions = {
-      ko: `나만의 얼굴 그대로 담은 실사 캐리커처 스티커 시트 완성! 🎨✨\n웃음, 인사, 감동, 잘자까지 15가지 감정과 포즈를 한 장에 담아봤어요.\n카톡·라인 이모티콘으로 바로 써도 딱일 것 같아요 😆💛\n\n👉 무료 AI 프롬프트 생성기: https://emoticon-beige.vercel.app/\n\n#카카오톡스티커 #라인스티커 #AI스티커 #이모티콘 #GrokArt #프롬프트메이커`,
-      ja: `写真そっくりの15種オリジナルスタンプシートが完成！🎨✨\n笑顔、挨拶、感動、おやすみまで15種類の表情とポーズを1枚にまとめました。\nLINEスタンプにもぴったり😆💛\n\n👉 無料AIプロンプト作成ツール: https://emoticon-beige.vercel.app/\n\n#LINEスタンプ #AIスタンプ #AIイラスト #GrokArt #PromptMaker`,
-      zh: `根据真人照片生成的15格专属表情包贴纸完成！🎨✨\n大笑、打招呼、感动、晚安等15种丰富表情和动作一网打尽。\n微信/LINE表情包即刻可用😆💛\n\n👉 免费AI提示词生成工具: https://emoticon-beige.vercel.app/\n\n#微信表情包 #LINE贴纸 #AI表情包 #AI绘画 #GrokArt #PromptMaker`,
-      en: `Just made my own 15-piece caricature sticker sheet with Grok AI ✨\nBased on a real photo — same face, same vibe, full 15 emotion set!\n\n👉 Free AI Prompt Maker: https://emoticon-beige.vercel.app/\n\n#KakaoTalkSticker #LINESticker #AIArt #CustomEmoticon #StickerSheet #GrokArt`,
+      ko: `나만의 얼굴 그대로 담은 실사 캐리커처 스티커 시트 완성! 🎨✨\n웃음, 인사, 감동, 잘자까지 15가지 감정과 포즈를 한 장에 담아봤어요.\n카톡·라인 이모티콘으로 바로 써도 딱일 것 같아요 😆💛\n\n👉 무료 AI 프롬프트 생성기: https://emoticonpromptmaker.com/\n\n#카카오톡스티커 #라인스티커 #AI스티커 #이모티콘 #GrokArt #프롬프트메이커`,
+      ja: `写真そっくりの15種オリジナルスタンプシートが完成！🎨✨\n笑顔、挨拶、感動、おやすみまで15種類の表情とポーズを1枚にまとめました。\nLINEスタンプにもぴったり😆💛\n\n👉 無料AIプロンプト作成ツール: https://emoticonpromptmaker.com/\n\n#LINEスタンプ #AIスタンプ #AIイラスト #GrokArt #PromptMaker`,
+      zh: `根据真人照片生成的15格专属表情包贴纸完成！🎨✨\n大笑、打招呼、感动、晚安等15种丰富表情和动作一网打尽。\n微信/LINE表情包即刻可用😆💛\n\n👉 免费AI提示词生成工具: https://emoticonpromptmaker.com/\n\n#微信表情包 #LINE贴纸 #AI表情包 #AI绘画 #GrokArt #PromptMaker`,
+      en: `Just made my own 15-piece caricature sticker sheet with Grok AI ✨\nBased on a real photo — same face, same vibe, full 15 emotion set!\n\n👉 Free AI Prompt Maker: https://emoticonpromptmaker.com/\n\n#KakaoTalkSticker #LINESticker #AIArt #CustomEmoticon #StickerSheet #GrokArt`,
     };
     const text = captions[mode] || captions.en;
     navigator.clipboard.writeText(text);
@@ -6644,10 +6658,10 @@ After generating the sticker sheet, also prepare a short, engaging Korean captio
 
   const shareOnTwitter = (mode = lang) => {
     const tweets = {
-      ko: `나만의 카톡/라인 스티커 15장 완성! 💕\n참고 사진 그대로 닮은 캐릭터로 감정 표현 풀세트 만들었어요 ✨\nㅋㅋㅋㅋ부터 잘자요까지 다 있음 ㅋㅋ\n\n👉 무료 AI 프롬프트 생성기: https://emoticon-beige.vercel.app/\n\n#카카오톡스티커 #라인스티커 #AI스티커 #이모티콘 #프롬프트메이커`,
-      ja: `自分そっくりのLINE/メッセンジャースタンプ15種が完成！💕\n写真の特徴をそのまま活かした感情豊かなスタンプシート✨\n\n👉 無料AIプロンプト作成: https://emoticon-beige.vercel.app/\n\n#LINEスタンプ #AIスタンプ #AIイラスト #GrokArt`,
-      zh: `制作了15张专属表情包贴纸！💕\n完美还原照片特征，涵盖大笑到晚安的日常情绪全套表情✨\n\n👉 免费AI提示词生成工具: https://emoticon-beige.vercel.app/\n\n#微信表情包 #LINE贴纸 #AI表情包 #GrokArt`,
-      en: `Just made my own 15-piece KakaoTalk/LINE sticker sheet with AI ✨\nBased on a real photo — same face, same vibe, full emotion set!\n\n👉 Free AI Prompt Maker: https://emoticon-beige.vercel.app/\n\n#KakaoTalkSticker #LINESticker #AIArt #CustomEmoticon #StickerSheet #PromptMaker`,
+      ko: `나만의 카톡/라인 스티커 15장 완성! 💕\n참고 사진 그대로 닮은 캐릭터로 감정 표현 풀세트 만들었어요 ✨\nㅋㅋㅋㅋ부터 잘자요까지 다 있음 ㅋㅋ\n\n👉 무료 AI 프롬프트 생성기: https://emoticonpromptmaker.com/\n\n#카카오톡스티커 #라인스티커 #AI스티커 #이모티콘 #프롬프트메이커`,
+      ja: `自分そっくりのLINE/メッセンジャースタンプ15種が完成！💕\n写真の特徴をそのまま活かした感情豊かなスタンプシート✨\n\n👉 無料AIプロンプト作成: https://emoticonpromptmaker.com/\n\n#LINEスタンプ #AIスタンプ #AIイラスト #GrokArt`,
+      zh: `制作了15张专属表情包贴纸！💕\n完美还原照片特征，涵盖大笑到晚安的日常情绪全套表情✨\n\n👉 免费AI提示词生成工具: https://emoticonpromptmaker.com/\n\n#微信表情包 #LINE贴纸 #AI表情包 #GrokArt`,
+      en: `Just made my own 15-piece KakaoTalk/LINE sticker sheet with AI ✨\nBased on a real photo — same face, same vibe, full emotion set!\n\n👉 Free AI Prompt Maker: https://emoticonpromptmaker.com/\n\n#KakaoTalkSticker #LINESticker #AIArt #CustomEmoticon #StickerSheet #PromptMaker`,
     };
     const text = tweets[mode] || tweets.en;
     const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
