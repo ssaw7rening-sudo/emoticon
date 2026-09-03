@@ -1719,65 +1719,74 @@ async function detectEmoticonSheet(blob) {
   return classifyEmoticonSheetComponents(components, analysisWidth, analysisHeight);
 }
 
-async function splitBySmartGrid(canvas, rows = 3, columns = 5) {
+async function splitIntoFifteen(blob) {
+  const { canvas, ctx } = await drawFileToCanvas(blob);
   const { width, height } = canvas;
-  const ctx = canvas.getContext('2d', { willReadFrequently: true });
-  if (!ctx || !width || !height) throw new Error('Canvas unavailable for smart grid');
+  if (!width || !height) throw new Error('Invalid canvas dimensions');
 
-  const items = [];
+  const rows = 3;
+  const columns = 5;
   const cellW = width / columns;
   const cellH = height / rows;
-  const padding = Math.max(6, Math.round(Math.min(cellW, cellH) * 0.04));
+  const padding = Math.max(6, Math.round(Math.min(cellW, cellH) * 0.045));
 
+  // 1. 전체 이미지의 알파 픽셀 데이터를 단 한 번만 읽어옴 (초고속 성능 & 메모리 최적화)
+  const fullImageData = ctx.getImageData(0, 0, width, height);
+  const data = fullImageData.data;
+
+  const items = [];
+
+  // 2. 15개 셀(3행 5열) 순서대로 정밀 Bounding Box 스캔
   for (let r = 0; r < rows; r += 1) {
     for (let c = 0; c < columns; c += 1) {
       const cellLeft = Math.floor(c * cellW);
       const cellTop = Math.floor(r * cellH);
       const cellRight = Math.min(width, Math.ceil((c + 1) * cellW));
       const cellBottom = Math.min(height, Math.ceil((r + 1) * cellH));
-      const cellWidth = Math.max(1, cellRight - cellLeft);
-      const cellHeight = Math.max(1, cellBottom - cellTop);
 
-      let minX = cellWidth, minY = cellHeight, maxX = 0, maxY = 0;
+      let minX = cellRight;
+      let minY = cellBottom;
+      let maxX = cellLeft - 1;
+      let maxY = cellTop - 1;
       let hasPixels = false;
 
-      try {
-        const imgData = ctx.getImageData(cellLeft, cellTop, cellWidth, cellHeight);
-        const data = imgData.data;
-
-        for (let y = 0; y < cellHeight; y += 1) {
-          for (let x = 0; x < cellWidth; x += 1) {
-            const alpha = data[(y * cellWidth + x) * 4 + 3];
-            if (alpha > 15) {
-              hasPixels = true;
-              if (x < minX) minX = x;
-              if (x > maxX) maxX = x;
-              if (y < minY) minY = y;
-              if (y > maxY) maxY = y;
-            }
+      // 해당 셀 구역 내부의 모든 유효 픽셀(캐릭터 본체 + 한글/영문 텍스트 + 말풍선 + 하트/별 효과선 등 일체)을 탐색
+      for (let y = cellTop; y < cellBottom; y += 1) {
+        const rowOffset = y * width * 4;
+        for (let x = cellLeft; x < cellRight; x += 1) {
+          const alpha = data[rowOffset + x * 4 + 3];
+          if (alpha > 15) {
+            hasPixels = true;
+            if (x < minX) minX = x;
+            if (x > maxX) maxX = x;
+            if (y < minY) minY = y;
+            if (y > maxY) maxY = y;
           }
         }
-      } catch (_imgDataErr) {
-        console.warn('getImageData warning on cell:', r, c, _imgDataErr);
       }
 
+      // 3. 정밀 바운딩 박스 결정 (타이트 크롭 + 자연스러운 여백 패딩)
       let cropX, cropY, cropW, cropH;
       if (hasPixels && minX <= maxX && minY <= maxY) {
-        const absMinX = Math.max(0, cellLeft + minX - padding);
-        const absMinY = Math.max(0, cellTop + minY - padding);
-        const absMaxX = Math.min(width, cellLeft + maxX + 1 + padding);
-        const absMaxY = Math.min(height, cellTop + maxY + 1 + padding);
+        // 인접 셀을 침범하지 않는 선에서 최대 패딩 적용
+        const absMinX = Math.max(cellLeft, minX - padding);
+        const absMinY = Math.max(cellTop, minY - padding);
+        const absMaxX = Math.min(cellRight, maxX + 1 + padding);
+        const absMaxY = Math.min(cellBottom, maxY + 1 + padding);
+
         cropX = Math.round(absMinX);
         cropY = Math.round(absMinY);
         cropW = Math.max(1, Math.round(absMaxX - absMinX));
         cropH = Math.max(1, Math.round(absMaxY - absMinY));
       } else {
+        // 픽셀이 없더라도 셀 전체 영역을 안전하게 크롭
         cropX = Math.round(cellLeft);
         cropY = Math.round(cellTop);
-        cropW = Math.max(1, Math.round(cellWidth));
-        cropH = Math.max(1, Math.round(cellHeight));
+        cropW = Math.max(1, Math.round(cellRight - cellLeft));
+        cropH = Math.max(1, Math.round(cellBottom - cellTop));
       }
 
+      // 4. 개별 캔버스에 정밀 크롭 렌더링
       const output = document.createElement('canvas');
       output.width = cropW;
       output.height = cropH;
@@ -1786,10 +1795,11 @@ async function splitBySmartGrid(canvas, rows = 3, columns = 5) {
         try {
           outCtx.drawImage(canvas, cropX, cropY, cropW, cropH, 0, 0, cropW, cropH);
         } catch (_drawErr) {
-          console.warn('Cell drawImage fallback:', _drawErr);
+          console.warn('Cell drawImage error:', _drawErr);
         }
       }
 
+      // 5. 모바일 안전 PNG Blob 추출
       let itemBlob;
       try {
         itemBlob = await canvasToPngBlob(output);
@@ -1809,53 +1819,11 @@ async function splitBySmartGrid(canvas, rows = 3, columns = 5) {
       });
     }
   }
+
   return items;
 }
 
-async function splitIntoFifteen(blob) {
-  const { canvas, ctx } = await drawFileToCanvas(blob);
-  const { width, height } = canvas;
-  try {
-    const components = extractConnectedComponents(ctx, width, height);
-    const primaries = orderPrimaryStickerComponents(components, width, height);
-    const groups = assignComponentsToStickers(components, primaries, width, height);
-    const items = [];
-    const padding = Math.max(8, Math.round(Math.min(width / 5, height / 3) * 0.035));
-
-    for (let index = 0; index < primaries.length; index += 1) {
-    const primary = primaries[index];
-    const group = groups.get(primary.id) || [primary];
-    const minX = Math.max(0, Math.min(...group.map((item) => item.minX)) - padding);
-    const minY = Math.max(0, Math.min(...group.map((item) => item.minY)) - padding);
-    const maxX = Math.min(width - 1, Math.max(...group.map((item) => item.maxX)) + padding);
-    const maxY = Math.min(height - 1, Math.max(...group.map((item) => item.maxY)) + padding);
-      const cropWidth = Math.max(1, maxX - minX + 1);
-      const cropHeight = Math.max(1, maxY - minY + 1);
-
-      const output = document.createElement('canvas');
-      output.width = cropWidth;
-      output.height = cropHeight;
-      const outputCtx = output.getContext('2d');
-      if (!outputCtx) throw new Error('Canvas 2D is unavailable');
-      outputCtx.drawImage(canvas, minX, minY, cropWidth, cropHeight, 0, 0, cropWidth, cropHeight);
-
-      const itemBlob = await canvasToPngBlob(output);
-      items.push({
-        index: index + 1,
-        blob: itemBlob,
-        width: cropWidth,
-        height: cropHeight
-      });
-    }
-
-    if (items.length === 15) return items;
-  } catch (err) {
-    console.warn('Component-based split failed, using smart grid fallback:', err);
-  }
-
-  // 100% Guaranteed Fallback: 3 rows x 5 columns Smart Tight-Crop Grid
-  return splitBySmartGrid(canvas, 3, 5);
-}
+const splitBySmartGrid = splitIntoFifteen;
 
 async function hasRealTransparency(file) {
   if (file?.type !== 'image/png') return false;
