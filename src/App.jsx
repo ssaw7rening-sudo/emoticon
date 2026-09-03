@@ -530,7 +530,42 @@ const CHARACTER_TAGS_KO = {
   '🌿 식물/자연': ['아기 선인장', '네잎클로버 요정', '동글이 버섯', '화분 아기', '해바라기 꼬마', '새싹 요정', '아기 단풍잎', '방울 토마토', '말랑 아보카도', '달콤 복숭아 요정', '매운맛 아기 고추', '민들레 홀씨', '뽀송 목화솜', '상큼 레몬 꼬마', '눈물 흘리는 양파', '동글동글 도토리', '빨간 사과 요정', '가을 꿀밤송이'],
   '👀 외형/특징': ['둥근 얼굴형', '크고 반짝이는 눈', '통통한 볼살', '짧고 통통한 팔다리', '작고 동그란 코', '발그레한 볼', '복슬복슬한 털', '말랑한 젤리 몸', '길고 쫑긋한 귀', '작은 송곳니', '주근깨', '한쪽 눈을 덮는 앞머리', '동그란 안경', '풍성한 꼬리', '작은 날개', '별 모양 눈동자', '하트 모양 볼무늬', '미니 SD 체형'],
   '✨ 성격/감정': ['장난기 많은', '시크하고 도도한', '순둥순둥 착한', '늘 피곤에 찌든', '애교가 넘치는', '화가 많은', '느긋한', '눈물 많은', '활발한', '소심한', '엉뚱한', '다정한', '항상 배고픈', '호기심 가득한', '매사에 진지한', '허세 가득한', '사랑에 빠진', '자신감 넘치는', '덜렁거리는', '게으른 뒹굴뒹굴', '열정 만수르', '겁이 많은', '새침떼기', '의욕 상실한', '돈을 좋아하는', '맑은 눈의 광인 (맑눈광)', '영혼 없는 동태눈', '자본주의 미소', '세상 억울하고 서러운', '초긍정 럭키비키 멘탈', '극단적 T (로봇 모드)', '폭풍 오열하는 극 F', '자포자기 / 해탈한', '킹받게 깐족거리는', '사회성 급속 방전'],
-  '🖌️ 화풍': ['귀여운 2D 만화풍', '한국 웹툰 스타일', '손그림 낙서풍', '부드러운 수채화풍', '색연필 동화책풍', '레트로 애니메이션풍', '깔끔한 미니멀 벡터', '통통 튀는 팝아트풍', '굵은 선의 코믹북풍', '도트 픽셀 아트풍', '종이 콜라주풍', '빈티지 인쇄 만화풍', '흑백 만화 톤', '열혈 배틀 만화풍', '샤방샤방 순정만화풍', '8090 레트로 애니풍', '3D 반실사 애니 렌더링', '일본 출판 만화풍', '3D 펠트/클레이 점토 인형풍', '크레파스 낙서풍', 'Y2K 픽셀 스티커풍', 'B급 병맛/코믹 짤툰풍', '크레파스/오일파스텔 동화풍', '동양화/수묵담채화풍', '동글동글 모찌/찹쌀떡 플랫풍', '키치 & 하이틴 Y2K 스티커풍', '맑은 눈의 개그 짤방풍', '연필/흑연 감성 드로잉풍'],
+  '🖌️ 화풍': [
+    '귀여운 2D 만화풍',
+    '한국 웹툰 스타일',
+    '손그림 낙서풍',
+    '부드러운 수채화풍',
+    '색연필 동화책풍',
+    '레트로 애니메이션풍',
+    '깔끔한 미니멀 벡터',
+    '통통 튀는 팝아트풍',
+    '굵은 선의 코믹북풍',
+    '도트 픽셀 아트풍',
+    '종이 콜라주풍',
+    '빈티지 인쇄 만화풍',
+    '흑백 만화 톤',
+    '열혈 배틀 만화풍',
+    '샤방샤방 순정만화풍',
+    '8090 레트로 애니풍',
+    '3D 반실사 애니 렌더링',
+    '일본 출판 만화풍',
+    '3D 펠트/클레이 점토 인형풍',
+    '크레파스 낙서풍',
+    'Y2K 픽셀 스티커풍',
+    'B급 병맛/코믹 짤툰풍',
+    '크레파스/오일파스텔 동화풍',
+    '정통 무협 만화풍',
+    '고전 동양화/민화풍',
+    '은은한 수묵담채화풍',
+    '니트 자수/패브릭 패치풍',
+    '빈티지 목판화/실크스크린풍',
+    '3D 젤리/글래스 입체풍',
+    '심플 원라인/볼펜 드로잉풍',
+    '동글동글 모찌/찹쌀떡 플랫풍',
+    '키치 & 하이틴 Y2K 스티커풍',
+    '맑은 눈의 개그 짤방풍',
+    '연필/흑연 감성 드로잉풍'
+  ],
   '👕 의상': ['의사 가운', '요리사 앞치마', '회사원 정장', '오버핏 후드티', '멜빵바지', '교복', '트레이닝복', '우비', '포근한 잠옷', '마법사 망토', '화려한 드레스', '스포티한 캡모자', '두꺼운 패딩', '가죽 자켓', '단정한 셔츠와 넥타이', '화사한 꽃무늬 원피스', '힙한 스트릿 패션', '전통 무술 도복', '따뜻한 니트 스웨터', '귀여운 동물 잠옷', '우주복', '탐험가 조끼와 모자', '수영복과 튜브', '클래식한 트렌치코트', '반짝이는 요정 날개', '왕관과 망토', '청바지와 흰 티', '명탐정 코트와 모자', '긱시크 뿔테 안경룩', '고프코어 바람막이와 카고팬츠', '포근한 수면잠옷과 세안밴드', '러닝 크루 운동복과 바이저'],
   '🎒 소품/동작': ['스마트폰을 든', '커피잔을 든', '선글라스를 낀', '헤드폰을 낀', '노트북을 하는', '책을 읽는', '풍선을 든', '꽃다발을 안고 있는', '마이크를 잡고 노래하는', '게임패드를 쥐고 있는', '프라이팬을 들고 있는', '커다란 돋보기를 든', '스케치북에 그림 그리는', '마법 지팡이를 휘두르는', '장바구니를 들고 있는', '우산을 쓰고 있는', '팝콘을 먹고 있는', '청소기를 돌리는', '망원경으로 엿보는', '요가 매트에서 스트레칭하는', '스마트워치를 확인하는', '돈다발을 쥐고 있는', '아이스 아메리카노 텀블러를 든', '노트북을 두드리는', '치킨 닭다리를 뜯는', '소주/맥주잔을 부딪치는', '수액 링거 맞고 있는', '침대에 대자로 뻗어 있는', '벽 잡고 쾅쾅 오열하는', '이불 돌돌 말고 김밥 된', '배달 앱 메뉴 고민하는', '체온계 물고 끙끙 앓는', '통장 잔고 확인하고 입틀막', '확성기 들고 소리 지르는', '선글라스 살짝 내리고 째려보는', '선풍기/에어컨 앞에서 입 벌린'],
   '🌏 글로벌/전통 문화': ['우아한 전통 궁중 한복 룩', '갓과 두루마기 모던 한복 룩', '화려한 K-POP 아이돌 의상', '태권도 검은띠 무도복', '전통 기모노 / 유카타', '아키하바라 메이드 코스프레', '사무라이 하카마 & 닌자 의상', '일본 청춘 세일러복 교복', '신사 무녀(미코) 의상', '신비로운 무협/선협 검객 도포', '화려한 전통 치파오 / 한푸', '이소룡풍 노란 트레이닝 무술복', '경극 가면 배우', '와일드 웨스트 카우보이', '런던 신사 트렌치코트 & 중절모', '사이버펑크 네온 스트릿웨어', '중세 유럽 기사 갑옷', '베레모와 바게트 든 파리지앵', '영국 왕실 근위병 (베어스킨 모자)', '스페인 플라멩코 무용수', '독일 옥토버페스트 레더호젠', '베네치아 가면무도회 귀족', '멕시코 마리아치 & 솜브레로', '망자의 날 슈가 스컬 분장', '브라질 삼바 카니발 댄서', '베트남 아오자이 & 논라 삿갓', '태국 전통 사바이 의상', '인도 전통 사리와 보석 (볼리우드)', '아라비안 나이트 터번 & 요술램프', '하와이안 알로하 셔츠 & 우쿨렐레'],
@@ -557,7 +592,42 @@ const CHARACTER_TAGS_EN = {
   '🌿 Plant/Nature': ['Baby cactus', 'Four-leaf clover fairy', 'Round mushroom', 'Plant pot baby', 'Sunflower buddy', 'Sprout fairy', 'Maple leaf', 'Cherry tomato', 'Cute avocado', 'Sweet peach fairy', 'Spicy chili baby', 'Dandelion fluff', 'Fluffy cotton fairy', 'Fresh lemon buddy', 'Crying onion', 'Cute acorn', 'Red apple fairy', 'Autumn chestnut'],
   '👀 Appearance': ['Round face shape', 'Large sparkling eyes', 'Chubby cheeks', 'Short chubby limbs', 'Small round nose', 'Rosy blushed cheeks', 'Fluffy soft fur', 'Soft squishy jelly body', 'Long perky ears', 'Tiny fangs', 'Cute freckles', 'Bangs covering one eye', 'Round glasses', 'Fluffy voluminous tail', 'Tiny fairy wings', 'Star-shaped pupils', 'Heart cheek pattern', 'Mini chibi SD body'],
   '✨ Trait/Emotion': ['Playful and cheeky', 'Chic and aloof', 'Gentle and kind', 'Perpetually exhausted', 'Full of cute charm', 'Hot-tempered', 'Laid-back and easygoing', 'Crybaby', 'Energetic and lively', 'Timid and shy', 'Goofy and quirky', 'Warm and sweet', 'Always hungry', 'Curious and inquisitive', 'Deadly serious', 'Pompous and showy', 'Deeply in love', 'Full of confidence', 'Clumsy butterfingers', 'Lazy couch potato', 'Overflowing with passion', 'Timid scaredy-cat', 'Prudish and sassy', 'Completely unmotivated', 'Money lover', 'Mad-eyed lunatic (bright crazy eyes)', 'Dead soulless eyes', 'Fake polite corporate smile', 'Unfair and sorrowful face', 'Ultra positive Lucky Vicky mentality', 'Extreme robotic T mode', 'Weeping emotional F mode', 'Hopeless and resigned', 'Smug annoying tease', 'Social battery drained'],
-  '🖌️ Art Style': ['Cute 2D cartoon', 'Korean webtoon style', 'Hand-drawn doodle', 'Soft watercolor', 'Colored pencil storybook', 'Retro animation', 'Clean minimal vector', 'Vibrant pop art', 'Bold line comic book', 'Pixel art retro dot', 'Paper collage style', 'Vintage print comic', 'Monochrome manga tone', 'Hot-blooded battle manga', 'Sparkling shojo manga', '80s-90s retro anime', '3D Semi-realistic anime rendering', 'Japanese Manga Ink & Tone Style', '3D Felt & Claymation Doll Style', 'Crayon Wax Pastel Doodle Style', 'Y2K Retro Glitter Pixel Sticker Style', 'Meme Webtoon Satirical Style', 'Crayon & Oil Pastel Storybook Style', 'Oriental Sumi-e Ink Wash Painting', 'Round Mochi & Flat Minimal Style', 'Kitsch & Y2K High-Teen Sticker Style', 'Hilarious Meme & Derp Comedy Style', 'Soft Graphite Pencil Sketch Style'],
+  '🖌️ Art Style': [
+    'Cute 2D cartoon',
+    'Korean webtoon style',
+    'Hand-drawn doodle',
+    'Soft watercolor',
+    'Colored pencil storybook',
+    'Retro animation',
+    'Clean minimal vector',
+    'Vibrant pop art',
+    'Bold line comic book',
+    'Pixel art retro dot',
+    'Paper collage style',
+    'Vintage print comic',
+    'Monochrome manga tone',
+    'Hot-blooded battle manga',
+    'Sparkling shojo manga',
+    '80s-90s retro anime',
+    '3D Semi-realistic anime rendering',
+    'Japanese Manga Ink & Tone Style',
+    '3D Felt & Claymation Doll Style',
+    'Crayon Wax Pastel Doodle Style',
+    'Y2K Retro Glitter Pixel Sticker Style',
+    'Meme Webtoon Satirical Style',
+    'Crayon & Oil Pastel Storybook Style',
+    'Classic Martial Arts Wuxia Style',
+    'Traditional Oriental Folk Art (Minhwa) Style',
+    'Delicate Ink Wash & Light Watercolor Style',
+    'Embroidered Patch & Fabric Knit Style',
+    'Vintage Woodblock & Silkscreen Print Style',
+    'Glossy 3D Jelly & Glassmorphism Style',
+    'Minimalist Single-Line Ballpen Drawing Style',
+    'Round Mochi & Flat Minimal Style',
+    'Kitsch & Y2K High-Teen Sticker Style',
+    'Hilarious Meme & Derp Comedy Style',
+    'Soft Graphite Pencil Sketch Style'
+  ],
   '👕 Outfit': ['Doctor coat', 'Chef apron', 'Business suit', 'Oversized hoodie', 'Overalls', 'School uniform', 'Tracksuit', 'Raincoat', 'Cozy pajamas', 'Wizard cape', 'Glamorous ballgown', 'Sporty baseball cap', 'Puffer jacket', 'Leather jacket', 'Shirt and tie', 'Floral dress', 'Hip streetwear', 'Martial arts uniform', 'Warm knit sweater', 'Animal onesie', 'Spacesuit', 'Explorer vest and hat', 'Swimwear and tube', 'Classic trench coat', 'Glittering fairy wings', 'Crown and royal cape', 'T-shirt and jeans', 'Detective coat and hat', 'Geek chic horn-rimmed glasses look', 'Gorpcore windbreaker & cargo pants', 'Cozy sleepwear & washing headband', 'Running crew athletic wear & visor'],
   '🎒 Prop/Action': ['Holding smartphone', 'Holding coffee cup', 'Wearing sunglasses', 'Wearing headphones', 'Working on laptop', 'Reading a book', 'Holding a balloon', 'Holding flower bouquet', 'Singing into microphone', 'Holding game controller', 'Holding frying pan', 'Holding large magnifying glass', 'Drawing in sketchbook', 'Waving magic wand', 'Holding grocery basket', 'Holding an umbrella', 'Eating popcorn', 'Vacuuming floor', 'Peeking through binoculars', 'Stretching on yoga mat', 'Checking smartwatch', 'Holding stacks of cash', 'Holding iced Americano tumbler', 'Typing on laptop', 'Eating fried chicken drumstick', 'Clinking beer/soju glasses', 'Getting IV drip while exhausted', 'Sprawled flat out on bed', 'Banging wall weeping loudly', 'Wrapped in blanket like kimbap roll', 'Browsing delivery app mouth watering', 'Shivering with thermometer in mouth', 'Covering mouth seeing bank balance', 'Shouting loudly through megaphone', 'Peeking suspiciously over sunglasses', 'Mouth wide open in front of fan'],
   '🌏 World Cultures': ['Traditional Hanbok Korean robe', 'Modern hip Hanbok with Gat hat', 'K-Pop idol stage outfit', 'Taekwondo Dobok martial uniform', 'Traditional Japanese Kimono / Yukata', 'Akihabara Maid cafe cosplay', 'Samurai swordsman / Ninja gear', 'Japanese sailor school uniform', 'Shrine maiden Miko robe', 'Wuxia martial arts silk robe', 'Traditional Cheongsam / Hanfu dress', 'Kung Fu martial artist yellow suit', 'Beijing opera mask performer', 'Wild West cowboy sheriff', 'London gentleman trench coat & fedora', 'Cyberpunk neon streetwear', 'Medieval knight armor & cape', 'Parisian with beret and baguette', 'British royal guard with bearskin cap', 'Spanish Flamenco dancer with rose', 'German Oktoberfest Lederhosen', 'Venetian masquerade noble outfit', 'Mexican Mariachi with Sombrero', 'Day of the Dead sugar skull', 'Brazilian Samba carnival dancer', 'Vietnamese Ao Dai & Non La hat', 'Traditional Thai Sabai silk dress', 'Indian Bollywood silk Saree', 'Arabian Nights turban & magic lamp', 'Hawaiian Aloha shirt & Ukulele'],
@@ -584,7 +654,42 @@ const CHARACTER_TAGS_JA = {
   '🌿 植物/自然': ['赤ちゃんサボテン', '四つ葉のクローバー妖精', 'ころころキノコ', '植木鉢の赤ちゃん', 'ひまわりちゃん', '新芽の妖精', 'もみじちゃん', 'プチトマト', 'アボカドちゃん', 'もも妖精', '激辛とうがらしちゃん', 'たんぽぽの綿毛', 'ふわふわコットン', 'レモン坊や', '泣き虫たまねぎ', 'ころころどんぐり', '赤りんご妖精', '秋のくり坊'],
   '👀 外見/特徴': ['丸顔', '大きくてキラキラした目', 'ぷっくりした頬', '短くて太い手足', '小さくて丸い鼻', 'ほんのり赤らんだ頬', 'もふもふの毛並み', 'ぷにぷにゼリー体型', '長くてぴんと立った耳', '小さな八重歯', 'そばかす', '片目を隠す前髪', '丸メガネ', 'ふさふさのしっぽ', '小さな羽', '星形の瞳', 'ハート型の頬模様', 'ミニSD体型'],
   '✨ 性格/感情': ['いたずら好き', 'ツンデレ・クール', 'おっとり優しい', 'いつもお疲れモード', '愛嬌たっぷり', '怒りっぽい', 'のんびり屋', '泣き虫', '活発・元気', '人見知り・内気', '天然・マイペース', '思いやりがある', 'いつも腹ペコ', '好奇心旺盛', '何事にも真面目', '見栄っ張り', '恋してる', '自信満々', 'おっちょこちょい', 'ぐうたら・ゴロゴロ', '情熱的・やる気満々', '怖がり・ビビリ', 'おすまし・気取り屋', 'やる気ゼロ', 'お金大好き', '澄んだ目の狂人（眼光鋭い）', '魂の抜けた魚の目', '営業スマイル（作り笑い）', '理不尽で悔し泣き', '超ポジティブ思考（ラッキー精神）', '超ドライなロボット思考', '涙腺崩壊・超共感モード', '自暴自棄・悟りの境地', 'ウザ可愛い煽り顔', 'コミュ力完全放電'],
-  '🖌️ 画風': ['かわいい2Dアニメ風', '韓国ウェブトゥーン風', '手描き落書き風', 'やわらか水彩画風', '色鉛筆絵本風', 'レトロアニメ風', 'すっきりミニマルベクター', 'ポップアート風', '太線のコミック風', 'ドット絵ピクセルアート', 'ペーパーコラージュ風', 'ヴィンテージ印刷風', 'モノクロ漫画トーン', '熱血バトル漫画風', 'きらきら少女漫画風', '80-90年代レトロアニメ風', '3Dセミリアルアニメレンダリング', '日本の出版マンガ風（Gペン・スクリーントーン）', '3Dフェルト・粘土クレイ人形風', 'クレヨン落書きパステル風', 'Y2Kレトロキラキラピクセル風', 'B級ギャグ・シュール落書き風', 'クレヨン・オイルパステル絵本風', '東洋画・水墨画風', 'まんまるモチモチ・フラット風', 'キッチュ＆Y2Kレトロステッカー風', 'シュール爆笑ミーム画風', '鉛筆・デッサン手描き風'],
+  '🖌️ 画風': [
+    'かわいい2Dアニメ風',
+    '韓国ウェブトゥーン風',
+    '手描き落書き風',
+    'やわらか水彩画風',
+    '色鉛筆絵本風',
+    'レトロアニメ風',
+    'すっきりミニマルベクター',
+    'ポップアート風',
+    '太線のコミック風',
+    'ドット絵ピクセルアート',
+    'ペーパーコラージュ風',
+    'ヴィンテージ印刷風',
+    'モノクロ漫画トーン',
+    '熱血バトル漫画風',
+    'きらきら少女漫画風',
+    '80-90年代レトロアニメ風',
+    '3Dセミリアルアニメレンダリング',
+    '日本の出版マンガ風（Gペン・スクリーントーン）',
+    '3Dフェルト・粘土クレイ人形風',
+    'クレヨン落書きパステル風',
+    'Y2Kレトロキラキラピクセル風',
+    'B級ギャグ・シュール落書き風',
+    'クレヨン・オイルパステル絵本風',
+    '本格武侠・バトル墨絵漫画風',
+    '古典東洋画・民画風',
+    '繊細な水墨淡彩画風',
+    '刺繍ワッペン・ニットファブリック風',
+    'ヴィンテージ木版画・シルクスクリーン風',
+    'ぷるぷる3Dゼリー・ガラスモーフィズム風',
+    'シンプル一筆書き・ボールペンドローイング風',
+    'まんまるモチモチ・フラット風',
+    'キッチュ＆Y2Kレトロステッカー風',
+    'シュール爆笑ミーム画風',
+    '鉛筆・デッサン手描き風'
+  ],
   '👕 衣装': ['白衣', 'コックエプロン', 'ビジネススーツ', 'オーバーサイズパーカー', 'オーバーオール', '制服', 'ジャージ', 'レインコート', 'もこもこパジャマ', '魔法使いのマント', '華やかなドレス', 'スポーティなキャップ', 'ダウンジャケット', 'レザージャケット', 'シャツとネクタイ', '花柄ワンピース', 'ストリート系ファッション', '伝統武術の道着', 'あったかニットセーター', '動物の着ぐるみパジャマ', '宇宙服', '探検家のベストと帽子', '水着と浮き輪', 'トレンチコート', '妖精の羽', '王冠とマント', 'デニムと白T', '名探偵のコートと帽子', 'ギークシックな黒縁メガネコーデ', 'ゴープコアウインドブレーカー＆カーゴ', 'もこもこルームウェア＆ヘアバンド', 'ランニングウェア＆サンバイザー'],
   '🎒 小道具/動作': ['スマホを持つ', 'コーヒーカップを持つ', 'サングラスをかける', 'ヘッドホンをつける', 'ノートパソコンを操作する', '本を読む', '風船を持つ', '花束を抱える', 'マイクで歌う', 'ゲームコントローラーを握る', 'フライパンを持つ', '大きな虫眼鏡を持つ', 'スケッチブックに絵を描く', '魔法の杖を振る', '買い物かごを持つ', '傘を差す', 'ポップコーンを食べる', '掃除機をかける', '望遠鏡を覗く', 'ヨガマットでストレッチする', 'スマートウォッチを見る', '札束を握っている', 'アイスコーヒーのタンブラーを持つ', 'ノートパソコンをカタカタ打つ', 'フライドチキンをかじる', 'ビール・お酒のグラスで乾杯', '点滴を打ってぐったり', 'ベッドで大の字にバタンキュー', '壁を叩いて号泣する', '毛布にくるまり海苔巻き状態', '出前アプリ見ながらよだれ', '体温計くわえてぐったり', '口座残高見て口をふさぐ', 'メガホンで本音を叫ぶ', 'サングラスをずらして睨む', '扇風機の前でア〜と口を開ける'],
   '🌏 世界の文化・伝統': ['伝統的な韓服（ハンボク）', 'モダンなヒップホップ韓服', 'K-POPアイドルステージ衣装', 'テコンドー黒帯道着', '伝統的な着物・浴衣', '秋葉原メイドコスプレ', '侍（サムライ）・忍者装束', '日本のセーラー服・学生服', '神社巫女（みこ）装束', '武侠・仙侠のシルク道袍', '華やかなチャイナドレス・漢服', 'カンフー武術家（黄色の道着）', '京劇の仮面役者', '西部劇カウボーイ・保安官', 'ロンドン紳士トレンチコート', 'サイバーパンクネオンストリート', '中世ヨーロッパ騎士の甲冑', 'パリジャンのベレー帽とバゲット', 'イギリス王室近衛兵（毛皮帽子）', 'スペイン情熱のフラメンコダンサー', 'ドイツのオクトーバーフェスト衣装', 'ベネチア仮面舞踏会衣装', 'メキシカンマリアッチ＆ソンブレロ', '死者の日シュガースカル仮装', 'ブラジルサンバカーニバルダンサー', 'ベトナムアオザイ＆ノンラー笠', 'タイ伝統サバイ衣装', 'インド伝統サリー＆ボリウッド', 'アラビアンナイトのターバン＆魔法のランプ', 'ハワイアンアロハシャツ＆ウクレレ'],
@@ -611,7 +716,42 @@ const CHARACTER_TAGS_ZH = {
   '🌿 植物/自然': ['小仙人掌', '四叶草精灵', '圆滚滚小蘑菇', '盆栽小宝', '小向日葵', '嫩芽仙子', '红枫叶', '圣女果', '牛油果宝', '蜜桃仙子', '火辣小尖椒', '蒲公英绒毛', '蓬松棉花糖', '柠檬小弟', '爱哭洋葱头', '圆圆小橡果', '红苹果小仙子', '秋天板栗头'],
   '👀 外貌/特征': ['圆圆脸', '大而闪亮的眼睛', '肉嘟嘟脸颊', '短粗小手小脚', '小巧圆鼻子', '泛红的脸颊', '蓬松柔软毛发', 'Q弹果冻身材', '直立长耳朵', '可爱小虎牙', '雀斑', '遮单眼的刘海', '圆圆眼镜', '毛茸茸大尾巴', '小翅膀', '星星眼瞳孔', '爱心脸颊纹', '迷你SD身材'],
   '✨ 性格/情绪': ['爱恶作剧', '高冷傲娇', '温顺善良', '日常被掏空', '撒娇精', '暴脾气', '慢吞吞', '爱哭鬼', '元气满满', '害羞内向', '古灵精怪', '温暖贴心', '干饭魂吃货', '好奇宝宝', '超级认真', '爱面子爱吹牛', '陷入爱河', '自信满满', '冒冒失失', '懒洋洋打滚', '满腔热血', '胆小鬼', '爱装清高', '毫无干劲', '守财奴'],
-  '🖌️ 画风': ['可爱2D卡通', '韩国条漫网漫风', '手绘涂鸦风', '柔和水彩风', '彩色铅笔绘本风', '复古动漫风', '简约扁平矢量', '活力波普艺术', '粗线条美漫风', '复古像素点阵', '剪纸拼贴风', '复古印刷漫画', '黑白漫画网点', '热血战斗漫画', '闪亮少女漫画', '8090复古动漫', '3D半写实动漫渲染', '日漫黑白G笔网点风', '3D毛毡粘土玩偶风', '蜡笔涂鸦粉彩风', 'Y2K千禧闪亮像素风', 'B级搞笑恶搞漫画风', '蜡笔油画棒童话风', '东方水墨国风'],
+  '🖌️ 画风': [
+    '可爱2D卡通',
+    '韩国条漫网漫风',
+    '手绘涂鸦风',
+    '柔和水彩风',
+    '彩色铅笔绘本风',
+    '复古动漫风',
+    '简约扁平矢量',
+    '活力波普艺术',
+    '粗线条美漫风',
+    '复古像素点阵',
+    '剪纸拼贴风',
+    '复古印刷漫画',
+    '黑白漫画网点',
+    '热血战斗漫画',
+    '闪亮少女漫画',
+    '8090复古动漫',
+    '3D半写实动漫渲染',
+    '日漫黑白G笔网点风',
+    '3D毛毡粘土玩偶风',
+    '蜡笔涂鸦粉彩风',
+    'Y2K千禧闪亮像素风',
+    'B级搞笑恶搞漫画风',
+    '蜡笔油画棒童话风',
+    '正统国风武侠漫画风',
+    '古典东洋画・传统民俗年画风',
+    '清雅水墨淡彩画风',
+    '手工刺绣布贴・织物布艺风',
+    '复古木刻版画・丝网印刷风',
+    'Q弹晶莹3D果冻玻璃拟态风',
+    '极简一笔画・单色圆珠笔线描风',
+    '软萌糯米团大福极简扁平风',
+    '复古千禧Y2K辣妹贴纸风',
+    '清澈愚蠢爆笑颜艺表情包风',
+    '铅笔石墨素描手绘风'
+  ],
   '👕 服饰': ['白大褂', '厨师围裙', '职场西装', '宽松大卫衣', '背带裤', '学生校服', '运动服', '小雨衣', '软绵绵睡衣', '魔法师斗篷', '华丽礼服裙', '运动棒球帽', '厚羽绒服', '皮夹克', '衬衫配领带', '碎花连衣裙', '潮酷街头风', '武道服', '暖和针织毛衣', '动物连体睡衣', '宇航服', '探险家马甲帽子', '泳衣配泳圈', '经典风衣', '闪亮仙女翅膀', '皇冠配斗篷', '白T配牛仔裤', '名侦探大衣帽子'],
   '🎒 道具/动作': ['拿手机', '端咖啡杯', '戴墨镜', '戴头戴式耳机', '操作笔记本电脑', '看书', '拿气球', '抱花束', '握麦克风唱歌', '握游戏手柄', '拿平底锅', '拿大放大镜', '在画本上画画', '挥动魔法棒', '提菜篮子', '撑伞', '吃爆米花', '吸尘器打扫', '拿望远镜看', '在瑜伽垫上拉伸', '看智能手表', '拿一沓钞票', '拿冰美式随行杯', '敲笔记本键盘', '啃炸鸡腿', '碰啤酒杯干杯', '打点滴精疲力尽'],
   '🌏 全球・传统文化': ['传统宫廷韩服', '潮流改良韩服配笠帽', 'K-POP舞台打歌服', '跆拳道黑带道服', '传统和服/浴衣', '秋叶原女仆装', '武士/忍者装束', '日系水手服学生装', '神社巫女服', '仙侠古风道袍', '华丽传统旗袍/汉服', '李小龙黄色功夫服', '京剧脸谱戏服', '狂野西部牛仔警长', '伦敦绅士风衣配礼帽', '赛博朋克霓虹街头装', '中世纪欧洲骑士铠甲', '法式贝雷帽配法棍', '英国皇家卫队熊皮帽', '西班牙弗拉门戈红裙', '德国啤酒节皮裤背带装', '威尼斯假面舞会华服', '墨西哥大草帽乐手服', '亡灵节糖骷髅装扮', '巴西桑巴狂欢舞裙', '越南奥黛配斗笠', '泰国传统纱丽丝绸服', '印度宝莱坞纱丽珠宝装', '一千零一夜头巾神灯装', '夏威夷风情衬衫配尤克里里'],
@@ -4691,7 +4831,9 @@ const shuffleEmoticons = () => {
       '귀여운 2D 만화풍', '일본 출판 만화풍', '3D 펠트/클레이 점토 인형풍', 
       '한국 웹툰 스타일', '크레파스 낙서풍', '흑백 만화 톤', '깔끔한 미니멀 벡터',
       '통통 튀는 팝아트풍', '샤방샤방 순정만화풍', 'Y2K 픽셀 스티커풍',
-      'B급 병맛/코믹 짤툰풍', '크레파스/오일파스텔 동화풍', '동양화/수묵담채화풍',
+      'B급 병맛/코믹 짤툰풍', '크레파스/오일파스텔 동화풍',
+      '정통 무협 만화풍', '고전 동양화/민화풍', '은은한 수묵담채화풍',
+      '니트 자수/패브릭 패치풍', '빈티지 목판화/실크스크린풍', '3D 젤리/글래스 입체풍', '심플 원라인/볼펜 드로잉풍',
       '동글동글 모찌/찹쌀떡 플랫풍', '키치 & 하이틴 Y2K 스티커풍', '맑은 눈의 개그 짤방풍', '연필/흑연 감성 드로잉풍'
     ];
 
@@ -4918,9 +5060,130 @@ Do not follow the photo's photorealistic rendering. Apply the selected art style
         ko: '부드러운 크레파스와 오일파스텔의 따뜻한 입자 질감이 살아있는 유아 그림책 동화 일러스트 스타일',
         en: 'warm textured children\'s storybook illustration with authentic crayon and oil pastel grainy strokes and soft cozy blending'
       },
-      '동양화/수묵담채화풍': {
-        ko: '먹선의 농담과 은은한 채색이 조화로운 전통 수묵담채화/동양화 일러스트 스타일',
-        en: 'traditional East Asian oriental ink wash painting (Sumi-e) with expressive brush strokes and subtle translucent watercolor gradients'
+      // 1. 정통 무협 만화풍
+      '정통 무협 만화풍': {
+        ko: '거친 먹선 갈필(마른 붓 터치), 역동적인 검기와 기공 오라, 먹물 스플래시 효과와 묵직한 흑백 명암 대비가 살아있는 2D 정통 무협 웹툰 액션 스타일',
+        en: 'authentic martial arts Wuxia manhwa webtoon style with rugged dry-brush ink strokes, dynamic Qi aura ripples, dramatic black-and-white contrast, and sharp action lines'
+      },
+      'Classic Martial Arts Wuxia Style': {
+        ko: '거친 먹선 갈필(마른 붓 터치), 역동적인 검기와 기공 오라, 먹물 스플래시 효과와 묵직한 흑백 명암 대비가 살아있는 2D 정통 무협 웹툰 액션 스타일',
+        en: 'authentic martial arts Wuxia manhwa webtoon style with rugged dry-brush ink strokes, dynamic Qi aura ripples, dramatic black-and-white contrast, and sharp action lines'
+      },
+      '本格武侠・バトル墨絵漫画風': {
+        ko: '거친 먹선 갈필(마른 붓 터치), 역동적인 검기와 기공 오라, 먹물 스플래시 효과와 묵직한 흑백 명암 대비가 살아있는 2D 정통 무협 웹툰 액션 스타일',
+        en: 'authentic martial arts Wuxia manhwa webtoon style with rugged dry-brush ink strokes, dynamic Qi aura ripples, dramatic black-and-white contrast, and sharp action lines'
+      },
+      '正统国风武侠漫画风': {
+        ko: '거친 먹선 갈필(마른 붓 터치), 역동적인 검기와 기공 오라, 먹물 스플래시 효과와 묵직한 흑백 명암 대비가 살아있는 2D 정통 무협 웹툰 액션 스타일',
+        en: 'authentic martial arts Wuxia manhwa webtoon style with rugged dry-brush ink strokes, dynamic Qi aura ripples, dramatic black-and-white contrast, and sharp action lines'
+      },
+
+      // 2. 고전 동양화/민화풍
+      '고전 동양화/민화풍': {
+        ko: '전통 닥종이(한지) 질감 바탕에 또렷한 철선묘 먹선 윤곽, 오방색 중심의 선명하고 풍성한 전통 채색, 해학적인 조선 민화와 고전 회화의 풍류가 담긴 스타일',
+        en: 'traditional Korean folk art (Minhwa) and East Asian classical painting style on textured Hanji mulberry paper, with crisp ink outlines, rich vibrant mineral pigments, and humorous witty folklore spirit'
+      },
+      'Traditional Oriental Folk Art (Minhwa) Style': {
+        ko: '전통 닥종이(한지) 질감 바탕에 또렷한 철선묘 먹선 윤곽, 오방색 중심의 선명하고 풍성한 전통 채색, 해학적인 조선 민화와 고전 회화의 풍류가 담긴 스타일',
+        en: 'traditional Korean folk art (Minhwa) and East Asian classical painting style on textured Hanji mulberry paper, with crisp ink outlines, rich vibrant mineral pigments, and humorous witty folklore spirit'
+      },
+      '古典東洋画・民画風': {
+        ko: '전통 닥종이(한지) 질감 바탕에 또렷한 철선묘 먹선 윤곽, 오방색 중심의 선명하고 풍성한 전통 채색, 해학적인 조선 민화와 고전 회화의 풍류가 담긴 스타일',
+        en: 'traditional Korean folk art (Minhwa) and East Asian classical painting style on textured Hanji mulberry paper, with crisp ink outlines, rich vibrant mineral pigments, and humorous witty folklore spirit'
+      },
+      '古典东洋画・传统民俗年画风': {
+        ko: '전통 닥종이(한지) 질감 바탕에 또렷한 철선묘 먹선 윤곽, 오방색 중심의 선명하고 풍성한 전통 채색, 해학적인 조선 민화와 고전 회화의 풍류가 담긴 스타일',
+        en: 'traditional Korean folk art (Minhwa) and East Asian classical painting style on textured Hanji mulberry paper, with crisp ink outlines, rich vibrant mineral pigments, and humorous witty folklore spirit'
+      },
+
+      // 3. 은은한 수묵담채화풍
+      '은은한 수묵담채화풍': {
+        ko: '먹물의 섬세한 농담과 촉촉한 물 번짐(발묵), 맑고 옅은 수채 채색과 넉넉한 여백의 미가 어우러진 서정적이고 평온한 전통 수묵담채화 스타일',
+        en: 'delicate East Asian ink wash painting (Sumi-e) with masterful ink gradation, soft blooming wet-on-wet watercolor washes, serene poetic negative space, and tranquil elegance'
+      },
+      'Delicate Ink Wash & Light Watercolor Style': {
+        ko: '먹물의 섬세한 농담과 촉촉한 물 번짐(발묵), 맑고 옅은 수채 채색과 넉넉한 여백의 미가 어우러진 서정적이고 평온한 전통 수묵담채화 스타일',
+        en: 'delicate East Asian ink wash painting (Sumi-e) with masterful ink gradation, soft blooming wet-on-wet watercolor washes, serene poetic negative space, and tranquil elegance'
+      },
+      '繊細な水墨淡彩画風': {
+        ko: '먹물의 섬세한 농담과 촉촉한 물 번짐(발묵), 맑고 옅은 수채 채색과 넉넉한 여백의 미가 어우러진 서정적이고 평온한 전통 수묵담채화 스타일',
+        en: 'delicate East Asian ink wash painting (Sumi-e) with masterful ink gradation, soft blooming wet-on-wet watercolor washes, serene poetic negative space, and tranquil elegance'
+      },
+      '清雅水墨淡彩画风': {
+        ko: '먹물의 섬세한 농담과 촉촉한 물 번짐(발묵), 맑고 옅은 수채 채색과 넉넉한 여백의 미가 어우러진 서정적이고 평온한 전통 수묵담채화 스타일',
+        en: 'delicate East Asian ink wash painting (Sumi-e) with masterful ink gradation, soft blooming wet-on-wet watercolor washes, serene poetic negative space, and tranquil elegance'
+      },
+
+      // 4. 니트 자수/패브릭 패치풍
+      '니트 자수/패브릭 패치풍': {
+        ko: '한 땀 한 땀 도톰한 자수 실밥의 엠보싱 텍스처, 따뜻한 펠트 천 와펜과 가장자리 오버록 스티치가 만져질 듯 포근한 핸드메이드 패브릭 굿즈 스타일',
+        en: 'cozy tactile embroidered patch and knitted fabric craft style with realistic threaded stitch relief, soft felt cloth textures, overlock border stitching, and charming plush artisan merchandise appeal'
+      },
+      'Embroidered Patch & Fabric Knit Style': {
+        ko: '한 땀 한 땀 도톰한 자수 실밥의 엠보싱 텍스처, 따뜻한 펠트 천 와펜과 가장자리 오버록 스티치가 만져질 듯 포근한 핸드메이드 패브릭 굿즈 스타일',
+        en: 'cozy tactile embroidered patch and knitted fabric craft style with realistic threaded stitch relief, soft felt cloth textures, overlock border stitching, and charming plush artisan merchandise appeal'
+      },
+      '刺繍ワッペン・ニットファブリック風': {
+        ko: '한 땀 한 땀 도톰한 자수 실밥의 엠보싱 텍스처, 따뜻한 펠트 천 와펜과 가장자리 오버록 스티치가 만져질 듯 포근한 핸드메이드 패브릭 굿즈 스타일',
+        en: 'cozy tactile embroidered patch and knitted fabric craft style with realistic threaded stitch relief, soft felt cloth textures, overlock border stitching, and charming plush artisan merchandise appeal'
+      },
+      '手工刺绣布贴・织物布艺风': {
+        ko: '한 땀 한 땀 도톰한 자수 실밥의 엠보싱 텍스처, 따뜻한 펠트 천 와펜과 가장자리 오버록 스티치가 만져질 듯 포근한 핸드메이드 패브릭 굿즈 스타일',
+        en: 'cozy tactile embroidered patch and knitted fabric craft style with realistic threaded stitch relief, soft felt cloth textures, overlock border stitching, and charming plush artisan merchandise appeal'
+      },
+
+      // 5. 빈티지 목판화/실크스크린풍
+      '빈티지 목판화/실크스크린풍': {
+        ko: '스탬프를 꾹 찍어낸 듯한 나무 판화의 요철 질감, 레트로 신문 인쇄의 살짝 어긋난 잉크 레이어와 거친 아날로그 종이 감성이 살아있는 실크스크린 그래픽',
+        en: 'vintage woodblock print and silkscreen poster illustration with authentic carved relief texture, slightly misaligned retro spot color ink layers, grainy paper grain, and analog mid-century graphic charm'
+      },
+      'Vintage Woodblock & Silkscreen Print Style': {
+        ko: '스탬프를 꾹 찍어낸 듯한 나무 판화의 요철 질감, 레트로 신문 인쇄의 살짝 어긋난 잉크 레이어와 거친 아날로그 종이 감성이 살아있는 실크스크린 그래픽',
+        en: 'vintage woodblock print and silkscreen poster illustration with authentic carved relief texture, slightly misaligned retro spot color ink layers, grainy paper grain, and analog mid-century graphic charm'
+      },
+      'ヴィンテージ木版画・シルクスクリーン風': {
+        ko: '스탬프를 꾹 찍어낸 듯한 나무 판화의 요철 질감, 레트로 신문 인쇄의 살짝 어긋난 잉크 레이어와 거친 아날로그 종이 감성이 살아있는 실크스크린 그래픽',
+        en: 'vintage woodblock print and silkscreen poster illustration with authentic carved relief texture, slightly misaligned retro spot color ink layers, grainy paper grain, and analog mid-century graphic charm'
+      },
+      '复古木刻版画・丝网印刷风': {
+        ko: '스탬프를 꾹 찍어낸 듯한 나무 판화의 요철 질감, 레트로 신문 인쇄의 살짝 어긋난 잉크 레이어와 거친 아날로그 종이 감성이 살아있는 실크스크린 그래픽',
+        en: 'vintage woodblock print and silkscreen poster illustration with authentic carved relief texture, slightly misaligned retro spot color ink layers, grainy paper grain, and analog mid-century graphic charm'
+      },
+
+      // 6. 3D 젤리/글래스 입체풍
+      '3D 젤리/글래스 입체풍': {
+        ko: '말랑말랑 투명한 푸딩 젤리와 유리구슬 표면의 영롱한 하이라이트 빛 굴절, 반짝이는 클리어 코팅 광택이 돋보이는 모던 3D 글래스모피즘 스타일',
+        en: 'modern 3D glossy translucent jelly and glassmorphism render with squishy gummy translucency, luminous refraction highlights, soft ambient occlusion, and vibrant glossy studio lighting'
+      },
+      'Glossy 3D Jelly & Glassmorphism Style': {
+        ko: '말랑말랑 투명한 푸딩 젤리와 유리구슬 표면의 영롱한 하이라이트 빛 굴절, 반짝이는 클리어 코팅 광택이 돋보이는 모던 3D 글래스모피즘 스타일',
+        en: 'modern 3D glossy translucent jelly and glassmorphism render with squishy gummy translucency, luminous refraction highlights, soft ambient occlusion, and vibrant glossy studio lighting'
+      },
+      'ぷるぷる3Dゼリー・ガラスモーフィズム風': {
+        ko: '말랑말랑 투명한 푸딩 젤리와 유리구슬 표면의 영롱한 하이라이트 빛 굴절, 반짝이는 클리어 코팅 광택이 돋보이는 모던 3D 글래스모피즘 스타일',
+        en: 'modern 3D glossy translucent jelly and glassmorphism render with squishy gummy translucency, luminous refraction highlights, soft ambient occlusion, and vibrant glossy studio lighting'
+      },
+      'Q弹晶莹3D果冻玻璃拟态风': {
+        ko: '말랑말랑 투명한 푸딩 젤리와 유리구슬 표면의 영롱한 하이라이트 빛 굴절, 반짝이는 클리어 코팅 광택이 돋보이는 모던 3D 글래스모피즘 스타일',
+        en: 'modern 3D glossy translucent jelly and glassmorphism render with squishy gummy translucency, luminous refraction highlights, soft ambient occlusion, and vibrant glossy studio lighting'
+      },
+
+      // 7. 심플 원라인/볼펜 드로잉풍
+      '심플 원라인/볼펜 드로잉풍': {
+        ko: '군더더기 없는 단색 잉크 볼펜 한 줄로 슥슥 그린 듯한 미니멀리즘, 무심하면서도 쿨한 감성이 돋보이는 트렌디 1도 라인 드로잉 스타일',
+        en: 'ultra-minimalist single-line ballpoint pen drawing with effortless continuous contour strokes, crisp monochrome ink, witty simplicity, and chic aesthetic doodle vibe'
+      },
+      'Minimalist Single-Line Ballpen Drawing Style': {
+        ko: '군더더기 없는 단색 잉크 볼펜 한 줄로 슥슥 그린 듯한 미니멀리즘, 무심하면서도 쿨한 감성이 돋보이는 트렌디 1도 라인 드로잉 스타일',
+        en: 'ultra-minimalist single-line ballpoint pen drawing with effortless continuous contour strokes, crisp monochrome ink, witty simplicity, and chic aesthetic doodle vibe'
+      },
+      'シンプル一筆書き・ボールペンドローイング風': {
+        ko: '군더더기 없는 단색 잉크 볼펜 한 줄로 슥슥 그린 듯한 미니멀리즘, 무심하면서도 쿨한 감성이 돋보이는 트렌디 1도 라인 드로잉 스타일',
+        en: 'ultra-minimalist single-line ballpoint pen drawing with effortless continuous contour strokes, crisp monochrome ink, witty simplicity, and chic aesthetic doodle vibe'
+      },
+      '极简一笔画・单色圆珠笔线描风': {
+        ko: '군더더기 없는 단색 잉크 볼펜 한 줄로 슥슥 그린 듯한 미니멀리즘, 무심하면서도 쿨한 감성이 돋보이는 트렌디 1도 라인 드로잉 스타일',
+        en: 'ultra-minimalist single-line ballpoint pen drawing with effortless continuous contour strokes, crisp monochrome ink, witty simplicity, and chic aesthetic doodle vibe'
       },
       '동글동글 모찌/찹쌀떡 플랫풍': {
         ko: '극도로 단순화된 부드러운 형태와 말랑말랑한 찹쌀떡 질감, 파스텔톤 플랫 채색이 돋보이는 카카오톡 1위 모찌 캐릭터 스타일',
