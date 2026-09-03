@@ -558,6 +558,136 @@ async function protectLightForegroundOpacity(blob, sourceFile = null) {
   const visibleThreshold = 8;
   const confidentThreshold = 180;
   const backgroundEstimate = estimateUniformEdgeBackground(sourcePixels, width, height);
+  let changed = false;
+
+  // Some removal masks delete a white/ivory face completely (alpha 0), so an
+  // opacity floor cannot recover it. Mark only transparency connected to the
+  // outer canvas as true background, then restore sufficiently large, light
+  // holes enclosed by foreground from the original image. Small enclosed
+  // counters inside lettering remain transparent.
+  const exteriorTransparency = new Uint8Array(total);
+  const transparencyQueue = new Int32Array(total);
+  let exteriorHead = 0;
+  let exteriorTail = 0;
+  const enqueueExterior = (index) => {
+    if (
+      index < 0 || index >= total || exteriorTransparency[index] ||
+      pixels[index * 4 + 3] > 2
+    ) return;
+    exteriorTransparency[index] = 1;
+    transparencyQueue[exteriorTail++] = index;
+  };
+
+  for (let x = 0; x < width; x += 1) {
+    enqueueExterior(x);
+    enqueueExterior((height - 1) * width + x);
+  }
+  for (let y = 1; y < height - 1; y += 1) {
+    enqueueExterior(y * width);
+    enqueueExterior(y * width + width - 1);
+  }
+  while (exteriorHead < exteriorTail) {
+    const index = transparencyQueue[exteriorHead++];
+    const x = index % width;
+    const y = Math.floor(index / width);
+    if (x > 0) enqueueExterior(index - 1);
+    if (x + 1 < width) enqueueExterior(index + 1);
+    if (y > 0) enqueueExterior(index - width);
+    if (y + 1 < height) enqueueExterior(index + width);
+  }
+
+  const visitedHoles = new Uint8Array(total);
+  const holeQueue = new Int32Array(total);
+  const minimumHoleArea = Math.max(36, Math.round(total * 0.00006));
+  const minimumHoleSpan = Math.max(8, Math.round(Math.min(width, height) * 0.016));
+
+  for (let seed = 0; seed < total; seed += 1) {
+    if (
+      visitedHoles[seed] || exteriorTransparency[seed] ||
+      pixels[seed * 4 + 3] > 2
+    ) continue;
+
+    let head = 0;
+    let tail = 0;
+    let lightPixels = 0;
+    let boundaryForeground = 0;
+    let minX = width;
+    let minY = height;
+    let maxX = -1;
+    let maxY = -1;
+    visitedHoles[seed] = 1;
+    holeQueue[tail++] = seed;
+
+    const enqueueHole = (index) => {
+      if (
+        index < 0 || index >= total || visitedHoles[index] ||
+        exteriorTransparency[index] || pixels[index * 4 + 3] > 2
+      ) return;
+      visitedHoles[index] = 1;
+      holeQueue[tail++] = index;
+    };
+
+    while (head < tail) {
+      const index = holeQueue[head++];
+      const x = index % width;
+      const y = Math.floor(index / width);
+      minX = Math.min(minX, x);
+      minY = Math.min(minY, y);
+      maxX = Math.max(maxX, x);
+      maxY = Math.max(maxY, y);
+
+      const p = index * 4;
+      const r = sourcePixels[p];
+      const g = sourcePixels[p + 1];
+      const b = sourcePixels[p + 2];
+      const max = Math.max(r, g, b);
+      const min = Math.min(r, g, b);
+      const luminance = r * 0.299 + g * 0.587 + b * 0.114;
+      if (sourcePixels[p + 3] >= 200 && luminance >= 145 && max - min <= 100) {
+        lightPixels += 1;
+      }
+
+      const neighbours = [];
+      if (x > 0) neighbours.push(index - 1);
+      if (x + 1 < width) neighbours.push(index + 1);
+      if (y > 0) neighbours.push(index - width);
+      if (y + 1 < height) neighbours.push(index + width);
+      for (const next of neighbours) {
+        if (pixels[next * 4 + 3] >= visibleThreshold) boundaryForeground += 1;
+        enqueueHole(next);
+      }
+    }
+
+    const holeWidth = maxX - minX + 1;
+    const holeHeight = maxY - minY + 1;
+    const fillRatio = tail / Math.max(1, holeWidth * holeHeight);
+    const lightRatio = lightPixels / Math.max(1, tail);
+    const restoreHole =
+      tail >= minimumHoleArea &&
+      holeWidth >= minimumHoleSpan &&
+      holeHeight >= minimumHoleSpan &&
+      fillRatio >= 0.14 &&
+      lightRatio >= 0.78 &&
+      boundaryForeground >= 8;
+
+    if (!restoreHole) continue;
+    for (let i = 0; i < tail; i += 1) {
+      const p = holeQueue[i] * 4;
+      const r = sourcePixels[p];
+      const g = sourcePixels[p + 1];
+      const b = sourcePixels[p + 2];
+      const max = Math.max(r, g, b);
+      const min = Math.min(r, g, b);
+      const luminance = r * 0.299 + g * 0.587 + b * 0.114;
+      if (sourcePixels[p + 3] < 200 || luminance < 145 || max - min > 100) continue;
+      pixels[p] = r;
+      pixels[p + 1] = g;
+      pixels[p + 2] = b;
+      pixels[p + 3] = 255;
+      changed = true;
+    }
+  }
+
   const maxAnalysisDimension = 1200;
   const analysisScale = Math.min(1, maxAnalysisDimension / Math.max(width, height));
   const analysisWidth = Math.max(1, Math.round(width * analysisScale));
@@ -617,7 +747,6 @@ async function protectLightForegroundOpacity(blob, sourceFile = null) {
     strongComponents[label] = hasConfidentForeground && area >= minimumComponentArea;
   }
 
-  let changed = false;
   for (let index = 0; index < total; index += 1) {
     const x = index % width;
     const y = Math.floor(index / width);
