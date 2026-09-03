@@ -1735,26 +1735,30 @@ async function splitBySmartGrid(canvas, rows = 3, columns = 5) {
       const cellTop = Math.floor(r * cellH);
       const cellRight = Math.min(width, Math.ceil((c + 1) * cellW));
       const cellBottom = Math.min(height, Math.ceil((r + 1) * cellH));
-      const cellWidth = cellRight - cellLeft;
-      const cellHeight = cellBottom - cellTop;
-
-      const imgData = ctx.getImageData(cellLeft, cellTop, cellWidth, cellHeight);
-      const data = imgData.data;
+      const cellWidth = Math.max(1, cellRight - cellLeft);
+      const cellHeight = Math.max(1, cellBottom - cellTop);
 
       let minX = cellWidth, minY = cellHeight, maxX = 0, maxY = 0;
       let hasPixels = false;
 
-      for (let y = 0; y < cellHeight; y += 1) {
-        for (let x = 0; x < cellWidth; x += 1) {
-          const alpha = data[(y * cellWidth + x) * 4 + 3];
-          if (alpha > 15) {
-            hasPixels = true;
-            if (x < minX) minX = x;
-            if (x > maxX) maxX = x;
-            if (y < minY) minY = y;
-            if (y > maxY) maxY = y;
+      try {
+        const imgData = ctx.getImageData(cellLeft, cellTop, cellWidth, cellHeight);
+        const data = imgData.data;
+
+        for (let y = 0; y < cellHeight; y += 1) {
+          for (let x = 0; x < cellWidth; x += 1) {
+            const alpha = data[(y * cellWidth + x) * 4 + 3];
+            if (alpha > 15) {
+              hasPixels = true;
+              if (x < minX) minX = x;
+              if (x > maxX) maxX = x;
+              if (y < minY) minY = y;
+              if (y > maxY) maxY = y;
+            }
           }
         }
+      } catch (_imgDataErr) {
+        console.warn('getImageData warning on cell:', r, c, _imgDataErr);
       }
 
       let cropX, cropY, cropW, cropH;
@@ -1763,15 +1767,15 @@ async function splitBySmartGrid(canvas, rows = 3, columns = 5) {
         const absMinY = Math.max(0, cellTop + minY - padding);
         const absMaxX = Math.min(width, cellLeft + maxX + 1 + padding);
         const absMaxY = Math.min(height, cellTop + maxY + 1 + padding);
-        cropX = absMinX;
-        cropY = absMinY;
-        cropW = Math.max(1, absMaxX - absMinX);
-        cropH = Math.max(1, absMaxY - absMinY);
+        cropX = Math.round(absMinX);
+        cropY = Math.round(absMinY);
+        cropW = Math.max(1, Math.round(absMaxX - absMinX));
+        cropH = Math.max(1, Math.round(absMaxY - absMinY));
       } else {
-        cropX = cellLeft;
-        cropY = cellTop;
-        cropW = cellWidth;
-        cropH = cellHeight;
+        cropX = Math.round(cellLeft);
+        cropY = Math.round(cellTop);
+        cropW = Math.max(1, Math.round(cellWidth));
+        cropH = Math.max(1, Math.round(cellHeight));
       }
 
       const output = document.createElement('canvas');
@@ -1779,9 +1783,24 @@ async function splitBySmartGrid(canvas, rows = 3, columns = 5) {
       output.height = cropH;
       const outCtx = output.getContext('2d');
       if (outCtx) {
-        outCtx.drawImage(canvas, cropX, cropY, cropW, cropH, 0, 0, cropW, cropH);
+        try {
+          outCtx.drawImage(canvas, cropX, cropY, cropW, cropH, 0, 0, cropW, cropH);
+        } catch (_drawErr) {
+          console.warn('Cell drawImage fallback:', _drawErr);
+        }
       }
-      const itemBlob = await canvasToPngBlob(output);
+
+      let itemBlob;
+      try {
+        itemBlob = await canvasToPngBlob(output);
+      } catch (_blobErr) {
+        const dataUrl = output.toDataURL('image/png');
+        const binStr = atob(dataUrl.split(',')[1]);
+        const arr = new Uint8Array(binStr.length);
+        for (let i = 0; i < binStr.length; i += 1) arr[i] = binStr.charCodeAt(i);
+        itemBlob = new Blob([arr], { type: 'image/png' });
+      }
+
       items.push({
         index: items.length + 1,
         blob: itemBlob,
@@ -1856,6 +1875,7 @@ async function hasRealTransparency(file) {
 export default function BackgroundRemover({ lang = 'ko' }) {
   const t = COPY[lang] || COPY.ko;
   const inputRef = useRef(null);
+  const splitCardRef = useRef(null);
   const [file, setFile] = useState(null);
   const [sourceUrl, setSourceUrl] = useState('');
   const [resultUrl, setResultUrl] = useState('');
@@ -2136,9 +2156,12 @@ export default function BackgroundRemover({ lang = 'ko' }) {
       }
       const withUrls = items.map((item) => ({ ...item, url: URL.createObjectURL(item.blob) }));
       setSplitItems(withUrls);
+      setTimeout(() => {
+        splitCardRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 120);
     } catch (e) {
       console.error('Sticker auto split failed:', e);
-      setSplitError(`${t.splitFailed} (${e?.message || String(e)})`);
+      setSplitError(`${t.splitFailed} [원인: ${e?.message || String(e)}]`);
     } finally {
       setSplitting(false);
     }
@@ -2152,11 +2175,17 @@ export default function BackgroundRemover({ lang = 'ko' }) {
     try {
       const { canvas } = await drawFileToCanvas(resultBlob);
       const items = await splitBySmartGrid(canvas, 3, 5);
+      if (!items || items.length === 0) {
+        throw new Error('No sticker slices generated');
+      }
       const withUrls = items.map((item) => ({ ...item, url: URL.createObjectURL(item.blob) }));
       setSplitItems(withUrls);
+      setTimeout(() => {
+        splitCardRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 120);
     } catch (e) {
       console.error('Force grid split failed:', e);
-      setSplitError(`${t.splitFailed} (${e?.message || String(e)})`);
+      setSplitError(`${t.splitFailed} [원인: ${e?.message || String(e)}]`);
     } finally {
       setSplitting(false);
     }
@@ -2351,7 +2380,7 @@ export default function BackgroundRemover({ lang = 'ko' }) {
           </div>
 
           {resultUrl && qualityAssessment.status !== 'fail' && (
-            <div className="mt-5 rounded-2xl border border-[#DDD8CE] bg-white p-3.5 sm:p-4 shadow-sm">
+            <div ref={splitCardRef} className="mt-5 rounded-2xl border border-[#DDD8CE] bg-white p-3.5 sm:p-4 shadow-sm">
               <div className="flex flex-wrap items-center gap-2">
                 <h3 className="text-sm sm:text-base font-extrabold text-[#35312C]">✂️ {t.splitTitle}</h3>
                 <span className="rounded-full bg-[#EEF4EA] px-2.5 py-1 text-[11px] font-extrabold text-[#597153]">
