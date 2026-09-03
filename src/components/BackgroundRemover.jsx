@@ -1719,8 +1719,16 @@ async function detectEmoticonSheet(blob) {
   return classifyEmoticonSheetComponents(components, analysisWidth, analysisHeight);
 }
 
-async function splitIntoFifteen(blob) {
-  const { canvas, ctx } = await drawFileToCanvas(blob);
+async function splitIntoFifteen(input) {
+  let canvas, ctx;
+  if (input && typeof input.getContext === 'function') {
+    canvas = input;
+    ctx = canvas.getContext('2d', { willReadFrequently: true });
+  } else {
+    const drawn = await drawFileToCanvas(input);
+    canvas = drawn.canvas;
+    ctx = drawn.ctx;
+  }
   const { width, height } = canvas;
   if (!width || !height) throw new Error('Invalid canvas dimensions');
 
@@ -1823,7 +1831,9 @@ async function splitIntoFifteen(blob) {
   return items;
 }
 
-const splitBySmartGrid = splitIntoFifteen;
+async function splitBySmartGrid(input) {
+  return splitIntoFifteen(input);
+}
 
 async function hasRealTransparency(file) {
   if (file?.type !== 'image/png') return false;
@@ -2110,17 +2120,9 @@ export default function BackgroundRemover({ lang = 'ko' }) {
     setSplitting(true);
     setSplitError('');
     try {
-      let items;
-      try {
-        items = await splitIntoFifteen(resultBlob);
-      } catch (innerErr) {
-        console.warn('splitIntoFifteen failed, attempting direct smart grid:', innerErr);
-        const { canvas } = await drawFileToCanvas(resultBlob);
-        items = await splitBySmartGrid(canvas, 3, 5);
-      }
+      const items = await splitIntoFifteen(resultBlob);
       if (!items || items.length === 0) {
-        const { canvas } = await drawFileToCanvas(resultBlob);
-        items = await splitBySmartGrid(canvas, 3, 5);
+        throw new Error('No stickers detected');
       }
       const withUrls = items.map((item) => ({ ...item, url: URL.createObjectURL(item.blob) }));
       setSplitItems(withUrls);
@@ -2141,8 +2143,7 @@ export default function BackgroundRemover({ lang = 'ko' }) {
     setSplitting(true);
     setSplitError('');
     try {
-      const { canvas } = await drawFileToCanvas(resultBlob);
-      const items = await splitBySmartGrid(canvas, 3, 5);
+      const items = await splitIntoFifteen(resultBlob);
       if (!items || items.length === 0) {
         throw new Error('No sticker slices generated');
       }
