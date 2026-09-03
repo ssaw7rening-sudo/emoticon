@@ -235,9 +235,9 @@ function backgroundRemovalResumeRecovery() {
       const cleanupCall = transformed.includes('blob = await removeEnclosedBackdropPockets(blob, file, true);')
         ? 'blob = await removeEnclosedBackdropPockets(blob, file, true);'
         : 'blob = await removeEnclosedBackdropPockets(blob, file);'
-      const opacityProtectionCalls = transformed.includes('blob = await protectLightForegroundOpacity(blob);')
+      const opacityProtectionCalls = transformed.includes('blob = await protectLightForegroundOpacity(blob, file);')
         ? `blob = await correctUnexpectedForegroundTransparency(blob);
-      blob = await protectLightForegroundOpacity(blob);`
+      blob = await protectLightForegroundOpacity(blob, file);`
         : ''
 
       replaceOnce(

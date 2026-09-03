@@ -1,2509 +1,30 @@
-import React, { useEffect, useRef, useState } from 'react';
-import EmoticonPostProcessor from './EmoticonPostProcessor';
-
-let removerPromise = null;
-let modnetPromise = null;
-const birefNetPromises = new Map();
-
-const COPY = {
-  ko: {
-    title: 'ë°°ê²½ ì œê±°', badge: 'BETA', desc: 'ì´ë¯¸ì§€ì˜ ë°°ê²½ì„ ì§€ìš°ê³  íˆ¬ëª… PNGë¡œ ì €ì¥í•´ ë³´ì„¸ìš”.',
-    privacy: 'ì´ë¯¸ì§€ëŠ” ì„œë²„ì— ì—…ë¡œë“œí•˜ì§€ ì•Šê³  ì´ ê¸°ê¸°ì—ì„œ ì²˜ë¦¬ë©ë‹ˆë‹¤.', first: 'ê· ì¼í•œ ë‹¨ìƒ‰ ë°°ê²½ì€ ë¹ ë¥´ê²Œ ì²˜ë¦¬í•˜ë©°, ë³µì¡í•œ ë°°ê²½ì€ AI ëª¨ë¸ì„ ì‚¬ìš©í•´ ì²˜ìŒ ì‹¤í–‰ì´ ì¡°ê¸ˆ ì˜¤ë˜ ê±¸ë¦´ ìˆ˜ ìˆìŠµë‹ˆë‹¤.',
-    upload: 'ì´ë¯¸ì§€ë¥¼ ì„ íƒí•˜ê±°ë‚˜ ì—¬ê¸°ì— ëŒì–´ë†“ìœ¼ì„¸ìš”', format: 'PNG Â· JPG Â· WEBP / ìµœëŒ€ 12MB', change: 'ì´ë¯¸ì§€ ë³€ê²½',
-    sheetUploadHint: '15ê°œ ì´ëª¨í‹°ì½˜ ì‹œíŠ¸ëŠ” ë°°ê²½ ì œê±° í›„ ìë™ìœ¼ë¡œ ê°ì§€í•´ ê°ê° ë¶„ë¦¬í•©ë‹ˆë‹¤.', sheetSelectedHint: '15ê°œ ì‹œíŠ¸ë¡œ í™•ì¸ë˜ë©´ ë°°ê²½ ì œê±° ì™„ë£Œ í›„ ìë™ ë¶„í• ë©ë‹ˆë‹¤.',
-    remove: 'ë°°ê²½ ì œê±°í•˜ê¸°', preparing: 'ì´ë¯¸ì§€ ë¶„ì„ ì¤‘â€¦', processing: 'ë°°ê²½ì„ ì œê±°í•˜ê³  ìˆì–´ìš”â€¦',
-    original: 'ì›ë³¸', result: 'íˆ¬ëª… ë°°ê²½', download: 'íˆ¬ëª… PNG ì €ì¥', again: 'ë‹¤ë¥¸ ì´ë¯¸ì§€',
-    compareHint: 'ê°€ìš´ë° ìŠ¬ë¼ì´ë”ë¥¼ ì¢Œìš°ë¡œ ì›€ì§ì—¬ ì›ë³¸ê³¼ ê²°ê³¼ë¥¼ ë¹„êµí•˜ì„¸ìš”.',
-    transparentAlready: 'ì´ë¯¸ íˆ¬ëª… ë°°ê²½ì¸ PNGëŠ” ë°°ê²½ ì œê±° ëŒ€ìƒì´ ì•„ë‹™ë‹ˆë‹¤. ë°°ê²½ì´ ìˆëŠ” PNGÂ·JPGÂ·WEBP ì´ë¯¸ì§€ë¥¼ ì‚¬ìš©í•´ ì£¼ì„¸ìš”.',
-    splitTitle: '15ê°œ ì´ëª¨í‹°ì½˜ ìë™ ë¶„ë¦¬', splitBadge: 'ìŠ¤ë§ˆíŠ¸ ê°ì§€',
-    splitDesc: 'ê³ ì • ê²©ìë¡œ ìë¥´ì§€ ì•Šê³  ì‹¤ì œ ìºë¦­í„°Â·ë¬¸êµ¬ ë©ì–´ë¦¬ë¥¼ ê°ì§€í•´ 15ê°œ ì´ëª¨í‹°ì½˜ì„ ê°ê° ë¶„ë¦¬í•©ë‹ˆë‹¤.',
-    splitAction: '15ê°œë¡œ ìë™ ë¶„ë¦¬', splitting: '15ê°œ ì´ëª¨í‹°ì½˜ì„ ë¶„ë¦¬í•˜ê³  ìˆì–´ìš”â€¦',
-    splitReady: 'ë¶„ë¦¬ ì™„ë£Œ Â· ê° ì´ë¯¸ì§€ë¥¼ ëˆŒëŸ¬ ê°œë³„ PNGë¡œ ì €ì¥í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤.',
-    splitAgain: 'ë‹¤ì‹œ ë¶„ë¦¬', splitDownload: 'PNG ì €ì¥', splitFailed: 'ìë™ ë¶„ë¦¬ì— ì‹¤íŒ¨í–ˆìŠµë‹ˆë‹¤. ì´ë¯¸ì§€ë¥¼ ë‹¤ì‹œ ì²˜ë¦¬í•œ ë’¤ ì‹œë„í•´ ì£¼ì„¸ìš”.',
-    splitMaybeTitle: '15ê°œ ì´ëª¨í‹°ì½˜ ì‹œíŠ¸ì¸ê°€ìš”?', splitMaybeDesc: 'ìë™ ê°ì§€ê°€ í™•ì‹¤í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤. ì´ëª¨í‹°ì½˜ ì‹œíŠ¸ë¼ë©´ ì§ì ‘ ë¶„ë¦¬ë¥¼ ì‹¤í–‰í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤.', splitMaybeAction: 'ì´ëª¨í‹°ì½˜ ì‹œíŠ¸ ë¶„ë¦¬',
-    splitChooseTitle: 'ë¶„í•  ë°©ì‹ ì„ íƒ', splitChooseDesc: 'ì‹œíŠ¸ì˜ í–‰ê³¼ ì—´ì— ë§ëŠ” êµ¬ì„±ì„ ì„ íƒí•´ ì£¼ì„¸ìš”.', splitRows: 'í–‰', splitColumns: 'ì—´', splitCustom: 'ì§ì ‘ ì„¤ì •', splitSelected: 'ì„ íƒí•œ ë°©ì‹ìœ¼ë¡œ ë¶„í• ', splitGridFailed: 'ì„ íƒí•œ í–‰Â·ì—´ë¡œ ë¶„í• í•˜ì§€ ëª»í–ˆìŠµë‹ˆë‹¤.',
-    qualityFailTitle: 'ê²°ê³¼ í’ˆì§ˆì„ ë‹¤ì‹œ í™•ì¸í•´ ì£¼ì„¸ìš”', qualityFailDesc: 'ë³µì¡í•œ ë°°ê²½ì´ ë§ì´ ë‚¨ì•„ ì •í™•í•œ íˆ¬ëª… PNGë¡œ ë³´ê¸° ì–´ë µìŠµë‹ˆë‹¤. ë°°ê²½ì´ ë” ë‹¨ìˆœí•œ ë‹¤ë¥¸ ì´ë¯¸ì§€ë¥¼ ì‚¬ìš©í•˜ëŠ” ê²ƒì„ ê¶Œì¥í•©ë‹ˆë‹¤.', qualityBlocked: 'í’ˆì§ˆ í™•ì¸ í•„ìš”',
-    qualityWarnTitle: 'ì¼ë¶€ ë°°ê²½ì´ ë‚¨ì•„ ìˆì„ ìˆ˜ ìˆì–´ìš”', qualityWarnDesc: 'ìŠ¬ë¼ì´ë”ë¡œ ì›ë³¸ê³¼ ê²°ê³¼ë¥¼ í™•ì¸í•œ ë’¤ ì €ì¥í•´ ì£¼ì„¸ìš”.',
-    precisionRetry: 'ì •ë°€ ì¬ì²˜ë¦¬', precisionHint: 'ì •ë°€ ì²˜ë¦¬ ì‹¤íŒ¨ ì‹œ ì§€ì› ê¸°ê¸°ì—ì„œëŠ” WebGPUì™€ ê³ ì •ë°€ ë³´ì¡° ëª¨ë¸ì„ ìë™ ì‚¬ìš©í•˜ë©°, ëª¨ë°”ì¼Â·ë¯¸ì§€ì› í™˜ê²½ì—ì„œëŠ” ê°€ë²¼ìš´ ëª¨ë¸ë¡œ ì•ˆì „í•˜ê²Œ ì²˜ë¦¬í•©ë‹ˆë‹¤. ì²« ì‹¤í–‰ì€ ëª¨ë¸ íŒŒì¼ì„ ë¶ˆëŸ¬ì™€ ì˜¤ë˜ ê±¸ë¦´ ìˆ˜ ìˆìŠµë‹ˆë‹¤.', precisionWorking: 'ì •ë°€ ëª¨ë¸ë¡œ ë‹¤ì‹œ ì²˜ë¦¬í•˜ê³  ìˆì–´ìš”â€¦', precisionNoBetter: 'ì •ë°€ ì¬ì²˜ë¦¬ ê²°ê³¼ê°€ í˜„ì¬ ê²°ê³¼ë³´ë‹¤ ì¢‹ì•„ì§€ì§€ ì•Šì•„ ê¸°ì¡´ ê²°ê³¼ë¥¼ ìœ ì§€í–ˆìŠµë‹ˆë‹¤.',
-    badType: 'PNG, JPG, WEBP ì´ë¯¸ì§€ë§Œ ì‚¬ìš©í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤.', tooLarge: '12MB ì´í•˜ì˜ ì´ë¯¸ì§€ë¥¼ ì‚¬ìš©í•´ ì£¼ì„¸ìš”.', failed: 'ë°°ê²½ ì œê±°ì— ì‹¤íŒ¨í–ˆìŠµë‹ˆë‹¤. ë¸Œë¼ìš°ì €ë¥¼ ìƒˆë¡œê³ ì¹¨í•œ ë’¤ ë‹¤ì‹œ ì‹œë„í•´ ì£¼ì„¸ìš”.'
-  },
-  en: {
-    title: 'Remove Background', badge: 'BETA', desc: 'Remove an image background and save it as a transparent PNG.',
-    privacy: 'Your image is processed on this device and is not uploaded to our server.', first: 'Uniform solid-color backgrounds are handled quickly. Complex backgrounds use an AI model, so the first run may take longer.',
-    upload: 'Choose an image or drop it here', format: 'PNG Â· JPG Â· WEBP / up to 12MB', change: 'Change image',
-    sheetUploadHint: 'A 15-emoticon sheet is detected and split automatically after background removal.', sheetSelectedHint: 'If this is a 15-emoticon sheet, it will be split automatically after background removal.',
-    remove: 'Remove background', preparing: 'Analyzing imageâ€¦', processing: 'Removing backgroundâ€¦',
-    original: 'Original', result: 'Transparent', download: 'Save transparent PNG', again: 'Try another image',
-    compareHint: 'Drag the center slider left or right to compare the original and result.',
-    transparentAlready: 'A PNG that already has transparency does not need background removal. Please use a PNG, JPG, or WEBP with a background.',
-    splitTitle: 'Auto-split 15 emoticons', splitBadge: 'Smart detect',
-    splitDesc: 'Detect the actual character and text groups instead of using a fixed grid, then split all 15 emoticons.',
-    splitAction: 'Auto-split into 15', splitting: 'Splitting 15 emoticonsâ€¦',
-    splitReady: 'Split complete Â· Save each emoticon as an individual PNG.',
-    splitAgain: 'Split again', splitDownload: 'Save PNG', splitFailed: 'Auto split failed. Process the image again and retry.',
-    splitMaybeTitle: 'Is this a 15-emoticon sheet?', splitMaybeDesc: 'The layout is uncertain. If this is an emoticon sheet, you can run the splitter manually.', splitMaybeAction: 'Split emoticon sheet',
-    splitChooseTitle: 'Choose a split layout', splitChooseDesc: 'Select the rows and columns that match your sheet.', splitRows: 'Rows', splitColumns: 'Columns', splitCustom: 'Custom', splitSelected: 'Split with this layout', splitGridFailed: 'Could not split with the selected rows and columns.',
-    qualityFailTitle: 'Please check the removal result', qualityFailDesc: 'Too much complex background appears to remain for a reliable transparent PNG. Try another image with a simpler background.', qualityBlocked: 'Quality check needed',
-    qualityWarnTitle: 'Some background may remain', qualityWarnDesc: 'Compare the original and result with the slider before saving.',
-    precisionRetry: 'Precision retry', precisionHint: 'If precision processing needs a fallback, supported devices automatically use WebGPU and a higher-precision backup model; mobile or unsupported environments use the lighter fallback. The first run may take longer while model files load.', precisionWorking: 'Retrying with the precision modelâ€¦', precisionNoBetter: 'The precision retry was not better, so the current result was kept.',
-    badType: 'Please use a PNG, JPG, or WEBP image.', tooLarge: 'Please use an image under 12MB.', failed: 'Background removal failed. Refresh the page and try again.'
-  },
-  ja: {
-    title: 'èƒŒæ™¯ã‚’å‰Šé™¤', badge: 'BETA', desc: 'ç”»åƒã®èƒŒæ™¯ã‚’å‰Šé™¤ã—ã€é€éPNGã¨ã—ã¦ä¿å­˜ã§ãã¾ã™ã€‚',
-    privacy: 'ç”»åƒã¯ã‚µãƒ¼ãƒãƒ¼ã¸é€ä¿¡ã›ãšã€ã“ã®ç«¯æœ«å†…ã§å‡¦ç†ã—ã¾ã™ã€‚', first: 'å‡ä¸€ãªå˜è‰²èƒŒæ™¯ã¯é«˜é€Ÿå‡¦ç†ã—ã€è¤‡é›‘ãªèƒŒæ™¯ã§ã¯AIãƒ¢ãƒ‡ãƒ«ã‚’ä½¿ç”¨ã™ã‚‹ãŸã‚åˆå›ã¯å°‘ã—æ™‚é–“ãŒã‹ã‹ã‚‹å ´åˆãŒã‚ã‚Šã¾ã™ã€‚',
-    upload: 'ç”»åƒã‚’é¸æŠã™ã‚‹ã‹ã€ã“ã“ã«ãƒ‰ãƒ­ãƒƒãƒ—ã—ã¦ãã ã•ã„', format: 'PNG Â· JPG Â· WEBP / æœ€å¤§12MB', change: 'ç”»åƒã‚’å¤‰æ›´',
-    sheetUploadHint: '15å€‹ã®çµµæ–‡å­—ã‚·ãƒ¼ãƒˆã¯èƒŒæ™¯å‰Šé™¤å¾Œã«è‡ªå‹•æ¤œå‡ºã—ã€å€‹åˆ¥ã«åˆ†å‰²ã—ã¾ã™ã€‚', sheetSelectedHint: '15å€‹ã®ã‚·ãƒ¼ãƒˆã¨ç¢ºèªã•ã‚Œã‚‹ã¨ã€èƒŒæ™¯å‰Šé™¤å¾Œã«è‡ªå‹•åˆ†å‰²ã•ã‚Œã¾ã™ã€‚',
-    remove: 'èƒŒæ™¯ã‚’å‰Šé™¤ã™ã‚‹', preparing: 'ç”»åƒã‚’è§£æä¸­â€¦', processing: 'èƒŒæ™¯ã‚’å‰Šé™¤ã—ã¦ã„ã¾ã™â€¦',
-    original: 'å…ƒç”»åƒ', result: 'é€éèƒŒæ™¯', download: 'é€éPNGã‚’ä¿å­˜', again: 'åˆ¥ã®ç”»åƒ',
-    compareHint: 'ä¸­å¤®ã®ã‚¹ãƒ©ã‚¤ãƒ€ãƒ¼ã‚’å·¦å³ã«å‹•ã‹ã—ã¦å…ƒç”»åƒã¨çµæœã‚’æ¯”è¼ƒã§ãã¾ã™ã€‚',
-    transparentAlready: 'ã™ã§ã«é€éèƒŒæ™¯ã®PNGã¯èƒŒæ™¯å‰Šé™¤ã®å¯¾è±¡ã§ã¯ã‚ã‚Šã¾ã›ã‚“ã€‚èƒŒæ™¯ã®ã‚ã‚‹PNGãƒ»JPGãƒ»WEBPã‚’ã”åˆ©ç”¨ãã ã•ã„ã€‚',
-    splitTitle: '15å€‹ã®çµµæ–‡å­—ã‚’è‡ªå‹•åˆ†å‰²', splitBadge: 'ã‚¹ãƒãƒ¼ãƒˆæ¤œå‡º',
-    splitDesc: 'å›ºå®šã‚°ãƒªãƒƒãƒ‰ã§ã¯ãªãå®Ÿéš›ã®ã‚­ãƒ£ãƒ©ã‚¯ã‚¿ãƒ¼ã¨æ–‡å­—ã®ã¾ã¨ã¾ã‚Šã‚’æ¤œå‡ºã—ã€15å€‹ã®çµµæ–‡å­—ã‚’å€‹åˆ¥ã«åˆ†å‰²ã—ã¾ã™ã€‚',
-    splitAction: '15å€‹ã«è‡ªå‹•åˆ†å‰²', splitting: '15å€‹ã®çµµæ–‡å­—ã‚’åˆ†å‰²ã—ã¦ã„ã¾ã™â€¦',
-    splitReady: 'åˆ†å‰²å®Œäº† Â· å„ç”»åƒã‚’å€‹åˆ¥PNGã¨ã—ã¦ä¿å­˜ã§ãã¾ã™ã€‚',
-    splitAgain: 'å†åˆ†å‰²', splitDownload: 'PNGä¿å­˜', splitFailed: 'è‡ªå‹•åˆ†å‰²ã«å¤±æ•—ã—ã¾ã—ãŸã€‚ç”»åƒã‚’å†å‡¦ç†ã—ã¦ãŠè©¦ã—ãã ã•ã„ã€‚',
-    splitMaybeTitle: '15å€‹ã®çµµæ–‡å­—ã‚·ãƒ¼ãƒˆã§ã™ã‹ï¼Ÿ', splitMaybeDesc: 'è‡ªå‹•åˆ¤å®šãŒç¢ºå®Ÿã§ã¯ã‚ã‚Šã¾ã›ã‚“ã€‚çµµæ–‡å­—ã‚·ãƒ¼ãƒˆã®å ´åˆã¯æ‰‹å‹•ã§åˆ†å‰²ã‚’å®Ÿè¡Œã§ãã¾ã™ã€‚', splitMaybeAction: 'çµµæ–‡å­—ã‚·ãƒ¼ãƒˆã‚’åˆ†å‰²',
-    splitChooseTitle: 'åˆ†å‰²æ–¹æ³•ã‚’é¸æŠ', splitChooseDesc: 'ã‚·ãƒ¼ãƒˆã«åˆã†è¡Œæ•°ã¨åˆ—æ•°ã‚’é¸æŠã—ã¦ãã ã•ã„ã€‚', splitRows: 'è¡Œ', splitColumns: 'åˆ—', splitCustom: 'ç›´æ¥è¨­å®š', splitSelected: 'é¸æŠã—ãŸæ–¹æ³•ã§åˆ†å‰²', splitGridFailed: 'é¸æŠã—ãŸè¡Œãƒ»åˆ—ã§ã¯åˆ†å‰²ã§ãã¾ã›ã‚“ã§ã—ãŸã€‚',
-    qualityFailTitle: 'èƒŒæ™¯å‰Šé™¤çµæœã‚’ç¢ºèªã—ã¦ãã ã•ã„', qualityFailDesc: 'è¤‡é›‘ãªèƒŒæ™¯ãŒå¤šãæ®‹ã£ã¦ãŠã‚Šã€æ­£ç¢ºãªé€éPNGã¨ã—ã¦ä¿å­˜ã™ã‚‹ã«ã¯ä¸å®‰å®šã§ã™ã€‚èƒŒæ™¯ãŒã‚ˆã‚Šå˜ç´”ãªåˆ¥ã®ç”»åƒã‚’ãŠã™ã™ã‚ã—ã¾ã™ã€‚', qualityBlocked: 'å“è³ªç¢ºèªãŒå¿…è¦',
-    qualityWarnTitle: 'èƒŒæ™¯ãŒä¸€éƒ¨æ®‹ã£ã¦ã„ã‚‹å¯èƒ½æ€§ãŒã‚ã‚Šã¾ã™', qualityWarnDesc: 'ã‚¹ãƒ©ã‚¤ãƒ€ãƒ¼ã§å…ƒç”»åƒã¨çµæœã‚’ç¢ºèªã—ã¦ã‹ã‚‰ä¿å­˜ã—ã¦ãã ã•ã„ã€‚',
-    precisionRetry: 'é«˜ç²¾åº¦ã§å†å‡¦ç†', precisionHint: 'é«˜ç²¾åº¦å‡¦ç†ã®ãƒ•ã‚©ãƒ¼ãƒ«ãƒãƒƒã‚¯ãŒå¿…è¦ãªå ´åˆã€å¯¾å¿œç«¯æœ«ã§ã¯WebGPUã¨é«˜ç²¾åº¦ã®è£œåŠ©ãƒ¢ãƒ‡ãƒ«ã‚’è‡ªå‹•ä½¿ç”¨ã—ã€ãƒ¢ãƒã‚¤ãƒ«ã‚„éå¯¾å¿œç’°å¢ƒã§ã¯è»½é‡ãƒ¢ãƒ‡ãƒ«ã‚’ä½¿ç”¨ã—ã¾ã™ã€‚åˆå›ã¯ãƒ¢ãƒ‡ãƒ«èª­ã¿è¾¼ã¿ã«æ™‚é–“ãŒã‹ã‹ã‚‹å ´åˆãŒã‚ã‚Šã¾ã™ã€‚', precisionWorking: 'é«˜ç²¾åº¦ãƒ¢ãƒ‡ãƒ«ã§å†å‡¦ç†ã—ã¦ã„ã¾ã™â€¦', precisionNoBetter: 'é«˜ç²¾åº¦å‡¦ç†ã§ã‚‚æ”¹å–„ã—ãªã‹ã£ãŸãŸã‚ã€ç¾åœ¨ã®çµæœã‚’ç¶­æŒã—ã¾ã—ãŸã€‚',
-    badType: 'PNGã€JPGã€WEBPç”»åƒã®ã¿ä½¿ç”¨ã§ãã¾ã™ã€‚', tooLarge: '12MBä»¥ä¸‹ã®ç”»åƒã‚’ä½¿ç”¨ã—ã¦ãã ã•ã„ã€‚', failed: 'èƒŒæ™¯ã®å‰Šé™¤ã«å¤±æ•—ã—ã¾ã—ãŸã€‚ãƒšãƒ¼ã‚¸ã‚’å†èª­ã¿è¾¼ã¿ã—ã¦ã‚‚ã†ä¸€åº¦ãŠè©¦ã—ãã ã•ã„ã€‚'
-  },
-  zh: {
-    title: 'ç§»é™¤èƒŒæ™¯', badge: 'BETA', desc: 'ç§»é™¤å›¾ç‰‡èƒŒæ™¯ï¼Œå¹¶ä¿å­˜ä¸ºé€æ˜PNGã€‚',
-    privacy: 'å›¾ç‰‡ä¸ä¼šä¸Šä¼ åˆ°æœåŠ¡å™¨ï¼Œè€Œæ˜¯åœ¨å½“å‰è®¾å¤‡ä¸­å¤„ç†ã€‚', first: 'å‡åŒ€çš„çº¯è‰²èƒŒæ™¯ä¼šå¿«é€Ÿå¤„ç†ï¼›å¤æ‚èƒŒæ™¯ä¼šä½¿ç”¨AIæ¨¡å‹ï¼Œå› æ­¤é¦–æ¬¡ä½¿ç”¨å¯èƒ½ç¨æ…¢ã€‚',
-    upload: 'é€‰æ‹©å›¾ç‰‡æˆ–å°†å›¾ç‰‡æ‹–åˆ°è¿™é‡Œ', format: 'PNG Â· JPG Â· WEBP / æœ€å¤§12MB', change: 'æ›´æ¢å›¾ç‰‡',
-    sheetUploadHint: 'åŒ…å«15ä¸ªè¡¨æƒ…çš„å›¾ç‰‡å°†åœ¨ç§»é™¤èƒŒæ™¯åè‡ªåŠ¨è¯†åˆ«å¹¶åˆ†åˆ«åˆ†å‰²ã€‚', sheetSelectedHint: 'å¦‚æœè¯†åˆ«ä¸º15ä¸ªè¡¨æƒ…çš„å›¾ç‰‡ï¼Œç§»é™¤èƒŒæ™¯åå°†è‡ªåŠ¨åˆ†å‰²ã€‚',
-    remove: 'ç§»é™¤èƒŒæ™¯', preparing: 'æ­£åœ¨åˆ†æå›¾ç‰‡â€¦', processing: 'æ­£åœ¨ç§»é™¤èƒŒæ™¯â€¦',
-    original: 'åŸå›¾', result: 'é€æ˜èƒŒæ™¯', download: 'ä¿å­˜é€æ˜PNG', again: 'æ¢ä¸€å¼ å›¾ç‰‡',
-    compareHint: 'å·¦å³æ‹–åŠ¨ä¸­é—´æ»‘å—å³å¯å¯¹æ¯”åŸå›¾å’Œå¤„ç†ç»“æœã€‚',
-    transparentAlready: 'å·²ç»å¸¦é€æ˜èƒŒæ™¯çš„PNGæ— éœ€å†æ¬¡ç§»é™¤èƒŒæ™¯ã€‚è¯·ä½¿ç”¨å¸¦èƒŒæ™¯çš„PNGã€JPGæˆ–WEBPå›¾ç‰‡ã€‚',
-    splitTitle: 'è‡ªåŠ¨åˆ†å‰²15ä¸ªè¡¨æƒ…', splitBadge: 'æ™ºèƒ½æ£€æµ‹',
-    splitDesc: 'ä¸å†æŒ‰å›ºå®šç½‘æ ¼åˆ‡å‰²ï¼Œè€Œæ˜¯æ£€æµ‹å®é™…è§’è‰²å’Œæ–‡å­—ç»„åˆå¹¶åˆ†åˆ«åˆ†å‰²15ä¸ªè¡¨æƒ…ã€‚',
-    splitAction: 'è‡ªåŠ¨åˆ†æˆ15ä¸ª', splitting: 'æ­£åœ¨åˆ†å‰²15ä¸ªè¡¨æƒ…â€¦',
-    splitReady: 'åˆ†å‰²å®Œæˆ Â· å¯å°†æ¯ä¸ªè¡¨æƒ…å•ç‹¬ä¿å­˜ä¸ºPNGã€‚',
-    splitAgain: 'é‡æ–°åˆ†å‰²', splitDownload: 'ä¿å­˜PNG', splitFailed: 'è‡ªåŠ¨åˆ†å‰²å¤±è´¥ï¼Œè¯·é‡æ–°å¤„ç†å›¾ç‰‡åå†è¯•ã€‚',
-    splitMaybeTitle: 'è¿™æ˜¯15ä¸ªè¡¨æƒ…çš„å›¾ç‰‡åˆé›†å—ï¼Ÿ', splitMaybeDesc: 'è‡ªåŠ¨åˆ¤æ–­ä¸å¤Ÿç¡®å®šã€‚å¦‚æœè¿™æ˜¯è¡¨æƒ…åˆé›†ï¼Œå¯ä»¥æ‰‹åŠ¨å¯åŠ¨åˆ†å‰²ã€‚', splitMaybeAction: 'åˆ†å‰²è¡¨æƒ…åˆé›†',
-    splitChooseTitle: 'é€‰æ‹©åˆ†å‰²æ–¹å¼', splitChooseDesc: 'è¯·é€‰æ‹©ä¸å›¾ç‰‡åˆé›†ç›¸ç¬¦çš„è¡Œæ•°å’Œåˆ—æ•°ã€‚', splitRows: 'è¡Œ', splitColumns: 'åˆ—', splitCustom: 'è‡ªå®šä¹‰', splitSelected: 'æŒ‰æ‰€é€‰æ–¹å¼åˆ†å‰²', splitGridFailed: 'æ— æ³•æŒ‰æ‰€é€‰è¡Œåˆ—å®Œæˆåˆ†å‰²ã€‚',
-    qualityFailTitle: 'è¯·æ£€æŸ¥èƒŒæ™¯ç§»é™¤ç»“æœ', qualityFailDesc: 'å¤æ‚èƒŒæ™¯æ®‹ç•™è¾ƒå¤šï¼Œå½“å‰ç»“æœä¸é€‚åˆç›´æ¥ä½œä¸ºå¯é çš„é€æ˜PNGä¿å­˜ã€‚å»ºè®®æ¢ç”¨èƒŒæ™¯æ›´ç®€å•çš„å›¾ç‰‡ã€‚', qualityBlocked: 'éœ€è¦æ£€æŸ¥è´¨é‡',
-    qualityWarnTitle: 'å¯èƒ½ä»æœ‰éƒ¨åˆ†èƒŒæ™¯æ®‹ç•™', qualityWarnDesc: 'è¯·å…ˆç”¨æ»‘å—å¯¹æ¯”åŸå›¾å’Œç»“æœï¼Œå†å†³å®šæ˜¯å¦ä¿å­˜ã€‚',
-    precisionRetry: 'é«˜ç²¾åº¦é‡è¯•', precisionHint: 'é«˜ç²¾åº¦å¤„ç†éœ€è¦å›é€€æ—¶ï¼Œæ”¯æŒçš„è®¾å¤‡ä¼šè‡ªåŠ¨ä½¿ç”¨WebGPUå’Œæ›´é«˜ç²¾åº¦çš„å¤‡ç”¨æ¨¡å‹ï¼›ç§»åŠ¨ç«¯æˆ–ä¸æ”¯æŒçš„ç¯å¢ƒä¼šä½¿ç”¨è½»é‡å¤‡ç”¨æ¨¡å‹ã€‚é¦–æ¬¡åŠ è½½æ¨¡å‹æ–‡ä»¶å¯èƒ½è¾ƒæ…¢ã€‚', precisionWorking: 'æ­£åœ¨ä½¿ç”¨é«˜ç²¾åº¦æ¨¡å‹é‡æ–°å¤„ç†â€¦', precisionNoBetter: 'é«˜ç²¾åº¦é‡è¯•æ²¡æœ‰æ”¹å–„ï¼Œå› æ­¤ä¿ç•™å½“å‰ç»“æœã€‚',
-    badType: 'ä»…æ”¯æŒPNGã€JPGã€WEBPå›¾ç‰‡ã€‚', tooLarge: 'è¯·ä½¿ç”¨12MBä»¥å†…çš„å›¾ç‰‡ã€‚', failed: 'èƒŒæ™¯ç§»é™¤å¤±è´¥ã€‚è¯·åˆ·æ–°é¡µé¢åé‡è¯•ã€‚'
-  }
-};
-
-const checkerStyle = {
-  backgroundColor: '#fff',
-  backgroundImage: 'linear-gradient(45deg,#eceae5 25%,transparent 25%),linear-gradient(-45deg,#eceae5 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#eceae5 75%),linear-gradient(-45deg,transparent 75%,#eceae5 75%)',
-  backgroundSize: '20px 20px',
-  backgroundPosition: '0 0,0 10px,10px -10px,-10px 0px'
-};
-
-const canvasToPngBlob = (canvas) => new Promise((resolve, reject) => {
-  if (!canvas) {
-    reject(new Error('Canvas is null'));
-    return;
-  }
-  const fallbackToDataUrl = () => {
-    try {
-      const dataUrl = canvas.toDataURL('image/png');
-      const parts = dataUrl.split(',');
-      const byteStr = atob(parts[1]);
-      const arr = new Uint8Array(byteStr.length);
-      for (let i = 0; i < byteStr.length; i += 1) {
-        arr[i] = byteStr.charCodeAt(i);
-      }
-      resolve(new Blob([arr], { type: 'image/png' }));
-    } catch (e) {
-      reject(e);
-    }
-  };
-
-  try {
-    canvas.toBlob((blob) => {
-      if (blob) resolve(blob);
-      else fallbackToDataUrl();
-    }, 'image/png');
-  } catch (_err) {
-    fallbackToDataUrl();
-  }
-});
-
-async function drawFileToCanvas(file) {
-  const canvas = document.createElement('canvas');
-
-  if (typeof createImageBitmap === 'function') {
-    try {
-      const bitmap = await createImageBitmap(file);
-      canvas.width = bitmap.width;
-      canvas.height = bitmap.height;
-      const ctx = canvas.getContext('2d', { willReadFrequently: true });
-      if (!ctx) throw new Error('Canvas 2D is unavailable');
-      ctx.drawImage(bitmap, 0, 0);
-      bitmap.close?.();
-      return { canvas, ctx };
-    } catch (e) {
-      console.warn('createImageBitmap failed, falling back to Image():', e);
-    }
-  }
-
-  const objectUrl = URL.createObjectURL(file);
-  try {
-    const image = await new Promise((resolve, reject) => {
-      const img = new Image();
-      img.onload = () => resolve(img);
-      img.onerror = () => reject(new Error('Image decode failed'));
-      img.src = objectUrl;
-    });
-    canvas.width = image.naturalWidth || image.width;
-    canvas.height = image.naturalHeight || image.height;
-    const ctx = canvas.getContext('2d', { willReadFrequently: true });
-    if (!ctx) throw new Error('Canvas 2D is unavailable');
-    ctx.drawImage(image, 0, 0);
-    return { canvas, ctx };
-  } finally {
-    setTimeout(() => URL.revokeObjectURL(objectUrl), 3000);
-  }
-}
-
-function colorDistance(a, b) {
-  const dr = a[0] - b[0];
-  const dg = a[1] - b[1];
-  const db = a[2] - b[2];
-  return Math.sqrt(dr * dr + dg * dg + db * db);
-}
-
-function sampleBackgroundPatch(data, width, height, startX, startY, sampleSize) {
-  const colors = [];
-  let r = 0;
-  let g = 0;
-  let b = 0;
-
-  for (let y = startY; y < Math.min(height, startY + sampleSize); y += 2) {
-    for (let x = startX; x < Math.min(width, startX + sampleSize); x += 2) {
-      const p = (y * width + x) * 4;
-      if (data[p + 3] < 240) continue;
-      const color = [data[p], data[p + 1], data[p + 2]];
-      colors.push(color);
-      r += color[0];
-      g += color[1];
-      b += color[2];
-    }
-  }
-
-  if (colors.length < 6) return null;
-  const mean = [r / colors.length, g / colors.length, b / colors.length];
-  const distances = colors.map((color) => colorDistance(color, mean)).sort((a, b) => a - b);
-  const p90 = distances[Math.min(distances.length - 1, Math.floor(distances.length * 0.9))] || 0;
-  return { mean, spread: p90, count: colors.length };
-}
-
-function estimateUniformEdgeBackground(data, width, height) {
-  const sampleSize = Math.max(8, Math.min(30, Math.floor(Math.min(width, height) * 0.025)));
-  const half = Math.floor(sampleSize / 2);
-  const points = [
-    [0, 0],
-    [Math.max(0, width - sampleSize), 0],
-    [0, Math.max(0, height - sampleSize)],
-    [Math.max(0, width - sampleSize), Math.max(0, height - sampleSize)],
-    [Math.max(0, Math.floor(width / 2) - half), 0],
-    [Math.max(0, Math.floor(width / 2) - half), Math.max(0, height - sampleSize)],
-    [0, Math.max(0, Math.floor(height / 2) - half)],
-    [Math.max(0, width - sampleSize), Math.max(0, Math.floor(height / 2) - half)]
-  ];
-
-  const patches = points
-    .map(([x, y]) => sampleBackgroundPatch(data, width, height, x, y, sampleSize))
-    .filter((patch) => patch && patch.spread <= 24);
-
-  if (patches.length < 4) return null;
-
-  let bestGroup = [];
-  for (const seed of patches) {
-    const group = patches.filter((patch) => colorDistance(seed.mean, patch.mean) <= 42);
-    if (group.length > bestGroup.length) bestGroup = group;
-  }
-
-  if (bestGroup.length < 4) return null;
-
-  const bg = [0, 0, 0];
-  let totalWeight = 0;
-  for (const patch of bestGroup) {
-    const weight = Math.max(1, patch.count);
-    bg[0] += patch.mean[0] * weight;
-    bg[1] += patch.mean[1] * weight;
-    bg[2] += patch.mean[2] * weight;
-    totalWeight += weight;
-  }
-  bg[0] /= totalWeight;
-  bg[1] /= totalWeight;
-  bg[2] /= totalWeight;
-
-  const groupSpread = Math.max(
-    ...bestGroup.map((patch) => Math.max(patch.spread, colorDistance(patch.mean, bg)))
-  );
-  const tolerance = Math.max(24, Math.min(52, 24 + groupSpread * 1.35));
-  return { bg, tolerance };
-}
-
-async function tryFastUniformBackgroundRemoval(file) {
-  const { canvas, ctx } = await drawFileToCanvas(file);
-  const { width, height } = canvas;
-  if (!width || !height) return null;
-
-  const imageData = ctx.getImageData(0, 0, width, height);
-  const pixels = imageData.data;
-  const estimate = estimateUniformEdgeBackground(pixels, width, height);
-  if (!estimate) return null;
-
-  const { bg, tolerance } = estimate;
-  const total = width * height;
-  const visited = new Uint8Array(total);
-  const queue = new Int32Array(total);
-  let head = 0;
-  let tail = 0;
-
-  const matchesBackground = (index) => {
-    const p = index * 4;
-    if (pixels[p + 3] < 16) return true;
-    return colorDistance([pixels[p], pixels[p + 1], pixels[p + 2]], bg) <= tolerance;
-  };
-
-  const enqueue = (index) => {
-    if (index < 0 || index >= total || visited[index] || !matchesBackground(index)) return;
-    visited[index] = 1;
-    queue[tail++] = index;
-  };
-
-  for (let x = 0; x < width; x += 1) {
-    enqueue(x);
-    enqueue((height - 1) * width + x);
-  }
-  for (let y = 1; y < height - 1; y += 1) {
-    enqueue(y * width);
-    enqueue(y * width + width - 1);
-  }
-
-  while (head < tail) {
-    const index = queue[head++];
-    const x = index % width;
-    const y = Math.floor(index / width);
-    pixels[index * 4 + 3] = 0;
-    if (x > 0) enqueue(index - 1);
-    if (x + 1 < width) enqueue(index + 1);
-    if (y > 0) enqueue(index - width);
-    if (y + 1 < height) enqueue(index + width);
-  }
-
-  // A solid backdrop should occupy a meaningful border-connected area.
-  // If too little was removed, fall back to the AI model rather than risk a false positive.
-  if (tail < total * 0.06) return null;
-
-  ctx.putImageData(imageData, 0, 0);
-  return canvasToPngBlob(canvas);
-}
-
-async function getRemover(onProgress) {
-  if (!removerPromise) {
-    removerPromise = (async () => {
-      const { pipeline, RawImage } = await import('@huggingface/transformers');
-      const remover = await pipeline('background-removal', 'onnx-community/ormbg-ONNX', {
-        device: 'wasm',
-        dtype: 'q8',
-        progress_callback: (info) => onProgress?.(info)
-      });
-      return { remover, RawImage };
-    })().catch((error) => {
-      removerPromise = null;
-      throw error;
-    });
-  }
-  return removerPromise;
-}
-
-async function getModnetRemover(onProgress) {
-  if (!modnetPromise) {
-    modnetPromise = (async () => {
-      const { pipeline, RawImage } = await import('@huggingface/transformers');
-      const remover = await pipeline('background-removal', 'Xenova/modnet', {
-        device: 'wasm',
-        dtype: 'fp32',
-        progress_callback: (info) => onProgress?.(info)
-      });
-      return { remover, RawImage };
-    })().catch((error) => {
-      modnetPromise = null;
-      throw error;
-    });
-  }
-  return modnetPromise;
-}
-
-const BIREFNET_LITE_MODEL = 'onnx-community/BiRefNet_lite-ONNX';
-const BIREFNET_FULL_MODEL = 'onnx-community/BiRefNet-ONNX';
-
-function isLikelyMobilePrecisionDevice() {
-  if (typeof navigator === 'undefined') return true;
-  return /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent || '');
-}
-
-async function getBiRefNetProfiles() {
-  const fallback = { key: 'lite-wasm-fp32', modelId: BIREFNET_LITE_MODEL, device: 'wasm', dtype: 'fp32' };
-  if (typeof navigator === 'undefined' || !navigator.gpu) return [fallback];
-
-  try {
-    const adapter = await navigator.gpu.requestAdapter({ powerPreference: 'high-performance' });
-    if (!adapter) return [fallback];
-  } catch (error) {
-    console.warn('WebGPU adapter check failed; using WASM precision model:', error);
-    return [fallback];
-  }
-
-  const deviceMemory = Number(navigator.deviceMemory || 0);
-  const canUseFullModel = !isLikelyMobilePrecisionDevice() && deviceMemory >= 8;
-  const profiles = [];
-  if (canUseFullModel) {
-    profiles.push({ key: 'full-webgpu-fp16', modelId: BIREFNET_FULL_MODEL, device: 'webgpu', dtype: 'fp16' });
-  }
-  profiles.push({ key: 'lite-webgpu-fp16', modelId: BIREFNET_LITE_MODEL, device: 'webgpu', dtype: 'fp16' });
-  profiles.push(fallback);
-  return profiles;
-}
-
-async function getBiRefNet(profile, onProgress) {
-  if (!birefNetPromises.has(profile.key)) {
-    const promise = (async () => {
-      const { AutoModel, AutoProcessor, RawImage } = await import('@huggingface/transformers');
-      const model = await AutoModel.from_pretrained(profile.modelId, {
-        device: profile.device,
-        dtype: profile.dtype,
-        progress_callback: (info) => onProgress?.(info)
-      });
-      const processor = await AutoProcessor.from_pretrained(profile.modelId, {
-        progress_callback: (info) => onProgress?.(info)
-      });
-      return { model, processor, RawImage };
-    })().catch((error) => {
-      birefNetPromises.delete(profile.key);
-      throw error;
-    });
-    birefNetPromises.set(profile.key, promise);
-  }
-  return birefNetPromises.get(profile.key);
-}
-
-async function pipelineRemovalToBlob(file, loader, onProgress) {
-  const { remover, RawImage } = await loader(onProgress);
-  const rawImage = await RawImage.fromBlob(file);
-  const output = await remover([rawImage]);
-  const image = Array.isArray(output) ? output[0] : output;
-  if (image instanceof Blob) return image;
-  if (!image?.toBlob) throw new Error('No removable image output');
-  const blob = await image.toBlob();
-  if (!blob) throw new Error('No output blob');
-  return blob;
-}
-
-async function removeWithModnet(file, onProgress) {
-  return pipelineRemovalToBlob(file, getModnetRemover, onProgress);
-}
-
-async function removeWithBiRefNet(file, onProgress) {
-  const profiles = await getBiRefNetProfiles();
-  let lastError = null;
-
-  const disposeSafely = (value) => {
-    if (!value || typeof value.dispose !== 'function') return;
-    try { value.dispose(); } catch (error) { console.warn('Tensor disposal skipped:', error); }
-  };
-
-  for (const profile of profiles) {
-    let pixelValues = null;
-    let outputTensor = null;
-    let sigmoidTensor = null;
-    let scaledTensor = null;
-    let uint8Tensor = null;
-    try {
-      const { model, processor, RawImage } = await getBiRefNet(profile, onProgress);
-      const rawImage = await RawImage.fromBlob(file);
-      const processed = await processor(rawImage);
-      pixelValues = processed?.pixel_values || null;
-      if (!pixelValues) throw new Error('BiRefNet processor output is unavailable');
-
-      const output = await model({ input_image: pixelValues });
-      outputTensor = output?.output_image || output?.output || null;
-      const sourceTensor = outputTensor?.[0];
-      if (!sourceTensor) throw new Error('BiRefNet output is unavailable');
-
-      sigmoidTensor = sourceTensor.sigmoid();
-      scaledTensor = sigmoidTensor.mul(255);
-      uint8Tensor = scaledTensor.to('uint8');
-      const mask = await RawImage.fromTensor(uint8Tensor).resize(rawImage.width, rawImage.height);
-      const { canvas, ctx } = await drawFileToCanvas(file);
-      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      const pixels = imageData.data;
-      const maskData = mask.data;
-      const maskChannels = Math.max(1, mask.channels || 1);
-      const total = canvas.width * canvas.height;
-      if (!maskData || mask.width !== canvas.width || mask.height !== canvas.height) {
-        throw new Error('BiRefNet mask size mismatch');
-      }
-      for (let i = 0; i < total; i += 1) {
-        const alpha = maskData[i * maskChannels];
-        pixels[i * 4 + 3] = Math.round((pixels[i * 4 + 3] * alpha) / 255);
-      }
-      ctx.putImageData(imageData, 0, 0);
-      return await canvasToPngBlob(canvas);
-    } catch (error) {
-      lastError = error;
-      console.warn(`BiRefNet precision profile ${profile.key} failed; trying fallback:`, error);
-    } finally {
-      const disposed = new Set();
-      for (const tensor of [uint8Tensor, scaledTensor, sigmoidTensor, outputTensor, pixelValues]) {
-        if (!tensor || disposed.has(tensor)) continue;
-        disposed.add(tensor);
-        disposeSafely(tensor);
-      }
-    }
-  }
-
-  throw lastError || new Error('BiRefNet precision processing failed');
-}
-
-function qualityRank(quality) {
-  if (!quality) return 99;
-  const statusBase = quality.status === 'pass' ? 0 : quality.status === 'warning' ? 10 : 20;
-  return statusBase + (quality.score || 0);
-}
-
-function alphaPercentile(histogram, visibleCount, percentile) {
-  if (!visibleCount) return 0;
-  const target = Math.max(1, Math.ceil(visibleCount * percentile));
-  let seen = 0;
-  for (let alpha = 1; alpha <= 255; alpha += 1) {
-    seen += histogram[alpha];
-    if (seen >= target) return alpha;
-  }
-  return 255;
-}
-
-async function correctUnexpectedForegroundTransparency(blob) {
-  const { canvas, ctx } = await drawFileToCanvas(blob);
-  const { width, height } = canvas;
-  if (!width || !height) return blob;
-
-  const imageData = ctx.getImageData(0, 0, width, height);
-  const pixels = imageData.data;
-  const histogram = new Uint32Array(256);
-  let visibleCount = 0;
-
-  for (let p = 3; p < pixels.length; p += 4) {
-    const alpha = pixels[p];
-    if (alpha <= 2) continue;
-    histogram[alpha] += 1;
-    visibleCount += 1;
-  }
-
-  if (visibleCount < width * height * 0.005) return blob;
-
-  const p50 = alphaPercentile(histogram, visibleCount, 0.5);
-  const p90 = alphaPercentile(histogram, visibleCount, 0.9);
-  const p98 = alphaPercentile(histogram, visibleCount, 0.98);
-
-  // ORMBG can occasionally return a correct mask whose entire foreground alpha
-  // is scaled down. Only compensate when the high percentile itself is translucent,
-  // so normal antialiased edges and intentional soft boundaries are preserved.
-  if (p98 >= 242 || p50 >= 225 || p90 >= 238) return blob;
-
-  const scale = Math.min(3.25, 255 / Math.max(32, p98));
-  if (scale <= 1.04) return blob;
-
-  for (let p = 3; p < pixels.length; p += 4) {
-    const alpha = pixels[p];
-    if (alpha <= 2) continue;
-    pixels[p] = Math.min(255, Math.round(alpha * scale));
-  }
-
-  ctx.putImageData(imageData, 0, 0);
-  return canvasToPngBlob(canvas);
-}
-
-async function protectLightForegroundOpacity(blob) {
-  const { canvas, ctx } = await drawFileToCanvas(blob);
-  const { width, height } = canvas;
-  if (!width || !height) return blob;
-
-  const imageData = ctx.getImageData(0, 0, width, height);
-  const pixels = imageData.data;
-  const total = width * height;
-  const visibleThreshold = 36;
-  const confidentThreshold = 220;
-  const maxAnalysisDimension = 1200;
-  const analysisScale = Math.min(1, maxAnalysisDimension / Math.max(width, height));
-  const analysisWidth = Math.max(1, Math.round(width * analysisScale));
-  const analysisHeight = Math.max(1, Math.round(height * analysisScale));
-  let analysisPixels = pixels;
-  if (analysisScale < 1) {
-    const analysisCanvas = document.createElement('canvas');
-    analysisCanvas.width = analysisWidth;
-    analysisCanvas.height = analysisHeight;
-    const analysisCtx = analysisCanvas.getContext('2d', { willReadFrequently: true });
-    if (!analysisCtx) return blob;
-    analysisCtx.imageSmoothingEnabled = true;
-    analysisCtx.imageSmoothingQuality = 'high';
-    analysisCtx.drawImage(canvas, 0, 0, analysisWidth, analysisHeight);
-    analysisPixels = analysisCtx.getImageData(0, 0, analysisWidth, analysisHeight).data;
-  }
-
-  const analysisTotal = analysisWidth * analysisHeight;
-  const labels = new Int32Array(analysisTotal);
-  const queue = new Int32Array(analysisTotal);
-  const strongComponents = [false];
-  const minimumComponentArea = Math.max(12, Math.round(analysisTotal * 0.00004));
-  let label = 0;
-
-  // Label only non-trivial matte components. A light pixel is restored only
-  // when it belongs to the same component as confidently opaque foreground.
-  // This prevents pale background remnants from being made opaque again.
-  for (let seed = 0; seed < analysisTotal; seed += 1) {
-    if (labels[seed] || analysisPixels[seed * 4 + 3] < visibleThreshold) continue;
-    label += 1;
-    let head = 0;
-    let tail = 0;
-    let area = 0;
-    let hasConfidentForeground = false;
-    labels[seed] = label;
-    queue[tail++] = seed;
-
-    while (head < tail) {
-      const index = queue[head++];
-      const alpha = analysisPixels[index * 4 + 3];
-      area += 1;
-      if (alpha >= confidentThreshold) hasConfidentForeground = true;
-      const x = index % analysisWidth;
-      const y = Math.floor(index / analysisWidth);
-
-      const enqueue = (next) => {
-        if (next < 0 || next >= analysisTotal || labels[next] || analysisPixels[next * 4 + 3] < visibleThreshold) return;
-        labels[next] = label;
-        queue[tail++] = next;
-      };
-      if (x > 0) enqueue(index - 1);
-      if (x + 1 < analysisWidth) enqueue(index + 1);
-      if (y > 0) enqueue(index - analysisWidth);
-      if (y + 1 < analysisHeight) enqueue(index + analysisWidth);
-    }
-
-    strongComponents[label] = hasConfidentForeground && area >= minimumComponentArea;
-  }
-
-  let changed = false;
-  for (let index = 0; index < total; index += 1) {
-    const x = index % width;
-    const y = Math.floor(index / width);
-    const analysisX = Math.min(analysisWidth - 1, Math.floor(x * analysisWidth / width));
-    const analysisY = Math.min(analysisHeight - 1, Math.floor(y * analysisHeight / height));
-    const componentLabel = labels[analysisY * analysisWidth + analysisX];
-    if (!componentLabel || !strongComponents[componentLabel]) continue;
-    const p = index * 4;
-    const alpha = pixels[p + 3];
-    if (alpha < 56 || alpha >= 248) continue;
-
-    const r = pixels[p];
-    const g = pixels[p + 1];
-    const b = pixels[p + 2];
-    const max = Math.max(r, g, b);
-    const min = Math.min(r, g, b);
-    const luminance = r * 0.299 + g * 0.587 + b * 0.114;
-
-    // White, ivory, cream, and light beige foreground are the colours most
-    // often weakened by a white-background matte. Saturated highlights and
-    // intentional translucent effects are left untouched.
-    if (luminance < 158 || max - min > 78) continue;
-
-    let touchesTransparency = false;
-    let supportingNeighbours = 0;
-    for (let dy = -1; dy <= 1; dy += 1) {
-      const ny = y + dy;
-      if (ny < 0 || ny >= height) continue;
-      for (let dx = -1; dx <= 1; dx += 1) {
-        if (dx === 0 && dy === 0) continue;
-        const nx = x + dx;
-        if (nx < 0 || nx >= width) continue;
-        const neighbourAlpha = pixels[(ny * width + nx) * 4 + 3];
-        if (neighbourAlpha <= 14) touchesTransparency = true;
-        if (neighbourAlpha >= 96) supportingNeighbours += 1;
-      }
-    }
-
-    // Preserve the true antialiased outer edge. Only interior matte pixels,
-    // supported by surrounding foreground, receive an opacity floor.
-    if (touchesTransparency || supportingNeighbours < 4) continue;
-
-    const opacityFloor = alpha < 96 ? 156 : alpha < 160 ? 214 : 242;
-    if (alpha < opacityFloor) {
-      pixels[p + 3] = opacityFloor;
-      changed = true;
-    }
-  }
-
-  if (!changed) return blob;
-  ctx.putImageData(imageData, 0, 0);
-  return canvasToPngBlob(canvas);
-}
-
-function estimateOpaqueCleanupBackdrop(sourcePixels, resultPixels, width, height) {
-  const total = width * height;
-  if (!total) return null;
-
-  // A PNG may already be transparent around the stickers while small pieces of the
-  // old white/cream backdrop remain trapped inside lettering. In that case the
-  // normal edge sampler has no opaque border from which to estimate a backdrop.
-  // Find the dominant bright, low-chroma colour touching transparency instead.
-  const bins = new Map();
-  const searchRadius = Math.max(1, Math.min(4, Math.round(Math.min(width, height) / 420)));
-
-  for (let index = 0; index < total; index += 1) {
-    const p = index * 4;
-    if (resultPixels[p + 3] < 128 || sourcePixels[p + 3] < 128) continue;
-
-    const r = sourcePixels[p];
-    const g = sourcePixels[p + 1];
-    const b = sourcePixels[p + 2];
-    const max = Math.max(r, g, b);
-    const min = Math.min(r, g, b);
-    const luminance = r * 0.299 + g * 0.587 + b * 0.114;
-    if (luminance < 150 || max - min > 54) continue;
-
-    const x = index % width;
-    const y = Math.floor(index / width);
-    let nearTransparency = false;
-    for (let offset = 1; offset <= searchRadius && !nearTransparency; offset += 1) {
-      const neighbours = [
-        x >= offset ? index - offset : -1,
-        x + offset < width ? index + offset : -1,
-        y >= offset ? index - width * offset : -1,
-        y + offset < height ? index + width * offset : -1
-      ];
-      nearTransparency = neighbours.some((next) => next >= 0 && resultPixels[next * 4 + 3] < 36);
-    }
-    if (!nearTransparency) continue;
-
-    const key = `${r >> 4}:${g >> 4}:${b >> 4}`;
-    const bin = bins.get(key) || { count: 0, r: 0, g: 0, b: 0 };
-    bin.count += 1;
-    bin.r += r;
-    bin.g += g;
-    bin.b += b;
-    bins.set(key, bin);
-  }
-
-  let best = null;
-  for (const bin of bins.values()) {
-    if (!best || bin.count > best.count) best = bin;
-  }
-  if (!best || best.count < Math.max(18, Math.round(total * 0.00002))) return null;
-
-  return {
-    bg: [Math.round(best.r / best.count), Math.round(best.g / best.count), Math.round(best.b / best.count)],
-    tolerance: 44
-  };
-}
-
-async function removeEnclosedBackdropPockets(blob, sourceFile, aggressive = false) {
-  try {
-    const source = await drawFileToCanvas(sourceFile);
-    const result = await drawFileToCanvas(blob);
-    const { width, height } = result.canvas;
-    if (!width || !height) return blob;
-
-    let sourceCtx = source.ctx;
-    if (source.canvas.width !== width || source.canvas.height !== height) {
-      const scaled = document.createElement('canvas');
-      scaled.width = width;
-      scaled.height = height;
-      const scaledCtx = scaled.getContext('2d', { willReadFrequently: true });
-      if (!scaledCtx) return blob;
-      scaledCtx.drawImage(source.canvas, 0, 0, width, height);
-      sourceCtx = scaledCtx;
-    }
-
-    const resultData = result.ctx.getImageData(0, 0, width, height);
-    const sourceData = sourceCtx.getImageData(0, 0, width, height);
-    const pixels = resultData.data;
-    const original = sourceData.data;
-    let estimate = estimateUniformEdgeBackground(original, width, height);
-    let usedTransparentFallback = false;
-    if (!estimate) {
-      estimate = estimateOpaqueCleanupBackdrop(original, pixels, width, height);
-      usedTransparentFallback = Boolean(estimate);
-    }
-    if (!estimate) return blob;
-
-    const { bg, tolerance } = estimate;
-    const total = width * height;
-    const visited = new Uint8Array(total);
-    const queue = new Int32Array(total);
-    const sourceTolerance = Math.max(16, Math.min(32, tolerance * 0.62));
-    const resultTolerance = Math.max(22, Math.min(42, tolerance * 0.9));
-    const boundaryDistance = Math.max(30, tolerance * 1.05);
-    const minArea = Math.max(8, Math.round(total * 0.000004));
-    const maxArea = Math.max(minArea + 1, Math.round(total * 0.008));
-    const maxWidth = Math.max(8, Math.round(width * 0.17));
-    const maxHeight = Math.max(8, Math.round(height * 0.14));
-    let changed = false;
-
-    const isCandidate = (index) => {
-      if (index < 0 || index >= total || visited[index]) return false;
-      const p = index * 4;
-      if (pixels[p + 3] < 128 || original[p + 3] < 220) return false;
-      return (
-        colorDistance([original[p], original[p + 1], original[p + 2]], bg) <= sourceTolerance &&
-        colorDistance([pixels[p], pixels[p + 1], pixels[p + 2]], bg) <= resultTolerance
-      );
-    };
-
-    // On an already-transparent PNG, the fallback colour is usually also the
-    // sticker's white outline. Skip broad component deletion and only use the
-    // much safer, stroke-bracketed text-gap pass below.
-    for (let seed = 0; seed < total && !usedTransparentFallback; seed += 1) {
-      if (!isCandidate(seed)) continue;
-
-      let head = 0;
-      let tail = 0;
-      visited[seed] = 1;
-      queue[tail++] = seed;
-      let area = 0;
-      let minX = width;
-      let minY = height;
-      let maxX = -1;
-      let maxY = -1;
-      let touchesEdge = false;
-
-      while (head < tail) {
-        const index = queue[head++];
-        const x = index % width;
-        const y = Math.floor(index / width);
-        area += 1;
-        minX = Math.min(minX, x);
-        minY = Math.min(minY, y);
-        maxX = Math.max(maxX, x);
-        maxY = Math.max(maxY, y);
-        if (x === 0 || y === 0 || x === width - 1 || y === height - 1) touchesEdge = true;
-
-        const enqueue = (next) => {
-          if (!isCandidate(next)) return;
-          visited[next] = 1;
-          queue[tail++] = next;
-        };
-        if (x > 0) enqueue(index - 1);
-        if (x + 1 < width) enqueue(index + 1);
-        if (y > 0) enqueue(index - width);
-        if (y + 1 < height) enqueue(index + width);
-      }
-
-      const componentWidth = maxX - minX + 1;
-      const componentHeight = maxY - minY + 1;
-      if (
-        touchesEdge ||
-        area < minArea ||
-        area > maxArea ||
-        componentWidth > maxWidth ||
-        componentHeight > maxHeight
-      ) continue;
-
-      let boundarySamples = 0;
-      let strongBoundarySamples = 0;
-      for (let i = 0; i < tail; i += 1) {
-        const index = queue[i];
-        const x = index % width;
-        const y = Math.floor(index / width);
-        const neighbours = [];
-        if (x > 0) neighbours.push(index - 1);
-        if (x + 1 < width) neighbours.push(index + 1);
-        if (y > 0) neighbours.push(index - width);
-        if (y + 1 < height) neighbours.push(index + width);
-
-        for (const next of neighbours) {
-          if (visited[next]) continue;
-          const p = next * 4;
-          if (pixels[p + 3] < 48) continue;
-          boundarySamples += 1;
-          if (colorDistance([pixels[p], pixels[p + 1], pixels[p + 2]], bg) >= boundaryDistance) {
-            strongBoundarySamples += 1;
-          }
-        }
-      }
-
-      const fillRatio = area / Math.max(1, componentWidth * componentHeight);
-      const boundaryRatio = strongBoundarySamples / Math.max(1, boundarySamples);
-      const isTrappedBackdrop =
-        fillRatio >= 0.16 &&
-        boundarySamples >= 6 &&
-        boundaryRatio >= 0.68;
-
-      if (!isTrappedBackdrop) continue;
-      for (let i = 0; i < tail; i += 1) {
-        pixels[queue[i] * 4 + 3] = 0;
-      }
-      changed = true;
-    }
-
-    // Text labels often use a white outline that joins the remaining white gaps into
-    // one large component. Detect those glyph gaps separately: a backdrop-coloured
-    // pixel is removed when saturated text strokes bracket it horizontally or vertically.
-    // Low-saturation boundaries (eyes, skin highlights and white clothing) are excluded.
-    const glyphGapMask = new Uint8Array(total);
-    const maxGlyphSpan = aggressive ? Math.max(14, Math.min(56, Math.round(Math.min(width, height) * 0.052))) : Math.max(8, Math.min(34, Math.round(Math.min(width, height) * 0.032)));
-    const isBackdropPixel = (index) => {
-      if (index < 0 || index >= total) return false;
-      const p = index * 4;
-      if (pixels[p + 3] < 128 || original[p + 3] < 220) return false;
-      return (
-        colorDistance([original[p], original[p + 1], original[p + 2]], bg) <= sourceTolerance &&
-        colorDistance([pixels[p], pixels[p + 1], pixels[p + 2]], bg) <= resultTolerance
-      );
-    };
-    const isSaturatedStroke = (index) => {
-      const p = index * 4;
-      if (pixels[p + 3] < 96) return false;
-      const r = pixels[p];
-      const g = pixels[p + 1];
-      const b = pixels[p + 2];
-      const chroma = Math.max(r, g, b) - Math.min(r, g, b);
-      const luminance = r * 0.299 + g * 0.587 + b * 0.114;
-      const backgroundLuminance = bg[0] * 0.299 + bg[1] * 0.587 + bg[2] * 0.114;
-      const contrast = colorDistance([r, g, b], bg);
-      return (
-        contrast >= (aggressive ? 34 : Math.max(42, boundaryDistance)) &&
-        (chroma >= (aggressive ? 18 : 34) || (aggressive && backgroundLuminance - luminance >= 54))
-      );
-    };
-    const hasStroke = (x, y, dx, dy) => {
-      for (let step = 1; step <= maxGlyphSpan; step += 1) {
-        const nx = x + dx * step;
-        const ny = y + dy * step;
-        if (nx < 0 || ny < 0 || nx >= width || ny >= height) return false;
-        const next = ny * width + nx;
-        const p = next * 4;
-        if (pixels[p + 3] < 40) return false;
-        if (isSaturatedStroke(next)) return true;
-        if (!isBackdropPixel(next)) return false;
-      }
-      return false;
-    };
-
-    for (let index = 0; index < total; index += 1) {
-      if (!isBackdropPixel(index)) continue;
-      const x = index % width;
-      const y = Math.floor(index / width);
-      const horizontallyBracketed = hasStroke(x, y, -1, 0) && hasStroke(x, y, 1, 0);
-      const verticallyBracketed = hasStroke(x, y, 0, -1) && hasStroke(x, y, 0, 1);
-      const diagonalDownBracketed = aggressive && hasStroke(x, y, -1, -1) && hasStroke(x, y, 1, 1);
-      const diagonalUpBracketed = aggressive && hasStroke(x, y, -1, 1) && hasStroke(x, y, 1, -1);
-      if (horizontallyBracketed || verticallyBracketed || diagonalDownBracketed || diagonalUpBracketed) {
-        glyphGapMask[index] = 1;
-      }
-    }
-
-    // Grow confirmed seeds only a few pixels through matching backdrop colour.
-    // This clears the full antialiased gap without following that colour around
-    // the entire white sticker outline.
-    const expansionPasses = aggressive ? 4 : 1;
-    for (let pass = 0; pass < expansionPasses; pass += 1) {
-      const additions = [];
-      for (let index = 0; index < total; index += 1) {
-        if (!glyphGapMask[index]) continue;
-        const x = index % width;
-        const y = Math.floor(index / width);
-        const neighbours = [];
-        if (x > 0) neighbours.push(index - 1);
-        if (x + 1 < width) neighbours.push(index + 1);
-        if (y > 0) neighbours.push(index - width);
-        if (y + 1 < height) neighbours.push(index + width);
-        if (aggressive && x > 0 && y > 0) neighbours.push(index - width - 1);
-        if (aggressive && x + 1 < width && y > 0) neighbours.push(index - width + 1);
-        if (aggressive && x > 0 && y + 1 < height) neighbours.push(index + width - 1);
-        if (aggressive && x + 1 < width && y + 1 < height) neighbours.push(index + width + 1);
-        for (const next of neighbours) {
-          if (!glyphGapMask[next] && isBackdropPixel(next)) additions.push(next);
-        }
-      }
-      if (!additions.length) break;
-      for (const next of additions) glyphGapMask[next] = 2;
-    }
-    for (let index = 0; index < total; index += 1) {
-      if (!glyphGapMask[index]) continue;
-      pixels[index * 4 + 3] = 0;
-      changed = true;
-    }
-
-    if (!changed) return blob;
-    result.ctx.putImageData(resultData, 0, 0);
-    return await canvasToPngBlob(result.canvas);
-  } catch (error) {
-    console.warn('Enclosed backdrop cleanup skipped:', error);
-    return blob;
-  }
-}
-
-async function refineHairBackgroundChannels(blob) {
-  const { canvas, ctx } = await drawFileToCanvas(blob);
-  const { width, height } = canvas;
-  if (!width || !height || width < 8 || height < 8) return blob;
-
-  const maxAnalysisDimension = 1200;
-  const scale = Math.min(1, maxAnalysisDimension / Math.max(width, height));
-  const analysisWidth = Math.max(1, Math.round(width * scale));
-  const analysisHeight = Math.max(1, Math.round(height * scale));
-  if (analysisWidth < 8 || analysisHeight < 8) return blob;
-
-  const analysisCanvas = document.createElement('canvas');
-  analysisCanvas.width = analysisWidth;
-  analysisCanvas.height = analysisHeight;
-  const analysisCtx = analysisCanvas.getContext('2d', { willReadFrequently: true });
-  if (!analysisCtx) return blob;
-  analysisCtx.imageSmoothingEnabled = true;
-  analysisCtx.imageSmoothingQuality = 'high';
-  analysisCtx.drawImage(canvas, 0, 0, analysisWidth, analysisHeight);
-
-  const analysisData = analysisCtx.getImageData(0, 0, analysisWidth, analysisHeight).data;
-  const total = analysisWidth * analysisHeight;
-  const reachable = new Uint8Array(total);
-  const queue = new Int32Array(total);
-  const transparentThreshold = 14;
-  const weakThreshold = 205;
-  const confidentThreshold = 225;
-  let head = 0;
-  let tail = 0;
-
-  // Start from pixels that the precision matte already considers background,
-  // including small transparent holes. Grow only through weak-confidence matte
-  // so solid hair, skin and clothing cannot become part of the background path.
-  for (let index = 0; index < total; index += 1) {
-    if (analysisData[index * 4 + 3] > transparentThreshold) continue;
-    reachable[index] = 1;
-    queue[tail++] = index;
-  }
-
-  const tryReach = (index) => {
-    if (index < 0 || index >= total || reachable[index]) return;
-    if (analysisData[index * 4 + 3] > weakThreshold) return;
-    reachable[index] = 1;
-    queue[tail++] = index;
-  };
-
-  while (head < tail) {
-    const index = queue[head++];
-    const x = index % analysisWidth;
-    const y = Math.floor(index / analysisWidth);
-    if (x > 0) tryReach(index - 1);
-    if (x + 1 < analysisWidth) tryReach(index + 1);
-    if (y > 0) tryReach(index - analysisWidth);
-    if (y + 1 < analysisHeight) tryReach(index + analysisWidth);
-  }
-
-  const candidates = new Uint8Array(total);
-  const axes = [[1, 0], [0, 1], [1, 1], [1, -1]];
-  const searchRadius = 6;
-  let candidateCount = 0;
-
-  const hasConfidentPixel = (x, y, dx, dy) => {
-    for (let step = 1; step <= searchRadius; step += 1) {
-      const nx = x + dx * step;
-      const ny = y + dy * step;
-      if (nx < 0 || nx >= analysisWidth || ny < 0 || ny >= analysisHeight) break;
-      const alpha = analysisData[(ny * analysisWidth + nx) * 4 + 3];
-      if (alpha >= confidentThreshold) return true;
-    }
-    return false;
-  };
-
-  for (let y = searchRadius; y < analysisHeight - searchRadius; y += 1) {
-    for (let x = searchRadius; x < analysisWidth - searchRadius; x += 1) {
-      const index = y * analysisWidth + x;
-      if (!reachable[index]) continue;
-      const alpha = analysisData[index * 4 + 3];
-      if (alpha <= transparentThreshold || alpha > weakThreshold) continue;
-
-      let betweenForeground = false;
-      for (const [dx, dy] of axes) {
-        if (hasConfidentPixel(x, y, dx, dy) && hasConfidentPixel(x, y, -dx, -dy)) {
-          betweenForeground = true;
-          break;
-        }
-      }
-      if (!betweenForeground) continue;
-      candidates[index] = 1;
-      candidateCount += 1;
-    }
-  }
-
-  if (!candidateCount || candidateCount > total * 0.04) return blob;
-
-  // Expand a detected narrow gap slightly through the same weak background path.
-  // This opens the middle of a gap without crossing high-confidence hair strands.
-  const refinedMask = candidates.slice();
-  const expandRadius = 2;
-  for (let y = 0; y < analysisHeight; y += 1) {
-    for (let x = 0; x < analysisWidth; x += 1) {
-      const index = y * analysisWidth + x;
-      if (!candidates[index]) continue;
-      for (let dy = -expandRadius; dy <= expandRadius; dy += 1) {
-        const ny = y + dy;
-        if (ny < 0 || ny >= analysisHeight) continue;
-        for (let dx = -expandRadius; dx <= expandRadius; dx += 1) {
-          const nx = x + dx;
-          if (nx < 0 || nx >= analysisWidth) continue;
-          const next = ny * analysisWidth + nx;
-          if (!reachable[next]) continue;
-          if (analysisData[next * 4 + 3] <= weakThreshold) refinedMask[next] = 1;
-        }
-      }
-    }
-  }
-
-  const imageData = ctx.getImageData(0, 0, width, height);
-  const pixels = imageData.data;
-  const xScale = analysisWidth / width;
-  const yScale = analysisHeight / height;
-  let changedPixels = 0;
-
-  for (let y = 0; y < height; y += 1) {
-    const ay = Math.min(analysisHeight - 1, Math.floor(y * yScale));
-    for (let x = 0; x < width; x += 1) {
-      const ax = Math.min(analysisWidth - 1, Math.floor(x * xScale));
-      if (!refinedMask[ay * analysisWidth + ax]) continue;
-      const p = (y * width + x) * 4;
-      const alpha = pixels[p + 3];
-      if (alpha <= transparentThreshold || alpha >= 224) continue;
-
-      let nextAlpha = alpha;
-      if (alpha < 72) nextAlpha = 0;
-      else if (alpha < 130) nextAlpha = Math.round(alpha * 0.35);
-      else if (alpha < 180) nextAlpha = Math.round(alpha * 0.55);
-      else nextAlpha = Math.round(alpha * 0.72);
-
-      if (nextAlpha === alpha) continue;
-      pixels[p + 3] = nextAlpha;
-      changedPixels += 1;
-    }
-  }
-
-  if (!changedPixels) return blob;
-  ctx.putImageData(imageData, 0, 0);
-  return canvasToPngBlob(canvas);
-}
-
-async function refinePrecisionEdges(blob) {
-  const { canvas, ctx } = await drawFileToCanvas(blob);
-  const { width, height } = canvas;
-  if (!width || !height || width < 5 || height < 5) return blob;
-
-  const imageData = ctx.getImageData(0, 0, width, height);
-  const pixels = imageData.data;
-  const source = new Uint8ClampedArray(pixels);
-  const neighborOffsets = [
-    [-1, 0], [1, 0], [0, -1], [0, 1],
-    [-1, -1], [1, -1], [-1, 1], [1, 1],
-    [-2, 0], [2, 0], [0, -2], [0, 2],
-    [-2, -1], [2, -1], [-2, 1], [2, 1],
-    [-1, -2], [1, -2], [-1, 2], [1, 2]
-  ];
-  let changedPixels = 0;
-
-  for (let y = 2; y < height - 2; y += 1) {
-    for (let x = 2; x < width - 2; x += 1) {
-      const p = (y * width + x) * 4;
-      const alpha = source[p + 3];
-      if (alpha <= 0 || alpha >= 238) continue;
-
-      let transparentNearby = false;
-      let r = 0;
-      let g = 0;
-      let b = 0;
-      let confidentCount = 0;
-
-      for (const [dx, dy] of neighborOffsets) {
-        const np = ((y + dy) * width + (x + dx)) * 4;
-        const neighborAlpha = source[np + 3];
-        if (neighborAlpha <= 14) transparentNearby = true;
-        if (neighborAlpha >= 232) {
-          r += source[np];
-          g += source[np + 1];
-          b += source[np + 2];
-          confidentCount += 1;
-        }
-      }
-
-      // Only touch the actual matte boundary. Semi-transparent details inside
-      // the subject are preserved even if their alpha happens to be similar.
-      if (!transparentNearby) continue;
-
-      let nextAlpha = alpha;
-      if (alpha < 22) nextAlpha = 0;
-      else if (alpha < 64) nextAlpha = Math.round(alpha * 0.48);
-      else if (alpha < 118) nextAlpha = Math.round(alpha * 0.72);
-      else if (alpha < 170) nextAlpha = Math.round(alpha * 0.88);
-      else nextAlpha = Math.round(alpha * 0.96);
-
-      if (nextAlpha !== alpha) {
-        pixels[p + 3] = nextAlpha;
-        changedPixels += 1;
-      }
-
-      // Pull contaminated edge colors toward nearby confident foreground pixels.
-      // This reduces faint skin/hair colors from a person standing behind the
-      // subject without blurring the solid face, hair or clothing interior.
-      if (nextAlpha > 0 && confidentCount > 0) {
-        const mix = alpha < 118 ? 0.34 : alpha < 170 ? 0.22 : 0.12;
-        pixels[p] = Math.round(source[p] * (1 - mix) + (r / confidentCount) * mix);
-        pixels[p + 1] = Math.round(source[p + 1] * (1 - mix) + (g / confidentCount) * mix);
-        pixels[p + 2] = Math.round(source[p + 2] * (1 - mix) + (b / confidentCount) * mix);
-        changedPixels += 1;
-      }
-    }
-  }
-
-  if (!changedPixels) return blob;
-  ctx.putImageData(imageData, 0, 0);
-  return canvasToPngBlob(canvas);
-}
-
-function analyzeAlphaComponents(ctx, width, height, alphaThreshold = 36) {
-  const pixels = ctx.getImageData(0, 0, width, height).data;
-  const total = width * height;
-  const labels = new Int32Array(total);
-  const queue = new Int32Array(total);
-  const components = [];
-  let nextLabel = 0;
-
-  const visible = (index) => pixels[index * 4 + 3] >= alphaThreshold;
-
-  for (let seed = 0; seed < total; seed += 1) {
-    if (labels[seed] || !visible(seed)) continue;
-    nextLabel += 1;
-    let head = 0;
-    let tail = 0;
-    queue[tail++] = seed;
-    labels[seed] = nextLabel;
-    let minX = width;
-    let minY = height;
-    let maxX = -1;
-    let maxY = -1;
-    let area = 0;
-
-    while (head < tail) {
-      const index = queue[head++];
-      const x = index % width;
-      const y = Math.floor(index / width);
-      area += 1;
-      if (x < minX) minX = x;
-      if (x > maxX) maxX = x;
-      if (y < minY) minY = y;
-      if (y > maxY) maxY = y;
-
-      if (x > 0) {
-        const next = index - 1;
-        if (!labels[next] && visible(next)) {
-          labels[next] = nextLabel;
-          queue[tail++] = next;
-        }
-      }
-      if (x + 1 < width) {
-        const next = index + 1;
-        if (!labels[next] && visible(next)) {
-          labels[next] = nextLabel;
-          queue[tail++] = next;
-        }
-      }
-      if (y > 0) {
-        const next = index - width;
-        if (!labels[next] && visible(next)) {
-          labels[next] = nextLabel;
-          queue[tail++] = next;
-        }
-      }
-      if (y + 1 < height) {
-        const next = index + width;
-        if (!labels[next] && visible(next)) {
-          labels[next] = nextLabel;
-          queue[tail++] = next;
-        }
-      }
-    }
-
-    components.push({
-      label: nextLabel,
-      area,
-      minX,
-      minY,
-      maxX,
-      maxY,
-      width: maxX - minX + 1,
-      height: maxY - minY + 1,
-      centerX: (minX + maxX) / 2,
-      centerY: (minY + maxY) / 2
-    });
-  }
-
-  return { pixels, labels, components };
-}
-
-function componentGap(a, b) {
-  const dx = Math.max(a.minX - b.maxX, b.minX - a.maxX, 0);
-  const dy = Math.max(a.minY - b.maxY, b.minY - a.maxY, 0);
-  return Math.hypot(dx, dy);
-}
-
-async function cleanAiForegroundArtifacts(blob) {
-  const { canvas, ctx } = await drawFileToCanvas(blob);
-  const { width, height } = canvas;
-  if (!width || !height) return blob;
-
-  // Detect disconnected remnants on a bounded preview. The full-resolution
-  // image is only touched once after the keep-mask is decided, which keeps
-  // memory use reasonable on phones.
-  const maxAnalysisDimension = 960;
-  const scale = Math.min(1, maxAnalysisDimension / Math.max(width, height));
-  const analysisWidth = Math.max(1, Math.round(width * scale));
-  const analysisHeight = Math.max(1, Math.round(height * scale));
-  const analysisCanvas = document.createElement('canvas');
-  analysisCanvas.width = analysisWidth;
-  analysisCanvas.height = analysisHeight;
-  const analysisCtx = analysisCanvas.getContext('2d', { willReadFrequently: true });
-  if (!analysisCtx) return blob;
-  analysisCtx.imageSmoothingEnabled = true;
-  analysisCtx.imageSmoothingQuality = 'high';
-  analysisCtx.drawImage(canvas, 0, 0, analysisWidth, analysisHeight);
-
-  const { labels, components } = analyzeAlphaComponents(analysisCtx, analysisWidth, analysisHeight, 36);
-  if (!components.length) return blob;
-
-  const ranked = [...components].sort((a, b) => b.area - a.area);
-  const visibleArea = ranked.reduce((sum, item) => sum + item.area, 0);
-  const largest = ranked[0];
-  const largestShare = largest.area / Math.max(1, visibleArea);
-  const topFiveShare = ranked.slice(0, 5).reduce((sum, item) => sum + item.area, 0) / Math.max(1, visibleArea);
-
-  // A 15-sticker sheet has many similarly sized foreground islands. Skip this
-  // cleanup unless a few dominant subjects account for most visible pixels.
-  // This still supports two or three people because several large components
-  // can be retained at the same time.
-  const photoLikeForeground = largestShare >= 0.30 || topFiveShare >= 0.72;
-  if (!photoLikeForeground) return blob;
-
-  const analysisTotal = analysisWidth * analysisHeight;
-  const majorMinArea = Math.max(analysisTotal * 0.0025, largest.area * 0.075);
-  const keepLabels = new Set([largest.label]);
-  const keptComponents = [largest];
-
-  for (const component of ranked.slice(1)) {
-    if (component.area < majorMinArea) continue;
-    const fillRatio = component.area / Math.max(1, component.width * component.height);
-    const aspect = Math.max(component.width / Math.max(1, component.height), component.height / Math.max(1, component.width));
-    const touchesLeft = component.minX <= 2;
-    const touchesRight = component.maxX >= analysisWidth - 3;
-    const touchesTop = component.minY <= 2;
-    const touchesBottom = component.maxY >= analysisHeight - 3;
-    const edgeCount = Number(touchesLeft) + Number(touchesRight) + Number(touchesTop) + Number(touchesBottom);
-
-    // Typical ORMBG leftovers are wall/sign/ceiling fragments attached to the
-    // outer frame. Do not discard a sizeable second/third person merely for
-    // being near one edge; only reject strongly background-like edge shapes.
-    const suspiciousEdgeFragment =
-      (edgeCount >= 2 && component.area < largest.area * 0.62) ||
-      (((touchesLeft || touchesRight || touchesTop) && !touchesBottom) &&
-        component.area < largest.area * 0.28 &&
-        (fillRatio < 0.48 || aspect > 2.7));
-
-    if (suspiciousEdgeFragment) continue;
-    keepLabels.add(component.label);
-    keptComponents.push(component);
-  }
-
-  // Preserve disconnected hands, hair wisps and accessories close to a kept
-  // person, while still dropping distant text/sign fragments.
-  const satelliteMinArea = Math.max(analysisTotal * 0.00012, largest.area * 0.0035);
-  const satelliteMaxGap = Math.max(4, Math.max(analysisWidth, analysisHeight) * 0.026);
-  for (const component of ranked) {
-    if (keepLabels.has(component.label) || component.area < satelliteMinArea) continue;
-    if (keptComponents.some((kept) => componentGap(component, kept) <= satelliteMaxGap)) {
-      keepLabels.add(component.label);
-    }
-  }
-
-  const keepMask = new Uint8Array(analysisTotal);
-  for (let i = 0; i < labels.length; i += 1) {
-    if (keepLabels.has(labels[i])) keepMask[i] = 1;
-  }
-
-  // Expand the keep mask slightly so antialiased hair/clothing edges survive.
-  const expandedMask = keepMask.slice();
-  const radius = 2;
-  for (let y = 0; y < analysisHeight; y += 1) {
-    for (let x = 0; x < analysisWidth; x += 1) {
-      const index = y * analysisWidth + x;
-      if (!keepMask[index]) continue;
-      for (let dy = -radius; dy <= radius; dy += 1) {
-        const ny = y + dy;
-        if (ny < 0 || ny >= analysisHeight) continue;
-        for (let dx = -radius; dx <= radius; dx += 1) {
-          const nx = x + dx;
-          if (nx < 0 || nx >= analysisWidth) continue;
-          expandedMask[ny * analysisWidth + nx] = 1;
-        }
-      }
-    }
-  }
-
-  const imageData = ctx.getImageData(0, 0, width, height);
-  const pixels = imageData.data;
-  const xScale = analysisWidth / width;
-  const yScale = analysisHeight / height;
-  let removedPixels = 0;
-
-  for (let y = 0; y < height; y += 1) {
-    const ay = Math.min(analysisHeight - 1, Math.floor(y * yScale));
-    for (let x = 0; x < width; x += 1) {
-      const ax = Math.min(analysisWidth - 1, Math.floor(x * xScale));
-      const p = (y * width + x) * 4;
-      const alpha = pixels[p + 3];
-      if (!alpha) continue;
-
-      if (!expandedMask[ay * analysisWidth + ax]) {
-        pixels[p + 3] = 0;
-        removedPixels += 1;
-        continue;
-      }
-
-      // Tighten only weak matte pixels. Strong hair/skin/clothing alpha stays
-      // untouched; faint white/gray halos become less visible.
-      if (alpha < 16) pixels[p + 3] = 0;
-      else if (alpha < 72) pixels[p + 3] = Math.round(alpha * 0.68);
-      else if (alpha < 132) pixels[p + 3] = Math.round(alpha * 0.90);
-    }
-  }
-
-  // Very small cleanups are mostly antialias noise; avoid an unnecessary
-  // re-encode unless the mask actually removed something meaningful.
-  if (removedPixels < width * height * 0.00008) return blob;
-
-  // Reduce bright fringe color using adjacent confident foreground colors.
-  // This is deliberately one-pixel and conservative so facial detail is not
-  // blurred and multiple people remain independent.
-  const neighborOffsets = [[-1, 0], [1, 0], [0, -1], [0, 1]];
-  for (let y = 1; y < height - 1; y += 1) {
-    for (let x = 1; x < width - 1; x += 1) {
-      const p = (y * width + x) * 4;
-      const alpha = pixels[p + 3];
-      if (alpha < 32 || alpha > 218) continue;
-      let r = 0;
-      let g = 0;
-      let b = 0;
-      let count = 0;
-      for (const [dx, dy] of neighborOffsets) {
-        const np = ((y + dy) * width + (x + dx)) * 4;
-        if (pixels[np + 3] < 238) continue;
-        r += pixels[np];
-        g += pixels[np + 1];
-        b += pixels[np + 2];
-        count += 1;
-      }
-      if (!count) continue;
-      const mix = Math.min(0.42, ((218 - alpha) / 186) * 0.42);
-      pixels[p] = Math.round(pixels[p] * (1 - mix) + (r / count) * mix);
-      pixels[p + 1] = Math.round(pixels[p + 1] * (1 - mix) + (g / count) * mix);
-      pixels[p + 2] = Math.round(pixels[p + 2] * (1 - mix) + (b / count) * mix);
-    }
-  }
-
-  ctx.putImageData(imageData, 0, 0);
-  return canvasToPngBlob(canvas);
-}
-
-async function assessRemovalQuality(blob) {
-  const { canvas } = await drawFileToCanvas(blob);
-  const { width, height } = canvas;
-  if (!width || !height) return { status: 'warning', score: 2 };
-
-  const maxDimension = 720;
-  const scale = Math.min(1, maxDimension / Math.max(width, height));
-  const analysisWidth = Math.max(1, Math.round(width * scale));
-  const analysisHeight = Math.max(1, Math.round(height * scale));
-  const analysisCanvas = document.createElement('canvas');
-  analysisCanvas.width = analysisWidth;
-  analysisCanvas.height = analysisHeight;
-  const ctx = analysisCanvas.getContext('2d', { willReadFrequently: true });
-  if (!ctx) return { status: 'warning', score: 2 };
-  ctx.imageSmoothingEnabled = true;
-  ctx.imageSmoothingQuality = 'high';
-  ctx.drawImage(canvas, 0, 0, analysisWidth, analysisHeight);
-
-  const imageData = ctx.getImageData(0, 0, analysisWidth, analysisHeight);
-  const pixels = imageData.data;
-  const total = analysisWidth * analysisHeight;
-  const threshold = 36;
-  let visible = 0;
-  let solid = 0;
-
-  const bandX = Math.max(2, Math.round(analysisWidth * 0.035));
-  const bandY = Math.max(2, Math.round(analysisHeight * 0.035));
-  let topVisible = 0;
-  let bottomVisible = 0;
-  let leftVisible = 0;
-  let rightVisible = 0;
-  let topLeftCornerVisible = 0;
-  let topRightCornerVisible = 0;
-  let upperLeftSideVisible = 0;
-  let upperRightSideVisible = 0;
-  const cornerWidth = Math.max(3, Math.round(analysisWidth * 0.18));
-  const cornerHeight = Math.max(3, Math.round(analysisHeight * 0.16));
-  const upperSideHeight = Math.max(3, Math.round(analysisHeight * 0.62));
-
-  for (let y = 0; y < analysisHeight; y += 1) {
-    for (let x = 0; x < analysisWidth; x += 1) {
-      const alpha = pixels[(y * analysisWidth + x) * 4 + 3];
-      if (alpha < threshold) continue;
-      visible += 1;
-      if (alpha >= 180) solid += 1;
-      if (y < bandY) topVisible += 1;
-      if (y >= analysisHeight - bandY) bottomVisible += 1;
-      if (x < bandX) leftVisible += 1;
-      if (x >= analysisWidth - bandX) rightVisible += 1;
-      if (x < cornerWidth && y < cornerHeight) topLeftCornerVisible += 1;
-      if (x >= analysisWidth - cornerWidth && y < cornerHeight) topRightCornerVisible += 1;
-      if (x < bandX && y < upperSideHeight) upperLeftSideVisible += 1;
-      if (x >= analysisWidth - bandX && y < upperSideHeight) upperRightSideVisible += 1;
-    }
-  }
-
-  const visibleRatio = visible / Math.max(1, total);
-  if (visibleRatio < 0.01) return { status: 'fail', score: 5 };
-
-  const topEdge = topVisible / Math.max(1, analysisWidth * bandY);
-  const bottomEdge = bottomVisible / Math.max(1, analysisWidth * bandY);
-  const leftEdge = leftVisible / Math.max(1, analysisHeight * bandX);
-  const rightEdge = rightVisible / Math.max(1, analysisHeight * bandX);
-  const topLeftCorner = topLeftCornerVisible / Math.max(1, cornerWidth * cornerHeight);
-  const topRightCorner = topRightCornerVisible / Math.max(1, cornerWidth * cornerHeight);
-  const upperLeftSide = upperLeftSideVisible / Math.max(1, bandX * upperSideHeight);
-  const upperRightSide = upperRightSideVisible / Math.max(1, bandX * upperSideHeight);
-
-  const { components } = analyzeAlphaComponents(ctx, analysisWidth, analysisHeight, threshold);
-  const sheetCheck = classifyEmoticonSheetComponents(components, analysisWidth, analysisHeight);
-  if (sheetCheck.status === 'sheet') return { status: 'pass', score: 0 };
-
-  const ranked = [...components].sort((a, b) => b.area - a.area);
-  const largest = ranked[0];
-  const major = ranked.filter((item) => item.area >= total * 0.018);
-  let suspiciousDetachedArea = 0;
-
-  for (const component of major.slice(1)) {
-    const touchesTop = component.minY <= 2;
-    const touchesLeft = component.minX <= 2;
-    const touchesRight = component.maxX >= analysisWidth - 3;
-    const touchesBottom = component.maxY >= analysisHeight - 3;
-    const edgeAttached = touchesTop || touchesLeft || touchesRight;
-    const fillRatio = component.area / Math.max(1, component.width * component.height);
-    const aspect = Math.max(component.width / Math.max(1, component.height), component.height / Math.max(1, component.width));
-    if (edgeAttached && !touchesBottom && (fillRatio < 0.52 || aspect > 2.1)) suspiciousDetachedArea += component.area;
-  }
-
-  const suspiciousDetachedRatio = suspiciousDetachedArea / Math.max(1, total);
-  const largestWidthRatio = largest ? largest.width / analysisWidth : 0;
-  const largestHeightRatio = largest ? largest.height / analysisHeight : 0;
-  const largestTouchesTop = largest ? largest.minY <= 2 : false;
-  const largestTouchesSide = largest ? (largest.minX <= 2 || largest.maxX >= analysisWidth - 3) : false;
-
-  let score = 0;
-  if (visibleRatio > 0.78) score += 4;
-  else if (visibleRatio > 0.67) score += 2;
-  else if (visibleRatio > 0.58) score += 1;
-
-  if (topEdge > 0.42 && Math.max(leftEdge, rightEdge) > 0.32) score += 2;
-  else if (topEdge > 0.30 && Math.max(leftEdge, rightEdge) > 0.24) score += 1;
-
-  if (leftEdge > 0.58 && rightEdge > 0.58 && visibleRatio > 0.48) score += 2;
-
-  // Complex indoor failures often leave large ceiling/signboard regions in both
-  // upper corners even though the center subject was isolated. A legitimate
-  // close-up may touch the frame too, so only treat this as strong contamination
-  // when the overall foreground is not already filling nearly the whole image.
-  const bothUpperCornersContaminated =
-    topLeftCorner > 0.24 &&
-    topRightCorner > 0.24 &&
-    topEdge > 0.20 &&
-    visibleRatio > 0.24 &&
-    visibleRatio < 0.78;
-  if (bothUpperCornersContaminated) score += 4;
-
-  // Softer upper-frame signals are intentionally warning-grade. They make
-  // ORMBG compare against MODNet without immediately blocking a legitimate
-  // close-up or group photo that happens to touch one edge.
-  const softBothUpperCorners =
-    topLeftCorner > 0.16 &&
-    topRightCorner > 0.16 &&
-    topEdge > 0.13 &&
-    visibleRatio > 0.20 &&
-    visibleRatio < 0.82;
-  if (!bothUpperCornersContaminated && softBothUpperCorners) score += 2;
-
-  const leftUpperFrameContaminated =
-    topLeftCorner > 0.42 && upperLeftSide > 0.30 && topEdge > 0.16 && visibleRatio < 0.78;
-  const rightUpperFrameContaminated =
-    topRightCorner > 0.42 && upperRightSide > 0.30 && topEdge > 0.16 && visibleRatio < 0.78;
-  if (leftUpperFrameContaminated) score += 2;
-  if (rightUpperFrameContaminated) score += 2;
-
-  const softLeftUpperFrame =
-    topLeftCorner > 0.30 && upperLeftSide > 0.22 && topEdge > 0.11 && visibleRatio < 0.82;
-  const softRightUpperFrame =
-    topRightCorner > 0.30 && upperRightSide > 0.22 && topEdge > 0.11 && visibleRatio < 0.82;
-  if (!leftUpperFrameContaminated && softLeftUpperFrame) score += 1;
-  if (!rightUpperFrameContaminated && softRightUpperFrame) score += 1;
-
-  const broadUpperFrameContamination =
-    topEdge > 0.24 && leftEdge > 0.18 && rightEdge > 0.18 && visibleRatio > 0.30 && visibleRatio < 0.78;
-  if (broadUpperFrameContamination) score += 3;
-
-  if (suspiciousDetachedRatio > 0.12) score += 2;
-  else if (suspiciousDetachedRatio > 0.065) score += 1;
-
-  if (largest && largestWidthRatio > 0.90 && largestHeightRatio > 0.72 && largestTouchesTop && largestTouchesSide && visibleRatio > 0.46) score += 2;
-
-  // Bottom contact is common for a correctly isolated person or group. Reward it
-  // slightly so normal full-body/upper-body photos are less likely to be blocked.
-  if (bottomEdge > 0.28 && topEdge < 0.24 && visibleRatio < 0.66) score = Math.max(0, score - 1);
-
-  // A solid foreground is expected; this metric is only diagnostic for future tuning.
-  const solidRatio = solid / Math.max(1, visible);
-  if (solidRatio < 0.26 && visibleRatio > 0.44) score += 1;
-
-  // Two independent strong upper-frame signals are enough to block saving even
-  // when the foreground component graph is connected by thin alpha bridges.
-  if ((bothUpperCornersContaminated && (leftUpperFrameContaminated || rightUpperFrameContaminated)) ||
-      (broadUpperFrameContamination && (topLeftCorner > 0.42 || topRightCorner > 0.42))) {
-    score = Math.max(score, 5);
-  }
-
-  if (score >= 4) return { status: 'fail', score };
-  if (score >= 2) return { status: 'warning', score };
-  return { status: 'pass', score };
-}
-
-async function removeWithAi(file, onProgress) {
-  const blob = await pipelineRemovalToBlob(file, getRemover, onProgress);
-  const corrected = await correctUnexpectedForegroundTransparency(blob);
-  return cleanAiForegroundArtifacts(corrected);
-}
-
-function extractConnectedComponents(ctx, width, height) {
-  const pixels = ctx.getImageData(0, 0, width, height).data;
-  const total = width * height;
-  const visited = new Uint8Array(total);
-  const queue = new Int32Array(total);
-  const components = [];
-  const minPixels = Math.max(8, Math.round(total * 0.000004));
-
-  const isVisible = (index) => pixels[index * 4 + 3] > 18;
-  const enqueue = (index, state) => {
-    if (index < 0 || index >= total || visited[index] || !isVisible(index)) return;
-    visited[index] = 1;
-    queue[state.tail++] = index;
-  };
-
-  for (let seed = 0; seed < total; seed += 1) {
-    if (visited[seed] || !isVisible(seed)) continue;
-
-    const state = { head: 0, tail: 0 };
-    enqueue(seed, state);
-    let minX = width;
-    let minY = height;
-    let maxX = -1;
-    let maxY = -1;
-    let area = 0;
-
-    while (state.head < state.tail) {
-      const index = queue[state.head++];
-      const x = index % width;
-      const y = Math.floor(index / width);
-      area += 1;
-      if (x < minX) minX = x;
-      if (x > maxX) maxX = x;
-      if (y < minY) minY = y;
-      if (y > maxY) maxY = y;
-
-      if (x > 0) enqueue(index - 1, state);
-      if (x + 1 < width) enqueue(index + 1, state);
-      if (y > 0) enqueue(index - width, state);
-      if (y + 1 < height) enqueue(index + width, state);
-    }
-
-    if (area < minPixels || maxX < minX || maxY < minY) continue;
-    components.push({
-      id: components.length + 1,
-      minX,
-      minY,
-      maxX,
-      maxY,
-      width: maxX - minX + 1,
-      height: maxY - minY + 1,
-      area,
-      centerX: (minX + maxX) / 2,
-      centerY: (minY + maxY) / 2
-    });
-  }
-
-  return components;
-}
-
-function orderPrimaryStickerComponents(components, width, height) {
-  if (components.length < 15) throw new Error('Not enough visible sticker components');
-
-  const expectedCellWidth = width / 5;
-  const expectedCellHeight = height / 3;
-  const score = (component) => {
-    const heightBoost = 0.65 + Math.min(1.4, component.height / Math.max(1, height * 0.12));
-    return component.area * heightBoost;
-  };
-
-  const ranked = [...components].sort((a, b) => score(b) - score(a));
-  const selected = [];
-
-  for (const candidate of ranked) {
-    const tooClose = selected.some((picked) => {
-      const dx = (candidate.centerX - picked.centerX) / expectedCellWidth;
-      const dy = (candidate.centerY - picked.centerY) / expectedCellHeight;
-      return Math.hypot(dx, dy) < 0.45;
-    });
-    if (!tooClose) selected.push(candidate);
-    if (selected.length === 15) break;
-  }
-
-  if (selected.length < 15) {
-    for (const candidate of ranked) {
-      if (!selected.includes(candidate)) selected.push(candidate);
-      if (selected.length === 15) break;
-    }
-  }
-
-  const byY = selected.slice(0, 15).sort((a, b) => a.centerY - b.centerY);
-  const ordered = [];
-  for (let row = 0; row < 3; row += 1) {
-    const rowItems = byY.slice(row * 5, row * 5 + 5).sort((a, b) => a.centerX - b.centerX);
-    ordered.push(...rowItems);
-  }
-  return ordered;
-}
-
-function assignComponentsToStickers(components, primaries, width, height) {
-  const expectedCellWidth = width / 5;
-  const expectedVerticalGap = (height / 3) * 0.43;
-  const primaryIds = new Set(primaries.map((item) => item.id));
-  const groups = new Map(primaries.map((item) => [item.id, [item]]));
-
-  for (const component of components) {
-    if (primaryIds.has(component.id)) continue;
-
-    let bestPrimary = null;
-    let bestScore = Number.POSITIVE_INFINITY;
-
-    for (const primary of primaries) {
-      const dx = Math.max(primary.minX - component.maxX, component.minX - primary.maxX, 0);
-      const dy = Math.max(primary.minY - component.maxY, component.minY - primary.maxY, 0);
-      const centerDx = component.centerX - primary.centerX;
-      const centerDy = component.centerY - primary.centerY;
-      const distanceScore =
-        (dx / expectedCellWidth) ** 2 +
-        (dy / expectedVerticalGap) ** 2 +
-        0.04 * (centerDx / expectedCellWidth) ** 2 +
-        0.02 * (centerDy / expectedVerticalGap) ** 2;
-
-      if (distanceScore < bestScore) {
-        bestScore = distanceScore;
-        bestPrimary = primary;
-      }
-    }
-
-    if (bestPrimary && bestScore < 2.2) groups.get(bestPrimary.id).push(component);
-  }
-
-  return groups;
-}
-
-function median(values) {
-  if (!values.length) return 0;
-  const sorted = [...values].sort((a, b) => a - b);
-  const middle = Math.floor(sorted.length / 2);
-  return sorted.length % 2 ? sorted[middle] : (sorted[middle - 1] + sorted[middle]) / 2;
-}
-
-function classifyEmoticonSheetComponents(components, width, height) {
-  const total = width * height;
-  if (!total || components.length < 10) return { status: 'not-sheet', confidence: 0 };
-
-  // A sticker-sheet primary is substantial but still much smaller than the full image.
-  // This excludes faces/bodies in ordinary group photos while filtering tiny text/noise fragments.
-  const candidates = components.filter((component) => {
-    const areaRatio = component.area / total;
-    const fillRatio = component.area / Math.max(1, component.width * component.height);
-    return (
-      areaRatio >= 0.0015 &&
-      component.width >= width * 0.045 &&
-      component.width <= width * 0.34 &&
-      component.height >= height * 0.065 &&
-      component.height <= height * 0.34 &&
-      fillRatio >= 0.055
-    );
-  });
-
-  if (candidates.length < 10) return { status: 'not-sheet', confidence: 0.08 };
-
-  const expectedCellWidth = width / 5;
-  const expectedCellHeight = height / 3;
-  const ranked = [...candidates].sort((a, b) => {
-    const aFill = a.area / Math.max(1, a.width * a.height);
-    const bFill = b.area / Math.max(1, b.width * b.height);
-    return b.area * (0.82 + Math.min(0.6, bFill)) - a.area * (0.82 + Math.min(0.6, aFill));
-  });
-
-  const selected = [];
-  for (const candidate of ranked) {
-    const tooClose = selected.some((picked) => {
-      const dx = (candidate.centerX - picked.centerX) / expectedCellWidth;
-      const dy = (candidate.centerY - picked.centerY) / expectedCellHeight;
-      return Math.hypot(dx, dy) < 0.43;
-    });
-    if (!tooClose) selected.push(candidate);
-    if (selected.length === 15) break;
-  }
-
-  if (selected.length < 13) return { status: 'not-sheet', confidence: 0.22 };
-  if (selected.length < 15) return { status: 'ambiguous', confidence: 0.52 };
-
-  const byY = selected.slice(0, 15).sort((a, b) => a.centerY - b.centerY);
-  const rows = [0, 1, 2].map((row) => byY.slice(row * 5, row * 5 + 5).sort((a, b) => a.centerX - b.centerX));
-  const rowMeans = rows.map((row) => row.reduce((sum, item) => sum + item.centerY, 0) / row.length);
-  const rowSpreads = rows.map((row) => (Math.max(...row.map((item) => item.centerY)) - Math.min(...row.map((item) => item.centerY))) / height);
-  const rowGaps = [rowMeans[1] - rowMeans[0], rowMeans[2] - rowMeans[1]].map((gap) => gap / height);
-
-  const xCenters = selected.map((item) => item.centerX);
-  const yCenters = selected.map((item) => item.centerY);
-  const xCoverage = (Math.max(...xCenters) - Math.min(...xCenters)) / width;
-  const yCoverage = (Math.max(...yCenters) - Math.min(...yCenters)) / height;
-  const averageRowSpread = rowSpreads.reduce((sum, value) => sum + value, 0) / rowSpreads.length;
-  const minRowGap = Math.min(...rowGaps);
-  const edgeRows = rows.filter((row) => row[0].centerX / width < 0.29 && row[4].centerX / width > 0.71).length;
-
-  const columnDrifts = [0, 1, 2, 3, 4].map((column) => {
-    const centers = rows.map((row) => row[column].centerX);
-    return (Math.max(...centers) - Math.min(...centers)) / width;
-  });
-  const averageColumnDrift = columnDrifts.reduce((sum, value) => sum + value, 0) / columnDrifts.length;
-
-  const medianWidth = median(selected.map((item) => item.width / width));
-  const medianHeight = median(selected.map((item) => item.height / height));
-
-  let confidence = 0.15; // fifteen separated primary candidates were found
-  if (xCoverage >= 0.62) confidence += 0.15;
-  if (yCoverage >= 0.44) confidence += 0.15;
-  if (averageRowSpread <= 0.13) confidence += 0.15;
-  if (minRowGap >= 0.17) confidence += 0.12;
-  if (edgeRows >= 2) confidence += 0.12;
-  if (averageColumnDrift <= 0.12) confidence += 0.10;
-  if (medianWidth >= 0.055 && medianWidth <= 0.25 && medianHeight >= 0.08 && medianHeight <= 0.29) confidence += 0.06;
-
-  if (confidence >= 0.78) return { status: 'sheet', confidence };
-  if (confidence >= 0.58) return { status: 'ambiguous', confidence };
-  return { status: 'not-sheet', confidence };
-}
-
-async function detectEmoticonSheet(blob) {
-  const { canvas } = await drawFileToCanvas(blob);
-  const { width, height } = canvas;
-  if (!width || !height) return { status: 'not-sheet', confidence: 0 };
-
-  // Layout detection does not need full-resolution pixels. Analyze a bounded
-  // preview so high-resolution phone photos do not allocate a huge BFS queue.
-  const maxDimension = 900;
-  const scale = Math.min(1, maxDimension / Math.max(width, height));
-  const analysisWidth = Math.max(1, Math.round(width * scale));
-  const analysisHeight = Math.max(1, Math.round(height * scale));
-  const analysisCanvas = document.createElement('canvas');
-  analysisCanvas.width = analysisWidth;
-  analysisCanvas.height = analysisHeight;
-  const analysisCtx = analysisCanvas.getContext('2d', { willReadFrequently: true });
-  if (!analysisCtx) return { status: 'not-sheet', confidence: 0 };
-  analysisCtx.imageSmoothingEnabled = true;
-  analysisCtx.imageSmoothingQuality = 'high';
-  analysisCtx.drawImage(canvas, 0, 0, analysisWidth, analysisHeight);
-
-  const components = extractConnectedComponents(analysisCtx, analysisWidth, analysisHeight);
-  return classifyEmoticonSheetComponents(components, analysisWidth, analysisHeight);
-}
-
-async function splitIntoFifteen(input) {
-  let canvas, ctx;
-  if (input && typeof input.getContext === 'function') {
-    canvas = input;
-    ctx = canvas.getContext('2d', { willReadFrequently: true });
-  } else {
-    const drawn = await drawFileToCanvas(input);
-    canvas = drawn.canvas;
-    ctx = drawn.ctx;
-  }
-  const { width, height } = canvas;
-  if (!width || !height) throw new Error('Invalid canvas dimensions');
-
-  const rows = 3;
-  const columns = 5;
-  const cellW = width / columns;
-  const cellH = height / rows;
-  const padding = Math.max(6, Math.round(Math.min(cellW, cellH) * 0.045));
-
-  // 1. ì „ì²´ ì´ë¯¸ì§€ì˜ ì•ŒíŒŒ í”½ì…€ ë°ì´í„°ë¥¼ ë‹¨ í•œ ë²ˆë§Œ ì½ì–´ì˜´ (ì´ˆê³ ì† ì„±ëŠ¥ & ë©”ëª¨ë¦¬ ìµœì í™”)
-  const fullImageData = ctx.getImageData(0, 0, width, height);
-  const data = fullImageData.data;
-
-  const items = [];
-
-  // 2. 15ê°œ ì…€(3í–‰ 5ì—´) ìˆœì„œëŒ€ë¡œ ì •ë°€ Bounding Box ìŠ¤ìº”
-  for (let r = 0; r < rows; r += 1) {
-    for (let c = 0; c < columns; c += 1) {
-      const cellLeft = Math.floor(c * cellW);
-      const cellTop = Math.floor(r * cellH);
-      const cellRight = Math.min(width, Math.ceil((c + 1) * cellW));
-      const cellBottom = Math.min(height, Math.ceil((r + 1) * cellH));
-
-      let minX = cellRight;
-      let minY = cellBottom;
-      let maxX = cellLeft - 1;
-      let maxY = cellTop - 1;
-      let hasPixels = false;
-
-      // í•´ë‹¹ ì…€ êµ¬ì—­ ë‚´ë¶€ì˜ ëª¨ë“  ìœ íš¨ í”½ì…€(ìºë¦­í„° ë³¸ì²´ + í•œê¸€/ì˜ë¬¸ í…ìŠ¤íŠ¸ + ë§í’ì„  + í•˜íŠ¸/ë³„ íš¨ê³¼ì„  ë“± ì¼ì²´)ì„ íƒìƒ‰
-      for (let y = cellTop; y < cellBottom; y += 1) {
-        const rowOffset = y * width * 4;
-        for (let x = cellLeft; x < cellRight; x += 1) {
-          const alpha = data[rowOffset + x * 4 + 3];
-          // Splitting never changes alpha. Include faint antialiased pixels in
-          // the crop bounds so pale lettering and beige edges are not clipped.
-          if (alpha > 8) {
-            hasPixels = true;
-            if (x < minX) minX = x;
-            if (x > maxX) maxX = x;
-            if (y < minY) minY = y;
-            if (y > maxY) maxY = y;
-          }
-        }
-      }
-
-      // 3. ì •ë°€ ë°”ìš´ë”© ë°•ìŠ¤ ê²°ì • (íƒ€ì´íŠ¸ í¬ë¡­ + ìì—°ìŠ¤ëŸ¬ìš´ ì—¬ë°± íŒ¨ë”©)
-      let cropX, cropY, cropW, cropH;
-      if (hasPixels && minX <= maxX && minY <= maxY) {
-        // ì¸ì ‘ ì…€ì„ ì¹¨ë²”í•˜ì§€ ì•ŠëŠ” ì„ ì—ì„œ ìµœëŒ€ íŒ¨ë”© ì ìš©
-        const absMinX = Math.max(cellLeft, minX - padding);
-        const absMinY = Math.max(cellTop, minY - padding);
-        const absMaxX = Math.min(cellRight, maxX + 1 + padding);
-        const absMaxY = Math.min(cellBottom, maxY + 1 + padding);
-
-        cropX = Math.round(absMinX);
-        cropY = Math.round(absMinY);
-        cropW = Math.max(1, Math.round(absMaxX - absMinX));
-        cropH = Math.max(1, Math.round(absMaxY - absMinY));
-      } else {
-        // í”½ì…€ì´ ì—†ë”ë¼ë„ ì…€ ì „ì²´ ì˜ì—­ì„ ì•ˆì „í•˜ê²Œ í¬ë¡­
-        cropX = Math.round(cellLeft);
-        cropY = Math.round(cellTop);
-        cropW = Math.max(1, Math.round(cellRight - cellLeft));
-        cropH = Math.max(1, Math.round(cellBottom - cellTop));
-      }
-
-      // 4. ê°œë³„ ìº”ë²„ìŠ¤ì— ì •ë°€ í¬ë¡­ ë Œë”ë§
-      const output = document.createElement('canvas');
-      output.width = cropW;
-      output.height = cropH;
-      const outCtx = output.getContext('2d');
-      if (outCtx) {
-        try {
-          outCtx.drawImage(canvas, cropX, cropY, cropW, cropH, 0, 0, cropW, cropH);
-        } catch (_drawErr) {
-          console.warn('Cell drawImage error:', _drawErr);
-        }
-      }
-
-      // 5. ëª¨ë°”ì¼ ì•ˆì „ PNG Blob ì¶”ì¶œ
-      let itemBlob;
-      try {
-        itemBlob = await canvasToPngBlob(output);
-      } catch (_blobErr) {
-        const dataUrl = output.toDataURL('image/png');
-        const binStr = atob(dataUrl.split(',')[1]);
-        const arr = new Uint8Array(binStr.length);
-        for (let i = 0; i < binStr.length; i += 1) arr[i] = binStr.charCodeAt(i);
-        itemBlob = new Blob([arr], { type: 'image/png' });
-      }
-
-      items.push({
-        index: items.length + 1,
-        blob: itemBlob,
-        width: cropW,
-        height: cropH
-      });
-    }
-  }
-
-  return items;
-}
-
-async function splitBySmartGrid(input) {
-  return splitIntoFifteen(input);
-}
-
-async function hasRealTransparency(file) {
-  if (file?.type !== 'image/png') return false;
-  const { canvas, ctx } = await drawFileToCanvas(file);
-  const { width, height } = canvas;
-  if (!width || !height) return false;
-  const pixels = ctx.getImageData(0, 0, width, height).data;
-  const step = Math.max(1, Math.floor(Math.sqrt((width * height) / 300000)));
-  for (let y = 0; y < height; y += step) {
-    for (let x = 0; x < width; x += step) {
-      if (pixels[(y * width + x) * 4 + 3] < 250) return true;
-    }
-  }
-  return false;
-}
-
-export default function BackgroundRemover({ lang = 'ko' }) {
-  const t = COPY[lang] || COPY.ko;
-  const inputRef = useRef(null);
-  const splitCardRef = useRef(null);
-  const [file, setFile] = useState(null);
-  const [sourceUrl, setSourceUrl] = useState('');
-  const [resultUrl, setResultUrl] = useState('');
-  const [resultBlob, setResultBlob] = useState(null);
-  const [busy, setBusy] = useState(false);
-  const [stage, setStage] = useState('');
-  const [progress, setProgress] = useState(null);
-  const progressRenderRef = useRef({ value: null, time: 0 });
-  const updateRemovalProgress = (rawProgress) => {
-    const numericProgress = Number(rawProgress);
-    if (!Number.isFinite(numericProgress)) return;
-
-    const nextValue = Math.max(0, Math.min(100, Math.round(numericProgress)));
-    const now = typeof performance !== 'undefined' && typeof performance.now === 'function'
-      ? performance.now()
-      : Date.now();
-    const previous = progressRenderRef.current;
-    const isBoundary = nextValue === 0 || nextValue === 100;
-
-    if (!isBoundary && previous.value !== null && now - previous.time < 80) return;
-
-    progressRenderRef.current = { value: nextValue, time: now };
-    setProgress((current) => current === nextValue ? current : nextValue);
-  };
-  const [error, setError] = useState('');
-  const [comparePosition, setComparePosition] = useState(50);
-  const [splitItems, setSplitItems] = useState([]);
-  const [splitting, setSplitting] = useState(false);
-  const [splitError, setSplitError] = useState('');
-  const [sheetDetection, setSheetDetection] = useState({ status: 'idle', confidence: 0 });
-  const automaticSplitBlobRef = useRef(null);
-  const autoSplitCallbackRef = useRef(null);
-  const [qualityAssessment, setQualityAssessment] = useState({ status: 'idle', score: 0 });
-  const [resultMethod, setResultMethod] = useState('');
-  const [precisionMessage, setPrecisionMessage] = useState('');
-
-  useEffect(() => () => {
-    if (sourceUrl) URL.revokeObjectURL(sourceUrl);
-    if (resultUrl) URL.revokeObjectURL(resultUrl);
-  }, [sourceUrl, resultUrl]);
-
-  useEffect(() => () => {
-    splitItems.forEach((item) => URL.revokeObjectURL(item.url));
-  }, [splitItems]);
-
-  useEffect(() => {
-    let cancelled = false;
-    if (!resultBlob) {
-      setSheetDetection({ status: 'idle', confidence: 0 });
-      return () => { cancelled = true; };
-    }
-
-    setSheetDetection({ status: 'checking', confidence: 0 });
-    detectEmoticonSheet(resultBlob)
-      .then((detection) => {
-        if (!cancelled) setSheetDetection(detection);
-      })
-      .catch((error) => {
-        console.warn('Emoticon sheet detection failed:', error);
-        if (!cancelled) setSheetDetection({ status: 'not-sheet', confidence: 0 });
-      });
-
-    return () => { cancelled = true; };
-  }, [resultBlob]);
-
-  const clearSplitItems = () => {
-    splitItems.forEach((item) => URL.revokeObjectURL(item.url));
-    setSplitItems([]);
-    setSplitError('');
-    setSplitting(false);
-  };
-
-  const clearResult = () => {
-    if (resultUrl) URL.revokeObjectURL(resultUrl);
-    clearSplitItems();
-    setResultUrl('');
-    setResultBlob(null);
-    setQualityAssessment({ status: 'idle', score: 0 });
-    setResultMethod('');
-    setPrecisionMessage('');
-    setError('');
-    setProgress(null);
-    setStage('');
-    setComparePosition(50);
-  };
-
-  const selectFile = async (nextFile) => {
-    if (!nextFile) return;
-    if (!['image/png', 'image/jpeg', 'image/webp'].includes(nextFile.type)) {
-      setError(t.badType);
-      return;
-    }
-    if (nextFile.size > 12 * 1024 * 1024) {
-      setError(t.tooLarge);
-      return;
-    }
-    if (nextFile.type === 'image/png') {
-      try {
-        if (await hasRealTransparency(nextFile)) {
-          setError(t.transparentAlready);
-          return;
-        }
-      } catch (e) {
-        console.warn('Transparent PNG detection failed:', e);
-      }
-    }
-    if (sourceUrl) URL.revokeObjectURL(sourceUrl);
-    clearResult();
-    setFile(nextFile);
-    setSourceUrl(URL.createObjectURL(nextFile));
-  };
-
-  const reset = () => {
-    if (sourceUrl) URL.revokeObjectURL(sourceUrl);
-    clearResult();
-    setFile(null);
-    setSourceUrl('');
-    if (inputRef.current) inputRef.current.value = '';
-  };
-
-  const removeBackground = async () => {
-    if (!file || busy) return;
-    clearResult();
-    setBusy(true);
-    setStage('preparing');
-    try {
-      let method = 'fast';
-      let blob = await tryFastUniformBackgroundRemoval(file);
-      let quality = { status: 'pass', score: 0 };
-
-      // The edge-color shortcut can occasionally mistake a complex indoor scene
-      // for a uniform backdrop. Validate the fast result before accepting it.
-      // Any warning/failure is discarded and routed through the AI models.
-      if (blob) {
-        try {
-          const fastQuality = await assessRemovalQuality(blob);
-          if (fastQuality.status === 'pass') {
-            quality = fastQuality;
-          } else {
-            console.warn('Fast background removal rejected by quality gate:', fastQuality);
-            blob = null;
-            quality = { status: 'idle', score: 0 };
-          }
-        } catch (fastQualityError) {
-          console.warn('Fast background validation failed; falling back to AI:', fastQualityError);
-          blob = null;
-          quality = { status: 'idle', score: 0 };
-        }
-      }
-
-      if (!blob) {
-        method = 'ai';
-        setStage('preparing');
-        blob = await removeWithAi(file, (info) => {
-          if (typeof info?.progress === 'number') {
-            updateRemovalProgress(info.progress);
-          }
-        });
-        quality = await assessRemovalQuality(blob);
-
-        // ORMBG is broad-purpose. If its mask looks unreliable, automatically
-        // try MODNet, a smaller portrait-matting model, and keep whichever
-        // result scores better. This costs nothing on clean ORMBG results.
-        if (quality.status !== 'pass') {
-          try {
-            setStage('preparing');
-            setProgress(null);
-            const portraitBlob = await removeWithModnet(file, (info) => {
-              if (typeof info?.progress === 'number') {
-                updateRemovalProgress(info.progress);
-              }
-            });
-            const portraitQuality = await assessRemovalQuality(portraitBlob);
-            if (qualityRank(portraitQuality) < qualityRank(quality)) {
-              blob = portraitBlob;
-              quality = portraitQuality;
-              method = 'modnet';
-            }
-          } catch (portraitError) {
-            console.warn('MODNet portrait retry failed:', portraitError);
-          }
-        }
-      }
-
-      setStage('processing');
-      setProgress(null);
-      blob = await removeEnclosedBackdropPockets(blob, file, true);
-      blob = await correctUnexpectedForegroundTransparency(blob);
-      blob = await protectLightForegroundOpacity(blob);
-      quality = await assessRemovalQuality(blob);
-      const url = URL.createObjectURL(blob);
-      setResultMethod(method);
-      setQualityAssessment(quality);
-      setResultBlob(blob);
-      setResultUrl(url);
-      setComparePosition(50);
-    } catch (e) {
-      console.error('Background removal failed:', e);
-      setError(t.failed);
-    } finally {
-      setBusy(false);
-      setStage('');
-      setProgress(null);
-    }
-  };
-
-  const runPrecisionRetry = async () => {
-    if (!file || busy || !resultBlob) return;
-    setBusy(true);
-    setStage('precision');
-    setProgress(null);
-    setPrecisionMessage('');
-    try {
-      let precisionBlob = await removeWithBiRefNet(file, (info) => {
-        if (typeof info?.progress === 'number') {
-          updateRemovalProgress(info.progress);
-        }
-      });
-      precisionBlob = await refineHairBackgroundChannels(precisionBlob);
-      precisionBlob = await correctUnexpectedForegroundTransparency(precisionBlob);
-      precisionBlob = await cleanAiForegroundArtifacts(precisionBlob);
-      precisionBlob = await refinePrecisionEdges(precisionBlob);
-      precisionBlob = await removeEnclosedBackdropPockets(precisionBlob, file, true);
-      precisionBlob = await protectLightForegroundOpacity(precisionBlob);
-      const precisionQuality = await assessRemovalQuality(precisionBlob);
-      if (qualityRank(precisionQuality) <= qualityRank(qualityAssessment)) {
-        const url = URL.createObjectURL(precisionBlob);
-        setResultBlob(precisionBlob);
-        setResultUrl(url);
-        setResultMethod('birefnet');
-        setQualityAssessment(precisionQuality);
-        setComparePosition(50);
-      } else {
-        setPrecisionMessage(t.precisionNoBetter);
-      }
-    } catch (e) {
-      console.error('BiRefNet precision retry failed:', e);
-      setPrecisionMessage(t.failed);
-    } finally {
-      setBusy(false);
-      setStage('');
-      setProgress(null);
-    }
-  };
-
-  const downloadBlob = (blob, filename) => {
-    if (!blob) return;
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    window.setTimeout(() => URL.revokeObjectURL(url), 1200);
-  };
-
-  const download = () => {
-    if (!resultBlob || qualityAssessment.status === 'fail') return;
-    const base = (file?.name || 'image').replace(/\.[^.]+$/, '').replace(/[^a-zA-Z0-9ê°€-í£ã-ã‚“ã‚¡-ãƒ³ä¸€-é¾¥_-]+/g, '-');
-    downloadBlob(resultBlob, `${base || 'image'}-transparent.png`);
-  };
-
-  const autoSplit = async () => {
-    if (!resultBlob || splitting || qualityAssessment.status === 'fail') return;
-    clearSplitItems();
-    setSplitting(true);
-    setSplitError('');
-    try {
-      const items = await splitIntoFifteen(resultBlob);
-      if (!items || items.length === 0) {
-        throw new Error('No stickers detected');
-      }
-      const withUrls = items.map((item) => ({ ...item, url: URL.createObjectURL(item.blob) }));
-      setSplitItems(withUrls);
-      setTimeout(() => {
-        splitCardRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 120);
-    } catch (e) {
-      console.error('Sticker auto split failed:', e);
-      setSplitError(`${t.splitFailed} [ì›ì¸: ${e?.message || String(e)}]`);
-    } finally {
-      setSplitting(false);
-    }
-  };
-
-  autoSplitCallbackRef.current = autoSplit;
-
-  useEffect(() => {
-    if (
-      sheetDetection.status !== 'sheet' || !resultBlob ||
-      qualityAssessment.status === 'fail' || splitItems.length > 0 ||
-      splitting || automaticSplitBlobRef.current === resultBlob
-    ) return;
-    automaticSplitBlobRef.current = resultBlob;
-    autoSplitCallbackRef.current?.();
-  }, [sheetDetection.status, resultBlob, qualityAssessment.status, splitItems.length, splitting]);
-
-  const downloadSplitItem = (item) => {
-    const base = (file?.name || 'emoticon').replace(/\.[^.]+$/, '').replace(/[^a-zA-Z0-9ê°€-í£ã-ã‚“ã‚¡-ãƒ³ä¸€-é¾¥_-]+/g, '-');
-    downloadBlob(item.blob, `${base || 'emoticon'}-${String(item.index).padStart(2, '0')}.png`);
-  };
-
-  const updateComparePosition = (element, clientX) => {
-    const rect = element.getBoundingClientRect();
-    if (!rect.width) return;
-    const next = ((clientX - rect.left) / rect.width) * 100;
-    setComparePosition(Math.max(0, Math.min(100, next)));
-  };
-
-  const handleComparePointerDown = (event) => {
-    event.currentTarget.setPointerCapture?.(event.pointerId);
-    updateComparePosition(event.currentTarget, event.clientX);
-  };
-
-  const handleComparePointerMove = (event) => {
-    if (event.currentTarget.hasPointerCapture?.(event.pointerId)) {
-      updateComparePosition(event.currentTarget, event.clientX);
-    }
-  };
-
-  const handleCompareKeyDown = (event) => {
-    if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
-    event.preventDefault();
-    const direction = event.key === 'ArrowLeft' ? -1 : 1;
-    setComparePosition((value) => Math.max(0, Math.min(100, value + direction * 5)));
-  };
-
-  return (
-    <section id="background-remover" className="mt-8 sm:mt-10 rounded-2xl border border-[#E8DFD1] bg-[#FFFDF9] p-4 sm:p-6 shadow-sm">
-      <div className="flex flex-wrap items-center gap-2">
-        <h2 className="text-lg sm:text-xl font-extrabold text-[#2F2D2A]">âœ¨ {t.title}</h2>
-        <span className="rounded-full bg-[#F4EADB] px-2.5 py-1 text-[11px] font-extrabold tracking-wide text-[#8A6841]">{t.badge}</span>
-      </div>
-      <p className="mt-2 text-sm sm:text-[15px] leading-6 text-[#625D55]">{t.desc}</p>
-      <div className="mt-3 flex flex-col gap-1 rounded-xl bg-[#F6F8F3] px-3.5 py-3 text-xs sm:text-[13px] leading-5 text-[#536052]">
-        <span>ğŸ”’ {t.privacy}</span>
-        <span>âš¡ {t.first}</span>
-      </div>
-
-      {!sourceUrl ? (
-        <button
-          type="button"
-          onClick={() => inputRef.current?.click()}
-          onDragOver={(e) => e.preventDefault()}
-          onDrop={(e) => { e.preventDefault(); selectFile(e.dataTransfer.files?.[0]); }}
-          className="mt-4 w-full rounded-2xl border-2 border-dashed border-[#D9CDBB] bg-white px-5 py-9 text-center transition hover:border-[#B9A98F] hover:bg-[#FFFCF7]"
-        >
-          <div className="text-3xl">ğŸ–¼ï¸</div>
-          <div className="mt-2 text-sm sm:text-base font-bold text-[#3E3A35]">{t.upload}</div>
-          <div className="mt-1 text-xs text-[#8A837A]">{t.format}</div>
-          <div className="mx-auto mt-3 max-w-md rounded-xl bg-[#F2F7EE] px-3 py-2 text-xs font-bold leading-5 text-[#587052]">âœ‚ï¸ {t.sheetUploadHint}</div>
-        </button>
-      ) : (
-        <div className="mt-4">
-          {!resultUrl && <div className="mb-3 rounded-xl border border-[#DCE8D5] bg-[#F4F8F1] px-3.5 py-2.5 text-xs sm:text-[13px] font-bold leading-5 text-[#587052]">âœ‚ï¸ {t.sheetSelectedHint}</div>}
-          {!resultUrl ? (
-            <div className="overflow-hidden rounded-2xl border border-[#E2DDD5] bg-white">
-              <div className="border-b border-[#EEE9E1] px-3 py-2 text-xs font-bold text-[#716A62]">{t.original}</div>
-              <div className="flex min-h-[230px] items-center justify-center bg-[#F7F5F1] p-3">
-                <img src={sourceUrl} alt={t.original} className="max-h-[520px] max-w-full rounded-xl object-contain" />
-              </div>
-            </div>
-          ) : (
-            <div className="overflow-hidden rounded-2xl border border-[#D8E0D2] bg-white">
-              <div className="flex items-center justify-between border-b border-[#E7ECE3] px-3 py-2 text-xs font-extrabold">
-                <span className="text-[#716A62]">{t.original}</span>
-                <span className="text-[#61705D]">{t.result}</span>
-              </div>
-              <div
-                role="slider"
-                tabIndex={0}
-                aria-label={t.compareHint}
-                aria-valuemin={0}
-                aria-valuemax={100}
-                aria-valuenow={Math.round(comparePosition)}
-                onPointerDown={handleComparePointerDown}
-                onPointerMove={handleComparePointerMove}
-                onPointerUp={(event) => event.currentTarget.releasePointerCapture?.(event.pointerId)}
-                onPointerCancel={(event) => event.currentTarget.releasePointerCapture?.(event.pointerId)}
-                onKeyDown={handleCompareKeyDown}
-                className="relative cursor-ew-resize select-none overflow-hidden outline-none focus-visible:ring-2 focus-visible:ring-[#7D9A75] focus-visible:ring-inset"
-                style={{ ...checkerStyle, touchAction: 'pan-y' }}
-              >
-                <img
-                  src={resultUrl}
-                  alt={t.result}
-                  draggable={false}
-                  className="pointer-events-none block h-auto w-full select-none"
-                />
-                <div
-                  className="pointer-events-none absolute inset-0 bg-white"
-                  style={{ clipPath: `inset(0 ${100 - comparePosition}% 0 0)` }}
-                >
-                  <img
-                    src={sourceUrl}
-                    alt={t.original}
-                    draggable={false}
-                    className="h-full w-full select-none object-contain"
-                  />
-                </div>
-                <div
-                  aria-hidden="true"
-                  className="pointer-events-none absolute bottom-0 top-0 z-10 w-0.5 bg-white shadow-[0_0_0_1px_rgba(52,48,43,0.22),0_0_10px_rgba(0,0,0,0.18)]"
-                  style={{ left: `${comparePosition}%`, transform: 'translateX(-50%)' }}
-                >
-                  <div className="absolute left-1/2 top-1/2 flex h-11 w-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-2 border-white bg-[#3E3933] text-lg font-black text-white shadow-lg">
-                    â†”
-                  </div>
-                </div>
-                <div className="pointer-events-none absolute left-3 top-3 rounded-full bg-black/60 px-2.5 py-1 text-[11px] font-extrabold text-white shadow-sm">
-                  {t.original}
-                </div>
-                <div className="pointer-events-none absolute right-3 top-3 rounded-full bg-[#3E6B4B]/90 px-2.5 py-1 text-[11px] font-extrabold text-white shadow-sm">
-                  {t.result}
-                </div>
-              </div>
-              <div className="border-t border-[#E7ECE3] bg-[#FBFCFA] px-3 py-2.5 text-center text-xs font-semibold leading-5 text-[#6B7467]">
-                â†” {t.compareHint}
-              </div>
-            </div>
-          )}
-
-          {busy && (
-            <div className="mt-4 rounded-xl border border-[#E8DFD1] bg-white px-4 py-3">
-              <div className="flex items-center justify-between gap-3 text-sm font-bold text-[#514B44]">
-                <span className="flex items-center gap-2"><span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-[#C8B79D] border-t-[#6D5C46]" />{stage === 'precision' ? t.precisionWorking : (stage === 'preparing' ? t.preparing : t.processing)}</span>
-                {typeof progress === 'number' && <span className="text-xs text-[#897D6D]">{progress}%</span>}
-              </div>
-              {typeof progress === 'number' && (
-                <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-[#EFEAE2]"><div className="h-full rounded-full bg-[#7D9A75] transition-[width]" style={{ width: `${progress}%` }} /></div>
-              )}
-            </div>
-          )}
-
-          {error && <div className="mt-3 rounded-xl bg-[#FFF1EE] px-3.5 py-3 text-sm font-semibold text-[#A64D3D]">{error}</div>}
-
-          {resultUrl && ['ai', 'modnet'].includes(resultMethod) && qualityAssessment.status === 'fail' && (
-            <div className="mt-4 rounded-xl border border-[#E8B8AE] bg-[#FFF4F1] px-3.5 py-3.5">
-              <div className="text-sm font-extrabold text-[#914B3F]">âš ï¸ {t.qualityFailTitle}</div>
-              <p className="mt-1.5 text-xs sm:text-[13px] font-medium leading-5 text-[#8B5C53]">{t.qualityFailDesc}</p>
-            </div>
-          )}
-
-          {resultUrl && ['ai', 'modnet'].includes(resultMethod) && qualityAssessment.status === 'warning' && (
-            <div className="mt-4 rounded-xl border border-[#E7D5A4] bg-[#FFFBEF] px-3.5 py-3">
-              <div className="text-sm font-extrabold text-[#806A32]">âš ï¸ {t.qualityWarnTitle}</div>
-              <p className="mt-1 text-xs sm:text-[13px] font-medium leading-5 text-[#7B704F]">{t.qualityWarnDesc}</p>
-            </div>
-          )}
-
-          {resultUrl && ['ai', 'modnet'].includes(resultMethod) && (
-            <div className="mt-3 rounded-xl border border-[#D8D0C5] bg-white px-3.5 py-3">
-              <button type="button" disabled={busy} onClick={runPrecisionRetry} className="w-full rounded-xl bg-[#4B5868] px-4 py-3 text-sm font-extrabold text-white shadow-sm transition hover:bg-[#394554] disabled:cursor-wait disabled:opacity-60">
-                ğŸ§ª {busy && stage === 'precision' ? t.precisionWorking : t.precisionRetry}
-              </button>
-              <p className="mt-2 text-[11px] sm:text-xs font-medium leading-5 text-[#7B746B]">{t.precisionHint}</p>
-            </div>
-          )}
-
-          {precisionMessage && <div className="mt-3 rounded-xl bg-[#F6F3EE] px-3.5 py-3 text-xs sm:text-[13px] font-semibold leading-5 text-[#6F675E]">{precisionMessage}</div>}
-
-          <div className="mt-4 flex flex-col gap-2 sm:flex-row">
-            {!resultUrl ? (
-              <button type="button" disabled={busy} onClick={removeBackground} className="flex-1 rounded-xl bg-[#38332D] px-4 py-3 text-sm font-extrabold text-white shadow-sm transition hover:bg-[#27231F] disabled:cursor-wait disabled:opacity-60">
-                {busy ? (stage === 'precision' ? t.precisionWorking : (stage === 'preparing' ? t.preparing : t.processing)) : `âœ¨ ${t.remove}`}
-              </button>
-            ) : (
-              <button type="button" disabled={qualityAssessment.status === 'fail'} onClick={download} className="background-remover-download flex-1 rounded-xl bg-[#3E6B4B] px-4 py-3 text-sm font-extrabold text-white shadow-sm transition hover:bg-[#31573D] disabled:cursor-not-allowed disabled:bg-[#9D9A94] disabled:shadow-none">{qualityAssessment.status === 'fail' ? `âš ï¸ ${t.qualityBlocked}` : `â¬‡ï¸ ${t.download}`}</button>
-            )}
-            <button type="button" disabled={busy} onClick={resultUrl ? reset : () => inputRef.current?.click()} className="rounded-xl border border-[#D8D0C5] bg-white px-4 py-3 text-sm font-bold text-[#5F574E] transition hover:bg-[#F8F5EF] disabled:opacity-50">
-              {resultUrl ? t.again : t.change}
-            </button>
-          </div>
-
-          {resultUrl && qualityAssessment.status !== 'fail' && (
-            <div ref={splitCardRef} className="mt-5 rounded-2xl border border-[#DDD8CE] bg-white p-3.5 sm:p-4 shadow-sm">
-              <div className="flex flex-wrap items-center gap-2">
-                <h3 className="text-sm sm:text-base font-extrabold text-[#35312C]">âœ‚ï¸ {t.splitTitle}</h3>
-                <span className="rounded-full bg-[#EEF4EA] px-2.5 py-1 text-[11px] font-extrabold text-[#597153]">
-                  {sheetDetection.status === 'sheet'
-                    ? t.splitBadge
-                    : (lang === 'ko' ? '15ì»· ë¶„ë¦¬' : lang === 'ja' ? '15åˆ†å‰²' : lang === 'zh' ? '15å›¾åˆ†å‰²' : '15-Sticker Split')}
-                </span>
-              </div>
-              <p className="mt-2 text-xs sm:text-[13px] leading-5 text-[#746E65]">{t.splitDesc}</p>
-
-              {splitError && (
-                <div className="mt-3 rounded-xl bg-[#FFF1EE] p-3 text-xs font-semibold leading-5 text-[#A64D3D]">
-                  âš ï¸ {splitError}
-                </div>
-              )}
-
-              {splitItems.length === 0 ? (
-                <button
-                  type="button"
-                  disabled={splitting}
-                  onClick={autoSplit}
-                  className="mt-3 w-full rounded-xl border border-[#CFC5B7] bg-[#FFF9F0] px-4 py-3 text-sm font-extrabold text-[#5B4B39] transition hover:bg-[#FFF3DF] disabled:cursor-wait disabled:opacity-60"
-                >
-                  {splitting ? `â³ ${t.splitting}` : `âœ‚ï¸ ${t.splitAction}`}
-                </button>
-              ) : (
-                <>
-                  <div className="mt-3 flex items-center justify-between gap-3 rounded-xl bg-[#F4F8F1] px-3 py-2.5">
-                    <span className="text-xs font-bold leading-5 text-[#5D6D58]">âœ“ {t.splitReady}</span>
-                    <button type="button" onClick={autoSplit} className="shrink-0 text-xs font-extrabold text-[#607859] underline underline-offset-2">{t.splitAgain}</button>
-                  </div>
-
-                  <EmoticonPostProcessor
-                    items={splitItems}
-                    sourceName={file?.name || 'emoticon'}
-                    lang={lang}
-                  />
-                </>
-              )}
-            </div>
-          )}
-
-        </div>
-      )}
-
-      <input ref={inputRef} type="file" accept="image/png,image/jpeg,image/webp" className="hidden" onChange={(e) => selectFile(e.target.files?.[0])} />
-      {!sourceUrl && error && <div className="mt-3 rounded-xl bg-[#FFF1EE] px-3.5 py-3 text-sm font-semibold text-[#A64D3D]">{error}</div>}
-    </section>
-  );
-}
+YªçŠx-®éÜj×¢ëiºÚ+Š§j[h‘éÜ¢éíã^½İ:-jZ.¶›­–)Ş³v–×÷'B&V7BÂ²W6TVffV7BÂW6U&VbÂW6U7FFRÒg&öÒw&V7Bs°¦–×÷'BVÖ÷F–6öå÷7E&ö6W76÷"g&öÒrâôVÖ÷F–6öå÷7E&ö6W76÷"s° ¦ÆWB&VÖ÷fW%&öÖ—6RÒçVÆÃ°¦ÆWBÖöFæWE&öÖ—6RÒçVÆÃ°¦6öç7B&—&VdæWE&öÖ—6W2ÒæWrÖ‚“° ¦6öç7B4õ’Ò°¢¶ó¢°¢F—FÆS¢~»«+ÒÊ	Î«rÂ&FvS¢t$UDrÂFW63¢~ÉÛNºûÊxÉÙ‚»«+ŞÉØBÊxÉ««:ØŠÎº¨Rä~ºÂÊÉê^Ù[B»;NÈKÉ©BârÀ¢&—f7“¢~ÉÛNºûÊx¸©BÈIÎ»(NÉyÉx^ºÎ¹9ÎÙYÊxÉX®«:ÉÛB«‹«‹ÉyÈIÂË)ºjÎ¹
+¸¸¸ºBârÂf—'7C¢~«zÉÛÎÙYÂ¸ºÈ8’»«+ŞÉØ»šº[N«(ÂË)ºjÎÙYº›Â»;^ÉêÙYÂ»«+ŞÉØ’ºª¸ÛÉØBÈ*ÎÉªÙ[BË)ÉØÂÈºNÙhÉÛBÊ«ˆ‚ÉŠN¹é‚«ºkBÈ‰‚ÉèÈ«^¸¸¸ºBârÀ¢WÆöC¢~ÉÛNºûÊxº[ÂÈJØ9ŞÙY«¸)‚ÉzÎ«‹Éy¸ÎÉkN¸i>ÉËÎÈKÉ©BrÂf÷&ÖC¢uär+r¥r+rtT%òËYÎ¸È$Ô"rÂ6†ævS¢~ÉÛNºûÊx»8«+ÒrÀ¢6†VWEWÆöD†–çC¢s^«	ÂÉÛNºªØ»ËÙ‚È¹ÎØ«¸©B»«+ÒÊ	Î«Ù¸BÉé¸ùÉËÎºÂ«	ÊxÙ[B««»hNºjÎÙZ¸¸¸ºBârÂ6†VWE6VÆV7FVD†–çC¢s^«	ÂÈ¹ÎØ«ºÂÙ™^ÉÛ¹	º›B»«+ÒÊ	Î«É˜Nº8ÂÙ¸BÉé¸ù’»hNÙZ¹
+¸¸¸ºBârÀ¢&VÖ÷fS¢~»«+ÒÊ	Î«ÙY«‹rÂ&W&–æs¢~ÉÛNºûÊx»hNÈIÒÊI(
+brÂ&ö6W76–æs¢~»«+ŞÉØBÊ	Î«ÙY«:ÉèÉkNÉ©N(
+brÀ¢÷&–v–æÃ¢~É¹»;‚rÂ&W7VÇC¢~ØŠÎº¨R»«+ÒrÂF÷væÆöC¢~ØŠÎº¨RärÊÉêRrÂv–ã¢~¸ºNº[‚ÉÛNºûÊxrÀ¢6ö×&T†–çC¢~«É«N¸ÛÈªÎ¹ÛÎÉÛN¸ÙNº[ÂÊ(ÎÉ«ºÂÉ¸ÊxÉzÂÉ¹»;«;Â«+«;Îº[Â»˜N«YÙYÈKÉ©BârÀ¢G&ç7&VçDÇ&VG“¢~ÉÛNºû‚ØŠÎº¨R»«+ŞÉÛ‚ä~¸©B»«+ÒÊ	Î«¸ÈÈ8ÉÛBÉXN¸¹¸¸¸ºBâ»«+ŞÉÛBÉè¸©Bä|+t¥|+utT%ÉÛNºûÊxº[ÂÈ*ÎÉªÙ[BÊ;ÎÈKÉ©BârÀ¢7Æ—EF—FÆS¢s^«	ÂÉÛNºªØ»ËÙ‚Éé¸ù’»hNºjÂrÂ7Æ—D&FvS¢~ÈªNºxØ«‚«	ÊxrÀ¢7Æ—DFW63¢~«:Ê	R«*ÉéºÂÉéº[NÊxÉX®«:ÈºNÊ	ÂË©ºjŞØK+~ºË«ZÂ¸ÚÉkNºjÎº[Â«	ÊxÙ[B^«	ÂÉÛNºªØ»ËÙÉØB««»hNºjÎÙZ¸¸¸ºBârÀ¢7Æ—D7F–öã¢s^«	ÎºÂÉé¸ù’»hNºjÂrÂ7Æ—GF–æs¢s^«	ÂÉÛNºªØ»ËÙÉØB»hNºjÎÙY«:ÉèÉkNÉ©N(
+brÀ¢7Æ—E&VG“¢~»hNºjÂÉ˜Nº8Â+r«ÉÛNºûÊxº[Â¸ˆÎ¹úÂ«	Î»8Bä~ºÂÊÉê^ÙZÈ‰‚ÉèÈ«^¸¸¸ºBârÀ¢7Æ—Dv–ã¢~¸ºNÈ¹Â»hNºjÂrÂ7Æ—DF÷væÆöC¢uärÊÉêRrÂ7Æ—Df–ÆVC¢~Éé¸ù’»hNºjÎÉyÈºNØÊÙhÈ«^¸¸¸ºBâÉÛNºûÊxº[Â¸ºNÈ¹ÂË)ºjÎÙYÂ¹*BÈ¹Î¸øNÙ[BÊ;ÎÈKÉ©BârÀ¢7Æ—DÖ–&UF—FÆS¢s^«	ÂÉÛNºªØ»ËÙ‚È¹ÎØ«ÉÛ«É©CòrÂ7Æ—DÖ–&TFW63¢~Éé¸ù’«	Êx«Ù™^ÈºNÙYÊxÉX®È«^¸¸¸ºBâÉÛNºªØ»ËÙ‚È¹ÎØ«¹ÛÎº›BÊxÊ	»hNºjÎº[ÂÈºNÙhÙZÈ‰‚ÉèÈ«^¸¸¸ºBârÂ7Æ—DÖ–&T7F–öã¢~ÉÛNºªØ»ËÙ‚È¹ÎØ«‚»hNºjÂrÀ¢7Æ—D6†ö÷6UF—FÆS¢~»hNÙZ»
+È¹ÒÈJØ9ÒrÂ7Æ—D6†ö÷6TFW63¢~È¹ÎØ«ÉÙ‚Ùh«;ÂÉ{NÉyºyî¸©B«ZÎÈKÉØBÈJØ9ŞÙ[BÊ;ÎÈKÉ©BârÂ7Æ—E&÷w3¢~Ùh’rÂ7Æ—D6öÇVÖç3¢~É{BrÂ7Æ—D7W7FöÓ¢~ÊxÊ	ÈJNÊ	RrÂ7Æ—E6VÆV7FVC¢~ÈJØ9ŞÙYÂ»
+È¹ŞÉËÎºÂ»hNÙZrÂ7Æ—Dw&–Df–ÆVC¢~ÈJØ9ŞÙYÂÙhœ+~É{NºÂ»hNÙZÙYÊxº«¾ÙhÈ«^¸¸¸ºBârÀ¢VÆ—G”f–ÅF—FÆS¢~«+«;ÂÙ(ÊxÉØB¸ºNÈ¹ÂÙ™^ÉÛÙ[BÊ;ÎÈKÉ©BrÂVÆ—G”f–ÄFW63¢~»;^ÉêÙYÂ»«+ŞÉÛBºxîÉÛB¸*ÉXBÊ	^Ù™^ÙYÂØŠÎº¨Rä~ºÂ»;N«‹ÉkNº^È«^¸¸¸ºBâ»«+ŞÉÛB¸ÙB¸ºÈ‰ÎÙYÂ¸ºNº[‚ÉÛNºûÊxº[ÂÈ*ÎÉªÙY¸©B«(>ÉØB«hÎÉê^ÙZ¸¸¸ºBârÂVÆ—G”&Æö6¶VC¢~Ù(Êx‚Ù™^ÉÛ‚ÙXNÉ©BrÀ¢VÆ—G•v&åF—FÆS¢~ÉÛÎ»h»«+ŞÉÛB¸*ÉXBÉèÉØBÈ‰‚ÉèÉkNÉ©BrÂVÆ—G•v&äFW63¢~ÈªÎ¹ÛÎÉÛN¸ÙNºÂÉ¹»;«;Â«+«;Îº[ÂÙ™^ÉÛÙYÂ¹*BÊÉê^Ù[BÊ;ÎÈKÉ©BârÀ¢&V6—6–öå&WG'“¢~Ê	^»ÉêÎË)ºjÂrÂ&V6—6–öä†–çC¢~Ê	^»Ë)ºjÂÈºNØÊ‚È¹ÂÊxÉ¹«‹«‹ÉyÈIÎ¸©BvV$u^É˜«:Ê	^»»;NÊºª¸ÛÉØBÉé¸ù’È*ÎÉªÙYº›Âºª»	NÉÛÌ+~ºûÊxÉ¹Ù™«+ŞÉyÈIÎ¸©B«»+ÎÉ«Bºª¸ÛºÂÉXÊNÙY«(ÂË)ºjÎÙZ¸¸¸ºBâË*²ÈºNÙhÉØºª¸Û‚ØÈÎÉÛÎÉØB»h¹úÎÉ˜ÉŠN¹é‚«ºkBÈ‰‚ÉèÈ«^¸¸¸ºBârÂ&V6—6–öåv÷&¶–æs¢~Ê	^»ºª¸ÛºÂ¸ºNÈ¹ÂË)ºjÎÙY«:ÉèÉkNÉ©N(
+brÂ&V6—6–öäæô&WGFW#¢~Ê	^»ÉêÎË)ºjÂ«+«;Î«ÙˆNÉêÂ«+«;Î»;N¸ºBÊ(¾ÉXNÊxÊxÉX®ÉXB«‹ÊB«+«;Îº[ÂÉÊÊxÙhÈ«^¸¸¸ºBârÀ¢&EG—S¢uärÂ¥rÂtT%ÉÛNºûÊxºxÂÈ*ÎÉªÙZÈ‰‚ÉèÈ«^¸¸¸ºBârÂFöôÆ&vS¢s$Ô"ÉÛNÙYÉÙ‚ÉÛNºûÊxº[ÂÈ*ÎÉªÙ[BÊ;ÎÈKÉ©BârÂf–ÆVC¢~»«+ÒÊ	Î«ÉyÈºNØÊÙhÈ«^¸¸¸ºBâ»ˆÎ¹ÛÎÉ«Êº[ÂÈ8ºÎ«:ËšÙYÂ¹*B¸ºNÈ¹ÂÈ¹Î¸øNÙ[BÊ;ÎÈKÉ©Bâp¢ÒÀ¢Vã¢°¢F—FÆS¢u&VÖ÷fR&6¶w&÷VæBrÂ&FvS¢t$UDrÂFW63¢u&VÖ÷fRâ–ÖvR&6¶w&÷VæBæB6fR—B2G&ç7&VçBärârÀ¢&—f7“¢u–÷W"–ÖvR—2&ö6W76VBöâF†—2FWf–6RæB—2æ÷BWÆöFVBFò÷W"6W'fW"ârÂf—'7C¢uVæ–f÷&Ò6öÆ–BÖ6öÆ÷"&6¶w&÷VæG2&R†æFÆVBV–6¶Ç’â6ö×ÆW‚&6¶w&÷VæG2W6Râ’ÖöFVÂÂ6òF†Rf—'7B'VâÖ’F¶RÆöævW"ârÀ¢WÆöC¢t6†ö÷6Râ–ÖvR÷"G&÷—B†W&RrÂf÷&ÖC¢uär+r¥r+rtT%òWFò$Ô"rÂ6†ævS¢t6†ævR–ÖvRrÀ¢6†VWEWÆöD†–çC¢tRÖVÖ÷F–6öâ6†VWB—2FWFV7FVBæB7Æ—BWFöÖF–6ÆÇ’gFW"&6¶w&÷VæB&VÖ÷fÂârÂ6†VWE6VÆV7FVD†–çC¢t–bF†—2—2RÖVÖ÷F–6öâ6†VWBÂ—Bv–ÆÂ&R7Æ—BWFöÖF–6ÆÇ’gFW"&6¶w&÷VæB&VÖ÷fÂârÀ¢&VÖ÷fS¢u&VÖ÷fR&6¶w&÷VæBrÂ&W&–æs¢tæÇ—¦–ær–Öv^(
+brÂ&ö6W76–æs¢u&VÖ÷f–ær&6¶w&÷VæN(
+brÀ¢÷&–v–æÃ¢t÷&–v–æÂrÂ&W7VÇC¢uG&ç7&VçBrÂF÷væÆöC¢u6fRG&ç7&VçBärrÂv–ã¢uG'’æ÷F†W"–ÖvRrÀ¢6ö×&T†–çC¢tG&rF†R6VçFW"6Æ–FW"ÆVgB÷"&–v‡BFò6ö×&RF†R÷&–v–æÂæB&W7VÇBârÀ¢G&ç7&VçDÇ&VG“¢tärF†BÇ&VG’†2G&ç7&Væ7’FöW2æ÷BæVVB&6¶w&÷VæB&VÖ÷fÂâÆV6RW6RärÂ¥rÂ÷"tT%v—F‚&6¶w&÷VæBârÀ¢7Æ—EF—FÆS¢tWFò×7Æ—BRVÖ÷F–6öç2rÂ7Æ—D&FvS¢u6Ö'BFWFV7BrÀ¢7Æ—DFW63¢tFWFV7BF†R7GVÂ6†&7FW"æBFW‡Bw&÷W2–ç7FVBöbW6–ærf—†VBw&–BÂF†Vâ7Æ—BÆÂRVÖ÷F–6öç2ârÀ¢7Æ—D7F–öã¢tWFò×7Æ—B–çFòRrÂ7Æ—GF–æs¢u7Æ—GF–ærRVÖ÷F–6öç>(
+brÀ¢7Æ—E&VG“¢u7Æ—B6ö×ÆWFR+r6fRV6‚VÖ÷F–6öâ2â–æF—f–GVÂärârÀ¢7Æ—Dv–ã¢u7Æ—Bv–ârÂ7Æ—DF÷væÆöC¢u6fRärrÂ7Æ—Df–ÆVC¢tWFò7Æ—Bf–ÆVBâ&ö6W72F†R–ÖvRv–âæB&WG'’ârÀ¢7Æ—DÖ–&UF—FÆS¢t—2F†—2RÖVÖ÷F–6öâ6†VWCòrÂ7Æ—DÖ–&TFW63¢uF†RÆ–÷WB—2Væ6W'F–ââ–bF†—2—2âVÖ÷F–6öâ6†VWBÂ–÷R6â'VâF†R7Æ—GFW"ÖçVÆÇ’ârÂ7Æ—DÖ–&T7F–öã¢u7Æ—BVÖ÷F–6öâ6†VWBrÀ¢7Æ—D6†ö÷6UF—FÆS¢t6†ö÷6R7Æ—BÆ–÷WBrÂ7Æ—D6†ö÷6TFW63¢u6VÆV7BF†R&÷w2æB6öÇVÖç2F†BÖF6‚–÷W"6†VWBârÂ7Æ—E&÷w3¢u&÷w2rÂ7Æ—D6öÇVÖç3¢t6öÇVÖç2rÂ7Æ—D7W7FöÓ¢t7W7FöÒrÂ7Æ—E6VÆV7FVC¢u7Æ—Bv—F‚F†—2Æ–÷WBrÂ7Æ—Dw&–Df–ÆVC¢t6÷VÆBæ÷B7Æ—Bv—F‚F†R6VÆV7FVB&÷w2æB6öÇVÖç2ârÀ¢VÆ—G”f–ÅF—FÆS¢uÆV6R6†V6²F†R&VÖ÷fÂ&W7VÇBrÂVÆ—G”f–ÄFW63¢uFöò×V6‚6ö×ÆW‚&6¶w&÷VæBV'2Fò&VÖ–âf÷"&VÆ–&ÆRG&ç7&VçBärâG'’æ÷F†W"–ÖvRv—F‚6–×ÆW"&6¶w&÷VæBârÂVÆ—G”&Æö6¶VC¢uVÆ—G’6†V6²æVVFVBrÀ¢VÆ—G•v&åF—FÆS¢u6öÖR&6¶w&÷VæBÖ’&VÖ–ârÂVÆ—G•v&äFW63¢t6ö×&RF†R÷&–v–æÂæB&W7VÇBv—F‚F†R6Æ–FW"&Vf÷&R6f–ærârÀ¢&V6—6–öå&WG'“¢u&V6—6–öâ&WG'’rÂ&V6—6–öä†–çC¢t–b&V6—6–öâ&ö6W76–æræVVG2fÆÆ&6²Â7W÷'FVBFWf–6W2WFöÖF–6ÆÇ’W6RvV$uRæB†–v†W"×&V6—6–öâ&6·WÖöFVÃ²Öö&–ÆR÷"Vç7W÷'FVBVçf—&öæÖVçG2W6RF†RÆ–v‡FW"fÆÆ&6²âF†Rf—'7B'VâÖ’F¶RÆöævW"v†–ÆRÖöFVÂf–ÆW2ÆöBârÂ&V6—6–öåv÷&¶–æs¢u&WG'––ærv—F‚F†R&V6—6–öâÖöFVÎ(
+brÂ&V6—6–öäæô&WGFW#¢uF†R&V6—6–öâ&WG'’v2æ÷B&WGFW"Â6òF†R7W'&VçB&W7VÇBv2¶WBârÀ¢&EG—S¢uÆV6RW6RärÂ¥rÂ÷"tT%–ÖvRârÂFöôÆ&vS¢uÆV6RW6Râ–ÖvRVæFW"$Ô"ârÂf–ÆVC¢t&6¶w&÷VæB&VÖ÷fÂf–ÆVBâ&Vg&W6‚F†RvRæBG'’v–ââp¢ÒÀ¢¦¢°¢F—FÆS¢~ˆ8Îišş8).X˜®™šBrÂ&FvS¢t$UDrÂFW63¢~yK¾X8ş8îˆ8Îišş8).X˜®™šN8~8˜ş˜åä~88~8nKùŞZÙ8~8Ş8î88"rÀ¢&—f7“¢~yK¾X8ş8ş8+^8;Î898;Î8˜Kú8¾8®88>8îzºşiÊ¾Xh^8~Xznyn8~8î88"rÂf—'7C¢~YØ~Kˆ8®XÙˆ›.ˆ8Îišş8şš¹˜	şXznyn8~8ŠH~™¹8®ˆ8Îišş8~8ô8:.88~8:¾8).KÛşyJ88(¾8ş8(X‰ŞY¹î8ş[	8~i˜.™i>8Î8¾8¾8(¾ZNY8Î8.8(®8î88"rÀ¢WÆöC¢~yK¾X8ş8).˜h©î88(¾8¾88>8>8¾888:Ş88>89~8~8n8ş88^8BrÂf÷&ÖC¢uär+r¥r+rtT%òiÈZJs$Ô"rÂ6†ævS¢~yK¾X8ş8).ZHi»BrÀ¢6†VWEWÆöD†–çC¢s^X¾8î{[^ih~ZÙ~8+~8;Î888şˆ8ÎišşX˜®™šN[èÎ8¾ˆz®X¹^jIÎX{®8~8X¾XŠ^8¾XˆnX›.8~8î88"rÂ6†VWE6VÆV7FVD†–çC¢s^X¾8î8+~8;Î888z+®Š¨Ş8^8(Î8(¾88ˆ8ÎišşX˜®™šN[èÎ8¾ˆz®X¹^XˆnX›.8^8(Î8î88"rÀ¢&VÖ÷fS¢~ˆ8Îišş8).X˜®™šN88(²rÂ&W&–æs¢~yK¾X8ş8).Šz>iéKŠŞ(
+brÂ&ö6W76–æs¢~ˆ8Îišş8).X˜®™šN8~8n8N8î8(
+brÀ¢÷&–v–æÃ¢~XX>yK¾X8òrÂ&W7VÇC¢~˜ş˜îˆ8ÎišòrÂF÷væÆöC¢~˜ş˜åä~8).KùŞZÙ‚rÂv–ã¢~XŠ^8îyK¾X8òrÀ¢6ö×&T†–çC¢~KŠŞZJî8î8+8:8*N888;Î8).[znXû>8¾X¹^8¾8~8nXX>yK¾X8ş8{YiéÎ8).jùN‹È>8~8Ş8î88"rÀ¢G&ç7&VçDÇ&VG“¢~88~8¾˜ş˜îˆ8Îišş8åä~8şˆ8ÎišşX˜®™šN8îZûî‹8~8ş8.8(®8î8¾8)>8.ˆ8Îišş8î8.8(µä~8;´¥~8;µtT%8).8NXŠyJ8ş88^8N8"rÀ¢7Æ—EF—FÆS¢s^X¾8î{[^ih~ZÙ~8).ˆz®X¹^XˆnX›"rÂ7Æ—D&FvS¢~8+89î8;Î88jIÎX{¢rÀ¢7Æ—DFW63¢~Y»®Zé®8+8:®88>888~8ş8®8şZéş™©¾8î8*Ş8:>8:8*ş8+ş8;Î8ih~ZÙ~8î8î88î8(®8).jIÎX{®8~8^X¾8î{[^ih~ZÙ~8).X¾XŠ^8¾XˆnX›.8~8î88"rÀ¢7Æ—D7F–öã¢s^X¾8¾ˆz®X¹^XˆnX›"rÂ7Æ—GF–æs¢s^X¾8î{[^ih~ZÙ~8).XˆnX›.8~8n8N8î8(
+brÀ¢7Æ—E&VG“¢~XˆnX›.ZèÎK¨b+rYNyK¾X8ş8).X¾XŠUä~88~8nKùŞZÙ8~8Ş8î88"rÀ¢7Æ—Dv–ã¢~XhŞXˆnX›"rÂ7Æ—DF÷væÆöC¢uä~KùŞZÙ‚rÂ7Æ—Df–ÆVC¢~ˆz®X¹^XˆnX›.8¾ZKiY~8~8î8~8ş8.yK¾X8ş8).XhŞXznyn8~8n8®Ššn8~8ş88^8N8"rÀ¢7Æ—DÖ–&UF—FÆS¢s^X¾8î{[^ih~ZÙ~8+~8;Î888~88¾ûÉòrÂ7Æ—DÖ–&TFW63¢~ˆz®X¹^XŠNZé®8Îz+®Zéş8~8ş8.8(®8î8¾8)>8.{[^ih~ZÙ~8+~8;Î888îZNY8şh˜¾X¹^8~XˆnX›.8).ZéşŠÎ8~8Ş8î88"rÂ7Æ—DÖ–&T7F–öã¢~{[^ih~ZÙ~8+~8;Î888).XˆnX›"rÀ¢7Æ—D6†ö÷6UF—FÆS¢~XˆnX›.ikk9^8).˜h©ârÂ7Æ—D6†ö÷6TFW63¢~8+~8;Î888¾Y8nŠÎi[8X‰~i[8).˜h©î8~8n8ş88^8N8"rÂ7Æ—E&÷w3¢~ŠÂrÂ7Æ—D6öÇVÖç3¢~X‰rrÂ7Æ—D7W7FöÓ¢~y»Nhê^ŠŠŞZé¢rÂ7Æ—E6VÆV7FVC¢~˜h©î8~8şikk9^8~XˆnX›"rÂ7Æ—Dw&–Df–ÆVC¢~˜h©î8~8şŠÎ8;¾X‰~8~8şXˆnX›.8~8Ş8î8¾8)>8~8~8ş8"rÀ¢VÆ—G”f–ÅF—FÆS¢~ˆ8ÎišşX˜®™šN{YiéÎ8).z+®Š¨Ş8~8n8ş88^8BrÂVÆ—G”f–ÄFW63¢~ŠH~™¹8®ˆ8Îišş8ÎZI®8şjè¾8>8n8®8(®8jÚ>z+®8®˜ş˜åä~88~8nKùŞZÙ88(¾8¾8şKˆŞZèZé®8~88.ˆ8Îišş8Î8(8(®XÙ{IN8®XŠ^8îyK¾X8ş8).8®888(8~8î88"rÂVÆ—G”&Æö6¶VC¢~Y8‹:®z+®Š¨Ş8Î[ø^ŠhrÀ¢VÆ—G•v&åF—FÆS¢~ˆ8Îišş8ÎKˆ˜:jè¾8>8n8N8(¾Xúşˆ;Şh
+~8Î8.8(®8î8’rÂVÆ—G•v&äFW63¢~8+8:8*N888;Î8~XX>yK¾X8ş8{YiéÎ8).z+®Š¨Ş8~8n8¾8(KùŞZÙ8~8n8ş88^8N8"rÀ¢&V6—6–öå&WG'“¢~š¹{+î[ªn8~XhŞXznybrÂ&V6—6–öä†–çC¢~š¹{+î[ªnXznyn8î89^8*8;Î8:¾8988>8*ş8Î[ø^Šh8®ZNY8Zûî[ùÎzºşiÊ¾8~8õvV$u^8š¹{+î[ªn8îŠ9ÎXª8:.88~8:¾8).ˆz®X¹^KÛşyJ8~88:.898*N8:¾8(N™ÙîZûî[ùÎy+Z(>8~8ş‹»Ş˜xş8:.88~8:¾8).KÛşyJ8~8î88.X‰ŞY¹î8ş8:.88~8:¾ŠªŞ8ş‹ëÎ8ş8¾i˜.™i>8Î8¾8¾8(¾ZNY8Î8.8(®8î88"rÂ&V6—6–öåv÷&¶–æs¢~š¹{+î[ªn8:.88~8:¾8~XhŞXznyn8~8n8N8î8(
+brÂ&V6—6–öäæô&WGFW#¢~š¹{+î[ªnXznyn8~8(.iKYhN8~8®8¾8>8ş8ş8(8xûîYÊ8î{YiéÎ8).{jŞhÈ8~8î8~8ş8"rÀ¢&EG—S¢uä~8¥~8tT%yK¾X8ş8î8şKÛşyJ8~8Ş8î88"rÂFöôÆ&vS¢s$Ô.Kº^Kˆ¾8îyK¾X8ş8).KÛşyJ8~8n8ş88^8N8"rÂf–ÆVC¢~ˆ8Îišş8îX˜®™šN8¾ZKiY~8~8î8~8ş8.89®8;Î8+8).XhŞŠªŞ8ş‹ëÎ8ş8~8n8(.8nKˆ[ªn8®Ššn8~8ş88^8N8"p¢ÒÀ¢¦ƒ¢°¢F—FÆS¢~z{¾™šNˆ8ÎišòrÂ&FvS¢t$UDrÂFW63¢~z{¾™šNY»îx˜~ˆ8ÎišşûÈÎ[›nKùŞZÙK‹®˜şiˆåä~8"rÀ¢&—f7“¢~Y»îx˜~KˆŞKÉ®Kˆ®KÊX‹iÈŞXªYšûÈÎˆÎiŠşYÊ[Ù>X˜ŞŠëîZH~KŠŞZHNyn8"rÂf—'7C¢~YØ~XÈy¨N{ªşˆ›.ˆ8ÎišşKÉ®[ú¾˜	şZHNynûÉ¾ZHŞiØ.ˆ8ÎišşKÉ®KÛşyJ„jŠYè¾ûÈÎYºjÚNšinjÊKÛşyJXúşˆ;ŞzˆŞhZ.8"rÀ¢WÆöC¢~˜hºY»îx˜~h‰n[nY»îx˜~h¹nX‹‹ù˜xÂrÂf÷&ÖC¢uär+r¥r+rtT%òiÈZJs$Ô"rÂ6†ævS¢~i»NhÚ.Y»îx˜rrÀ¢6†VWEWÆöD†–çC¢~XÈ^Y
+³^KŠ®Šh8^y¨NY»îx˜~[nYÊz{¾™šNˆ8ÎišşYîˆz®XªŠønXŠ¾[›nXˆnXŠ¾XˆnX›.8"rÂ6†VWE6VÆV7FVD†–çC¢~Zh.iéÎŠønXŠ¾K‹£^KŠ®Šh8^y¨NY»îx˜~ûÈÎz{¾™šNˆ8ÎišşYî[nˆz®XªXˆnX›.8"rÀ¢&VÖ÷fS¢~z{¾™šNˆ8ÎišòrÂ&W&–æs¢~jÚ>YÊXˆniéY»îx˜~(
+brÂ&ö6W76–æs¢~jÚ>YÊz{¾™šNˆ8Îišş(
+brÀ¢÷&–v–æÃ¢~XéşY»ârÂ&W7VÇC¢~˜şiˆîˆ8ÎišòrÂF÷væÆöC¢~KùŞZÙ˜şiˆåärrÂv–ã¢~hÚ.Kˆ[ÊY»îx˜rrÀ¢6ö×&T†–çC¢~[znXû>h¹nXªKŠŞ™{Nk¹YÙ~XÛ>XúşZûjùNXéşY»îY(ÎZHNyn{¹>iéÎ8"rÀ¢G&ç7&VçDÇ&VG“¢~[{.{¸ş[Šn˜şiˆîˆ8Îišşy¨Eä~iz™ÈXhŞjÊz{¾™šNˆ8Îišş8.Šû~KÛşyJ[Šnˆ8Îišşy¨Eä~8¥~h‰etT%Y»îx˜~8"rÀ¢7Æ—EF—FÆS¢~ˆz®XªXˆnX›#^KŠ®Šh8RrÂ7Æ—D&FvS¢~i›®ˆ;Şj8kX²rÀ¢7Æ—DFW63¢~KˆŞXhŞhÈY»®Zé®{ÙjÎXˆ~X›.ûÈÎˆÎiŠşj8kX¾Zéî™˜^Šy.ˆ›.Y(Îih~ZÙ~{¸NY[›nXˆnXŠ¾XˆnX›#^KŠ®Šh8^8"rÀ¢7Æ—D7F–öã¢~ˆz®XªXˆnh‰^KŠ¢rÂ7Æ—GF–æs¢~jÚ>YÊXˆnX›#^KŠ®Šh8^(
+brÀ¢7Æ—E&VG“¢~XˆnX›.ZèÎh‰+rXúş[njøşKŠ®Šh8^XÙ^xºÎKùŞZÙK‹¥ä~8"rÀ¢7Æ—Dv–ã¢~˜xŞikXˆnX›"rÂ7Æ—DF÷væÆöC¢~KùŞZÙ…ärrÂ7Æ—Df–ÆVC¢~ˆz®XªXˆnX›.ZK‹J^ûÈÎŠû~˜xŞikZHNynY»îx˜~YîXhŞŠù^8"rÀ¢7Æ—DÖ–&UF—FÆS¢~‹ùiŠó^KŠ®Šh8^y¨NY»îx˜~Y™¸nY	~ûÉòrÂ7Æ—DÖ–&TFW63¢~ˆz®XªXŠNijŞKˆŞZIşzîZé®8.Zh.iéÎ‹ùiŠşŠh8^Y™¸nûÈÎXúşKº^h˜¾XªY
+şXªXˆnX›.8"rÂ7Æ—DÖ–&T7F–öã¢~XˆnX›.Šh8^Y™¸brÀ¢7Æ—D6†ö÷6UF—FÆS¢~˜hºXˆnX›.ik[ÈòrÂ7Æ—D6†ö÷6TFW63¢~Šû~˜hºKˆîY»îx˜~Y™¸ny»zÊny¨NŠÎi[Y(ÎX‰~i[8"rÂ7Æ—E&÷w3¢~ŠÂrÂ7Æ—D6öÇVÖç3¢~X‰rrÂ7Æ—D7W7FöÓ¢~ˆz®Zé®K˜’rÂ7Æ—E6VÆV7FVC¢~hÈh˜˜ik[ÈşXˆnX›"rÂ7Æ—Dw&–Df–ÆVC¢~izk9^hÈh˜˜ŠÎX‰~ZèÎh‰XˆnX›.8"rÀ¢VÆ—G”f–ÅF—FÆS¢~Šû~j8iú^ˆ8Îišşz{¾™šN{¹>iéÂrÂVÆ—G”f–ÄFW63¢~ZHŞiØ.ˆ8Îišşjè¾yY‹è>ZI®ûÈÎ[Ù>X˜Ş{¹>iéÎKˆŞ˜.Yy»Nhê^KÙÎK‹®Xúş™Úy¨N˜şiˆåä~KùŞZÙ8.[»®ŠêîhÚ.yJˆ8Îišşi»NzèXÙ^y¨NY»îx˜~8"rÂVÆ—G”&Æö6¶VC¢~™ÈŠhj8iú^‹J˜xòrÀ¢VÆ—G•v&åF—FÆS¢~Xúşˆ;ŞK¸ŞiÈ˜:Xˆnˆ8Îišşjè¾yY’rÂVÆ—G•v&äFW63¢~Šû~XXyJk¹YÙ~ZûjùNXéşY»îY(Î{¹>iéÎûÈÎXhŞXk>Zé®iŠşY
+nKùŞZÙ8"rÀ¢&V6—6–öå&WG'“¢~š¹{+î[ªn˜xŞŠùRrÂ&V6—6–öä†–çC¢~š¹{+î[ªnZHNyn™ÈŠhY¹î˜i{nûÈÎiJşhÈy¨NŠëîZH~KÉ®ˆz®XªKÛşyJ…vV$u^Y(Îi»Nš¹{+î[ªny¨NZH~yJjŠYè¾ûÉ¾z{¾Xªzºşh‰nKˆŞiJşhÈy¨NxêşZ(>KÉ®KÛşyJ‹Û¾˜xşZH~yJjŠYè¾8.šinjÊXª‹ÛŞjŠYè¾ih~K»nXúşˆ;Ş‹è>hZ.8"rÂ&V6—6–öåv÷&¶–æs¢~jÚ>YÊKÛşyJš¹{+î[ªnjŠYè¾˜xŞikZHNyn(
+brÂ&V6—6–öäæô&WGFW#¢~š¹{+î[ªn˜xŞŠù^k*iÈiKYhNûÈÎYºjÚNKùŞyY[Ù>X˜Ş{¹>iéÎ8"rÀ¢&EG—S¢~K¸^iJşhÈä~8¥~8tT%Y»îx˜~8"rÂFöôÆ&vS¢~Šû~KÛşyJƒ$Ô.Kº^Xh^y¨NY»îx˜~8"rÂf–ÆVC¢~ˆ8Îišşz{¾™šNZK‹J^8.Šû~X‹~ikš^™Ú.Yî˜xŞŠù^8"p¢Ğ§Ó° ¦6öç7B6†V6¶W%7G–ÆRÒ°¢&6¶w&÷VæD6öÆ÷#¢r6ffbrÀ¢&6¶w&÷VæD–ÖvS¢vÆ–æV"Öw&F–VçBƒCVFVrÂ6V6VSR#RRÇG&ç7&VçB#RR’ÆÆ–æV"Öw&F–VçB‚ÓCVFVrÂ6V6VSR#RRÇG&ç7&VçB#RR’ÆÆ–æV"Öw&F–VçBƒCVFVrÇG&ç7&VçBsRRÂ6V6VSRsRR’ÆÆ–æV"Öw&F–VçB‚ÓCVFVrÇG&ç7&VçBsRRÂ6V6VSRsRR’rÀ¢&6¶w&÷VæE6—¦S¢s#‚#‚rÀ¢&6¶w&÷VæE÷6—F–öã¢sÃ‚Ã‚Ó‚ÂÓ‚‚p§Ó° ¦6öç7B6çf5Fõæt&Æö"Ò†6çf2’ÓâæWr&öÖ—6R‚‡&W6öÇfRÂ&V¦V7B’Óâ°¢–b‚6çf2’°¢&V¦V7B†æWrW'&÷"‚t6çf2—2çVÆÂr’“°¢&WGW&ã°¢Ğ¢6öç7BfÆÆ&6µFôFFW&ÂÒ‚’Óâ°¢G'’°¢6öç7BFFW&ÂÒ6çf2çFôFFU$Â‚v–ÖvR÷ærr“°¢6öç7B'G2ÒFFW&Âç7Æ—B‚rÂr“°¢6öç7B'—FU7G"ÒFö"‡'G5³Ò“°¢6öç7B'"ÒæWrV–çC„'&’†'—FU7G"æÆVæwF‚“°¢f÷"†ÆWB’Ò²’Â'—FU7G"æÆVæwFƒ²’³Ò’°¢'%¶•ÒÒ'—FU7G"æ6†$6öFTB†’“°¢Ğ¢&W6öÇfR†æWr&Æö"…¶'%ÒÂ²G—S¢v–ÖvR÷ærrÒ’“°¢Ò6F6‚†R’°¢&V¦V7B†R“°¢Ğ¢Ó° ¢G'’°¢6çf2çFô&Æö"‚†&Æö"’Óâ°¢–b†&Æö"’&W6öÇfR†&Æö"“°¢VÇ6RfÆÆ&6µFôFFW&Â‚“°¢ÒÂv–ÖvR÷ærr“°¢Ò6F6‚…öW'"’°¢fÆÆ&6µFôFFW&Â‚“°¢Ğ§Ò“° ¦7–æ2gVæ7F–öâG&tf–ÆUFô6çf2†f–ÆR’°¢6öç7B6çf2ÒFö7VÖVçBæ7&VFTVÆVÖVçB‚v6çf2r“° ¢–b‡G—Vöb7&VFT–ÖvT&—FÖÓÓÒvgVæ7F–öâr’°¢G'’°¢6öç7B&—FÖÒv—B7&VFT–ÖvT&—FÖ†f–ÆR“°¢6çf2çv–GF‚Ò&—FÖçv–GFƒ°¢6çf2æ†V–v‡BÒ&—FÖæ†V–v‡C°¢6öç7B7G‚Ò6çf2ævWD6öçFW‡B‚s&BrÂ²v–ÆÅ&VDg&WVVçFÇ“¢G'VRÒ“°¢–b‚7G‚’F‡&÷ræWrW'&÷"‚t6çf2$B—2Væf–Æ&ÆRr“°¢7G‚æG&t–ÖvR†&—FÖÂÂ“°¢&—FÖæ6Æ÷6Sòâ‚“°¢&WGW&â²6çf2Â7G‚Ó°¢Ò6F6‚†R’°¢6öç6öÆRçv&â‚v7&VFT–ÖvT&—FÖf–ÆVBÂfÆÆ–ær&6²Fò–ÖvR‚“¢rÂR“°¢Ğ¢Ğ ¢6öç7Bö&¦V7EW&ÂÒU$Âæ7&VFTö&¦V7EU$Â†f–ÆR“°¢G'’°¢6öç7B–ÖvRÒv—BæWr&öÖ—6R‚‡&W6öÇfRÂ&V¦V7B’Óâ°¢6öç7B–ÖrÒæWr–ÖvR‚“°¢–ÖræöæÆöBÒ‚’Óâ&W6öÇfR†–Ör“°¢–ÖræöæW'&÷"Ò‚’Óâ&V¦V7B†æWrW'&÷"‚t–ÖvRFV6öFRf–ÆVBr’“°¢–Örç7&2Òö&¦V7EW&Ã°¢Ò“°¢6çf2çv–GF‚Ò–ÖvRææGW&Åv–GF‚ÇÂ–ÖvRçv–GFƒ°¢6çf2æ†V–v‡BÒ–ÖvRææGW&Ä†V–v‡BÇÂ–ÖvRæ†V–v‡C°¢6öç7B7G‚Ò6çf2ævWD6öçFW‡B‚s&BrÂ²v–ÆÅ&VDg&WVVçFÇ“¢G'VRÒ“°¢–b‚7G‚’F‡&÷ræWrW'&÷"‚t6çf2$B—2Væf–Æ&ÆRr“°¢7G‚æG&t–ÖvR†–ÖvRÂÂ“°¢&WGW&â²6çf2Â7G‚Ó°¢Òf–æÆÇ’°¢6WEF–ÖV÷WB‚‚’ÓâU$Âç&Wfö¶Tö&¦V7EU$Â†ö&¦V7EW&Â’Â3“°¢Ğ§Ğ ¦gVæ7F–öâ6öÆ÷$F—7Fæ6R†Â"’°¢6öç7BG"Ò³ÒÒ%³Ó°¢6öç7BFrÒ³ÒÒ%³Ó°¢6öç7BF"Ò³%ÒÒ%³%Ó°¢&WGW&âÖF‚ç7'B†G"¢G"²Fr¢Fr²F"¢F"“°§Ğ ¦gVæ7F–öâ6×ÆT&6¶w&÷VæEF6‚†FFÂv–GF‚Â†V–v‡BÂ7F'E‚Â7F'E’Â6×ÆU6—¦R’°¢6öç7B6öÆ÷'2ÒµÓ°¢ÆWB"Ò°¢ÆWBrÒ°¢ÆWB"Ò° ¢f÷"†ÆWB’Ò7F'E“²’ÂÖF‚æÖ–â††V–v‡BÂ7F'E’²6×ÆU6—¦R“²’³Ò"’°¢f÷"†ÆWB‚Ò7F'Eƒ²‚ÂÖF‚æÖ–â‡v–GF‚Â7F'E‚²6×ÆU6—¦R“²‚³Ò"’°¢6öç7BÒ‡’¢v–GF‚²‚’¢C°¢–b†FF·²5ÒÂ#C’6öçF–çVS°¢6öç7B6öÆ÷"Ò¶FF·ÒÂFF·²ÒÂFF·²%ÕÓ°¢6öÆ÷'2çW6‚†6öÆ÷"“°¢"³Ò6öÆ÷%³Ó°¢r³Ò6öÆ÷%³Ó°¢"³Ò6öÆ÷%³%Ó°¢Ğ¢Ğ ¢–b†6öÆ÷'2æÆVæwF‚Âb’&WGW&âçVÆÃ°¢6öç7BÖVâÒ·"ò6öÆ÷'2æÆVæwF‚Ârò6öÆ÷'2æÆVæwF‚Â"ò6öÆ÷'2æÆVæwF…Ó°¢6öç7BF—7Fæ6W2Ò6öÆ÷'2æÖ‚†6öÆ÷"’Óâ6öÆ÷$F—7Fæ6R†6öÆ÷"ÂÖVâ’’ç6÷'B‚†Â"’ÓâÒ"“°¢6öç7B“ÒF—7Fæ6W5´ÖF‚æÖ–â†F—7Fæ6W2æÆVæwF‚ÒÂÖF‚æfÆö÷"†F—7Fæ6W2æÆVæwF‚¢ã’’•ÒÇÂ°¢&WGW&â²ÖVâÂ7&VC¢“Â6÷VçC¢6öÆ÷'2æÆVæwF‚Ó°§Ğ ¦gVæ7F–öâW7F–ÖFUVæ–f÷&ÔVFvT&6¶w&÷VæB†FFÂv–GF‚Â†V–v‡B’°¢6öç7B6×ÆU6—¦RÒÖF‚æÖ‚ƒ‚ÂÖF‚æÖ–âƒ3ÂÖF‚æfÆö÷"„ÖF‚æÖ–â‡v–GF‚Â†V–v‡B’¢ã#R’’“°¢6öç7B†ÆbÒÖF‚æfÆö÷"‡6×ÆU6—¦Rò"“°¢6öç7Bö–çG2Ò°¢³ÂÒÀ¢´ÖF‚æÖ‚ƒÂv–GF‚Ò6×ÆU6—¦R’ÂÒÀ¢³ÂÖF‚æÖ‚ƒÂ†V–v‡BÒ6×ÆU6—¦R•ÒÀ¢´ÖF‚æÖ‚ƒÂv–GF‚Ò6×ÆU6—¦R’ÂÖF‚æÖ‚ƒÂ†V–v‡BÒ6×ÆU6—¦R•ÒÀ¢´ÖF‚æÖ‚ƒÂÖF‚æfÆö÷"‡v–GF‚ò"’Ò†Æb’ÂÒÀ¢´ÖF‚æÖ‚ƒÂÖF‚æfÆö÷"‡v–GF‚ò"’Ò†Æb’ÂÖF‚æÖ‚ƒÂ†V–v‡BÒ6×ÆU6—¦R•ÒÀ¢³ÂÖF‚æÖ‚ƒÂÖF‚æfÆö÷"††V–v‡Bò"’Ò†Æb•ÒÀ¢´ÖF‚æÖ‚ƒÂv–GF‚Ò6×ÆU6—¦R’ÂÖF‚æÖ‚ƒÂÖF‚æfÆö÷"††V–v‡Bò"’Ò†Æb•Ğ¢Ó° ¢6öç7BF6†W2Òö–çG0¢æÖ‚…·‚Â•Ò’Óâ6×ÆT&6¶w&÷VæEF6‚†FFÂv–GF‚Â†V–v‡BÂ‚Â’Â6×ÆU6—¦R’¢æf–ÇFW"‚‡F6‚’ÓâF6‚bbF6‚ç7&VBÃÒ#B“° ¢–b‡F6†W2æÆVæwF‚ÂB’&WGW&âçVÆÃ° ¢ÆWB&W7Dw&÷WÒµÓ°¢f÷"†6öç7B6VVBöbF6†W2’°¢6öç7Bw&÷WÒF6†W2æf–ÇFW"‚‡F6‚’Óâ6öÆ÷$F—7Fæ6R‡6VVBæÖVâÂF6‚æÖVâ’ÃÒC"“°¢–b†w&÷WæÆVæwF‚â&W7Dw&÷WæÆVæwF‚’&W7Dw&÷WÒw&÷W°¢Ğ ¢–b†&W7Dw&÷WæÆVæwF‚ÂB’&WGW&âçVÆÃ° ¢6öç7B&rÒ³ÂÂÓ°¢ÆWBF÷FÅvV–v‡BÒ°¢f÷"†6öç7BF6‚öb&W7Dw&÷W’°¢6öç7BvV–v‡BÒÖF‚æÖ‚ƒÂF6‚æ6÷VçB“°¢&u³Ò³ÒF6‚æÖVå³Ò¢vV–v‡C°¢&u³Ò³ÒF6‚æÖVå³Ò¢vV–v‡C°¢&u³%Ò³ÒF6‚æÖVå³%Ò¢vV–v‡C°¢F÷FÅvV–v‡B³ÒvV–v‡C°¢Ğ¢&u³ÒóÒF÷FÅvV–v‡C°¢&u³ÒóÒF÷FÅvV–v‡C°¢&u³%ÒóÒF÷FÅvV–v‡C° ¢6öç7Bw&÷W7&VBÒÖF‚æÖ‚€¢ââæ&W7Dw&÷WæÖ‚‡F6‚’ÓâÖF‚æÖ‚‡F6‚ç7&VBÂ6öÆ÷$F—7Fæ6R‡F6‚æÖVâÂ&r’’¢“°¢6öç7BFöÆW&æ6RÒÖF‚æÖ‚ƒ#BÂÖF‚æÖ–âƒS"Â#B²w&÷W7&VB¢ã3R’“°¢&WGW&â²&rÂFöÆW&æ6RÓ°§Ğ ¦7–æ2gVæ7F–öâG'”f7EVæ–f÷&Ô&6¶w&÷VæE&VÖ÷fÂ†f–ÆR’°¢6öç7B²6çf2Â7G‚ÒÒv—BG&tf–ÆUFô6çf2†f–ÆR“°¢6öç7B²v–GF‚Â†V–v‡BÒÒ6çf3°¢–b‚v–GF‚ÇÂ†V–v‡B’&WGW&âçVÆÃ° ¢6öç7B–ÖvTFFÒ7G‚ævWD–ÖvTFFƒÂÂv–GF‚Â†V–v‡B“°¢6öç7B—†VÇ2Ò–ÖvTFFæFF°¢6öç7BW7F–ÖFRÒW7F–ÖFUVæ–f÷&ÔVFvT&6¶w&÷VæB‡—†VÇ2Âv–GF‚Â†V–v‡B“°¢–b‚W7F–ÖFR’&WGW&âçVÆÃ° ¢6öç7B²&rÂFöÆW&æ6RÒÒW7F–ÖFS°¢6öç7BF÷FÂÒv–GF‚¢†V–v‡C°¢6öç7Bf—6—FVBÒæWrV–çC„'&’‡F÷FÂ“°¢6öç7BVWVRÒæWr–çC3$'&’‡F÷FÂ“°¢ÆWB†VBÒ°¢ÆWBF–ÂÒ° ¢6öç7BÖF6†W4&6¶w&÷VæBÒ†–æFW‚’Óâ°¢6öç7BÒ–æFW‚¢C°¢–b‡—†VÇ5·²5ÒÂb’&WGW&âG'VS°¢&WGW&â6öÆ÷$F—7Fæ6R…·—†VÇ5·ÒÂ—†VÇ5·²ÒÂ—†VÇ5·²%ÕÒÂ&r’ÃÒFöÆW&æ6S°¢Ó° ¢6öç7BVçVWVRÒ†–æFW‚’Óâ°¢–b†–æFW‚ÂÇÂ–æFW‚ãÒF÷FÂÇÂf—6—FVE¶–æFW…ÒÇÂÖF6†W4&6¶w&÷VæB†–æFW‚’’&WGW&ã°¢f—6—FVE¶–æFW…ÒÒ°¢VWVU·F–Â²µÒÒ–æFWƒ°¢Ó° ¢f÷"†ÆWB‚Ò²‚Âv–GFƒ²‚³Ò’°¢VçVWVR‡‚“°¢VçVWVR‚††V–v‡BÒ’¢v–GF‚²‚“°¢Ğ¢f÷"†ÆWB’Ò²’Â†V–v‡BÒ²’³Ò’°¢VçVWVR‡’¢v–GF‚“°¢VçVWVR‡’¢v–GF‚²v–GF‚Ò“°¢Ğ ¢v†–ÆR††VBÂF–Â’°¢6öç7B–æFW‚ÒVWVU¶†VB²µÓ°¢6öç7B‚Ò–æFW‚Rv–GFƒ°¢6öç7B’ÒÖF‚æfÆö÷"†–æFW‚òv–GF‚“°¢—†VÇ5¶–æFW‚¢B²5ÒÒ°¢–b‡‚â’VçVWVR†–æFW‚Ò“°¢–b‡‚²Âv–GF‚’VçVWVR†–æFW‚²“°¢–b‡’â’VçVWVR†–æFW‚Òv–GF‚“°¢–b‡’²Â†V–v‡B’VçVWVR†–æFW‚²v–GF‚“°¢Ğ ¢òò6öÆ–B&6¶G&÷6†÷VÆBö67W’ÖVæ–ævgVÂ&÷&FW"Ö6öææV7FVB&Và¢òò–bFöòÆ—GFÆRv2&VÖ÷fVBÂfÆÂ&6²FòF†R’ÖöFVÂ&F†W"F†â&—6²fÇ6R÷6—F—fRà¢–b‡F–ÂÂF÷FÂ¢ãb’&WGW&âçVÆÃ° ¢7G‚çWD–ÖvTFF†–ÖvTFFÂÂ“°¢&WGW&â6çf5Fõæt&Æö"†6çf2“°§Ğ ¦7–æ2gVæ7F–öâvWE&VÖ÷fW"†öå&öw&W72’°¢–b‚&VÖ÷fW%&öÖ—6R’°¢&VÖ÷fW%&öÖ—6RÒ†7–æ2‚’Óâ°¢6öç7B²—VÆ–æRÂ&t–ÖvRÒÒv—B–×÷'B‚t‡Vvv–ævf6R÷G&ç6f÷&ÖW'2r“°¢6öç7B&VÖ÷fW"Òv—B—VÆ–æR‚v&6¶w&÷VæB×&VÖ÷fÂrÂvöæç‚Ö6öÖ×Væ—G’ö÷&Ö&rÔôäå‚rÂ°¢FWf–6S¢wv6ÒrÀ¢GG—S¢w‚rÀ¢&öw&W75ö6ÆÆ&6³¢†–æfò’Óâöå&öw&W73òâ†–æfò¢Ò“°¢&WGW&â²&VÖ÷fW"Â&t–ÖvRÓ°¢Ò’‚’æ6F6‚‚†W'&÷"’Óâ°¢&VÖ÷fW%&öÖ—6RÒçVÆÃ°¢F‡&÷rW'&÷#°¢Ò“°¢Ğ¢&WGW&â&VÖ÷fW%&öÖ—6S°§Ğ ¦7–æ2gVæ7F–öâvWDÖöFæWE&VÖ÷fW"†öå&öw&W72’°¢–b‚ÖöFæWE&öÖ—6R’°¢ÖöFæWE&öÖ—6RÒ†7–æ2‚’Óâ°¢6öç7B²—VÆ–æRÂ&t–ÖvRÒÒv—B–×÷'B‚t‡Vvv–ævf6R÷G&ç6f÷&ÖW'2r“°¢6öç7B&VÖ÷fW"Òv—B—VÆ–æR‚v&6¶w&÷VæB×&VÖ÷fÂrÂu†Væ÷föÖöFæWBrÂ°¢FWf–6S¢wv6ÒrÀ¢GG—S¢vg3"rÀ¢&öw&W75ö6ÆÆ&6³¢†–æfò’Óâöå&öw&W73òâ†–æfò¢Ò“°¢&WGW&â²&VÖ÷fW"Â&t–ÖvRÓ°¢Ò’‚’æ6F6‚‚†W'&÷"’Óâ°¢ÖöFæWE&öÖ—6RÒçVÆÃ°¢F‡&÷rW'&÷#°¢Ò“°¢Ğ¢&WGW&âÖöFæWE&öÖ—6S°§Ğ ¦6öç7B$•$TdäUEôÄ•DUôÔôDTÂÒvöæç‚Ö6öÖ×Væ—G’ô&•&VdæWEöÆ—FRÔôäå‚s°¦6öç7B$•$TdäUEôeTÄÅôÔôDTÂÒvöæç‚Ö6öÖ×Væ—G’ô&•&VdæWBÔôäå‚s° ¦gVæ7F–öâ—4Æ–¶VÇ”Öö&–ÆU&V6—6–öäFWf–6R‚’°¢–b‡G—Vöbæf–vF÷"ÓÓÒwVæFVf–æVBr’&WGW&âG'VS°¢&WGW&âôæG&ö–GÆ•†öæWÆ•GÆ•öGÄÖö&–ÆRö’çFW7B†æf–vF÷"çW6W$vVçBÇÂrr“°§Ğ ¦7–æ2gVæ7F–öâvWD&•&VdæWE&öf–ÆW2‚’°¢6öç7BfÆÆ&6²Ò²¶W“¢vÆ—FR×v6ÒÖg3"rÂÖöFVÄ–C¢$•$TdäUEôÄ•DUôÔôDTÂÂFWf–6S¢wv6ÒrÂGG—S¢vg3"rÓ°¢–b‡G—Vöbæf–vF÷"ÓÓÒwVæFVf–æVBrÇÂæf–vF÷"æwR’&WGW&â¶fÆÆ&6µÓ° ¢G'’°¢6öç7BFFW"Òv—Bæf–vF÷"æwRç&WVW7DFFW"‡²÷vW%&VfW&Væ6S¢v†–v‚×W&f÷&Öæ6RrÒ“°¢–b‚FFW"’&WGW&â¶fÆÆ&6µÓ°¢Ò6F6‚†W'&÷"’°¢6öç6öÆRçv&â‚uvV$uRFFW"6†V6²f–ÆVC²W6–ært4Ò&V6—6–öâÖöFVÃ¢rÂW'&÷"“°¢&WGW&â¶fÆÆ&6µÓ°¢Ğ ¢6öç7BFWf–6TÖVÖ÷'’ÒçVÖ&W"†æf–vF÷"æFWf–6TÖVÖ÷'’ÇÂ“°¢6öç7B6åW6TgVÆÄÖöFVÂÒ—4Æ–¶VÇ”Öö&–ÆU&V6—6–öäFWf–6R‚’bbFWf–6TÖVÖ÷'’ãÒƒ°¢6öç7B&öf–ÆW2ÒµÓ°¢–b†6åW6TgVÆÄÖöFVÂ’°¢&öf–ÆW2çW6‚‡²¶W“¢vgVÆÂ×vV&wRÖgbrÂÖöFVÄ–C¢$•$TdäUEôeTÄÅôÔôDTÂÂFWf–6S¢wvV&wRrÂGG—S¢vgbrÒ“°¢Ğ¢&öf–ÆW2çW6‚‡²¶W“¢vÆ—FR×vV&wRÖgbrÂÖöFVÄ–C¢$•$TdäUEôÄ•DUôÔôDTÂÂFWf–6S¢wvV&wRrÂGG—S¢vgbrÒ“°¢&öf–ÆW2çW6‚†fÆÆ&6²“°¢&WGW&â&öf–ÆW3°§Ğ ¦7–æ2gVæ7F–öâvWD&•&VdæWB‡&öf–ÆRÂöå&öw&W72’°¢–b‚&—&VdæWE&öÖ—6W2æ†2‡&öf–ÆRæ¶W’’’°¢6öç7B&öÖ—6RÒ†7–æ2‚’Óâ°¢6öç7B²WFôÖöFVÂÂWFõ&ö6W76÷"Â&t–ÖvRÒÒv—B–×÷'B‚t‡Vvv–ævf6R÷G&ç6f÷&ÖW'2r“°¢6öç7BÖöFVÂÒv—BWFôÖöFVÂæg&öÕ÷&WG&–æVB‡&öf–ÆRæÖöFVÄ–BÂ°¢FWf–6S¢&öf–ÆRæFWf–6RÀ¢GG—S¢&öf–ÆRæGG—RÀ¢&öw&W75ö6ÆÆ&6³¢†–æfò’Óâöå&öw&W73òâ†–æfò¢Ò“°¢6öç7B&ö6W76÷"Òv—BWFõ&ö6W76÷"æg&öÕ÷&WG&–æVB‡&öf–ÆRæÖöFVÄ–BÂ°¢&öw&W75ö6ÆÆ&6³¢†–æfò’Óâöå&öw&W73òâ†–æfò¢Ò“°¢&WGW&â²ÖöFVÂÂ&ö6W76÷"Â&t–ÖvRÓ°¢Ò’‚’æ6F6‚‚†W'&÷"’Óâ°¢&—&VdæWE&öÖ—6W2æFVÆWFR‡&öf–ÆRæ¶W’“°¢F‡&÷rW'&÷#°¢Ò“°¢&—&VdæWE&öÖ—6W2ç6WB‡&öf–ÆRæ¶W’Â&öÖ—6R“°¢Ğ¢&WGW&â&—&VdæWE&öÖ—6W2ævWB‡&öf–ÆRæ¶W’“°§Ğ ¦7–æ2gVæ7F–öâ—VÆ–æU&VÖ÷fÅFô&Æö"†f–ÆRÂÆöFW"Âöå&öw&W72’°¢6öç7B²&VÖ÷fW"Â&t–ÖvRÒÒv—BÆöFW"†öå&öw&W72“°¢6öç7B&t–ÖvRÒv—B&t–ÖvRæg&öÔ&Æö"†f–ÆR“°¢6öç7B÷WGWBÒv—B&VÖ÷fW"…·&t–ÖvUÒ“°¢6öç7B–ÖvRÒ'&’æ—4'&’†÷WGWB’ò÷WGWE³Ò¢÷WGWC°¢–b†–ÖvR–ç7Fæ6Vöb&Æö"’&WGW&â–ÖvS°¢–b‚–ÖvSòçFô&Æö"’F‡&÷ræWrW'&÷"‚tæò&VÖ÷f&ÆR–ÖvR÷WGWBr“°¢6öç7B&Æö"Òv—B–ÖvRçFô&Æö"‚“°¢–b‚&Æö"’F‡&÷ræWrW'&÷"‚tæò÷WGWB&Æö"r“°¢&WGW&â&Æö#°§Ğ ¦7–æ2gVæ7F–öâ&VÖ÷fUv—F„ÖöFæWB†f–ÆRÂöå&öw&W72’°¢&WGW&â—VÆ–æU&VÖ÷fÅFô&Æö"†f–ÆRÂvWDÖöFæWE&VÖ÷fW"Âöå&öw&W72“°§Ğ ¦7–æ2gVæ7F–öâ&VÖ÷fUv—F„&•&VdæWB†f–ÆRÂöå&öw&W72’°¢6öç7B&öf–ÆW2Òv—BvWD&•&VdæWE&öf–ÆW2‚“°¢ÆWBÆ7DW'&÷"ÒçVÆÃ° ¢6öç7BF—7÷6U6fVÇ’Ò‡fÇVR’Óâ°¢–b‚fÇVRÇÂG—VöbfÇVRæF—7÷6RÓÒvgVæ7F–öâr’&WGW&ã°¢G'’²fÇVRæF—7÷6R‚“²Ò6F6‚†W'&÷"’²6öç6öÆRçv&â‚uFVç6÷"F—7÷6Â6¶—VC¢rÂW'&÷"“²Ğ¢Ó° ¢f÷"†6öç7B&öf–ÆRöb&öf–ÆW2’°¢ÆWB—†VÅfÇVW2ÒçVÆÃ°¢ÆWB÷WGWEFVç6÷"ÒçVÆÃ°¢ÆWB6–vÖö–EFVç6÷"ÒçVÆÃ°¢ÆWB66ÆVEFVç6÷"ÒçVÆÃ°¢ÆWBV–çC…FVç6÷"ÒçVÆÃ°¢G'’°¢6öç7B²ÖöFVÂÂ&ö6W76÷"Â&t–ÖvRÒÒv—BvWD&•&VdæWB‡&öf–ÆRÂöå&öw&W72“°¢6öç7B&t–ÖvRÒv—B&t–ÖvRæg&öÔ&Æö"†f–ÆR“°¢6öç7B&ö6W76VBÒv—B&ö6W76÷"‡&t–ÖvR“°¢—†VÅfÇVW2Ò&ö6W76VCòç—†VÅ÷fÇVW2ÇÂçVÆÃ°¢–b‚—†VÅfÇVW2’F‡&÷ræWrW'&÷"‚t&•&VdæWB&ö6W76÷"÷WGWB—2Væf–Æ&ÆRr“° ¢6öç7B÷WGWBÒv—BÖöFVÂ‡²–çWEö–ÖvS¢—†VÅfÇVW2Ò“°¢÷WGWEFVç6÷"Ò÷WGWCòæ÷WGWEö–ÖvRÇÂ÷WGWCòæ÷WGWBÇÂçVÆÃ°¢6öç7B6÷W&6UFVç6÷"Ò÷WGWEFVç6÷#òå³Ó°¢–b‚6÷W&6UFVç6÷"’F‡&÷ræWrW'&÷"‚t&•&VdæWB÷WGWB—2Væf–Æ&ÆRr“° ¢6–vÖö–EFVç6÷"Ò6÷W&6UFVç6÷"ç6–vÖö–B‚“°¢66ÆVEFVç6÷"Ò6–vÖö–EFVç6÷"æ×VÂƒ#SR“°¢V–çC…FVç6÷"Ò66ÆVEFVç6÷"çFò‚wV–çC‚r“°¢6öç7BÖ6²Òv—B&t–ÖvRæg&öÕFVç6÷"‡V–çC…FVç6÷"’ç&W6—¦R‡&t–ÖvRçv–GF‚Â&t–ÖvRæ†V–v‡B“°¢6öç7B²6çf2Â7G‚ÒÒv—BG&tf–ÆUFô6çf2†f–ÆR“°¢6öç7B–ÖvTFFÒ7G‚ævWD–ÖvTFFƒÂÂ6çf2çv–GF‚Â6çf2æ†V–v‡B“°¢6öç7B—†VÇ2Ò–ÖvTFFæFF°¢6öç7BÖ6´FFÒÖ6²æFF°¢6öç7BÖ6´6†ææVÇ2ÒÖF‚æÖ‚ƒÂÖ6²æ6†ææVÇ2ÇÂ“°¢6öç7BF÷FÂÒ6çf2çv–GF‚¢6çf2æ†V–v‡C°¢–b‚Ö6´FFÇÂÖ6²çv–GF‚ÓÒ6çf2çv–GF‚ÇÂÖ6²æ†V–v‡BÓÒ6çf2æ†V–v‡B’°¢F‡&÷ræWrW'&÷"‚t&•&VdæWBÖ6²6—¦RÖ—6ÖF6‚r“°¢Ğ¢f÷"†ÆWB’Ò²’ÂF÷FÃ²’³Ò’°¢6öç7BÇ†ÒÖ6´FF¶’¢Ö6´6†ææVÇ5Ó°¢—†VÇ5¶’¢B²5ÒÒÖF‚ç&÷VæB‚‡—†VÇ5¶’¢B²5Ò¢Ç†’ò#SR“°¢Ğ¢7G‚çWD–ÖvTFF†–ÖvTFFÂÂ“°¢&WGW&âv—B6çf5Fõæt&Æö"†6çf2“°¢Ò6F6‚†W'&÷"’°¢Æ7DW'&÷"ÒW'&÷#°¢6öç6öÆRçv&â†&•&VdæWB&V6—6–öâ&öf–ÆRG·&öf–ÆRæ¶W—Òf–ÆVC²G'––ærfÆÆ&6³¦ÂW'&÷"“°¢Òf–æÆÇ’°¢6öç7BF—7÷6VBÒæWr6WB‚“°¢f÷"†6öç7BFVç6÷"öb·V–çC…FVç6÷"Â66ÆVEFVç6÷"Â6–vÖö–EFVç6÷"Â÷WGWEFVç6÷"Â—†VÅfÇVW5Ò’°¢–b‚FVç6÷"ÇÂF—7÷6VBæ†2‡FVç6÷"’’6öçF–çVS°¢F—7÷6VBæFB‡FVç6÷"“°¢F—7÷6U6fVÇ’‡FVç6÷"“°¢Ğ¢Ğ¢Ğ ¢F‡&÷rÆ7DW'&÷"ÇÂæWrW'&÷"‚t&•&VdæWB&V6—6–öâ&ö6W76–ærf–ÆVBr“°§Ğ ¦gVæ7F–öâVÆ—G•&æ²‡VÆ—G’’°¢–b‚VÆ—G’’&WGW&â““°¢6öç7B7FGW4&6RÒVÆ—G’ç7FGW2ÓÓÒw72rò¢VÆ—G’ç7FGW2ÓÓÒwv&æ–ærrò¢#°¢&WGW&â7FGW4&6R²‡VÆ—G’ç66÷&RÇÂ“°§Ğ ¦gVæ7F–öâÇ†W&6VçF–ÆR††—7Föw&ÒÂf—6–&ÆT6÷VçBÂW&6VçF–ÆR’°¢–b‚f—6–&ÆT6÷VçB’&WGW&â°¢6öç7BF&vWBÒÖF‚æÖ‚ƒÂÖF‚æ6V–Â‡f—6–&ÆT6÷VçB¢W&6VçF–ÆR’“°¢ÆWB6VVâÒ°¢f÷"†ÆWBÇ†Ò²Ç†ÃÒ#SS²Ç†³Ò’°¢6VVâ³Ò†—7Föw&Õ¶Ç†Ó°¢–b‡6VVâãÒF&vWB’&WGW&âÇ†°¢Ğ¢&WGW&â#SS°§Ğ ¦7–æ2gVæ7F–öâ6÷'&V7EVæW‡V7FVDf÷&Vw&÷VæEG&ç7&Væ7’†&Æö"’°¢6öç7B²6çf2Â7G‚ÒÒv—BG&tf–ÆUFô6çf2†&Æö"“°¢6öç7B²v–GF‚Â†V–v‡BÒÒ6çf3°¢–b‚v–GF‚ÇÂ†V–v‡B’&WGW&â&Æö#° ¢6öç7B–ÖvTFFÒ7G‚ævWD–ÖvTFFƒÂÂv–GF‚Â†V–v‡B“°¢6öç7B—†VÇ2Ò–ÖvTFFæFF°¢6öç7B†—7Föw&ÒÒæWrV–çC3$'&’ƒ#Sb“°¢ÆWBf—6–&ÆT6÷VçBÒ° ¢f÷"†ÆWBÒ3²Â—†VÇ2æÆVæwFƒ²³ÒB’°¢6öç7BÇ†Ò—†VÇ5·Ó°¢–b†Ç†ÃÒ"’6öçF–çVS°¢†—7Föw&Õ¶Ç†Ò³Ò°¢f—6–&ÆT6÷VçB³Ò°¢Ğ ¢–b‡f—6–&ÆT6÷VçBÂv–GF‚¢†V–v‡B¢ãR’&WGW&â&Æö#° ¢6öç7BSÒÇ†W&6VçF–ÆR††—7Föw&ÒÂf—6–&ÆT6÷VçBÂãR“°¢6öç7B“ÒÇ†W&6VçF–ÆR††—7Föw&ÒÂf—6–&ÆT6÷VçBÂã’“°¢6öç7B“‚ÒÇ†W&6VçF–ÆR††—7Föw&ÒÂf—6–&ÆT6÷VçBÂã“‚“° ¢òòõ$Ô$r6âö666–öæÆÇ’&WGW&â6÷'&V7BÖ6²v†÷6RVçF—&Rf÷&Vw&÷VæBÇ†¢òò—266ÆVBF÷vââöæÇ’6ö×Vç6FRv†VâF†R†–v‚W&6VçF–ÆR—G6VÆb—2G&ç6ÇV6VçBÀ¢òò6òæ÷&ÖÂçF–Æ–6VBVFvW2æB–çFVçF–öæÂ6ögB&÷VæF&–W2&R&W6W'fVBà¢–b‡“‚ãÒ#C"ÇÂSãÒ##RÇÂ“ãÒ#3‚’&WGW&â&Æö#° ¢6öç7B66ÆRÒÖF‚æÖ–âƒ2ã#RÂ#SRòÖF‚æÖ‚ƒ3"Â“‚’“°¢–b‡66ÆRÃÒãB’&WGW&â&Æö#° ¢f÷"†ÆWBÒ3²Â—†VÇ2æÆVæwFƒ²³ÒB’°¢6öç7BÇ†Ò—†VÇ5·Ó°¢–b†Ç†ÃÒ"’6öçF–çVS°¢—†VÇ5·ÒÒÖF‚æÖ–âƒ#SRÂÖF‚ç&÷VæB†Ç†¢66ÆR’“°¢Ğ ¢7G‚çWD–ÖvTFF†–ÖvTFFÂÂ“°¢&WGW&â6çf5Fõæt&Æö"†6çf2“°§Ğ ¦7–æ2gVæ7F–öâ&÷FV7DÆ–v‡Df÷&Vw&÷VæD÷6—G’†&Æö"Â6÷W&6Tf–ÆRÒçVÆÂ’°¢6öç7B²6çf2Â7G‚ÒÒv—BG&tf–ÆUFô6çf2†&Æö"“°¢6öç7B²v–GF‚Â†V–v‡BÒÒ6çf3°¢–b‚v–GF‚ÇÂ†V–v‡B’&WGW&â&Æö#° ¢6öç7B–ÖvTFFÒ7G‚ævWD–ÖvTFFƒÂÂv–GF‚Â†V–v‡B“°¢6öç7B—†VÇ2Ò–ÖvTFFæFF°¢ÆWB6÷W&6U—†VÇ2Ò—†VÇ3°¢–b‡6÷W&6Tf–ÆR’°¢6öç7B6÷W&6RÒv—BG&tf–ÆUFô6çf2‡6÷W&6Tf–ÆR“°¢ÆWB6÷W&6T7G‚Ò6÷W&6Ræ7Gƒ°¢–b‡6÷W&6Ræ6çf2çv–GF‚ÓÒv–GF‚ÇÂ6÷W&6Ræ6çf2æ†V–v‡BÓÒ†V–v‡B’°¢6öç7B66ÆVE6÷W&6RÒFö7VÖVçBæ7&VFTVÆVÖVçB‚v6çf2r“°¢66ÆVE6÷W&6Rçv–GF‚Òv–GFƒ°¢66ÆVE6÷W&6Ræ†V–v‡BÒ†V–v‡C°¢6öç7B66ÆVE6÷W&6T7G‚Ò66ÆVE6÷W&6RævWD6öçFW‡B‚s&BrÂ²v–ÆÅ&VDg&WVVçFÇ“¢G'VRÒ“°¢–b‡66ÆVE6÷W&6T7G‚’°¢66ÆVE6÷W&6T7G‚æ–ÖvU6Öö÷F†–ætVæ&ÆVBÒG'VS°¢66ÆVE6÷W&6T7G‚æ–ÖvU6Öö÷F†–æuVÆ—G’Òv†–v‚s°¢66ÆVE6÷W&6T7G‚æG&t–ÖvR‡6÷W&6Ræ6çf2ÂÂÂv–GF‚Â†V–v‡B“°¢6÷W&6T7G‚Ò66ÆVE6÷W&6T7Gƒ°¢Ğ¢Ğ¢6÷W&6U—†VÇ2Ò6÷W&6T7G‚ævWD–ÖvTFFƒÂÂv–GF‚Â†V–v‡B’æFF°¢Ğ ¢6öç7BF÷FÂÒv–GF‚¢†V–v‡C°¢6öç7Bf—6–&ÆUF‡&W6†öÆBÒƒ°¢6öç7B6öæf–FVçEF‡&W6†öÆBÒƒ°¢6öç7B&6¶w&÷VæDW7F–ÖFRÒW7F–ÖFUVæ–f÷&ÔVFvT&6¶w&÷VæB‡6÷W&6U—†VÇ2Âv–GF‚Â†V–v‡B“°¢6öç7BÖ„æÇ—6—4F–ÖVç6–öâÒ#°¢6öç7BæÇ—6—566ÆRÒÖF‚æÖ–âƒÂÖ„æÇ—6—4F–ÖVç6–öâòÖF‚æÖ‚‡v–GF‚Â†V–v‡B’“°¢6öç7BæÇ—6—5v–GF‚ÒÖF‚æÖ‚ƒÂÖF‚ç&÷VæB‡v–GF‚¢æÇ—6—566ÆR’“°¢6öç7BæÇ—6—4†V–v‡BÒÖF‚æÖ‚ƒÂÖF‚ç&÷VæB††V–v‡B¢æÇ—6—566ÆR’“°¢ÆWBæÇ—6—5—†VÇ2Ò—†VÇ3°¢–b†æÇ—6—566ÆRÂ’°¢6öç7BæÇ—6—46çf2ÒFö7VÖVçBæ7&VFTVÆVÖVçB‚v6çf2r“°¢æÇ—6—46çf2çv–GF‚ÒæÇ—6—5v–GFƒ°¢æÇ—6—46çf2æ†V–v‡BÒæÇ—6—4†V–v‡C°¢6öç7BæÇ—6—47G‚ÒæÇ—6—46çf2ævWD6öçFW‡B‚s&BrÂ²v–ÆÅ&VDg&WVVçFÇ“¢G'VRÒ“°¢–b‚æÇ—6—47G‚’&WGW&â&Æö#°¢æÇ—6—47G‚æ–ÖvU6Öö÷F†–ætVæ&ÆVBÒG'VS°¢æÇ—6—47G‚æ–ÖvU6Öö÷F†–æuVÆ—G’Òv†–v‚s°¢æÇ—6—47G‚æG&t–ÖvR†6çf2ÂÂÂæÇ—6—5v–GF‚ÂæÇ—6—4†V–v‡B“°¢æÇ—6—5—†VÇ2ÒæÇ—6—47G‚ævWD–ÖvTFFƒÂÂæÇ—6—5v–GF‚ÂæÇ—6—4†V–v‡B’æFF°¢Ğ ¢6öç7BæÇ—6—5F÷FÂÒæÇ—6—5v–GF‚¢æÇ—6—4†V–v‡C°¢6öç7BÆ&VÇ2ÒæWr–çC3$'&’†æÇ—6—5F÷FÂ“°¢6öç7BVWVRÒæWr–çC3$'&’†æÇ—6—5F÷FÂ“°¢6öç7B7G&öæt6ö×öæVçG2Ò¶fÇ6UÓ°¢6öç7BÖ–æ–×VÔ6ö×öæVçD&VÒÖF‚æÖ‚ƒ"ÂÖF‚ç&÷VæB†æÇ—6—5F÷FÂ¢ãB’“°¢ÆWBÆ&VÂÒ° ¢òòÆ&VÂöæÇ’æöâ×G&—f–ÂÖGFR6ö×öæVçG2âÆ–v‡B—†VÂ—2&W7F÷&VBöæÇ¢òòv†Vâ—B&VÆöæw2FòF†R6ÖR6ö×öæVçB26öæf–FVçFÇ’÷VRf÷&Vw&÷VæBà¢òòF†—2&WfVçG2ÆR&6¶w&÷VæB&VÖæçG2g&öÒ&V–ærÖFR÷VRv–âà¢f÷"†ÆWB6VVBÒ²6VVBÂæÇ—6—5F÷FÃ²6VVB³Ò’°¢–b†Æ&VÇ5·6VVEÒÇÂæÇ—6—5—†VÇ5·6VVB¢B²5ÒÂf—6–&ÆUF‡&W6†öÆB’6öçF–çVS°¢Æ&VÂ³Ò°¢ÆWB†VBÒ°¢ÆWBF–ÂÒ°¢ÆWB&VÒ°¢ÆWB†46öæf–FVçDf÷&Vw&÷VæBÒfÇ6S°¢Æ&VÇ5·6VVEÒÒÆ&VÃ°¢VWVU·F–Â²µÒÒ6VVC° ¢v†–ÆR††VBÂF–Â’°¢6öç7B–æFW‚ÒVWVU¶†VB²µÓ°¢6öç7BÇ†ÒæÇ—6—5—†VÇ5¶–æFW‚¢B²5Ó°¢&V³Ò°¢–b†Ç†ãÒ6öæf–FVçEF‡&W6†öÆB’†46öæf–FVçDf÷&Vw&÷VæBÒG'VS°¢6öç7B‚Ò–æFW‚RæÇ—6—5v–GFƒ°¢6öç7B’ÒÖF‚æfÆö÷"†–æFW‚òæÇ—6—5v–GF‚“° ¢6öç7BVçVWVRÒ†æW‡B’Óâ°¢–b†æW‡BÂÇÂæW‡BãÒæÇ—6—5F÷FÂÇÂÆ&VÇ5¶æW‡EÒÇÂæÇ—6—5—†VÇ5¶æW‡B¢B²5ÒÂf—6–&ÆUF‡&W6†öÆB’&WGW&ã°¢Æ&VÇ5¶æW‡EÒÒÆ&VÃ°¢VWVU·F–Â²µÒÒæW‡C°¢Ó°¢–b‡‚â’VçVWVR†–æFW‚Ò“°¢–b‡‚²ÂæÇ—6—5v–GF‚’VçVWVR†–æFW‚²“°¢–b‡’â’VçVWVR†–æFW‚ÒæÇ—6—5v–GF‚“°¢–b‡’²ÂæÇ—6—4†V–v‡B’VçVWVR†–æFW‚²æÇ—6—5v–GF‚“°¢Ğ ¢7G&öæt6ö×öæVçG5¶Æ&VÅÒÒ†46öæf–FVçDf÷&Vw&÷VæBbb&VãÒÖ–æ–×VÔ6ö×öæVçD&V°¢Ğ ¢ÆWB6†ævVBÒfÇ6S°¢f÷"†ÆWB–æFW‚Ò²–æFW‚ÂF÷FÃ²–æFW‚³Ò’°¢6öç7B‚Ò–æFW‚Rv–GFƒ°¢6öç7B’ÒÖF‚æfÆö÷"†–æFW‚òv–GF‚“°¢6öç7BæÇ—6—5‚ÒÖF‚æÖ–â†æÇ—6—5v–GF‚ÒÂÖF‚æfÆö÷"‡‚¢æÇ—6—5v–GF‚òv–GF‚’“°¢6öç7BæÇ—6—5’ÒÖF‚æÖ–â†æÇ—6—4†V–v‡BÒÂÖF‚æfÆö÷"‡’¢æÇ—6—4†V–v‡Bò†V–v‡B’“°¢6öç7B6ö×öæVçDÆ&VÂÒÆ&VÇ5¶æÇ—6—5’¢æÇ—6—5v–GF‚²æÇ—6—5…Ó°¢–b‚6ö×öæVçDÆ&VÂÇÂ7G&öæt6ö×öæVçG5¶6ö×öæVçDÆ&VÅÒ’6öçF–çVS°¢6öç7BÒ–æFW‚¢C°¢6öç7BÇ†Ò—†VÇ5·²5Ó°¢–b†Ç†Âf—6–&ÆUF‡&W6†öÆBÇÂÇ†ãÒ#SR’6öçF–çVS° ¢6öç7B"Ò6÷W&6U—†VÇ5·Ó°¢6öç7BrÒ6÷W&6U—†VÇ5·²Ó°¢6öç7B"Ò6÷W&6U—†VÇ5·²%Ó°¢6öç7BÖ‚ÒÖF‚æÖ‚‡"ÂrÂ"“°¢6öç7BÖ–âÒÖF‚æÖ–â‡"ÂrÂ"“°¢6öç7BÇVÖ–ææ6RÒ"¢ã#“’²r¢ãSƒr²"¢ãC° ¢òòv†—FRÂ—f÷'’Â7&VÒÂæBÆ–v‡B&V–vRf÷&Vw&÷VæB&RF†R6öÆ÷W'2Ö÷7@¢òòögFVâvV¶VæVB'’v†—FRÖ&6¶w&÷VæBÖGFRâ6GW&FVB†–v†Æ–v‡G2æ@¢òò–çFVçF–öæÂG&ç6ÇV6VçBVffV7G2&RÆVgBVçF÷V6†VBà¢–b†ÇVÖ–ææ6RÂSÇÂÖ‚ÒÖ–ââ“’6öçF–çVS° ¢òòFòæ÷B×Æ–g’&&VÇ’f—6–&ÆR&VÖæçG2F†B&RVffV7F—fVÇ’–FVçF–6À¢òòFòF†R6×ÆVB6÷W&6R&6¶G&÷â&VÂ—f÷'’ö&V–vR'Gv÷&²æ÷&ÖÆÇ’†2¢òòÖV7W&&ÆR6öÆ÷W"F–ffW&Væ6R÷"&WF–ç27G&öævW"ÖGFRfÇVRà¢–b€¢&6¶w&÷VæDW7F–ÖFRbbÇ†Â#Bb`¢6öÆ÷$F—7Fæ6R…·"ÂrÂ%ÒÂ&6¶w&÷VæDW7F–ÖFRæ&r’ÃÒP¢’6öçF–çVS° ¢ÆWBF÷V6†W5G&ç7&Væ7’ÒfÇ6S°¢ÆWB7W÷'F–ætæV–v†&÷W'2Ò°¢f÷"†ÆWBG’ÒÓ²G’ÃÒ²G’³Ò’°¢6öç7Bç’Ò’²G“°¢–b†ç’ÂÇÂç’ãÒ†V–v‡B’6öçF–çVS°¢f÷"†ÆWBG‚ÒÓ²G‚ÃÒ²G‚³Ò’°¢–b†G‚ÓÓÒbbG’ÓÓÒ’6öçF–çVS°¢6öç7Bç‚Ò‚²Gƒ°¢–b†ç‚ÂÇÂç‚ãÒv–GF‚’6öçF–çVS°¢6öç7BæV–v†&÷W$Ç†Ò—†VÇ5²†ç’¢v–GF‚²ç‚’¢B²5Ó°¢–b†æV–v†&÷W$Ç†ÃÒ"’F÷V6†W5G&ç7&Væ7’ÒG'VS°¢–b†æV–v†&÷W$Ç†ãÒf—6–&ÆUF‡&W6†öÆB’7W÷'F–ætæV–v†&÷W'2³Ò°¢Ğ¢Ğ ¢òò&W6W'fRöæÇ’F†RG'VR÷WFW&Ö÷7BçF–Æ–6VBVFvRâÆR–çFW&–÷"—†VÇ0¢òòæòÆöævW"æVVB6WfW&ÂÇ&VG’Ö÷VRæV–v†&÷W'3²F†BöÆB6öæF—F–öà¢òò6¶—VBÆ&vRv†—FRf6W2v†÷6Rv†öÆRÖGFR†B&VVâvV¶VæVBBöæ6Rà¢–b‡F÷V6†W5G&ç7&Væ7’ÇÂ7W÷'F–ætæV–v†&÷W'2ÂR’6öçF–çVS° ¢—†VÇ5·ÒÒ#°¢—†VÇ5·²ÒÒs°¢—†VÇ5·²%ÒÒ#°¢—†VÇ5·²5ÒÒ#SS°¢6†ævVBÒG'VS°¢Ğ ¢–b‚6†ævVB’&WGW&â&Æö#°¢7G‚çWD–ÖvTFF†–ÖvTFFÂÂ“°¢&WGW&â6çf5Fõæt&Æö"†6çf2“°§Ğ ¦gVæ7F–öâW7F–ÖFT÷VT6ÆVçW&6¶G&÷‡6÷W&6U—†VÇ2Â&W7VÇE—†VÇ2Âv–GF‚Â†V–v‡B’°¢6öç7BF÷FÂÒv–GF‚¢†V–v‡C°¢–b‚F÷FÂ’&WGW&âçVÆÃ° ¢òòärÖ’Ç&VG’&RG&ç7&VçB&÷VæBF†R7F–6¶W'2v†–ÆR6ÖÆÂ–V6W2öbF†P¢òòöÆBv†—FRö7&VÒ&6¶G&÷&VÖ–âG&VB–ç6–FRÆWGFW&–ærâ–âF†B66RF†P¢òòæ÷&ÖÂVFvR6×ÆW"†2æò÷VR&÷&FW"g&öÒv†–6‚FòW7F–ÖFR&6¶G&÷à¢òòf–æBF†RFöÖ–æçB'&–v‡BÂÆ÷rÖ6‡&öÖ6öÆ÷W"F÷V6†–ærG&ç7&Væ7’–ç7FVBà¢6öç7B&–ç2ÒæWrÖ‚“°¢6öç7B6V&6…&F—W2ÒÖF‚æÖ‚ƒÂÖF‚æÖ–âƒBÂÖF‚ç&÷VæB„ÖF‚æÖ–â‡v–GF‚Â†V–v‡B’òC#’’“° ¢f÷"†ÆWB–æFW‚Ò²–æFW‚ÂF÷FÃ²–æFW‚³Ò’°¢6öç7BÒ–æFW‚¢C°¢–b‡&W7VÇE—†VÇ5·²5ÒÂ#‚ÇÂ6÷W&6U—†VÇ5·²5ÒÂ#‚’6öçF–çVS° ¢6öç7B"Ò6÷W&6U—†VÇ5·Ó°¢6öç7BrÒ6÷W&6U—†VÇ5·²Ó°¢6öç7B"Ò6÷W&6U—†VÇ5·²%Ó°¢6öç7BÖ‚ÒÖF‚æÖ‚‡"ÂrÂ"“°¢6öç7BÖ–âÒÖF‚æÖ–â‡"ÂrÂ"“°¢6öç7BÇVÖ–ææ6RÒ"¢ã#“’²r¢ãSƒr²"¢ãC°¢–b†ÇVÖ–ææ6RÂSÇÂÖ‚ÒÖ–ââSB’6öçF–çVS° ¢6öç7B‚Ò–æFW‚Rv–GFƒ°¢6öç7B’ÒÖF‚æfÆö÷"†–æFW‚òv–GF‚“°¢ÆWBæV%G&ç7&Væ7’ÒfÇ6S°¢f÷"†ÆWBöfg6WBÒ²öfg6WBÃÒ6V&6…&F—W2bbæV%G&ç7&Væ7“²öfg6WB³Ò’°¢6öç7BæV–v†&÷W'2Ò°¢‚ãÒöfg6WBò–æFW‚Òöfg6WB¢ÓÀ¢‚²öfg6WBÂv–GF‚ò–æFW‚²öfg6WB¢ÓÀ¢’ãÒöfg6WBò–æFW‚Òv–GF‚¢öfg6WB¢ÓÀ¢’²öfg6WBÂ†V–v‡Bò–æFW‚²v–GF‚¢öfg6WB¢Ó¢Ó°¢æV%G&ç7&Væ7’ÒæV–v†&÷W'2ç6öÖR‚†æW‡B’ÓâæW‡BãÒbb&W7VÇE—†VÇ5¶æW‡B¢B²5ÒÂ3b“°¢Ğ¢–b‚æV%G&ç7&Væ7’’6öçF–çVS° ¢6öç7B¶W’ÒG·"ãâGÓ¢G¶rãâGÓ¢G¶"ãâGÖ°¢6öç7B&–âÒ&–ç2ævWB†¶W’’ÇÂ²6÷VçC¢Â#¢Âs¢Â#¢Ó°¢&–âæ6÷VçB³Ò°¢&–âç"³Ò#°¢&–âær³Òs°¢&–âæ"³Ò#°¢&–ç2ç6WB†¶W’Â&–â“°¢Ğ ¢ÆWB&W7BÒçVÆÃ°¢f÷"†6öç7B&–âöb&–ç2çfÇVW2‚’’°¢–b‚&W7BÇÂ&–âæ6÷VçBâ&W7Bæ6÷VçB’&W7BÒ&–ã°¢Ğ¢–b‚&W7BÇÂ&W7Bæ6÷VçBÂÖF‚æÖ‚ƒ‚ÂÖF‚ç&÷VæB‡F÷FÂ¢ã"’’’&WGW&âçVÆÃ° ¢&WGW&â°¢&s¢´ÖF‚ç&÷VæB†&W7Bç"ò&W7Bæ6÷VçB’ÂÖF‚ç&÷VæB†&W7Bærò&W7Bæ6÷VçB’ÂÖF‚ç&÷VæB†&W7Bæ"ò&W7Bæ6÷VçB•ÒÀ¢FöÆW&æ6S¢C@¢Ó°§Ğ ¦7–æ2gVæ7F–öâ&VÖ÷fTVæ6Æ÷6VD&6¶G&÷ö6¶WG2†&Æö"Â6÷W&6Tf–ÆRÂvw&W76—fRÒfÇ6R’°¢G'’°¢6öç7B6÷W&6RÒv—BG&tf–ÆUFô6çf2‡6÷W&6Tf–ÆR“°¢6öç7B&W7VÇBÒv—BG&tf–ÆUFô6çf2†&Æö"“°¢6öç7B²v–GF‚Â†V–v‡BÒÒ&W7VÇBæ6çf3°¢–b‚v–GF‚ÇÂ†V–v‡B’&WGW&â&Æö#° ¢ÆWB6÷W&6T7G‚Ò6÷W&6Ræ7Gƒ°¢–b‡6÷W&6Ræ6çf2çv–GF‚ÓÒv–GF‚ÇÂ6÷W&6Ræ6çf2æ†V–v‡BÓÒ†V–v‡B’°¢6öç7B66ÆVBÒFö7VÖVçBæ7&VFTVÆVÖVçB‚v6çf2r“°¢66ÆVBçv–GF‚Òv–GFƒ°¢66ÆVBæ†V–v‡BÒ†V–v‡C°¢6öç7B66ÆVD7G‚Ò66ÆVBævWD6öçFW‡B‚s&BrÂ²v–ÆÅ&VDg&WVVçFÇ“¢G'VRÒ“°¢–b‚66ÆVD7G‚’&WGW&â&Æö#°¢66ÆVD7G‚æG&t–ÖvR‡6÷W&6Ræ6çf2ÂÂÂv–GF‚Â†V–v‡B“°¢6÷W&6T7G‚Ò66ÆVD7Gƒ°¢Ğ ¢6öç7B&W7VÇDFFÒ&W7VÇBæ7G‚ævWD–ÖvTFFƒÂÂv–GF‚Â†V–v‡B“°¢6öç7B6÷W&6TFFÒ6÷W&6T7G‚ævWD–ÖvTFFƒÂÂv–GF‚Â†V–v‡B“°¢6öç7B—†VÇ2Ò&W7VÇDFFæFF°¢6öç7B÷&–v–æÂÒ6÷W&6TFFæFF°¢ÆWBW7F–ÖFRÒW7F–ÖFUVæ–f÷&ÔVFvT&6¶w&÷VæB†÷&–v–æÂÂv–GF‚Â†V–v‡B“°¢ÆWBW6VEG&ç7&VçDfÆÆ&6²ÒfÇ6S°¢–b‚W7F–ÖFR’°¢W7F–ÖFRÒW7F–ÖFT÷VT6ÆVçW&6¶G&÷†÷&–v–æÂÂ—†VÇ2Âv–GF‚Â†V–v‡B“°¢W6VEG&ç7&VçDfÆÆ&6²Ò&ööÆVâ†W7F–ÖFR“°¢Ğ¢–b‚W7F–ÖFR’&WGW&â&Æö#° ¢6öç7B²&rÂFöÆW&æ6RÒÒW7F–ÖFS°¢6öç7BF÷FÂÒv–GF‚¢†V–v‡C°¢6öç7Bf—6—FVBÒæWrV–çC„'&’‡F÷FÂ“°¢6öç7BVWVRÒæWr–çC3$'&’‡F÷FÂ“°¢6öç7B6÷W&6UFöÆW&æ6RÒÖF‚æÖ‚ƒbÂÖF‚æÖ–âƒ3"ÂFöÆW&æ6R¢ãc"’“°¢6öç7B&W7VÇEFöÆW&æ6RÒÖF‚æÖ‚ƒ#"ÂÖF‚æÖ–âƒC"ÂFöÆW&æ6R¢ã’’“°¢6öç7B&÷VæF'”F—7Fæ6RÒÖF‚æÖ‚ƒ3ÂFöÆW&æ6R¢ãR“°¢6öç7BÖ–ä&VÒÖF‚æÖ‚ƒ‚ÂÖF‚ç&÷VæB‡F÷FÂ¢ãB’“°¢6öç7BÖ„&VÒÖF‚æÖ‚†Ö–ä&V²ÂÖF‚ç&÷VæB‡F÷FÂ¢ã‚’“°¢6öç7BÖ…v–GF‚ÒÖF‚æÖ‚ƒ‚ÂÖF‚ç&÷VæB‡v–GF‚¢ãr’“°¢6öç7BÖ„†V–v‡BÒÖF‚æÖ‚ƒ‚ÂÖF‚ç&÷VæB††V–v‡B¢ãB’“°¢ÆWB6†ævVBÒfÇ6S° ¢6öç7B—46æF–FFRÒ†–æFW‚’Óâ°¢–b†–æFW‚ÂÇÂ–æFW‚ãÒF÷FÂÇÂf—6—FVE¶–æFW…Ò’&WGW&âfÇ6S°¢6öç7BÒ–æFW‚¢C°¢–b‡—†VÇ5·²5ÒÂ#‚ÇÂ÷&–v–æÅ·²5ÒÂ##’&WGW&âfÇ6S°¢&WGW&â€¢6öÆ÷$F—7Fæ6R…¶÷&–v–æÅ·ÒÂ÷&–v–æÅ·²ÒÂ÷&–v–æÅ·²%ÕÒÂ&r’ÃÒ6÷W&6UFöÆW&æ6Rb`¢6öÆ÷$F—7Fæ6R…·—†VÇ5·ÒÂ—†VÇ5·²ÒÂ—†VÇ5·²%ÕÒÂ&r’ÃÒ&W7VÇEFöÆW&æ6P¢“°¢Ó° ¢òòöââÇ&VG’×G&ç7&VçBärÂF†RfÆÆ&6²6öÆ÷W"—2W7VÆÇ’Ç6òF†P¢òò7F–6¶W"w2v†—FR÷WFÆ–æRâ6¶—'&öB6ö×öæVçBFVÆWF–öâæBöæÇ’W6RF†P¢òò×V6‚6fW"Â7G&ö¶RÖ'&6¶WFVBFW‡BÖv72&VÆ÷rà¢f÷"†ÆWB6VVBÒ²6VVBÂF÷FÂbbW6VEG&ç7&VçDfÆÆ&6³²6VVB³Ò’°¢–b‚—46æF–FFR‡6VVB’’6öçF–çVS° ¢ÆWB†VBÒ°¢ÆWBF–ÂÒ°¢f—6—FVE·6VVEÒÒ°¢VWVU·F–Â²µÒÒ6VVC°¢ÆWB&VÒ°¢ÆWBÖ–å‚Òv–GFƒ°¢ÆWBÖ–å’Ò†V–v‡C°¢ÆWBÖ…‚ÒÓ°¢ÆWBÖ…’ÒÓ°¢ÆWBF÷V6†W4VFvRÒfÇ6S° ¢v†–ÆR††VBÂF–Â’°¢6öç7B–æFW‚ÒVWVU¶†VB²µÓ°¢6öç7B‚Ò–æFW‚Rv–GFƒ°¢6öç7B’ÒÖF‚æfÆö÷"†–æFW‚òv–GF‚“°¢&V³Ò°¢Ö–å‚ÒÖF‚æÖ–â†Ö–å‚Â‚“°¢Ö–å’ÒÖF‚æÖ–â†Ö–å’Â’“°¢Ö…‚ÒÖF‚æÖ‚†Ö…‚Â‚“°¢Ö…’ÒÖF‚æÖ‚†Ö…’Â’“°¢–b‡‚ÓÓÒÇÂ’ÓÓÒÇÂ‚ÓÓÒv–GF‚ÒÇÂ’ÓÓÒ†V–v‡BÒ’F÷V6†W4VFvRÒG'VS° ¢6öç7BVçVWVRÒ†æW‡B’Óâ°¢–b‚—46æF–FFR†æW‡B’’&WGW&ã°¢f—6—FVE¶æW‡EÒÒ°¢VWVU·F–Â²µÒÒæW‡C°¢Ó°¢–b‡‚â’VçVWVR†–æFW‚Ò“°¢–b‡‚²Âv–GF‚’VçVWVR†–æFW‚²“°¢–b‡’â’VçVWVR†–æFW‚Òv–GF‚“°¢–b‡’²Â†V–v‡B’VçVWVR†–æFW‚²v–GF‚“°¢Ğ ¢6öç7B6ö×öæVçEv–GF‚ÒÖ…‚ÒÖ–å‚²°¢6öç7B6ö×öæVçD†V–v‡BÒÖ…’ÒÖ–å’²°¢–b€¢F÷V6†W4VFvRÇÀ¢&VÂÖ–ä&VÇÀ¢&VâÖ„&VÇÀ¢6ö×öæVçEv–GF‚âÖ…v–GF‚ÇÀ¢6ö×öæVçD†V–v‡BâÖ„†V–v‡@¢’6öçF–çVS° ¢ÆWB&÷VæF'•6×ÆW2Ò°¢ÆWB7G&öæt&÷VæF'•6×ÆW2Ò°¢f÷"†ÆWB’Ò²’ÂF–Ã²’³Ò’°¢6öç7B–æFW‚ÒVWVU¶•Ó°¢6öç7B‚Ò–æFW‚Rv–GFƒ°¢6öç7B’ÒÖF‚æfÆö÷"†–æFW‚òv–GF‚“°¢6öç7BæV–v†&÷W'2ÒµÓ°¢–b‡‚â’æV–v†&÷W'2çW6‚†–æFW‚Ò“°¢–b‡‚²Âv–GF‚’æV–v†&÷W'2çW6‚†–æFW‚²“°¢–b‡’â’æV–v†&÷W'2çW6‚†–æFW‚Òv–GF‚“°¢–b‡’²Â†V–v‡B’æV–v†&÷W'2çW6‚†–æFW‚²v–GF‚“° ¢f÷"†6öç7BæW‡BöbæV–v†&÷W'2’°¢–b‡f—6—FVE¶æW‡EÒ’6öçF–çVS°¢6öç7BÒæW‡B¢C°¢–b‡—†VÇ5·²5ÒÂC‚’6öçF–çVS°¢&÷VæF'•6×ÆW2³Ò°¢–b†6öÆ÷$F—7Fæ6R…·—†VÇ5·ÒÂ—†VÇ5·²ÒÂ—†VÇ5·²%ÕÒÂ&r’ãÒ&÷VæF'”F—7Fæ6R’°¢7G&öæt&÷VæF'•6×ÆW2³Ò°¢Ğ¢Ğ¢Ğ ¢6öç7Bf–ÆÅ&F–òÒ&VòÖF‚æÖ‚ƒÂ6ö×öæVçEv–GF‚¢6ö×öæVçD†V–v‡B“°¢6öç7B&÷VæF'•&F–òÒ7G&öæt&÷VæF'•6×ÆW2òÖF‚æÖ‚ƒÂ&÷VæF'•6×ÆW2“°¢6öç7B—5G&VD&6¶G&÷Ğ¢f–ÆÅ&F–òãÒãbb`¢&÷VæF'•6×ÆW2ãÒbb`¢&÷VæF'•&F–òãÒãcƒ° ¢–b‚—5G&VD&6¶G&÷’6öçF–çVS°¢f÷"†ÆWB’Ò²’ÂF–Ã²’³Ò’°¢—†VÇ5·VWVU¶•Ò¢B²5ÒÒ°¢Ğ¢6†ævVBÒG'VS°¢Ğ ¢òòFW‡BÆ&VÇ2ögFVâW6Rv†—FR÷WFÆ–æRF†B¦ö–ç2F†R&VÖ–æ–ærv†—FRv2–çFğ¢òòöæRÆ&vR6ö×öæVçBâFWFV7BF†÷6RvÇ—‚v26W&FVÇ“¢&6¶G&÷Ö6öÆ÷W&V@¢òò—†VÂ—2&VÖ÷fVBv†Vâ6GW&FVBFW‡B7G&ö¶W2'&6¶WB—B†÷&—¦öçFÆÇ’÷"fW'F–6ÆÇ’à¢òòÆ÷r×6GW&F–öâ&÷VæF&–W2†W–W2Â6¶–â†–v†Æ–v‡G2æBv†—FR6Æ÷F†–ær’&RW†6ÇVFVBà¢6öç7BvÇ—„vÖ6²ÒæWrV–çC„'&’‡F÷FÂ“°¢6öç7BÖ„vÇ—…7âÒvw&W76—fRòÖF‚æÖ‚ƒBÂÖF‚æÖ–âƒSbÂÖF‚ç&÷VæB„ÖF‚æÖ–â‡v–GF‚Â†V–v‡B’¢ãS"’’’¢ÖF‚æÖ‚ƒ‚ÂÖF‚æÖ–âƒ3BÂÖF‚ç&÷VæB„ÖF‚æÖ–â‡v–GF‚Â†V–v‡B’¢ã3"’’“°¢6öç7B—4&6¶G&÷—†VÂÒ†–æFW‚’Óâ°¢–b†–æFW‚ÂÇÂ–æFW‚ãÒF÷FÂ’&WGW&âfÇ6S°¢6öç7BÒ–æFW‚¢C°¢–b‡—†VÇ5·²5ÒÂ#‚ÇÂ÷&–v–æÅ·²5ÒÂ##’&WGW&âfÇ6S°¢&WGW&â€¢6öÆ÷$F—7Fæ6R…¶÷&–v–æÅ·ÒÂ÷&–v–æÅ·²ÒÂ÷&–v–æÅ·²%ÕÒÂ&r’ÃÒ6÷W&6UFöÆW&æ6Rb`¢6öÆ÷$F—7Fæ6R…·—†VÇ5·ÒÂ—†VÇ5·²ÒÂ—†VÇ5·²%ÕÒÂ&r’ÃÒ&W7VÇEFöÆW&æ6P¢“°¢Ó°¢6öç7B—56GW&FVE7G&ö¶RÒ†–æFW‚’Óâ°¢6öç7BÒ–æFW‚¢C°¢–b‡—†VÇ5·²5ÒÂ“b’&WGW&âfÇ6S°¢6öç7B"Ò—†VÇ5·Ó°¢6öç7BrÒ—†VÇ5·²Ó°¢6öç7B"Ò—†VÇ5·²%Ó°¢6öç7B6‡&öÖÒÖF‚æÖ‚‡"ÂrÂ"’ÒÖF‚æÖ–â‡"ÂrÂ"“°¢6öç7BÇVÖ–ææ6RÒ"¢ã#“’²r¢ãSƒr²"¢ãC°¢6öç7B&6¶w&÷VæDÇVÖ–ææ6RÒ&u³Ò¢ã#“’²&u³Ò¢ãSƒr²&u³%Ò¢ãC°¢6öç7B6öçG&7BÒ6öÆ÷$F—7Fæ6R…·"ÂrÂ%ÒÂ&r“°¢&WGW&â€¢6öçG&7BãÒ†vw&W76—fRò3B¢ÖF‚æÖ‚ƒC"Â&÷VæF'”F—7Fæ6R’’b`¢†6‡&öÖãÒ†vw&W76—fRò‚¢3B’ÇÂ†vw&W76—fRbb&6¶w&÷VæDÇVÖ–ææ6RÒÇVÖ–ææ6RãÒSB’¢“°¢Ó°¢6öç7B†57G&ö¶RÒ‡‚Â’ÂG‚ÂG’’Óâ°¢f÷"†ÆWB7FWÒ²7FWÃÒÖ„vÇ—…7ã²7FW³Ò’°¢6öç7Bç‚Ò‚²G‚¢7FW°¢6öç7Bç’Ò’²G’¢7FW°¢–b†ç‚ÂÇÂç’ÂÇÂç‚ãÒv–GF‚ÇÂç’ãÒ†V–v‡B’&WGW&âfÇ6S°¢6öç7BæW‡BÒç’¢v–GF‚²çƒ°¢6öç7BÒæW‡B¢C°¢–b‡—†VÇ5·²5ÒÂC’&WGW&âfÇ6S°¢–b†—56GW&FVE7G&ö¶R†æW‡B’’&WGW&âG'VS°¢–b‚—4&6¶G&÷—†VÂ†æW‡B’’&WGW&âfÇ6S°¢Ğ¢&WGW&âfÇ6S°¢Ó° ¢f÷"†ÆWB–æFW‚Ò²–æFW‚ÂF÷FÃ²–æFW‚³Ò’°¢–b‚—4&6¶G&÷—†VÂ†–æFW‚’’6öçF–çVS°¢6öç7B‚Ò–æFW‚Rv–GFƒ°¢6öç7B’ÒÖF‚æfÆö÷"†–æFW‚òv–GF‚“°¢6öç7B†÷&—¦öçFÆÇ”'&6¶WFVBÒ†57G&ö¶R‡‚Â’ÂÓÂ’bb†57G&ö¶R‡‚Â’ÂÂ“°¢6öç7BfW'F–6ÆÇ”'&6¶WFVBÒ†57G&ö¶R‡‚Â’ÂÂÓ’bb†57G&ö¶R‡‚Â’ÂÂ“°¢6öç7BF–vöæÄF÷vä'&6¶WFVBÒvw&W76—fRbb†57G&ö¶R‡‚Â’ÂÓÂÓ’bb†57G&ö¶R‡‚Â’ÂÂ“°¢6öç7BF–vöæÅW'&6¶WFVBÒvw&W76—fRbb†57G&ö¶R‡‚Â’ÂÓÂ’bb†57G&ö¶R‡‚Â’ÂÂÓ“°¢–b††÷&—¦öçFÆÇ”'&6¶WFVBÇÂfW'F–6ÆÇ”'&6¶WFVBÇÂF–vöæÄF÷vä'&6¶WFVBÇÂF–vöæÅW'&6¶WFVB’°¢vÇ—„vÖ6µ¶–æFW…ÒÒ°¢Ğ¢Ğ ¢òòw&÷r6öæf—&ÖVB6VVG2öæÇ’fWr—†VÇ2F‡&÷Vv‚ÖF6†–ær&6¶G&÷6öÆ÷W"à¢òòF†—26ÆV'2F†RgVÆÂçF–Æ–6VBvv—F†÷WBföÆÆ÷v–ærF†B6öÆ÷W"&÷Væ@¢òòF†RVçF—&Rv†—FR7F–6¶W"÷WFÆ–æRà¢6öç7BW‡ç6–öå76W2Òvw&W76—fRòB¢°¢f÷"†ÆWB72Ò²72ÂW‡ç6–öå76W3²72³Ò’°¢6öç7BFF—F–öç2ÒµÓ°¢f÷"†ÆWB–æFW‚Ò²–æFW‚ÂF÷FÃ²–æFW‚³Ò’°¢–b‚vÇ—„vÖ6µ¶–æFW…Ò’6öçF–çVS°¢6öç7B‚Ò–æFW‚Rv–GFƒ°¢6öç7B’ÒÖF‚æfÆö÷"†–æFW‚òv–GF‚“°¢6öç7BæV–v†&÷W'2ÒµÓ°¢–b‡‚â’æV–v†&÷W'2çW6‚†–æFW‚Ò“°¢–b‡‚²Âv–GF‚’æV–v†&÷W'2çW6‚†–æFW‚²“°¢–b‡’â’æV–v†&÷W'2çW6‚†–æFW‚Òv–GF‚“°¢–b‡’²Â†V–v‡B’æV–v†&÷W'2çW6‚†–æFW‚²v–GF‚“°¢–b†vw&W76—fRbb‚âbb’â’æV–v†&÷W'2çW6‚†–æFW‚Òv–GF‚Ò“°¢–b†vw&W76—fRbb‚²Âv–GF‚bb’â’æV–v†&÷W'2çW6‚†–æFW‚Òv–GF‚²“°¢–b†vw&W76—fRbb‚âbb’²Â†V–v‡B’æV–v†&÷W'2çW6‚†–æFW‚²v–GF‚Ò“°¢–b†vw&W76—fRbb‚²Âv–GF‚bb’²Â†V–v‡B’æV–v†&÷W'2çW6‚†–æFW‚²v–GF‚²“°¢f÷"†6öç7BæW‡BöbæV–v†&÷W'2’°¢–b‚vÇ—„vÖ6µ¶æW‡EÒbb—4&6¶G&÷—†VÂ†æW‡B’’FF—F–öç2çW6‚†æW‡B“°¢Ğ¢Ğ¢–b‚FF—F–öç2æÆVæwF‚’'&V³°¢f÷"†6öç7BæW‡BöbFF—F–öç2’vÇ—„vÖ6µ¶æW‡EÒÒ#°¢Ğ¢f÷"†ÆWB–æFW‚Ò²–æFW‚ÂF÷FÃ²–æFW‚³Ò’°¢–b‚vÇ—„vÖ6µ¶–æFW…Ò’6öçF–çVS°¢—†VÇ5¶–æFW‚¢B²5ÒÒ°¢6†ævVBÒG'VS°¢Ğ ¢–b‚6†ævVB’&WGW&â&Æö#°¢&W7VÇBæ7G‚çWD–ÖvTFF‡&W7VÇDFFÂÂ“°¢&WGW&âv—B6çf5Fõæt&Æö"‡&W7VÇBæ6çf2“°¢Ò6F6‚†W'&÷"’°¢6öç6öÆRçv&â‚tVæ6Æ÷6VB&6¶G&÷6ÆVçW6¶—VC¢rÂW'&÷"“°¢&WGW&â&Æö#°¢Ğ§Ğ ¦7–æ2gVæ7F–öâ&Vf–æT†—$&6¶w&÷VæD6†ææVÇ2†&Æö"’°¢6öç7B²6çf2Â7G‚ÒÒv—BG&tf–ÆUFô6çf2†&Æö"“°¢6öç7B²v–GF‚Â†V–v‡BÒÒ6çf3°¢–b‚v–GF‚ÇÂ†V–v‡BÇÂv–GF‚Â‚ÇÂ†V–v‡BÂ‚’&WGW&â&Æö#° ¢6öç7BÖ„æÇ—6—4F–ÖVç6–öâÒ#°¢6öç7B66ÆRÒÖF‚æÖ–âƒÂÖ„æÇ—6—4F–ÖVç6–öâòÖF‚æÖ‚‡v–GF‚Â†V–v‡B’“°¢6öç7BæÇ—6—5v–GF‚ÒÖF‚æÖ‚ƒÂÖF‚ç&÷VæB‡v–GF‚¢66ÆR’“°¢6öç7BæÇ—6—4†V–v‡BÒÖF‚æÖ‚ƒÂÖF‚ç&÷VæB††V–v‡B¢66ÆR’“°¢–b†æÇ—6—5v–GF‚Â‚ÇÂæÇ—6—4†V–v‡BÂ‚’&WGW&â&Æö#° ¢6öç7BæÇ—6—46çf2ÒFö7VÖVçBæ7&VFTVÆVÖVçB‚v6çf2r“°¢æÇ—6—46çf2çv–GF‚ÒæÇ—6—5v–GFƒ°¢æÇ—6—46çf2æ†V–v‡BÒæÇ—6—4†V–v‡C°¢6öç7BæÇ—6—47G‚ÒæÇ—6—46çf2ævWD6öçFW‡B‚s&BrÂ²v–ÆÅ&VDg&WVVçFÇ“¢G'VRÒ“°¢–b‚æÇ—6—47G‚’&WGW&â&Æö#°¢æÇ—6—47G‚æ–ÖvU6Öö÷F†–ætVæ&ÆVBÒG'VS°¢æÇ—6—47G‚æ–ÖvU6Öö÷F†–æuVÆ—G’Òv†–v‚s°¢æÇ—6—47G‚æG&t–ÖvR†6çf2ÂÂÂæÇ—6—5v–GF‚ÂæÇ—6—4†V–v‡B“° ¢6öç7BæÇ—6—4FFÒæÇ—6—47G‚ævWD–ÖvTFFƒÂÂæÇ—6—5v–GF‚ÂæÇ—6—4†V–v‡B’æFF°¢6öç7BF÷FÂÒæÇ—6—5v–GF‚¢æÇ—6—4†V–v‡C°¢6öç7B&V6†&ÆRÒæWrV–çC„'&’‡F÷FÂ“°¢6öç7BVWVRÒæWr–çC3$'&’‡F÷FÂ“°¢6öç7BG&ç7&VçEF‡&W6†öÆBÒC°¢6öç7BvVµF‡&W6†öÆBÒ#S°¢6öç7B6öæf–FVçEF‡&W6†öÆBÒ##S°¢ÆWB†VBÒ°¢ÆWBF–ÂÒ° ¢òò7F'Bg&öÒ—†VÇ2F†BF†R&V6—6–öâÖGFRÇ&VG’6öç6–FW'2&6¶w&÷VæBÀ¢òò–æ6ÇVF–ær6ÖÆÂG&ç7&VçB†öÆW2âw&÷röæÇ’F‡&÷Vv‚vV²Ö6öæf–FVæ6RÖGFP¢òò6ò6öÆ–B†—"Â6¶–âæB6Æ÷F†–ær6ææ÷B&V6öÖR'BöbF†R&6¶w&÷VæBF‚à¢f÷"†ÆWB–æFW‚Ò²–æFW‚ÂF÷FÃ²–æFW‚³Ò’°¢–b†æÇ—6—4FF¶–æFW‚¢B²5ÒâG&ç7&VçEF‡&W6†öÆB’6öçF–çVS°¢&V6†&ÆU¶–æFW…ÒÒ°¢VWVU·F–Â²µÒÒ–æFWƒ°¢Ğ ¢6öç7BG'•&V6‚Ò†–æFW‚’Óâ°¢–b†–æFW‚ÂÇÂ–æFW‚ãÒF÷FÂÇÂ&V6†&ÆU¶–æFW…Ò’&WGW&ã°¢–b†æÇ—6—4FF¶–æFW‚¢B²5ÒâvVµF‡&W6†öÆB’&WGW&ã°¢&V6†&ÆU¶–æFW…ÒÒ°¢VWVU·F–Â²µÒÒ–æFWƒ°¢Ó° ¢v†–ÆR††VBÂF–Â’°¢6öç7B–æFW‚ÒVWVU¶†VB²µÓ°¢6öç7B‚Ò–æFW‚RæÇ—6—5v–GFƒ°¢6öç7B’ÒÖF‚æfÆö÷"†–æFW‚òæÇ—6—5v–GF‚“°¢–b‡‚â’G'•&V6‚†–æFW‚Ò“°¢–b‡‚²ÂæÇ—6—5v–GF‚’G'•&V6‚†–æFW‚²“°¢–b‡’â’G'•&V6‚†–æFW‚ÒæÇ—6—5v–GF‚“°¢–b‡’²ÂæÇ—6—4†V–v‡B’G'•&V6‚†–æFW‚²æÇ—6—5v–GF‚“°¢Ğ ¢6öç7B6æF–FFW2ÒæWrV–çC„'&’‡F÷FÂ“°¢6öç7B†W2Òµ³ÂÒÂ³ÂÒÂ³ÂÒÂ³ÂÓÕÓ°¢6öç7B6V&6…&F—W2Òc°¢ÆWB6æF–FFT6÷VçBÒ° ¢6öç7B†46öæf–FVçE—†VÂÒ‡‚Â’ÂG‚ÂG’’Óâ°¢f÷"†ÆWB7FWÒ²7FWÃÒ6V&6…&F—W3²7FW³Ò’°¢6öç7Bç‚Ò‚²G‚¢7FW°¢6öç7Bç’Ò’²G’¢7FW°¢–b†ç‚ÂÇÂç‚ãÒæÇ—6—5v–GF‚ÇÂç’ÂÇÂç’ãÒæÇ—6—4†V–v‡B’'&V³°¢6öç7BÇ†ÒæÇ—6—4FF²†ç’¢æÇ—6—5v–GF‚²ç‚’¢B²5Ó°¢–b†Ç†ãÒ6öæf–FVçEF‡&W6†öÆB’&WGW&âG'VS°¢Ğ¢&WGW&âfÇ6S°¢Ó° ¢f÷"†ÆWB’Ò6V&6…&F—W3²’ÂæÇ—6—4†V–v‡BÒ6V&6…&F—W3²’³Ò’°¢f÷"†ÆWB‚Ò6V&6…&F—W3²‚ÂæÇ—6—5v–GF‚Ò6V&6…&F—W3²‚³Ò’°¢6öç7B–æFW‚Ò’¢æÇ—6—5v–GF‚²ƒ°¢–b‚&V6†&ÆU¶–æFW…Ò’6öçF–çVS°¢6öç7BÇ†ÒæÇ—6—4FF¶–æFW‚¢B²5Ó°¢–b†Ç†ÃÒG&ç7&VçEF‡&W6†öÆBÇÂÇ†âvVµF‡&W6†öÆB’6öçF–çVS° ¢ÆWB&WGvVVäf÷&Vw&÷VæBÒfÇ6S°¢f÷"†6öç7B¶G‚ÂG•Òöb†W2’°¢–b††46öæf–FVçE—†VÂ‡‚Â’ÂG‚ÂG’’bb†46öæf–FVçE—†VÂ‡‚Â’ÂÖG‚ÂÖG’’’°¢&WGvVVäf÷&Vw&÷VæBÒG'VS°¢'&V³°¢Ğ¢Ğ¢–b‚&WGvVVäf÷&Vw&÷VæB’6öçF–çVS°¢6æF–FFW5¶–æFW…ÒÒ°¢6æF–FFT6÷VçB³Ò°¢Ğ¢Ğ ¢–b‚6æF–FFT6÷VçBÇÂ6æF–FFT6÷VçBâF÷FÂ¢ãB’&WGW&â&Æö#° ¢òòW‡æBFWFV7FVBæ'&÷rv6Æ–v‡FÇ’F‡&÷Vv‚F†R6ÖRvV²&6¶w&÷VæBF‚à¢òòF†—2÷Vç2F†RÖ–FFÆRöbvv—F†÷WB7&÷76–ær†–v‚Ö6öæf–FVæ6R†—"7G&æG2à¢6öç7B&Vf–æVDÖ6²Ò6æF–FFW2ç6Æ–6R‚“°¢6öç7BW‡æE&F—W2Ò#°¢f÷"†ÆWB’Ò²’ÂæÇ—6—4†V–v‡C²’³Ò’°¢f÷"†ÆWB‚Ò²‚ÂæÇ—6—5v–GFƒ²‚³Ò’°¢6öç7B–æFW‚Ò’¢æÇ—6—5v–GF‚²ƒ°¢–b‚6æF–FFW5¶–æFW…Ò’6öçF–çVS°¢f÷"†ÆWBG’ÒÖW‡æE&F—W3²G’ÃÒW‡æE&F—W3²G’³Ò’°¢6öç7Bç’Ò’²G“°¢–b†ç’ÂÇÂç’ãÒæÇ—6—4†V–v‡B’6öçF–çVS°¢f÷"†ÆWBG‚ÒÖW‡æE&F—W3²G‚ÃÒW‡æE&F—W3²G‚³Ò’°¢6öç7Bç‚Ò‚²Gƒ°¢–b†ç‚ÂÇÂç‚ãÒæÇ—6—5v–GF‚’6öçF–çVS°¢6öç7BæW‡BÒç’¢æÇ—6—5v–GF‚²çƒ°¢–b‚&V6†&ÆU¶æW‡EÒ’6öçF–çVS°¢–b†æÇ—6—4FF¶æW‡B¢B²5ÒÃÒvVµF‡&W6†öÆB’&Vf–æVDÖ6µ¶æW‡EÒÒ°¢Ğ¢Ğ¢Ğ¢Ğ ¢6öç7B–ÖvTFFÒ7G‚ævWD–ÖvTFFƒÂÂv–GF‚Â†V–v‡B“°¢6öç7B—†VÇ2Ò–ÖvTFFæFF°¢6öç7B…66ÆRÒæÇ—6—5v–GF‚òv–GFƒ°¢6öç7B•66ÆRÒæÇ—6—4†V–v‡Bò†V–v‡C°¢ÆWB6†ævVE—†VÇ2Ò° ¢f÷"†ÆWB’Ò²’Â†V–v‡C²’³Ò’°¢6öç7B’ÒÖF‚æÖ–â†æÇ—6—4†V–v‡BÒÂÖF‚æfÆö÷"‡’¢•66ÆR’“°¢f÷"†ÆWB‚Ò²‚Âv–GFƒ²‚³Ò’°¢6öç7B‚ÒÖF‚æÖ–â†æÇ—6—5v–GF‚ÒÂÖF‚æfÆö÷"‡‚¢…66ÆR’“°¢–b‚&Vf–æVDÖ6µ¶’¢æÇ—6—5v–GF‚²…Ò’6öçF–çVS°¢6öç7BÒ‡’¢v–GF‚²‚’¢C°¢6öç7BÇ†Ò—†VÇ5·²5Ó°¢–b†Ç†ÃÒG&ç7&VçEF‡&W6†öÆBÇÂÇ†ãÒ##B’6öçF–çVS° ¢ÆWBæW‡DÇ†ÒÇ†°¢–b†Ç†Âs"’æW‡DÇ†Ò°¢VÇ6R–b†Ç†Â3’æW‡DÇ†ÒÖF‚ç&÷VæB†Ç†¢ã3R“°¢VÇ6R–b†Ç†Âƒ’æW‡DÇ†ÒÖF‚ç&÷VæB†Ç†¢ãSR“°¢VÇ6RæW‡DÇ†ÒÖF‚ç&÷VæB†Ç†¢ãs"“° ¢–b†æW‡DÇ†ÓÓÒÇ†’6öçF–çVS°¢—†VÇ5·²5ÒÒæW‡DÇ†°¢6†ævVE—†VÇ2³Ò°¢Ğ¢Ğ ¢–b‚6†ævVE—†VÇ2’&WGW&â&Æö#°¢7G‚çWD–ÖvTFF†–ÖvTFFÂÂ“°¢&WGW&â6çf5Fõæt&Æö"†6çf2“°§Ğ ¦7–æ2gVæ7F–öâ&Vf–æU&V6—6–öäVFvW2†&Æö"’°¢6öç7B²6çf2Â7G‚ÒÒv—BG&tf–ÆUFô6çf2†&Æö"“°¢6öç7B²v–GF‚Â†V–v‡BÒÒ6çf3°¢–b‚v–GF‚ÇÂ†V–v‡BÇÂv–GF‚ÂRÇÂ†V–v‡BÂR’&WGW&â&Æö#° ¢6öç7B–ÖvTFFÒ7G‚ævWD–ÖvTFFƒÂÂv–GF‚Â†V–v‡B“°¢6öç7B—†VÇ2Ò–ÖvTFFæFF°¢6öç7B6÷W&6RÒæWrV–çC„6Æ×VD'&’‡—†VÇ2“°¢6öç7BæV–v†&÷$öfg6WG2Ò°¢²ÓÂÒÂ³ÂÒÂ³ÂÓÒÂ³ÂÒÀ¢²ÓÂÓÒÂ³ÂÓÒÂ²ÓÂÒÂ³ÂÒÀ¢²Ó"ÂÒÂ³"ÂÒÂ³ÂÓ%ÒÂ³Â%ÒÀ¢²Ó"ÂÓÒÂ³"ÂÓÒÂ²Ó"ÂÒÂ³"ÂÒÀ¢²ÓÂÓ%ÒÂ³ÂÓ%ÒÂ²ÓÂ%ÒÂ³Â%Ğ¢Ó°¢ÆWB6†ævVE—†VÇ2Ò° ¢f÷"†ÆWB’Ò#²’Â†V–v‡BÒ#²’³Ò’°¢f÷"†ÆWB‚Ò#²‚Âv–GF‚Ò#²‚³Ò’°¢6öç7BÒ‡’¢v–GF‚²‚’¢C°¢6öç7BÇ†Ò6÷W&6U·²5Ó°¢–b†Ç†ÃÒÇÂÇ†ãÒ#3‚’6öçF–çVS° ¢ÆWBG&ç7&VçDæV&'’ÒfÇ6S°¢ÆWB"Ò°¢ÆWBrÒ°¢ÆWB"Ò°¢ÆWB6öæf–FVçD6÷VçBÒ° ¢f÷"†6öç7B¶G‚ÂG•ÒöbæV–v†&÷$öfg6WG2’°¢6öç7BçÒ‚‡’²G’’¢v–GF‚²‡‚²G‚’’¢C°¢6öç7BæV–v†&÷$Ç†Ò6÷W&6U¶ç²5Ó°¢–b†æV–v†&÷$Ç†ÃÒB’G&ç7&VçDæV&'’ÒG'VS°¢–b†æV–v†&÷$Ç†ãÒ#3"’°¢"³Ò6÷W&6U¶çÓ°¢r³Ò6÷W&6U¶ç²Ó°¢"³Ò6÷W&6U¶ç²%Ó°¢6öæf–FVçD6÷VçB³Ò°¢Ğ¢Ğ ¢òòöæÇ’F÷V6‚F†R7GVÂÖGFR&÷VæF'’â6VÖ’×G&ç7&VçBFWF–Ç2–ç6–FP¢òòF†R7V&¦V7B&R&W6W'fVBWfVâ–bF†V—"Ç††Vç2Fò&R6–Ö–Æ"à¢–b‚G&ç7&VçDæV&'’’6öçF–çVS° ¢ÆWBæW‡DÇ†ÒÇ†°¢–b†Ç†Â#"’æW‡DÇ†Ò°¢VÇ6R–b†Ç†ÂcB’æW‡DÇ†ÒÖF‚ç&÷VæB†Ç†¢ãC‚“°¢VÇ6R–b†Ç†Â‚’æW‡DÇ†ÒÖF‚ç&÷VæB†Ç†¢ãs"“°¢VÇ6R–b†Ç†Âs’æW‡DÇ†ÒÖF‚ç&÷VæB†Ç†¢ãƒ‚“°¢VÇ6RæW‡DÇ†ÒÖF‚ç&÷VæB†Ç†¢ã“b“° ¢–b†æW‡DÇ†ÓÒÇ†’°¢—†VÇ5·²5ÒÒæW‡DÇ†°¢6†ævVE—†VÇ2³Ò°¢Ğ ¢òòVÆÂ6öçFÖ–æFVBVFvR6öÆ÷'2F÷v&BæV&'’6öæf–FVçBf÷&Vw&÷VæB—†VÇ2à¢òòF†—2&VGV6W2f–çB6¶–âö†—"6öÆ÷'2g&öÒW'6öâ7FæF–ær&V†–æBF†P¢òò7V&¦V7Bv—F†÷WB&ÇW'&–ærF†R6öÆ–Bf6RÂ†—"÷"6Æ÷F†–ær–çFW&–÷"à¢–b†æW‡DÇ†âbb6öæf–FVçD6÷VçBâ’°¢6öç7BÖ—‚ÒÇ†Â‚òã3B¢Ç†Âsòã#"¢ã#°¢—†VÇ5·ÒÒÖF‚ç&÷VæB‡6÷W&6U·Ò¢ƒÒÖ—‚’²‡"ò6öæf–FVçD6÷VçB’¢Ö—‚“°¢—†VÇ5·²ÒÒÖF‚ç&÷VæB‡6÷W&6U·²Ò¢ƒÒÖ—‚’²†rò6öæf–FVçD6÷VçB’¢Ö—‚“°¢—†VÇ5·²%ÒÒÖF‚ç&÷VæB‡6÷W&6U·²%Ò¢ƒÒÖ—‚’²†"ò6öæf–FVçD6÷VçB’¢Ö—‚“°¢6†ævVE—†VÇ2³Ò°¢Ğ¢Ğ¢Ğ ¢–b‚6†ævVE—†VÇ2’&WGW&â&Æö#°¢7G‚çWD–ÖvTFF†–ÖvTFFÂÂ“°¢&WGW&â6çf5Fõæt&Æö"†6çf2“°§Ğ ¦gVæ7F–öâæÇ—¦TÇ†6ö×öæVçG2†7G‚Âv–GF‚Â†V–v‡BÂÇ†F‡&W6†öÆBÒ3b’°¢6öç7B—†VÇ2Ò7G‚ævWD–ÖvTFFƒÂÂv–GF‚Â†V–v‡B’æFF°¢6öç7BF÷FÂÒv–GF‚¢†V–v‡C°¢6öç7BÆ&VÇ2ÒæWr–çC3$'&’‡F÷FÂ“°¢6öç7BVWVRÒæWr–çC3$'&’‡F÷FÂ“°¢6öç7B6ö×öæVçG2ÒµÓ°¢ÆWBæW‡DÆ&VÂÒ° ¢6öç7Bf—6–&ÆRÒ†–æFW‚’Óâ—†VÇ5¶–æFW‚¢B²5ÒãÒÇ†F‡&W6†öÆC° ¢f÷"†ÆWB6VVBÒ²6VVBÂF÷FÃ²6VVB³Ò’°¢–b†Æ&VÇ5·6VVEÒÇÂf—6–&ÆR‡6VVB’’6öçF–çVS°¢æW‡DÆ&VÂ³Ò°¢ÆWB†VBÒ°¢ÆWBF–ÂÒ°¢VWVU·F–Â²µÒÒ6VVC°¢Æ&VÇ5·6VVEÒÒæW‡DÆ&VÃ°¢ÆWBÖ–å‚Òv–GFƒ°¢ÆWBÖ–å’Ò†V–v‡C°¢ÆWBÖ…‚ÒÓ°¢ÆWBÖ…’ÒÓ°¢ÆWB&VÒ° ¢v†–ÆR††VBÂF–Â’°¢6öç7B–æFW‚ÒVWVU¶†VB²µÓ°¢6öç7B‚Ò–æFW‚Rv–GFƒ°¢6öç7B’ÒÖF‚æfÆö÷"†–æFW‚òv–GF‚“°¢&V³Ò°¢–b‡‚ÂÖ–å‚’Ö–å‚Òƒ°¢–b‡‚âÖ…‚’Ö…‚Òƒ°¢–b‡’ÂÖ–å’’Ö–å’Ò“°¢–b‡’âÖ…’’Ö…’Ò“° ¢–b‡‚â’°¢6öç7BæW‡BÒ–æFW‚Ò°¢–b‚Æ&VÇ5¶æW‡EÒbbf—6–&ÆR†æW‡B’’°¢Æ&VÇ5¶æW‡EÒÒæW‡DÆ&VÃ°¢VWVU·F–Â²µÒÒæW‡C°¢Ğ¢Ğ¢–b‡‚²Âv–GF‚’°¢6öç7BæW‡BÒ–æFW‚²°¢–b‚Æ&VÇ5¶æW‡EÒbbf—6–&ÆR†æW‡B’’°¢Æ&VÇ5¶æW‡EÒÒæW‡DÆ&VÃ°¢VWVU·F–Â²µÒÒæW‡C°¢Ğ¢Ğ¢–b‡’â’°¢6öç7BæW‡BÒ–æFW‚Òv–GFƒ°¢–b‚Æ&VÇ5¶æW‡EÒbbf—6–&ÆR†æW‡B’’°¢Æ&VÇ5¶æW‡EÒÒæW‡DÆ&VÃ°¢VWVU·F–Â²µÒÒæW‡C°¢Ğ¢Ğ¢–b‡’²Â†V–v‡B’°¢6öç7BæW‡BÒ–æFW‚²v–GFƒ°¢–b‚Æ&VÇ5¶æW‡EÒbbf—6–&ÆR†æW‡B’’°¢Æ&VÇ5¶æW‡EÒÒæW‡DÆ&VÃ°¢VWVU·F–Â²µÒÒæW‡C°¢Ğ¢Ğ¢Ğ ¢6ö×öæVçG2çW6‚‡°¢Æ&VÃ¢æW‡DÆ&VÂÀ¢&VÀ¢Ö–å‚À¢Ö–å’À¢Ö…‚À¢Ö…’À¢v–GFƒ¢Ö…‚ÒÖ–å‚²À¢†V–v‡C¢Ö…’ÒÖ–å’²À¢6VçFW%ƒ¢†Ö–å‚²Ö…‚’ò"À¢6VçFW%“¢†Ö–å’²Ö…’’ò ¢Ò“°¢Ğ ¢&WGW&â²—†VÇ2ÂÆ&VÇ2Â6ö×öæVçG2Ó°§Ğ ¦gVæ7F–öâ6ö×öæVçDv†Â"’°¢6öç7BG‚ÒÖF‚æÖ‚†æÖ–å‚Ò"æÖ…‚Â"æÖ–å‚ÒæÖ…‚Â“°¢6öç7BG’ÒÖF‚æÖ‚†æÖ–å’Ò"æÖ…’Â"æÖ–å’ÒæÖ…’Â“°¢&WGW&âÖF‚æ‡—÷B†G‚ÂG’“°§Ğ ¦7–æ2gVæ7F–öâ6ÆVä”f÷&Vw&÷VæD'F–f7G2†&Æö"’°¢6öç7B²6çf2Â7G‚ÒÒv—BG&tf–ÆUFô6çf2†&Æö"“°¢6öç7B²v–GF‚Â†V–v‡BÒÒ6çf3°¢–b‚v–GF‚ÇÂ†V–v‡B’&WGW&â&Æö#° ¢òòFWFV7BF—66öææV7FVB&VÖæçG2öâ&÷VæFVB&Wf–WrâF†RgVÆÂ×&W6öÇWF–öà¢òò–ÖvR—2öæÇ’F÷V6†VBöæ6RgFW"F†R¶VWÖÖ6²—2FV6–FVBÂv†–6‚¶VW0¢òòÖVÖ÷'’W6R&V6öæ&ÆRöâ†öæW2à¢6öç7BÖ„æÇ—6—4F–ÖVç6–öâÒ“c°¢6öç7B66ÆRÒÖF‚æÖ–âƒÂÖ„æÇ—6—4F–ÖVç6–öâòÖF‚æÖ‚‡v–GF‚Â†V–v‡B’“°¢6öç7BæÇ—6—5v–GF‚ÒÖF‚æÖ‚ƒÂÖF‚ç&÷VæB‡v–GF‚¢66ÆR’“°¢6öç7BæÇ—6—4†V–v‡BÒÖF‚æÖ‚ƒÂÖF‚ç&÷VæB††V–v‡B¢66ÆR’“°¢6öç7BæÇ—6—46çf2ÒFö7VÖVçBæ7&VFTVÆVÖVçB‚v6çf2r“°¢æÇ—6—46çf2çv–GF‚ÒæÇ—6—5v–GFƒ°¢æÇ—6—46çf2æ†V–v‡BÒæÇ—6—4†V–v‡C°¢6öç7BæÇ—6—47G‚ÒæÇ—6—46çf2ævWD6öçFW‡B‚s&BrÂ²v–ÆÅ&VDg&WVVçFÇ“¢G'VRÒ“°¢–b‚æÇ—6—47G‚’&WGW&â&Æö#°¢æÇ—6—47G‚æ–ÖvU6Öö÷F†–ætVæ&ÆVBÒG'VS°¢æÇ—6—47G‚æ–ÖvU6Öö÷F†–æuVÆ—G’Òv†–v‚s°¢æÇ—6—47G‚æG&t–ÖvR†6çf2ÂÂÂæÇ—6—5v–GF‚ÂæÇ—6—4†V–v‡B“° ¢6öç7B²Æ&VÇ2Â6ö×öæVçG2ÒÒæÇ—¦TÇ†6ö×öæVçG2†æÇ—6—47G‚ÂæÇ—6—5v–GF‚ÂæÇ—6—4†V–v‡BÂ3b“°¢–b‚6ö×öæVçG2æÆVæwF‚’&WGW&â&Æö#° ¢6öç7B&æ¶VBÒ²ââæ6ö×öæVçG5Òç6÷'B‚†Â"’Óâ"æ&VÒæ&V“°¢6öç7Bf—6–&ÆT&VÒ&æ¶VBç&VGV6R‚‡7VÒÂ—FVÒ’Óâ7VÒ²—FVÒæ&VÂ“°¢6öç7BÆ&vW7BÒ&æ¶VE³Ó°¢6öç7BÆ&vW7E6†&RÒÆ&vW7Bæ&VòÖF‚æÖ‚ƒÂf—6–&ÆT&V“°¢6öç7BF÷f—fU6†&RÒ&æ¶VBç6Æ–6RƒÂR’ç&VGV6R‚‡7VÒÂ—FVÒ’Óâ7VÒ²—FVÒæ&VÂ’òÖF‚æÖ‚ƒÂf—6–&ÆT&V“° ¢òòR×7F–6¶W"6†VWB†2Öç’6–Ö–Æ&Ç’6—¦VBf÷&Vw&÷VæB—6ÆæG2â6¶—F†—0¢òò6ÆVçWVæÆW72fWrFöÖ–æçB7V&¦V7G266÷VçBf÷"Ö÷7Bf—6–&ÆR—†VÇ2à¢òòF†—27F–ÆÂ7W÷'G2Gvò÷"F‡&VRV÷ÆR&V6W6R6WfW&ÂÆ&vR6ö×öæVçG0¢òò6â&R&WF–æVBBF†R6ÖRF–ÖRà¢6öç7B†÷FôÆ–¶Tf÷&Vw&÷VæBÒÆ&vW7E6†&RãÒã3ÇÂF÷f—fU6†&RãÒãs#°¢–b‚†÷FôÆ–¶Tf÷&Vw&÷VæB’&WGW&â&Æö#° ¢6öç7BæÇ—6—5F÷FÂÒæÇ—6—5v–GF‚¢æÇ—6—4†V–v‡C°¢6öç7BÖ¦÷$Ö–ä&VÒÖF‚æÖ‚†æÇ—6—5F÷FÂ¢ã#RÂÆ&vW7Bæ&V¢ãsR“°¢6öç7B¶VWÆ&VÇ2ÒæWr6WB…¶Æ&vW7BæÆ&VÅÒ“°¢6öç7B¶WD6ö×öæVçG2Ò¶Æ&vW7EÓ° ¢f÷"†6öç7B6ö×öæVçBöb&æ¶VBç6Æ–6Rƒ’’°¢–b†6ö×öæVçBæ&VÂÖ¦÷$Ö–ä&V’6öçF–çVS°¢6öç7Bf–ÆÅ&F–òÒ6ö×öæVçBæ&VòÖF‚æÖ‚ƒÂ6ö×öæVçBçv–GF‚¢6ö×öæVçBæ†V–v‡B“°¢6öç7B7V7BÒÖF‚æÖ‚†6ö×öæVçBçv–GF‚òÖF‚æÖ‚ƒÂ6ö×öæVçBæ†V–v‡B’Â6ö×öæVçBæ†V–v‡BòÖF‚æÖ‚ƒÂ6ö×öæVçBçv–GF‚’“°¢6öç7BF÷V6†W4ÆVgBÒ6ö×öæVçBæÖ–å‚ÃÒ#°¢6öç7BF÷V6†W5&–v‡BÒ6ö×öæVçBæÖ…‚ãÒæÇ—6—5v–GF‚Ò3°¢6öç7BF÷V6†W5F÷Ò6ö×öæVçBæÖ–å’ÃÒ#°¢6öç7BF÷V6†W4&÷GFöÒÒ6ö×öæVçBæÖ…’ãÒæÇ—6—4†V–v‡BÒ3°¢6öç7BVFvT6÷VçBÒçVÖ&W"‡F÷V6†W4ÆVgMz÷{h‘éì¶»§q«^t€½¹ÍĞÑà€ô…¹…±åÍ¥Í…¹Ù…Ì¹•Ñ½¹Ñ•áĞ œÉœ°ìİ¥±±I•…‘É•ÅÕ•¹Ñ±äèÑÉÕ”ô¤ì(€¥˜€ …Ñà¤É•ÑÕÉ¸ìÍÑ…ÑÕÌè€İ…É¹¥¹œœ°Í½É”è€Èôì(€Ñà¹¥µ…•Mµ½½Ñ¡¥¹¹…‰±•€ôÑÉÕ”ì(€Ñà¹¥µ…•Mµ½½Ñ¡¥¹EÕ…±¥Ñä€ô€¡¥ œì(€Ñà¹‘É…İ%µ…”¡…¹Ù…Ì°€À°€À°…¹…±åÍ¥Í]¥‘Ñ °…¹…±åÍ¥Í!•¥¡Ğ¤ì((€½¹ÍĞ¥µ…•…Ñ„€ôÑà¹•Ñ%µ…•…Ñ„ À°€À°…¹…±åÍ¥Í]¥‘Ñ °…¹…±åÍ¥Í!•¥¡Ğ¤ì(€½¹ÍĞÁ¥á•±Ì€ô¥µ…•…Ñ„¹‘…Ñ„ì(€½¹ÍĞÑ½Ñ…°€ô…¹…±åÍ¥Í]¥‘Ñ €¨…¹…±åÍ¥Í!•¥¡Ğì(€½¹ÍĞÑ¡É•Í¡½±€ô€ÌØì(€±•ĞÙ¥Í¥‰±”€ô€Àì(€±•ĞÍ½±¥€ô€Àì((€½¹ÍĞ‰…¹‘`€ô5…Ñ ¹µ…à È°5…Ñ ¹É½Õ¹¡…¹…±åÍ¥Í]¥‘Ñ €¨€À¸ÀÌÔ¤¤ì(€½¹ÍĞ‰…¹‘d€ô5…Ñ ¹µ…à È°5…Ñ ¹É½Õ¹¡…¹…±åÍ¥Í!•¥¡Ğ€¨€À¸ÀÌÔ¤¤ì(€±•ĞÑ½ÁY¥Í¥‰±”€ô€Àì(€±•Ğ‰½ÑÑ½µY¥Í¥‰±”€ô€Àì(€±•Ğ±•™ÑY¥Í¥‰±”€ô€Àì(€±•ĞÉ¥¡ÑY¥Í¥‰±”€ô€Àì(€±•ĞÑ½Á1•™Ñ½É¹•ÉY¥Í¥‰±”€ô€Àì(€±•ĞÑ½ÁI¥¡Ñ½É¹•ÉY¥Í¥‰±”€ô€Àì(€±•ĞÕÁÁ•É1•™ÑM¥‘•Y¥Í¥‰±”€ô€Àì(€±•ĞÕÁÁ•ÉI¥¡ÑM¥‘•Y¥Í¥‰±”€ô€Àì(€½¹ÍĞ½É¹•É]¥‘Ñ €ô5…Ñ ¹µ…à Ì°5…Ñ ¹É½Õ¹¡…¹…±åÍ¥Í]¥‘Ñ €¨€À¸Äà¤¤ì(€½¹ÍĞ½É¹•É!•¥¡Ğ€ô5…Ñ ¹µ…à Ì°5…Ñ ¹É½Õ¹¡…¹…±åÍ¥Í!•¥¡Ğ€¨€À¸ÄØ¤¤ì(€½¹ÍĞÕÁÁ•ÉM¥‘•!•¥¡Ğ€ô5…Ñ ¹µ…à Ì°5…Ñ ¹É½Õ¹¡…¹…±åÍ¥Í!•¥¡Ğ€¨€À¸ØÈ¤¤ì((€™½È€¡±•Ğä€ô€Àìä€ğ…¹…±åÍ¥Í!•¥¡Ğìä€¬ô€Ä¤ì(€€€™½È€¡±•Ğà€ô€Àìà€ğ…¹…±åÍ¥Í]¥‘Ñ ìà€¬ô€Ä¤ì(€€€€€½¹ÍĞ…±Á¡„€ôÁ¥á•±Íl¡ä€¨…¹…±åÍ¥Í]¥‘Ñ €¬à¤€¨€Ğ€¬€Ítì(€€€€€¥˜€¡…±Á¡„€ğÑ¡É•Í¡½±¤½¹Ñ¥¹Õ”ì(€€€€€Ù¥Í¥‰±”€¬ô€Äì(€€€€€¥˜€¡…±Á¡„€øô€ÄàÀ¤Í½±¥€¬ô€Äì(€€€€€¥˜€¡ä€ğ‰…¹‘d¤Ñ½ÁY¥Í¥‰±”€¬ô€Äì(€€€€€¥˜€¡ä€øô…¹…±åÍ¥Í!•¥¡Ğ€´‰…¹‘d¤‰½ÑÑ½µY¥Í¥‰±”€¬ô€Äì(€€€€€¥˜€¡à€ğ‰…¹‘`¤±•™ÑY¥Í¥‰±”€¬ô€Äì(€€€€€¥˜€¡à€øô…¹…±åÍ¥Í]¥‘Ñ €´‰…¹‘`¤É¥¡ÑY¥Í¥‰±”€¬ô€Äì(€€€€€¥˜€¡à€ğ½É¹•É]¥‘Ñ €˜˜ä€ğ½É¹•É!•¥¡Ğ¤Ñ½Á1•™Ñ½É¹•ÉY¥Í¥‰±”€¬ô€Äì(€€€€€¥˜€¡à€øô…¹…±åÍ¥Í]¥‘Ñ €´½É¹•É]¥‘Ñ €˜˜ä€ğ½É¹•É!•¥¡Ğ¤Ñ½ÁI¥¡Ñ½É¹•ÉY¥Í¥‰±”€¬ô€Äì(€€€€€¥˜€¡à€ğ‰…¹‘`€˜˜ä€ğÕÁÁ•ÉM¥‘•!•¥¡Ğ¤ÕÁÁ•É1•™ÑM¥‘•Y¥Í¥‰±”€¬ô€Äì(€€€€€¥˜€¡à€øô…¹…±åÍ¥Í]¥‘Ñ €´‰…¹‘`€˜˜ä€ğÕÁÁ•ÉM¥‘•!•¥¡Ğ¤ÕÁÁ•ÉI¥¡ÑM¥‘•Y¥Í¥‰±”€¬ô€Äì(€€€ô(€ô((€½¹ÍĞÙ¥Í¥‰±•I…Ñ¥¼€ôÙ¥Í¥‰±”€¼5…Ñ ¹µ…à Ä°Ñ½Ñ…°¤ì(€¥˜€¡Ù¥Í¥‰±•I…Ñ¥¼€ğ€À¸ÀÄ¤É•ÑÕÉ¸ìÍÑ…ÑÕÌè€™…¥°œ°Í½É”è€Ôôì((€½¹ÍĞÑ½Á‘”€ôÑ½ÁY¥Í¥‰±”€¼5…Ñ ¹µ…à Ä°…¹…±åÍ¥Í]¥‘Ñ €¨‰…¹‘d¤ì(€½¹ÍĞ‰½ÑÑ½µ‘”€ô‰½ÑÑ½µY¥Í¥‰±”€¼5…Ñ ¹µ…à Ä°…¹…±åÍ¥Í]¥‘Ñ €¨‰…¹‘d¤ì(€½¹ÍĞ±•™Ñ‘”€ô±•™ÑY¥Í¥‰±”€¼5…Ñ ¹µ…à Ä°…¹…±åÍ¥Í!•¥¡Ğ€¨‰…¹‘`¤ì(€½¹ÍĞÉ¥¡Ñ‘”€ôÉ¥¡ÑY¥Í¥‰±”€¼5…Ñ ¹µ…à Ä°…¹…±åÍ¥Í!•¥¡Ğ€¨‰…¹‘`¤ì(€½¹ÍĞÑ½Á1•™Ñ½É¹•È€ôÑ½Á1•™Ñ½É¹•ÉY¥Í¥‰±”€¼5…Ñ ¹µ…à Ä°½É¹•É]¥‘Ñ €¨½É¹•É!•¥¡Ğ¤ì(€½¹ÍĞÑ½ÁI¥¡Ñ½É¹•È€ôÑ½ÁI¥¡Ñ½É¹•ÉY¥Í¥‰±”€¼5…Ñ ¹µ…à Ä°½É¹•É]¥‘Ñ €¨½É¹•É!•¥¡Ğ¤ì(€½¹ÍĞÕÁÁ•É1•™ÑM¥‘”€ôÕÁÁ•É1•™ÑM¥‘•Y¥Í¥‰±”€¼5…Ñ ¹µ…à Ä°‰…¹‘`€¨ÕÁÁ•ÉM¥‘•!•¥¡Ğ¤ì(€½¹ÍĞÕÁÁ•ÉI¥¡ÑM¥‘”€ôÕÁÁ•ÉI¥¡ÑM¥‘•Y¥Í¥‰±”€¼5…Ñ ¹µ…à Ä°‰…¹‘`€¨ÕÁÁ•ÉM¥‘•!•¥¡Ğ¤ì((€½¹ÍĞì½µÁ½¹•¹ÑÌô€ô…¹…±åé•±Á¡…½µÁ½¹•¹ÑÌ¡Ñà°…¹…±åÍ¥Í]¥‘Ñ °…¹…±åÍ¥Í!•¥¡Ğ°Ñ¡É•Í¡½±¤ì(€½¹ÍĞÍ¡••Ñ¡•¬€ô±…ÍÍ¥™åµ½Ñ¥½¹M¡••Ñ½µÁ½¹•¹ÑÌ¡½µÁ½¹•¹ÑÌ°…¹…±åÍ¥Í]¥‘Ñ °…¹…±åÍ¥Í!•¥¡Ğ¤ì(€¥˜€¡Í¡••Ñ¡•¬¹ÍÑ…ÑÕÌ€ôôô€Í¡••Ğœ¤É•ÑÕÉ¸ìÍÑ…ÑÕÌè€Á…ÍÌœ°Í½É”è€Àôì((€½¹ÍĞÉ…¹­•€ôl¸¸¹½µÁ½¹•¹ÑÍt¹Í½ÉĞ ¡„°ˆ¤€ôøˆ¹…É•„€´„¹…É•„¤ì(€½¹ÍĞ±…É•ÍĞ€ôÉ…¹­•‘lÁtì(€½¹ÍĞµ…©½È€ôÉ…¹­•¹™¥±Ñ•È ¡¥Ñ•´¤€ôø¥Ñ•´¹…É•„€øôÑ½Ñ…°€¨€À¸ÀÄà¤ì(€±•ĞÍÕÍÁ¥¥½ÕÍ•Ñ…¡•‘É•„€ô€Àì((€™½È€¡½¹ÍĞ½µÁ½¹•¹Ğ½˜µ…©½È¹Í±¥” Ä¤¤ì(€€€½¹ÍĞÑ½Õ¡•ÍQ½À€ô½µÁ½¹•¹Ğ¹µ¥¹d€ğô€Èì(€€€½¹ÍĞÑ½Õ¡•Í1•™Ğ€ô½µÁ½¹•¹Ğ¹µ¥¹`€ğô€Èì(€€€½¹ÍĞÑ½Õ¡•ÍI¥¡Ğ€ô½µÁ½¹•¹Ğ¹µ…á`€øô…¹…±åÍ¥Í]¥‘Ñ €´€Ìì(€€€½¹ÍĞÑ½Õ¡•Í	½ÑÑ½´€ô½µÁ½¹•¹Ğ¹µ…ád€øô…¹…±åÍ¥Í!•¥¡Ğ€´€Ìì(€€€½¹ÍĞ•‘•ÑÑ…¡•€ôÑ½Õ¡•ÍQ½ÀñğÑ½Õ¡•Í1•™ĞñğÑ½Õ¡•ÍI¥¡Ğì(€€€½¹ÍĞ™¥±±I…Ñ¥¼€ô½µÁ½¹•¹Ğ¹…É•„€¼5…Ñ ¹µ…à Ä°½µÁ½¹•¹Ğ¹İ¥‘Ñ €¨½µÁ½¹•¹Ğ¹¡•¥¡Ğ¤ì(€€€½¹ÍĞ…ÍÁ•Ğ€ô5…Ñ ¹µ…à¡½µÁ½¹•¹Ğ¹İ¥‘Ñ €¼5…Ñ ¹µ…à Ä°½µÁ½¹•¹Ğ¹¡•¥¡Ğ¤°½µÁ½¹•¹Ğ¹¡•¥¡Ğ€¼5…Ñ ¹µ…à Ä°½µÁ½¹•¹Ğ¹İ¥‘Ñ ¤¤ì(€€€¥˜€¡•‘•ÑÑ…¡•€˜˜€…Ñ½Õ¡•Í	½ÑÑ½´€˜˜€¡™¥±±I…Ñ¥¼€ğ€À¸ÔÈñğ…ÍÁ•Ğ€ø€È¸Ä¤¤ÍÕÍÁ¥¥½ÕÍ•Ñ…¡•‘É•„€¬ô½µÁ½¹•¹Ğ¹…É•„ì(€ô((€½¹ÍĞÍÕÍÁ¥¥½ÕÍ•Ñ…¡•‘I…Ñ¥¼€ôÍÕÍÁ¥¥½ÕÍ•Ñ…¡•‘É•„€¼5…Ñ ¹µ…à Ä°Ñ½Ñ…°¤ì(€½¹ÍĞ±…É•ÍÑ]¥‘Ñ¡I…Ñ¥¼€ô±…É•ÍĞ€ü±…É•ÍĞ¹İ¥‘Ñ €¼…¹…±åÍ¥Í]¥‘Ñ €è€Àì(€½¹ÍĞ±…É•ÍÑ!•¥¡ÑI…Ñ¥¼€ô±…É•ÍĞ€ü±…É•ÍĞ¹¡•¥¡Ğ€¼…¹…±åÍ¥Í!•¥¡Ğ€è€Àì(€½¹ÍĞ±…É•ÍÑQ½Õ¡•ÍQ½À€ô±…É•ÍĞ€ü±…É•ÍĞ¹µ¥¹d€ğô€È€è™…±Í”ì(€½¹ÍĞ±…É•ÍÑQ½Õ¡•ÍM¥‘”€ô±…É•ÍĞ€ü€¡±…É•ÍĞ¹µ¥¹`€ğô€Èñğ±…É•ÍĞ¹µ…á`€øô…¹…±åÍ¥Í]¥‘Ñ €´€Ì¤€è™…±Í”ì((€±•ĞÍ½É”€ô€Àì(€¥˜€¡Ù¥Í¥‰±•I…Ñ¥¼€ø€À¸Üà¤Í½É”€¬ô€Ğì(€•±Í”¥˜€¡Ù¥Í¥‰±•I…Ñ¥¼€ø€À¸ØÜ¤Í½É”€¬ô€Èì(€•±Í”¥˜€¡Ù¥Í¥‰±•I…Ñ¥¼€ø€À¸Ôà¤Í½É”€¬ô€Äì((€¥˜€¡Ñ½Á‘”€ø€À¸ĞÈ€˜˜5…Ñ ¹µ…à¡±•™Ñ‘”°É¥¡Ñ‘”¤€ø€À¸ÌÈ¤Í½É”€¬ô€Èì(€•±Í”¥˜€¡Ñ½Á‘”€ø€À¸ÌÀ€˜˜5…Ñ ¹µ…à¡±•™Ñ‘”°É¥¡Ñ‘”¤€ø€À¸ÈĞ¤Í½É”€¬ô€Äì((€¥˜€¡±•™Ñ‘”€ø€À¸Ôà€˜˜É¥¡Ñ‘”€ø€À¸Ôà€˜˜Ù¥Í¥‰±•I…Ñ¥¼€ø€À¸Ğà¤Í½É”€¬ô€Èì((€€¼¼½µÁ±•à¥¹‘½½È™…¥±ÕÉ•Ì½™Ñ•¸±•…Ù”±…É”•¥±¥¹œ½Í¥¹‰½…ÉÉ•¥½¹Ì¥¸‰½Ñ (€€¼¼ÕÁÁ•È½É¹•ÉÌ•Ù•¸Ñ¡½Õ Ñ¡”•¹Ñ•ÈÍÕ‰©•Ğİ…Ì¥Í½±…Ñ•¸±•¥Ñ¥µ…Ñ”(€€¼¼±½Í”µÕÀµ…äÑ½Õ Ñ¡”™É…µ”Ñ½¼°Í¼½¹±äÑÉ•…ĞÑ¡¥Ì…ÌÍÑÉ½¹œ½¹Ñ…µ¥¹…Ñ¥½¸(€€¼¼İ¡•¸Ñ¡”½Ù•É…±°™½É•É½Õ¹¥Ì¹½Ğ…±É•…‘ä™¥±±¥¹œ¹•…É±äÑ¡”İ¡½±”¥µ…”¸(€½¹ÍĞ‰½Ñ¡UÁÁ•É½É¹•ÉÍ½¹Ñ…µ¥¹…Ñ•€ô(€€€Ñ½Á1•™Ñ½É¹•È€ø€À¸ÈĞ€˜˜(€€€Ñ½ÁI¥¡Ñ½É¹•È€ø€À¸ÈĞ€˜˜(€€€Ñ½Á‘”€ø€À¸ÈÀ€˜˜(€€€Ù¥Í¥‰±•I…Ñ¥¼€ø€À¸ÈĞ€˜˜(€€€Ù¥Í¥‰±•I…Ñ¥¼€ğ€À¸Üàì(€¥˜€¡‰½Ñ¡UÁÁ•É½É¹•ÉÍ½¹Ñ…µ¥¹…Ñ•¤Í½É”€¬ô€Ğì((€€¼¼M½™Ñ•ÈÕÁÁ•Èµ™É…µ”Í¥¹…±Ì…É”¥¹Ñ•¹Ñ¥½¹…±±äİ…É¹¥¹œµÉ…‘”¸Q¡•äµ…­”(€€¼¼=I5	½µÁ…É”……¥¹ÍĞ5=9•Ğİ¥Ñ¡½ÕĞ¥µµ•‘¥…Ñ•±ä‰±½­¥¹œ„±•¥Ñ¥µ…Ñ”(€€¼¼±½Í”µÕÀ½ÈÉ½ÕÀÁ¡½Ñ¼Ñ¡…Ğ¡…ÁÁ•¹ÌÑ¼Ñ½Õ ½¹”•‘”¸(€½¹ÍĞÍ½™Ñ	½Ñ¡UÁÁ•É½É¹•ÉÌ€ô(€€€Ñ½Á1•™Ñ½É¹•È€ø€À¸ÄØ€˜˜(€€€Ñ½ÁI¥¡Ñ½É¹•È€ø€À¸ÄØ€˜˜(€€€Ñ½Á‘”€ø€À¸ÄÌ€˜˜(€€€Ù¥Í¥‰±•I…Ñ¥¼€ø€À¸ÈÀ€˜˜(€€€Ù¥Í¥‰±•I…Ñ¥¼€ğ€À¸àÈì(€¥˜€ …‰½Ñ¡UÁÁ•É½É¹•ÉÍ½¹Ñ…µ¥¹…Ñ•€˜˜Í½™Ñ	½Ñ¡UÁÁ•É½É¹•ÉÌ¤Í½É”€¬ô€Èì((€½¹ÍĞ±•™ÑUÁÁ•ÉÉ…µ•½¹Ñ…µ¥¹…Ñ•€ô(€€€Ñ½Á1•™Ñ½É¹•È€ø€À¸ĞÈ€˜˜ÕÁÁ•É1•™ÑM¥‘”€ø€À¸ÌÀ€˜˜Ñ½Á‘”€ø€À¸ÄØ€˜˜Ù¥Í¥‰±•I…Ñ¥¼€ğ€À¸Üàì(€½¹ÍĞÉ¥¡ÑUÁÁ•ÉÉ…µ•½¹Ñ…µ¥¹…Ñ•€ô(€€€Ñ½ÁI¥¡Ñ½É¹•È€ø€À¸ĞÈ€˜˜ÕÁÁ•ÉI¥¡ÑM¥‘”€ø€À¸ÌÀ€˜˜Ñ½Á‘”€ø€À¸ÄØ€˜˜Ù¥Í¥‰±•I…Ñ¥¼€ğ€À¸Üàì(€¥˜€¡±•™ÑUÁÁ•ÉÉ…µ•½¹Ñ…µ¥¹…Ñ•¤Í½É”€¬ô€Èì(€¥˜€¡É¥¡ÑUÁÁ•ÉÉ…µ•½¹Ñ…µ¥¹…Ñ•¤Í½É”€¬ô€Èì((€½¹ÍĞÍ½™Ñ1•™ÑUÁÁ•ÉÉ…µ”€ô(€€€Ñ½Á1•™Ñ½É¹•È€ø€À¸ÌÀ€˜˜ÕÁÁ•É1•™ÑM¥‘”€ø€À¸ÈÈ€˜˜Ñ½Á‘”€ø€À¸ÄÄ€˜˜Ù¥Í¥‰±•I…Ñ¥¼€ğ€À¸àÈì(€½¹ÍĞÍ½™ÑI¥¡ÑUÁÁ•ÉÉ…µ”€ô(€€€Ñ½ÁI¥¡Ñ½É¹•È€ø€À¸ÌÀ€˜˜ÕÁÁ•ÉI¥¡ÑM¥‘”€ø€À¸ÈÈ€˜˜Ñ½Á‘”€ø€À¸ÄÄ€˜˜Ù¥Í¥‰±•I…Ñ¥¼€ğ€À¸àÈì(€¥˜€ …±•™ÑUÁÁ•ÉÉ…µ•½¹Ñ…µ¥¹…Ñ•€˜˜Í½™Ñ1•™ÑUÁÁ•ÉÉ…µ”¤Í½É”€¬ô€Äì(€¥˜€ …É¥¡ÑUÁÁ•ÉÉ…µ•½¹Ñ…µ¥¹…Ñ•€˜˜Í½™ÑI¥¡ÑUÁÁ•ÉÉ…µ”¤Í½É”€¬ô€Äì((€½¹ÍĞ‰É½…‘UÁÁ•ÉÉ…µ•½¹Ñ…µ¥¹…Ñ¥½¸€ô(€€€Ñ½Á‘”€ø€À¸ÈĞ€˜˜±•™Ñ‘”€ø€À¸Äà€˜˜É¥¡Ñ‘”€ø€À¸Äà€˜˜Ù¥Í¥‰±•I…Ñ¥¼€ø€À¸ÌÀ€˜˜Ù¥Í¥‰±•I…Ñ¥¼€ğ€À¸Üàì(€¥˜€¡‰É½…‘UÁÁ•ÉÉ…µ•½¹Ñ…µ¥¹…Ñ¥½¸¤Í½É”€¬ô€Ìì((€¥˜€¡ÍÕÍÁ¥¥½ÕÍ•Ñ…¡•‘I…Ñ¥¼€ø€À¸ÄÈ¤Í½É”€¬ô€Èì(€•±Í”¥˜€¡ÍÕÍÁ¥¥½ÕÍ•Ñ…¡•‘I…Ñ¥¼€ø€À¸ÀØÔ¤Í½É”€¬ô€Äì((€¥˜€¡±…É•ÍĞ€˜˜±…É•ÍÑ]¥‘Ñ¡I…Ñ¥¼€ø€À¸äÀ€˜˜±…É•ÍÑ!•¥¡ÑI…Ñ¥¼€ø€À¸ÜÈ€˜˜±…É•ÍÑQ½Õ¡•ÍQ½À€˜˜±…É•ÍÑQ½Õ¡•ÍM¥‘”€˜˜Ù¥Í¥‰±•I…Ñ¥¼€ø€À¸ĞØ¤Í½É”€¬ô€Èì((€€¼¼	½ÑÑ½´½¹Ñ…Ğ¥Ì½µµ½¸™½È„½ÉÉ•Ñ±ä¥Í½±…Ñ•Á•ÉÍ½¸½ÈÉ½ÕÀ¸I•İ…É¥Ğ(€€¼¼Í±¥¡Ñ±äÍ¼¹½Éµ…°™Õ±°µ‰½‘ä½ÕÁÁ•Èµ‰½‘äÁ¡½Ñ½Ì…É”±•ÍÌ±¥­•±äÑ¼‰”‰±½­•¸(€¥˜€¡‰½ÑÑ½µ‘”€ø€À¸Èà€˜˜Ñ½Á‘”€ğ€À¸ÈĞ€˜˜Ù¥Í¥‰±•I…Ñ¥¼€ğ€À¸ØØ¤Í½É”€ô5…Ñ ¹µ…à À°Í½É”€´€Ä¤ì((€€¼¼Í½±¥™½É•É½Õ¹¥Ì•áÁ•Ñ•ìÑ¡¥Ìµ•ÑÉ¥Œ¥Ì½¹±ä‘¥…¹½ÍÑ¥Œ™½È™ÕÑÕÉ”ÑÕ¹¥¹œ¸(€½¹ÍĞÍ½±¥‘I…Ñ¥¼€ôÍ½±¥€¼5…Ñ ¹µ…à Ä°Ù¥Í¥‰±”¤ì(€¥˜€¡Í½±¥‘I…Ñ¥¼€ğ€À¸ÈØ€˜˜Ù¥Í¥‰±•I…Ñ¥¼€ø€À¸ĞĞ¤Í½É”€¬ô€Äì((€€¼¼Qİ¼¥¹‘•Á•¹‘•¹ĞÍÑÉ½¹œÕÁÁ•Èµ™É…µ”Í¥¹…±Ì…É”•¹½Õ Ñ¼‰±½¬Í…Ù¥¹œ•Ù•¸(€€¼¼İ¡•¸Ñ¡”™½É•É½Õ¹½µÁ½¹•¹ĞÉ…Á ¥Ì½¹¹•Ñ•‰äÑ¡¥¸…±Á¡„‰É¥‘•Ì¸(€¥˜€ ¡‰½Ñ¡UÁÁ•É½É¹•ÉÍ½¹Ñ…µ¥¹…Ñ•€˜˜€¡±•™ÑUÁÁ•ÉÉ…µ•½¹Ñ…µ¥¹…Ñ•ñğÉ¥¡ÑUÁÁ•ÉÉ…µ•½¹Ñ…µ¥¹…Ñ•¤¤ñğ(€€€€€€¡‰É½…‘UÁÁ•ÉÉ…µ•½¹Ñ…µ¥¹…Ñ¥½¸€˜˜€¡Ñ½Á1•™Ñ½É¹•È€ø€À¸ĞÈñğÑ½ÁI¥¡Ñ½É¹•È€ø€À¸ĞÈ¤¤¤ì(€€€Í½É”€ô5…Ñ ¹µ…à¡Í½É”°€Ô¤ì(€ô((€¥˜€¡Í½É”€øô€Ğ¤É•ÑÕÉ¸ìÍÑ…ÑÕÌè€™…¥°œ°Í½É”ôì(€¥˜€¡Í½É”€øô€È¤É•ÑÕÉ¸ìÍÑ…ÑÕÌè€İ…É¹¥¹œœ°Í½É”ôì(€É•ÑÕÉ¸ìÍÑ…ÑÕÌè€Á…ÍÌœ°Í½É”ôì)ô()…Íå¹Œ™Õ¹Ñ¥½¸É•µ½Ù•]¥Ñ¡¤¡™¥±”°½¹AÉ½É•ÍÌ¤ì(€½¹ÍĞ‰±½ˆ€ô…İ…¥ĞÁ¥Á•±¥¹•I•µ½Ù…±Q½	±½ˆ¡™¥±”°•ÑI•µ½Ù•È°½¹AÉ½É•ÍÌ¤ì(€½¹ÍĞ½ÉÉ•Ñ•€ô…İ…¥Ğ½ÉÉ•ÑU¹•áÁ•Ñ•‘½É•É½Õ¹‘QÉ…¹ÍÁ…É•¹ä¡‰±½ˆ¤ì(€É•ÑÕÉ¸±•…¹¥½É•É½Õ¹‘ÉÑ¥™…ÑÌ¡½ÉÉ•Ñ•¤ì)ô()™Õ¹Ñ¥½¸•áÑÉ…Ñ½¹¹•Ñ•‘½µÁ½¹•¹ÑÌ¡Ñà°İ¥‘Ñ °¡•¥¡Ğ¤ì(€½¹ÍĞÁ¥á•±Ì€ôÑà¹•Ñ%µ…•…Ñ„ À°€À°İ¥‘Ñ °¡•¥¡Ğ¤¹‘…Ñ„ì(€½¹ÍĞÑ½Ñ…°€ôİ¥‘Ñ €¨¡•¥¡Ğì(€½¹ÍĞÙ¥Í¥Ñ•€ô¹•ÜU¥¹ĞáÉÉ…ä¡Ñ½Ñ…°¤ì(€½¹ÍĞÅÕ•Õ”€ô¹•Ü%¹ĞÌÉÉÉ…ä¡Ñ½Ñ…°¤ì(€½¹ÍĞ½µÁ½¹•¹ÑÌ€ômtì(€½¹ÍĞµ¥¹A¥á•±Ì€ô5…Ñ ¹µ…à à°5…Ñ ¹É½Õ¹¡Ñ½Ñ…°€¨€À¸ÀÀÀÀÀĞ¤¤ì((€½¹ÍĞ¥ÍY¥Í¥‰±”€ô€¡¥¹‘•à¤€ôøÁ¥á•±Ím¥¹‘•à€¨€Ğ€¬€Ít€ø€Äàì(€½¹ÍĞ•¹ÅÕ•Õ”€ô€¡¥¹‘•à°ÍÑ…Ñ”¤€ôøì(€€€¥˜€¡¥¹‘•à€ğ€Àñğ¥¹‘•à€øôÑ½Ñ…°ñğÙ¥Í¥Ñ•‘m¥¹‘•átñğ€…¥ÍY¥Í¥‰±”¡¥¹‘•à¤¤É•ÑÕÉ¸ì(€€€Ù¥Í¥Ñ•‘m¥¹‘•át€ô€Äì(€€€ÅÕ•Õ•mÍÑ…Ñ”¹Ñ…¥°¬­t€ô¥¹‘•àì(€ôì((€™½È€¡±•ĞÍ••€ô€ÀìÍ••€ğÑ½Ñ…°ìÍ••€¬ô€Ä¤ì(€€€¥˜€¡Ù¥Í¥Ñ•‘mÍ••‘tñğ€…¥ÍY¥Í¥‰±”¡Í••¤¤½¹Ñ¥¹Õ”ì((€€€½¹ÍĞÍÑ…Ñ”€ôì¡•…è€À°Ñ…¥°è€Àôì(€€€•¹ÅÕ•Õ”¡Í••°ÍÑ…Ñ”¤ì(€€€±•Ğµ¥¹`€ôİ¥‘Ñ ì(€€€±•Ğµ¥¹d€ô¡•¥¡Ğì(€€€±•Ğµ…á`€ô€´Äì(€€€±•Ğµ…ád€ô€´Äì(€€€±•Ğ…É•„€ô€Àì((€€€İ¡¥±”€¡ÍÑ…Ñ”¹¡•…€ğÍÑ…Ñ”¹Ñ…¥°¤ì(€€€€€½¹ÍĞ¥¹‘•à€ôÅÕ•Õ•mÍÑ…Ñ”¹¡•…¬­tì(€€€€€½¹ÍĞà€ô¥¹‘•à€”İ¥‘Ñ ì(€€€€€½¹ÍĞä€ô5…Ñ ¹™±½½È¡¥¹‘•à€¼İ¥‘Ñ ¤ì(€€€€€…É•„€¬ô€Äì(€€€€€¥˜€¡à€ğµ¥¹`¤µ¥¹`€ôàì(€€€€€¥˜€¡à€øµ…á`¤µ…á`€ôàì(€€€€€¥˜€¡ä€ğµ¥¹d¤µ¥¹d€ôäì(€€€€€¥˜€¡ä€øµ…ád¤µ…ád€ôäì((€€€€€¥˜€¡à€ø€À¤•¹ÅÕ•Õ”¡¥¹‘•à€´€Ä°ÍÑ…Ñ”¤ì(€€€€€¥˜€¡à€¬€Ä€ğİ¥‘Ñ ¤•¹ÅÕ•Õ”¡¥¹‘•à€¬€Ä°ÍÑ…Ñ”¤ì(€€€€€¥˜€¡ä€ø€À¤•¹ÅÕ•Õ”¡¥¹‘•à€´İ¥‘Ñ °ÍÑ…Ñ”¤ì(€€€€€¥˜€¡ä€¬€Ä€ğ¡•¥¡Ğ¤•¹ÅÕ•Õ”¡¥¹‘•à€¬İ¥‘Ñ °ÍÑ…Ñ”¤ì(€€€ô((€€€¥˜€¡…É•„€ğµ¥¹A¥á•±Ìñğµ…á`€ğµ¥¹`ñğµ…ád€ğµ¥¹d¤½¹Ñ¥¹Õ”ì(€€€½µÁ½¹•¹ÑÌ¹ÁÕÍ ¡ì(€€€€€¥è½µÁ½¹•¹ÑÌ¹±•¹Ñ €¬€Ä°(€€€€€µ¥¹`°(€€€€€µ¥¹d°(€€€€€µ…á`°(€€€€€µ…ád°(€€€€€İ¥‘Ñ èµ…á`€´µ¥¹`€¬€Ä°(€€€€€¡•¥¡Ğèµ…ád€´µ¥¹d€¬€Ä°(€€€€€…É•„°(€€€€€•¹Ñ•É`è€¡µ¥¹`€¬µ…á`¤€¼€È°(€€€€€•¹Ñ•Édè€¡µ¥¹d€¬µ…ád¤€¼€È(€€€ô¤ì(€ô((€É•ÑÕÉ¸½µÁ½¹•¹ÑÌì)ô()™Õ¹Ñ¥½¸½É‘•ÉAÉ¥µ…ÉåMÑ¥­•É½µÁ½¹•¹ÑÌ¡½µÁ½¹•¹ÑÌ°İ¥‘Ñ °¡•¥¡Ğ¤ì(€¥˜€¡½µÁ½¹•¹ÑÌ¹±•¹Ñ €ğ€ÄÔ¤Ñ¡É½Ü¹•ÜÉÉ½È 9½Ğ•¹½Õ Ù¥Í¥‰±”ÍÑ¥­•È½µÁ½¹•¹ÑÌœ¤ì((€½¹ÍĞ•áÁ•Ñ•‘•±±]¥‘Ñ €ôİ¥‘Ñ €¼€Ôì(€½¹ÍĞ•áÁ•Ñ•‘•±±!•¥¡Ğ€ô¡•¥¡Ğ€¼€Ìì(€½¹ÍĞÍ½É”€ô€¡½µÁ½¹•¹Ğ¤€ôøì(€€€½¹ÍĞ¡•¥¡Ñ	½½ÍĞ€ô€À¸ØÔ€¬5…Ñ ¹µ¥¸ Ä¸Ğ°½µÁ½¹•¹Ğ¹¡•¥¡Ğ€¼5…Ñ ¹µ…à Ä°¡•¥¡Ğ€¨€À¸ÄÈ¤¤ì(€€€É•ÑÕÉ¸½µÁ½¹•¹Ğ¹…É•„€¨¡•¥¡Ñ	½½ÍĞì(€ôì((€½¹ÍĞÉ…¹­•€ôl¸¸¹½µÁ½¹•¹ÑÍt¹Í½ÉĞ ¡„°ˆ¤€ôøÍ½É”¡ˆ¤€´Í½É”¡„¤¤ì(€½¹ÍĞÍ•±•Ñ•€ômtì((€™½È€¡½¹ÍĞ…¹‘¥‘…Ñ”½˜É…¹­•¤ì(€€€½¹ÍĞÑ½½±½Í”€ôÍ•±•Ñ•¹Í½µ” ¡Á¥­•¤€ôøì(€€€€€½¹ÍĞ‘à€ô€¡…¹‘¥‘…Ñ”¹•¹Ñ•É`€´Á¥­•¹•¹Ñ•É`¤€¼•áÁ•Ñ•‘•±±]¥‘Ñ ì(€€€€€½¹ÍĞ‘ä€ô€¡…¹‘¥‘…Ñ”¹•¹Ñ•Éd€´Á¥­•¹•¹Ñ•Éd¤€¼•áÁ•Ñ•‘•±±!•¥¡Ğì(€€€€€É•ÑÕÉ¸5…Ñ ¹¡åÁ½Ğ¡‘à°‘ä¤€ğ€À¸ĞÔì(€€€ô¤ì(€€€¥˜€ …Ñ½½±½Í”¤Í•±•Ñ•¹ÁÕÍ ¡…¹‘¥‘…Ñ”¤ì(€€€¥˜€¡Í•±•Ñ•¹±•¹Ñ €ôôô€ÄÔ¤‰É•…¬ì(€ô((€¥˜€¡Í•±•Ñ•¹±•¹Ñ €ğ€ÄÔ¤ì(€€€™½È€¡½¹ÍĞ…¹‘¥‘…Ñ”½˜É…¹­•¤ì(€€€€€¥˜€ …Í•±•Ñ•¹¥¹±Õ‘•Ì¡…¹‘¥‘…Ñ”¤¤Í•±•Ñ•¹ÁÕÍ ¡…¹‘¥‘…Ñ”¤ì(€€€€€¥˜€¡Í•±•Ñ•¹±•¹Ñ €ôôô€ÄÔ¤‰É•…¬ì(€€€ô(€ô((€½¹ÍĞ‰åd€ôÍ•±•Ñ•¹Í±¥” À°€ÄÔ¤¹Í½ÉĞ ¡„°ˆ¤€ôø„¹•¹Ñ•Éd€´ˆ¹•¹Ñ•Éd¤ì(€½¹ÍĞ½É‘•É•€ômtì(€™½È€¡±•ĞÉ½Ü€ô€ÀìÉ½Ü€ğ€ÌìÉ½Ü€¬ô€Ä¤ì(€€€½¹ÍĞÉ½İ%Ñ•µÌ€ô‰åd¹Í±¥”¡É½Ü€¨€Ô°É½Ü€¨€Ô€¬€Ô¤¹Í½ÉĞ ¡„°ˆ¤€ôø„¹•¹Ñ•É`€´ˆ¹•¹Ñ•É`¤ì(€€€½É‘•É•¹ÁÕÍ  ¸¸¹É½İ%Ñ•µÌ¤ì(€ô(€É•ÑÕÉ¸½É‘•É•ì)ô()™Õ¹Ñ¥½¸…ÍÍ¥¹½µÁ½¹•¹ÑÍQ½MÑ¥­•ÉÌ¡½µÁ½¹•¹ÑÌ°ÁÉ¥µ…É¥•Ì°İ¥‘Ñ °¡•¥¡Ğ¤ì(€½¹ÍĞ•áÁ•Ñ•‘•±±]¥‘Ñ €ôİ¥‘Ñ €¼€Ôì(€½¹ÍĞ•áÁ•Ñ•‘Y•ÉÑ¥…±…À€ô€¡¡•¥¡Ğ€¼€Ì¤€¨€À¸ĞÌì(€½¹ÍĞÁÉ¥µ…Éå%‘Ì€ô¹•ÜM•Ğ¡ÁÉ¥µ…É¥•Ì¹µ…À ¡¥Ñ•´¤€ôø¥Ñ•´¹¥¤¤ì(€½¹ÍĞÉ½ÕÁÌ€ô¹•Ü5…À¡ÁÉ¥µ…É¥•Ì¹µ…À ¡¥Ñ•´¤€ôøm¥Ñ•´¹¥°m¥Ñ•µut¤¤ì((€™½È€¡½¹ÍĞ½µÁ½¹•¹Ğ½˜½µÁ½¹•¹ÑÌ¤ì(€€€¥˜€¡ÁÉ¥µ…Éå%‘Ì¹¡…Ì¡½µÁ½¹•¹Ğ¹¥¤¤½¹Ñ¥¹Õ”ì((€€€±•Ğ‰•ÍÑAÉ¥µ…Éä€ô¹Õ±°ì(€€€±•Ğ‰•ÍÑM½É”€ô9Õµ‰•È¹A=M%Q%Y}%9%9%Qdì((€€€™½È€¡½¹ÍĞÁÉ¥µ…Éä½˜ÁÉ¥µ…É¥•Ì¤ì(€€€€€½¹ÍĞ‘à€ô5…Ñ ¹µ…à¡ÁÉ¥µ…Éä¹µ¥¹`€´½µÁ½¹•¹Ğ¹µ…á`°½µÁ½¹•¹Ğ¹µ¥¹`€´ÁÉ¥µ…Éä¹µ…á`°€À¤ì(€€€€€½¹ÍĞ‘ä€ô5…Ñ ¹µ…à¡ÁÉ¥µ…Éä¹µ¥¹d€´½µÁ½¹•¹Ğ¹µ…ád°½µÁ½¹•¹Ğ¹µ¥¹d€´ÁÉ¥µ…Éä¹µ…ád°€À¤ì(€€€€€½¹ÍĞ•¹Ñ•Éà€ô½µÁ½¹•¹Ğ¹•¹Ñ•É`€´ÁÉ¥µ…Éä¹•¹Ñ•É`ì(€€€€€½¹ÍĞ•¹Ñ•Éä€ô½µÁ½¹•¹Ğ¹•¹Ñ•Éd€´ÁÉ¥µ…Éä¹•¹Ñ•Édì(€€€€€½¹ÍĞ‘¥ÍÑ…¹•M½É”€ô(€€€€€€€€¡‘à€¼•áÁ•Ñ•‘•±±]¥‘Ñ ¤€¨¨€È€¬(€€€€€€€€¡‘ä€¼•áÁ•Ñ•‘Y•ÉÑ¥…±…À¤€¨¨€È€¬(€€€€€€€€À¸ÀĞ€¨€¡•¹Ñ•Éà€¼•áÁ•Ñ•‘•±±]¥‘Ñ ¤€¨¨€È€¬(€€€€€€€€À¸ÀÈ€¨€¡•¹Ñ•Éä€¼•áÁ•Ñ•‘Y•ÉÑ¥…±…À¤€¨¨€Èì((€€€€€¥˜€¡‘¥ÍÑ…¹•M½É”€ğ‰•ÍÑM½É”¤ì(€€€€€€€‰•ÍÑM½É”€ô‘¥ÍÑ…¹•M½É”ì(€€€€€€€‰•ÍÑAÉ¥µ…Éä€ôÁÉ¥µ…Éäì(€€€€€ô(€€€ô((€€€¥˜€¡‰•ÍÑAÉ¥µ…Éä€˜˜‰•ÍÑM½É”€ğ€È¸È¤É½ÕÁÌ¹•Ğ¡‰•ÍÑAÉ¥µ…Éä¹¥¤¹ÁÕÍ ¡½µÁ½¹•¹Ğ¤ì(€ô((€É•ÑÕÉ¸É½ÕÁÌì)ô()™Õ¹Ñ¥½¸µ•‘¥…¸¡Ù…±Õ•Ì¤ì(€¥˜€ …Ù…±Õ•Ì¹±•¹Ñ ¤É•ÑÕÉ¸€Àì(€½¹ÍĞÍ½ÉÑ•€ôl¸¸¹Ù…±Õ•Ít¹Í½ÉĞ ¡„°ˆ¤€ôø„€´ˆ¤ì(€½¹ÍĞµ¥‘‘±”€ô5…Ñ ¹™±½½È¡Í½ÉÑ•¹±•¹Ñ €¼€È¤ì(€É•ÑÕÉ¸Í½ÉÑ•¹±•¹Ñ €”€È€üÍ½ÉÑ•‘mµ¥‘‘±•t€è€¡Í½ÉÑ•‘mµ¥‘‘±”€´€Åt€¬Í½ÉÑ•‘mµ¥‘‘±•t¤€¼€Èì)ô()™Õ¹Ñ¥½¸±…ÍÍ¥™åµ½Ñ¥½¹M¡••Ñ½µÁ½¹•¹ÑÌ¡½µÁ½¹•¹ÑÌ°İ¥‘Ñ °¡•¥¡Ğ¤ì(€½¹ÍĞÑ½Ñ…°€ôİ¥‘Ñ €¨¡•¥¡Ğì(€¥˜€ …Ñ½Ñ…°ñğ½µÁ½¹•¹ÑÌ¹±•¹Ñ €ğ€ÄÀ¤É•ÑÕÉ¸ìÍÑ…ÑÕÌè€¹½ĞµÍ¡••Ğœ°½¹™¥‘•¹”è€Àôì((€€¼¼ÍÑ¥­•ÈµÍ¡••ĞÁÉ¥µ…Éä¥ÌÍÕ‰ÍÑ…¹Ñ¥…°‰ÕĞÍÑ¥±°µÕ Íµ…±±•ÈÑ¡…¸Ñ¡”™Õ±°¥µ…”¸(€€¼¼Q¡¥Ì•á±Õ‘•Ì™…•Ì½‰½‘¥•Ì¥¸½É‘¥¹…ÉäÉ½ÕÀÁ¡½Ñ½Ìİ¡¥±”™¥±Ñ•É¥¹œÑ¥¹äÑ•áĞ½¹½¥Í”™É…µ•¹ÑÌ¸(€½¹ÍĞ…¹‘¥‘…Ñ•Ì€ô½µÁ½¹•¹ÑÌ¹™¥±Ñ•È ¡½µÁ½¹•¹Ğ¤€ôøì(€€€½¹ÍĞ…É•…I…Ñ¥¼€ô½µÁ½¹•¹Ğ¹…É•„€¼Ñ½Ñ…°ì(€€€½¹ÍĞ™¥±±I…Ñ¥¼€ô½µÁ½¹•¹Ğ¹…É•„€¼5…Ñ ¹µ…à Ä°½µÁ½¹•¹Ğ¹İ¥‘Ñ €¨½µÁ½¹•¹Ğ¹¡•¥¡Ğ¤ì(€€€É•ÑÕÉ¸€ (€€€€€…É•…I…Ñ¥¼€øô€À¸ÀÀÄÔ€˜˜(€€€€€½µÁ½¹•¹Ğ¹İ¥‘Ñ €øôİ¥‘Ñ €¨€À¸ÀĞÔ€˜˜(€€€€€½µÁ½¹•¹Ğ¹İ¥‘Ñ €ğôİ¥‘Ñ €¨€À¸ÌĞ€˜˜(€€€€€½µÁ½¹•¹Ğ¹¡•¥¡Ğ€øô¡•¥¡Ğ€¨€À¸ÀØÔ€˜˜(€€€€€½µÁ½¹•¹Ğ¹¡•¥¡Ğ€ğô¡•¥¡Ğ€¨€À¸ÌĞ€˜˜(€€€€€™¥±±I…Ñ¥¼€øô€À¸ÀÔÔ(€€€€¤ì(€ô¤ì((€¥˜€¡…¹‘¥‘…Ñ•Ì¹±•¹Ñ €ğ€ÄÀ¤É•ÑÕÉ¸ìÍÑ…ÑÕÌè€¹½ĞµÍ¡••Ğœ°½¹™¥‘•¹”è€À¸Ààôì((€½¹ÍĞ•áÁ•Ñ•‘•±±]¥‘Ñ €ôİ¥‘Ñ €¼€Ôì(€½¹ÍĞ•áÁ•Ñ•‘•±±!•¥¡Ğ€ô¡•¥¡Ğ€¼€Ìì(€½¹ÍĞÉ…¹­•€ôl¸¸¹…¹‘¥‘…Ñ•Ít¹Í½ÉĞ ¡„°ˆ¤€ôøì(€€€½¹ÍĞ…¥±°€ô„¹…É•„€¼5…Ñ ¹µ…à Ä°„¹İ¥‘Ñ €¨„¹¡•¥¡Ğ¤ì(€€€½¹ÍĞ‰¥±°€ôˆ¹…É•„€¼5…Ñ ¹µ…à Ä°ˆ¹İ¥‘Ñ €¨ˆ¹¡•¥¡Ğ¤ì(€€€É•ÑÕÉ¸ˆ¹…É•„€¨€ À¸àÈ€¬5…Ñ ¹µ¥¸ À¸Ø°‰¥±°¤¤€´„¹…É•„€¨€ À¸àÈ€¬5…Ñ ¹µ¥¸ À¸Ø°…¥±°¤¤ì(€ô¤ì((€½¹ÍĞÍ•±•Ñ•€ômtì(€™½È€¡½¹ÍĞ…¹‘¥‘…Ñ”½˜É…¹­•¤ì(€€€½¹ÍĞÑ½½±½Í”€ôÍ•±•Ñ•¹Í½µ” ¡Á¥­•¤€ôøì(€€€€€½¹ÍĞ‘à€ô€¡…¹‘¥‘…Ñ”¹•¹Ñ•É`€´Á¥­•¹•¹Ñ•É`¤€¼•áÁ•Ñ•‘•±±]¥‘Ñ ì(€€€€€½¹ÍĞ‘ä€ô€¡…¹‘¥‘…Ñ”¹•¹Ñ•Éd€´Á¥­•¹•¹Ñ•Éd¤€¼•áÁ•Ñ•‘•±±!•¥¡Ğì(€€€€€É•ÑÕÉ¸5…Ñ ¹¡åÁ½Ğ¡‘à°‘ä¤€ğ€À¸ĞÌì(€€€ô¤ì(€€€¥˜€ …Ñ½½±½Í”¤Í•±•Ñ•¹ÁÕÍ ¡…¹‘¥‘…Ñ”¤ì(€€€¥˜€¡Í•±•Ñ•¹±•¹Ñ €ôôô€ÄÔ¤‰É•…¬ì(€ô((€¥˜€¡Í•±•Ñ•¹±•¹Ñ €ğ€ÄÌ¤É•ÑÕÉ¸ìÍÑ…ÑÕÌè€¹½ĞµÍ¡••Ğœ°½¹™¥‘•¹”è€À¸ÈÈôì(€¥˜€¡Í•±•Ñ•¹±•¹Ñ €ğ€ÄÔ¤É•ÑÕÉ¸ìÍÑ…ÑÕÌè€…µ‰¥Õ½ÕÌœ°½¹™¥‘•¹”è€À¸ÔÈôì((€½¹ÍĞ‰åd€ôÍ•±•Ñ•¹Í±¥” À°€ÄÔ¤¹Í½ÉĞ ¡„°ˆ¤€ôø„¹•¹Ñ•Éd€´ˆ¹•¹Ñ•Éd¤ì(€½¹ÍĞÉ½İÌ€ôlÀ°€Ä°€Ét¹µ…À ¡É½Ü¤€ôø‰åd¹Í±¥”¡É½Ü€¨€Ô°É½Ü€¨€Ô€¬€Ô¤¹Í½ÉĞ ¡„°ˆ¤€ôø„¹•¹Ñ•É`€´ˆ¹•¹Ñ•É`¤¤ì(€½¹ÍĞÉ½İ5•…¹Ì€ôÉ½İÌ¹µ…À ¡É½Ü¤€ôøÉ½Ü¹É•‘Õ” ¡ÍÕ´°¥Ñ•´¤€ôøÍÕ´€¬¥Ñ•´¹•¹Ñ•Éd°€À¤€¼É½Ü¹±•¹Ñ ¤ì(€½¹ÍĞÉ½İMÁÉ•…‘Ì€ôÉ½İÌ¹µ…À ¡É½Ü¤€ôø€¡5…Ñ ¹µ…à ¸¸¹É½Ü¹µ…À ¡¥Ñ•´¤€ôø¥Ñ•´¹•¹Ñ•Éd¤¤€´5…Ñ ¹µ¥¸ ¸¸¹É½Ü¹µ…À ¡¥Ñ•´¤€ôø¥Ñ•´¹•¹Ñ•Éd¤¤¤€¼¡•¥¡Ğ¤ì(€½¹ÍĞÉ½İ…ÁÌ€ômÉ½İ5•…¹ÍlÅt€´É½İ5•…¹ÍlÁt°É½İ5•…¹ÍlÉt€´É½İ5•…¹ÍlÅut¹µ…À ¡…À¤€ôø…À€¼¡•¥¡Ğ¤ì((€½¹ÍĞá•¹Ñ•ÉÌ€ôÍ•±•Ñ•¹µ…À ¡¥Ñ•´¤€ôø¥Ñ•´¹•¹Ñ•É`¤ì(€½¹ÍĞå•¹Ñ•ÉÌ€ôÍ•±•Ñ•¹µ…À ¡¥Ñ•´¤€ôø¥Ñ•´¹•¹Ñ•Éd¤ì(€½¹ÍĞá½Ù•É…”€ô€¡5…Ñ ¹µ…à ¸¸¹á•¹Ñ•ÉÌ¤€´5…Ñ ¹µ¥¸ ¸¸¹á•¹Ñ•ÉÌ¤¤€¼İ¥‘Ñ ì(€½¹ÍĞå½Ù•É…”€ô€¡5…Ñ ¹µ…à ¸¸¹å•¹Ñ•ÉÌ¤€´5…Ñ ¹µ¥¸ ¸¸¹å•¹Ñ•ÉÌ¤¤€¼¡•¥¡Ğì(€½¹ÍĞ…Ù•É…•I½İMÁÉ•…€ôÉ½İMÁÉ•…‘Ì¹É•‘Õ” ¡ÍÕ´°Ù…±Õ”¤€ôøÍÕ´€¬Ù…±Õ”°€À¤€¼É½İMÁÉ•…‘Ì¹±•¹Ñ ì(€½¹ÍĞµ¥¹I½İ…À€ô5…Ñ ¹µ¥¸ ¸¸¹É½İ…ÁÌ¤ì(€½¹ÍĞ•‘•I½İÌ€ôÉ½İÌ¹™¥±Ñ•È ¡É½Ü¤€ôøÉ½İlÁt¹•¹Ñ•É`€¼İ¥‘Ñ €ğ€À¸Èä€˜˜É½İlÑt¹•¹Ñ•É`€¼İ¥‘Ñ €ø€À¸ÜÄ¤¹±•¹Ñ ì((€½¹ÍĞ½±Õµ¹É¥™ÑÌ€ôlÀ°€Ä°€È°€Ì°€Ñt¹µ…À ¡½±Õµ¸¤€ôøì(€€€½¹ÍĞ•¹Ñ•ÉÌ€ôÉ½İÌ¹µ…À ¡É½Ü¤€ôøÉ½İm½±Õµ¹t¹•¹Ñ•É`¤ì(€€€É•ÑÕÉ¸€¡5…Ñ ¹µ…à ¸¸¹•¹Ñ•ÉÌ¤€´5…Ñ ¹µ¥¸ ¸¸¹•¹Ñ•ÉÌ¤¤€¼İ¥‘Ñ ì(€ô¤ì(€½¹ÍĞ…Ù•É…•½±Õµ¹É¥™Ğ€ô½±Õµ¹É¥™ÑÌ¹É•‘Õ” ¡ÍÕ´°Ù…±Õ”¤€ôøÍÕ´€¬Ù…±Õ”°€À¤€¼½±Õµ¹É¥™ÑÌ¹±•¹Ñ ì((€½¹ÍĞµ•‘¥…¹]¥‘Ñ €ôµ•‘¥…¸¡Í•±•Ñ•¹µ…À ¡¥Ñ•´¤€ôø¥Ñ•´¹İ¥‘Ñ €¼İ¥‘Ñ ¤¤ì(€½¹ÍĞµ•‘¥…¹!•¥¡Ğ€ôµ•‘¥…¸¡Í•±•Ñ•¹µ…À ¡¥Ñ•´¤€ôø¥Ñ•´¹¡•¥¡Ğ€¼¡•¥¡Ğ¤¤ì((€±•Ğ½¹™¥‘•¹”€ô€À¸ÄÔì€¼¼™¥™Ñ••¸Í•Á…É…Ñ•ÁÉ¥µ…Éä…¹‘¥‘…Ñ•Ìİ•É”™½Õ¹(€¥˜€¡á½Ù•É…”€øô€À¸ØÈ¤½¹™¥‘•¹”€¬ô€À¸ÄÔì(€¥˜€¡å½Ù•É…”€øô€À¸ĞĞ¤½¹™¥‘•¹”€¬ô€À¸ÄÔì(€¥˜€¡…Ù•É…•I½İMÁÉ•…€ğô€À¸ÄÌ¤½¹™¥‘•¹”€¬ô€À¸ÄÔì(€¥˜€¡µ¥¹I½İ…À€øô€À¸ÄÜ¤½¹™¥‘•¹”€¬ô€À¸ÄÈì(€¥˜€¡•‘•I½İÌ€øô€È¤½¹™¥‘•¹”€¬ô€À¸ÄÈì(€¥˜€¡…Ù•É…•½±Õµ¹É¥™Ğ€ğô€À¸ÄÈ¤½¹™¥‘•¹”€¬ô€À¸ÄÀì(€¥˜€¡µ•‘¥…¹]¥‘Ñ €øô€À¸ÀÔÔ€˜˜µ•‘¥…¹]¥‘Ñ €ğô€À¸ÈÔ€˜˜µ•‘¥…¹!•¥¡Ğ€øô€À¸Àà€˜˜µ•‘¥…¹!•¥¡Ğ€ğô€À¸Èä¤½¹™¥‘•¹”€¬ô€À¸ÀØì((€¥˜€¡½¹™¥‘•¹”€øô€À¸Üà¤É•ÑÕÉ¸ìÍÑ…ÑÕÌè€Í¡••Ğœ°½¹™¥‘•¹”ôì(€¥˜€¡½¹™¥‘•¹”€øô€À¸Ôà¤É•ÑÕÉ¸ìÍÑ…ÑÕÌè€…µ‰¥Õ½ÕÌœ°½¹™¥‘•¹”ôì(€É•ÑÕÉ¸ìÍÑ…ÑÕÌè€¹½ĞµÍ¡••Ğœ°½¹™¥‘•¹”ôì)ô()…Íå¹Œ™Õ¹Ñ¥½¸‘•Ñ•Ñµ½Ñ¥½¹M¡••Ğ¡‰±½ˆ¤ì(€½¹ÍĞì…¹Ù…Ìô€ô…İ…¥Ğ‘É…İ¥±•Q½…¹Ù…Ì¡‰±½ˆ¤ì(€½¹ÍĞìİ¥‘Ñ °¡•¥¡Ğô€ô…¹Ù…Ìì(€¥˜€ …İ¥‘Ñ ñğ€…¡•¥¡Ğ¤É•ÑÕÉ¸ìÍÑ…ÑÕÌè€¹½ĞµÍ¡••Ğœ°½¹™¥‘•¹”è€Àôì((€€¼¼1…å½ÕĞ‘•Ñ•Ñ¥½¸‘½•Ì¹½Ğ¹••™Õ±°µÉ•Í½±ÕÑ¥½¸Á¥á•±Ì¸¹…±åé”„‰½Õ¹‘•(€€¼¼ÁÉ•Ù¥•ÜÍ¼¡¥ µÉ•Í½±ÕÑ¥½¸Á¡½¹”Á¡½Ñ½Ì‘¼¹½Ğ…±±½…Ñ”„¡Õ”	LÅÕ•Õ”¸(€½¹ÍĞµ…á¥µ•¹Í¥½¸€ô€äÀÀì(€½¹ÍĞÍ…±”€ô5…Ñ ¹µ¥¸ Ä°µ…á¥µ•¹Í¥½¸€¼5…Ñ ¹µ…à¡İ¥‘Ñ °¡•¥¡Ğ¤¤ì(€½¹ÍĞ…¹…±åÍ¥Í]¥‘Ñ €ô5…Ñ ¹µ…à Ä°5…Ñ ¹É½Õ¹¡İ¥‘Ñ €¨Í…±”¤¤ì(€½¹ÍĞ…¹…±åÍ¥Í!•¥¡Ğ€ô5…Ñ ¹µ…à Ä°5…Ñ ¹É½Õ¹¡¡•¥¡Ğ€¨Í…±”¤¤ì(€½¹ÍĞ…¹…±åÍ¥Í…¹Ù…Ì€ô‘½Õµ•¹Ğ¹É•…Ñ•±•µ•¹Ğ …¹Ù…Ìœ¤ì(€…¹…±åÍ¥Í…¹Ù…Ì¹İ¥‘Ñ €ô…¹…±åÍ¥Í]¥‘Ñ ì(€…¹…±åÍ¥Í…¹Ù…Ì¹¡•¥¡Ğ€ô…¹…±åÍ¥Í!•¥¡Ğì(€½¹ÍĞ…¹…±åÍ¥ÍÑà€ô…¹…±åÍ¥Í…¹Ù…Ì¹•Ñ½¹Ñ•áĞ œÉœ°ìİ¥±±I•…‘É•ÅÕ•¹Ñ±äèÑÉÕ”ô¤ì(€¥˜€ ……¹…±åÍ¥ÍÑà¤É•ÑÕÉ¸ìÍÑ…ÑÕÌè€¹½ĞµÍ¡••Ğœ°½¹™¥‘•¹”è€Àôì(€…¹…±åÍ¥ÍÑà¹¥µ…•Mµ½½Ñ¡¥¹¹…‰±•€ôÑÉÕ”ì(€…¹…±åÍ¥ÍÑà¹¥µ…•Mµ½½Ñ¡¥¹EÕ…±¥Ñä€ô€¡¥ œì(€…¹…±åÍ¥ÍÑà¹‘É…İ%µ…”¡…¹Ù…Ì°€À°€À°…¹…±åÍ¥Í]¥‘Ñ °…¹…±åÍ¥Í!•¥¡Ğ¤ì((€½¹ÍĞ½µÁ½¹•¹ÑÌ€ô•áÑÉ…Ñ½¹¹•Ñ•‘½µÁ½¹•¹ÑÌ¡…¹…±åÍ¥ÍÑà°…¹…±åÍ¥Í]¥‘Ñ °…¹…±åÍ¥Í!•¥¡Ğ¤ì(€É•ÑÕÉ¸±…ÍÍ¥™åµ½Ñ¥½¹M¡••Ñ½µÁ½¹•¹ÑÌ¡½µÁ½¹•¹ÑÌ°…¹…±åÍ¥Í]¥‘Ñ °…¹…±åÍ¥Í!•¥¡Ğ¤ì)ô()…Íå¹Œ™Õ¹Ñ¥½¸ÍÁ±¥Ñ%¹Ñ½¥™Ñ••¸¡¥¹ÁÕĞ¤ì(€±•Ğ…¹Ù…Ì°Ñàì(€¥˜€¡¥¹ÁÕĞ€˜˜ÑåÁ•½˜¥¹ÁÕĞ¹•Ñ½¹Ñ•áĞ€ôôô€™Õ¹Ñ¥½¸œ¤ì(€€€…¹Ù…Ì€ô¥¹ÁÕĞì(€€€Ñà€ô…¹Ù…Ì¹•Ñ½¹Ñ•áĞ œÉœ°ìİ¥±±I•…‘É•ÅÕ•¹Ñ±äèÑÉÕ”ô¤ì(€ô•±Í”ì(€€€½¹ÍĞ‘É…İ¸€ô…İ…¥Ğ‘É…İ¥±•Q½…¹Ù…Ì¡¥¹ÁÕĞ¤ì(€€€…¹Ù…Ì€ô‘É…İ¸¹…¹Ù…Ìì(€€€Ñà€ô‘É…İ¸¹Ñàì(€ô(€½¹ÍĞìİ¥‘Ñ °¡•¥¡Ğô€ô…¹Ù…Ìì(€¥˜€ …İ¥‘Ñ ñğ€…¡•¥¡Ğ¤Ñ¡É½Ü¹•ÜÉÉ½È %¹Ù…±¥…¹Ù…Ì‘¥µ•¹Í¥½¹Ìœ¤ì((€½¹ÍĞÉ½İÌ€ô€Ìì(€½¹ÍĞ½±Õµ¹Ì€ô€Ôì(€½¹ÍĞ•±±\€ôİ¥‘Ñ €¼½±Õµ¹Ìì(€½¹ÍĞ•±± €ô¡•¥¡Ğ€¼É½İÌì(€½¹ÍĞÁ…‘‘¥¹œ€ô5…Ñ ¹µ…à Ø°5…Ñ ¹É½Õ¹¡5…Ñ ¹µ¥¸¡•±±\°•±± ¤€¨€À¸ÀĞÔ¤¤ì((€€¼¼€Ä¸ƒ²‚²ÊĞƒ²vÓ®¾ã²²v`ƒ²V3¶20ƒ¶R÷² ƒ®6Ã²vÓ¶Ã®–ğƒ®. ƒ¶Vpƒ®Ê#®0ƒ²v÷²ZÓ²bĞ€£²Ò#ªÎƒ²4ƒ²Ç®*”€˜ƒ®¦S®ª£®š°ƒ²Ös²‚¶fP¤(€½¹ÍĞ™Õ±±%µ…•…Ñ„€ôÑà¹•Ñ%µ…•…Ñ„ À°€À°İ¥‘Ñ °¡•¥¡Ğ¤ì(€½¹ÍĞ‘…Ñ„€ô™Õ±±%µ…•…Ñ„¹‘…Ñ„ì((€½¹ÍĞ¥Ñ•µÌ€ômtì((€€¼¼€È¸€Ä×ªÂpƒ²  Ï¶Z$€×²^Ğ¤ƒ²"s²s®2®†pƒ²‚W®Â 	½Õ¹‘¥¹œ	½àƒ²*“²êP(€™½È€¡±•ĞÈ€ô€ÀìÈ€ğÉ½İÌìÈ€¬ô€Ä¤ì(€€€™½È€¡±•ĞŒ€ô€ÀìŒ€ğ½±Õµ¹ÌìŒ€¬ô€Ä¤ì(€€€€€½¹ÍĞ•±±1•™Ğ€ô5…Ñ ¹™±½½È¡Œ€¨•±±\¤ì(€€€€€½¹ÍĞ•±±Q½À€ô5…Ñ ¹™±½½È¡È€¨•±± ¤ì(€€€€€½¹ÍĞ•±±I¥¡Ğ€ô5…Ñ ¹µ¥¸¡İ¥‘Ñ °5…Ñ ¹•¥° ¡Œ€¬€Ä¤€¨•±±\¤¤ì(€€€€€½¹ÍĞ•±±	½ÑÑ½´€ô5…Ñ ¹µ¥¸¡¡•¥¡Ğ°5…Ñ ¹•¥° ¡È€¬€Ä¤€¨•±± ¤¤ì((€€€€€±•Ğµ¥¹`€ô•±±I¥¡Ğì(€€€€€±•Ğµ¥¹d€ô•±±	½ÑÑ½´ì(€€€€€±•Ğµ…á`€ô•±±1•™Ğ€´€Äì(€€€€€±•Ğµ…ád€ô•±±Q½À€´€Äì(€€€€€±•Ğ¡…ÍA¥á•±Ì€ô™…±Í”ì((€€€€€€¼¼ƒ¶VÓ®.äƒ² ƒªÖ³²^´ƒ®
+Ó®Ú²v`ƒ®ª£®N€ƒ²rƒ¶j ƒ¶R÷² £²êC®š·¶Àƒ®Îã²ÊĞ€¬ƒ¶Vsªâ ¿²b®²àƒ¶7²*“¶*à€¬ƒ®C¶J7²€€¬ƒ¶Vc¶*à¿®Îƒ¶j£ªÎó²€ƒ®NÄƒ²vó²ÊĞ§²vƒ¶C²$(€€€€€™½È€¡±•Ğä€ô•±±Q½Àìä€ğ•±±	½ÑÑ½´ìä€¬ô€Ä¤ì(€€€€€€€½¹ÍĞÉ½İ=™™Í•Ğ€ôä€¨İ¥‘Ñ €¨€Ğì(€€€€€€€™½È€¡±•Ğà€ô•±±1•™Ğìà€ğ•±±I¥¡Ğìà€¬ô€Ä¤ì(€€€€€€€€€½¹ÍĞ…±Á¡„€ô‘…Ñ…mÉ½İ=™™Í•Ğ€¬à€¨€Ğ€¬€Ítì(€€€€€€€€€€¼¼MÁ±¥ÑÑ¥¹œ¹•Ù•È¡…¹•Ì…±Á¡„¸%¹±Õ‘”™…¥¹Ğ…¹Ñ¥…±¥…Í•Á¥á•±Ì¥¸(€€€€€€€€€€¼¼Ñ¡”É½À‰½Õ¹‘ÌÍ¼Á…±”±•ÑÑ•É¥¹œ…¹‰•¥”•‘•Ì…É”¹½Ğ±¥ÁÁ•¸(€€€€€€€€€¥˜€¡…±Á¡„€ø€à¤ì(€€€€€€€€€€€¡…ÍA¥á•±Ì€ôÑÉÕ”ì(€€€€€€€€€€€¥˜€¡à€ğµ¥¹`¤µ¥¹`€ôàì(€€€€€€€€€€€¥˜€¡à€øµ…á`¤µ…á`€ôàì(€€€€€€€€€€€¥˜€¡ä€ğµ¥¹d¤µ¥¹d€ôäì(€€€€€€€€€€€¥˜€¡ä€øµ…ád¤µ…ád€ôäì(€€€€€€€€€ô(€€€€€€€ô(€€€€€ô((€€€€€€¼¼€Ì¸ƒ²‚W®Â ƒ®ÂS²jÓ®R¤ƒ®ÂW²*ƒªÊÃ²‚T€£¶²vÓ¶*àƒ¶³®†´€¬ƒ²zC²^Ã²*“®~³²jĞƒ²^³®ÂÄƒ¶2£®R¤¤(€€€€€±•ĞÉ½Á`°É½Ád°É½Á\°É½Á ì(€€€€€¥˜€¡¡…ÍA¥á•±Ì€˜˜µ¥¹`€ğôµ…á`€˜˜µ¥¹d€ğôµ…ád¤ì(€€€€€€€€¼¼ƒ²vã²‚Dƒ²²vƒ²æ£®ÊS¶Vc² ƒ²V+®*Pƒ²ƒ²^C²pƒ²Ös®2 ƒ¶2£®R¤ƒ²‚²j¤(€€€€€€€½¹ÍĞ…‰Í5¥¹`€ô5…Ñ ¹µ…à¡•±±1•™Ğ°µ¥¹`€´Á…‘‘¥¹œ¤ì(€€€€€€€½¹ÍĞ…‰Í5¥¹d€ô5…Ñ ¹µ…à¡•±±Q½À°µ¥¹d€´Á…‘‘¥¹œ¤ì(€€€€€€€½¹ÍĞ…‰Í5…á`€ô5…Ñ ¹µ¥¸¡•±±I¥¡Ğ°µ…á`€¬€Ä€¬Á…‘‘¥¹œ¤ì(€€€€€€€½¹ÍĞ…‰Í5…ád€ô5…Ñ ¹µ¥¸¡•±±	½ÑÑ½´°µ…ád€¬€Ä€¬Á…‘‘¥¹œ¤ì((€€€€€€€É½Á`€ô5…Ñ ¹É½Õ¹¡…‰Í5¥¹`¤ì(€€€€€€€É½Ád€ô5…Ñ ¹É½Õ¹¡…‰Í5¥¹d¤ì(€€€€€€€É½Á\€ô5…Ñ ¹µ…à Ä°5…Ñ ¹É½Õ¹¡…‰Í5…á`€´…‰Í5¥¹`¤¤ì(€€€€€€€É½Á €ô5…Ñ ¹µ…à Ä°5…Ñ ¹É½Õ¹¡…‰Í5…ád€´…‰Í5¥¹d¤¤ì(€€€€€ô•±Í”ì(€€€€€€€€¼¼ƒ¶R÷²²vĞƒ²^®6S®vó®>ƒ² ƒ²‚²ÊĞƒ²b²^·²vƒ²V#²‚¶VcªÊ0ƒ¶³®†´(€€€€€€€É½Á`€ô5…Ñ ¹É½Õ¹¡•±±1•™Ğ¤ì(€€€€€€€É½Ád€ô5…Ñ ¹É½Õ¹¡•±±Q½À¤ì(€€€€€€€É½Á\€ô5…Ñ ¹µ…à Ä°5…Ñ ¹É½Õ¹¡•±±I¥¡Ğ€´•±±1•™Ğ¤¤ì(€€€€€€€É½Á €ô5…Ñ ¹µ…à Ä°5…Ñ ¹É½Õ¹¡•±±	½ÑÑ½´€´•±±Q½À¤¤ì(€€€€€ô((€€€€€€¼¼€Ğ¸ƒªÂs®Îƒ²êS®Ê²*“²^@ƒ²‚W®Â ƒ¶³®†´ƒ®‚3®6S®(€€€€€½¹ÍĞ½ÕÑÁÕĞ€ô‘½Õµ•¹Ğ¹É•…Ñ•±•µ•¹Ğ …¹Ù…Ìœ¤ì(€€€€€½ÕÑÁÕĞ¹İ¥‘Ñ €ôÉ½Á\ì(€€€€€½ÕÑÁÕĞ¹¡•¥¡Ğ€ôÉ½Á ì(€€€€€½¹ÍĞ½ÕÑÑà€ô½ÕÑÁÕĞ¹•Ñ½¹Ñ•áĞ œÉœ¤ì(€€€€€¥˜€¡½ÕÑÑà¤ì(€€€€€€€ÑÉäì(€€€€€€€€€½ÕÑÑà¹‘É…İ%µ…”¡…¹Ù…Ì°É½Á`°É½Ád°É½Á\°É½Á °€À°€À°É½Á\°É½Á ¤ì(€€€€€€€ô…Ñ €¡}‘É…İÉÈ¤ì(€€€€€€€€€½¹Í½±”¹İ…É¸ •±°‘É…İ%µ…”•ÉÉ½Èèœ°}‘É…İÉÈ¤ì(€€€€€€€ô(€€€€€ô((€€€€€€¼¼€Ô¸ƒ®ª£®ÂS²vğƒ²V#²‚A9	±½ˆƒ²ÚS²Úp(€€€€€±•Ğ¥Ñ•µ	±½ˆì(€€€€€ÑÉäì(€€€€€€€¥Ñ•µ	±½ˆ€ô…İ…¥Ğ…¹Ù…ÍQ½A¹	±½ˆ¡½ÕÑÁÕĞ¤ì(€€€€€ô…Ñ €¡}‰±½‰ÉÈ¤ì(€€€€€€€½¹ÍĞ‘…Ñ…UÉ°€ô½ÕÑÁÕĞ¹Ñ½…Ñ…UI0 ¥µ…”½Á¹œœ¤ì(€€€€€€€½¹ÍĞ‰¥¹MÑÈ€ô…Ñ½ˆ¡‘…Ñ…UÉ°¹ÍÁ±¥Ğ œ°œ¥lÅt¤ì(€€€€€€€½¹ÍĞ…ÉÈ€ô¹•ÜU¥¹ĞáÉÉ…ä¡‰¥¹MÑÈ¹±•¹Ñ ¤ì(€€€€€€€™½È€¡±•Ğ¤€ô€Àì¤€ğ‰¥¹MÑÈ¹±•¹Ñ ì¤€¬ô€Ä¤…ÉÉm¥t€ô‰¥¹MÑÈ¹¡…É½‘•Ğ¡¤¤ì(€€€€€€€¥Ñ•µ	±½ˆ€ô¹•Ü	±½ˆ¡m…ÉÉt°ìÑåÁ”è€¥µ…”½Á¹œœô¤ì(€€€€€ô((€€€€€¥Ñ•µÌ¹ÁÕÍ ¡ì(€€€€€€€¥¹‘•àè¥Ñ•µÌ¹±•¹Ñ €¬€Ä°(€€€€€€€‰±½ˆè¥Ñ•µ	±½ˆ°(€€€€€€€İ¥‘Ñ èÉ½Á\°(€€€€€€€¡•¥¡ĞèÉ½Á (€€€€€ô¤ì(€€€ô(€ô((€É•ÑÕÉ¸¥Ñ•µÌì)ô()…Íå¹Œ™Õ¹Ñ¥½¸ÍÁ±¥Ñ	åMµ…ÉÑÉ¥¡¥¹ÁÕĞ¤ì(€É•ÑÕÉ¸ÍÁ±¥Ñ%¹Ñ½¥™Ñ••¸¡¥¹ÁÕĞ¤ì)ô()…Íå¹Œ™Õ¹Ñ¥½¸¡…ÍI•…±QÉ…¹ÍÁ…É•¹ä¡™¥±”¤ì(€¥˜€¡™¥±”ü¹ÑåÁ”€„ôô€¥µ…”½Á¹œœ¤É•ÑÕÉ¸™…±Í”ì(€½¹ÍĞì…¹Ù…Ì°Ñàô€ô…İ…¥Ğ‘É…İ¥±•Q½…¹Ù…Ì¡™¥±”¤ì(€½¹ÍĞìİ¥‘Ñ °¡•¥¡Ğô€ô…¹Ù…Ìì(€¥˜€ …İ¥‘Ñ ñğ€…¡•¥¡Ğ¤É•ÑÕÉ¸™…±Í”ì(€½¹ÍĞÁ¥á•±Ì€ôÑà¹•Ñ%µ…•…Ñ„ À°€À°İ¥‘Ñ °¡•¥¡Ğ¤¹‘…Ñ„ì(€½¹ÍĞÍÑ•À€ô5…Ñ ¹µ…à Ä°5…Ñ ¹™±½½È¡5…Ñ ¹ÍÅÉĞ ¡İ¥‘Ñ €¨¡•¥¡Ğ¤€¼€ÌÀÀÀÀÀ¤¤¤ì(€™½È€¡±•Ğä€ô€Àìä€ğ¡•¥¡Ğìä€¬ôÍÑ•À¤ì(€€€™½È€¡±•Ğà€ô€Àìà€ğİ¥‘Ñ ìà€¬ôÍÑ•À¤ì(€€€€€¥˜€¡Á¥á•±Íl¡ä€¨İ¥‘Ñ €¬à¤€¨€Ğ€¬€Ít€ğ€ÈÔÀ¤É•ÑÕÉ¸ÑÉÕ”ì(€€€ô(€ô(€É•ÑÕÉ¸™…±Í”ì)ô()•áÁ½ÉĞ‘•™…Õ±Ğ™Õ¹Ñ¥½¸	…­É½Õ¹‘I•µ½Ù•È¡ì±…¹œ€ô€­¼œô¤ì(€½¹ÍĞĞ€ô=Aem±…¹tñğ=Ad¹­¼ì(€½¹ÍĞ¥¹ÁÕÑI•˜€ôÕÍ•I•˜¡¹Õ±°¤ì(€½¹ÍĞÍÁ±¥Ñ…É‘I•˜€ôÕÍ•I•˜¡¹Õ±°¤ì(€½¹ÍĞm™¥±”°Í•Ñ¥±•t€ôÕÍ•MÑ…Ñ”¡¹Õ±°¤ì(€½¹ÍĞmÍ½ÕÉ•UÉ°°Í•ÑM½ÕÉ•UÉ±t€ôÕÍ•MÑ…Ñ” œœ¤ì(€½¹ÍĞmÉ•ÍÕ±ÑUÉ°°Í•ÑI•ÍÕ±ÑUÉ±t€ôÕÍ•MÑ…Ñ” œœ¤ì(€½¹ÍĞmÉ•ÍÕ±Ñ	±½ˆ°Í•ÑI•ÍÕ±Ñ	±½‰t€ôÕÍ•MÑ…Ñ”¡¹Õ±°¤ì(€½¹ÍĞm‰ÕÍä°Í•Ñ	ÕÍåt€ôÕÍ•MÑ…Ñ”¡™…±Í”¤ì(€½¹ÍĞmÍÑ…”°Í•ÑMÑ…•t€ôÕÍ•MÑ…Ñ” œœ¤ì(€½¹ÍĞmÁÉ½É•ÍÌ°Í•ÑAÉ½É•ÍÍt€ôÕÍ•MÑ…Ñ”¡¹Õ±°¤ì(€½¹ÍĞÁÉ½É•ÍÍI•¹‘•ÉI•˜€ôÕÍ•I•˜¡ìÙ…±Õ”è¹Õ±°°Ñ¥µ”è€Àô¤ì(€½¹ÍĞÕÁ‘…Ñ•I•µ½Ù…±AÉ½É•ÍÌ€ô€¡É…İAÉ½É•ÍÌ¤€ôøì(€€€½¹ÍĞ¹Õµ•É¥AÉ½É•ÍÌ€ô9Õµ‰•È¡É…İAÉ½É•ÍÌ¤ì(€€€¥˜€ …9Õµ‰•È¹¥Í¥¹¥Ñ”¡¹Õµ•É¥AÉ½É•ÍÌ¤¤É•ÑÕÉ¸ì((€€€½¹ÍĞ¹•áÑY…±Õ”€ô5…Ñ ¹µ…à À°5…Ñ ¹µ¥¸ ÄÀÀ°5…Ñ ¹É½Õ¹¡¹Õµ•É¥AÉ½É•ÍÌ¤¤¤ì(€€€½¹ÍĞ¹½Ü€ôÑåÁ•½˜Á•É™½Éµ…¹”€„ôô€Õ¹‘•™¥¹•œ€˜˜ÑåÁ•½˜Á•É™½Éµ…¹”¹¹½Ü€ôôô€™Õ¹Ñ¥½¸œ(€€€€€€üÁ•É™½Éµ…¹”¹¹½Ü ¤(€€€€€€è…Ñ”¹¹½Ü ¤ì(€€€½¹ÍĞÁÉ•Ù¥½ÕÌ€ôÁÉ½É•ÍÍI•¹‘•ÉI•˜¹ÕÉÉ•¹Ğì(€€€½¹ÍĞ¥Í	½Õ¹‘…Éä€ô¹•áÑY…±Õ”€ôôô€Àñğ¹•áÑY…±Õ”€ôôô€ÄÀÀì((€€€¥˜€ …¥Í	½Õ¹‘…Éä€˜˜ÁÉ•Ù¥½ÕÌ¹Ù…±Õ”€„ôô¹Õ±°€˜˜¹½Ü€´ÁÉ•Ù¥½ÕÌ¹Ñ¥µ”€ğ€àÀ¤É•ÑÕÉ¸ì((€€€ÁÉ½É•ÍÍI•¹‘•ÉI•˜¹ÕÉÉ•¹Ğ€ôìÙ…±Õ”è¹•áÑY…±Õ”°Ñ¥µ”è¹½Üôì(€€€Í•ÑAÉ½É•ÍÌ ¡ÕÉÉ•¹Ğ¤€ôøÕÉÉ•¹Ğ€ôôô¹•áÑY…±Õ”€üÕÉÉ•¹Ğ€è¹•áÑY…±Õ”¤ì(€ôì(€½¹ÍĞm•ÉÉ½È°Í•ÑÉÉ½Ét€ôÕÍ•MÑ…Ñ” œœ¤ì(€½¹ÍĞm½µÁ…É•A½Í¥Ñ¥½¸°Í•Ñ½µÁ…É•A½Í¥Ñ¥½¹t€ôÕÍ•MÑ…Ñ” ÔÀ¤ì(€½¹ÍĞmÍÁ±¥Ñ%Ñ•µÌ°Í•ÑMÁ±¥Ñ%Ñ•µÍt€ôÕÍ•MÑ…Ñ”¡mt¤ì(€½¹ÍĞmÍÁ±¥ÑÑ¥¹œ°Í•ÑMÁ±¥ÑÑ¥¹t€ôÕÍ•MÑ…Ñ”¡™…±Í”¤ì(€½¹ÍĞmÍÁ±¥ÑÉÉ½È°Í•ÑMÁ±¥ÑÉÉ½Ét€ôÕÍ•MÑ…Ñ” œœ¤ì(€½¹ÍĞmÍ¡••Ñ•Ñ•Ñ¥½¸°Í•ÑM¡••Ñ•Ñ•Ñ¥½¹t€ôÕÍ•MÑ…Ñ”¡ìÍÑ…ÑÕÌè€¥‘±”œ°½¹™¥‘•¹”è€Àô¤ì(€½¹ÍĞ…ÕÑ½µ…Ñ¥MÁ±¥Ñ	±½‰I•˜€ôÕÍ•I•˜¡¹Õ±°¤ì(€½¹ÍĞ…ÕÑ½MÁ±¥Ñ…±±‰…­I•˜€ôÕÍ•I•˜¡¹Õ±°¤ì(€½¹ÍĞmÅÕ…±¥ÑåÍÍ•ÍÍµ•¹Ğ°Í•ÑEÕ…±¥ÑåÍÍ•ÍÍµ•¹Ñt€ôÕÍ•MÑ…Ñ”¡ìÍÑ…ÑÕÌè€¥‘±”œ°Í½É”è€Àô¤ì(€½¹ÍĞmÉ•ÍÕ±Ñ5•Ñ¡½°Í•ÑI•ÍÕ±Ñ5•Ñ¡½‘t€ôÕÍ•MÑ…Ñ” œœ¤ì(€½¹ÍĞmÁÉ•¥Í¥½¹5•ÍÍ…”°Í•ÑAÉ•¥Í¥½¹5•ÍÍ…•t€ôÕÍ•MÑ…Ñ” œœ¤ì((€ÕÍ•™™•Ğ  ¤€ôø€ ¤€ôøì(€€€¥˜€¡Í½ÕÉ•UÉ°¤UI0¹É•Ù½­•=‰©•ÑUI0¡Í½ÕÉ•UÉ°¤ì(€€€¥˜€¡É•ÍÕ±ÑUÉ°¤UI0¹É•Ù½­•=‰©•ÑUI0¡É•ÍÕ±ÑUÉ°¤ì(€ô°mÍ½ÕÉ•UÉ°°É•ÍÕ±ÑUÉ±t¤ì((€ÕÍ•™™•Ğ  ¤€ôø€ ¤€ôøì(€€€ÍÁ±¥Ñ%Ñ•µÌ¹™½É…  ¡¥Ñ•´¤€ôøUI0¹É•Ù½­•=‰©•ÑUI0¡¥Ñ•´¹ÕÉ°¤¤ì(€ô°mÍÁ±¥Ñ%Ñ•µÍt¤ì((€ÕÍ•™™•Ğ  ¤€ôøì(€€€±•Ğ…¹•±±•€ô™…±Í”ì(€€€¥˜€ …É•ÍÕ±Ñ	±½ˆ¤ì(€€€€€Í•ÑM¡••Ñ•Ñ•Ñ¥½¸¡ìÍÑ…ÑÕÌè€¥‘±”œ°½¹™¥‘•¹”è€Àô¤ì(€€€€€É•ÑÕÉ¸€ ¤€ôøì…¹•±±•€ôÑÉÕ”ìôì(€€€ô((€€€Í•ÑM¡••Ñ•Ñ•Ñ¥½¸¡ìÍÑ…ÑÕÌè€¡•­¥¹œœ°½¹™¥‘•¹”è€Àô¤ì(€€€‘•Ñ•Ñµ½Ñ¥½¹M¡••Ğ¡É•ÍÕ±Ñ	±½ˆ¤(€€€€€€¹Ñ¡•¸ ¡‘•Ñ•Ñ¥½¸¤€ôøì(€€€€€€€¥˜€ ……¹•±±•¤Í•ÑM¡••Ñ•Ñ•Ñ¥½¸¡‘•Ñ•Ñ¥½¸¤ì(€€€€€ô¤(€€€€€€¹…Ñ  ¡•ÉÉ½È¤€ôøì(€€€€€€€½¹Í½±”¹İ…É¸ µ½Ñ¥½¸Í¡••Ğ‘•Ñ•Ñ¥½¸™…¥±•èœ°•ÉÉ½È¤ì(€€€€€€€¥˜€ ……¹•±±•¤Í•ÑM¡••Ñ•Ñ•Ñ¥½¸¡ìÍÑ…ÑÕÌè€¹½ĞµÍ¡••Ğœ°½¹™¥‘•¹”è€Àô¤ì(€€€€€ô¤ì((€€€É•ÑÕÉ¸€ ¤€ôøì…¹•±±•€ôÑÉÕ”ìôì(€ô°mÉ•ÍÕ±Ñ	±½‰t¤ì((€½¹ÍĞ±•…ÉMÁ±¥Ñ%Ñ•µÌ€ô€ ¤€ôøì(€€€ÍÁ±¥Ñ%Ñ•µÌ¹™½É…  ¡¥Ñ•´¤€ôøUI0¹É•Ù½­•=‰©•ÑUI0¡¥Ñ•´¹ÕÉ°¤¤ì(€€€Í•ÑMÁ±¥Ñ%Ñ•µÌ¡mt¤ì(€€€Í•ÑMÁ±¥ÑÉÉ½È œœ¤ì(€€€Í•ÑMÁ±¥ÑÑ¥¹œ¡™…±Í”¤ì(€ôì((€½¹ÍĞ±•…ÉI•ÍÕ±Ğ€ô€ ¤€ôøì(€€€¥˜€¡É•ÍÕ±ÑUÉ°¤UI0¹É•Ù½­•=‰©•ÑUI0¡É•ÍÕ±ÑUÉ°¤ì(€€€±•…ÉMÁ±¥Ñ%Ñ•µÌ ¤ì(€€€Í•ÑI•ÍÕ±ÑUÉ° œœ¤ì(€€€Í•ÑI•ÍÕ±Ñ	±½ˆ¡¹Õ±°¤ì(€€€Í•ÑEÕ…±¥ÑåÍÍ•ÍÍµ•¹Ğ¡ìÍÑ…ÑÕÌè€¥‘±”œ°Í½É”è€Àô¤ì(€€€Í•ÑI•ÍÕ±Ñ5•Ñ¡½ œœ¤ì(€€€Í•ÑAÉ•¥Í¥½¹5•ÍÍ…” œœ¤ì(€€€Í•ÑÉÉ½È œœ¤ì(€€€Í•ÑAÉ½É•ÍÌ¡¹Õ±°¤ì(€€€Í•ÑMÑ…” œœ¤ì(€€€Í•Ñ½µÁ…É•A½Í¥Ñ¥½¸ ÔÀ¤ì(€ôì((€½¹ÍĞÍ•±•Ñ¥±”€ô…Íå¹Œ€¡¹•áÑ¥±”¤€ôøì(€€€¥˜€ …¹•áÑ¥±”¤É•ÑÕÉ¸ì(€€€¥˜€ …l¥µ…”½Á¹œœ°€¥µ…”½©Á•œœ°€¥µ…”½İ•‰Àt¹¥¹±Õ‘•Ì¡¹•áÑ¥±”¹ÑåÁ”¤¤ì(€€€€€Í•ÑÉÉ½È¡Ğ¹‰…‘QåÁ”¤ì(€€€€€É•ÑÕÉ¸ì(€€€ô(€€€¥˜€¡¹•áÑ¥±”¹Í¥é”€ø€ÄÈ€¨€ÄÀÈĞ€¨€ÄÀÈĞ¤ì(€€€€€Í•ÑÉÉ½È¡Ğ¹Ñ½½1…É”¤ì(€€€€€É•ÑÕÉ¸ì(€€€ô(€€€¥˜€¡¹•áÑ¥±”¹ÑåÁ”€ôôô€¥µ…”½Á¹œœ¤ì(€€€€€ÑÉäì(€€€€€€€¥˜€¡…İ…¥Ğ¡…ÍI•…±QÉ…¹ÍÁ…É•¹ä¡¹•áÑ¥±”¤¤ì(€€€€€€€€€Í•ÑÉÉ½È¡Ğ¹ÑÉ…¹ÍÁ…É•¹Ñ±É•…‘ä¤ì(€€€€€€€€€É•ÑÕÉ¸ì(€€€€€€€ô(€€€€€ô…Ñ €¡”¤ì(€€€€€€€½¹Í½±”¹İ…É¸ QÉ…¹ÍÁ…É•¹ĞA9‘•Ñ•Ñ¥½¸™…¥±•èœ°”¤ì(€€€€€ô(€€€ô(€€€¥˜€¡Í½ÕÉ•UÉ°¤UI0¹É•Ù½­•=‰©•ÑUI0¡Í½ÕÉ•UÉ°¤ì(€€€±•…ÉI•ÍÕ±Ğ ¤ì(€€€Í•Ñ¥±”¡¹•áÑ¥±”¤ì(€€€Í•ÑM½ÕÉ•UÉ°¡UI0¹É•…Ñ•=‰©•ÑUI0¡¹•áÑ¥±”¤¤ì(€ôì((€½¹ÍĞÉ•Í•Ğ€ô€ ¤€ôøì(€€€¥˜€¡Í½ÕÉ•UÉ°¤UI0¹É•Ù½­•=‰©•ÑUI0¡Í½ÕÉ•UÉ°¤ì(€€€±•…ÉI•ÍÕ±Ğ ¤ì(€€€Í•Ñ¥±”¡¹Õ±°¤ì(€€€Í•ÑM½ÕÉ•UÉ° œœ¤ì(€€€¥˜€¡¥¹ÁÕÑI•˜¹ÕÉÉ•¹Ğ¤¥¹ÁÕÑI•˜¹ÕÉÉ•¹Ğ¹Ù…±Õ”€ô€œœì(€ôì((€½¹ÍĞÉ•µ½Ù•	…­É½Õ¹€ô…Íå¹Œ€ ¤€ôøì(€€€¥˜€ …™¥±”ñğ‰ÕÍä¤É•ÑÕÉ¸ì(€€€±•…ÉI•ÍÕ±Ğ ¤ì(€€€Í•Ñ	ÕÍä¡ÑÉÕ”¤ì(€€€Í•ÑMÑ…” ÁÉ•Á…É¥¹œœ¤ì(€€€ÑÉäì(€€€€€±•Ğµ•Ñ¡½€ô€™…ÍĞœì(€€€€€±•Ğ‰±½ˆ€ô…İ…¥ĞÑÉå…ÍÑU¹¥™½Éµ	…­É½Õ¹‘I•µ½Ù…°¡™¥±”¤ì(€€€€€±•ĞÅÕ…±¥Ñä€ôìÍÑ…ÑÕÌè€Á…ÍÌœ°Í½É”è€Àôì((€€€€€€¼¼Q¡”•‘”µ½±½ÈÍ¡½ÉÑÕĞ…¸½…Í¥½¹…±±äµ¥ÍÑ…­”„½µÁ±•à¥¹‘½½ÈÍ•¹”(€€€€€€¼¼™½È„Õ¹¥™½É´‰…­‘É½À¸Y…±¥‘…Ñ”Ñ¡”™…ÍĞÉ•ÍÕ±Ğ‰•™½É”…•ÁÑ¥¹œ¥Ğ¸(€€€€€€¼¼¹äİ…É¹¥¹œ½™…¥±ÕÉ”¥Ì‘¥Í…É‘•…¹É½ÕÑ•Ñ¡É½Õ Ñ¡”$µ½‘•±Ì¸(€€€€€¥˜€¡‰±½ˆ¤ì(€€€€€€€ÑÉäì(€€€€€€€€€½¹ÍĞ™…ÍÑEÕ…±¥Ñä€ô…İ…¥Ğ…ÍÍ•ÍÍI•µ½Ù…±EÕ…±¥Ñä¡‰±½ˆ¤ì(€€€€€€€€€¥˜€¡™…ÍÑEÕ…±¥Ñä¹ÍÑ…ÑÕÌ€ôôô€Á…ÍÌœ¤ì(€€€€€€€€€€€ÅÕ…±¥Ñä€ô™…ÍÑEÕ…±¥Ñäì(€€€€€€€€€ô•±Í”ì(€€€€€€€€€€€½¹Í½±”¹İ…É¸ …ÍĞ‰…­É½Õ¹É•µ½Ù…°É•©•Ñ•‰äÅÕ…±¥Ñä…Ñ”èœ°™…ÍÑEÕ…±¥Ñä¤ì(€€€€€€€€€€€‰±½ˆ€ô¹Õ±°ì(€€€€€€€€€€€ÅÕ…±¥Ñä€ôìÍÑ…ÑÕÌè€¥‘±”œ°Í½É”è€Àôì(€€€€€€€€€ô(€€€€€€€ô…Ñ €¡™…ÍÑEÕ…±¥ÑåÉÉ½È¤ì(€€€€€€€€€½¹Í½±”¹İ…É¸ …ÍĞ‰…­É½Õ¹Ù…±¥‘…Ñ¥½¸™…¥±•ì™…±±¥¹œ‰…¬Ñ¼$èœ°™…ÍÑEÕ…±¥ÑåÉÉ½È¤ì(€€€€€€€€€‰±½ˆ€ô¹Õ±°ì(€€€€€€€€€ÅÕ…±¥Ñä€ôìÍÑ…ÑÕÌè€¥‘±”œ°Í½É”è€Àôì(€€€€€€€ô(€€€€€ô((€€€€€¥˜€ …‰±½ˆ¤ì(€€€€€€€µ•Ñ¡½€ô€…¤œì(€€€€€€€Í•ÑMÑ…” ÁÉ•Á…É¥¹œœ¤ì(€€€€€€€‰±½ˆ€ô…İ…¥ĞÉ•µ½Ù•]¥Ñ¡¤¡™¥±”°€¡¥¹™¼¤€ôøì(€€€€€€€€€¥˜€¡ÑåÁ•½˜¥¹™¼ü¹ÁÉ½É•ÍÌ€ôôô€¹Õµ‰•Èœ¤ì(€€€€€€€€€€€ÕÁ‘…Ñ•I•µ½Ù…±AÉ½É•ÍÌ¡¥¹™¼¹ÁÉ½É•ÍÌ¤ì(€€€€€€€€€ô(€€€€€€€ô¤ì(€€€€€€€ÅÕ…±¥Ñä€ô…İ…¥Ğ…ÍÍ•ÍÍI•µ½Ù…±EÕ…±¥Ñä¡‰±½ˆ¤ì((€€€€€€€€¼¼=I5	¥Ì‰É½…µÁÕÉÁ½Í”¸%˜¥ÑÌµ…Í¬±½½­ÌÕ¹É•±¥…‰±”°…ÕÑ½µ…Ñ¥…±±ä(€€€€€€€€¼¼ÑÉä5=9•Ğ°„Íµ…±±•ÈÁ½ÉÑÉ…¥Ğµµ…ÑÑ¥¹œµ½‘•°°…¹­••Àİ¡¥¡•Ù•È(€€€€€€€€¼¼É•ÍÕ±ĞÍ½É•Ì‰•ÑÑ•È¸Q¡¥Ì½ÍÑÌ¹½Ñ¡¥¹œ½¸±•…¸=I5	É•ÍÕ±ÑÌ¸(€€€€€€€¥˜€¡ÅÕ…±¥Ñä¹ÍÑ…ÑÕÌ€„ôô€Á…ÍÌœ¤ì(€€€€€€€€€ÑÉäì(€€€€€€€€€€€Í•ÑMÑ…” ÁÉ•Á…É¥¹œœ¤ì(€€€€€€€€€€€Í•ÑAÉ½É•ÍÌ¡¹Õ±°¤ì(€€€€€€€€€€€½¹ÍĞÁ½ÉÑÉ…¥Ñ	±½ˆ€ô…İ…¥ĞÉ•µ½Ù•]¥Ñ¡5½‘¹•Ğ¡™¥±”°€¡¥¹™¼¤€ôøì(€€€€€€€€€€€€€¥˜€¡ÑåÁ•½˜¥¹™¼ü¹ÁÉ½É•ÍÌ€ôôô€¹Õµ‰•Èœ¤ì(€€€€€€€€€€€€€€€ÕÁ‘…Ñ•I•µ½Ù…±AÉ½É•ÍÌ¡¥¹™¼¹ÁÉ½É•ÍÌ¤ì(€€€€€€€€€€€€€ô(€€€€€€€€€€€ô¤ì(€€€€€€€€€€€½¹ÍĞÁ½ÉÑÉ…¥ÑEÕ…±¥Ñä€ô…İ…¥Ğ…ÍÍ•ÍÍI•µ½Ù…±EÕ…±¥Ñä¡Á½ÉÑÉ…¥Ñ	±½ˆ¤ì(€€€€€€€€€€€¥˜€¡ÅÕ…±¥ÑåI…¹¬¡Á½ÉÑÉ…¥ÑEÕ…±¥Ñä¤€ğÅÕ…±¥ÑåI…¹¬¡ÅÕ…±¥Ñä¤¤ì(€€€€€€€€€€€€€‰±½ˆ€ôÁ½ÉÑÉ…¥Ñ	±½ˆì(€€€€€€€€€€€€€ÅÕ…±¥Ñä€ôÁ½ÉÑÉ…¥ÑEÕ…±¥Ñäì(€€€€€€€€€€€€€µ•Ñ¡½€ô€µ½‘¹•Ğœì(€€€€€€€€€€€ô(€€€€€€€€€ô…Ñ €¡Á½ÉÑÉ…¥ÑÉÉ½È¤ì(€€€€€€€€€€€½¹Í½±”¹İ…É¸ 5=9•ĞÁ½ÉÑÉ…¥ĞÉ•ÑÉä™…¥±•èœ°Á½ÉÑÉ…¥ÑÉÉ½È¤ì(€€€€€€€€€ô(€€€€€€€ô(€€€€€ô((€€€€€Í•ÑMÑ…” ÁÉ½•ÍÍ¥¹œœ¤ì(€€€€€Í•ÑAÉ½É•ÍÌ¡¹Õ±°¤ì(€€€€€‰±½ˆ€ô…İ…¥ĞÉ•µ½Ù•¹±½Í•‘	…­‘É½ÁA½­•ÑÌ¡‰±½ˆ°™¥±”°ÑÉÕ”¤ì(€€€€€‰±½ˆ€ô…İ…¥Ğ½ÉÉ•ÑU¹•áÁ•Ñ•‘½É•É½Õ¹‘QÉ…¹ÍÁ…É•¹ä¡‰±½ˆ¤ì(€€€€€‰±½ˆ€ô…İ…¥ĞÁÉ½Ñ•Ñ1¥¡Ñ½É•É½Õ¹‘=Á…¥Ñä¡‰±½ˆ°™¥±”¤ì(€€€€€ÅÕ…±¥Ñä€ô…İ…¥Ğ…ÍÍ•ÍÍI•µ½Ù…±EÕ…±¥Ñä¡‰±½ˆ¤ì(€€€€€½¹ÍĞÕÉ°€ôUI0¹É•…Ñ•=‰©•ÑUI0¡‰±½ˆ¤ì(€€€€€Í•ÑI•ÍÕ±Ñ5•Ñ¡½¡µ•Ñ¡½¤ì(€€€€€Í•ÑEÕ…±¥ÑåÍÍ•ÍÍµ•¹Ğ¡ÅÕ…±¥Ñä¤ì(€€€€€Í•ÑI•ÍÕ±Ñ	±½ˆ¡‰±½ˆ¤ì(€€€€€Í•ÑI•ÍÕ±ÑUÉ°¡ÕÉ°¤ì(€€€€€Í•Ñ½µÁ…É•A½Í¥Ñ¥½¸ ÔÀ¤ì(€€€ô…Ñ €¡”¤ì(€€€€€½¹Í½±”¹•ÉÉ½È 	…­É½Õ¹É•µ½Ù…°™…¥±•èœ°”¤ì(€€€€€Í•ÑÉÉ½È¡Ğ¹™…¥±•¤ì(€€€ô™¥¹…±±äì(€€€€€Í•Ñ	ÕÍä¡™…±Í”¤ì(€€€€€Í•ÑMÑ…” œœ¤ì(€€€€€Í•ÑAÉ½É•ÍÌ¡¹Õ±°¤ì(€€€ô(€ôì((€½¹ÍĞÉÕ¹AÉ•¥Í¥½¹I•ÑÉä€ô…Íå¹Œ€ ¤€ôøì(€€€¥˜€ …™¥±”ñğ‰ÕÍäñğ€…É•ÍÕ±Ñ	±½ˆ¤É•ÑÕÉ¸ì(€€€Í•Ñ	ÕÍä¡ÑÉÕ”¤ì(€€€Í•ÑMÑ…” ÁÉ•¥Í¥½¸œ¤ì(€€€Í•ÑAÉ½É•ÍÌ¡¹Õ±°¤ì(€€€Í•ÑAÉ•¥Í¥½¹5•ÍÍ…” œœ¤ì(€€€ÑÉäì(€€€€€±•ĞÁÉ•¥Í¥½¹	±½ˆ€ô…İ…¥ĞÉ•µ½Ù•]¥Ñ¡	¥I•™9•Ğ¡™¥±”°€¡¥¹™¼¤€ôøì(€€€€€€€¥˜€¡ÑåÁ•½˜¥¹™¼ü¹ÁÉ½É•ÍÌ€ôôô€¹Õµ‰•Èœ¤ì(€€€€€€€€€ÕÁ‘…Ñ•I•µ½Ù…±AÉ½É•ÍÌ¡¥¹™¼¹ÁÉ½É•ÍÌ¤ì(€€€€€€€ô(€€€€€ô¤ì(€€€€€ÁÉ•¥Í¥½¹	±½ˆ€ô…İ…¥ĞÉ•™¥¹•!…¥É	…­É½Õ¹‘¡…¹¹•±Ì¡ÁÉ•¥Í¥½¹	±½ˆ¤ì(€€€€€ÁÉ•¥Í¥½¹	±½ˆ€ô…İ…¥Ğ½ÉÉ•ÑU¹•áÁ•Ñ•‘½É•É½Õ¹‘QÉ…¹ÍÁ…É•¹ä¡ÁÉ•¥Í¥½¹	±½ˆ¤ì(€€€€€ÁÉ•¥Í¥½¹	±½ˆ€ô…İ…¥Ğ±•…¹¥½É•É½Õ¹‘ÉÑ¥™…ÑÌ¡ÁÉ•¥Í¥½¹	±½ˆ¤ì(€€€€€ÁÉ•¥Í¥½¹	±½ˆ€ô…İ…¥ĞÉ•™¥¹•AÉ•¥Í¥½¹‘•Ì¡ÁÉ•¥Í¥½¹	±½ˆ¤ì(€€€€€ÁÉ•¥Í¥½¹	±½ˆ€ô…İ…¥ĞÉ•µ½Ù•¹±½Í•‘	…­‘É½ÁA½­•ÑÌ¡ÁÉ•¥Í¥½¹	±½ˆ°™¥±”°ÑÉÕ”¤ì(€€€€€ÁÉ•¥Í¥½¹	±½ˆ€ô…İ…¥ĞÁÉ½Ñ•Ñ1¥¡Ñ½É•É½Õ¹‘=Á…¥Ñä¡ÁÉ•¥Í¥½¹	±½ˆ°™¥±”¤ì(€€€€€½¹ÍĞÁÉ•¥Í¥½¹EÕ…±¥Ñä€ô…İ…¥Ğ…ÍÍ•ÍÍI•µ½Ù…±EÕ…±¥Ñä¡ÁÉ•¥Í¥½¹	±½ˆ¤ì(€€€€€¥˜€¡ÅÕ…±¥ÑåI…¹¬¡ÁÉ•¥Í¥½¹EÕ…±¥Ñä¤€ğôÅÕ…±¥ÑåI…¹¬¡ÅÕ…±¥ÑåÍÍ•ÍÍµ•¹Ğ¤¤ì(€€€€€€€½¹ÍĞÕÉ°€ôUI0¹É•…Ñ•=‰©•ÑUI0¡ÁÉ•¥Í¥½¹	±½ˆ¤ì(€€€€€€€Í•ÑI•ÍÕ±Ñ	±½ˆ¡ÁÉ•¥Í¥½¹	±½ˆ¤ì(€€€€€€€Í•ÑI•ÍÕ±ÑUÉ°¡ÕÉ°¤ì(€€€€€€€Í•ÑI•ÍÕ±Ñ5•Ñ¡½ ‰¥É•™¹•Ğœ¤ì(€€€€€€€Í•ÑEÕ…±¥ÑåÍÍ•ÍÍµ•¹Ğ¡ÁÉ•¥Í¥½¹EÕ…±¥Ñä¤ì(€€€€€€€Í•Ñ½µÁ…É•A½Í¥Ñ¥½¸ ÔÀ¤ì(€€€€€ô•±Í”ì(€€€€€€€Í•ÑAÉ•¥Í¥½¹5•ÍÍ…”¡Ğ¹ÁÉ•¥Í¥½¹9½	•ÑÑ•È¤ì(€€€€€ô(€€€ô…Ñ €¡”¤ì(€€€€€½¹Í½±”¹•ÉÉ½È 	¥I•™9•ĞÁÉ•¥Í¥½¸É•ÑÉä™…¥±•èœ°”¤ì(€€€€€Í•ÑAÉ•¥Í¥½¹5•ÍÍ…”¡Ğ¹™…¥±•¤ì(€€€ô™¥¹…±±äì(€€€€€Í•Ñ	ÕÍä¡™…±Í”¤ì(€€€€€Í•ÑMÑ…” œœ¤ì(€€€€€Í•ÑAÉ½É•ÍÌ¡¹Õ±°¤ì(€€€ô(€ôì((€½¹ÍĞ‘½İ¹±½…‘	±½ˆ€ô€¡‰±½ˆ°™¥±•¹…µ”¤€ôøì(€€€¥˜€ …‰±½ˆ¤É•ÑÕÉ¸ì(€€€½¹ÍĞÕÉ°€ôUI0¹É•…Ñ•=‰©•ÑUI0¡‰±½ˆ¤ì(€€€½¹ÍĞ„€ô‘½Õµ•¹Ğ¹É•…Ñ•±•µ•¹Ğ „œ¤ì(€€€„¹¡É•˜€ôÕÉ°ì(€€€„¹‘½İ¹±½…€ô™¥±•¹…µ”ì(€€€‘½Õµ•¹Ğ¹‰½‘ä¹…ÁÁ•¹‘¡¥±¡„¤ì(€€€„¹±¥¬ ¤ì(€€€„¹É•µ½Ù” ¤ì(€€€İ¥¹‘½Ü¹Í•ÑQ¥µ•½ÕĞ  ¤€ôøUI0¹É•Ù½­•=‰©•ÑUI0¡ÕÉ°¤°€ÄÈÀÀ¤ì(€ôì((€½¹ÍĞ‘½İ¹±½…€ô€ ¤€ôøì(€€€¥˜€ …É•ÍÕ±Ñ	±½ˆñğÅÕ…±¥ÑåÍÍ•ÍÍµ•¹Ğ¹ÍÑ…ÑÕÌ€ôôô€™…¥°œ¤É•ÑÕÉ¸ì(€€€½¹ÍĞ‰…Í”€ô€¡™¥±”ü¹¹…µ”ñğ€¥µ…”œ¤¹É•Á±…” ½p¹mx¹t¬¼°€œœ¤¹É•Á±…” ½my„µéµhÀ´çªÂ ·¶z·
+O
+„·Ï’â ·¦ú•|µt¬½œ°€œ´œ¤ì(€€€‘½İ¹±½…‘	±½ˆ¡É•ÍÕ±Ñ	±½ˆ°€‘í‰…Í”ñğ€¥µ…”ôµÑÉ…¹ÍÁ…É•¹Ğ¹Á¹€¤ì(€ôì((€½¹ÍĞ…ÕÑ½MÁ±¥Ğ€ô…Íå¹Œ€ ¤€ôøì(€€€¥˜€ …É•ÍÕ±Ñ	±½ˆñğÍÁ±¥ÑÑ¥¹œñğÅÕ…±¥ÑåÍÍ•ÍÍµ•¹Ğ¹ÍÑ…ÑÕÌ€ôôô€™…¥°œ¤É•ÑÕÉ¸ì(€€€±•…ÉMÁ±¥Ñ%Ñ•µÌ ¤ì(€€€Í•ÑMÁ±¥ÑÑ¥¹œ¡ÑÉÕ”¤ì(€€€Í•ÑMÁ±¥ÑÉÉ½È œœ¤ì(€€€ÑÉäì(€€€€€½¹ÍĞ¥Ñ•µÌ€ô…İ…¥ĞÍÁ±¥Ñ%¹Ñ½¥™Ñ••¸¡É•ÍÕ±Ñ	±½ˆ¤ì(€€€€€¥˜€ …¥Ñ•µÌñğ¥Ñ•µÌ¹±•¹Ñ €ôôô€À¤ì(€€€€€€€Ñ¡É½Ü¹•ÜÉÉ½È 9¼ÍÑ¥­•ÉÌ‘•Ñ•Ñ•œ¤ì(€€€€€ô(€€€€€½¹ÍĞİ¥Ñ¡UÉ±Ì€ô¥Ñ•µÌ¹µ…À ¡¥Ñ•´¤€ôø€¡ì€¸¸¹¥Ñ•´°ÕÉ°èUI0¹É•…Ñ•=‰©•ÑUI0¡¥Ñ•´¹‰±½ˆ¤ô¤¤ì(€€€€€Í•ÑMÁ±¥Ñ%Ñ•µÌ¡İ¥Ñ¡UÉ±Ì¤ì(€€€€€Í•ÑQ¥µ•½ÕĞ  ¤€ôøì(€€€€€€€ÍÁ±¥Ñ…É‘I•˜¹ÕÉÉ•¹Ğü¹ÍÉ½±±%¹Ñ½Y¥•Ü¡ì‰•¡…Ù¥½Èè€Íµ½½Ñ œ°‰±½¬è€ÍÑ…ÉĞœô¤ì(€€€€€ô°€ÄÈÀ¤ì(€€€ô…Ñ €¡”¤ì(€€€€€½¹Í½±”¹•ÉÉ½È MÑ¥­•È…ÕÑ¼ÍÁ±¥Ğ™…¥±•èœ°”¤ì(€€€€€Í•ÑMÁ±¥ÑÉÉ½È¡€‘íĞ¹ÍÁ±¥Ñ…¥±•‘ôo²nC²vàè€‘í”ü¹µ•ÍÍ…”ñğMÑÉ¥¹œ¡”¥õu€¤ì(€€€ô™¥¹…±±äì(€€€€€Í•ÑMÁ±¥ÑÑ¥¹œ¡™…±Í”¤ì(€€€ô(€ôì((€…ÕÑ½MÁ±¥Ñ…±±‰…­I•˜¹ÕÉÉ•¹Ğ€ô…ÕÑ½MÁ±¥Ğì((€ÕÍ•™™•Ğ  ¤€ôøì(€€€¥˜€ (€€€€€Í¡••Ñ•Ñ•Ñ¥½¸¹ÍÑ…ÑÕÌ€„ôô€Í¡••Ğœñğ€…É•ÍÕ±Ñ	±½ˆñğ(€€€€€ÅÕ…±¥ÑåÍÍ•ÍÍµ•¹Ğ¹ÍÑ…ÑÕÌ€ôôô€™…¥°œñğÍÁ±¥Ñ%Ñ•µÌ¹±•¹Ñ €ø€Àñğ(€€€€€ÍÁ±¥ÑÑ¥¹œñğ…ÕÑ½µ…Ñ¥MÁ±¥Ñ	±½‰I•˜¹ÕÉÉ•¹Ğ€ôôôÉ•ÍÕ±Ñ	±½ˆ(€€€€¤É•ÑÕÉ¸ì(€€€…ÕÑ½µ…Ñ¥MÁ±¥Ñ	±½‰I•˜¹ÕÉÉ•¹Ğ€ôÉ•ÍÕ±Ñ	±½ˆì(€€€…ÕÑ½MÁ±¥Ñ…±±‰…­I•˜¹ÕÉÉ•¹Ğü¸ ¤ì(€ô°mÍ¡••Ñ•Ñ•Ñ¥½¸¹ÍÑ…ÑÕÌ°É•ÍÕ±Ñ	±½ˆ°ÅÕ…±¥ÑåÍÍ•ÍÍµ•¹Ğ¹ÍÑ…ÑÕÌ°ÍÁ±¥Ñ%Ñ•µÌ¹±•¹Ñ °ÍÁ±¥ÑÑ¥¹t¤ì((€½¹ÍĞ‘½İ¹±½…‘MÁ±¥Ñ%Ñ•´€ô€¡¥Ñ•´¤€ôøì(€€€½¹ÍĞ‰…Í”€ô€¡™¥±”ü¹¹…µ”ñğ€•µ½Ñ¥½¸œ¤¹É•Á±…” ½p¹mx¹t¬¼°€œœ¤¹É•Á±…” ½my„µéµhÀ´çªÂ ·¶z·
+O
+„·Ï’â ·¦ú•|µt¬½œ°€œ´œ¤ì(€€€‘½İ¹±½…‘	±½ˆ¡¥Ñ•´¹‰±½ˆ°€‘í‰…Í”ñğ€•µ½Ñ¥½¸ô´‘íMÑÉ¥¹œ¡¥Ñ•´¹¥¹‘•à¤¹Á…‘MÑ…ÉĞ È°€œÀœ¥ô¹Á¹€¤ì(€ôì((€½¹ÍĞÕÁ‘…Ñ•½µÁ…É•A½Í¥Ñ¥½¸€ô€¡•±•µ•¹Ğ°±¥•¹Ñ`¤€ôøì(€€€½¹ÍĞÉ•Ğ€ô•±•µ•¹Ğ¹•Ñ	½Õ¹‘¥¹±¥•¹ÑI•Ğ ¤ì(€€€¥˜€ …É•Ğ¹İ¥‘Ñ ¤É•ÑÕÉ¸ì(€€€½¹ÍĞ¹•áĞ€ô€ ¡±¥•¹Ñ`€´É•Ğ¹±•™Ğ¤€¼É•Ğ¹İ¥‘Ñ ¤€¨€ÄÀÀì(€€€Í•Ñ½µÁ…É•A½Í¥Ñ¥½¸¡5…Ñ ¹µ…à À°5…Ñ ¹µ¥¸ ÄÀÀ°¹•áĞ¤¤¤ì(€ôì((€½¹ÍĞ¡…¹‘±•½µÁ…É•A½¥¹Ñ•É½İ¸€ô€¡•Ù•¹Ğ¤€ôøì(€€€•Ù•¹Ğ¹ÕÉÉ•¹ÑQ…É•Ğ¹Í•ÑA½¥¹Ñ•É…ÁÑÕÉ”ü¸¡•Ù•¹Ğ¹Á½¥¹Ñ•É%¤ì(€€€ÕÁ‘…Ñ•½µÁ…É•A½Í¥Ñ¥½¸¡•Ù•¹Ğ¹ÕÉÉ•¹ÑQ…É•Ğ°•Ù•¹Ğ¹±¥•¹Ñ`¤ì(€ôì((€½¹ÍĞ¡…¹‘±•½µÁ…É•A½¥¹Ñ•É5½Ù”€ô€¡•Ù•¹Ğ¤€ôøì(€€€¥˜€¡•Ù•¹Ğ¹ÕÉÉ•¹ÑQ…É•Ğ¹¡…ÍA½¥¹Ñ•É…ÁÑÕÉ”ü¸¡•Ù•¹Ğ¹Á½¥¹Ñ•É%¤¤ì(€€€€€ÕÁ‘…Ñ•½µÁ…É•A½Í¥Ñ¥½¸¡•Ù•¹Ğ¹ÕÉÉ•¹ÑQ…É•Ğ°•Ù•¹Ğ¹±¥•¹Ñ`¤ì(€€€ô(€ôì((€½¹ÍĞ¡…¹‘±•½µÁ…É•-•å½İ¸€ô€¡•Ù•¹Ğ¤€ôøì(€€€¥˜€¡•Ù•¹Ğ¹­•ä€„ôô€ÉÉ½İ1•™Ğœ€˜˜•Ù•¹Ğ¹­•ä€„ôô€ÉÉ½İI¥¡Ğœ¤É•ÑÕÉ¸ì(€€€•Ù•¹Ğ¹ÁÉ•Ù•¹Ñ•™…Õ±Ğ ¤ì(€€€½¹ÍĞ‘¥É•Ñ¥½¸€ô•Ù•¹Ğ¹­•ä€ôôô€ÉÉ½İ1•™Ğœ€ü€´Ä€è€Äì(€€€Í•Ñ½µÁ…É•A½Í¥Ñ¥½¸ ¡Ù…±Õ”¤€ôø5…Ñ ¹µ…à À°5…Ñ ¹µ¥¸ ÄÀÀ°Ù…±Õ”€¬‘¥É•Ñ¥½¸€¨€Ô¤¤¤ì(€ôì((€É•ÑÕÉ¸€ (€€€€ñÍ•Ñ¥½¸¥ô‰‰…­É½Õ¹µÉ•µ½Ù•Èˆ±…ÍÍ9…µ”ô‰µĞ´àÍ´éµĞ´ÄÀÉ½Õ¹‘•´Éá°‰½É‘•È‰½É‘•ÈµláÅt‰œµlåtÀ´ĞÍ´éÀ´ØÍ¡…‘½ÜµÍ´ˆø(€€€€€€ñ‘¥Ø±…ÍÍ9…µ”ô‰™±•à™±•àµİÉ…À¥Ñ•µÌµ•¹Ñ•È…À´Èˆø(€€€€€€€€ñ È±…ÍÍ9…µ”ô‰Ñ•áĞµ±œÍ´éÑ•áĞµá°™½¹Ğµ•áÑÉ…‰½±Ñ•áĞµlŒÉÉÉtˆûŠr íĞ¹Ñ¥Ñ±•ôğ½ Èø(€€€€€€€€ñÍÁ…¸±…ÍÍ9…µ”ô‰É½Õ¹‘•µ™Õ±°‰œµlÑ	tÁà´È¸ÔÁä´ÄÑ•áĞµlÄÅÁát™½¹Ğµ•áÑÉ…‰½±ÑÉ…­¥¹œµİ¥‘”Ñ•áĞµlŒáØàĞÅtˆùíĞ¹‰…‘•ôğ½ÍÁ…¸ø(€€€€€€ğ½‘¥Øø(€€€€€€ñÀ±…ÍÍ9…µ”ô‰µĞ´ÈÑ•áĞµÍ´Í´éÑ•áĞµlÄÕÁát±•…‘¥¹œ´ØÑ•áĞµlŒØÈÕÔÕtˆùíĞ¹‘•Íôğ½Àø(€€€€€€ñ‘¥Ø±…ÍÍ9…µ”ô‰µĞ´Ì™±•à™±•àµ½°…À´ÄÉ½Õ¹‘•µá°‰œµlÙáÍtÁà´Ì¸ÔÁä´ÌÑ•áĞµáÌÍ´éÑ•áĞµlÄÍÁát±•…‘¥¹œ´ÔÑ•áĞµlŒÔÌØÀÔÉtˆø(€€€€€€€€ñÍÁ…¸ûÂ~RHíĞ¹ÁÉ¥Ù…åôğ½ÍÁ…¸ø(€€€€€€€€ñÍÁ…¸ûŠj„íĞ¹™¥ÉÍÑôğ½ÍÁ…¸ø(€€€€€€ğ½‘¥Øø((€€€€€ì…Í½ÕÉ•UÉ°€ü€ (€€€€€€€€ñ‰ÕÑÑ½¸(€€€€€€€€€ÑåÁ”ô‰‰ÕÑÑ½¸ˆ(€€€€€€€€€½¹±¥¬õì ¤€ôø¥¹ÁÕÑI•˜¹ÕÉÉ•¹Ğü¹±¥¬ ¥ô(€€€€€€€€€½¹É…=Ù•Èõì¡”¤€ôø”¹ÁÉ•Ù•¹Ñ•™…Õ±Ğ ¥ô(€€€€€€€€€½¹É½Àõì¡”¤€ôøì”¹ÁÉ•Ù•¹Ñ•™…Õ±Ğ ¤ìÍ•±•Ñ¥±”¡”¹‘…Ñ…QÉ…¹Í™•È¹™¥±•Ìü¹lÁt¤ìõô(€€€€€€€€€±…ÍÍ9…µ”ô‰µĞ´ĞÜµ™Õ±°É½Õ¹‘•´Éá°‰½É‘•È´È‰½É‘•Èµ‘…Í¡•‰½É‘•Èµlå		t‰œµİ¡¥Ñ”Áà´ÔÁä´äÑ•áĞµ•¹Ñ•ÈÑÉ…¹Í¥Ñ¥½¸¡½Ù•Èé‰½É‘•Èµlåäát¡½Ù•Èé‰œµlİtˆ(€€€€€€€€ø(€€€€€€€€€€ñ‘¥Ø±…ÍÍ9…µ”ô‰Ñ•áĞ´Íá°ˆûÂ~Zó¾â<ğ½‘¥Øø(€€€€€€€€€€ñ‘¥Ø±…ÍÍ9…µ”ô‰µĞ´ÈÑ•áĞµÍ´Í´éÑ•áĞµ‰…Í”™½¹Ğµ‰½±Ñ•áĞµlŒÍÍÌÕtˆùíĞ¹ÕÁ±½…‘ôğ½‘¥Øø(€€€€€€€€€€ñ‘¥Ø±…ÍÍ9…µ”ô‰µĞ´ÄÑ•áĞµáÌÑ•áĞµlŒáàÌİtˆùíĞ¹™½Éµ…Ñôğ½‘¥Øø(€€€€€€€€€€ñ‘¥Ø±…ÍÍ9…µ”ô‰µàµ…ÕÑ¼µĞ´Ìµ…àµÜµµÉ½Õ¹‘•µá°‰œµlÉİtÁà´ÌÁä´ÈÑ•áĞµáÌ™½¹Ğµ‰½±±•…‘¥¹œ´ÔÑ•áĞµlŒÔàÜÀÔÉtˆûŠr¾â<íĞ¹Í¡••ÑUÁ±½…‘!¥¹Ñôğ½‘¥Øø(€€€€€€€€ğ½‰ÕÑÑ½¸ø(€€€€€€¤€è€ (€€€€€€€€ñ‘¥Ø±…ÍÍ9…µ”ô‰µĞ´Ğˆø(€€€€€€€€€ì…É•ÍÕ±ÑUÉ°€˜˜€ñ‘¥Ø±…ÍÍ9…µ”ô‰µˆ´ÌÉ½Õ¹‘•µá°‰½É‘•È‰½É‘•ÈµláÕt‰œµlÑáÅtÁà´Ì¸ÔÁä´È¸ÔÑ•áĞµáÌÍ´éÑ•áĞµlÄÍÁát™½¹Ğµ‰½±±•…‘¥¹œ´ÔÑ•áĞµlŒÔàÜÀÔÉtˆûŠr¾â<íĞ¹Í¡••ÑM•±•Ñ•‘!¥¹Ñôğ½‘¥Øùô(€€€€€€€€€ì…É•ÍÕ±ÑUÉ°€ü€ (€€€€€€€€€€€€ñ‘¥Ø±…ÍÍ9…µ”ô‰½Ù•É™±½Üµ¡¥‘‘•¸É½Õ¹‘•´Éá°‰½É‘•È‰½É‘•ÈµlÉÕt‰œµİ¡¥Ñ”ˆø(€€€€€€€€€€€€€€ñ‘¥Ø±…ÍÍ9…µ”ô‰‰½É‘•Èµˆ‰½É‘•ÈµlåÅtÁà´ÌÁä´ÈÑ•áĞµáÌ™½¹Ğµ‰½±Ñ•áĞµlŒÜÄÙØÉtˆùíĞ¹½É¥¥¹…±ôğ½‘¥Øø(€€€€€€€€€€€€€€ñ‘¥Ø±…ÍÍ9…µ”ô‰™±•àµ¥¸µ µlÈÌÁÁát¥Ñ•µÌµ•¹Ñ•È©ÕÍÑ¥™äµ•¹Ñ•È‰œµlİÕÅtÀ´Ìˆø(€€€€€€€€€€€€€€€€ñ¥µœÍÉŒõíÍ½ÕÉ•UÉ±ô…±ĞõíĞ¹½É¥¥¹…±ô±…ÍÍ9…µ”ô‰µ…àµ µlÔÈÁÁátµ…àµÜµ™Õ±°É½Õ¹‘•µá°½‰©•Ğµ½¹Ñ…¥¸ˆ€¼ø(€€€€€€€€€€€€€€ğ½‘¥Øø(€€€€€€€€€€€€ğ½‘¥Øø(€€€€€€€€€€¤€è€ (€€€€€€€€€€€€ñ‘¥Ø±…ÍÍ9…µ”ô‰½Ù•É™±½Üµ¡¥‘‘•¸É½Õ¹‘•´Éá°‰½É‘•È‰½É‘•ÈµláÁÉt‰œµİ¡¥Ñ”ˆø(€€€€€€€€€€€€€€ñ‘¥Ø±…ÍÍ9…µ”ô‰™±•à¥Ñ•µÌµ•¹Ñ•È©ÕÍÑ¥™äµ‰•Ñİ••¸‰½É‘•Èµˆ‰½É‘•ÈµlİÍtÁà´ÌÁä´ÈÑ•áĞµáÌ™½¹Ğµ•áÑÉ…‰½±ˆø(€€€€€€€€€€€€€€€€ñÍÁ…¸±…ÍÍ9…µ”ô‰Ñ•áĞµlŒÜÄÙØÉtˆùíĞ¹½É¥¥¹…±ôğ½ÍÁ…¸ø(€€€€€€€€€€€€€€€€ñÍÁ…¸±…ÍÍ9…µ”ô‰Ñ•áĞµlŒØÄÜÀÕtˆùíĞ¹É•ÍÕ±Ñôğ½ÍÁ…¸ø(€€€€€€€€€€€€€€ğ½‘¥Øø(€€€€€€€€€€€€€€ñ‘¥Ø(€€€€€€€€€€€€€€€É½±”ô‰Í±¥‘•Èˆ(€€€€€€€€€€€€€€€Ñ…‰%¹‘•àõìÁô(€€€€€€€€€€€€€€€…É¥„µ±…‰•°õíĞ¹½µÁ…É•!¥¹Ñô(€€€€€€€€€€€€€€€…É¥„µÙ…±Õ•µ¥¸õìÁô(€€€€€€€€€€€€€€€…É¥„µÙ…±Õ•µ…àõìÄÀÁô(€€€€€€€€€€€€€€€…É¥„µÙ…±Õ•¹½Üõí5…Ñ ¹É½Õ¹¡½µÁ…É•A½Í¥Ñ¥½¸¥ô(€€€€€€€€€€€€€€€½¹A½¥¹Ñ•É½İ¸õí¡…¹‘±•½µÁ…É•A½¥¹Ñ•É½İ¹ô(€€€€€€€€€€€€€€€½¹A½¥¹Ñ•É5½Ù”õí¡…¹‘±•½µÁ…É•A½¥¹Ñ•É5½Ù•ô(€€€€€€€€€€€€€€€½¹A½¥¹Ñ•ÉUÀõì¡•Ù•¹Ğ¤€ôø•Ù•¹Ğ¹ÕÉÉ•¹ÑQ…É•Ğ¹É•±•…Í•A½¥¹Ñ•É…ÁÑÕÉ”ü¸¡•Ù•¹Ğ¹Á½¥¹Ñ•É%¥ô(€€€€€€€€€€€€€€€½¹A½¥¹Ñ•É…¹•°õì¡•Ù•¹Ğ¤€ôø•Ù•¹Ğ¹ÕÉÉ•¹ÑQ…É•Ğ¹É•±•…Í•A½¥¹Ñ•É…ÁÑÕÉ”ü¸¡•Ù•¹Ğ¹Á½¥¹Ñ•É%¥ô(€€€€€€€€€€€€€€€½¹-•å½İ¸õí¡…¹‘±•½µÁ…É•-•å½İ¹ô(€€€€€€€€€€€€€€€±…ÍÍ9…µ”ô‰É•±…Ñ¥Ù”ÕÉÍ½Èµ•ÜµÉ•Í¥é”Í•±•Ğµ¹½¹”½Ù•É™±½Üµ¡¥‘‘•¸½ÕÑ±¥¹”µ¹½¹”™½ÕÌµÙ¥Í¥‰±”éÉ¥¹œ´È™½ÕÌµÙ¥Í¥‰±”éÉ¥¹œµlŒİåÜÕt™½ÕÌµÙ¥Í¥‰±”éÉ¥¹œµ¥¹Í•Ğˆ(€€€€€€€€€€€€€€€ÍÑå±”õíì€¸¸¹¡•­•ÉMÑå±”°Ñ½Õ¡Ñ¥½¸è€Á…¸µäœõô(€€€€€€€€€€€€€€ø(€€€€€€€€€€€€€€€€ñ¥µœ(€€€€€€€€€€€€€€€€€ÍÉŒõíÉ•ÍÕ±ÑUÉ±ô(€€€€€€€€€€€€€€€€€…±ĞõíĞ¹É•ÍÕ±Ñô(€€€€€€€€€€€€€€€€€‘É……‰±”õí™…±Í•ô(€€€€€€€€€€€€€€€€€±…ÍÍ9…µ”ô‰Á½¥¹Ñ•Èµ•Ù•¹ÑÌµ¹½¹”‰±½¬ µ…ÕÑ¼Üµ™Õ±°Í•±•Ğµ¹½¹”ˆ(€€€€€€€€€€€€€€€€¼ø(€€€€€€€€€€€€€€€€ñ‘¥Ø(€€€€€€€€€€€€€€€€€±…ÍÍ9…µ”ô‰Á½¥¹Ñ•Èµ•Ù•¹ÑÌµ¹½¹”…‰Í½±ÕÑ”¥¹Í•Ğ´À‰œµİ¡¥Ñ”ˆ(€€€€€€€€€€€€€€€€€ÍÑå±”õíì±¥ÁA…Ñ è¥¹Í•Ğ À€‘ìÄÀÀ€´½µÁ…É•A½Í¥Ñ¥½¹ô”€À€À¥€õô(€€€€€€€€€€€€€€€€ø(€€€€€€€€€€€€€€€€€€ñ¥µœ(€€€€€€€€€€€€€€€€€€€ÍÉŒõíÍ½ÕÉ•UÉ±ô(€€€€€€€€€€€€€€€€€€€…±ĞõíĞ¹½É¥¥¹…±ô(€€€€€€€€€€€€€€€€€€€‘É……‰±”õí™…±Í•ô(€€€€€€€€€€€€€€€€€€€±…ÍÍ9…µ”ô‰ µ™Õ±°Üµ™Õ±°Í•±•Ğµ¹½¹”½‰©•Ğµ½¹Ñ…¥¸ˆ(€€€€€€€€€€€€€€€€€€¼ø(€€€€€€€€€€€€€€€€ğ½‘¥Øø(€€€€€€€€€€€€€€€€ñ‘¥Ø(€€€€€€€€€€€€€€€€€…É¥„µ¡¥‘‘•¸ô‰ÑÉÕ”ˆ(€€€€€€€€€€€€€€€€€±…ÍÍ9…µ”ô‰Á½¥¹Ñ•Èµ•Ù•¹ÑÌµ¹½¹”…‰Í½±ÕÑ”‰½ÑÑ½´´ÀÑ½À´Àè´ÄÀÜ´À¸Ô‰œµİ¡¥Ñ”Í¡…‘½ÜµlÁ|Á|Á|ÅÁá}É‰„ ÔÈ°Ğà°ĞÌ°À¸ÈÈ¤°Á|Á|ÄÁÁá}É‰„ À°À°À°À¸Äà¥tˆ(€€€€€€€€€€€€€€€€€ÍÑå±”õíì±•™Ğè€‘í½µÁ…É•A½Í¥Ñ¥½¹ô•€°ÑÉ…¹Í™½É´è€ÑÉ…¹Í±…Ñ•` ´ÔÀ”¤œõô(€€€€€€€€€€€€€€€€ø(€€€€€€€€€€€€€€€€€€ñ‘¥Ø±…ÍÍ9…µ”ô‰…‰Í½±ÕÑ”±•™Ğ´Ä¼ÈÑ½À´Ä¼È™±•à ´ÄÄÜ´ÄÄ€µÑÉ…¹Í±…Ñ”µà´Ä¼È€µÑÉ…¹Í±…Ñ”µä´Ä¼È¥Ñ•µÌµ•¹Ñ•È©ÕÍÑ¥™äµ•¹Ñ•ÈÉ½Õ¹‘•µ™Õ±°‰½É‘•È´È‰½É‘•Èµİ¡¥Ñ”‰œµlŒÍÌäÌÍtÑ•áĞµ±œ™½¹Ğµ‰±…¬Ñ•áĞµİ¡¥Ñ”Í¡…‘½Üµ±œˆø(€€€€€€€€€€€€€€€€€€€ƒŠP(€€€€€€€€€€€€€€€€€€ğ½‘¥Øø(€€€€€€€€€€€€€€€€ğ½‘¥Øø(€€€€€€€€€€€€€€€€ñ‘¥Ø±…ÍÍ9…µ”ô‰Á½¥¹Ñ•Èµ•Ù•¹ÑÌµ¹½¹”…‰Í½±ÕÑ”±•™Ğ´ÌÑ½À´ÌÉ½Õ¹‘•µ™Õ±°‰œµ‰±…¬¼ØÀÁà´È¸ÔÁä´ÄÑ•áĞµlÄÅÁát™½¹Ğµ•áÑÉ…‰½±Ñ•áĞµİ¡¥Ñ”Í¡…‘½ÜµÍ´ˆø(€€€€€€€€€€€€€€€€€íĞ¹½É¥¥¹…±ô(€€€€€€€€€€€€€€€€ğ½‘¥Øø(€€€€€€€€€€€€€€€€ñ‘¥Ø±…ÍÍ9…µ”ô‰Á½¥¹Ñ•Èµ•Ù•¹ÑÌµ¹½¹”…‰Í½±ÕÑ”É¥¡Ğ´ÌÑ½À´ÌÉ½Õ¹‘•µ™Õ±°‰œµlŒÍÙÑ	t¼äÀÁà´È¸ÔÁä´ÄÑ•áĞµlÄÅÁát™½¹Ğµ•áÑÉ…‰½±Ñ•áĞµİ¡¥Ñ”Í¡…‘½ÜµÍ´ˆø(€€€€€€€€€€€€€€€€€íĞ¹É•ÍÕ±Ñô(€€€€€€€€€€€€€€€€ğ½‘¥Øø(€€€€€€€€€€€€€€ğ½‘¥Øø(€€€€€€€€€€€€€€ñ‘¥Ø±…ÍÍ9…µ”ô‰‰½É‘•ÈµĞ‰½É‘•ÈµlİÍt‰œµl	tÁà´ÌÁä´È¸ÔÑ•áĞµ•¹Ñ•ÈÑ•áĞµáÌ™½¹ĞµÍ•µ¥‰½±±•…‘¥¹œ´ÔÑ•áĞµlŒÙÜĞØİtˆø(€€€€€€€€€€€€€€€ƒŠPíĞ¹½µÁ…É•!¥¹Ñô(€€€€€€€€€€€€€€ğ½‘¥Øø(€€€€€€€€€€€€ğ½‘¥Øø(€€€€€€€€€€¥ô((€€€€€€€€€í‰ÕÍä€˜˜€ (€€€€€€€€€€€€ñ‘¥Ø±…ÍÍ9…µ”ô‰µĞ´ĞÉ½Õ¹‘•µá°‰½É‘•È‰½É‘•ÈµláÅt‰œµİ¡¥Ñ”Áà´ĞÁä´Ìˆø(€€€€€€€€€€€€€€ñ‘¥Ø±…ÍÍ9…µ”ô‰™±•à¥Ñ•µÌµ•¹Ñ•È©ÕÍÑ¥™äµ‰•Ñİ••¸…À´ÌÑ•áĞµÍ´™½¹Ğµ‰½±Ñ•áĞµlŒÔÄÑĞÑtˆø(€€€€€€€€€€€€€€€€ñÍÁ…¸±…ÍÍ9…µ”ô‰™±•à¥Ñ•µÌµ•¹Ñ•È…À´ÈˆøñÍÁ…¸±…ÍÍ9…µ”ô‰¥¹±¥¹”µ‰±½¬ ´ĞÜ´Ğ…¹¥µ…Ñ”µÍÁ¥¸É½Õ¹‘•µ™Õ±°‰½É‘•È´È‰½É‘•ÈµláÜåt‰½É‘•ÈµĞµlŒÙÕĞÙtˆ€¼ùíÍÑ…”€ôôô€ÁÉ•¥Í¥½¸œ€üĞ¹ÁÉ•¥Í¥½¹]½É­¥¹œ€è€¡ÍÑ…”€ôôô€ÁÉ•Á…É¥¹œœ€üĞ¹ÁÉ•Á…É¥¹œ€èĞ¹ÁÉ½•ÍÍ¥¹œ¥ôğ½ÍÁ…¸ø(€€€€€€€€€€€€€€€íÑåÁ•½˜ÁÉ½É•ÍÌ€ôôô€¹Õµ‰•Èœ€˜˜€ñÍÁ…¸±…ÍÍ9…µ”ô‰Ñ•áĞµáÌÑ•áĞµlŒàäİÙtˆùíÁÉ½É•ÍÍô”ğ½ÍÁ…¸ùô(€€€€€€€€€€€€€€ğ½‘¥Øø(€€€€€€€€€€€€€íÑåÁ•½˜ÁÉ½É•ÍÌ€ôôô€¹Õµ‰•Èœ€˜˜€ (€€€€€€€€€€€€€€€€ñ‘¥Ø±…ÍÍ9…µ”ô‰µĞ´È ´Ä¸Ô½Ù•É™±½Üµ¡¥‘‘•¸É½Õ¹‘•µ™Õ±°‰œµlÉtˆøñ‘¥Ø±…ÍÍ9…µ”ô‰ µ™Õ±°É½Õ¹‘•µ™Õ±°‰œµlŒİåÜÕtÑÉ…¹Í¥Ñ¥½¸µmİ¥‘Ñ¡tˆÍÑå±”õíìİ¥‘Ñ è€‘íÁÉ½É•ÍÍô•€õô€¼øğ½‘¥Øø(€€€€€€€€€€€€€€¥ô(€€€€€€€€€€€€ğ½‘¥Øø(€€€€€€€€€€¥ô((€€€€€€€€€í•ÉÉ½È€˜˜€ñ‘¥Ø±…ÍÍ9…µ”ô‰µĞ´ÌÉ½Õ¹‘•µá°‰œµlÅtÁà´Ì¸ÔÁä´ÌÑ•áĞµÍ´™½¹ĞµÍ•µ¥‰½±Ñ•áĞµlØÑÍtˆùí•ÉÉ½Éôğ½‘¥Øùô((€€€€€€€€€íÉ•ÍÕ±ÑUÉ°€˜˜l…¤œ°€µ½‘¹•Ğt¹¥¹±Õ‘•Ì¡É•ÍÕ±Ñ5•Ñ¡½¤€˜˜ÅÕ…±¥ÑåÍÍ•ÍÍµ•¹Ğ¹ÍÑ…ÑÕÌ€ôôô€™…¥°œ€˜˜€ (€€€€€€€€€€€€ñ‘¥Ø±…ÍÍ9…µ”ô‰µĞ´ĞÉ½Õ¹‘•µá°‰½É‘•È‰½É‘•Èµláát‰œµlÑÅtÁà´Ì¸ÔÁä´Ì¸Ôˆø(€€€€€€€€€€€€€€ñ‘¥Ø±…ÍÍ9…µ”ô‰Ñ•áĞµÍ´™½¹Ğµ•áÑÉ…‰½±Ñ•áĞµlŒäÄÑÍtˆûŠjƒ¾â<íĞ¹ÅÕ…±¥Ñå…¥±Q¥Ñ±•ôğ½‘¥Øø(€€€€€€€€€€€€€€ñÀ±…ÍÍ9…µ”ô‰µĞ´Ä¸ÔÑ•áĞµáÌÍ´éÑ•áĞµlÄÍÁát™½¹Ğµµ•‘¥Õ´±•…‘¥¹œ´ÔÑ•áĞµlŒáÕÔÍtˆùíĞ¹ÅÕ…±¥Ñå…¥±•Íôğ½Àø(€€€€€€€€€€€€ğ½‘¥Øø(€€€€€€€€€€¥ô((€€€€€€€€€íÉ•ÍÕ±ÑUÉ°€˜˜l…¤œ°€µ½‘¹•Ğt¹¥¹±Õ‘•Ì¡É•ÍÕ±Ñ5•Ñ¡½¤€˜˜ÅÕ…±¥ÑåÍÍ•ÍÍµ•¹Ğ¹ÍÑ…ÑÕÌ€ôôô€İ…É¹¥¹œœ€˜˜€ (€€€€€€€€€€€€ñ‘¥Ø±…ÍÍ9…µ”ô‰µĞ´ĞÉ½Õ¹‘•µá°‰½É‘•È‰½É‘•ÈµlİÕÑt‰œµl	tÁà´Ì¸ÔÁä´Ìˆø(€€€€€€€€€€€€€€ñ‘¥Ø±…ÍÍ9…µ”ô‰Ñ•áĞµÍ´™½¹Ğµ•áÑÉ…‰½±Ñ•áĞµlŒàÀÙÌÉtˆûŠjƒ¾â<íĞ¹ÅÕ…±¥Ñå]…É¹Q¥Ñ±•ôğ½‘¥Øø(€€€€€€€€€€€€€€ñÀ±…ÍÍ9…µ”ô‰µĞ´ÄÑ•áĞµáÌÍ´éÑ•áĞµlÄÍÁát™½¹Ğµµ•‘¥Õ´±•…‘¥¹œ´ÔÑ•áĞµlŒİÜÀÑtˆùíĞ¹ÅÕ…±¥Ñå]…É¹•Íôğ½Àø(€€€€€€€€€€€€ğ½‘¥Øø(€€€€€€€€€€¥ô((€€€€€€€€€íÉ•ÍÕ±ÑUÉ°€˜˜l…¤œ°€µ½‘¹•Ğt¹¥¹±Õ‘•Ì¡É•ÍÕ±Ñ5•Ñ¡½¤€˜˜€ (€€€€€€€€€€€€ñ‘¥Ø±…ÍÍ9…µ”ô‰µĞ´ÌÉ½Õ¹‘•µá°‰½É‘•È‰½É‘•ÈµláÁÕt‰œµİ¡¥Ñ”Áà´Ì¸ÔÁä´Ìˆø(€€€€€€€€€€€€€€ñ‰ÕÑÑ½¸ÑåÁ”ô‰‰ÕÑÑ½¸ˆ‘¥Í…‰±•õí‰ÕÍåô½¹±¥¬õíÉÕ¹AÉ•¥Í¥½¹I•ÑÉåô±…ÍÍ9…µ”ô‰Üµ™Õ±°É½Õ¹‘•µá°‰œµlŒÑÔàØátÁà´ĞÁä´ÌÑ•áĞµÍ´™½¹Ğµ•áÑÉ…‰½±Ñ•áĞµİ¡¥Ñ”Í¡…‘½ÜµÍ´ÑÉ…¹Í¥Ñ¥½¸¡½Ù•Èé‰œµlŒÌäĞÔÔÑt‘¥Í…‰±•éÕÉÍ½Èµİ…¥Ğ‘¥Í…‰±•é½Á…¥Ñä´ØÀˆø(€€€€€€€€€€€€€€€ƒÂ~¨í‰ÕÍä€˜˜ÍÑ…”€ôôô€ÁÉ•¥Í¥½¸œ€üĞ¹ÁÉ•¥Í¥½¹]½É­¥¹œ€èĞ¹ÁÉ•¥Í¥½¹I•ÑÉåô(€€€€€€€€€€€€€€ğ½‰ÕÑÑ½¸ø(€€€€€€€€€€€€€€ñÀ±…ÍÍ9…µ”ô‰µĞ´ÈÑ•áĞµlÄÅÁátÍ´éÑ•áĞµáÌ™½¹Ğµµ•‘¥Õ´±•…‘¥¹œ´ÔÑ•áĞµlŒİÜĞÙ	tˆùíĞ¹ÁÉ•¥Í¥½¹!¥¹Ñôğ½Àø(€€€€€€€€€€€€ğ½‘¥Øø(€€€€€€€€€€¥ô((€€€€€€€€€íÁÉ•¥Í¥½¹5•ÍÍ…”€˜˜€ñ‘¥Ø±…ÍÍ9…µ”ô‰µĞ´ÌÉ½Õ¹‘•µá°‰œµlÙÍtÁà´Ì¸ÔÁä´ÌÑ•áĞµáÌÍ´éÑ•áĞµlÄÍÁát™½¹ĞµÍ•µ¥‰½±±•…‘¥¹œ´ÔÑ•áĞµlŒÙØÜÕtˆùíÁÉ•¥Í¥½¹5•ÍÍ…•ôğ½‘¥Øùô((€€€€€€€€€€ñ‘¥Ø±…ÍÍ9…µ”ô‰µĞ´Ğ™±•à™±•àµ½°…À´ÈÍ´é™±•àµÉ½Üˆø(€€€€€€€€€€€ì…É•ÍÕ±ÑUÉ°€ü€ (€€€€€€€€€€€€€€ñ‰ÕÑÑ½¸ÑåÁ”ô‰‰ÕÑÑ½¸ˆ‘¥Í…‰±•õí‰ÕÍåô½¹±¥¬õíÉ•µ½Ù•	…­É½Õ¹‘ô±…ÍÍ9…µ”ô‰™±•à´ÄÉ½Õ¹‘•µá°‰œµlŒÌàÌÌÉtÁà´ĞÁä´ÌÑ•áĞµÍ´™½¹Ğµ•áÑÉ…‰½±Ñ•áĞµİ¡¥Ñ”Í¡…‘½ÜµÍ´ÑÉ…¹Í¥Ñ¥½¸¡½Ù•Èé‰œµlŒÈÜÈÌÅt‘¥Í…‰±•éÕÉÍ½Èµİ…¥Ğ‘¥Í…‰±•é½Á…¥Ñä´ØÀˆø(€€€€€€€€€€€€€€€í‰ÕÍä€ü€¡ÍÑ…”€ôôô€ÁÉ•¥Í¥½¸œ€üĞ¹ÁÉ•¥Í¥½¹]½É­¥¹œ€è€¡ÍÑ…”€ôôô€ÁÉ•Á…É¥¹œœ€üĞ¹ÁÉ•Á…É¥¹œ€èĞ¹ÁÉ½•ÍÍ¥¹œ¤¤€èƒŠr €‘íĞ¹É•µ½Ù•õô(€€€€€€€€€€€€€€ğ½‰ÕÑÑ½¸ø(€€€€€€€€€€€€¤€è€ (€€€€€€€€€€€€€€ñ‰ÕÑÑ½¸ÑåÁ”ô‰‰ÕÑÑ½¸ˆ‘¥Í…‰±•õíÅÕ…±¥ÑåÍÍ•ÍÍµ•¹Ğ¹ÍÑ…ÑÕÌ€ôôô€™…¥°ô½¹±¥¬õí‘½İ¹±½…‘ô±…ÍÍ9…µ”ô‰‰…­É½Õ¹µÉ•µ½Ù•Èµ‘½İ¹±½…™±•à´ÄÉ½Õ¹‘•µá°‰œµlŒÍÙÑ	tÁà´ĞÁä´ÌÑ•áĞµÍ´™½¹Ğµ•áÑÉ…‰½±Ñ•áĞµİ¡¥Ñ”Í¡…‘½ÜµÍ´ÑÉ…¹Í¥Ñ¥½¸¡½Ù•Èé‰œµlŒÌÄÔÜÍt‘¥Í…‰±•éÕÉÍ½Èµ¹½Ğµ…±±½İ•‘¥Í…‰±•é‰œµlŒååäÑt‘¥Í…‰±•éÍ¡…‘½Üµ¹½¹”ˆùíÅÕ…±¥ÑåÍÍ•ÍÍµ•¹Ğ¹ÍÑ…ÑÕÌ€ôôô€™…¥°œ€üƒŠjƒ¾â<€‘íĞ¹ÅÕ…±¥Ñå	±½­•‘õ€€èƒŠ²¾â<€‘íĞ¹‘½İ¹±½…‘õôğ½‰ÕÑÑ½¸ø(€€€€€€€€€€€€¥ô(€€€€€€€€€€€€ñ‰ÕÑÑ½¸ÑåÁ”ô‰‰ÕÑÑ½¸ˆ‘¥Í…‰±•õí‰ÕÍåô½¹±¥¬õíÉ•ÍÕ±ÑUÉ°€üÉ•Í•Ğ€è€ ¤€ôø¥¹ÁÕÑI•˜¹ÕÉÉ•¹Ğü¹±¥¬ ¥ô±…ÍÍ9…µ”ô‰É½Õ¹‘•µá°‰½É‘•È‰½É‘•ÈµláÁÕt‰œµİ¡¥Ñ”Áà´ĞÁä´ÌÑ•áĞµÍ´™½¹Ğµ‰½±Ñ•áĞµlŒÕÔÜÑtÑÉ…¹Í¥Ñ¥½¸¡½Ù•Èé‰œµláÕt‘¥Í…‰±•é½Á…¥Ñä´ÔÀˆø(€€€€€€€€€€€€€íÉ•ÍÕ±ÑUÉ°€üĞ¹……¥¸€èĞ¹¡…¹•ô(€€€€€€€€€€€€ğ½‰ÕÑÑ½¸ø(€€€€€€€€€€ğ½‘¥Øø((€€€€€€€€€íÉ•ÍÕ±ÑUÉ°€˜˜ÅÕ…±¥ÑåÍÍ•ÍÍµ•¹Ğ¹ÍÑ…ÑÕÌ€„ôô€™…¥°œ€˜˜€ (€€€€€€€€€€€€ñ‘¥ØÉ•˜õíÍÁ±¥Ñ…É‘I•™ô±…ÍÍ9…µ”ô‰µĞ´ÔÉ½Õ¹‘•´Éá°‰½É‘•È‰½É‘•Èµlát‰œµİ¡¥Ñ”À´Ì¸ÔÍ´éÀ´ĞÍ¡…‘½ÜµÍ´ˆø(€€€€€€€€€€€€€€ñ‘¥Ø±…ÍÍ9…µ”ô‰™±•à™±•àµİÉ…À¥Ñ•µÌµ•¹Ñ•È…À´Èˆø(€€€€€€€€€€€€€€€€ñ Ì±…ÍÍ9…µ”ô‰Ñ•áĞµÍ´Í´éÑ•áĞµ‰…Í”™½¹Ğµ•áÑÉ…‰½±Ñ•áĞµlŒÌÔÌÄÉtˆûŠr¾â<íĞ¹ÍÁ±¥ÑQ¥Ñ±•ôğ½ Ìø(€€€€€€€€€€€€€€€€ñÍÁ…¸±…ÍÍ9…µ”ô‰É½Õ¹‘•µ™Õ±°‰œµlÑtÁà´È¸ÔÁä´ÄÑ•áĞµlÄÅÁát™½¹Ğµ•áÑÉ…‰½±Ñ•áĞµlŒÔäÜÄÔÍtˆø(€€€€€€€€€€€€€€€€€íÍ¡••Ñ•Ñ•Ñ¥½¸¹ÍÑ…ÑÕÌ€ôôô€Í¡••Ğœ(€€€€€€€€€€€€€€€€€€€€üĞ¹ÍÁ±¥Ñ	…‘”(€€€€€€€€€€€€€€€€€€€€è€¡±…¹œ€ôôô€­¼œ€ü€œÄ×²îÜƒ®Ú®š°œ€è±…¹œ€ôôô€©„œ€ü€œÄ×–"–&Èœ€è±…¹œ€ôôô€é œ€ü€œÄ×–nû–"–&Èœ€è€œÄÔµMÑ¥­•ÈMÁ±¥Ğœ¥ô(€€€€€€€€€€€€€€€€ğ½ÍÁ…¸ø(€€€€€€€€€€€€€€ğ½‘¥Øø(€€€€€€€€€€€€€€ñÀ±…ÍÍ9…µ”ô‰µĞ´ÈÑ•áĞµáÌÍ´éÑ•áĞµlÄÍÁát±•…‘¥¹œ´ÔÑ•áĞµlŒÜĞÙØÕtˆùíĞ¹ÍÁ±¥Ñ•Íôğ½Àø((€€€€€€€€€€€€€íÍÁ±¥ÑÉÉ½È€˜˜€ (€€€€€€€€€€€€€€€€ñ‘¥Ø±…ÍÍ9…µ”ô‰µĞ´ÌÉ½Õ¹‘•µá°‰œµlÅtÀ´ÌÑ•áĞµáÌ™½¹ĞµÍ•µ¥‰½±±•…‘¥¹œ´ÔÑ•áĞµlØÑÍtˆø(€€€€€€€€€€€€€€€€€ƒŠjƒ¾â<íÍÁ±¥ÑÉÉ½Éô(€€€€€€€€€€€€€€€€ğ½‘¥Øø(€€€€€€€€€€€€€€¥ô((€€€€€€€€€€€€€íÍÁ±¥Ñ%Ñ•µÌ¹±•¹Ñ €ôôô€À€ü€ (€€€€€€€€€€€€€€€€ñ‰ÕÑÑ½¸(€€€€€€€€€€€€€€€€€ÑåÁ”ô‰‰ÕÑÑ½¸ˆ(€€€€€€€€€€€€€€€€€‘¥Í…‰±•õíÍÁ±¥ÑÑ¥¹ô(€€€€€€€€€€€€€€€€€½¹±¥¬õí…ÕÑ½MÁ±¥Ñô(€€€€€€€€€€€€€€€€€±…ÍÍ9…µ”ô‰µĞ´ÌÜµ™Õ±°É½Õ¹‘•µá°‰½É‘•È‰½É‘•ÈµlÕİt‰œµlåÁtÁà´ĞÁä´ÌÑ•áĞµÍ´™½¹Ğµ•áÑÉ…‰½±Ñ•áĞµlŒÕÑÌåtÑÉ…¹Í¥Ñ¥½¸¡½Ù•Èé‰œµlÍt‘¥Í…‰±•éÕÉÍ½Èµİ…¥Ğ‘¥Í…‰±•é½Á…¥Ñä´ØÀˆ(€€€€€€€€€€€€€€€€ø(€€€€€€€€€€€€€€€€€íÍÁ±¥ÑÑ¥¹œ€üƒŠ>Ì€‘íĞ¹ÍÁ±¥ÑÑ¥¹õ€€èƒŠr¾â<€‘íĞ¹ÍÁ±¥ÑÑ¥½¹õô(€€€€€€€€€€€€€€€€ğ½‰ÕÑÑ½¸ø(€€€€€€€€€€€€€€¤€è€ (€€€€€€€€€€€€€€€€ğø(€€€€€€€€€€€€€€€€€€ñ‘¥Ø±…ÍÍ9…µ”ô‰µĞ´Ì™±•à¥Ñ•µÌµ•¹Ñ•È©ÕÍÑ¥™äµ‰•Ñİ••¸…À´ÌÉ½Õ¹‘•µá°‰œµlÑáÅtÁà´ÌÁä´È¸Ôˆø(€€€€€€€€€€€€€€€€€€€€ñÍÁ…¸±…ÍÍ9…µ”ô‰Ñ•áĞµáÌ™½¹Ğµ‰½±±•…‘¥¹œ´ÔÑ•áĞµlŒÕÙÔátˆûŠrLíĞ¹ÍÁ±¥ÑI•…‘åôğ½ÍÁ…¸ø(€€€€€€€€€€€€€€€€€€€€ñ‰ÕÑÑ½¸ÑåÁ”ô‰‰ÕÑÑ½¸ˆ½¹±¥¬õí…ÕÑ½MÁ±¥Ñô±…ÍÍ9…µ”ô‰Í¡É¥¹¬´ÀÑ•áĞµáÌ™½¹Ğµ•áÑÉ…‰½±Ñ•áĞµlŒØÀÜàÔåtÕ¹‘•É±¥¹”Õ¹‘•É±¥¹”µ½™™Í•Ğ´ÈˆùíĞ¹ÍÁ±¥Ñ…¥¹ôğ½‰ÕÑÑ½¸ø(€€€€€€€€€€€€€€€€€€ğ½‘¥Øø((€€€€€€€€€€€€€€€€€€ñµ½Ñ¥½¹A½ÍÑAÉ½•ÍÍ½È(€€€€€€€€€€€€€€€€€€€¥Ñ•µÌõíÍÁ±¥Ñ%Ñ•µÍô(€€€€€€€€€€€€€€€€€€€Í½ÕÉ•9…µ”õí™¥±”ü¹¹…µ”ñğ€•µ½Ñ¥½¸ô(€€€€€€€€€€€€€€€€€€€±…¹œõí±…¹ô(€€€€€€€€€€€€€€€€€€¼ø(€€€€€€€€€€€€€€€€ğ¼ø(€€€€€€€€€€€€€€¥ô(€€€€€€€€€€€€ğ½‘¥Øø(€€€€€€€€€€¥ô((€€€€€€€€ğ½‘¥Øø(€€€€€€¥ô((€€€€€€ñ¥¹ÁÕĞÉ•˜õí¥¹ÁÕÑI•™ôÑåÁ”ô‰™¥±”ˆ…•ÁĞô‰¥µ…”½Á¹œ±¥µ…”½©Á•œ±¥µ…”½İ•‰Àˆ±…ÍÍ9…µ”ô‰¡¥‘‘•¸ˆ½¹¡…¹”õì¡”¤€ôøÍ•±•Ñ¥±”¡”¹Ñ…É•Ğ¹™¥±•Ìü¹lÁt¥ô€¼ø(€€€€€ì…Í½ÕÉ•UÉ°€˜˜•ÉÉ½È€˜˜€ñ‘¥Ø±…ÍÍ9…µ”ô‰µĞ´ÌÉ½Õ¹‘•µá°‰œµlÅtÁà´Ì¸ÔÁä´ÌÑ•áĞµÍ´™½¹ĞµÍ•µ¥‰½±Ñ•áĞµlØÑÍtˆùí•ÉÉ½Éôğ½‘¥Øùô(€€€€ğ½Í•Ñ¥½¸ø(€€¤ì)ô(
