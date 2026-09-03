@@ -300,7 +300,17 @@ async function tryFastUniformBackgroundRemoval(file) {
   if (tail < total * 0.06) return null;
 
   ctx.putImageData(imageData, 0, 0);
-  return canvasToPngBlob(canvas);
+  return {
+    blob: await canvasToPngBlob(canvas),
+    background: bg,
+  };
+}
+
+function isDarkBackgroundColor(color) {
+  if (!Array.isArray(color) || color.length < 3) return false;
+  const [r, g, b] = color;
+  const luminance = r * 0.2126 + g * 0.7152 + b * 0.0722;
+  return luminance <= 96 && Math.max(r, g, b) <= 128;
 }
 
 async function getRemover(onProgress) {
@@ -2420,7 +2430,9 @@ export default function BackgroundRemover({ lang = 'ko' }) {
     setStage('preparing');
     try {
       let method = 'fast';
-      let blob = await tryFastUniformBackgroundRemoval(file);
+      const fastResult = await tryFastUniformBackgroundRemoval(file);
+      let blob = fastResult?.blob || null;
+      const fastBackgroundIsDark = isDarkBackgroundColor(fastResult?.background);
       let quality = { status: 'pass', score: 0 };
 
       // The edge-color shortcut can occasionally mistake a complex indoor scene
@@ -2431,11 +2443,16 @@ export default function BackgroundRemover({ lang = 'ko' }) {
           const fastQuality = await assessRemovalQuality(blob);
           if (fastQuality.status === 'pass') {
             const fastSheetDetection = await detectEmoticonSheet(blob);
-            if (fastSheetDetection.status === 'sheet' || fastSheetDetection.status === 'ambiguous') {
+            if (
+              !fastBackgroundIsDark
+              && (fastSheetDetection.status === 'sheet' || fastSheetDetection.status === 'ambiguous')
+            ) {
               // Uniform-colour flood fill cannot reliably distinguish a white
               // character face from a white sheet background when their
               // outlines contain tiny openings. Route sticker sheets through
               // the semantic model instead of risking permanent alpha loss.
+              // A dark backdrop is safe to flood-fill and must stay on this
+              // path: semantic models can mistake pale faces for background.
               blob = null;
               quality = { status: 'idle', score: 0 };
             } else {
