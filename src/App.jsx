@@ -6667,7 +6667,7 @@ if (currentPath === '/privacy' || currentPath === '/terms') {
   return (
     <div className={`font-body-md text-body-md antialiased max-w-full w-full lang-${lang}`}>
       {toastMessage && (
-        <div role="status" aria-live="polite" className="fixed left-1/2 top-16 z-[150] -translate-x-1/2 rounded-full border border-mint-border bg-[#184F43] px-4 py-2.5 text-[13px] font-bold text-white shadow-lg whitespace-nowrap max-w-[calc(100vw_-_24px)] overflow-hidden text-ellipsis">
+        <div role="status" aria-live="polite" className="fixed left-1/2 bottom-6 sm:bottom-8 z-[150] -translate-x-1/2 rounded-full border border-[#E9A48C] bg-[#F6C8B8] px-5 py-2.5 text-[13px] font-bold text-[#6F3428] shadow-[0_8px_24px_rgba(111,52,40,0.18)] whitespace-nowrap max-w-[calc(100vw_-_24px)] overflow-hidden text-ellipsis pointer-events-none transition-all duration-300">
           {toastMessage}
         </div>
       )}
