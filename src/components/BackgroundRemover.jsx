@@ -131,16 +131,20 @@ const canvasToPngBlob = (canvas) => new Promise((resolve, reject) => {
 
 async function drawFileToCanvas(file) {
   const canvas = document.createElement('canvas');
-  const ctx = canvas.getContext('2d', { willReadFrequently: true });
-  if (!ctx) throw new Error('Canvas 2D is unavailable');
 
   if (typeof createImageBitmap === 'function') {
-    const bitmap = await createImageBitmap(file);
-    canvas.width = bitmap.width;
-    canvas.height = bitmap.height;
-    ctx.drawImage(bitmap, 0, 0);
-    bitmap.close?.();
-    return { canvas, ctx };
+    try {
+      const bitmap = await createImageBitmap(file);
+      canvas.width = bitmap.width;
+      canvas.height = bitmap.height;
+      const ctx = canvas.getContext('2d', { willReadFrequently: true });
+      if (!ctx) throw new Error('Canvas 2D is unavailable');
+      ctx.drawImage(bitmap, 0, 0);
+      bitmap.close?.();
+      return { canvas, ctx };
+    } catch (e) {
+      console.warn('createImageBitmap failed, falling back to Image():', e);
+    }
   }
 
   const objectUrl = URL.createObjectURL(file);
@@ -153,10 +157,12 @@ async function drawFileToCanvas(file) {
     });
     canvas.width = image.naturalWidth || image.width;
     canvas.height = image.naturalHeight || image.height;
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
+    if (!ctx) throw new Error('Canvas 2D is unavailable');
     ctx.drawImage(image, 0, 0);
     return { canvas, ctx };
   } finally {
-    URL.revokeObjectURL(objectUrl);
+    setTimeout(() => URL.revokeObjectURL(objectUrl), 3000);
   }
 }
 
@@ -2132,7 +2138,25 @@ export default function BackgroundRemover({ lang = 'ko' }) {
       setSplitItems(withUrls);
     } catch (e) {
       console.error('Sticker auto split failed:', e);
-      setSplitError(t.splitFailed);
+      setSplitError(`${t.splitFailed} (${e?.message || String(e)})`);
+    } finally {
+      setSplitting(false);
+    }
+  };
+
+  const forceGridSplit = async () => {
+    if (!resultBlob || splitting) return;
+    clearSplitItems();
+    setSplitting(true);
+    setSplitError('');
+    try {
+      const { canvas } = await drawFileToCanvas(resultBlob);
+      const items = await splitBySmartGrid(canvas, 3, 5);
+      const withUrls = items.map((item) => ({ ...item, url: URL.createObjectURL(item.blob) }));
+      setSplitItems(withUrls);
+    } catch (e) {
+      console.error('Force grid split failed:', e);
+      setSplitError(`${t.splitFailed} (${e?.message || String(e)})`);
     } finally {
       setSplitting(false);
     }
@@ -2338,7 +2362,18 @@ export default function BackgroundRemover({ lang = 'ko' }) {
               </div>
               <p className="mt-2 text-xs sm:text-[13px] leading-5 text-[#746E65]">{t.splitDesc}</p>
 
-              {splitError && <div className="mt-3 rounded-xl bg-[#FFF1EE] px-3 py-2.5 text-xs font-semibold leading-5 text-[#A64D3D]">{splitError}</div>}
+              {splitError && (
+                <div className="mt-3 rounded-xl bg-[#FFF1EE] p-3 text-xs font-semibold leading-5 text-[#A64D3D]">
+                  <div>⚠️ {splitError}</div>
+                  <button
+                    type="button"
+                    onClick={forceGridSplit}
+                    className="mt-2.5 w-full rounded-xl bg-[#A64D3D] px-3.5 py-2.5 text-xs font-extrabold text-white shadow-sm transition hover:bg-[#8D3B2D]"
+                  >
+                    ⚡ 3x5 스마트 그리드로 즉시 강제 분할하기
+                  </button>
+                </div>
+              )}
 
               {splitItems.length === 0 ? (
                 <button
