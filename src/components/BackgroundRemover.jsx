@@ -100,10 +100,33 @@ const checkerStyle = {
 };
 
 const canvasToPngBlob = (canvas) => new Promise((resolve, reject) => {
-  canvas.toBlob((blob) => {
-    if (blob) resolve(blob);
-    else reject(new Error('Canvas PNG export failed'));
-  }, 'image/png');
+  if (!canvas) {
+    reject(new Error('Canvas is null'));
+    return;
+  }
+  const fallbackToDataUrl = () => {
+    try {
+      const dataUrl = canvas.toDataURL('image/png');
+      const parts = dataUrl.split(',');
+      const byteStr = atob(parts[1]);
+      const arr = new Uint8Array(byteStr.length);
+      for (let i = 0; i < byteStr.length; i += 1) {
+        arr[i] = byteStr.charCodeAt(i);
+      }
+      resolve(new Blob([arr], { type: 'image/png' }));
+    } catch (e) {
+      reject(e);
+    }
+  };
+
+  try {
+    canvas.toBlob((blob) => {
+      if (blob) resolve(blob);
+      else fallbackToDataUrl();
+    }, 'image/png');
+  } catch (_err) {
+    fallbackToDataUrl();
+  }
 });
 
 async function drawFileToCanvas(file) {
@@ -2093,7 +2116,18 @@ export default function BackgroundRemover({ lang = 'ko' }) {
     setSplitting(true);
     setSplitError('');
     try {
-      const items = await splitIntoFifteen(resultBlob);
+      let items;
+      try {
+        items = await splitIntoFifteen(resultBlob);
+      } catch (innerErr) {
+        console.warn('splitIntoFifteen failed, attempting direct smart grid:', innerErr);
+        const { canvas } = await drawFileToCanvas(resultBlob);
+        items = await splitBySmartGrid(canvas, 3, 5);
+      }
+      if (!items || items.length === 0) {
+        const { canvas } = await drawFileToCanvas(resultBlob);
+        items = await splitBySmartGrid(canvas, 3, 5);
+      }
       const withUrls = items.map((item) => ({ ...item, url: URL.createObjectURL(item.blob) }));
       setSplitItems(withUrls);
     } catch (e) {
