@@ -528,6 +528,130 @@ async function correctUnexpectedForegroundTransparency(blob) {
   return canvasToPngBlob(canvas);
 }
 
+async function protectLightForegroundOpacity(blob) {
+  const { canvas, ctx } = await drawFileToCanvas(blob);
+  const { width, height } = canvas;
+  if (!width || !height) return blob;
+
+  const imageData = ctx.getImageData(0, 0, width, height);
+  const pixels = imageData.data;
+  const total = width * height;
+  const visibleThreshold = 36;
+  const confidentThreshold = 220;
+  const maxAnalysisDimension = 1200;
+  const analysisScale = Math.min(1, maxAnalysisDimension / Math.max(width, height));
+  const analysisWidth = Math.max(1, Math.round(width * analysisScale));
+  const analysisHeight = Math.max(1, Math.round(height * analysisScale));
+  let analysisPixels = pixels;
+  if (analysisScale < 1) {
+    const analysisCanvas = document.createElement('canvas');
+    analysisCanvas.width = analysisWidth;
+    analysisCanvas.height = analysisHeight;
+    const analysisCtx = analysisCanvas.getContext('2d', { willReadFrequently: true });
+    if (!analysisCtx) return blob;
+    analysisCtx.imageSmoothingEnabled = true;
+    analysisCtx.imageSmoothingQuality = 'high';
+    analysisCtx.drawImage(canvas, 0, 0, analysisWidth, analysisHeight);
+    analysisPixels = analysisCtx.getImageData(0, 0, analysisWidth, analysisHeight).data;
+  }
+
+  const analysisTotal = analysisWidth * analysisHeight;
+  const labels = new Int32Array(analysisTotal);
+  const queue = new Int32Array(analysisTotal);
+  const strongComponents = [false];
+  const minimumComponentArea = Math.max(12, Math.round(analysisTotal * 0.00004));
+  let label = 0;
+
+  // Label only non-trivial matte components. A light pixel is restored only
+  // when it belongs to the same component as confidently opaque foreground.
+  // This prevents pale background remnants from being made opaque again.
+  for (let seed = 0; seed < analysisTotal; seed += 1) {
+    if (labels[seed] || analysisPixels[seed * 4 + 3] < visibleThreshold) continue;
+    label += 1;
+    let head = 0;
+    let tail = 0;
+    let area = 0;
+    let hasConfidentForeground = false;
+    labels[seed] = label;
+    queue[tail++] = seed;
+
+    while (head < tail) {
+      const index = queue[head++];
+      const alpha = analysisPixels[index * 4 + 3];
+      area += 1;
+      if (alpha >= confidentThreshold) hasConfidentForeground = true;
+      const x = index % analysisWidth;
+      const y = Math.floor(index / analysisWidth);
+
+      const enqueue = (next) => {
+        if (next < 0 || next >= analysisTotal || labels[next] || analysisPixels[next * 4 + 3] < visibleThreshold) return;
+        labels[next] = label;
+        queue[tail++] = next;
+      };
+      if (x > 0) enqueue(index - 1);
+      if (x + 1 < analysisWidth) enqueue(index + 1);
+      if (y > 0) enqueue(index - analysisWidth);
+      if (y + 1 < analysisHeight) enqueue(index + analysisWidth);
+    }
+
+    strongComponents[label] = hasConfidentForeground && area >= minimumComponentArea;
+  }
+
+  let changed = false;
+  for (let index = 0; index < total; index += 1) {
+    const x = index % width;
+    const y = Math.floor(index / width);
+    const analysisX = Math.min(analysisWidth - 1, Math.floor(x * analysisWidth / width));
+    const analysisY = Math.min(analysisHeight - 1, Math.floor(y * analysisHeight / height));
+    const componentLabel = labels[analysisY * analysisWidth + analysisX];
+    if (!componentLabel || !strongComponents[componentLabel]) continue;
+    const p = index * 4;
+    const alpha = pixels[p + 3];
+    if (alpha < 56 || alpha >= 248) continue;
+
+    const r = pixels[p];
+    const g = pixels[p + 1];
+    const b = pixels[p + 2];
+    const max = Math.max(r, g, b);
+    const min = Math.min(r, g, b);
+    const luminance = r * 0.299 + g * 0.587 + b * 0.114;
+
+    // White, ivory, cream, and light beige foreground are the colours most
+    // often weakened by a white-background matte. Saturated highlights and
+    // intentional translucent effects are left untouched.
+    if (luminance < 158 || max - min > 78) continue;
+
+    let touchesTransparency = false;
+    let supportingNeighbours = 0;
+    for (let dy = -1; dy <= 1; dy += 1) {
+      const ny = y + dy;
+      if (ny < 0 || ny >= height) continue;
+      for (let dx = -1; dx <= 1; dx += 1) {
+        if (dx === 0 && dy === 0) continue;
+        const nx = x + dx;
+        if (nx < 0 || nx >= width) continue;
+        const neighbourAlpha = pixels[(ny * width + nx) * 4 + 3];
+        if (neighbourAlpha <= 14) touchesTransparency = true;
+        if (neighbourAlpha >= 96) supportingNeighbours += 1;
+      }
+    }
+
+    // Preserve the true antialiased outer edge. Only interior matte pixels,
+    // supported by surrounding foreground, receive an opacity floor.
+    if (touchesTransparency || supportingNeighbours < 4) continue;
+
+    const opacityFloor = alpha < 96 ? 156 : alpha < 160 ? 214 : 242;
+    if (alpha < opacityFloor) {
+      pixels[p + 3] = opacityFloor;
+      changed = true;
+    }
+  }
+
+  if (!changed) return blob;
+  ctx.putImageData(imageData, 0, 0);
+  return canvasToPngBlob(canvas);
+}
+
 function estimateOpaqueCleanupBackdrop(sourcePixels, resultPixels, width, height) {
   const total = width * height;
   if (!total) return null;
@@ -1763,7 +1887,9 @@ async function splitIntoFifteen(input) {
         const rowOffset = y * width * 4;
         for (let x = cellLeft; x < cellRight; x += 1) {
           const alpha = data[rowOffset + x * 4 + 3];
-          if (alpha > 15) {
+          // Splitting never changes alpha. Include faint antialiased pixels in
+          // the crop bounds so pale lettering and beige edges are not clipped.
+          if (alpha > 8) {
             hasPixels = true;
             if (x < minX) minX = x;
             if (x > maxX) maxX = x;
@@ -2041,6 +2167,8 @@ export default function BackgroundRemover({ lang = 'ko' }) {
       setStage('processing');
       setProgress(null);
       blob = await removeEnclosedBackdropPockets(blob, file, true);
+      blob = await correctUnexpectedForegroundTransparency(blob);
+      blob = await protectLightForegroundOpacity(blob);
       quality = await assessRemovalQuality(blob);
       const url = URL.createObjectURL(blob);
       setResultMethod(method);
@@ -2075,6 +2203,7 @@ export default function BackgroundRemover({ lang = 'ko' }) {
       precisionBlob = await cleanAiForegroundArtifacts(precisionBlob);
       precisionBlob = await refinePrecisionEdges(precisionBlob);
       precisionBlob = await removeEnclosedBackdropPockets(precisionBlob, file, true);
+      precisionBlob = await protectLightForegroundOpacity(precisionBlob);
       const precisionQuality = await assessRemovalQuality(precisionBlob);
       if (qualityRank(precisionQuality) <= qualityRank(qualityAssessment)) {
         const url = URL.createObjectURL(precisionBlob);

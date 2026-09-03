@@ -235,17 +235,23 @@ function backgroundRemovalResumeRecovery() {
       const cleanupCall = transformed.includes('blob = await removeEnclosedBackdropPockets(blob, file, true);')
         ? 'blob = await removeEnclosedBackdropPockets(blob, file, true);'
         : 'blob = await removeEnclosedBackdropPockets(blob, file);'
+      const opacityProtectionCalls = transformed.includes('blob = await protectLightForegroundOpacity(blob);')
+        ? `blob = await correctUnexpectedForegroundTransparency(blob);
+      blob = await protectLightForegroundOpacity(blob);`
+        : ''
 
       replaceOnce(
         `      setStage('processing');
       setProgress(null);
       ${cleanupCall}
-      quality = await assessRemovalQuality(blob);
+      ${opacityProtectionCalls ? `${opacityProtectionCalls}
+      ` : ''}quality = await assessRemovalQuality(blob);
       const url = URL.createObjectURL(blob);`,
         `      setStage('processing');
       setProgress(null);
       ${cleanupCall}
-      quality = await assessRemovalQuality(blob);
+      ${opacityProtectionCalls ? `${opacityProtectionCalls}
+      ` : ''}quality = await assessRemovalQuality(blob);
       if (operationIdRef.current !== operationId) return;
       const url = URL.createObjectURL(blob);`,
         'stale result guard'
