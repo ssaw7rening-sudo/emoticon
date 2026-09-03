@@ -6,7 +6,7 @@ const sourcePath = path.join(distDir, 'index.html');
 if (!fs.existsSync(sourcePath)) throw new Error('dist/index.html not found');
 const source = fs.readFileSync(sourcePath, 'utf8');
 
-const origin = 'https://emoticon-beige.vercel.app';
+const origin = 'https://emoticonpromptmaker.com';
 
 const mainPages = {
   ko: {

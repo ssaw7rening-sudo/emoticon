@@ -34,4 +34,4 @@ Allow: /
 User-agent: Bytespider
 Allow: /
 
-Sitemap: https://emoticon-beige.vercel.app/sitemap.xml
+Sitemap: https://emoticonpromptmaker.com/sitemap.xml

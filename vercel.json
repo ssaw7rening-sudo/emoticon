@@ -1,35 +1,107 @@
 {
   "redirects": [
-    { "source": "/ko", "destination": "/", "permanent": true },
-    { "source": "/ko/", "destination": "/", "permanent": true },
-    { "source": "/privacy/", "destination": "/privacy", "permanent": true },
-    { "source": "/terms/", "destination": "/terms", "permanent": true }
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "emoticon-beige.vercel.app"
+        }
+      ],
+      "destination": "https://emoticonpromptmaker.com/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/ko",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/ko/",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/privacy/",
+      "destination": "/privacy",
+      "permanent": true
+    },
+    {
+      "source": "/terms/",
+      "destination": "/terms",
+      "permanent": true
+    }
   ],
   "rewrites": [
-    { "source": "/privacy", "destination": "/privacy/index.html" },
-    { "source": "/terms", "destination": "/terms/index.html" },
-
-    { "source": "/:lang(en|ja|zh)", "destination": "/:lang/index.html" },
-    { "source": "/:lang(en|ja|zh)/", "destination": "/:lang/index.html" },
-
-    { "source": "/background-remover", "destination": "/background-remover/index.html" },
-    { "source": "/background-remover/", "destination": "/background-remover/index.html" },
-    { "source": "/:lang(en|ja|zh)/background-remover", "destination": "/:lang/background-remover/index.html" },
-    { "source": "/:lang(en|ja|zh)/background-remover/", "destination": "/:lang/background-remover/index.html" },
-
-    { "source": "/:tool(ai-sticker-maker|photo-to-sticker|sticker-sheet-splitter|transparent-png-maker|image-upscaler)", "destination": "/:tool/index.html" },
-    { "source": "/:tool(ai-sticker-maker|photo-to-sticker|sticker-sheet-splitter|transparent-png-maker|image-upscaler)/", "destination": "/:tool/index.html" },
-    { "source": "/:lang(en|ja|zh)/:tool(ai-sticker-maker|photo-to-sticker|sticker-sheet-splitter|transparent-png-maker|image-upscaler)", "destination": "/:lang/:tool/index.html" },
-    { "source": "/:lang(en|ja|zh)/:tool(ai-sticker-maker|photo-to-sticker|sticker-sheet-splitter|transparent-png-maker|image-upscaler)/", "destination": "/:lang/:tool/index.html" }
+    {
+      "source": "/privacy",
+      "destination": "/privacy/index.html"
+    },
+    {
+      "source": "/terms",
+      "destination": "/terms/index.html"
+    },
+    {
+      "source": "/:lang(en|ja|zh)",
+      "destination": "/:lang/index.html"
+    },
+    {
+      "source": "/:lang(en|ja|zh)/",
+      "destination": "/:lang/index.html"
+    },
+    {
+      "source": "/background-remover",
+      "destination": "/background-remover/index.html"
+    },
+    {
+      "source": "/background-remover/",
+      "destination": "/background-remover/index.html"
+    },
+    {
+      "source": "/:lang(en|ja|zh)/background-remover",
+      "destination": "/:lang/background-remover/index.html"
+    },
+    {
+      "source": "/:lang(en|ja|zh)/background-remover/",
+      "destination": "/:lang/background-remover/index.html"
+    },
+    {
+      "source": "/:tool(ai-sticker-maker|photo-to-sticker|sticker-sheet-splitter|transparent-png-maker|image-upscaler)",
+      "destination": "/:tool/index.html"
+    },
+    {
+      "source": "/:tool(ai-sticker-maker|photo-to-sticker|sticker-sheet-splitter|transparent-png-maker|image-upscaler)/",
+      "destination": "/:tool/index.html"
+    },
+    {
+      "source": "/:lang(en|ja|zh)/:tool(ai-sticker-maker|photo-to-sticker|sticker-sheet-splitter|transparent-png-maker|image-upscaler)",
+      "destination": "/:lang/:tool/index.html"
+    },
+    {
+      "source": "/:lang(en|ja|zh)/:tool(ai-sticker-maker|photo-to-sticker|sticker-sheet-splitter|transparent-png-maker|image-upscaler)/",
+      "destination": "/:lang/:tool/index.html"
+    }
   ],
   "headers": [
     {
       "source": "/(.*)",
       "headers": [
-        { "key": "X-Content-Type-Options", "value": "nosniff" },
-        { "key": "X-Frame-Options", "value": "SAMEORIGIN" },
-        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
-        { "key": "Strict-Transport-Security", "value": "max-age=31536000; includeSubDomains" }
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "SAMEORIGIN"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Strict-Transport-Security",
+          "value": "max-age=31536000; includeSubDomains"
+        }
       ]
     }
   ]

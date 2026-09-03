@@ -190,6 +190,10 @@ function refreshRuntimeSeoMeta() {
         }
         transformed = transformed.replace(from, to)
       }
+      transformed = transformed.replaceAll(
+        'https://emoticon-beige.vercel.app',
+        'https://emoticonpromptmaker.com'
+      )
       return { code: transformed, map: null }
     }
   }

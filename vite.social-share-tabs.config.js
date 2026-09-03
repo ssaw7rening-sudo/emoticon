@@ -58,28 +58,28 @@ function socialShareTabs() {
 마음에 드는 컷은 투명 PNG로 분리해서 바로 활용할 수 있어요 💛\\
 \\
 프로필 링크에서 나만의 이모티콘 프롬프트를 만들어보세요.\\
-https://emoticon-beige.vercel.app/\\
+https://emoticonpromptmaker.com/\\
 \\
 #AI이모티콘 #이모티콘만들기 #AI캐릭터 #캐릭터디자인 #스티커 #카톡이모티콘 #라인스티커 #AI아트 #프롬프트 #PromptMaker #StickerDesign #DigitalArt\`,
       en: \`My 15-piece AI sticker set is done ✨\\
 Expressions, poses, captions, and transparent PNG-ready artwork — all in one sheet.\\
 Create your own sticker prompt from the link below.\\
 \\
-https://emoticon-beige.vercel.app/\\
+https://emoticonpromptmaker.com/\\
 \\
 #AISticker #StickerDesign #AIArt #CharacterDesign #DigitalArt #Emoticon #CustomSticker #PromptMaker #CreativeAI #StickerSheet\`,
       ja: \`AIで作った15種類のオリジナルスタンプが完成しました ✨\\
 表情・ポーズ・メッセージまで1枚にまとめて、透過PNGとして分割して使えます。\\
 自分だけのスタンプ用プロンプトはプロフィールのリンクから。\\
 \\
-https://emoticon-beige.vercel.app/\\
+https://emoticonpromptmaker.com/\\
 \\
 #AIスタンプ #スタンプ作り #AIイラスト #キャラクターデザイン #デジタルアート #オリジナルスタンプ #PromptMaker #StickerDesign\`,
       zh: \`我的15张AI表情贴纸完成啦 ✨\\
 表情、动作、文案一次生成，还可以拆分为透明PNG继续使用。\\
 通过下面的链接制作属于自己的表情包提示词。\\
 \\
-https://emoticon-beige.vercel.app/\\
+https://emoticonpromptmaker.com/\\
 \\
 #AI表情包 #AI贴纸 #角色设计 #数字艺术 #原创贴纸 #AI绘画 #PromptMaker #StickerDesign\`
     };

@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 const distDir = path.resolve('dist');
-const origin = 'https://emoticon-beige.vercel.app';
+const origin = 'https://emoticonpromptmaker.com';
 
 const locales = {
   ko: { prefix: '', html: 'ko', home: '/', homeLabel: '홈', toolsLabel: '기능별 무료 도구', intentTitle: '이런 작업에 특히 유용합니다' },

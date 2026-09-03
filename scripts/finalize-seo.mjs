@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 const distDir = path.resolve('dist');
-const origin = 'https://emoticon-beige.vercel.app';
+const origin = 'https://emoticonpromptmaker.com';
 
 const locales = {
   ko: {

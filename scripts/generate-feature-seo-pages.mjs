@@ -7,7 +7,7 @@ const sitemapPath = path.join(distDir, 'sitemap.xml');
 if (!fs.existsSync(sourcePath)) throw new Error('dist/index.html not found');
 
 const source = fs.readFileSync(sourcePath, 'utf8');
-const origin = 'https://emoticon-beige.vercel.app';
+const origin = 'https://emoticonpromptmaker.com';
 
 const localeMeta = {
   ko: { htmlLang: 'ko', prefix: '', ogLocale: 'ko_KR', home: '/', tool: '/background-remover/', ctaMain: 'AI 이모티콘 만들기', ctaTool: '배경 제거 도구 열기', related: '다른 무료 도구도 살펴보세요' },
