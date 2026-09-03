@@ -528,6 +528,138 @@ async function correctUnexpectedForegroundTransparency(blob) {
   return canvasToPngBlob(canvas);
 }
 
+function restoreSheetLightInteriors(pixels, sourcePixels, width, height) {
+  const rows = 3;
+  const columns = 5;
+  const strongAlpha = 96;
+  let changed = false;
+
+  for (let row = 0; row < rows; row += 1) {
+    for (let column = 0; column < columns; column += 1) {
+      const left = Math.floor(column * width / columns);
+      const right = Math.ceil((column + 1) * width / columns);
+      const top = Math.floor(row * height / rows);
+      const bottom = Math.ceil((row + 1) * height / rows);
+      const cellWidth = right - left;
+      const cellHeight = bottom - top;
+      const cellTotal = cellWidth * cellHeight;
+      if (cellWidth < 8 || cellHeight < 8) continue;
+
+      const maxHorizontalSpan = Math.max(8, Math.round(cellWidth * 0.34));
+      const maxVerticalSpan = Math.max(8, Math.round(cellHeight * 0.34));
+      const leftDistance = new Uint16Array(cellTotal);
+      const rightDistance = new Uint16Array(cellTotal);
+      const upDistance = new Uint16Array(cellTotal);
+      const downDistance = new Uint16Array(cellTotal);
+
+      for (let y = 0; y < cellHeight; y += 1) {
+        let distance = 0;
+        for (let x = 0; x < cellWidth; x += 1) {
+          const global = ((top + y) * width + left + x) * 4;
+          if (pixels[global + 3] >= strongAlpha) distance = 1;
+          else if (distance) distance += 1;
+          if (distance && distance <= maxHorizontalSpan + 1) leftDistance[y * cellWidth + x] = distance;
+        }
+        distance = 0;
+        for (let x = cellWidth - 1; x >= 0; x -= 1) {
+          const global = ((top + y) * width + left + x) * 4;
+          if (pixels[global + 3] >= strongAlpha) distance = 1;
+          else if (distance) distance += 1;
+          if (distance && distance <= maxHorizontalSpan + 1) rightDistance[y * cellWidth + x] = distance;
+        }
+      }
+
+      for (let x = 0; x < cellWidth; x += 1) {
+        let distance = 0;
+        for (let y = 0; y < cellHeight; y += 1) {
+          const global = ((top + y) * width + left + x) * 4;
+          if (pixels[global + 3] >= strongAlpha) distance = 1;
+          else if (distance) distance += 1;
+          if (distance && distance <= maxVerticalSpan + 1) upDistance[y * cellWidth + x] = distance;
+        }
+        distance = 0;
+        for (let y = cellHeight - 1; y >= 0; y -= 1) {
+          const global = ((top + y) * width + left + x) * 4;
+          if (pixels[global + 3] >= strongAlpha) distance = 1;
+          else if (distance) distance += 1;
+          if (distance && distance <= maxVerticalSpan + 1) downDistance[y * cellWidth + x] = distance;
+        }
+      }
+
+      const candidates = new Uint8Array(cellTotal);
+      for (let local = 0; local < cellTotal; local += 1) {
+        if (!leftDistance[local] || !rightDistance[local] || !upDistance[local] || !downDistance[local]) continue;
+        const x = local % cellWidth;
+        const y = Math.floor(local / cellWidth);
+        const p = ((top + y) * width + left + x) * 4;
+        if (pixels[p + 3] >= 250 || sourcePixels[p + 3] < 200) continue;
+        const r = sourcePixels[p];
+        const g = sourcePixels[p + 1];
+        const b = sourcePixels[p + 2];
+        const max = Math.max(r, g, b);
+        const min = Math.min(r, g, b);
+        const luminance = r * 0.299 + g * 0.587 + b * 0.114;
+        if (luminance >= 142 && max - min <= 105) candidates[local] = 1;
+      }
+
+      const visited = new Uint8Array(cellTotal);
+      const queue = new Int32Array(cellTotal);
+      const minimumArea = Math.max(18, Math.round(cellTotal * 0.0022));
+      const minimumSpan = Math.max(5, Math.round(Math.min(cellWidth, cellHeight) * 0.045));
+
+      for (let seed = 0; seed < cellTotal; seed += 1) {
+        if (!candidates[seed] || visited[seed]) continue;
+        let head = 0;
+        let tail = 0;
+        let minX = cellWidth;
+        let minY = cellHeight;
+        let maxX = -1;
+        let maxY = -1;
+        visited[seed] = 1;
+        queue[tail++] = seed;
+
+        while (head < tail) {
+          const local = queue[head++];
+          const x = local % cellWidth;
+          const y = Math.floor(local / cellWidth);
+          minX = Math.min(minX, x);
+          minY = Math.min(minY, y);
+          maxX = Math.max(maxX, x);
+          maxY = Math.max(maxY, y);
+
+          const enqueue = (next) => {
+            if (next < 0 || next >= cellTotal || visited[next] || !candidates[next]) return;
+            visited[next] = 1;
+            queue[tail++] = next;
+          };
+          if (x > 0) enqueue(local - 1);
+          if (x + 1 < cellWidth) enqueue(local + 1);
+          if (y > 0) enqueue(local - cellWidth);
+          if (y + 1 < cellHeight) enqueue(local + cellWidth);
+        }
+
+        const componentWidth = maxX - minX + 1;
+        const componentHeight = maxY - minY + 1;
+        if (tail < minimumArea || componentWidth < minimumSpan || componentHeight < minimumSpan) continue;
+
+        for (let i = 0; i < tail; i += 1) {
+          const local = queue[i];
+          const x = local % cellWidth;
+          const y = Math.floor(local / cellWidth);
+          const p = ((top + y) * width + left + x) * 4;
+          pixels[p] = sourcePixels[p];
+          pixels[p + 1] = sourcePixels[p + 1];
+          pixels[p + 2] = sourcePixels[p + 2];
+          pixels[p + 3] = 255;
+        }
+        changed = true;
+      }
+    }
+  }
+
+  return changed;
+}
+
 async function protectLightForegroundOpacity(blob, sourceFile = null) {
   const { canvas, ctx } = await drawFileToCanvas(blob);
   const { width, height } = canvas;
@@ -559,6 +691,10 @@ async function protectLightForegroundOpacity(blob, sourceFile = null) {
   const confidentThreshold = 180;
   const backgroundEstimate = estimateUniformEdgeBackground(sourcePixels, width, height);
   let changed = false;
+  const sheetDetection = await detectEmoticonSheet(blob);
+  if (sheetDetection.status === 'sheet' || sheetDetection.status === 'ambiguous') {
+    changed = restoreSheetLightInteriors(pixels, sourcePixels, width, height) || changed;
+  }
 
   // Some removal masks reduce a white/ivory face to zero or near-zero alpha,
   // so an opacity floor cannot recover it. A small dilation seals tiny gaps in
