@@ -2137,28 +2137,6 @@ export default function BackgroundRemover({ lang = 'ko' }) {
     }
   };
 
-  const forceGridSplit = async () => {
-    if (!resultBlob || splitting) return;
-    clearSplitItems();
-    setSplitting(true);
-    setSplitError('');
-    try {
-      const items = await splitIntoFifteen(resultBlob);
-      if (!items || items.length === 0) {
-        throw new Error('No sticker slices generated');
-      }
-      const withUrls = items.map((item) => ({ ...item, url: URL.createObjectURL(item.blob) }));
-      setSplitItems(withUrls);
-      setTimeout(() => {
-        splitCardRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 120);
-    } catch (e) {
-      console.error('Force grid split failed:', e);
-      setSplitError(`${t.splitFailed} [원인: ${e?.message || String(e)}]`);
-    } finally {
-      setSplitting(false);
-    }
-  };
   autoSplitCallbackRef.current = autoSplit;
 
   useEffect(() => {
@@ -2362,14 +2340,7 @@ export default function BackgroundRemover({ lang = 'ko' }) {
 
               {splitError && (
                 <div className="mt-3 rounded-xl bg-[#FFF1EE] p-3 text-xs font-semibold leading-5 text-[#A64D3D]">
-                  <div>⚠️ {splitError}</div>
-                  <button
-                    type="button"
-                    onClick={forceGridSplit}
-                    className="mt-2.5 w-full rounded-xl bg-[#A64D3D] px-3.5 py-2.5 text-xs font-extrabold text-white shadow-sm transition hover:bg-[#8D3B2D]"
-                  >
-                    ⚡ 3x5 스마트 그리드로 즉시 강제 분할하기
-                  </button>
+                  ⚠️ {splitError}
                 </div>
               )}
 
