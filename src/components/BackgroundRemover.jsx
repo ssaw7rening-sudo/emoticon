@@ -13,7 +13,7 @@ const COPY = {
     sheetUploadHint: '15개 이모티콘 시트는 배경 제거 후 자동으로 감지해 각각 분리합니다.', sheetSelectedHint: '15개 시트로 확인되면 배경 제거 완료 후 자동 분할됩니다.',
     remove: '배경 제거하기', preparing: '이미지 분석 중…', processing: '배경을 제거하고 있어요…',
     original: '원본', result: '투명 배경', download: '투명 PNG 저장', again: '다른 이미지',
-    compareHint: '가운데 슬라이더를 좌우로 움직여 원본과 결과를 비교하세요.',
+    compareHint: '가운데 슬라이더를 좌우로 움직여 원본과 결과를 비교하세요.', methodSafe: '밝은색 보호 안전 처리', methodAi: 'AI 정밀 처리',
     transparentAlready: '이미 투명 배경인 PNG는 배경 제거 대상이 아닙니다. 배경이 있는 PNG·JPG·WEBP 이미지를 사용해 주세요.',
     splitTitle: '15개 이모티콘 자동 분리', splitBadge: '스마트 감지',
     splitDesc: '고정 격자로 자르지 않고 실제 캐릭터·문구 덩어리를 감지해 15개 이모티콘을 각각 분리합니다.',
@@ -34,7 +34,7 @@ const COPY = {
     sheetUploadHint: 'A 15-emoticon sheet is detected and split automatically after background removal.', sheetSelectedHint: 'If this is a 15-emoticon sheet, it will be split automatically after background removal.',
     remove: 'Remove background', preparing: 'Analyzing image…', processing: 'Removing background…',
     original: 'Original', result: 'Transparent', download: 'Save transparent PNG', again: 'Try another image',
-    compareHint: 'Drag the center slider left or right to compare the original and result.',
+    compareHint: 'Drag the center slider left or right to compare the original and result.', methodSafe: 'Light-color safe processing', methodAi: 'AI precision processing',
     transparentAlready: 'A PNG that already has transparency does not need background removal. Please use a PNG, JPG, or WEBP with a background.',
     splitTitle: 'Auto-split 15 emoticons', splitBadge: 'Smart detect',
     splitDesc: 'Detect the actual character and text groups instead of using a fixed grid, then split all 15 emoticons.',
@@ -55,7 +55,7 @@ const COPY = {
     sheetUploadHint: '15個の絵文字シートは背景削除後に自動検出し、個別に分割します。', sheetSelectedHint: '15個のシートと確認されると、背景削除後に自動分割されます。',
     remove: '背景を削除する', preparing: '画像を解析中…', processing: '背景を削除しています…',
     original: '元画像', result: '透過背景', download: '透過PNGを保存', again: '別の画像',
-    compareHint: '中央のスライダーを左右に動かして元画像と結果を比較できます。',
+    compareHint: '中央のスライダーを左右に動かして元画像と結果を比較できます。', methodSafe: '明るい色を保護する安全処理', methodAi: 'AI高精度処理',
     transparentAlready: 'すでに透過背景のPNGは背景削除の対象ではありません。背景のあるPNG・JPG・WEBPをご利用ください。',
     splitTitle: '15個の絵文字を自動分割', splitBadge: 'スマート検出',
     splitDesc: '固定グリッドではなく実際のキャラクターと文字のまとまりを検出し、15個の絵文字を個別に分割します。',
@@ -76,7 +76,7 @@ const COPY = {
     sheetUploadHint: '包含15个表情的图片将在移除背景后自动识别并分别分割。', sheetSelectedHint: '如果识别为15个表情的图片，移除背景后将自动分割。',
     remove: '移除背景', preparing: '正在分析图片…', processing: '正在移除背景…',
     original: '原图', result: '透明背景', download: '保存透明PNG', again: '换一张图片',
-    compareHint: '左右拖动中间滑块即可对比原图和处理结果。',
+    compareHint: '左右拖动中间滑块即可对比原图和处理结果。', methodSafe: '浅色保护安全处理', methodAi: 'AI精细处理',
     transparentAlready: '已经带透明背景的PNG无需再次移除背景。请使用带背景的PNG、JPG或WEBP图片。',
     splitTitle: '自动分割15个表情', splitBadge: '智能检测',
     splitDesc: '不再按固定网格切割，而是检测实际角色和文字组合并分别分割15个表情。',
@@ -2746,6 +2746,15 @@ export default function BackgroundRemover({ lang = 'ko' }) {
               <div className="border-t border-[#E7ECE3] bg-[#FBFCFA] px-3 py-2.5 text-center text-xs font-semibold leading-5 text-[#6B7467]">
                 ↔ {t.compareHint}
               </div>
+            </div>
+          )}
+
+          {resultUrl && (
+            <div
+              data-alpha-engine="v6"
+              className="mt-3 rounded-xl border border-[#DCE8D5] bg-[#F4F8F1] px-3 py-2 text-center text-[11px] font-extrabold text-[#587052] sm:text-xs"
+            >
+              ✓ {resultMethod === 'fast' ? t.methodSafe : t.methodAi} · Alpha v6
             </div>
           )}
 
