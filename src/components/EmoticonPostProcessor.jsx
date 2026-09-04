@@ -132,7 +132,7 @@ function downloadBlob(blob, filename) {
 
 const safeBaseName = (name = 'emoticon') => name.replace(/\.[^.]+$/, '').replace(/[^a-zA-Z0-9가-힣ぁ-んァ-ン一-龥_-]+/g, '-') || 'emoticon';
 
-export default function EmoticonPostProcessor({ items = [], sourceName = 'emoticon', lang = 'ko' }) {
+export default function EmoticonPostProcessor({ items = [], sourceName = 'emoticon', lang = 'ko', engineLabel = '' }) {
   const t = COPY[lang] || COPY.ko;
   const [processed, setProcessed] = useState([]);
   const [working, setWorking] = useState(false);
@@ -163,7 +163,7 @@ export default function EmoticonPostProcessor({ items = [], sourceName = 'emotic
   const reviewCount = useMemo(() => processed.filter((item) => item.needsReview).length, [processed]);
   const base = safeBaseName(sourceName);
   const outputSize = 360 * outputScale;
-  const normalizeLabel = t.normalizeAll.replace('{size}', String(outputSize));
+  const normalizeLabel = t.normalizeAll.split('{size}').join(String(outputSize));
 
   const changeOutputScale = (nextScale) => {
     if (working || nextScale === outputScale) return;
@@ -290,7 +290,14 @@ export default function EmoticonPostProcessor({ items = [], sourceName = 'emotic
   return (
     <div className="mt-4 rounded-2xl border border-[#DDD8CE] bg-[#FFFDF9] p-3.5 sm:p-4">
       <div>
-        <h4 className="text-sm sm:text-base font-extrabold text-[#35312C]">🧰 {t.title}</h4>
+        <div className="flex flex-wrap items-center gap-2">
+          <h4 className="text-sm sm:text-base font-extrabold text-[#35312C]">🧰 {t.title}</h4>
+          {engineLabel && (
+            <span className="rounded-full bg-[#EEF4EA] px-2 py-1 text-[10px] font-extrabold leading-none text-[#587052]">
+              {engineLabel}
+            </span>
+          )}
+        </div>
         <p className="mt-1 text-xs sm:text-[13px] leading-5 text-[#746E65]">{t.ready}</p>
       </div>
 

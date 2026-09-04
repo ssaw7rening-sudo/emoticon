@@ -1,5 +1,5 @@
 // PWA Service Worker for offline support & home screen install
-const CACHE_NAME = 'emoticon-pwa-v6-alpha-safe';
+const CACHE_NAME = 'emoticon-pwa-v7-mobile-preview';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',

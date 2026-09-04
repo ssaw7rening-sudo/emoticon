@@ -2751,10 +2751,10 @@ export default function BackgroundRemover({ lang = 'ko' }) {
 
           {resultUrl && (
             <div
-              data-alpha-engine="v6"
+              data-alpha-engine="v7"
               className="mt-3 rounded-xl border border-[#DCE8D5] bg-[#F4F8F1] px-3 py-2 text-center text-[11px] font-extrabold text-[#587052] sm:text-xs"
             >
-              ✓ {resultMethod === 'fast' ? t.methodSafe : t.methodAi} · Alpha v6
+              ✓ {resultMethod === 'fast' ? t.methodSafe : t.methodAi} · Alpha v7
             </div>
           )}
 
@@ -2848,6 +2848,7 @@ export default function BackgroundRemover({ lang = 'ko' }) {
                     items={splitItems}
                     sourceName={file?.name || 'emoticon'}
                     lang={lang}
+                    engineLabel={`${resultMethod === 'fast' ? t.methodSafe : t.methodAi} · Alpha v7`}
                   />
                 </>
               )}
