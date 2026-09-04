@@ -3,7 +3,7 @@ import baseConfig from './vite.ui-runtime-cleanup.config.js'
 
 function finalTransparencyIntegrityGuard() {
   return {
-    name: 'final-transparency-integrity-guard-v1',
+    name: 'final-transparency-integrity-guard-v2',
     enforce: 'post',
     transform(code, id) {
       const normalizedId = id.replace(/\\/g, '/')
@@ -184,7 +184,134 @@ function finalTransparencyIntegrityGuard() {
         throw new Error('[transparency-integrity] Background-removal handler boundaries were not found')
       }
 
-      let removeHandler = transformed.slice(removeStart, retryStart)
+      // Sticker sheets generated on a black or nearly-black matte need a very
+      // conservative path. The generic fast remover also examines enclosed
+      // dark pockets; eyes, lettering and outlines can make that inspection
+      // ambiguous and cause the otherwise-correct result to be discarded in
+      // favour of an AI mask. AI masks are precisely what can make pale faces
+      // and cream artwork semi-transparent. This pre-pass removes only dark
+      // pixels connected to a demonstrably uniform dark image border and never
+      // changes the alpha of any enclosed/light foreground pixel.
+      const safeDarkPrepass = `async function trySafeDarkBorderRemoval(file) {
+  const { canvas, ctx } = await drawFileToCanvas(file, {
+    maxEdge: typeof FAST_CANVAS_MAX_EDGE === 'number' ? FAST_CANVAS_MAX_EDGE : 4096,
+    maxPixels: typeof FAST_CANVAS_MAX_PIXELS === 'number' ? FAST_CANVAS_MAX_PIXELS : 12 * 1024 * 1024,
+  });
+  const { width, height } = canvas;
+  if (!width || !height) return null;
+
+  const imageData = ctx.getImageData(0, 0, width, height);
+  const pixels = imageData.data;
+  const borderColours = [];
+  const step = Math.max(1, Math.floor(Math.min(width, height) / 460));
+  const addBorderPixel = (x, y) => {
+    const p = (y * width + x) * 4;
+    if (pixels[p + 3] < 240) return;
+    borderColours.push([pixels[p], pixels[p + 1], pixels[p + 2]]);
+  };
+
+  for (let x = 0; x < width; x += step) {
+    addBorderPixel(x, 0);
+    addBorderPixel(x, height - 1);
+  }
+  for (let y = step; y < height - 1; y += step) {
+    addBorderPixel(0, y);
+    addBorderPixel(width - 1, y);
+  }
+  if (borderColours.length < 24) return null;
+
+  const darkBorderColours = borderColours.filter(([r, g, b]) => {
+    const luminance = r * 0.2126 + g * 0.7152 + b * 0.0722;
+    return luminance <= 78 && Math.max(r, g, b) <= 104;
+  });
+  if (darkBorderColours.length / borderColours.length < 0.72) return null;
+
+  const background = [0, 0, 0];
+  for (const colour of darkBorderColours) {
+    background[0] += colour[0];
+    background[1] += colour[1];
+    background[2] += colour[2];
+  }
+  background[0] /= darkBorderColours.length;
+  background[1] /= darkBorderColours.length;
+  background[2] /= darkBorderColours.length;
+
+  const deviations = darkBorderColours
+    .map((colour) => colorDistance(colour, background))
+    .sort((a, b) => a - b);
+  const p95 = deviations[Math.min(deviations.length - 1, Math.floor(deviations.length * 0.95))] || 0;
+  if (p95 > 30) return null;
+  const tolerance = Math.max(18, Math.min(42, 18 + p95 * 1.6));
+
+  const total = width * height;
+  const visited = new Uint8Array(total);
+  const queue = new Int32Array(total);
+  let head = 0;
+  let tail = 0;
+  const matchesDarkMatte = (index) => {
+    const p = index * 4;
+    if (pixels[p + 3] < 16) return true;
+    const r = pixels[p];
+    const g = pixels[p + 1];
+    const b = pixels[p + 2];
+    const luminance = r * 0.2126 + g * 0.7152 + b * 0.0722;
+    return luminance <= 112 && colorDistance([r, g, b], background) <= tolerance;
+  };
+  const enqueue = (index) => {
+    if (index < 0 || index >= total || visited[index] || !matchesDarkMatte(index)) return;
+    visited[index] = 1;
+    queue[tail++] = index;
+  };
+
+  for (let x = 0; x < width; x += 1) {
+    enqueue(x);
+    enqueue((height - 1) * width + x);
+  }
+  for (let y = 1; y < height - 1; y += 1) {
+    enqueue(y * width);
+    enqueue(y * width + width - 1);
+  }
+  while (head < tail) {
+    const index = queue[head++];
+    const x = index % width;
+    const y = Math.floor(index / width);
+    if (x > 0) enqueue(index - 1);
+    if (x + 1 < width) enqueue(index + 1);
+    if (y > 0) enqueue(index - width);
+    if (y + 1 < height) enqueue(index + width);
+  }
+
+  // Require a meaningful but not all-consuming border component. Only the
+  // already-visited component gets cleared; enclosed black details stay solid.
+  if (tail < total * 0.06 || tail > total * 0.92) return null;
+  for (let i = 0; i < tail; i += 1) pixels[queue[i] * 4 + 3] = 0;
+  ctx.putImageData(imageData, 0, 0);
+  return {
+    blob: await canvasToPngBlob(canvas),
+    background,
+    deterministicDark: true,
+  };
+}
+
+`
+
+      transformed = transformed.slice(0, removeStart) + safeDarkPrepass + transformed.slice(removeStart)
+
+      const updatedRemoveStart = transformed.indexOf('const removeBackground = async', removeStart + safeDarkPrepass.length)
+      const updatedRetryStart = transformed.indexOf('const runPrecisionRetry = async', updatedRemoveStart)
+      if (updatedRemoveStart < 0 || updatedRetryStart < 0) {
+        throw new Error('[transparency-integrity] Updated background-removal handler boundaries were not found')
+      }
+
+      let removeHandler = transformed.slice(updatedRemoveStart, updatedRetryStart)
+      const fastCallPattern = /const\s+fastResult\s*=\s*await\s+tryFastUniformBackgroundRemoval\(file\);/
+      if (!fastCallPattern.test(removeHandler)) {
+        throw new Error('[transparency-integrity] Fast removal call anchor was not found')
+      }
+      removeHandler = removeHandler.replace(
+        fastCallPattern,
+        'const fastResult = await trySafeDarkBorderRemoval(file) || await tryFastUniformBackgroundRemoval(file);'
+      )
       const qualityPassPattern = /if\s*\(fastQuality\.status\s*===\s*["']pass["']\)\s*\{/
       if (!qualityPassPattern.test(removeHandler)) {
         const fastQualityIndex = removeHandler.indexOf('fastQuality')
@@ -273,7 +400,7 @@ function finalTransparencyIntegrityGuard() {
       )
 
       removeHandler = removeHandler.slice(0, processingStart) + processingTail
-      transformed = transformed.slice(0, removeStart) + removeHandler + transformed.slice(retryStart)
+      transformed = transformed.slice(0, updatedRemoveStart) + removeHandler + transformed.slice(updatedRetryStart)
 
       return { code: transformed, map: null }
     },
