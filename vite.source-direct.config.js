@@ -354,13 +354,14 @@ function maskGuidedSourceSplitter() {
       if (!normalizedId.endsWith('/src/components/BackgroundRemover.jsx')) return null
       if (!code.includes('splitIntoFifteenSourceSafe')) return null
 
-      const pattern = /async function splitIntoFifteenSourceSafe\(input,\s*sourceFile\s*=\s*null\)\s*\{[\s\S]*?\n\}\n\nasync function hasRealTransparency/
-      if (!pattern.test(code)) {
+      const start = code.indexOf('async function splitIntoFifteenSourceSafe')
+      const end = code.indexOf('async function hasRealTransparency', start)
+      if (start < 0 || end < 0 || end <= start) {
         throw new Error('[mask-guided-source-safe] splitter function could not be located')
       }
 
       return {
-        code: code.replace(pattern, MASK_GUIDED_SPLITTER + '\n\nasync function hasRealTransparency'),
+        code: code.slice(0, start) + MASK_GUIDED_SPLITTER + '\n\n' + code.slice(end),
         map: null,
       }
     },
