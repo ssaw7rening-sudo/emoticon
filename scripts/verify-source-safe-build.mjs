@@ -13,6 +13,7 @@ const bundle = fs.readdirSync(assetsDir)
 
 const required = [
   ['transparent source-safe route', 'transparent-source-safe'],
+  ['original alpha preservation', 'SOURCE_ALPHA_PRESERVE'],
   ['strict dark-source lock', 'SOURCE_DIRECT_STRICT_DARK'],
   ['direct RGBA export', 'SOURCE_DIRECT_EXPORT'],
   ['direct engine', 'SOURCE_DIRECT'],
@@ -31,4 +32,4 @@ for (const [label, marker] of required) {
 }
 
 if (failed) process.exit(1);
-console.log('[source-direct-check] all split routes preserve original-source RGBA in production');
+console.log('[source-direct-check] exterior background is removed without resurrecting transparent pixels');
