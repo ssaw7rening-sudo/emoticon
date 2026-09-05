@@ -7,14 +7,14 @@ function verifyDarkSplitRuntime() {
     enforce: 'post',
     transform(code, id) {
       const normalizedId = id.replace(/\\/g, '/')
+      if (!normalizedId.endsWith('/src/components/BackgroundRemover.jsx')) return null
 
-      if (normalizedId.endsWith('/src/components/BackgroundRemover.jsx')) {
-        let transformed = code.replace(/\r\n/g, '\n')
-        const componentMarker = 'export default function BackgroundRemover'
-        const componentIndex = transformed.indexOf(componentMarker)
-        if (componentIndex < 0) throw new Error('[split-v14] BackgroundRemover marker not found')
+      let transformed = code.replace(/\r\n/g, '\n')
+      const componentMarker = 'export default function BackgroundRemover'
+      const componentIndex = transformed.indexOf(componentMarker)
+      if (componentIndex < 0) throw new Error('[split-v14] BackgroundRemover marker not found')
 
-        const helper = `async function inspectOriginalDarkSource(sourceFile) {
+      const helper = `async function inspectOriginalDarkSource(sourceFile) {
   if (!sourceFile) return { isDark: false, ratio: 0 };
   try {
     const { canvas, ctx } = await drawFileToCanvas(sourceFile);
@@ -48,39 +48,17 @@ function verifyDarkSplitRuntime() {
 }
 
 `
-        transformed = transformed.slice(0, componentIndex) + helper + transformed.slice(componentIndex)
+      transformed = transformed.slice(0, componentIndex) + helper + transformed.slice(componentIndex)
 
-        const v13Runtime = `const directDarkItems = await splitOriginalDarkSheetDirectly(file);\n      const items = directDarkItems || await splitIntoFifteen(resultBlob, file);`
-        const replacement = `const sourceDarkInfo = await inspectOriginalDarkSource(file);\n      const directDarkItems = sourceDarkInfo.isDark ? await splitOriginalDarkSheetDirectly(file) : null;\n      if (sourceDarkInfo.isDark && !directDarkItems) {\n        throw new Error('검정 원본 Direct 분리 실패 · fallback 차단 · dark=' + sourceDarkInfo.ratio.toFixed(3));\n      }\n      const actualSplitEngine = directDarkItems ? 'Direct v14 ✓' : 'Fallback v14';\n      const items = directDarkItems || await splitIntoFifteen(resultBlob, file);`
-        if (!transformed.includes(v13Runtime)) {
-          throw new Error('[split-v14] v13 autoSplit runtime anchor not found')
-        }
-        transformed = transformed.replace(v13Runtime, replacement)
+      const v13Runtime = `const directDarkItems = await splitOriginalDarkSheetDirectly(file);\n      const items = directDarkItems || await splitIntoFifteen(resultBlob, file);`
+      const replacement = `const sourceDarkInfo = await inspectOriginalDarkSource(file);\n      const directDarkItems = sourceDarkInfo.isDark ? await splitOriginalDarkSheetDirectly(file) : null;\n      if (sourceDarkInfo.isDark && !directDarkItems) {\n        throw new Error('검정 원본 Direct 분리 실패 · fallback 차단 · dark=' + sourceDarkInfo.ratio.toFixed(3));\n      }\n      const items = directDarkItems || await splitIntoFifteen(resultBlob, file);`
 
-        const withUrls = `const withUrls = items.map((item) => ({ ...item, url: URL.createObjectURL(item.blob) }));`
-        const withRuntime = `const withUrls = items.map((item) => ({ ...item, splitEngine: actualSplitEngine, url: URL.createObjectURL(item.blob) }));`
-        if (!transformed.includes(withUrls)) {
-          throw new Error('[split-v14] withUrls anchor not found')
-        }
-        transformed = transformed.replace(withUrls, withRuntime)
-        transformed = transformed.replace(/Split v13 · Direct/g, 'Split v14 · runtime')
-        return { code: transformed, map: null }
+      if (!transformed.includes(v13Runtime)) {
+        throw new Error('[split-v14] v13 autoSplit runtime anchor not found')
       }
-
-      if (normalizedId.endsWith('/src/components/EmoticonPostProcessor.jsx')) {
-        let transformed = code.replace(/\r\n/g, '\n')
-        const labelAnchor = `const normalizeLabel = t.normalizeAll.split('{size}').join(String(outputSize));`
-        const labelInsert = `${labelAnchor}\n  const runtimeSplitEngine = processed[0]?.splitEngine || items[0]?.splitEngine || '';\n  const runtimeEngineLabel = runtimeSplitEngine\n    ? \`${'${engineLabel.replace(/\\s*·\\s*Split.*$/, \'\').trim()}'} · ${'${runtimeSplitEngine}'}\`.replace(/^ · /, '')\n    : engineLabel;`
-        if (!transformed.includes(labelAnchor)) {
-          throw new Error('[split-v14] post-processor label anchor not found')
-        }
-        transformed = transformed.replace(labelAnchor, labelInsert)
-        transformed = transformed.replace('{engineLabel && (', '{runtimeEngineLabel && (')
-        transformed = transformed.replace('{engineLabel}\n            </span>', '{runtimeEngineLabel}\n            </span>')
-        return { code: transformed, map: null }
-      }
-
-      return null
+      transformed = transformed.replace(v13Runtime, replacement)
+      transformed = transformed.replace(/Split v13 · Direct/g, 'Split v14 · Direct Lock')
+      return { code: transformed, map: null }
     }
   }
 }
