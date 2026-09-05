@@ -18,6 +18,17 @@ function pixelExactDarkSplitV15() {
           throw new Error('[split-v15] direct crop anchor not found')
         }
         transformed = transformed.replace(oldCrop, newCrop)
+
+        // v20 export source: keep the exact, already verified RGBA bytes before
+        // PNG encoding. The finish/save stage can then render from these pixels
+        // directly instead of decoding the transparent PNG again on Android.
+        const oldPush = `        const blob = await canvasToPngBlob(output);\n        items.push({\n          index: items.length + 1,\n          blob,\n          width: output.width,\n          height: output.height,\n          needsReview: false,\n          reviewReasons: []\n        });`
+        const newPush = `        const blob = await canvasToPngBlob(output);\n        items.push({\n          index: items.length + 1,\n          blob,\n          width: output.width,\n          height: output.height,\n          pixelSafe: true,\n          pixelData: new Uint8ClampedArray(targetData),\n          pixelWidth: output.width,\n          pixelHeight: output.height,\n          needsReview: false,\n          reviewReasons: []\n        });`
+        if (!transformed.includes(oldPush)) {
+          throw new Error('[split-v20] direct item push anchor not found')
+        }
+        transformed = transformed.replace(oldPush, newPush)
+
         transformed = transformed.replace(/Split v14 · Direct Lock/g, 'Split v15 · Pixel Copy')
         return { code: transformed, map: null }
       }
