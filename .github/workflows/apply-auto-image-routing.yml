@@ -10,7 +10,7 @@ permissions:
   contents: write
 
 env:
-  AUTO_ROUTING_REFACTOR_RUN: '5'
+  AUTO_ROUTING_REFACTOR_RUN: '6'
 
 jobs:
   refactor:
@@ -55,7 +55,14 @@ jobs:
           p.write_text(s)
           PY
       - run: node scripts/refactor-auto-image-routing.mjs
-      - run: npm ci
+      - name: Install dependencies with retry
+        run: |
+          for attempt in 1 2 3; do
+            npm ci && exit 0
+            echo "npm ci attempt ${attempt} failed; retrying..."
+            sleep $((attempt * 5))
+          done
+          exit 1
       - run: npm run build
       - name: Commit refactored source and remove one-time tools
         run: |
