@@ -205,22 +205,26 @@ async function makeOutputForItem(item, transform = { zoom: 1, x: 0, y: 0 }, outp
       const fx = sx - x0;
       const ids = [sourceIndex(x0, y0), sourceIndex(x1, y0), sourceIndex(x0, y1), sourceIndex(x1, y1)];
       const weights = [(1 - fx) * (1 - fy), fx * (1 - fy), (1 - fx) * fy, fx * fy];
-      let coverage = 0;
-      let rr = 0, gg = 0, bb = 0;
+      let alphaCoverage = 0;
+      let premultipliedR = 0;
+      let premultipliedG = 0;
+      let premultipliedB = 0;
       for (let i = 0; i < 4; i += 1) {
         const p = ids[i];
-        if (pixels[p + 3] === 0) continue;
-        coverage += weights[i];
-        rr += pixels[p] * weights[i];
-        gg += pixels[p + 1] * weights[i];
-        bb += pixels[p + 2] * weights[i];
+        const alpha = pixels[p + 3] / 255;
+        if (alpha <= 0) continue;
+        const weightedAlpha = alpha * weights[i];
+        alphaCoverage += weightedAlpha;
+        premultipliedR += pixels[p] * weightedAlpha;
+        premultipliedG += pixels[p + 1] * weightedAlpha;
+        premultipliedB += pixels[p + 2] * weightedAlpha;
       }
-      if (coverage <= 0.02) continue;
+      if (alphaCoverage <= 0.001) continue;
       const dp = (oy * size + ox) * 4;
-      out[dp] = Math.round(rr / coverage);
-      out[dp + 1] = Math.round(gg / coverage);
-      out[dp + 2] = Math.round(bb / coverage);
-      out[dp + 3] = 255;
+      out[dp] = Math.round(premultipliedR / alphaCoverage);
+      out[dp + 1] = Math.round(premultipliedG / alphaCoverage);
+      out[dp + 2] = Math.round(premultipliedB / alphaCoverage);
+      out[dp + 3] = Math.max(0, Math.min(255, Math.round(alphaCoverage * 255)));
     }
   }
 
@@ -254,7 +258,7 @@ async function makeOutput(blob, transform = { zoom: 1, x: 0, y: 0 }, outputScale
   image.close?.();
 
   if (scaleFactor > 1) sharpenCanvas(canvas, scaleFactor === 4 ? 0.11 : 0.075);
-  stabilizeBrightForegroundAlpha(canvas);
+  // Preserve the same soft alpha matte shown in the preview.
   return canvasToBlob(canvas);
 }
 
