@@ -31,7 +31,7 @@ jobs:
           needle = "text = ENTRY_RE.sub(refine_entry, text)"
           replacement = '''style_fn_start = text.index("  const getExpandedArtStyleText = (styleTag, isKo) => {")
           style_map_start = text.index("    const styleMap = {", style_fn_start)
-          style_map_end = text.index("\n    const found = styleMap[styleTag];", style_map_start)
+          style_map_end = text.index("    const found = styleMap[styleTag];", style_map_start)
           style_block = text[style_map_start:style_map_end]
           style_block = ENTRY_RE.sub(refine_entry, style_block)
           text = text[:style_map_start] + style_block + text[style_map_end:]'''
