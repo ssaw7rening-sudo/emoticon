@@ -7,14 +7,14 @@ function alphaVerifiedV17() {
     enforce: 'post',
     transform(code, id) {
       const normalizedId = id.replace(/\\/g, '/')
-      if (!normalizedId.endsWith('/src/components/BackgroundRemover.jsx')) return null
-
       let transformed = code.replace(/\r\n/g, '\n')
-      const componentMarker = 'export default function BackgroundRemover'
-      const componentIndex = transformed.indexOf(componentMarker)
-      if (componentIndex < 0) throw new Error('[alpha-v17] BackgroundRemover marker not found')
 
-      const helper = `async function inspectSplitAlphaTopology(blob) {
+      if (normalizedId.endsWith('/src/components/BackgroundRemover.jsx')) {
+        const componentMarker = 'export default function BackgroundRemover'
+        const componentIndex = transformed.indexOf(componentMarker)
+        if (componentIndex < 0) throw new Error('[alpha-v17] BackgroundRemover marker not found')
+
+        const helper = `async function inspectSplitAlphaTopology(blob) {
   try {
     const { canvas, ctx } = await drawFileToCanvas(blob);
     const width = canvas.width;
@@ -68,11 +68,11 @@ function alphaVerifiedV17() {
 }
 
 `
-      transformed = transformed.slice(0, componentIndex) + helper + transformed.slice(componentIndex)
+        transformed = transformed.slice(0, componentIndex) + helper + transformed.slice(componentIndex)
 
-      const splitUrlRegex = /const withUrls = [\s\S]*?;\n\s*setSplitItems\(withUrls\);/
-      if (!splitUrlRegex.test(transformed)) throw new Error('[alpha-v17] split URL block not found')
-      const newWithUrls = `const inspectedItems = [];
+        const splitUrlRegex = /const withUrls = [\s\S]*?;\n\s*setSplitItems\(withUrls\);/
+        if (!splitUrlRegex.test(transformed)) throw new Error('[alpha-v17] split URL block not found')
+        const newWithUrls = `const inspectedItems = [];
       for (const item of items) {
         const alphaDiag = await inspectSplitAlphaTopology(item.blob);
         inspectedItems.push({ ...item, alphaDiag });
@@ -81,12 +81,55 @@ function alphaVerifiedV17() {
       setSplitItems(withUrls);
       if (inspectedItems[0]) {
         const d = inspectedItems[0].alphaDiag;
-        setPrecisionMessage('Alpha v18 · ' + (inspectedItems[0].splitEngine || 'NA') + ' · H' + d.holes + ' · S' + d.semi + ' · Z' + (d.zeroRatio >= 0 ? d.zeroRatio.toFixed(3) : '?'));
+        setPrecisionMessage('Alpha v19 · ' + (inspectedItems[0].splitEngine || 'NA') + ' · H' + d.holes + ' · S' + d.semi + ' · Z' + (d.zeroRatio >= 0 ? d.zeroRatio.toFixed(3) : '?'));
       }`
-      transformed = transformed.replace(splitUrlRegex, newWithUrls)
-      transformed = transformed.replace(/Split v16 · Direct First/g, 'Split v18 · Strict Source')
-      transformed = transformed.replace(/Split v17 · Alpha Verified/g, 'Split v18 · Strict Source')
-      return { code: transformed, map: null }
+        transformed = transformed.replace(splitUrlRegex, newWithUrls)
+        transformed = transformed.replace(/Split v16 · Direct First/g, 'Split v19 · Mobile Save Fix')
+        transformed = transformed.replace(/Split v17 · Alpha Verified/g, 'Split v19 · Mobile Save Fix')
+        transformed = transformed.replace(/Split v18 · Strict Source/g, 'Split v19 · Mobile Save Fix')
+        return { code: transformed, map: null }
+      }
+
+      if (normalizedId.endsWith('/src/components/EmoticonPostProcessor.jsx')) {
+        const oldLoader = `async function loadBitmap(blob) {
+  if (typeof createImageBitmap === 'function') return createImageBitmap(blob);
+  const url = URL.createObjectURL(blob);
+  try {
+    return await new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => resolve(img);
+      img.onerror = reject;
+      img.src = url;
+    });
+  } finally {
+    URL.revokeObjectURL(url);
+  }
+}`
+        const safeLoader = `async function loadBitmap(blob) {
+  // Mobile-save fix: use the same HTMLImageElement decoder as the correct
+  // on-screen preview. Android/WebView createImageBitmap() may premultiply or
+  // corrupt transparent sticker alpha only during Canvas export.
+  const url = URL.createObjectURL(blob);
+  try {
+    return await new Promise((resolve, reject) => {
+      const img = new Image();
+      img.decoding = 'sync';
+      img.onload = () => resolve(img);
+      img.onerror = () => reject(new Error('PNG image decode failed'));
+      img.src = url;
+    });
+  } finally {
+    window.setTimeout(() => URL.revokeObjectURL(url), 0);
+  }
+}`
+        if (!transformed.includes(oldLoader)) {
+          throw new Error('[mobile-save-v19] loadBitmap anchor not found')
+        }
+        transformed = transformed.replace(oldLoader, safeLoader)
+        return { code: transformed, map: null }
+      }
+
+      return null
     }
   }
 }
