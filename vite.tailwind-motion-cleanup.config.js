@@ -282,7 +282,9 @@ function finalTransparencyIntegrityGuard() {
   }
 
   // Require a meaningful but not all-consuming border component. Only the
-  // already-visited component gets cleared; enclosed black details stay solid.
+  // already-visited border-connected component gets cleared; enclosed black
+  // eyes, lettering and shadows stay solid, while white/ivory faces, fine pale
+  // fur/wisps and antialiased sticker outlines keep original RGB and alpha.
   if (tail < total * 0.06 || tail > total * 0.92) return null;
   for (let i = 0; i < tail; i += 1) pixels[queue[i] * 4 + 3] = 0;
   ctx.putImageData(imageData, 0, 0);
@@ -325,7 +327,8 @@ function finalTransparencyIntegrityGuard() {
         `if (fastBackgroundIsDark) {
             // A uniform dark border is unambiguous for flood-fill. Generic
             // portrait heuristics must not reroute a sticker sheet to semantic
-            // AI, which can erase pale faces and cream artwork.
+            // AI, which can erase pale faces, ivory fur, fine wisps and white outlines.
+            method = 'fast-dark';
             quality = { status: 'pass', score: 0 };
           } else if (fastQuality.status === 'pass') {`
       )
@@ -339,6 +342,7 @@ function finalTransparencyIntegrityGuard() {
         `} catch (fastQualityError) {
           if (fastBackgroundIsDark) {
             console.warn('Fast dark-background quality inspection failed; preserving deterministic flood-fill result:', fastQualityError);
+            method = 'fast-dark';
             quality = { status: 'pass', score: 0 };
           } else {
             console.warn('Fast background validation failed; falling back to AI:', fastQualityError);
@@ -361,7 +365,7 @@ function finalTransparencyIntegrityGuard() {
       processingTail = processingTail.replace(
         processingProgressPattern,
         `setProgress(null);
-      const fastDarkMatteIsFinal = method === 'fast' && fastBackgroundIsDark;`
+      const fastDarkMatteIsFinal = (method === 'fast-dark' || method === 'fast') && fastBackgroundIsDark;`
       )
 
       const mainCleanupPattern = /const\s+sheetBeforeCleanup\s*=\s*await\s+detectEmoticonSheet\(blob\);/
