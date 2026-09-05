@@ -3253,7 +3253,7 @@ export default function BackgroundRemover({ lang = 'ko' }) {
                 <img src={sourceUrl} alt={t.original} className="max-h-[520px] max-w-full rounded-xl object-contain" />
               </div>
             </div>
-          ) : (
+          ) : inputKind === 'transparent-sheet' ? null : (
             <div className="overflow-hidden rounded-2xl border border-[#D8E0D2] bg-white">
               <div className="flex items-center justify-between border-b border-[#E7ECE3] px-3 py-2 text-xs font-extrabold">
                 <span className="text-[#716A62]">{t.original}</span>
