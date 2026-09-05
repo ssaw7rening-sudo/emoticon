@@ -1,10 +1,18 @@
 import { PHRASE_THEME_ADDITIONS, PHRASE_THEME_EXPECTED_ADDITIONS, PHRASES_PER_THEME } from './phrase-theme-data.js'
 
 const additions = structuredClone(PHRASE_THEME_ADDITIONS)
+additions.ko['명대사풍 ②'][1] = '너라면 해내'
+additions.en['Cinematic Line ②'][1] = 'You can pull it off'
+additions.ja['名セリフ風 ②'][1] = '君ならやれる'
+additions.zh['名台词风 ②'][1] = '你肯定能做到'
 additions.ko['명대사풍 ②'][11] = '새겨 둬'
 additions.en['Cinematic Line ②'][11] = 'Mark my words'
 additions.ja['名セリフ風 ②'][11] = '胸に刻め'
 additions.zh['名台词风 ②'][11] = '刻在心里'
+additions.ko['혼잣말/속마음 ②'][10] = '그냥 누워있자'
+additions.en['Inner Monologue ②'][10] = 'Just stay in bed'
+additions.ja['ひとり言/本音 ②'][10] = 'もう寝てよう'
+additions.zh['自言自语/内心话 ②'][10] = '还是躺着吧'
 
 const OBJECTS = { ko: 'THEMES_KO', en: 'THEMES_EN', ja: 'THEMES_JA', zh: 'THEMES_ZH' }
 const BASE_COUNT = 124
