@@ -91,20 +91,10 @@ function alphaVerifiedV17() {
       }
 
       if (normalizedId.endsWith('/src/components/EmoticonPostProcessor.jsx')) {
-        const oldLoader = `async function loadBitmap(blob) {
-  if (typeof createImageBitmap === 'function') return createImageBitmap(blob);
-  const url = URL.createObjectURL(blob);
-  try {
-    return await new Promise((resolve, reject) => {
-      const img = new Image();
-      img.onload = () => resolve(img);
-      img.onerror = reject;
-      img.src = url;
-    });
-  } finally {
-    URL.revokeObjectURL(url);
-  }
-}`
+        const loaderRegex = /async function loadBitmap\(blob\) \{[\s\S]*?\n\}\n\nfunction sharpenCanvas/
+        if (!loaderRegex.test(transformed)) {
+          throw new Error('[mobile-save-v19] loadBitmap function range not found')
+        }
         const safeLoader = `async function loadBitmap(blob) {
   // Mobile-save fix: use the same HTMLImageElement decoder as the correct
   // on-screen preview. Android/WebView createImageBitmap() may premultiply or
@@ -121,11 +111,10 @@ function alphaVerifiedV17() {
   } finally {
     window.setTimeout(() => URL.revokeObjectURL(url), 0);
   }
-}`
-        if (!transformed.includes(oldLoader)) {
-          throw new Error('[mobile-save-v19] loadBitmap anchor not found')
-        }
-        transformed = transformed.replace(oldLoader, safeLoader)
+}
+
+function sharpenCanvas`
+        transformed = transformed.replace(loaderRegex, safeLoader)
         return { code: transformed, map: null }
       }
 
