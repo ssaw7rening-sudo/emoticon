@@ -7,7 +7,7 @@ const viteBin = path.join(rootDir, 'node_modules', 'vite', 'bin', 'vite.js');
 
 const steps = [
   ['Generate OG images', process.execPath, [path.join(rootDir, 'scripts', 'generate-og-images.mjs')]],
-  ['Build Vite app', process.execPath, [viteBin, 'build', '--config', path.join(rootDir, 'vite.config.js')]],
+  ['Build Vite app', process.execPath, [viteBin, 'build', '--config', path.join(rootDir, 'vite.auto-routing.config.js')]],
   ['Verify automatic image routing', process.execPath, [path.join(rootDir, 'scripts', 'verify-auto-image-routing-build.mjs')]],
   ['Normalize service names', process.execPath, [path.join(rootDir, 'scripts', 'normalize-service-names.mjs')]],
   ['Generate localized pages', process.execPath, [path.join(rootDir, 'scripts', 'generate-localized-pages.mjs')]],
