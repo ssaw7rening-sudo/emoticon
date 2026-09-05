@@ -70,15 +70,18 @@ function alphaVerifiedV17() {
 `
         transformed = transformed.slice(0, componentIndex) + helper + transformed.slice(componentIndex)
 
-        const oldWithUrls = 'const withUrls = items.map((item) => ({ ...item, url: URL.createObjectURL(item.blob) }));'
+        // Earlier Vite layers can reformat this statement. Replace the entire
+        // withUrls -> setSplitItems block instead of relying on one exact line.
+        const splitUrlRegex = /const withUrls = [\s\S]*?;\n\s*setSplitItems\(withUrls\);/
+        if (!splitUrlRegex.test(transformed)) throw new Error('[alpha-v17] split URL block not found')
         const newWithUrls = `const inspectedItems = [];
       for (const item of items) {
         const alphaDiag = await inspectSplitAlphaTopology(item.blob);
         inspectedItems.push({ ...item, alphaDiag });
       }
-      const withUrls = inspectedItems.map((item) => ({ ...item, url: URL.createObjectURL(item.blob) }));`
-        if (!transformed.includes(oldWithUrls)) throw new Error('[alpha-v17] split URL anchor not found')
-        transformed = transformed.replace(oldWithUrls, newWithUrls)
+      const withUrls = inspectedItems.map((item) => ({ ...item, url: URL.createObjectURL(item.blob) }));
+      setSplitItems(withUrls);`
+        transformed = transformed.replace(splitUrlRegex, newWithUrls)
 
         // Replace whichever engineLabel previous build layers produced with a
         // runtime label sourced from the actual first split PNG.
