@@ -1,0 +1,35 @@
+name: Apply Source Direct Fix
+
+on:
+  push:
+    paths:
+      - 'scripts/apply-source-direct-fix.mjs'
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - name: Apply source fix
+        run: node scripts/apply-source-direct-fix.mjs
+      - name: Validate diff
+        run: git diff --check
+      - name: Commit source fix
+        run: |
+          if git diff --quiet; then
+            echo "No source changes required"
+            exit 0
+          fi
+          git config user.name "source-safe-bot"
+          git config user.email "source-safe-bot@users.noreply.github.com"
+          git add src/components/BackgroundRemover.jsx src/components/EmoticonPostProcessor.jsx scripts/build-app.mjs scripts/verify-source-safe-build.mjs vite.source-direct.config.js
+          git commit -m "Move emoticon alpha fix into source"
+          git push origin HEAD:main
