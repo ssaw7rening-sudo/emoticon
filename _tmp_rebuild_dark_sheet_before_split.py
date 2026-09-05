@@ -81,3 +81,4 @@ if 'rebuild the entire\n  // split source from the ORIGINAL upload' in text:
 text = text.replace(anchor, insert, 1)
 path.write_text(text, encoding='utf-8')
 print('Applied original-authoritative dark-sheet reconstruction before auto split.')
+# trigger
