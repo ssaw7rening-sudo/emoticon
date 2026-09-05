@@ -22,7 +22,7 @@ function finalTransparencyIntegrityGuard() {
         throw new Error('[transparency-integrity] Split function boundaries were not found')
       }
 
-      const alphaPreservingSplitter = `async function splitIntoFifteen(blob) {
+      const alphaPreservingSplitter = `async function splitIntoFifteen(blob, sourceFile = null) {
   const { canvas, ctx } = await drawFileToCanvas(blob);
   const width = canvas.width;
   const height = canvas.height;
@@ -32,6 +32,66 @@ function finalTransparencyIntegrityGuard() {
   const columns = 5;
   const pixels = ctx.getImageData(0, 0, width, height).data;
   const alphaAt = (x, y) => pixels[(y * width + x) * 4 + 3];
+
+  // Keep an aligned copy of the original uploaded sheet. The processed blob
+  // may already contain fully transparent (alpha 0) holes where a pale face,
+  // white outline or fine bright wisp was mistaken for background. Once alpha
+  // reaches 0 the processed PNG no longer carries usable RGB there, so the
+  // splitter must consult the original opaque source to recover those pixels.
+  let originalPixels = null;
+  let originalBackground = [0, 0, 0];
+  let originalHasDarkBorder = false;
+  if (sourceFile) {
+    try {
+      const original = await drawFileToCanvas(sourceFile);
+      const aligned = document.createElement('canvas');
+      aligned.width = width;
+      aligned.height = height;
+      const alignedCtx = aligned.getContext('2d', { willReadFrequently: true });
+      if (alignedCtx) {
+        alignedCtx.drawImage(
+          original.canvas,
+          0, 0, original.canvas.width, original.canvas.height,
+          0, 0, width, height
+        );
+        originalPixels = alignedCtx.getImageData(0, 0, width, height).data;
+
+        const border = [];
+        const step = Math.max(1, Math.floor(Math.min(width, height) / 420));
+        const addBorder = (x, y) => {
+          const p = (y * width + x) * 4;
+          border.push([originalPixels[p], originalPixels[p + 1], originalPixels[p + 2]]);
+        };
+        for (let x = 0; x < width; x += step) {
+          addBorder(x, 0);
+          addBorder(x, height - 1);
+        }
+        for (let y = step; y < height - 1; y += step) {
+          addBorder(0, y);
+          addBorder(width - 1, y);
+        }
+
+        const dark = border.filter(([r, g, b]) => {
+          const l = r * 0.2126 + g * 0.7152 + b * 0.0722;
+          return l <= 112 && Math.max(r, g, b) <= 148;
+        });
+        if (border.length && dark.length / border.length >= 0.55) {
+          originalHasDarkBorder = true;
+          for (const [r, g, b] of dark) {
+            originalBackground[0] += r;
+            originalBackground[1] += g;
+            originalBackground[2] += b;
+          }
+          originalBackground[0] /= dark.length;
+          originalBackground[1] /= dark.length;
+          originalBackground[2] /= dark.length;
+        }
+      }
+    } catch (sourceError) {
+      console.warn('Original-sheet alpha recovery unavailable:', sourceError);
+      originalPixels = null;
+    }
+  }
 
   // Find the emptiest line close to each expected 5 x 3 boundary. This keeps
   // longer captions intact more often than a rigid grid while retaining a
@@ -168,6 +228,44 @@ function finalTransparencyIntegrityGuard() {
         for (let sx = 0; sx < output.width; sx += 1) {
           const sp = (sy * output.width + sx) * 4;
           const sa = splitSource[sp + 3];
+
+          // Zero-alpha recovery from the original opaque source. This is the
+          // critical case previous fixes could not repair: alpha 0 pixels have
+          // already lost their RGB in the processed PNG. Only enable this for
+          // sheets whose original border is demonstrably dark, so bright/white
+          // artwork can be restored without resurrecting a light background.
+          const sourceX = cropLeft + sx - safetyMargin;
+          const sourceY = cropTop + sy - safetyMargin;
+          const insideSource = originalPixels && sourceX >= cropLeft && sourceX < cropRight && sourceY >= cropTop && sourceY < cropBottom;
+          if (insideSource && originalHasDarkBorder) {
+            const op = (sourceY * width + sourceX) * 4;
+            const or = originalPixels[op];
+            const og = originalPixels[op + 1];
+            const ob = originalPixels[op + 2];
+            const ol = or * 0.2126 + og * 0.7152 + ob * 0.0722;
+            const bgDistance = Math.sqrt(
+              (or - originalBackground[0]) ** 2 +
+              (og - originalBackground[1]) ** 2 +
+              (ob - originalBackground[2]) ** 2
+            );
+
+            if (sa === 0 && ol >= 118 && bgDistance >= 72) {
+              splitData[sp] = or;
+              splitData[sp + 1] = og;
+              splitData[sp + 2] = ob;
+              splitData[sp + 3] = 255;
+              continue;
+            }
+
+            if (sa > 0 && sa < 255 && ol >= 118 && bgDistance >= 64) {
+              splitData[sp] = or;
+              splitData[sp + 1] = og;
+              splitData[sp + 2] = ob;
+              splitData[sp + 3] = 255;
+              continue;
+            }
+          }
+
           if (sa === 0 || sa === 255) continue;
           const sr = splitSource[sp];
           const sg = splitSource[sp + 1];
@@ -216,6 +314,15 @@ function finalTransparencyIntegrityGuard() {
       transformed = transformed.slice(0, splitStart)
         + alphaPreservingSplitter
         + transformed.slice(splitEnd)
+
+      const splitCallMarker = 'const items = await splitIntoFifteen(resultBlob);'
+      if (!transformed.includes(splitCallMarker)) {
+        throw new Error('[transparency-integrity] Auto-split invocation was not found')
+      }
+      transformed = transformed.replace(
+        splitCallMarker,
+        'const items = await splitIntoFifteen(resultBlob, file);'
+      )
 
       const removeStart = transformed.indexOf('const removeBackground = async')
       const retryStart = transformed.indexOf('const runPrecisionRetry = async', removeStart)
