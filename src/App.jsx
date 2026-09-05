@@ -840,7 +840,7 @@ const I18N = {
     geminiIncludeText: '문구 포함',
     geminiBackgroundMode: 'Gemini 배경',
     geminiTransparent: '누끼용 흰 배경',
-    geminiSolid: '단색 배경',
+    geminiSolid: '흰색 배경',
     geminiChroma: '크로마키',
     geminiStageMode: 'Gemini 작업 단계',
     geminiReferenceStage: '① 기준 캐릭터 만들기',
@@ -859,7 +859,7 @@ const I18N = {
     grokIncludeText: '문구 포함',
     grokBackgroundMode: 'Grok 배경',
     grokTransparent: '누끼용 흰 배경',
-    grokSolid: '단색 배경',
+    grokSolid: '흰색 배경',
     grokChroma: '크로마키',
     grokWorkflowTip: 'Grok 팁: 이모티콘 시트는 [누끼용 흰 배경]을 권장합니다. 앱이 순백색 배경 시트를 자동 감지해 5×3으로 분할하고 각 셀의 외곽 흰 배경만 투명하게 처리합니다.',
     grokRepairTitle: 'Grok에서 다시 수정하기',
@@ -944,7 +944,7 @@ const I18N = {
     geminiIncludeText: 'Include phrase',
     geminiBackgroundMode: 'Gemini background',
     geminiTransparent: 'White BG for removal',
-    geminiSolid: 'Solid color',
+    geminiSolid: 'White background',
     geminiChroma: 'Chroma key',
     geminiStageMode: 'Gemini workflow stage',
     geminiReferenceStage: '① Create base character',
@@ -963,7 +963,7 @@ const I18N = {
     grokIncludeText: 'Include text',
     grokBackgroundMode: 'Grok background',
     grokTransparent: 'White BG for removal',
-    grokSolid: 'Solid color',
+    grokSolid: 'White background',
     grokChroma: 'Chroma key',
     grokWorkflowTip: 'Grok tip: [White BG for removal] is recommended for sticker sheets. The app automatically detects the white 5×3 sheet, splits it, and removes only the outer white background of each cell.',
     grokRepairTitle: 'Edit Again in Grok',
@@ -1050,7 +1050,7 @@ const I18N = {
     geminiIncludeText: '文字あり',
     geminiBackgroundMode: 'Gemini背景',
     geminiTransparent: '切り抜き用白背景',
-    geminiSolid: '単色背景',
+    geminiSolid: '白背景',
     geminiChroma: 'クロマキー',
     geminiStageMode: 'Gemini作業段階',
     geminiReferenceStage: '① 基準キャラクター作成',
@@ -1069,7 +1069,7 @@ const I18N = {
     grokIncludeText: '文字あり',
     grokBackgroundMode: 'Grok背景',
     grokTransparent: '切り抜き用白背景',
-    grokSolid: '単色背景',
+    grokSolid: '白背景',
     grokChroma: 'クロマキー',
     grokWorkflowTip: 'Grokヒント: スタンプシートは[切り抜き用白背景]を推奨します。アプリが白い5×3シートを自動判定し、各セルの外側の白背景だけを透過処理します。',
     grokRepairTitle: 'Grokで再修正',
@@ -1156,7 +1156,7 @@ const I18N = {
     geminiIncludeText: '包含文字',
     geminiBackgroundMode: 'Gemini背景',
     geminiTransparent: '抠图用白背景',
-    geminiSolid: '单色背景',
+    geminiSolid: '白色背景',
     geminiChroma: '绿幕抠图',
     geminiStageMode: 'Gemini制作阶段',
     geminiReferenceStage: '① 制作基准角色',
@@ -1175,7 +1175,7 @@ const I18N = {
     grokIncludeText: '包含文字',
     grokBackgroundMode: 'Grok背景',
     grokTransparent: '抠图用白背景',
-    grokSolid: '单色背景',
+    grokSolid: '白色背景',
     grokChroma: '抠图绿幕',
     grokWorkflowTip: 'Grok提示：表情贴纸建议使用[抠图用白背景]。应用会自动识别白色5×3图表，分割后仅移除每格外部相连的白色背景。',
     grokRepairTitle: '在Grok中再次修改',
@@ -5754,7 +5754,7 @@ Do not follow the photo's photorealistic rendering. Apply the selected art style
   const getGeminiBackgroundInstruction = () => {
     const instructions = {
       transparent: 'Clean solid pure white (#FFFFFF) background intended for later background removal. Keep each sticker fully isolated with a clear continuous silhouette and no background objects, cast shadows, haze, or transparency checkerboard. Do not fake alpha transparency; this output is a removal-ready white-background source image.',
-      solid: 'One clean solid background color with strong contrast against the character. No gradient, texture, or background objects. No checkerboard tiles.',
+      solid: 'Use only one continuous pure white (#FFFFFF) background. This is not a generic solid-color option: do not use beige, cream, gray, off-white, pastel, colored, gradient, textured, patterned, or checkerboard backgrounds. Keep every sticker fully isolated with generous spacing and no background objects or cast shadows.',
       chroma: 'Solid bright green #00FF00 chroma-key background for easy background removal. No green spill on the character outline.',
     };
     return instructions[geminiBackgroundMode] || instructions.transparent;
@@ -6437,7 +6437,7 @@ ${textExclusionEn}${styleDirectives.negativeExtra ? ` ${styleDirectives.negative
   const getGrokBackgroundInstruction = () => {
     const instructions = {
       transparent: 'Use one continuous pure solid white (#FFFFFF) background prepared for later background removal. Keep every sticker fully isolated with a clean continuous silhouette and generous spacing. Do not draw checkerboard transparency, grid lines, shadows, haze, textures, or background objects. White or ivory parts inside the character are allowed and must remain clearly enclosed by their artwork outlines.',
-      solid: 'One clean solid background color with strong contrast against the character. No gradient, texture, or background objects.',
+      solid: 'Use only one continuous pure white (#FFFFFF) background. This is not a generic solid-color option: do not use beige, cream, gray, off-white, pastel, colored, gradient, textured, patterned, or checkerboard backgrounds. Keep every sticker fully isolated with generous spacing and no background objects or cast shadows.',
       chroma: 'Solid bright green #00FF00 chroma-key background for easy background removal. No green spill on the character outline.',
     };
     return instructions[grokBackgroundMode] || instructions.transparent;
