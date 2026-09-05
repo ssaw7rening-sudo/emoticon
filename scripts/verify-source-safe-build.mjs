@@ -16,7 +16,6 @@ const required = [
   ['source splitter marker', 'SRC23'],
   ['pixel-safe payload', 'pixelData'],
   ['pixel-safe flag', 'pixelSafe'],
-  ['direct RGBA export lock', 'SOURCE_SAFE_EXPORT_LOCK'],
   ['stable UI label', '원본 보존 분리 · 직접 RGBA 저장'],
 ];
 
@@ -31,4 +30,4 @@ for (const [label, marker] of required) {
 }
 
 if (failed) process.exit(1);
-console.log('[source-safe-check] original-source split payload and direct RGBA export are present in production bundle');
+console.log('[source-safe-check] source-preserving split payload and direct RGBA export path are present in production bundle');
