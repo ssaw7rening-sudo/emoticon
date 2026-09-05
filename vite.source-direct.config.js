@@ -16,6 +16,52 @@ const plugins = (baseConfig.plugins || []).filter((plugin) => {
   return true;
 });
 
+function safeTransparentSourceRoute() {
+  return {
+    name: 'transparent-source-safe-route',
+    enforce: 'post',
+    transform(code, id) {
+      const normalizedId = id.replace(/\\/g, '/')
+      if (!normalizedId.endsWith('/src/components/BackgroundRemover.jsx')) return null
+      if (!code.includes('sourceAlreadyTransparent')) return null
+      if (!code.includes('splitIntoFifteenSourceSafe')) {
+        throw new Error('[transparent-source-safe] source-safe splitter is missing')
+      }
+
+      let transformed = code
+      let sourceProtected = false
+      let splitProtected = false
+
+      transformed = transformed.replace(
+        /const\s+transparentResult\s*=\s*await\s+removeEnclosedBackdropPockets\(\s*nextFile\s*,\s*nextFile\s*,\s*true\s*\);/,
+        () => {
+          sourceProtected = true
+          return "const transparentResult = nextFile;"
+        }
+      )
+
+      transformed = transformed.replace(
+        /setResultMethod\(\s*['\"]transparent['\"]\s*\);/,
+        "setResultMethod('transparent-source-safe');"
+      )
+
+      transformed = transformed.replace(
+        /const\s+items\s*=\s*await\s+splitIntoFifteen\(\s*transparentResult\s*\);/,
+        () => {
+          splitProtected = true
+          return "const items = await splitIntoFifteenSourceSafe(transparentResult, nextFile);"
+        }
+      )
+
+      if (!sourceProtected || !splitProtected) {
+        throw new Error('[transparent-source-safe] legacy transparent split route could not be replaced')
+      }
+
+      return { code: transformed, map: null }
+    },
+  }
+}
+
 function strictDarkSourceSplit() {
   return {
     name: 'strict-dark-source-split-lock',
@@ -64,5 +110,5 @@ function strictDarkSourceSplit() {
 
 export default defineConfig({
   ...baseConfig,
-  plugins: [...plugins, strictDarkSourceSplit()],
+  plugins: [...plugins, safeTransparentSourceRoute(), strictDarkSourceSplit()],
 })
