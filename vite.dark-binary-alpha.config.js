@@ -106,12 +106,6 @@ function strictDarkBackgroundBinaryAlpha() {
 
       transformed = transformed.slice(0, updatedRemoveStart) + removeHandler + transformed.slice(retryStart)
 
-      if (!transformed.includes('data-alpha-engine="v8"')) {
-        throw new Error('[dark-binary-alpha] Alpha engine badge anchor was not found')
-      }
-      transformed = transformed.replace('data-alpha-engine="v8"', 'data-alpha-engine="v9"')
-      transformed = transformed.replace(' · Alpha v8', ' · Alpha v9 · α 0/255')
-
       return { code: transformed, map: null }
     },
   }
