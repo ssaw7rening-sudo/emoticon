@@ -18,6 +18,18 @@ jobs:
         with:
           node-version: 22
           cache: npm
+      - name: Fix one-time script template literal
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('scripts/refactor-auto-image-routing.mjs')
+          s = p.read_text()
+          old = "      setSplitError(`${t.splitFailed} [원인: ${e?.message || String(e)}]`);"
+          new = "      setSplitError(t.splitFailed + ' [원인: ' + (e?.message || String(e)) + ']');"
+          if old not in s:
+              raise SystemExit('template-literal fix anchor not found')
+          p.write_text(s.replace(old, new))
+          PY
       - run: node scripts/refactor-auto-image-routing.mjs
       - run: npm ci
       - run: npm run build
