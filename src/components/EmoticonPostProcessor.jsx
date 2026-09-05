@@ -145,6 +145,89 @@ function stabilizeBrightForegroundAlpha(canvas) {
   ctx.putImageData(imageData, 0, 0);
 }
 
+async function makeOutputForItem(item, transform = { zoom: 1, x: 0, y: 0 }, outputScale = 1) {
+  const SOURCE_DIRECT_EXPORT = 'SOURCE_DIRECT_EXPORT';
+  void SOURCE_DIRECT_EXPORT;
+
+  const pixels = item?.pixelData;
+  const sourceWidth = Math.max(0, Number(item?.pixelWidth || 0));
+  const sourceHeight = Math.max(0, Number(item?.pixelHeight || 0));
+  const directRequired = item?.splitEngine === 'SOURCE_DIRECT';
+  const validDirect = Boolean(
+    item?.pixelSafe && pixels && sourceWidth && sourceHeight &&
+    pixels.length === sourceWidth * sourceHeight * 4
+  );
+
+  if (directRequired && !validDirect) {
+    throw new Error('SOURCE_DIRECT_EXPORT: original RGBA payload is missing');
+  }
+  if (!validDirect) return makeOutput(item.blob, transform, outputScale);
+
+  const scaleFactor = [1, 2, 4].includes(outputScale) ? outputScale : 1;
+  const size = 360 * scaleFactor;
+  const safeSize = 300 * scaleFactor;
+  const zoom = Math.max(0.55, Math.min(1.45, transform?.zoom || 1));
+  const fit = Math.min(safeSize / Math.max(1, sourceWidth), safeSize / Math.max(1, sourceHeight));
+  const drawScale = fit * zoom;
+  const drawW = sourceWidth * drawScale;
+  const drawH = sourceHeight * drawScale;
+  const offsetX = (size - drawW) / 2 + (transform?.x || 0) * scaleFactor;
+  const offsetY = (size - drawH) / 2 + (transform?.y || 0) * scaleFactor;
+
+  const canvas = document.createElement('canvas');
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext('2d', { willReadFrequently: true });
+  if (!ctx) throw new Error('Canvas unavailable');
+  const image = ctx.createImageData(size, size);
+  const out = image.data;
+
+  const sourceIndex = (x, y) => {
+    const sx = Math.max(0, Math.min(sourceWidth - 1, x));
+    const sy = Math.max(0, Math.min(sourceHeight - 1, y));
+    return (sy * sourceWidth + sx) * 4;
+  };
+
+  const minX = Math.max(0, Math.floor(offsetX));
+  const maxX = Math.min(size - 1, Math.ceil(offsetX + drawW) - 1);
+  const minY = Math.max(0, Math.floor(offsetY));
+  const maxY = Math.min(size - 1, Math.ceil(offsetY + drawH) - 1);
+
+  for (let oy = minY; oy <= maxY; oy += 1) {
+    const sy = ((oy + 0.5 - offsetY) / drawScale) - 0.5;
+    const y0 = Math.floor(sy);
+    const y1 = y0 + 1;
+    const fy = sy - y0;
+    for (let ox = minX; ox <= maxX; ox += 1) {
+      const sx = ((ox + 0.5 - offsetX) / drawScale) - 0.5;
+      const x0 = Math.floor(sx);
+      const x1 = x0 + 1;
+      const fx = sx - x0;
+      const ids = [sourceIndex(x0, y0), sourceIndex(x1, y0), sourceIndex(x0, y1), sourceIndex(x1, y1)];
+      const weights = [(1 - fx) * (1 - fy), fx * (1 - fy), (1 - fx) * fy, fx * fy];
+      let coverage = 0;
+      let rr = 0, gg = 0, bb = 0;
+      for (let i = 0; i < 4; i += 1) {
+        const p = ids[i];
+        if (pixels[p + 3] === 0) continue;
+        coverage += weights[i];
+        rr += pixels[p] * weights[i];
+        gg += pixels[p + 1] * weights[i];
+        bb += pixels[p + 2] * weights[i];
+      }
+      if (coverage <= 0.02) continue;
+      const dp = (oy * size + ox) * 4;
+      out[dp] = Math.round(rr / coverage);
+      out[dp + 1] = Math.round(gg / coverage);
+      out[dp + 2] = Math.round(bb / coverage);
+      out[dp + 3] = 255;
+    }
+  }
+
+  ctx.putImageData(image, 0, 0);
+  return canvasToBlob(canvas);
+}
+
 async function makeOutput(blob, transform = { zoom: 1, x: 0, y: 0 }, outputScale = 1) {
   const image = await loadBitmap(blob);
   const width = image.width || image.naturalWidth;
@@ -231,7 +314,7 @@ export default function EmoticonPostProcessor({ items = [], sourceName = 'emotic
   };
 
   const saveProcessedItem = async (item, transform) => {
-    const blob = await makeOutput(item.blob, transform, outputScale);
+    const blob = await makeOutputForItem(item, transform, outputScale);
     const url = URL.createObjectURL(blob);
     setProcessed((list) => list.map((entry) => {
       if (entry.index !== item.index) return entry;
@@ -249,7 +332,7 @@ export default function EmoticonPostProcessor({ items = [], sourceName = 'emotic
       const next = [];
       for (const item of processed) {
         const transform = item.transform || { zoom: 1, x: 0, y: 0 };
-        const blob = await makeOutput(item.blob, transform, outputScale);
+        const blob = await makeOutputForItem(item, transform, outputScale);
         next.push({ ...item, finalBlob: blob, finalUrl: URL.createObjectURL(blob) });
       }
       setProcessed((old) => {
@@ -286,7 +369,7 @@ export default function EmoticonPostProcessor({ items = [], sourceName = 'emotic
         let blob = item.finalBlob;
         let finalUrl = item.finalUrl;
         if (!blob) {
-          blob = await makeOutput(item.blob, item.transform || { zoom: 1, x: 0, y: 0 }, outputScale);
+          blob = await makeOutputForItem(item, item.transform || { zoom: 1, x: 0, y: 0 }, outputScale);
           finalUrl = URL.createObjectURL(blob);
         }
         zip.file(`${String(item.index).padStart(2, '0')}.png`, blob);

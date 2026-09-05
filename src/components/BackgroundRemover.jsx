@@ -2284,6 +2284,150 @@ async function splitBySmartGrid(input) {
   return splitIntoFifteen(input);
 }
 
+async function splitIntoFifteenSourceSafe(input, sourceFile = null) {
+  const SOURCE_DIRECT_SPLIT = 'SOURCE_DIRECT_SPLIT';
+  void SOURCE_DIRECT_SPLIT;
+
+  if (!sourceFile) return splitIntoFifteen(input);
+
+  let source;
+  try {
+    source = await drawFileToCanvas(sourceFile);
+  } catch (error) {
+    console.warn('Direct source decode failed; using processed split:', error);
+    return splitIntoFifteen(input);
+  }
+
+  const canvas = source.canvas;
+  const ctx = source.ctx;
+  const width = canvas.width;
+  const height = canvas.height;
+  if (!width || !height) return splitIntoFifteen(input);
+
+  const imageData = ctx.getImageData(0, 0, width, height);
+  const pixels = imageData.data;
+  const border = [];
+  const sampleStep = Math.max(1, Math.floor(Math.min(width, height) / 600));
+  const sample = (x, y) => {
+    const p = (y * width + x) * 4;
+    const r = pixels[p], g = pixels[p + 1], b = pixels[p + 2];
+    const l = r * 0.2126 + g * 0.7152 + b * 0.0722;
+    border.push({ r, g, b, l });
+  };
+  for (let x = 0; x < width; x += sampleStep) { sample(x, 0); sample(x, height - 1); }
+  for (let y = sampleStep; y < height - 1; y += sampleStep) { sample(0, y); sample(width - 1, y); }
+
+  const dark = border.filter((c) => c.l <= 90 && Math.max(c.r, c.g, c.b) <= 115);
+  if (!border.length || dark.length / border.length < 0.58) return splitIntoFifteen(input);
+
+  const bgColor = dark.reduce((acc, c) => [acc[0] + c.r, acc[1] + c.g, acc[2] + c.b], [0, 0, 0]);
+  bgColor[0] /= dark.length; bgColor[1] /= dark.length; bgColor[2] /= dark.length;
+  const distances = dark.map((c) => Math.sqrt(
+    (c.r - bgColor[0]) ** 2 + (c.g - bgColor[1]) ** 2 + (c.b - bgColor[2]) ** 2
+  )).sort((a, b) => a - b);
+  const p95 = distances[Math.min(distances.length - 1, Math.floor(distances.length * 0.95))] || 0;
+  const tolerance = Math.max(14, Math.min(34, p95 + 14));
+
+  const total = width * height;
+  const visited = new Uint8Array(total);
+  const queue = new Int32Array(total);
+  let head = 0, tail = 0;
+  const isBackground = (index) => {
+    const p = index * 4;
+    const r = pixels[p], g = pixels[p + 1], b = pixels[p + 2];
+    const l = r * 0.2126 + g * 0.7152 + b * 0.0722;
+    const d = Math.sqrt((r - bgColor[0]) ** 2 + (g - bgColor[1]) ** 2 + (b - bgColor[2]) ** 2);
+    return l <= 105 && d <= tolerance;
+  };
+  const enqueue = (index) => {
+    if (index < 0 || index >= total || visited[index] || !isBackground(index)) return;
+    visited[index] = 1;
+    queue[tail++] = index;
+  };
+  for (let x = 0; x < width; x += 1) { enqueue(x); enqueue((height - 1) * width + x); }
+  for (let y = 1; y < height - 1; y += 1) { enqueue(y * width); enqueue(y * width + width - 1); }
+  while (head < tail) {
+    const index = queue[head++];
+    const x = index % width;
+    const y = Math.floor(index / width);
+    if (x > 0) enqueue(index - 1);
+    if (x + 1 < width) enqueue(index + 1);
+    if (y > 0) enqueue(index - width);
+    if (y + 1 < height) enqueue(index + width);
+  }
+
+  const removedRatio = tail / Math.max(1, total);
+  if (removedRatio < 0.08 || removedRatio > 0.94) return splitIntoFifteen(input);
+
+  for (let index = 0; index < total; index += 1) {
+    pixels[index * 4 + 3] = visited[index] ? 0 : 255;
+  }
+  ctx.putImageData(imageData, 0, 0);
+
+  const rows = 3, columns = 5;
+  const cellW = width / columns, cellH = height / rows;
+  const items = [];
+  for (let row = 0; row < rows; row += 1) {
+    for (let column = 0; column < columns; column += 1) {
+      const left = Math.floor(column * cellW);
+      const top = Math.floor(row * cellH);
+      const right = Math.min(width, Math.ceil((column + 1) * cellW));
+      const bottom = Math.min(height, Math.ceil((row + 1) * cellH));
+      let minX = right, minY = bottom, maxX = left - 1, maxY = top - 1;
+      for (let y = top; y < bottom; y += 1) {
+        for (let x = left; x < right; x += 1) {
+          if (pixels[(y * width + x) * 4 + 3] === 0) continue;
+          if (x < minX) minX = x; if (x > maxX) maxX = x;
+          if (y < minY) minY = y; if (y > maxY) maxY = y;
+        }
+      }
+      const hasContent = minX <= maxX && minY <= maxY;
+      const pad = Math.max(8, Math.round(Math.min(cellW, cellH) * 0.045));
+      const cropLeft = hasContent ? Math.max(left, minX - pad) : left;
+      const cropTop = hasContent ? Math.max(top, minY - pad) : top;
+      const cropRight = hasContent ? Math.min(right, maxX + 1 + pad) : right;
+      const cropBottom = hasContent ? Math.min(bottom, maxY + 1 + pad) : bottom;
+      const cropW = Math.max(1, cropRight - cropLeft);
+      const cropH = Math.max(1, cropBottom - cropTop);
+      const safety = Math.max(8, Math.round(Math.min(cropW, cropH) * 0.055));
+      const output = document.createElement('canvas');
+      output.width = cropW + safety * 2;
+      output.height = cropH + safety * 2;
+      const outCtx = output.getContext('2d', { willReadFrequently: true });
+      if (!outCtx) throw new Error('Canvas 2D is unavailable');
+      const outImage = outCtx.createImageData(output.width, output.height);
+      const out = outImage.data;
+      for (let y = 0; y < cropH; y += 1) {
+        for (let x = 0; x < cropW; x += 1) {
+          const sp = ((cropTop + y) * width + (cropLeft + x)) * 4;
+          const dp = ((y + safety) * output.width + (x + safety)) * 4;
+          out[dp] = pixels[sp];
+          out[dp + 1] = pixels[sp + 1];
+          out[dp + 2] = pixels[sp + 2];
+          out[dp + 3] = pixels[sp + 3] === 0 ? 0 : 255;
+        }
+      }
+      outCtx.putImageData(outImage, 0, 0);
+      const blob = await canvasToPngBlob(output);
+      items.push({
+        index: items.length + 1,
+        blob,
+        width: output.width,
+        height: output.height,
+        pixelSafe: true,
+        pixelData: new Uint8ClampedArray(out),
+        pixelWidth: output.width,
+        pixelHeight: output.height,
+        splitEngine: 'SOURCE_DIRECT',
+        needsReview: false,
+        reviewReasons: []
+      });
+    }
+  }
+  if (items.length !== 15) throw new Error('Could not create 15 sticker outputs');
+  return items;
+}
+
 async function hasRealTransparency(file) {
   if (file?.type !== 'image/png') return false;
   const { canvas, ctx } = await drawFileToCanvas(file);
@@ -2595,7 +2739,7 @@ export default function BackgroundRemover({ lang = 'ko' }) {
     setSplitting(true);
     setSplitError('');
     try {
-      const items = await splitIntoFifteen(resultBlob);
+      const items = await splitIntoFifteenSourceSafe(resultBlob, file);
       if (!items || items.length === 0) {
         throw new Error('No stickers detected');
       }
