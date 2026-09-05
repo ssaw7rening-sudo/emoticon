@@ -7,14 +7,14 @@ function alphaVerifiedV17() {
     enforce: 'post',
     transform(code, id) {
       const normalizedId = id.replace(/\\/g, '/')
+      if (!normalizedId.endsWith('/src/components/BackgroundRemover.jsx')) return null
+
       let transformed = code.replace(/\r\n/g, '\n')
+      const componentMarker = 'export default function BackgroundRemover'
+      const componentIndex = transformed.indexOf(componentMarker)
+      if (componentIndex < 0) throw new Error('[alpha-v17] BackgroundRemover marker not found')
 
-      if (normalizedId.endsWith('/src/components/BackgroundRemover.jsx')) {
-        const componentMarker = 'export default function BackgroundRemover'
-        const componentIndex = transformed.indexOf(componentMarker)
-        if (componentIndex < 0) throw new Error('[alpha-v17] BackgroundRemover marker not found')
-
-        const helper = `async function inspectSplitAlphaTopology(blob) {
+      const helper = `async function inspectSplitAlphaTopology(blob) {
   try {
     const { canvas, ctx } = await drawFileToCanvas(blob);
     const width = canvas.width;
@@ -68,56 +68,24 @@ function alphaVerifiedV17() {
 }
 
 `
-        transformed = transformed.slice(0, componentIndex) + helper + transformed.slice(componentIndex)
+      transformed = transformed.slice(0, componentIndex) + helper + transformed.slice(componentIndex)
 
-        const splitUrlRegex = /const withUrls = [\s\S]*?;\n\s*setSplitItems\(withUrls\);/
-        if (!splitUrlRegex.test(transformed)) throw new Error('[alpha-v17] split URL block not found')
-        const newWithUrls = `const inspectedItems = [];
+      const splitUrlRegex = /const withUrls = [\s\S]*?;\n\s*setSplitItems\(withUrls\);/
+      if (!splitUrlRegex.test(transformed)) throw new Error('[alpha-v17] split URL block not found')
+      const newWithUrls = `const inspectedItems = [];
       for (const item of items) {
         const alphaDiag = await inspectSplitAlphaTopology(item.blob);
         inspectedItems.push({ ...item, alphaDiag });
       }
       const withUrls = inspectedItems.map((item) => ({ ...item, url: URL.createObjectURL(item.blob) }));
-      setSplitItems(withUrls);`
-        transformed = transformed.replace(splitUrlRegex, newWithUrls)
-        transformed = transformed.replace(/Split v16 · Direct First/g, 'Split v17 · Alpha Verified')
-        return { code: transformed, map: null }
-      }
-
-      if (normalizedId.endsWith('/src/components/EmoticonPostProcessor.jsx')) {
-        const makeOutputMarker = 'async function makeOutput(blob, transform = { zoom: 1, x: 0, y: 0 }, outputScale = 1) {'
-        const makeOutputIndex = transformed.indexOf(makeOutputMarker)
-        if (makeOutputIndex < 0) throw new Error('[alpha-v17] makeOutput marker not found')
-
-        const binaryHelper = `function forceBinaryOutputAlpha(canvas) {
-  const ctx = canvas.getContext('2d', { willReadFrequently: true });
-  if (!ctx) return;
-  const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-  const data = imageData.data;
-  for (let p = 3; p < data.length; p += 4) {
-    data[p] = data[p] === 0 ? 0 : 255;
-  }
-  ctx.putImageData(imageData, 0, 0);
-}
-
-`
-        transformed = transformed.slice(0, makeOutputIndex) + binaryHelper + transformed.slice(makeOutputIndex)
-
-        const returnAnchor = `  stabilizeBrightForegroundAlpha(canvas);\n  return canvasToBlob(canvas);`
-        const returnReplacement = `  stabilizeBrightForegroundAlpha(canvas);\n  forceBinaryOutputAlpha(canvas);\n  return canvasToBlob(canvas);`
-        if (!transformed.includes(returnAnchor)) throw new Error('[alpha-v17] makeOutput return anchor not found')
-        transformed = transformed.replace(returnAnchor, returnReplacement)
-
-        transformed = transformed.replace(/filter: 'none'/g, "filter: 'none', imageRendering: 'pixelated'")
-
-        const labelAnchor = '{engineLabel}'
-        const labelReplacement = `{engineLabel} · {processed[0]?.splitEngine || 'NA'} · H{processed[0]?.alphaDiag?.holes ?? '?'} · S{processed[0]?.alphaDiag?.semi ?? '?'} · Split v17`
-        if (!transformed.includes(labelAnchor)) throw new Error('[alpha-v17] engine label child not found')
-        transformed = transformed.replace(labelAnchor, labelReplacement)
-        return { code: transformed, map: null }
-      }
-
-      return null
+      setSplitItems(withUrls);
+      if (inspectedItems[0]) {
+        const d = inspectedItems[0].alphaDiag;
+        setPrecisionMessage('Alpha v17 · ' + (inspectedItems[0].splitEngine || 'NA') + ' · H' + d.holes + ' · S' + d.semi + ' · Z' + (d.zeroRatio >= 0 ? d.zeroRatio.toFixed(3) : '?'));
+      }`
+      transformed = transformed.replace(splitUrlRegex, newWithUrls)
+      transformed = transformed.replace(/Split v16 · Direct First/g, 'Split v17 · Alpha Verified')
+      return { code: transformed, map: null }
     }
   }
 }
