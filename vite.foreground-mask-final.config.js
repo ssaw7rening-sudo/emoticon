@@ -40,7 +40,6 @@ async function splitIntoFifteenSourceSafe(input, sourceFile = null) {
   const sourcePixels = sourceData.data;
   const total = width * height;
 
-  // Estimate the actual backdrop only from the outside border of the original.
   const border = [];
   const step = Math.max(1, Math.floor(Math.min(width, height) / 650));
   const pushBorder = (x, y) => {
@@ -60,7 +59,6 @@ async function splitIntoFifteenSourceSafe(input, sourceFile = null) {
     bgR /= darkBorder.length; bgG /= darkBorder.length; bgB /= darkBorder.length;
   }
 
-  // Flood-fill background only from the outer edge. Internal black outlines are protected.
   const background = new Uint8Array(total);
   const queue = new Int32Array(total);
   let head = 0, tail = 0;
@@ -74,20 +72,20 @@ async function splitIntoFifteenSourceSafe(input, sourceFile = null) {
     const d = Math.sqrt((r - bgR) ** 2 + (g - bgG) ** 2 + (b - bgB) ** 2);
     return l <= 152 && d <= 72;
   };
-  const enqueue = (index) => {
+  const enqueueBackground = (index) => {
     if (index < 0 || index >= total || background[index] || !isBackdrop(index)) return;
     background[index] = 1;
     queue[tail++] = index;
   };
-  for (let x = 0; x < width; x += 1) { enqueue(x); enqueue((height - 1) * width + x); }
-  for (let y = 1; y < height - 1; y += 1) { enqueue(y * width); enqueue(y * width + width - 1); }
+  for (let x = 0; x < width; x += 1) { enqueueBackground(x); enqueueBackground((height - 1) * width + x); }
+  for (let y = 1; y < height - 1; y += 1) { enqueueBackground(y * width); enqueueBackground(y * width + width - 1); }
   while (head < tail) {
     const index = queue[head++];
     const x = index % width, y = Math.floor(index / width);
-    if (x > 0) enqueue(index - 1);
-    if (x + 1 < width) enqueue(index + 1);
-    if (y > 0) enqueue(index - width);
-    if (y + 1 < height) enqueue(index + width);
+    if (x > 0) enqueueBackground(index - 1);
+    if (x + 1 < width) enqueueBackground(index + 1);
+    if (y > 0) enqueueBackground(index - width);
+    if (y + 1 < height) enqueueBackground(index + width);
   }
 
   const removedRatio = tail / Math.max(1, total);
@@ -95,86 +93,93 @@ async function splitIntoFifteenSourceSafe(input, sourceFile = null) {
     return splitIntoFifteen(input);
   }
 
-  // Source foreground = non-background pixels with real source alpha.
-  const foreground = new Uint8Array(total);
+  let barrier = new Uint8Array(total);
   for (let index = 0; index < total; index += 1) {
-    if (!background[index] && sourcePixels[index * 4 + 3] >= 12) foreground[index] = 1;
+    if (background[index]) continue;
+    const p = index * 4;
+    if (sourcePixels[p + 3] < 16) continue;
+    const r = sourcePixels[p], g = sourcePixels[p + 1], b = sourcePixels[p + 2];
+    const l = r * 0.2126 + g * 0.7152 + b * 0.0722;
+    if (l <= 118 && Math.max(r, g, b) <= 168) barrier[index] = 1;
   }
 
-  // Keep meaningful source components. Tiny disconnected RGB noise is rejected.
-  const labels = new Uint32Array(total);
-  const componentQueue = new Int32Array(total);
-  const keepLabels = new Set();
-  let label = 0;
-  const significantArea = Math.max(18, Math.round(total * 0.000012));
-  for (let seed = 0; seed < total; seed += 1) {
-    if (!foreground[seed] || labels[seed]) continue;
-    label += 1;
-    let ch = 0, ct = 0, area = 0, overlap = 0;
-    componentQueue[ct++] = seed;
-    labels[seed] = label;
-    while (ch < ct) {
-      const index = componentQueue[ch++];
-      area += 1;
-      if (processedPixels[index * 4 + 3] >= 12) overlap += 1;
-      const x = index % width, y = Math.floor(index / width);
-      const visit = (next) => {
-        if (next < 0 || next >= total || !foreground[next] || labels[next]) return;
-        labels[next] = label;
-        componentQueue[ct++] = next;
-      };
-      if (x > 0) visit(index - 1);
-      if (x + 1 < width) visit(index + 1);
-      if (y > 0) visit(index - width);
-      if (y + 1 < height) visit(index + width);
-    }
-    if (overlap >= 2 || area >= significantArea) keepLabels.add(label);
-  }
-
-  const rebuilt = new Uint8ClampedArray(sourcePixels.length);
-  const touchesBackdrop = (index) => {
-    const x = index % width, y = Math.floor(index / width);
-    for (let dy = -1; dy <= 1; dy += 1) {
-      const ny = y + dy;
-      if (ny < 0 || ny >= height) continue;
-      for (let dx = -1; dx <= 1; dx += 1) {
-        const nx = x + dx;
-        if (nx < 0 || nx >= width) continue;
-        if (background[ny * width + nx]) return true;
+  const barrierRadius = Math.max(1, Math.min(3, Math.round(Math.min(width, height) / 620)));
+  for (let pass = 0; pass < barrierRadius; pass += 1) {
+    const next = barrier.slice();
+    for (let y = 1; y < height - 1; y += 1) {
+      const row = y * width;
+      for (let x = 1; x < width - 1; x += 1) {
+        const index = row + x;
+        if (!barrier[index]) continue;
+        next[index - 1] = 1;
+        next[index + 1] = 1;
+        next[index - width] = 1;
+        next[index + width] = 1;
       }
     }
-    return false;
-  };
+    barrier = next;
+  }
 
+  const exterior = new Uint8Array(total);
+  const exteriorQueue = new Int32Array(total);
+  let eh = 0, et = 0;
+  const enqueueExterior = (index) => {
+    if (index < 0 || index >= total || exterior[index] || barrier[index]) return;
+    exterior[index] = 1;
+    exteriorQueue[et++] = index;
+  };
+  for (let x = 0; x < width; x += 1) { enqueueExterior(x); enqueueExterior((height - 1) * width + x); }
+  for (let y = 1; y < height - 1; y += 1) { enqueueExterior(y * width); enqueueExterior(y * width + width - 1); }
+  while (eh < et) {
+    const index = exteriorQueue[eh++];
+    const x = index % width, y = Math.floor(index / width);
+    if (x > 0) enqueueExterior(index - 1);
+    if (x + 1 < width) enqueueExterior(index + 1);
+    if (y > 0) enqueueExterior(index - width);
+    if (y + 1 < height) enqueueExterior(index + width);
+  }
+
+  const rebuilt = new Uint8ClampedArray(processedPixels);
   for (let index = 0; index < total; index += 1) {
     const p = index * 4;
-    if (!labels[index] || !keepLabels.has(labels[index]) || background[index]) continue;
+    if (background[index] || exterior[index]) {
+      if (rebuilt[p + 3] === 0) { rebuilt[p] = 0; rebuilt[p + 1] = 0; rebuilt[p + 2] = 0; }
+      continue;
+    }
+
     const sourceAlpha = sourcePixels[p + 3];
-    if (sourceAlpha < 12) continue;
+    const processedAlpha = processedPixels[p + 3];
+    if (sourceAlpha < 16 || processedAlpha >= 220) continue;
 
     rebuilt[p] = sourcePixels[p];
     rebuilt[p + 1] = sourcePixels[p + 1];
     rebuilt[p + 2] = sourcePixels[p + 2];
+    rebuilt[p + 3] = Math.max(processedAlpha, sourceAlpha);
+  }
 
-    const processedAlpha = processedPixels[p + 3];
-    let alpha = sourceAlpha;
-    if (touchesBackdrop(index)) {
-      // Prefer the already-clean AI edge when it exists.
-      if (processedAlpha > 0) {
-        alpha = processedAlpha;
-      } else if (darkBackdrop && sourceAlpha >= 248) {
-        // Opaque RGB source: derive a one-pixel soft matte from backdrop distance.
-        const r = sourcePixels[p], g = sourcePixels[p + 1], b = sourcePixels[p + 2];
-        const d = Math.sqrt((r - bgR) ** 2 + (g - bgG) ** 2 + (b - bgB) ** 2);
-        alpha = Math.max(16, Math.min(255, Math.round(((d - 6) / 64) * 255)));
-      }
-    } else if (processedAlpha >= 220) {
-      alpha = processedAlpha;
-    } else {
-      // Interior foreground from the original repairs face/leg holes even if they connect to outside in the AI mask.
-      alpha = sourceAlpha;
-    }
-    rebuilt[p + 3] = alpha;
+  for (let index = 0; index < total; index += 1) {
+    if (!barrier[index] || background[index]) continue;
+    const p = index * 4;
+    if (processedPixels[p + 3] >= 24 || sourcePixels[p + 3] < 16) continue;
+    const x = index % width, y = Math.floor(index / width);
+    let touchesInterior = false;
+    const check = (next) => {
+      if (next >= 0 && next < total && !exterior[next] && !background[next] && !barrier[next]) touchesInterior = true;
+    };
+    if (x > 0) check(index - 1);
+    if (x + 1 < width) check(index + 1);
+    if (y > 0) check(index - width);
+    if (y + 1 < height) check(index + width);
+    if (!touchesInterior) continue;
+    rebuilt[p] = sourcePixels[p];
+    rebuilt[p + 1] = sourcePixels[p + 1];
+    rebuilt[p + 2] = sourcePixels[p + 2];
+    rebuilt[p + 3] = sourcePixels[p + 3];
+  }
+
+  for (let index = 0; index < total; index += 1) {
+    const p = index * 4;
+    if (rebuilt[p + 3] === 0) { rebuilt[p] = 0; rebuilt[p + 1] = 0; rebuilt[p + 2] = 0; }
   }
 
   const rows = 3, columns = 5;
@@ -229,7 +234,7 @@ async function splitIntoFifteenSourceSafe(input, sourceFile = null) {
         pixelData: new Uint8ClampedArray(out),
         pixelWidth: output.width,
         pixelHeight: output.height,
-        splitEngine: 'FOREGROUND_MASK',
+        splitEngine: 'OUTLINE_INTERIOR',
         needsReview: false,
         reviewReasons: [],
       });
@@ -242,7 +247,7 @@ async function splitIntoFifteenSourceSafe(input, sourceFile = null) {
 
 function foregroundMaskFinal() {
   return {
-    name: 'foreground-mask-final-v2',
+    name: 'foreground-mask-final-v3-outline-interior',
     enforce: 'post',
     transform(code, id) {
       const normalizedId = id.replace(/\\/g, '/')
@@ -250,24 +255,23 @@ function foregroundMaskFinal() {
       if (normalizedId.endsWith('/src/components/BackgroundRemover.jsx')) {
         const start = code.indexOf('async function splitIntoFifteenSourceSafe')
         const end = code.indexOf('async function hasRealTransparency', start)
-        if (start < 0 || end < 0 || end <= start) throw new Error('[foreground-mask-final] splitter not found')
+        if (start < 0 || end < 0 || end <= start) throw new Error('[outline-interior] splitter not found')
         return { code: code.slice(0, start) + FINAL_SPLITTER + '\n\n' + code.slice(end), map: null }
       }
 
       if (normalizedId.endsWith('/src/components/EmoticonPostProcessor.jsx')) {
         const fnStart = code.indexOf('async function makeOutputForItem')
         const fnEnd = code.indexOf('async function makeOutput(', fnStart)
-        if (fnStart < 0 || fnEnd < 0 || fnEnd <= fnStart) throw new Error('[foreground-mask-final] output function not found')
+        if (fnStart < 0 || fnEnd < 0 || fnEnd <= fnStart) throw new Error('[outline-interior] output function not found')
         let fn = code.slice(fnStart, fnEnd)
 
         const loopPattern = /if\s*\(\s*pixels\[p\s*\+\s*3\]\s*===\s*0\s*\)\s*continue;\s*coverage\s*\+=\s*weights\[i\];\s*rr\s*\+=\s*pixels\[p\]\s*\*\s*weights\[i\];\s*gg\s*\+=\s*pixels\[p\s*\+\s*1\]\s*\*\s*weights\[i\];\s*bb\s*\+=\s*pixels\[p\s*\+\s*2\]\s*\*\s*weights\[i\];/
-        const replacement = `const sampleAlpha = pixels[p + 3] / 255;\n        if (sampleAlpha <= 0) continue;\n        const weightedAlpha = weights[i] * sampleAlpha;\n        coverage += weightedAlpha;\n        rr += pixels[p] * weightedAlpha;\n        gg += pixels[p + 1] * weightedAlpha;\n        bb += pixels[p + 2] * weightedAlpha;`
-        if (!loopPattern.test(fn)) throw new Error('[foreground-mask-final] RGBA resample loop not found')
-        fn = fn.replace(loopPattern, replacement)
+        if (!loopPattern.test(fn)) throw new Error('[outline-interior] RGBA resample loop not found')
+        fn = fn.replace(loopPattern, `const sampleAlpha = pixels[p + 3] / 255;\n        if (sampleAlpha <= 0) continue;\n        const weightedAlpha = weights[i] * sampleAlpha;\n        coverage += weightedAlpha;\n        rr += pixels[p] * weightedAlpha;\n        gg += pixels[p + 1] * weightedAlpha;\n        bb += pixels[p + 2] * weightedAlpha;`)
 
         const alphaPattern = /out\[dp\s*\+\s*3\]\s*=\s*255;/
-        if (!alphaPattern.test(fn)) throw new Error('[foreground-mask-final] output alpha assignment not found')
-        fn = fn.replace(alphaPattern, "out[dp + 3] = Math.max(1, Math.min(255, Math.round(coverage * 255))); const SOFT_ALPHA_EXPORT = 'SOFT_ALPHA_EXPORT'; void SOFT_ALPHA_EXPORT;")
+        if (!alphaPattern.test(fn)) throw new Error('[outline-interior] output alpha assignment not found')
+        fn = fn.replace(alphaPattern, 'out[dp + 3] = Math.max(1, Math.min(255, Math.round(coverage * 255)));')
 
         return { code: code.slice(0, fnStart) + fn + code.slice(fnEnd), map: null }
       }
