@@ -108,7 +108,34 @@ function strictDarkSourceSplit() {
   }
 }
 
+function preserveOriginalAlpha() {
+  return {
+    name: 'source-safe-preserve-original-alpha',
+    enforce: 'post',
+    transform(code, id) {
+      const normalizedId = id.replace(/\\/g, '/')
+      if (!normalizedId.endsWith('/src/components/BackgroundRemover.jsx')) return null
+      if (!code.includes('splitIntoFifteenSourceSafe')) return null
+
+      let applied = false
+      const transformed = code.replace(
+        /for\s*\(let\s+index\s*=\s*0;\s*index\s*<\s*total;\s*index\s*\+=\s*1\)\s*\{\s*pixels\[index\s*\*\s*4\s*\+\s*3\]\s*=\s*visited\[index\]\s*\?\s*0\s*:\s*255;\s*\}/,
+        () => {
+          applied = true
+          return `const SOURCE_ALPHA_PRESERVE = 'SOURCE_ALPHA_PRESERVE';\n  void SOURCE_ALPHA_PRESERVE;\n  for (let index = 0; index < total; index += 1) {\n    const alphaOffset = index * 4 + 3;\n    const originalAlpha = pixels[alphaOffset];\n    pixels[alphaOffset] = visited[index] ? 0 : originalAlpha;\n  }`
+        }
+      )
+
+      if (!applied) {
+        throw new Error('[source-alpha-preserve] source-safe alpha loop could not be replaced')
+      }
+
+      return { code: transformed, map: null }
+    },
+  }
+}
+
 export default defineConfig({
   ...baseConfig,
-  plugins: [...plugins, safeTransparentSourceRoute(), strictDarkSourceSplit()],
+  plugins: [...plugins, safeTransparentSourceRoute(), strictDarkSourceSplit(), preserveOriginalAlpha()],
 })
