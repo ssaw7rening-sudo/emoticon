@@ -15,22 +15,22 @@ def replace_once(old, new, label):
 copy_replacements = [
     (
         "compareHint: '가운데 슬라이더를 좌우로 움직여 원본과 결과를 비교하세요.', methodSafe: '밝은색 보호 안전 처리', methodAi: 'AI 정밀 처리',",
-        "compareHint: '가운데 슬라이더를 좌우로 움직여 원본과 결과를 비교하세요.', methodSafe: '밝은색 보호 안전 처리', methodSafeDark: '검정 배경 스티커 안전 처리', methodAi: 'AI 정밀 처리', precisionDarkLocked: '검정/짙은 단색 배경 시트는 밝은 얼굴·솜털·흰 외곽선을 보호하기 위해 AI 정밀 처리 대신 안전 재처리를 사용합니다.',",
+        "compareHint: '가운데 슬라이더를 좌우로 움직여 원본과 결과를 비교하세요.', methodSafe: '밝은색 보호 안전 처리', methodSafeDark: '검정 배경 스티커 안전 처리', methodAi: 'AI 정밀 처리',",
         'ko copy',
     ),
     (
         "compareHint: 'Drag the center slider left or right to compare the original and result.', methodSafe: 'Light-color safe processing', methodAi: 'AI precision processing',",
-        "compareHint: 'Drag the center slider left or right to compare the original and result.', methodSafe: 'Light-color safe processing', methodSafeDark: 'Dark-background sticker safe mode', methodAi: 'AI precision processing', precisionDarkLocked: 'Dark or near-black sticker sheets use the safe path instead of AI precision processing to protect pale faces, fine fur, and white outlines.',",
+        "compareHint: 'Drag the center slider left or right to compare the original and result.', methodSafe: 'Light-color safe processing', methodSafeDark: 'Dark-background sticker safe mode', methodAi: 'AI precision processing',",
         'en copy',
     ),
     (
         "compareHint: '中央のスライダーを左右に動かして元画像と結果を比較できます。', methodSafe: '明るい色を保護する安全処理', methodAi: 'AI高精度処理',",
-        "compareHint: '中央のスライダーを左右に動かして元画像と結果を比較できます。', methodSafe: '明るい色を保護する安全処理', methodSafeDark: '暗い背景ステッカー安全処理', methodAi: 'AI高精度処理', precisionDarkLocked: '黒または暗い単色背景のステッカーシートでは、明るい顔・細い毛・白い縁取りを保護するためAI高精度処理ではなく安全処理を使用します。',",
+        "compareHint: '中央のスライダーを左右に動かして元画像と結果を比較できます。', methodSafe: '明るい色を保護する安全処理', methodSafeDark: '暗い背景ステッカー安全処理', methodAi: 'AI高精度処理',",
         'ja copy',
     ),
     (
         "compareHint: '左右拖动中间滑块即可对比原图和处理结果。', methodSafe: '浅色保护安全处理', methodAi: 'AI精细处理',",
-        "compareHint: '左右拖动中间滑块即可对比原图和处理结果。', methodSafe: '浅色保护安全处理', methodSafeDark: '深色背景贴纸安全处理', methodAi: 'AI精细处理', precisionDarkLocked: '黑色或深色纯色背景的贴纸合集会使用安全处理而非AI精细处理，以保护浅色脸部、细毛和白色描边。',",
+        "compareHint: '左右拖动中间滑块即可对比原图和处理结果。', methodSafe: '浅色保护安全处理', methodSafeDark: '深色背景贴纸安全处理', methodAi: 'AI精细处理',",
         'zh copy',
     ),
 ]
@@ -158,42 +158,13 @@ new_fast_block = """      let method = 'fast';
 """
 replace_once(old_fast_block, new_fast_block, 'main safe-path block')
 
-# Keep the existing sheet cleanup source block unchanged. The build-time resume
-# recovery plugin anchors to that exact block; dark sticker sheets remain safe
-# because their detected sheet/ambiguous status already prevents the cleanup.
+# Keep the existing sheet cleanup and precision-retry source blocks unchanged.
+# Several build-time resilience/precision plugins anchor to those exact blocks.
+# Dark sticker sheets use resultMethod='fast-dark', while the precision retry UI
+# is rendered only for AI/MODNet results, so semantic reprocessing cannot be
+# triggered for the locked dark-sheet path.
 
-# 4) Precision retry must also respect the dark sticker lock. If an older AI
-# result is on screen or sheet detection changed, re-run the safe flood-fill
-# path rather than BiRefNet.
-old_precision_start = """    setPrecisionMessage('');
-    try {
-      let precisionBlob = await removeWithBiRefNet(file, (info) => {
-"""
-new_precision_start = """    setPrecisionMessage('');
-    try {
-      const safeFastResult = await tryFastUniformBackgroundRemoval(file);
-      if (safeFastResult?.blob && isDarkBackgroundColor(safeFastResult.background)) {
-        const safeDetection = await detectEmoticonSheet(safeFastResult.blob);
-        if (isLikelyDarkStickerSheet(safeFastResult.background, safeDetection)) {
-          let safeBlob = await correctUnexpectedForegroundTransparency(safeFastResult.blob);
-          safeBlob = await protectLightForegroundOpacity(safeBlob, file);
-          const safeQuality = await assessRemovalQuality(safeBlob);
-          const url = URL.createObjectURL(safeBlob);
-          setResultBlob(safeBlob);
-          setResultUrl(url);
-          setResultMethod('fast-dark');
-          setQualityAssessment(safeQuality.status === 'fail' ? { status: 'pass', score: 0 } : safeQuality);
-          setComparePosition(50);
-          setPrecisionMessage(t.precisionDarkLocked);
-          return;
-        }
-      }
-
-      let precisionBlob = await removeWithBiRefNet(file, (info) => {
-"""
-replace_once(old_precision_start, new_precision_start, 'precision safe reroute')
-
-# 5) Surface the active method clearly and bump alpha engine marker.
+# 4) Surface the active method clearly and bump alpha engine marker.
 old_badge = """              data-alpha-engine=\"v7\"
               className=\"mt-3 rounded-xl border border-[#DCE8D5] bg-[#F4F8F1] px-3 py-2 text-center text-[11px] font-extrabold text-[#587052] sm:text-xs\"
             >
@@ -210,7 +181,6 @@ required = [
     "function isLikelyDarkStickerSheet",
     "let darkStickerSafePath = false;",
     "method = 'fast-dark';",
-    "setPrecisionMessage(t.precisionDarkLocked);",
     'data-alpha-engine="v8"',
 ]
 for marker in required:
