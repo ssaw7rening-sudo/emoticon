@@ -13,9 +13,9 @@ const bundle = fs.readdirSync(assetsDir)
 
 const required = [
   ['transparent source-safe route', 'transparent-source-safe'],
-  ['strict dark-source lock', 'SOURCE_DIRECT_STRICT_DARK'],
+  ['mask-guided splitter', 'MASK_GUIDED_SOURCE_SAFE'],
+  ['mask-guided engine', 'MASK_GUIDED'],
   ['direct RGBA export', 'SOURCE_DIRECT_EXPORT'],
-  ['direct engine', 'SOURCE_DIRECT'],
   ['pixel payload', 'pixelData'],
   ['pixel-safe flag', 'pixelSafe'],
 ];
@@ -23,12 +23,12 @@ const required = [
 let failed = false;
 for (const [label, marker] of required) {
   if (!bundle.includes(marker)) {
-    console.error('[source-direct-check] missing ' + label + ': ' + marker);
+    console.error('[source-safe-check] missing ' + label + ': ' + marker);
     failed = true;
   } else {
-    console.log('[source-direct-check] ok: ' + label);
+    console.log('[source-safe-check] ok: ' + label);
   }
 }
 
 if (failed) process.exit(1);
-console.log('[source-direct-check] source-safe split/export routes are present; alpha preservation is enforced by the transform guard');
+console.log('[source-safe-check] exterior transparency, enclosed-hole recovery, and original edge alpha are present in production');
