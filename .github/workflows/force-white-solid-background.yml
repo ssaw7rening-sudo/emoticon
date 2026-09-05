@@ -1,0 +1,95 @@
+name: Force White Solid Background
+
+on:
+  push:
+    paths:
+      - '.github/workflows/force-white-solid-background.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Force Gemini and Grok solid background to pure white
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path('src/App.jsx')
+          text = path.read_text(encoding='utf-8')
+
+          replacements = {
+            "geminiSolid: '단색 배경'": "geminiSolid: '흰색 배경'",
+            "geminiSolid: 'Solid color'": "geminiSolid: 'White background'",
+            "geminiSolid: '単色背景'": "geminiSolid: '白背景'",
+            "geminiSolid: '单色背景'": "geminiSolid: '白色背景'",
+            "grokSolid: '단색 배경'": "grokSolid: '흰색 배경'",
+            "grokSolid: 'Solid color'": "grokSolid: 'White background'",
+            "grokSolid: '単色背景'": "grokSolid: '白背景'",
+            "grokSolid: '单色背景'": "grokSolid: '白色背景'",
+            "solid: 'One clean solid background color with strong contrast against the character. No gradient, texture, or background objects. No checkerboard tiles.'": "solid: 'Use only one continuous pure white (#FFFFFF) background. This is not a generic solid-color option: do not use beige, cream, gray, off-white, pastel, colored, gradient, textured, patterned, or checkerboard backgrounds. Keep every sticker fully isolated with generous spacing and no background objects or cast shadows.'",
+            "solid: 'One clean solid background color with strong contrast against the character. No gradient, texture, or background objects.'": "solid: 'Use only one continuous pure white (#FFFFFF) background. This is not a generic solid-color option: do not use beige, cream, gray, off-white, pastel, colored, gradient, textured, patterned, or checkerboard backgrounds. Keep every sticker fully isolated with generous spacing and no background objects or cast shadows.'",
+          }
+
+          counts = {}
+          for old, new in replacements.items():
+            count = text.count(old)
+            counts[old] = count
+            if count:
+              text = text.replace(old, new)
+
+          if "geminiSolid: '흰색 배경'" not in text or "grokSolid: '흰색 배경'" not in text:
+            raise SystemExit('Korean white-background labels were not applied')
+
+          strict = "Use only one continuous pure white (#FFFFFF) background. This is not a generic solid-color option"
+          if text.count(strict) < 2:
+            raise SystemExit('Strict white solid instructions were not applied to both Gemini and Grok')
+
+          path.write_text(text, encoding='utf-8')
+          print('White solid background policy applied')
+          PY
+
+      - name: Verify white-only background policy
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          text = Path('src/App.jsx').read_text(encoding='utf-8')
+          required = [
+            "geminiSolid: '흰색 배경'",
+            "grokSolid: '흰색 배경'",
+            "geminiSolid: 'White background'",
+            "grokSolid: 'White background'",
+            'Use only one continuous pure white (#FFFFFF) background.',
+            'do not use beige, cream, gray, off-white, pastel, colored',
+          ]
+          for marker in required:
+            if marker not in text:
+              raise SystemExit(f'Missing white-background marker: {marker}')
+          if "solid: 'One clean solid background color with strong contrast against the character" in text:
+            raise SystemExit('Legacy arbitrary solid-color instruction is still active')
+          print('White-only policy verified')
+          PY
+
+      - name: Install dependencies
+        run: |
+          for attempt in 1 2 3; do
+            npm ci && break
+            if [ "$attempt" = "3" ]; then exit 1; fi
+            sleep $((attempt * 8))
+          done
+
+      - name: Build
+        run: npm run build
+
+      - name: Commit verified source
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add src/App.jsx
+          git rm -f .github/workflows/force-white-solid-background.yml
+          git commit -m 'Force Gemini and Grok sheet backgrounds to pure white'
+          git push
