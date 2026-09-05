@@ -11,9 +11,8 @@ const bundle = fs.readdirSync(assetsDir)
   .map((name) => fs.readFileSync(path.join(assetsDir, name), 'utf8'))
   .join('\n');
 
-// SOURCE_DIRECT_SPLIT is a dead-code marker and may be removed by minification.
-// These markers are tied to executable behavior and must remain in production.
 const required = [
+  ['transparent source-safe route', 'transparent-source-safe'],
   ['strict dark-source lock', 'SOURCE_DIRECT_STRICT_DARK'],
   ['direct RGBA export', 'SOURCE_DIRECT_EXPORT'],
   ['direct engine', 'SOURCE_DIRECT'],
@@ -32,4 +31,4 @@ for (const [label, marker] of required) {
 }
 
 if (failed) process.exit(1);
-console.log('[source-direct-check] strict original-source split and direct RGBA export survived production build');
+console.log('[source-direct-check] all split routes preserve original-source RGBA in production');
