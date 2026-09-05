@@ -3,12 +3,14 @@ import baseConfig from './vite.direct-first-v16.config.js'
 
 function mobileSaveDecoderPre() {
   return {
-    name: 'mobile-save-decoder-v19-pre',
+    name: 'pixel-safe-save-v20-pre',
     enforce: 'pre',
     transform(code, id) {
       const normalizedId = id.replace(/\\/g, '/')
       if (!normalizedId.endsWith('/src/components/EmoticonPostProcessor.jsx')) return null
       let transformed = code.replace(/\r\n/g, '\n')
+
+      // Keep the non-direct fallback safe on Android too.
       const oldLoader = `async function loadBitmap(blob) {
   if (typeof createImageBitmap === 'function') return createImageBitmap(blob);
   const url = URL.createObjectURL(blob);
@@ -24,8 +26,6 @@ function mobileSaveDecoderPre() {
   }
 }`
       const safeLoader = `async function loadBitmap(blob) {
-  // Android/mobile save path must use the same decoder as the correct preview.
-  // createImageBitmap() can corrupt premultiplied alpha only during Canvas export.
   const url = URL.createObjectURL(blob);
   try {
     return await new Promise((resolve, reject) => {
@@ -40,9 +40,90 @@ function mobileSaveDecoderPre() {
   }
 }`
       if (!transformed.includes(oldLoader)) {
-        throw new Error('[mobile-save-v19-pre] original loadBitmap anchor not found')
+        throw new Error('[pixel-safe-v20] original loadBitmap anchor not found')
       }
       transformed = transformed.replace(oldLoader, safeLoader)
+
+      // Replace every finish/save path before inserting the helper so the helper's
+      // own fallback call remains makeOutput(item.blob, ...).
+      const saveCall = 'makeOutput(item.blob,'
+      const saveCallCount = transformed.split(saveCall).length - 1
+      if (saveCallCount < 3) {
+        throw new Error(`[pixel-safe-v20] expected at least 3 item export calls, found ${saveCallCount}`)
+      }
+      transformed = transformed.replaceAll(saveCall, 'makeOutputForItem(item,')
+
+      const makeOutputAnchor = 'async function makeOutput(blob, transform = { zoom: 1, x: 0, y: 0 }, outputScale = 1) {'
+      if (!transformed.includes(makeOutputAnchor)) {
+        throw new Error('[pixel-safe-v20] makeOutput anchor not found')
+      }
+
+      const pixelSafeHelper = `async function makePixelSafeOutput(item, transform = { zoom: 1, x: 0, y: 0 }, outputScale = 1) {
+  const pixels = item?.pixelData;
+  const sourceWidth = Math.max(0, Number(item?.pixelWidth || 0));
+  const sourceHeight = Math.max(0, Number(item?.pixelHeight || 0));
+  if (!pixels || !sourceWidth || !sourceHeight || pixels.length !== sourceWidth * sourceHeight * 4) {
+    return makeOutput(item.blob, transform, outputScale);
+  }
+
+  // Reconstruct directly from the exact RGBA bytes captured at split time.
+  // No PNG/JPEG/ImageBitmap decoding occurs in this path.
+  const sourceCanvas = document.createElement('canvas');
+  sourceCanvas.width = sourceWidth;
+  sourceCanvas.height = sourceHeight;
+  const sourceCtx = sourceCanvas.getContext('2d', { willReadFrequently: true });
+  if (!sourceCtx) throw new Error('Canvas unavailable');
+  const sourceImage = sourceCtx.createImageData(sourceWidth, sourceHeight);
+  sourceImage.data.set(pixels);
+  sourceCtx.putImageData(sourceImage, 0, 0);
+
+  const scaleFactor = [1, 2, 4].includes(outputScale) ? outputScale : 1;
+  const size = 360 * scaleFactor;
+  const canvas = document.createElement('canvas');
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext('2d', { willReadFrequently: true });
+  if (!ctx) throw new Error('Canvas unavailable');
+
+  ctx.clearRect(0, 0, size, size);
+  ctx.globalCompositeOperation = 'source-over';
+  ctx.globalAlpha = 1;
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = 'high';
+
+  const safeSize = 300 * scaleFactor;
+  const fit = Math.min(safeSize / Math.max(1, sourceWidth), safeSize / Math.max(1, sourceHeight));
+  const zoom = Math.max(0.55, Math.min(1.45, transform?.zoom || 1));
+  const drawScale = fit * zoom;
+  const drawW = sourceWidth * drawScale;
+  const drawH = sourceHeight * drawScale;
+  const x = (size - drawW) / 2 + (transform?.x || 0) * scaleFactor;
+  const y = (size - drawH) / 2 + (transform?.y || 0) * scaleFactor;
+  ctx.drawImage(sourceCanvas, x, y, drawW, drawH);
+
+  if (scaleFactor > 1) sharpenCanvas(canvas, scaleFactor === 4 ? 0.11 : 0.075);
+
+  // Final binary-alpha guarantee after resizing: true background remains 0 and
+  // every retained subject pixel remains fully opaque. This prevents white/ivory
+  // faces and legs from becoming transparent during the finish/export stage.
+  const finalImage = ctx.getImageData(0, 0, size, size);
+  const finalData = finalImage.data;
+  for (let p = 3; p < finalData.length; p += 4) {
+    finalData[p] = finalData[p] <= 8 ? 0 : 255;
+  }
+  ctx.putImageData(finalImage, 0, 0);
+  return canvasToBlob(canvas);
+}
+
+async function makeOutputForItem(item, transform = { zoom: 1, x: 0, y: 0 }, outputScale = 1) {
+  if (item?.pixelSafe && item?.pixelData && item?.pixelWidth && item?.pixelHeight) {
+    return makePixelSafeOutput(item, transform, outputScale);
+  }
+  return makeOutput(item.blob, transform, outputScale);
+}
+
+`
+      transformed = transformed.replace(makeOutputAnchor, pixelSafeHelper + makeOutputAnchor)
       return { code: transformed, map: null }
     }
   }
@@ -128,12 +209,13 @@ function alphaVerifiedV17() {
       setSplitItems(withUrls);
       if (inspectedItems[0]) {
         const d = inspectedItems[0].alphaDiag;
-        setPrecisionMessage('Alpha v19 · ' + (inspectedItems[0].splitEngine || 'NA') + ' · H' + d.holes + ' · S' + d.semi + ' · Z' + (d.zeroRatio >= 0 ? d.zeroRatio.toFixed(3) : '?'));
+        setPrecisionMessage('Alpha v20 · ' + (inspectedItems[0].splitEngine || 'NA') + ' · H' + d.holes + ' · S' + d.semi + ' · Z' + (d.zeroRatio >= 0 ? d.zeroRatio.toFixed(3) : '?'));
       }`
       transformed = transformed.replace(splitUrlRegex, newWithUrls)
-      transformed = transformed.replace(/Split v16 · Direct First/g, 'Split v19 · Mobile Save Fix')
-      transformed = transformed.replace(/Split v17 · Alpha Verified/g, 'Split v19 · Mobile Save Fix')
-      transformed = transformed.replace(/Split v18 · Strict Source/g, 'Split v19 · Mobile Save Fix')
+      transformed = transformed.replace(/Split v16 · Direct First/g, 'Split v20 · Pixel Safe Save')
+      transformed = transformed.replace(/Split v17 · Alpha Verified/g, 'Split v20 · Pixel Safe Save')
+      transformed = transformed.replace(/Split v18 · Strict Source/g, 'Split v20 · Pixel Safe Save')
+      transformed = transformed.replace(/Split v19 · Mobile Save Fix/g, 'Split v20 · Pixel Safe Save')
       return { code: transformed, map: null }
     }
   }
