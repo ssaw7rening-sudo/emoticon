@@ -11,11 +11,9 @@ const bundle = fs.readdirSync(assetsDir)
   .map((name) => fs.readFileSync(path.join(assetsDir, name), 'utf8'))
   .join('\n');
 
-// The split-specific console string exists only inside the source-level
-// splitIntoFifteenSourceSafe() implementation. Requiring it prevents a legacy
-// Vite splitter from deleting that function while leaving the export path intact.
 const required = [
-  ['source-direct splitter', 'Direct source decode failed; using processed split:'],
+  ['source-direct splitter', 'SOURCE_DIRECT_SPLIT'],
+  ['strict dark-source lock', 'SOURCE_DIRECT_STRICT_DARK'],
   ['direct RGBA export', 'SOURCE_DIRECT_EXPORT'],
   ['direct engine', 'SOURCE_DIRECT'],
   ['pixel payload', 'pixelData'],
@@ -33,4 +31,4 @@ for (const [label, marker] of required) {
 }
 
 if (failed) process.exit(1);
-console.log('[source-direct-check] source splitter and direct RGBA export both survived the production build');
+console.log('[source-direct-check] strict original-source split and direct RGBA export survived production build');
