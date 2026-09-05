@@ -12,8 +12,8 @@ def replace_once(text, old, new, label):
         raise SystemExit(f'{label}: expected exactly 1 match, found {count}')
     return text.replace(old, new, 1)
 
-# UI only: do not modify removeBackground/runPrecisionRetry source structures;
-# several chained Vite resilience plugins intentionally anchor to them.
+# UI only. Handler source is deliberately left untouched because the build
+# chain has several plugins that structurally transform it.
 copy_replacements = [
     (
         "compareHint: '가운데 슬라이더를 좌우로 움직여 원본과 결과를 비교하세요.', methodSafe: '밝은색 보호 안전 처리', methodAi: 'AI 정밀 처리',",
@@ -46,49 +46,48 @@ source = replace_once(
     'Alpha v8 badge',
 )
 
-# Strengthen the existing FINAL build-time transparency guard instead of
-# competing with earlier source transforms. Its deterministic dark prepass
-# removes only border-connected dark pixels and already skips all alpha/RGB
-# cleanup for the final dark matte result.
+# The final build plugin already owns a deterministic dark-border flood-fill
+# prepass. Strengthen that final guard rather than rewriting source handlers.
 config = replace_once(
     config,
-    """          if (fastBackgroundIsDark) {\n            // A uniform dark border is unambiguous for flood-fill. Generic\n            // portrait heuristics must not reroute a sticker sheet to semantic\n            // AI, which can erase pale faces and cream artwork.\n            quality = { status: 'pass', score: 0 };\n          } else if (fastQuality.status === 'pass') {""",
-    """          if (fastBackgroundIsDark) {\n            // A uniform dark border is unambiguous for flood-fill. Generic\n            // portrait heuristics must not reroute a sticker sheet to semantic\n            // AI, which can erase pale faces, ivory fur, fine white wisps, or\n            // die-cut outlines. Mark this deterministic path explicitly so\n            // later cleanup and the UI cannot mistake it for semantic AI.\n            method = 'fast-dark';\n            quality = { status: 'pass', score: 0 };\n          } else if (fastQuality.status === 'pass') {""",
-    'final guard dark quality branch',
+    """            quality = { status: 'pass', score: 0 };\n          } else if (fastQuality.status === 'pass') {""",
+    """            method = 'fast-dark';\n            quality = { status: 'pass', score: 0 };\n          } else if (fastQuality.status === 'pass') {""",
+    'dark quality method marker',
+)
+
+config = replace_once(
+    config,
+    """            console.warn('Fast dark-background quality inspection failed; preserving deterministic flood-fill result:', fastQualityError);\n            quality = { status: 'pass', score: 0 };""",
+    """            console.warn('Fast dark-background quality inspection failed; preserving deterministic flood-fill result:', fastQualityError);\n            method = 'fast-dark';\n            quality = { status: 'pass', score: 0 };""",
+    'dark catch method marker',
 )
 
 config = replace_once(
     config,
     "const fastDarkMatteIsFinal = method === 'fast' && fastBackgroundIsDark;",
     "const fastDarkMatteIsFinal = (method === 'fast-dark' || method === 'fast') && fastBackgroundIsDark;",
-    'final guard dark final flag',
+    'dark final flag',
 )
 
-# If generic fast validation itself throws after a deterministic dark result,
-# keep the flood-fill and mark it as fast-dark instead of falling through.
-config = replace_once(
-    config,
-    """          if (fastBackgroundIsDark) {\n            console.warn('Fast dark-background quality inspection failed; preserving deterministic flood-fill result:', fastQualityError);\n            quality = { status: 'pass', score: 0 };""",
-    """          if (fastBackgroundIsDark) {\n            console.warn('Fast dark-background quality inspection failed; preserving deterministic flood-fill result:', fastQualityError);\n            method = 'fast-dark';\n            quality = { status: 'pass', score: 0 };""",
-    'final guard dark catch branch',
-)
-
-# Tighten the comment/contract around the deterministic prepass. The actual
-# pixel rule remains topology-first: only the dark component connected to the
-# image border can become transparent; enclosed black eyes/text remain opaque.
 config = replace_once(
     config,
     """  // Require a meaningful but not all-consuming border component. Only the\n  // already-visited component gets cleared; enclosed black details stay solid.\n  if (tail < total * 0.06 || tail > total * 0.92) return null;""",
-    """  // Require a meaningful but not all-consuming border component. Only the\n  // already-visited border-connected component gets cleared; enclosed black\n  // eyes, lettering, shadows, white/ivory faces, fine pale fur and antialiased\n  // sticker outlines keep their original RGB and alpha.\n  if (tail < total * 0.06 || tail > total * 0.92) return null;""",
-    'dark prepass preservation contract',
+    """  // Require a meaningful but not all-consuming border component. Only the\n  // already-visited border-connected component gets cleared; enclosed black\n  // eyes, lettering and shadows stay solid, while white/ivory faces, fine pale\n  // fur/wisps and antialiased sticker outlines keep original RGB and alpha.\n  if (tail < total * 0.06 || tail > total * 0.92) return null;""",
+    'dark preservation contract',
 )
 
-required_source = ["methodSafeDark", "resultMethod === 'fast-dark'", 'data-alpha-engine="v8"']
-required_config = ["method = 'fast-dark';", "method === 'fast-dark' || method === 'fast'", "fine pale fur"]
-for marker in required_source:
+# Update the comment in the injected quality branch so its intent is explicit.
+config = replace_once(
+    config,
+    "// AI, which can erase pale faces and cream artwork.",
+    "// AI, which can erase pale faces, ivory fur, fine wisps and white outlines.",
+    'dark branch comment',
+)
+
+for marker in ["methodSafeDark", "resultMethod === 'fast-dark'", 'data-alpha-engine="v8"']:
     if marker not in source:
         raise SystemExit(f'missing source marker: {marker}')
-for marker in required_config:
+for marker in ["method = 'fast-dark';", "method === 'fast-dark' || method === 'fast'", "fine pale"]:
     if marker not in config:
         raise SystemExit(f'missing config marker: {marker}')
 
