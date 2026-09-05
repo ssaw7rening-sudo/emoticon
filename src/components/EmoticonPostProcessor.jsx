@@ -90,6 +90,61 @@ function sharpenCanvas(canvas, amount = 0.08) {
   ctx.putImageData(imageData, 0, 0);
 }
 
+function stabilizeBrightForegroundAlpha(canvas) {
+  const ctx = canvas.getContext('2d', { willReadFrequently: true });
+  if (!ctx) return;
+  const { width, height } = canvas;
+  if (!width || !height) return;
+
+  const imageData = ctx.getImageData(0, 0, width, height);
+  const data = imageData.data;
+  const source = new Uint8ClampedArray(data);
+  const alphaAt = (x, y) => source[(y * width + x) * 4 + 3];
+
+  for (let y = 0; y < height; y += 1) {
+    for (let x = 0; x < width; x += 1) {
+      const p = (y * width + x) * 4;
+      const alpha = source[p + 3];
+      if (alpha === 0 || alpha === 255) continue;
+
+      const r = source[p];
+      const g = source[p + 1];
+      const b = source[p + 2];
+      const luminance = r * 0.2126 + g * 0.7152 + b * 0.0722;
+      let opaqueNeighbors = 0;
+      let visibleNeighbors = 0;
+
+      for (let oy = -1; oy <= 1; oy += 1) {
+        for (let ox = -1; ox <= 1; ox += 1) {
+          if (ox === 0 && oy === 0) continue;
+          const nx = x + ox;
+          const ny = y + oy;
+          if (nx < 0 || ny < 0 || nx >= width || ny >= height) continue;
+          const neighborAlpha = alphaAt(nx, ny);
+          if (neighborAlpha >= 238) opaqueNeighbors += 1;
+          if (neighborAlpha >= 16) visibleNeighbors += 1;
+        }
+      }
+
+      // Bright sticker artwork must never become see-through because of
+      // resampling. This specifically protects white/ivory faces, pale fur,
+      // dandelion-like wisps, captions and white sticker outlines.
+      if (luminance >= 138 && alpha >= 3) {
+        data[p + 3] = 255;
+        continue;
+      }
+
+      // Interior foreground pixels of any colour are also restored when their
+      // local alpha topology shows that they belong to the solid subject.
+      if ((alpha >= 20 && opaqueNeighbors >= 2) || (alpha >= 48 && visibleNeighbors >= 5)) {
+        data[p + 3] = 255;
+      }
+    }
+  }
+
+  ctx.putImageData(imageData, 0, 0);
+}
+
 async function makeOutput(blob, transform = { zoom: 1, x: 0, y: 0 }, outputScale = 1) {
   const image = await loadBitmap(blob);
   const width = image.width || image.naturalWidth;
@@ -99,7 +154,7 @@ async function makeOutput(blob, transform = { zoom: 1, x: 0, y: 0 }, outputScale
   const canvas = document.createElement('canvas');
   canvas.width = size;
   canvas.height = size;
-  const ctx = canvas.getContext('2d', { willReadFrequently: scaleFactor > 1 });
+  const ctx = canvas.getContext('2d', { willReadFrequently: true });
   if (!ctx) throw new Error('Canvas unavailable');
 
   ctx.imageSmoothingEnabled = true;
@@ -116,6 +171,7 @@ async function makeOutput(blob, transform = { zoom: 1, x: 0, y: 0 }, outputScale
   image.close?.();
 
   if (scaleFactor > 1) sharpenCanvas(canvas, scaleFactor === 4 ? 0.11 : 0.075);
+  stabilizeBrightForegroundAlpha(canvas);
   return canvasToBlob(canvas);
 }
 

@@ -156,6 +156,45 @@ function finalTransparencyIntegrityGuard() {
         for (let y = cellTop; y < cellBottom; y += 2) if (alphaAt(x, y) > 8) seamInk += 1;
       }
       const needsReview = seamInk > Math.max(4, Math.round((cellBottom - cellTop) * 0.012));
+      // Final split-stage opacity repair. drawImage/cropping can retain or
+      // expose semi-transparent pale pixels from the sheet. Restore bright
+      // subject pixels and solid interior pixels before each individual PNG is
+      // exported, while leaving truly empty background pixels at alpha 0.
+      const splitImageData = outputCtx.getImageData(0, 0, output.width, output.height);
+      const splitData = splitImageData.data;
+      const splitSource = new Uint8ClampedArray(splitData);
+      const splitAlphaAt = (x, y) => splitSource[(y * output.width + x) * 4 + 3];
+      for (let sy = 0; sy < output.height; sy += 1) {
+        for (let sx = 0; sx < output.width; sx += 1) {
+          const sp = (sy * output.width + sx) * 4;
+          const sa = splitSource[sp + 3];
+          if (sa === 0 || sa === 255) continue;
+          const sr = splitSource[sp];
+          const sg = splitSource[sp + 1];
+          const sb = splitSource[sp + 2];
+          const sl = sr * 0.2126 + sg * 0.7152 + sb * 0.0722;
+          let solidAround = 0;
+          let visibleAround = 0;
+          for (let oy = -1; oy <= 1; oy += 1) {
+            for (let ox = -1; ox <= 1; ox += 1) {
+              if (ox === 0 && oy === 0) continue;
+              const nx = sx + ox;
+              const ny = sy + oy;
+              if (nx < 0 || ny < 0 || nx >= output.width || ny >= output.height) continue;
+              const na = splitAlphaAt(nx, ny);
+              if (na >= 238) solidAround += 1;
+              if (na >= 16) visibleAround += 1;
+            }
+          }
+          if (sl >= 138 && sa >= 3) {
+            splitData[sp + 3] = 255;
+          } else if ((sa >= 20 && solidAround >= 2) || (sa >= 48 && visibleAround >= 5)) {
+            splitData[sp + 3] = 255;
+          }
+        }
+      }
+      outputCtx.putImageData(splitImageData, 0, 0);
+
       const itemBlob = await canvasToPngBlob(output);
       items.push({
         index: items.length + 1,
