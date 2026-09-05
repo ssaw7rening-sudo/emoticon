@@ -18,17 +18,38 @@ jobs:
         with:
           node-version: 22
           cache: npm
-      - name: Fix one-time script template literal
+      - name: Stabilize one-time refactor script
         run: |
           python - <<'PY'
           from pathlib import Path
           p = Path('scripts/refactor-auto-image-routing.mjs')
           s = p.read_text()
-          old = "      setSplitError(`${t.splitFailed} [원인: ${e?.message || String(e)}]`);"
-          new = "      setSplitError(t.splitFailed + ' [원인: ' + (e?.message || String(e)) + ']');"
-          if old not in s:
-              raise SystemExit('template-literal fix anchor not found')
-          p.write_text(s.replace(old, new))
+
+          fixes = [
+              (
+                  "      setSplitError(`${t.splitFailed} [원인: ${e?.message || String(e)}]`);",
+                  "      setSplitError(t.splitFailed + ' [원인: ' + (e?.message || String(e)) + ']');"
+              ),
+              (
+                  "const precisionEnd = code.indexOf('  const downloadBlob = (blob, filename) => {', precisionStart);",
+                  "const precisionStartCurrent = code.indexOf('  const runPrecisionRetry = async () => {');\nconst precisionEnd = code.indexOf('  const downloadBlob = (blob, filename) => {', precisionStartCurrent);"
+              ),
+              (
+                  "code = code.slice(0, precisionStart) + newPrecision + code.slice(precisionEnd);",
+                  "code = code.slice(0, precisionStartCurrent) + newPrecision + code.slice(precisionEnd);"
+              ),
+              (
+                  "const effectStart = code.indexOf('  useEffect(() => {\\n    if (\\n      sheetDetection.status', autoRef);",
+                  "const autoRefCurrent = code.indexOf('  autoSplitCallbackRef.current = autoSplit;', autoStart);\nconst effectStart = code.indexOf('  useEffect(() => {\\n    if (\\n      sheetDetection.status', autoRefCurrent);"
+              ),
+          ]
+
+          for old, new in fixes:
+              if old not in s:
+                  raise SystemExit('refactor fix anchor not found: ' + old[:90])
+              s = s.replace(old, new)
+
+          p.write_text(s)
           PY
       - run: node scripts/refactor-auto-image-routing.mjs
       - run: npm ci
