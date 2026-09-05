@@ -1,4 +1,5 @@
 const TARGET = '/src/components/BackgroundRemoverLanding.jsx';
+const BACKGROUND_HOWTO_AD_SLOT = '5645247291';
 
 export function adsensePlacementPlugin() {
   return {
@@ -22,7 +23,7 @@ export function adsensePlacementPlugin() {
       }
 
       const placementMarker = '        <BackgroundRemover lang={lang} />';
-      const adBlock = `${placementMarker}\n\n        <AdSenseUnit\n          slot={import.meta.env.VITE_ADSENSE_BACKGROUND_HOWTO_SLOT || import.meta.env.VITE_ADSENSE_SLOT || ''}\n          className="mx-auto mt-8 max-w-3xl"\n        />`;
+      const adBlock = `${placementMarker}\n\n        <AdSenseUnit\n          slot={import.meta.env.VITE_ADSENSE_BACKGROUND_HOWTO_SLOT || import.meta.env.VITE_ADSENSE_SLOT || '${BACKGROUND_HOWTO_AD_SLOT}'}\n          className="mx-auto mt-8 max-w-3xl"\n        />`;
 
       if (!out.includes('data-adsense-placement="background-howto"') && !out.includes('<AdSenseUnit')) {
         if (!out.includes(placementMarker)) {
