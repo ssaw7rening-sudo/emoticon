@@ -1,0 +1,80 @@
+name: Fix Mobile PNG Save
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/fix-mobile-png-save.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch-build-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - name: Patch mobile-safe PNG decoder
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('src/components/EmoticonPostProcessor.jsx')
+          text = p.read_text(encoding='utf-8')
+          old = """async function loadBitmap(blob) {
+  if (typeof createImageBitmap === 'function') return createImageBitmap(blob);
+  const url = URL.createObjectURL(blob);
+  try {
+    return await new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => resolve(img);
+      img.onerror = reject;
+      img.src = url;
+    });
+  } finally {
+    URL.revokeObjectURL(url);
+  }
+}
+"""
+          new = """async function loadBitmap(blob) {
+  // Use the same HTMLImageElement decoder path as the on-screen preview.
+  // Android/WebView createImageBitmap() can mishandle premultiplied alpha for
+  // transparent PNG stickers, producing holes only after Save/ZIP export even
+  // though the preview is correct. Object-URL + <img> preserves the source alpha.
+  const url = URL.createObjectURL(blob);
+  try {
+    return await new Promise((resolve, reject) => {
+      const img = new Image();
+      img.decoding = 'sync';
+      img.onload = () => resolve(img);
+      img.onerror = () => reject(new Error('PNG image decode failed'));
+      img.src = url;
+    });
+  } finally {
+    // Revoke on the next task so Android has finished consuming the object URL.
+    window.setTimeout(() => URL.revokeObjectURL(url), 0);
+  }
+}
+"""
+          if old not in text:
+            raise SystemExit('loadBitmap anchor not found')
+          text = text.replace(old, new, 1)
+          p.write_text(text, encoding='utf-8')
+          PY
+      - name: Install dependencies
+        run: npm ci
+      - name: Production build
+        run: npm run build
+      - name: Commit verified fix and remove workflow
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/components/EmoticonPostProcessor.jsx
+          git rm .github/workflows/fix-mobile-png-save.yml
+          git commit -m "Fix Android PNG save alpha corruption"
+          git push origin HEAD:main
