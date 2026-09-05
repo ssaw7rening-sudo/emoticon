@@ -1,3 +1,4 @@
+# trigger: apply source-based zero-alpha restoration
 from pathlib import Path
 
 path = Path('vite.tailwind-motion-cleanup.config.js')
