@@ -62,80 +62,312 @@ function safeTransparentSourceRoute() {
   }
 }
 
-function strictDarkSourceSplit() {
-  return {
-    name: 'strict-dark-source-split-lock',
-    enforce: 'post',
-    transform(code, id) {
-      const normalizedId = id.replace(/\\/g, '/')
-      if (!normalizedId.endsWith('/src/components/BackgroundRemover.jsx')) return null
-      if (!code.includes('splitIntoFifteenSourceSafe')) {
-        throw new Error('[strict-dark-source] source-safe splitter is missing before strict lock')
-      }
+const MASK_GUIDED_SPLITTER = String.raw`
+async function splitIntoFifteenSourceSafe(input, sourceFile = null) {
+  const MASK_GUIDED_SOURCE_SAFE = 'MASK_GUIDED_SOURCE_SAFE';
+  void MASK_GUIDED_SOURCE_SAFE;
 
-      let transformed = code
-      let strictApplied = false
+  if (!sourceFile) return splitIntoFifteen(input);
 
-      transformed = transformed.replace(
-        /console\.warn\(\s*['\"]Direct source decode failed; using processed split:['\"]\s*,\s*error\s*\);\s*return\s+splitIntoFifteen\(input\);/,
-        "console.error('Direct source decode failed:', error); throw new Error('SOURCE_DIRECT_STRICT_DARK: original source decode failed');"
-      )
-
-      transformed = transformed.replace(
-        /if\s*\(\s*!width\s*\|\|\s*!height\s*\)\s*return\s+splitIntoFifteen\(input\);/,
-        "if (!width || !height) throw new Error('SOURCE_DIRECT_STRICT_DARK: original source has no pixels');"
-      )
-
-      transformed = transformed.replace(
-        /if\s*\(\s*removedRatio\s*<\s*0?\.08\s*\|\|\s*removedRatio\s*>\s*0?\.94\s*\)\s*return\s+splitIntoFifteen\(input\);/,
-        "if (removedRatio < 0.08 || removedRatio > 0.94) throw new Error('SOURCE_DIRECT_STRICT_DARK: unsafe background flood ratio');"
-      )
-
-      transformed = transformed.replace(
-        /if\s*\(\s*!border\.length\s*\|\|\s*dark\.length\s*\/\s*border\.length\s*<\s*0?\.58\s*\)\s*return\s+splitIntoFifteen\(input\);/,
-        () => {
-          strictApplied = true
-          return "const darkBorderRatio = border.length ? dark.length / border.length : 0; if (!border.length || darkBorderRatio < 0.58) return splitIntoFifteen(input); const SOURCE_DIRECT_STRICT_DARK = 'SOURCE_DIRECT_STRICT_DARK'; void SOURCE_DIRECT_STRICT_DARK;"
-        }
-      )
-
-      if (!strictApplied) {
-        throw new Error('[strict-dark-source] dark-border decision could not be locked')
-      }
-
-      return { code: transformed, map: null }
-    },
+  let processed;
+  let source;
+  try {
+    processed = await drawFileToCanvas(input);
+    source = await drawFileToCanvas(sourceFile);
+  } catch (error) {
+    console.warn('Mask-guided source decode failed; using processed split:', error);
+    return splitIntoFifteen(input);
   }
-}
 
-function preserveOriginalAlpha() {
+  const width = processed.canvas.width;
+  const height = processed.canvas.height;
+  if (!width || !height) return splitIntoFifteen(input);
+
+  let sourceCtx = source.ctx;
+  if (source.canvas.width !== width || source.canvas.height !== height) {
+    const scaled = document.createElement('canvas');
+    scaled.width = width;
+    scaled.height = height;
+    const scaledCtx = scaled.getContext('2d', { willReadFrequently: true });
+    if (!scaledCtx) return splitIntoFifteen(input);
+    scaledCtx.imageSmoothingEnabled = true;
+    scaledCtx.imageSmoothingQuality = 'high';
+    scaledCtx.drawImage(source.canvas, 0, 0, width, height);
+    sourceCtx = scaledCtx;
+  }
+
+  const resultData = processed.ctx.getImageData(0, 0, width, height);
+  const sourceData = sourceCtx.getImageData(0, 0, width, height);
+  const pixels = resultData.data;
+  const original = sourceData.data;
+  const total = width * height;
+  const visibleThreshold = 24;
+
+  const foreground = new Uint8Array(total);
+  for (let index = 0; index < total; index += 1) {
+    if (pixels[index * 4 + 3] >= visibleThreshold) foreground[index] = 1;
+  }
+
+  const sealRadius = Math.max(1, Math.min(5, Math.round(Math.min(width, height) / 420)));
+  let sealed = foreground;
+  for (let pass = 0; pass < sealRadius; pass += 1) {
+    const next = sealed.slice();
+    for (let y = 0; y < height; y += 1) {
+      const row = y * width;
+      for (let x = 0; x < width; x += 1) {
+        const index = row + x;
+        if (!sealed[index]) continue;
+        if (x > 0) next[index - 1] = 1;
+        if (x + 1 < width) next[index + 1] = 1;
+        if (y > 0) next[index - width] = 1;
+        if (y + 1 < height) next[index + width] = 1;
+      }
+    }
+    sealed = next;
+  }
+
+  const exterior = new Uint8Array(total);
+  const queue = new Int32Array(total);
+  let head = 0;
+  let tail = 0;
+  const enqueueExterior = (index) => {
+    if (index < 0 || index >= total || exterior[index] || sealed[index]) return;
+    exterior[index] = 1;
+    queue[tail++] = index;
+  };
+
+  for (let x = 0; x < width; x += 1) {
+    enqueueExterior(x);
+    enqueueExterior((height - 1) * width + x);
+  }
+  for (let y = 1; y < height - 1; y += 1) {
+    enqueueExterior(y * width);
+    enqueueExterior(y * width + width - 1);
+  }
+
+  while (head < tail) {
+    const index = queue[head++];
+    const x = index % width;
+    const y = Math.floor(index / width);
+    if (x > 0) enqueueExterior(index - 1);
+    if (x + 1 < width) enqueueExterior(index + 1);
+    if (y > 0) enqueueExterior(index - width);
+    if (y + 1 < height) enqueueExterior(index + width);
+  }
+
+  let bgR = 0;
+  let bgG = 0;
+  let bgB = 0;
+  let bgCount = 0;
+  const sampleStep = Math.max(1, Math.floor(Math.min(width, height) / 700));
+  for (let y = 0; y < height; y += sampleStep) {
+    for (let x = 0; x < width; x += sampleStep) {
+      const index = y * width + x;
+      const p = index * 4;
+      if (pixels[p + 3] >= 8 || original[p + 3] < 16) continue;
+      const r = original[p];
+      const g = original[p + 1];
+      const b = original[p + 2];
+      const luminance = r * 0.2126 + g * 0.7152 + b * 0.0722;
+      if (luminance > 150) continue;
+      bgR += r;
+      bgG += g;
+      bgB += b;
+      bgCount += 1;
+    }
+  }
+  if (bgCount) {
+    bgR /= bgCount;
+    bgG /= bgCount;
+    bgB /= bgCount;
+  }
+
+  const restore = new Uint8Array(total);
+  for (let index = 0; index < total; index += 1) {
+    const p = index * 4;
+    const resultAlpha = pixels[p + 3];
+    if (resultAlpha >= visibleThreshold || exterior[index]) continue;
+
+    const sourceAlpha = original[p + 3];
+    if (sourceAlpha < 24) continue;
+
+    const r = original[p];
+    const g = original[p + 1];
+    const b = original[p + 2];
+    const luminance = r * 0.2126 + g * 0.7152 + b * 0.0722;
+    const distanceFromBackdrop = bgCount
+      ? Math.sqrt((r - bgR) ** 2 + (g - bgG) ** 2 + (b - bgB) ** 2)
+      : luminance;
+
+    if (luminance >= 112 || distanceFromBackdrop >= 58) {
+      restore[index] = 1;
+    }
+  }
+
+  const restoreLabels = new Uint32Array(total);
+  const restoreQueue = new Int32Array(total);
+  let label = 0;
+  const keepRestoreLabel = new Set();
+  const minimumRestoreArea = Math.max(6, Math.round(total * 0.0000015));
+
+  for (let seed = 0; seed < total; seed += 1) {
+    if (!restore[seed] || restoreLabels[seed]) continue;
+    label += 1;
+    let rh = 0;
+    let rt = 0;
+    let area = 0;
+    restoreQueue[rt++] = seed;
+    restoreLabels[seed] = label;
+    while (rh < rt) {
+      const index = restoreQueue[rh++];
+      area += 1;
+      const x = index % width;
+      const y = Math.floor(index / width);
+      const visit = (next) => {
+        if (next < 0 || next >= total || !restore[next] || restoreLabels[next]) return;
+        restoreLabels[next] = label;
+        restoreQueue[rt++] = next;
+      };
+      if (x > 0) visit(index - 1);
+      if (x + 1 < width) visit(index + 1);
+      if (y > 0) visit(index - width);
+      if (y + 1 < height) visit(index + width);
+    }
+    if (area >= minimumRestoreArea) keepRestoreLabel.add(label);
+  }
+
+  let restoredPixels = 0;
+  for (let index = 0; index < total; index += 1) {
+    const p = index * 4;
+    if (restoreLabels[index] && keepRestoreLabel.has(restoreLabels[index])) {
+      pixels[p] = original[p];
+      pixels[p + 1] = original[p + 1];
+      pixels[p + 2] = original[p + 2];
+      pixels[p + 3] = Math.max(pixels[p + 3], original[p + 3]);
+      restoredPixels += 1;
+    }
+
+    if (pixels[p + 3] === 0) {
+      pixels[p] = 0;
+      pixels[p + 1] = 0;
+      pixels[p + 2] = 0;
+    }
+  }
+
+  processed.ctx.putImageData(resultData, 0, 0);
+
+  const rows = 3;
+  const columns = 5;
+  const cellW = width / columns;
+  const cellH = height / rows;
+  const items = [];
+
+  for (let row = 0; row < rows; row += 1) {
+    for (let column = 0; column < columns; column += 1) {
+      const left = Math.floor(column * cellW);
+      const top = Math.floor(row * cellH);
+      const right = Math.min(width, Math.ceil((column + 1) * cellW));
+      const bottom = Math.min(height, Math.ceil((row + 1) * cellH));
+
+      let minX = right;
+      let minY = bottom;
+      let maxX = left - 1;
+      let maxY = top - 1;
+
+      for (let y = top; y < bottom; y += 1) {
+        for (let x = left; x < right; x += 1) {
+          if (pixels[(y * width + x) * 4 + 3] <= 8) continue;
+          if (x < minX) minX = x;
+          if (x > maxX) maxX = x;
+          if (y < minY) minY = y;
+          if (y > maxY) maxY = y;
+        }
+      }
+
+      const hasContent = minX <= maxX && minY <= maxY;
+      const pad = Math.max(8, Math.round(Math.min(cellW, cellH) * 0.045));
+      const cropLeft = hasContent ? Math.max(left, minX - pad) : left;
+      const cropTop = hasContent ? Math.max(top, minY - pad) : top;
+      const cropRight = hasContent ? Math.min(right, maxX + 1 + pad) : right;
+      const cropBottom = hasContent ? Math.min(bottom, maxY + 1 + pad) : bottom;
+      const cropW = Math.max(1, cropRight - cropLeft);
+      const cropH = Math.max(1, cropBottom - cropTop);
+      const safety = Math.max(8, Math.round(Math.min(cropW, cropH) * 0.055));
+
+      const output = document.createElement('canvas');
+      output.width = cropW + safety * 2;
+      output.height = cropH + safety * 2;
+      const outCtx = output.getContext('2d', { willReadFrequently: true });
+      if (!outCtx) throw new Error('Canvas 2D is unavailable');
+
+      const outImage = outCtx.createImageData(output.width, output.height);
+      const out = outImage.data;
+      for (let y = 0; y < cropH; y += 1) {
+        for (let x = 0; x < cropW; x += 1) {
+          const sp = ((cropTop + y) * width + (cropLeft + x)) * 4;
+          const dp = ((y + safety) * output.width + (x + safety)) * 4;
+          const alpha = pixels[sp + 3];
+          if (alpha === 0) {
+            out[dp] = 0;
+            out[dp + 1] = 0;
+            out[dp + 2] = 0;
+            out[dp + 3] = 0;
+          } else {
+            out[dp] = pixels[sp];
+            out[dp + 1] = pixels[sp + 1];
+            out[dp + 2] = pixels[sp + 2];
+            out[dp + 3] = alpha;
+          }
+        }
+      }
+
+      outCtx.putImageData(outImage, 0, 0);
+      const blob = await canvasToPngBlob(output);
+      items.push({
+        index: items.length + 1,
+        blob,
+        width: output.width,
+        height: output.height,
+        pixelSafe: true,
+        pixelData: new Uint8ClampedArray(out),
+        pixelWidth: output.width,
+        pixelHeight: output.height,
+        splitEngine: 'MASK_GUIDED',
+        restoredPixels,
+        needsReview: false,
+        reviewReasons: []
+      });
+    }
+  }
+
+  if (items.length !== 15) throw new Error('Could not create 15 sticker outputs');
+  return items;
+}
+`;
+
+function maskGuidedSourceSplitter() {
   return {
-    name: 'source-safe-preserve-original-alpha',
+    name: 'mask-guided-source-safe-splitter',
     enforce: 'post',
     transform(code, id) {
       const normalizedId = id.replace(/\\/g, '/')
       if (!normalizedId.endsWith('/src/components/BackgroundRemover.jsx')) return null
       if (!code.includes('splitIntoFifteenSourceSafe')) return null
 
-      let applied = false
-      const transformed = code.replace(
-        /for\s*\(let\s+index\s*=\s*0;\s*index\s*<\s*total;\s*index\s*\+=\s*1\)\s*\{\s*pixels\[index\s*\*\s*4\s*\+\s*3\]\s*=\s*visited\[index\]\s*\?\s*0\s*:\s*255;\s*\}/,
-        () => {
-          applied = true
-          return `const SOURCE_ALPHA_PRESERVE = 'SOURCE_ALPHA_PRESERVE';\n  void SOURCE_ALPHA_PRESERVE;\n  for (let index = 0; index < total; index += 1) {\n    const alphaOffset = index * 4 + 3;\n    const originalAlpha = pixels[alphaOffset];\n    pixels[alphaOffset] = visited[index] ? 0 : originalAlpha;\n  }`
-        }
-      )
-
-      if (!applied) {
-        throw new Error('[source-alpha-preserve] source-safe alpha loop could not be replaced')
+      const pattern = /async function splitIntoFifteenSourceSafe\(input,\s*sourceFile\s*=\s*null\)\s*\{[\s\S]*?\n\}\n\nasync function hasRealTransparency/
+      if (!pattern.test(code)) {
+        throw new Error('[mask-guided-source-safe] splitter function could not be located')
       }
 
-      return { code: transformed, map: null }
+      return {
+        code: code.replace(pattern, MASK_GUIDED_SPLITTER + '\n\nasync function hasRealTransparency'),
+        map: null,
+      }
     },
   }
 }
 
 export default defineConfig({
   ...baseConfig,
-  plugins: [...plugins, safeTransparentSourceRoute(), strictDarkSourceSplit(), preserveOriginalAlpha()],
+  plugins: [...plugins, safeTransparentSourceRoute(), maskGuidedSourceSplitter()],
 })
