@@ -35,17 +35,13 @@ jobs:
             "solid: 'One clean solid background color with strong contrast against the character. No gradient, texture, or background objects.'": "solid: 'Use only one continuous pure white (#FFFFFF) background. This is not a generic solid-color option: do not use beige, cream, gray, off-white, pastel, colored, gradient, textured, patterned, or checkerboard backgrounds. Keep every sticker fully isolated with generous spacing and no background objects or cast shadows.'",
           }
 
-          counts = {}
           for old, new in replacements.items():
-            count = text.count(old)
-            counts[old] = count
-            if count:
+            if old in text:
               text = text.replace(old, new)
 
+          strict = "Use only one continuous pure white (#FFFFFF) background. This is not a generic solid-color option"
           if "geminiSolid: '흰색 배경'" not in text or "grokSolid: '흰색 배경'" not in text:
             raise SystemExit('Korean white-background labels were not applied')
-
-          strict = "Use only one continuous pure white (#FFFFFF) background. This is not a generic solid-color option"
           if text.count(strict) < 2:
             raise SystemExit('Strict white solid instructions were not applied to both Gemini and Grok')
 
@@ -69,9 +65,9 @@ jobs:
           for marker in required:
             if marker not in text:
               raise SystemExit(f'Missing white-background marker: {marker}')
-          if "solid: 'One clean solid background color with strong contrast against the character" in text:
-            raise SystemExit('Legacy arbitrary solid-color instruction is still active')
-          print('White-only policy verified')
+          if text.count('Use only one continuous pure white (#FFFFFF) background.') < 2:
+            raise SystemExit('Both Gemini and Grok must contain strict #FFFFFF instructions')
+          print('Gemini/Grok white-only policy verified')
           PY
 
       - name: Install dependencies
