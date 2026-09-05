@@ -858,10 +858,10 @@ const I18N = {
     grokNoText: '글자 없이',
     grokIncludeText: '문구 포함',
     grokBackgroundMode: 'Grok 배경',
-    grokTransparent: '투명 PNG(배경 제거)',
+    grokTransparent: '누끼용 흰 배경',
     grokSolid: '단색 배경',
     grokChroma: '크로마키',
-    grokWorkflowTip: 'Grok 팁: Imagine Image 2.0은 배경 제거 후 투명 배경 내보내기를 지원합니다. 투명 PNG가 필요하면 [투명 PNG(배경 제거)] 모드를 사용하세요. 글자 정확도가 중요하면 [글자 없이]도 권장합니다.',
+    grokWorkflowTip: 'Grok 팁: 이모티콘 시트는 [누끼용 흰 배경]을 권장합니다. 앱이 순백색 배경 시트를 자동 감지해 5×3으로 분할하고 각 셀의 외곽 흰 배경만 투명하게 처리합니다.',
     grokRepairTitle: 'Grok에서 다시 수정하기',
     emptyPhraseError: '비어 있는 문구가 있습니다. 모든 문구를 입력해 주세요.',
     duplicatePhraseError: '중복된 문구가 있습니다. 서로 다른 문구로 수정해 주세요.',
@@ -962,10 +962,10 @@ const I18N = {
     grokNoText: 'No text',
     grokIncludeText: 'Include text',
     grokBackgroundMode: 'Grok background',
-    grokTransparent: 'Transparent PNG (BG removal)',
+    grokTransparent: 'White BG for removal',
     grokSolid: 'Solid color',
     grokChroma: 'Chroma key',
-    grokWorkflowTip: 'Grok tip: Imagine Image 2.0 supports background removal and transparent export. Use [Transparent PNG (BG removal)] when you need alpha transparency. For exact lettering, [No text] is still safer.',
+    grokWorkflowTip: 'Grok tip: [White BG for removal] is recommended for sticker sheets. The app automatically detects the white 5×3 sheet, splits it, and removes only the outer white background of each cell.',
     grokRepairTitle: 'Edit Again in Grok',
     emptyPhraseError: 'One or more phrases are empty. Please fill in every phrase.',
     duplicatePhraseError: 'Duplicate phrases found. Please use a different phrase for each sticker.',
@@ -1068,10 +1068,10 @@ const I18N = {
     grokNoText: '文字なし',
     grokIncludeText: '文字あり',
     grokBackgroundMode: 'Grok背景',
-    grokTransparent: '透過PNG（背景削除）',
+    grokTransparent: '切り抜き用白背景',
     grokSolid: '単色背景',
     grokChroma: 'クロマキー',
-    grokWorkflowTip: 'Grokヒント: Imagine Image 2.0は背景削除と透過書き出しに対応しています。透過PNGが必要な場合は[透過PNG（背景削除）]を使用してください。文字精度を優先する場合は[文字なし]も推奨します。',
+    grokWorkflowTip: 'Grokヒント: スタンプシートは[切り抜き用白背景]を推奨します。アプリが白い5×3シートを自動判定し、各セルの外側の白背景だけを透過処理します。',
     grokRepairTitle: 'Grokで再修正',
     emptyPhraseError: '空のフレーズがあります。すべてのフレーズを入力してください。',
     duplicatePhraseError: '重複したフレーズがあります。それぞれ異なるフレーズを入力してください。',
@@ -1174,10 +1174,10 @@ const I18N = {
     grokNoText: '纯图无字',
     grokIncludeText: '包含文字',
     grokBackgroundMode: 'Grok背景',
-    grokTransparent: '透明PNG（移除背景）',
+    grokTransparent: '抠图用白背景',
     grokSolid: '单色背景',
     grokChroma: '抠图绿幕',
-    grokWorkflowTip: 'Grok提示：Imagine Image 2.0支持背景移除并导出透明背景。需要透明PNG时请使用[透明PNG（移除背景）]；文字准确性优先时建议使用[纯图无字]。',
+    grokWorkflowTip: 'Grok提示：表情贴纸建议使用[抠图用白背景]。应用会自动识别白色5×3图表，分割后仅移除每格外部相连的白色背景。',
     grokRepairTitle: '在Grok中再次修改',
     emptyPhraseError: '存在空白短语，请填写所有短语。',
     duplicatePhraseError: '存在重复短语，请修改为不同的短语。',
@@ -4876,6 +4876,7 @@ const shuffleEmoticons = () => {
     setGeminiTextMode('visual');
     setGeminiBackgroundMode('transparent');
     setGrokTextMode('visual');
+    setGrokBackgroundMode('transparent');
     setSelectedTopTheme(null);
     setActiveGoldenComboId(null);
     setPreviousComboBackup(null);
@@ -6435,7 +6436,7 @@ ${textExclusionEn}${styleDirectives.negativeExtra ? ` ${styleDirectives.negative
 
   const getGrokBackgroundInstruction = () => {
     const instructions = {
-      transparent: 'Create each sticker as a fully isolated subject with a clean, well-separated silhouette. After generation, use Grok Imagine Image 2.0 Background Removal to remove the background and export a PNG with genuine alpha transparency. Do not draw checkerboard tiles or fake transparency. If background removal cannot be applied automatically, use a pure solid white (#FFFFFF) background as the fallback for easy removal.',
+      transparent: 'Use one continuous pure solid white (#FFFFFF) background prepared for later background removal. Keep every sticker fully isolated with a clean continuous silhouette and generous spacing. Do not draw checkerboard transparency, grid lines, shadows, haze, textures, or background objects. White or ivory parts inside the character are allowed and must remain clearly enclosed by their artwork outlines.',
       solid: 'One clean solid background color with strong contrast against the character. No gradient, texture, or background objects.',
       chroma: 'Solid bright green #00FF00 chroma-key background for easy background removal. No green spill on the character outline.',
     };
