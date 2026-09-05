@@ -12,9 +12,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - name: Show split call sites
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - name: Show split and rendered opacity clues
         run: |
-          echo '=== splitIntoFifteen call sites ==='
+          echo '=== source splitIntoFifteen call sites ==='
           grep -n -C 8 "splitIntoFifteen" src/components/BackgroundRemover.jsx || true
-          echo '=== autoSplit callback references ==='
-          grep -n -C 12 "autoSplitCallbackRef\|automaticSplitBlobRef\|const autoSplit" src/components/BackgroundRemover.jsx || true
+          echo '=== source image opacity / blend clues ==='
+          grep -RniE "img[^\n]*opacity|opacity[^\n]*img|mix-blend|mixBlend|globalAlpha" src vite*.js || true
+          echo '=== built CSS img/opacity clues ==='
+          grep -RnoE "img\{[^}]*\}|opacity:[^;}]+|mix-blend-mode:[^;}]+" dist/assets/*.css | head -n 300 || true
+          echo '=== build stamp ==='
+          grep -Rno "Split v14 · Direct Lock\|Split v14" dist/assets/*.js | head -n 20 || true
