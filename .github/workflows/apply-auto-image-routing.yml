@@ -1,0 +1,31 @@
+name: Apply Auto Image Routing
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/apply-auto-image-routing.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  refactor:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - run: node scripts/refactor-auto-image-routing.mjs
+      - run: npm ci
+      - run: npm run build
+      - name: Commit refactored source and remove one-time tools
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/components/BackgroundRemover.jsx
+          git rm scripts/refactor-auto-image-routing.mjs .github/workflows/apply-auto-image-routing.yml
+          git commit -m "Refactor image handling into automatic sheet and photo routes"
+          git push
