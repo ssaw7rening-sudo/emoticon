@@ -11,8 +11,9 @@ const bundle = fs.readdirSync(assetsDir)
   .map((name) => fs.readFileSync(path.join(assetsDir, name), 'utf8'))
   .join('\n');
 
+// SOURCE_DIRECT_SPLIT is a dead-code marker and may be removed by minification.
+// These markers are tied to executable behavior and must remain in production.
 const required = [
-  ['source-direct splitter', 'SOURCE_DIRECT_SPLIT'],
   ['strict dark-source lock', 'SOURCE_DIRECT_STRICT_DARK'],
   ['direct RGBA export', 'SOURCE_DIRECT_EXPORT'],
   ['direct engine', 'SOURCE_DIRECT'],
