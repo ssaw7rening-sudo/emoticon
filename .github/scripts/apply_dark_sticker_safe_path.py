@@ -158,22 +158,11 @@ new_fast_block = """      let method = 'fast';
 """
 replace_once(old_fast_block, new_fast_block, 'main safe-path block')
 
-# 4) On the dark safe path, do not run enclosed-backdrop cleanup. The border
-# flood fill is the authoritative alpha operation; only opacity restoration may
-# follow it.
-old_cleanup = """      const sheetBeforeCleanup = await detectEmoticonSheet(blob);
-      if (sheetBeforeCleanup.status === 'not-sheet') {
-        blob = await removeEnclosedBackdropPockets(blob, file, true);
-      }
-"""
-new_cleanup = """      const sheetBeforeCleanup = await detectEmoticonSheet(blob);
-      if (!darkStickerSafePath && sheetBeforeCleanup.status === 'not-sheet') {
-        blob = await removeEnclosedBackdropPockets(blob, file, true);
-      }
-"""
-replace_once(old_cleanup, new_cleanup, 'safe cleanup guard')
+# Keep the existing sheet cleanup source block unchanged. The build-time resume
+# recovery plugin anchors to that exact block; dark sticker sheets remain safe
+# because their detected sheet/ambiguous status already prevents the cleanup.
 
-# 5) Precision retry must also respect the dark sticker lock. If an older AI
+# 4) Precision retry must also respect the dark sticker lock. If an older AI
 # result is on screen or sheet detection changed, re-run the safe flood-fill
 # path rather than BiRefNet.
 old_precision_start = """    setPrecisionMessage('');
@@ -204,7 +193,7 @@ new_precision_start = """    setPrecisionMessage('');
 """
 replace_once(old_precision_start, new_precision_start, 'precision safe reroute')
 
-# 6) Surface the active method clearly and bump alpha engine marker.
+# 5) Surface the active method clearly and bump alpha engine marker.
 old_badge = """              data-alpha-engine=\"v7\"
               className=\"mt-3 rounded-xl border border-[#DCE8D5] bg-[#F4F8F1] px-3 py-2 text-center text-[11px] font-extrabold text-[#587052] sm:text-xs\"
             >
@@ -217,12 +206,10 @@ new_badge = """              data-alpha-engine=\"v8\"
 """
 replace_once(old_badge, new_badge, 'alpha v8 badge')
 
-# Static sanity checks.
 required = [
     "function isLikelyDarkStickerSheet",
     "let darkStickerSafePath = false;",
     "method = 'fast-dark';",
-    "if (!darkStickerSafePath && sheetBeforeCleanup.status === 'not-sheet')",
     "setPrecisionMessage(t.precisionDarkLocked);",
     'data-alpha-engine="v8"',
 ]
