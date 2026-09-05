@@ -70,8 +70,6 @@ function alphaVerifiedV17() {
 `
         transformed = transformed.slice(0, componentIndex) + helper + transformed.slice(componentIndex)
 
-        // Earlier Vite layers can reformat this statement. Replace the entire
-        // withUrls -> setSplitItems block instead of relying on one exact line.
         const splitUrlRegex = /const withUrls = [\s\S]*?;\n\s*setSplitItems\(withUrls\);/
         if (!splitUrlRegex.test(transformed)) throw new Error('[alpha-v17] split URL block not found')
         const newWithUrls = `const inspectedItems = [];
@@ -82,13 +80,6 @@ function alphaVerifiedV17() {
       const withUrls = inspectedItems.map((item) => ({ ...item, url: URL.createObjectURL(item.blob) }));
       setSplitItems(withUrls);`
         transformed = transformed.replace(splitUrlRegex, newWithUrls)
-
-        // Replace whichever engineLabel previous build layers produced with a
-        // runtime label sourced from the actual first split PNG.
-        const engineRegex = /engineLabel=\{[^\n]*\}/
-        if (!engineRegex.test(transformed)) throw new Error('[alpha-v17] engineLabel prop not found')
-        const runtimeLabel = "engineLabel={(resultMethod === 'fast-dark' ? t.methodSafeDark : resultMethod === 'fast' ? t.methodSafe : t.methodAi) + ' · ' + (splitItems[0]?.splitEngine || 'NA') + ' · H' + (splitItems[0]?.alphaDiag?.holes ?? '?') + ' · S' + (splitItems[0]?.alphaDiag?.semi ?? '?') + ' · Split v17 · Alpha Verified'}"
-        transformed = transformed.replace(engineRegex, runtimeLabel)
         transformed = transformed.replace(/Split v16 · Direct First/g, 'Split v17 · Alpha Verified')
         return { code: transformed, map: null }
       }
@@ -117,9 +108,12 @@ function alphaVerifiedV17() {
         if (!transformed.includes(returnAnchor)) throw new Error('[alpha-v17] makeOutput return anchor not found')
         transformed = transformed.replace(returnAnchor, returnReplacement)
 
-        // Prevent the browser's CSS downscaling from visually blending opaque
-        // artwork with the checkerboard underneath on small mobile cards.
         transformed = transformed.replace(/filter: 'none'/g, "filter: 'none', imageRendering: 'pixelated'")
+
+        const labelAnchor = '{engineLabel}'
+        const labelReplacement = `{engineLabel} · {processed[0]?.splitEngine || 'NA'} · H{processed[0]?.alphaDiag?.holes ?? '?'} · S{processed[0]?.alphaDiag?.semi ?? '?'} · Split v17`
+        if (!transformed.includes(labelAnchor)) throw new Error('[alpha-v17] engine label child not found')
+        transformed = transformed.replace(labelAnchor, labelReplacement)
         return { code: transformed, map: null }
       }
 
