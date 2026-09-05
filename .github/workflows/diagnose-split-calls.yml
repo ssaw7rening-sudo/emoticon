@@ -1,0 +1,20 @@
+name: Diagnose Split Calls
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Show split call sites
+        run: |
+          echo '=== splitIntoFifteen call sites ==='
+          grep -n -C 8 "splitIntoFifteen" src/components/BackgroundRemover.jsx || true
+          echo '=== autoSplit callback references ==='
+          grep -n -C 12 "autoSplitCallbackRef\|automaticSplitBlobRef\|const autoSplit" src/components/BackgroundRemover.jsx || true
