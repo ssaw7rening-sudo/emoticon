@@ -13,8 +13,9 @@ const bundle = fs.readdirSync(assetsDir)
 
 const required = [
   ['transparent source-safe route', 'transparent-source-safe'],
-  ['mask-guided engine', 'MASK_GUIDED'],
+  ['final foreground-mask engine', 'FOREGROUND_MASK'],
   ['direct RGBA export', 'SOURCE_DIRECT_EXPORT'],
+  ['soft alpha export', 'SOFT_ALPHA_EXPORT'],
   ['pixel payload', 'pixelData'],
   ['pixel-safe flag', 'pixelSafe'],
 ];
@@ -22,12 +23,12 @@ const required = [
 let failed = false;
 for (const [label, marker] of required) {
   if (!bundle.includes(marker)) {
-    console.error('[source-safe-check] missing ' + label + ': ' + marker);
+    console.error('[foreground-mask-check] missing ' + label + ': ' + marker);
     failed = true;
   } else {
-    console.log('[source-safe-check] ok: ' + label);
+    console.log('[foreground-mask-check] ok: ' + label);
   }
 }
 
 if (failed) process.exit(1);
-console.log('[source-safe-check] mask-guided hole recovery and original edge alpha are present in production');
+console.log('[foreground-mask-check] exterior-only background removal, foreground recovery, and soft alpha export are present in production');
