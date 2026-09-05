@@ -1,17 +1,19 @@
 from pathlib import Path
 
-path = Path('src/components/BackgroundRemover.jsx')
-text = path.read_text(encoding='utf-8')
+source_path = Path('src/components/BackgroundRemover.jsx')
+config_path = Path('vite.tailwind-motion-cleanup.config.js')
+source = source_path.read_text(encoding='utf-8')
+config = config_path.read_text(encoding='utf-8')
 
 
-def replace_once(old, new, label):
-    global text
+def replace_once(text, old, new, label):
     count = text.count(old)
     if count != 1:
         raise SystemExit(f'{label}: expected exactly 1 match, found {count}')
-    text = text.replace(old, new, 1)
+    return text.replace(old, new, 1)
 
-# 1) Localized UI copy for the locked dark-background sticker path.
+# UI only: do not modify removeBackground/runPrecisionRetry source structures;
+# several chained Vite resilience plugins intentionally anchor to them.
 copy_replacements = [
     (
         "compareHint: '가운데 슬라이더를 좌우로 움직여 원본과 결과를 비교하세요.', methodSafe: '밝은색 보호 안전 처리', methodAi: 'AI 정밀 처리',",
@@ -35,157 +37,61 @@ copy_replacements = [
     ),
 ]
 for old, new, label in copy_replacements:
-    replace_once(old, new, label)
+    source = replace_once(source, old, new, label)
 
-# 2) Dedicated classifier: dark backdrop + detected 15-sticker layout.
-old_helper = """function isDarkBackgroundColor(color) {
-  if (!Array.isArray(color) || color.length < 3) return false;
-  const [r, g, b] = color;
-  const luminance = r * 0.2126 + g * 0.7152 + b * 0.0722;
-  return luminance <= 96 && Math.max(r, g, b) <= 128;
-}
-"""
-new_helper = old_helper + """
-function isLikelyDarkStickerSheet(backgroundColor, detection) {
-  if (!isDarkBackgroundColor(backgroundColor)) return false;
-  return detection?.status === 'sheet' || detection?.status === 'ambiguous';
-}
-"""
-replace_once(old_helper, new_helper, 'dark sticker helper')
+source = replace_once(
+    source,
+    '''              data-alpha-engine="v7"\n              className="mt-3 rounded-xl border border-[#DCE8D5] bg-[#F4F8F1] px-3 py-2 text-center text-[11px] font-extrabold text-[#587052] sm:text-xs"\n            >\n              ✓ {resultMethod === 'fast' ? t.methodSafe : t.methodAi} · Alpha v7\n''',
+    '''              data-alpha-engine="v8"\n              className="mt-3 rounded-xl border border-[#DCE8D5] bg-[#F4F8F1] px-3 py-2 text-center text-[11px] font-extrabold text-[#587052] sm:text-xs"\n            >\n              ✓ {resultMethod === 'fast-dark' ? t.methodSafeDark : resultMethod === 'fast' ? t.methodSafe : t.methodAi} · Alpha v8\n''',
+    'Alpha v8 badge',
+)
 
-# 3) Lock dark sticker sheets to border-connected flood-fill result before the
-# semantic AI models can weaken pale foreground.
-old_fast_block = """      let method = 'fast';
-      const fastResult = await tryFastUniformBackgroundRemoval(file);
-      let blob = fastResult?.blob || null;
-      const fastBackgroundIsDark = isDarkBackgroundColor(fastResult?.background);
-      let quality = { status: 'pass', score: 0 };
+# Strengthen the existing FINAL build-time transparency guard instead of
+# competing with earlier source transforms. Its deterministic dark prepass
+# removes only border-connected dark pixels and already skips all alpha/RGB
+# cleanup for the final dark matte result.
+config = replace_once(
+    config,
+    """          if (fastBackgroundIsDark) {\n            // A uniform dark border is unambiguous for flood-fill. Generic\n            // portrait heuristics must not reroute a sticker sheet to semantic\n            // AI, which can erase pale faces and cream artwork.\n            quality = { status: 'pass', score: 0 };\n          } else if (fastQuality.status === 'pass') {""",
+    """          if (fastBackgroundIsDark) {\n            // A uniform dark border is unambiguous for flood-fill. Generic\n            // portrait heuristics must not reroute a sticker sheet to semantic\n            // AI, which can erase pale faces, ivory fur, fine white wisps, or\n            // die-cut outlines. Mark this deterministic path explicitly so\n            // later cleanup and the UI cannot mistake it for semantic AI.\n            method = 'fast-dark';\n            quality = { status: 'pass', score: 0 };\n          } else if (fastQuality.status === 'pass') {""",
+    'final guard dark quality branch',
+)
 
-      // The edge-color shortcut can occasionally mistake a complex indoor scene
-      // for a uniform backdrop. Validate the fast result before accepting it.
-      // Any warning/failure is discarded and routed through the AI models.
-      if (blob) {
-        try {
-          const fastQuality = await assessRemovalQuality(blob);
-          if (fastQuality.status === 'pass') {
-            const fastSheetDetection = await detectEmoticonSheet(blob);
-            if (
-              !fastBackgroundIsDark
-              && (fastSheetDetection.status === 'sheet' || fastSheetDetection.status === 'ambiguous')
-            ) {
-              // Uniform-colour flood fill cannot reliably distinguish a white
-              // character face from a white sheet background when their
-              // outlines contain tiny openings. Route sticker sheets through
-              // the semantic model instead of risking permanent alpha loss.
-              // A dark backdrop is safe to flood-fill and must stay on this
-              // path: semantic models can mistake pale faces for background.
-              blob = null;
-              quality = { status: 'idle', score: 0 };
-            } else {
-              quality = fastQuality;
-            }
-          } else {
-            console.warn('Fast background removal rejected by quality gate:', fastQuality);
-            blob = null;
-            quality = { status: 'idle', score: 0 };
-          }
-        } catch (fastQualityError) {
-          console.warn('Fast background validation failed; falling back to AI:', fastQualityError);
-          blob = null;
-          quality = { status: 'idle', score: 0 };
-        }
-      }
-"""
-new_fast_block = """      let method = 'fast';
-      const fastResult = await tryFastUniformBackgroundRemoval(file);
-      let blob = fastResult?.blob || null;
-      const fastBackgroundIsDark = isDarkBackgroundColor(fastResult?.background);
-      let darkStickerSafePath = false;
-      let quality = { status: 'pass', score: 0 };
+config = replace_once(
+    config,
+    "const fastDarkMatteIsFinal = method === 'fast' && fastBackgroundIsDark;",
+    "const fastDarkMatteIsFinal = (method === 'fast-dark' || method === 'fast') && fastBackgroundIsDark;",
+    'final guard dark final flag',
+)
 
-      // Uniform black / near-black sticker sheets are safest when only the
-      // border-connected backdrop is flood-filled away. Semantic matting can
-      // misclassify white faces, ivory fur, dandelion-like wisps and white
-      // sticker outlines as background, so detect and lock this path first.
-      if (blob) {
-        try {
-          const fastSheetDetection = await detectEmoticonSheet(blob);
-          darkStickerSafePath = isLikelyDarkStickerSheet(fastResult?.background, fastSheetDetection);
+# If generic fast validation itself throws after a deterministic dark result,
+# keep the flood-fill and mark it as fast-dark instead of falling through.
+config = replace_once(
+    config,
+    """          if (fastBackgroundIsDark) {\n            console.warn('Fast dark-background quality inspection failed; preserving deterministic flood-fill result:', fastQualityError);\n            quality = { status: 'pass', score: 0 };""",
+    """          if (fastBackgroundIsDark) {\n            console.warn('Fast dark-background quality inspection failed; preserving deterministic flood-fill result:', fastQualityError);\n            method = 'fast-dark';\n            quality = { status: 'pass', score: 0 };""",
+    'final guard dark catch branch',
+)
 
-          if (darkStickerSafePath) {
-            method = 'fast-dark';
-            // tryFastUniformBackgroundRemoval already requires a meaningful
-            // border-connected removal area. For a detected dark sticker sheet,
-            // keep that topology-safe result even if the generic photo quality
-            // heuristic is conservative; never route it through semantic AI.
-            quality = { status: 'pass', score: 0 };
-          } else {
-            const fastQuality = await assessRemovalQuality(blob);
-            if (fastQuality.status === 'pass') {
-              if (
-                !fastBackgroundIsDark
-                && (fastSheetDetection.status === 'sheet' || fastSheetDetection.status === 'ambiguous')
-              ) {
-                // On a light sheet background, flood fill can leak through tiny
-                // outline openings into a white face. Let semantic removal handle
-                // those cases, then restore light foreground in post-processing.
-                blob = null;
-                quality = { status: 'idle', score: 0 };
-              } else {
-                quality = fastQuality;
-              }
-            } else {
-              console.warn('Fast background removal rejected by quality gate:', fastQuality);
-              blob = null;
-              quality = { status: 'idle', score: 0 };
-            }
-          }
-        } catch (fastQualityError) {
-          if (fastBackgroundIsDark) {
-            // A validated uniform dark edge is still safer than semantic AI for
-            // pale sticker artwork. Keep the flood-fill result if available.
-            console.warn('Dark-background validation was inconclusive; keeping safe flood-fill result:', fastQualityError);
-            darkStickerSafePath = true;
-            method = 'fast-dark';
-            quality = { status: 'pass', score: 0 };
-          } else {
-            console.warn('Fast background validation failed; falling back to AI:', fastQualityError);
-            blob = null;
-            quality = { status: 'idle', score: 0 };
-          }
-        }
-      }
-"""
-replace_once(old_fast_block, new_fast_block, 'main safe-path block')
+# Tighten the comment/contract around the deterministic prepass. The actual
+# pixel rule remains topology-first: only the dark component connected to the
+# image border can become transparent; enclosed black eyes/text remain opaque.
+config = replace_once(
+    config,
+    """  // Require a meaningful but not all-consuming border component. Only the\n  // already-visited component gets cleared; enclosed black details stay solid.\n  if (tail < total * 0.06 || tail > total * 0.92) return null;""",
+    """  // Require a meaningful but not all-consuming border component. Only the\n  // already-visited border-connected component gets cleared; enclosed black\n  // eyes, lettering, shadows, white/ivory faces, fine pale fur and antialiased\n  // sticker outlines keep their original RGB and alpha.\n  if (tail < total * 0.06 || tail > total * 0.92) return null;""",
+    'dark prepass preservation contract',
+)
 
-# Keep the existing sheet cleanup and precision-retry source blocks unchanged.
-# Several build-time resilience/precision plugins anchor to those exact blocks.
-# Dark sticker sheets use resultMethod='fast-dark', while the precision retry UI
-# is rendered only for AI/MODNet results, so semantic reprocessing cannot be
-# triggered for the locked dark-sheet path.
+required_source = ["methodSafeDark", "resultMethod === 'fast-dark'", 'data-alpha-engine="v8"']
+required_config = ["method = 'fast-dark';", "method === 'fast-dark' || method === 'fast'", "fine pale fur"]
+for marker in required_source:
+    if marker not in source:
+        raise SystemExit(f'missing source marker: {marker}')
+for marker in required_config:
+    if marker not in config:
+        raise SystemExit(f'missing config marker: {marker}')
 
-# 4) Surface the active method clearly and bump alpha engine marker.
-old_badge = """              data-alpha-engine=\"v7\"
-              className=\"mt-3 rounded-xl border border-[#DCE8D5] bg-[#F4F8F1] px-3 py-2 text-center text-[11px] font-extrabold text-[#587052] sm:text-xs\"
-            >
-              ✓ {resultMethod === 'fast' ? t.methodSafe : t.methodAi} · Alpha v7
-"""
-new_badge = """              data-alpha-engine=\"v8\"
-              className=\"mt-3 rounded-xl border border-[#DCE8D5] bg-[#F4F8F1] px-3 py-2 text-center text-[11px] font-extrabold text-[#587052] sm:text-xs\"
-            >
-              ✓ {resultMethod === 'fast-dark' ? t.methodSafeDark : resultMethod === 'fast' ? t.methodSafe : t.methodAi} · Alpha v8
-"""
-replace_once(old_badge, new_badge, 'alpha v8 badge')
-
-required = [
-    "function isLikelyDarkStickerSheet",
-    "let darkStickerSafePath = false;",
-    "method = 'fast-dark';",
-    'data-alpha-engine="v8"',
-]
-for marker in required:
-    if marker not in text:
-        raise SystemExit(f'missing marker after patch: {marker}')
-
-path.write_text(text, encoding='utf-8')
-print('Applied dark-background sticker safe path and Alpha v8 UI.')
+source_path.write_text(source, encoding='utf-8')
+config_path.write_text(config, encoding='utf-8')
+print('Strengthened final dark-background transparency guard and Alpha v8 UI.')
