@@ -1,4 +1,4 @@
-# trigger: apply source-based zero-alpha restoration
+# trigger: apply source-based zero-alpha restoration v2
 from pathlib import Path
 
 path = Path('vite.tailwind-motion-cleanup.config.js')
@@ -22,10 +22,11 @@ if old_loop not in text:
     raise SystemExit('split repair loop anchor not found')
 text = text.replace(old_loop, new_loop, 1)
 
-call_anchor = "const items = await splitIntoFifteen(resultBlob);"
-if call_anchor not in text:
-    raise SystemExit('autoSplit invocation anchor not found')
-text = text.replace(call_anchor, "const items = await splitIntoFifteen(resultBlob, file);", 1)
+transform_anchor = """      transformed = transformed.slice(0, splitStart)\n        + alphaPreservingSplitter\n        + transformed.slice(splitEnd)\n\n      const removeStart = transformed.indexOf('const removeBackground = async')\n"""
+transform_insert = """      transformed = transformed.slice(0, splitStart)\n        + alphaPreservingSplitter\n        + transformed.slice(splitEnd)\n\n      const splitCallMarker = 'const items = await splitIntoFifteen(resultBlob);'\n      if (!transformed.includes(splitCallMarker)) {\n        throw new Error('[transparency-integrity] Auto-split invocation was not found')\n      }\n      transformed = transformed.replace(\n        splitCallMarker,\n        'const items = await splitIntoFifteen(resultBlob, file);'\n      )\n\n      const removeStart = transformed.indexOf('const removeBackground = async')\n"""
+if transform_anchor not in text:
+    raise SystemExit('split transform anchor not found')
+text = text.replace(transform_anchor, transform_insert, 1)
 
 path.write_text(text, encoding='utf-8')
 print('Applied original-source zero-alpha restoration to auto split.')
