@@ -3,8 +3,9 @@ import baseConfig from './vite.prompt-library-dev.config.js'
 import { phraseThemeExpansionV2 } from './vite.phrase-theme-plugin-v2.js'
 import { phraseThemeExpansionV3 } from './vite.phrase-theme-plugin-v3.js'
 import { photoReferencePromptStructure } from './vite.photo-reference-prompt-plugin.js'
+import { goldenComboRebuildV2 } from './vite.golden-combo-plugin-v2.js'
 
 export default defineConfig({
   ...baseConfig,
-  plugins: [photoReferencePromptStructure(), phraseThemeExpansionV2(), phraseThemeExpansionV3(), ...(baseConfig.plugins || [])],
+  plugins: [photoReferencePromptStructure(), phraseThemeExpansionV2(), phraseThemeExpansionV3(), goldenComboRebuildV2(), ...(baseConfig.plugins || [])],
 })
