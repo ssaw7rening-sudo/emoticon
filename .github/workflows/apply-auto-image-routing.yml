@@ -9,6 +9,9 @@ on:
 permissions:
   contents: write
 
+env:
+  AUTO_ROUTING_REFACTOR_RUN: '4'
+
 jobs:
   refactor:
     runs-on: ubuntu-latest
