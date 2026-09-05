@@ -1,0 +1,75 @@
+name: Apply White Sheet Policy
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/apply-white-sheet-policy.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  update-source:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - name: Update Gemini and Grok background policy in App source
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('src/App.jsx')
+          s = p.read_text()
+
+          replacements = {
+            "grokTransparent: '투명 PNG(배경 제거)'": "grokTransparent: '누끼용 흰 배경'",
+            "grokTransparent: 'Transparent PNG (BG removal)'": "grokTransparent: 'White BG for removal'",
+            "grokTransparent: '透過PNG（背景削除）'": "grokTransparent: '切り抜き用白背景'",
+            "grokTransparent: '透明PNG（移除背景）'": "grokTransparent: '抠图用白背景'",
+            "grokWorkflowTip: 'Grok 팁: Imagine Image 2.0은 배경 제거 후 투명 배경 내보내기를 지원합니다. 투명 PNG가 필요하면 [투명 PNG(배경 제거)] 모드를 사용하세요. 글자 정확도가 중요하면 [글자 없이]도 권장합니다.'": "grokWorkflowTip: 'Grok 팁: 이모티콘 시트는 [누끼용 흰 배경]을 권장합니다. 앱이 순백색 배경 시트를 자동 감지해 5×3으로 분할하고 각 셀의 외곽 흰 배경만 투명하게 처리합니다.'",
+            "grokWorkflowTip: 'Grok tip: Imagine Image 2.0 supports background removal and transparent export. Use [Transparent PNG (BG removal)] when you need alpha transparency. For exact lettering, [No text] is still safer.'": "grokWorkflowTip: 'Grok tip: [White BG for removal] is recommended for sticker sheets. The app automatically detects the white 5×3 sheet, splits it, and removes only the outer white background of each cell.'",
+            "grokWorkflowTip: 'Grokヒント: Imagine Image 2.0は背景削除と透過書き出しに対応しています。透過PNGが必要な場合は[透過PNG（背景削除）]を使用してください。文字精度を優先する場合は[文字なし]も推奨します。'": "grokWorkflowTip: 'Grokヒント: スタンプシートは[切り抜き用白背景]を推奨します。アプリが白い5×3シートを自動判定し、各セルの外側の白背景だけを透過処理します。'",
+            "grokWorkflowTip: 'Grok提示：Imagine Image 2.0支持背景移除并导出透明背景。需要透明PNG时请使用[透明PNG（移除背景）]；文字准确性优先时建议使用[纯图无字]。'": "grokWorkflowTip: 'Grok提示：表情贴纸建议使用[抠图用白背景]。应用会自动识别白色5×3图表，分割后仅移除每格外部相连的白色背景。'",
+            "transparent: 'Create each sticker as a fully isolated subject with a clean, well-separated silhouette. After generation, use Grok Imagine Image 2.0 Background Removal to remove the background and export a PNG with genuine alpha transparency. Do not draw checkerboard tiles or fake transparency. If background removal cannot be applied automatically, use a pure solid white (#FFFFFF) background as the fallback for easy removal.'": "transparent: 'Use one continuous pure solid white (#FFFFFF) background prepared for later background removal. Keep every sticker fully isolated with a clean continuous silhouette and generous spacing. Do not draw checkerboard transparency, grid lines, shadows, haze, textures, or background objects. White or ivory parts inside the character are allowed and must remain clearly enclosed by their artwork outlines.'",
+          }
+
+          for old, new in replacements.items():
+            if old not in s:
+              raise SystemExit('Required App source anchor not found: ' + old[:100])
+            s = s.replace(old, new)
+
+          reset_anchor = "    setGeminiBackgroundMode('transparent');\n    setGrokTextMode('visual');"
+          reset_new = "    setGeminiBackgroundMode('transparent');\n    setGrokTextMode('visual');\n    setGrokBackgroundMode('transparent');"
+          if reset_anchor not in s:
+            raise SystemExit('Reset background anchor not found')
+          s = s.replace(reset_anchor, reset_new)
+
+          p.write_text(s)
+          PY
+      - name: Verify source policy
+        run: |
+          grep -F "grokTransparent: '누끼용 흰 배경'" src/App.jsx
+          grep -F "Use one continuous pure solid white (#FFFFFF) background" src/App.jsx
+          grep -F "setGrokBackgroundMode('transparent');" src/App.jsx
+          grep -F "geminiTransparent: '누끼용 흰 배경'" src/App.jsx
+      - name: Install dependencies with retry
+        run: |
+          for attempt in 1 2 3; do
+            npm ci && exit 0
+            echo "npm ci attempt ${attempt} failed; retrying..."
+            sleep $((attempt * 5))
+          done
+          exit 1
+      - run: npm run build
+      - name: Commit source and remove one-time workflow
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/App.jsx
+          git rm -f .github/workflows/apply-white-sheet-policy.yml
+          git commit -m "Use white removal-ready sheets for Gemini and Grok"
+          git push
