@@ -13,20 +13,20 @@ function directFirstV16() {
 
       const gatedRuntime = `const sourceDarkInfo = await inspectOriginalDarkSource(file);\n      const directDarkItems = sourceDarkInfo.isDark ? await splitOriginalDarkSheetDirectly(file) : null;\n      if (sourceDarkInfo.isDark && !directDarkItems) {\n        throw new Error('검정 원본 Direct 분리 실패 · fallback 차단 · dark=' + sourceDarkInfo.ratio.toFixed(3));\n      }\n      const items = directDarkItems || await splitIntoFifteen(resultBlob, file);`
 
-      const directFirstRuntime = `const sourceDarkInfo = await inspectOriginalDarkSource(file);\n      // v16: always attempt the original-pixel splitter first. The splitter\n      // already performs its own safety checks, so a separate classifier must\n      // not silently force a valid dark sheet through the AI result path.\n      const directDarkItemsRaw = await splitOriginalDarkSheetDirectly(file);\n      const fallbackItemsRaw = directDarkItemsRaw ? null : await splitIntoFifteen(resultBlob, file);\n      const splitEngine = directDarkItemsRaw ? 'D16' : 'AI';\n      const items = (directDarkItemsRaw || fallbackItemsRaw || []).map((item) => ({\n        ...item,\n        splitEngine,\n        sourceDarkRatio: sourceDarkInfo.ratio\n      }));`
+      const strictRuntime = `const sourceDarkInfo = await inspectOriginalDarkSource(file);\n      // Strict source rule: a dark original sheet must NEVER fall back to the\n      // AI/resultBlob splitter. The original upload is authoritative because\n      // semantic masks can make pale faces and white fills translucent.\n      let directDarkItemsRaw = null;\n      let fallbackItemsRaw = null;\n      let splitEngine = 'STD18';\n      if (sourceDarkInfo.isDark) {\n        directDarkItemsRaw = await splitOriginalDarkSheetDirectly(file);\n        splitEngine = 'D18';\n        if (!directDarkItemsRaw || directDarkItemsRaw.length !== 15) {\n          throw new Error('D18 원본 직접 분리 실패 · AI fallback 차단 · dark=' + sourceDarkInfo.ratio.toFixed(3));\n        }\n      } else {\n        fallbackItemsRaw = await splitIntoFifteen(resultBlob, file);\n      }\n      const items = (directDarkItemsRaw || fallbackItemsRaw || []).map((item) => ({\n        ...item,\n        splitEngine,\n        sourceDarkRatio: sourceDarkInfo.ratio\n      }));`
 
       if (!transformed.includes(gatedRuntime)) {
         throw new Error('[split-v16] gated runtime anchor not found')
       }
-      transformed = transformed.replace(gatedRuntime, directFirstRuntime)
+      transformed = transformed.replace(gatedRuntime, strictRuntime)
 
       const oldEngineLabel = "engineLabel={`${resultMethod === 'fast' ? t.methodSafe : t.methodAi} · Alpha v7`}"
-      const newEngineLabel = "engineLabel={`${resultMethod === 'fast-dark' ? t.methodSafeDark : resultMethod === 'fast' ? t.methodSafe : t.methodAi} · ${splitItems[0]?.splitEngine || '…'}${typeof splitItems[0]?.sourceDarkRatio === 'number' ? ` ${splitItems[0].sourceDarkRatio.toFixed(2)}` : ''} · Split v16 · Direct First`}"
+      const newEngineLabel = "engineLabel={`${resultMethod === 'fast-dark' ? t.methodSafeDark : resultMethod === 'fast' ? t.methodSafe : t.methodAi} · ${splitItems[0]?.splitEngine || '…'}${typeof splitItems[0]?.sourceDarkRatio === 'number' ? ` ${splitItems[0].sourceDarkRatio.toFixed(2)}` : ''} · Split v18 · Strict Source`}"
       if (transformed.includes(oldEngineLabel)) {
         transformed = transformed.replace(oldEngineLabel, newEngineLabel)
       }
 
-      transformed = transformed.replace(/Split v15 · Pixel Copy/g, 'Split v16 · Direct First')
+      transformed = transformed.replace(/Split v15 · Pixel Copy/g, 'Split v18 · Strict Source')
       return { code: transformed, map: null }
     }
   }
