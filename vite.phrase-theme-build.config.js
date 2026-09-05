@@ -5,8 +5,9 @@ import { phraseThemeExpansionV3 } from './vite.phrase-theme-plugin-v3.js'
 import { photoReferencePromptStructure } from './vite.photo-reference-prompt-plugin.js'
 import { goldenComboRebuildV2 } from './vite.golden-combo-plugin-v2.js'
 import { adsensePlacementPlugin } from './vite.adsense-placement-plugin.js'
+import { mainAdCleanupPlugin } from './vite.main-ad-cleanup-plugin.js'
 
 export default defineConfig({
   ...baseConfig,
-  plugins: [adsensePlacementPlugin(), photoReferencePromptStructure(), phraseThemeExpansionV2(), phraseThemeExpansionV3(), goldenComboRebuildV2(), ...(baseConfig.plugins || [])],
+  plugins: [mainAdCleanupPlugin(), adsensePlacementPlugin(), photoReferencePromptStructure(), phraseThemeExpansionV2(), phraseThemeExpansionV3(), goldenComboRebuildV2(), ...(baseConfig.plugins || [])],
 })
