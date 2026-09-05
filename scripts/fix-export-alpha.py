@@ -1,0 +1,68 @@
+from pathlib import Path
+
+path = Path('src/components/EmoticonPostProcessor.jsx')
+text = path.read_text(encoding='utf-8')
+
+old = """      let coverage = 0;
+      let rr = 0, gg = 0, bb = 0;
+      for (let i = 0; i < 4; i += 1) {
+        const p = ids[i];
+        if (pixels[p + 3] === 0) continue;
+        coverage += weights[i];
+        rr += pixels[p] * weights[i];
+        gg += pixels[p + 1] * weights[i];
+        bb += pixels[p + 2] * weights[i];
+      }
+      if (coverage <= 0.02) continue;
+      const dp = (oy * size + ox) * 4;
+      out[dp] = Math.round(rr / coverage);
+      out[dp + 1] = Math.round(gg / coverage);
+      out[dp + 2] = Math.round(bb / coverage);
+      out[dp + 3] = 255;"""
+
+new = """      let alphaCoverage = 0;
+      let premultipliedR = 0;
+      let premultipliedG = 0;
+      let premultipliedB = 0;
+      for (let i = 0; i < 4; i += 1) {
+        const p = ids[i];
+        const alpha = pixels[p + 3] / 255;
+        if (alpha <= 0) continue;
+        const weightedAlpha = alpha * weights[i];
+        alphaCoverage += weightedAlpha;
+        premultipliedR += pixels[p] * weightedAlpha;
+        premultipliedG += pixels[p + 1] * weightedAlpha;
+        premultipliedB += pixels[p + 2] * weightedAlpha;
+      }
+      if (alphaCoverage <= 0.001) continue;
+      const dp = (oy * size + ox) * 4;
+      out[dp] = Math.round(premultipliedR / alphaCoverage);
+      out[dp + 1] = Math.round(premultipliedG / alphaCoverage);
+      out[dp + 2] = Math.round(premultipliedB / alphaCoverage);
+      out[dp + 3] = Math.max(0, Math.min(255, Math.round(alphaCoverage * 255)));"""
+
+if old not in text:
+    raise SystemExit('Direct RGBA export block was not found')
+text = text.replace(old, new, 1)
+
+old_call = "  stabilizeBrightForegroundAlpha(canvas);\n  return canvasToBlob(canvas);"
+new_call = "  // Preserve the same soft alpha matte shown in the preview.\n  return canvasToBlob(canvas);"
+if old_call not in text:
+    raise SystemExit('Bright-alpha hardening call was not found')
+text = text.replace(old_call, new_call, 1)
+
+path.write_text(text, encoding='utf-8')
+
+check = path.read_text(encoding='utf-8')
+required = [
+    'alphaCoverage += weightedAlpha',
+    'premultipliedR += pixels[p] * weightedAlpha',
+    'Math.round(alphaCoverage * 255)',
+    'Preserve the same soft alpha matte shown in the preview.',
+]
+for marker in required:
+    if marker not in check:
+        raise SystemExit(f'Missing export marker: {marker}')
+if 'stabilizeBrightForegroundAlpha(canvas);' in check:
+    raise SystemExit('Legacy bright-alpha hardening is still active')
+print('Export alpha patch verified')
