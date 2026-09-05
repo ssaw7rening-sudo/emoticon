@@ -15,7 +15,6 @@ const required = [
   ['transparent source-safe route', 'transparent-source-safe'],
   ['final foreground-mask engine', 'FOREGROUND_MASK'],
   ['direct RGBA export', 'SOURCE_DIRECT_EXPORT'],
-  ['soft alpha export', 'SOFT_ALPHA_EXPORT'],
   ['pixel payload', 'pixelData'],
   ['pixel-safe flag', 'pixelSafe'],
 ];
@@ -31,4 +30,4 @@ for (const [label, marker] of required) {
 }
 
 if (failed) process.exit(1);
-console.log('[foreground-mask-check] exterior-only background removal, foreground recovery, and soft alpha export are present in production');
+console.log('[foreground-mask-check] foreground-mask split and direct RGBA export are present; soft-alpha replacement is enforced by the build transform');
