@@ -13,7 +13,7 @@ const bundle = fs.readdirSync(assetsDir)
 
 const required = [
   ['transparent source-safe route', 'transparent-source-safe'],
-  ['final foreground-mask engine', 'FOREGROUND_MASK'],
+  ['outline-interior engine', 'OUTLINE_INTERIOR'],
   ['direct RGBA export', 'SOURCE_DIRECT_EXPORT'],
   ['pixel payload', 'pixelData'],
   ['pixel-safe flag', 'pixelSafe'],
@@ -22,12 +22,12 @@ const required = [
 let failed = false;
 for (const [label, marker] of required) {
   if (!bundle.includes(marker)) {
-    console.error('[foreground-mask-check] missing ' + label + ': ' + marker);
+    console.error('[outline-interior-check] missing ' + label + ': ' + marker);
     failed = true;
   } else {
-    console.log('[foreground-mask-check] ok: ' + label);
+    console.log('[outline-interior-check] ok: ' + label);
   }
 }
 
 if (failed) process.exit(1);
-console.log('[foreground-mask-check] foreground-mask split and direct RGBA export are present; soft-alpha replacement is enforced by the build transform');
+console.log('[outline-interior-check] outline-enclosed recovery and direct RGBA export are present; soft alpha is enforced by the transform');
