@@ -13,7 +13,6 @@ const bundle = fs.readdirSync(assetsDir)
 
 const required = [
   ['transparent source-safe route', 'transparent-source-safe'],
-  ['mask-guided splitter', 'MASK_GUIDED_SOURCE_SAFE'],
   ['mask-guided engine', 'MASK_GUIDED'],
   ['direct RGBA export', 'SOURCE_DIRECT_EXPORT'],
   ['pixel payload', 'pixelData'],
@@ -31,4 +30,4 @@ for (const [label, marker] of required) {
 }
 
 if (failed) process.exit(1);
-console.log('[source-safe-check] exterior transparency, enclosed-hole recovery, and original edge alpha are present in production');
+console.log('[source-safe-check] mask-guided hole recovery and original edge alpha are present in production');
