@@ -7,8 +7,8 @@ const viteBin = path.join(rootDir, 'node_modules', 'vite', 'bin', 'vite.js');
 
 const steps = [
   ['Generate OG images', process.execPath, [path.join(rootDir, 'scripts', 'generate-og-images.mjs')]],
-  ['Build Vite app', process.execPath, [viteBin, 'build', '--config', path.join(rootDir, 'vite.foreground-mask-final.config.js')]],
-  ['Verify source-safe image pipeline', process.execPath, [path.join(rootDir, 'scripts', 'verify-source-safe-build.mjs')]],
+  ['Build Vite app', process.execPath, [viteBin, 'build', '--config', path.join(rootDir, 'vite.config.js')]],
+  ['Verify automatic image routing', process.execPath, [path.join(rootDir, 'scripts', 'verify-auto-image-routing-build.mjs')]],
   ['Normalize service names', process.execPath, [path.join(rootDir, 'scripts', 'normalize-service-names.mjs')]],
   ['Generate localized pages', process.execPath, [path.join(rootDir, 'scripts', 'generate-localized-pages.mjs')]],
   ['Generate feature SEO pages', process.execPath, [path.join(rootDir, 'scripts', 'generate-feature-seo-pages.mjs')]],
@@ -27,10 +27,12 @@ for (const [label, command, args] of steps) {
     env: process.env,
     stdio: 'inherit',
   });
+
   if (result.error) {
     console.error(`[build] ${label} could not start:`, result.error);
     process.exit(1);
   }
+
   if (result.status !== 0) {
     console.error(`[build] ${label} failed with exit code ${result.status ?? 'unknown'}.`);
     process.exit(result.status || 1);
