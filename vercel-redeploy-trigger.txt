@@ -1,4 +1,4 @@
 Vercel redeploy trigger for inline tag accordion UI update.
 Date: 2026-09-07 KST
-Purpose: trigger a fresh production deployment after converting the tag category picker to an inline row accordion while preserving all existing tag data and selection logic.
-Source commit before redeploy: 0064292d131ce1b1bde79f77a6a5d0c33c3de08d
+Purpose: trigger a fresh production deployment for the current main branch, including the inline tag category accordion UI and latest prompt updates.
+Source commit before redeploy: 862eea916ed82fb1b09866a6306664cf3fa5e9a8
