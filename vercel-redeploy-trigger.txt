@@ -1,3 +1,4 @@
 Vercel redeploy trigger for style-first prompt update.
-Date: 2026-09-06
-Purpose: trigger a fresh production deployment after the previous build-rate-limit failure.
+Date: 2026-09-06 21:17 KST
+Purpose: trigger a fresh production deployment after applying the vivid full-body cute/default 2D style lock.
+Source commit before redeploy: 4ae39cf36f86db303cfbd9a416420d80ebc5c1e2
