@@ -9,8 +9,9 @@ import { mainAdCleanupPlugin } from './vite.main-ad-cleanup-plugin.js'
 import { bulkSaveLayoutPlugin } from './vite.bulk-save-layout-plugin.js'
 import { modelLetteringPromptPlugin } from './vite.model-lettering-prompt-plugin.js'
 import { textCharacterInvariancePlugin } from './vite.text-character-invariance-plugin.js'
+import { safeWhiteSheetRoutingPlugin } from './vite.safe-white-sheet-routing-plugin.js'
 
 export default defineConfig({
   ...baseConfig,
-  plugins: [modelLetteringPromptPlugin(), textCharacterInvariancePlugin(), bulkSaveLayoutPlugin(), mainAdCleanupPlugin(), adsensePlacementPlugin(), photoReferencePromptStructure(), phraseThemeExpansionV2(), phraseThemeExpansionV3(), goldenComboRebuildV2(), ...(baseConfig.plugins || [])],
+  plugins: [safeWhiteSheetRoutingPlugin(), modelLetteringPromptPlugin(), textCharacterInvariancePlugin(), bulkSaveLayoutPlugin(), mainAdCleanupPlugin(), adsensePlacementPlugin(), photoReferencePromptStructure(), phraseThemeExpansionV2(), phraseThemeExpansionV3(), goldenComboRebuildV2(), ...(baseConfig.plugins || [])],
 })
