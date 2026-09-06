@@ -6,6 +6,7 @@ const rootDir = fileURLToPath(new URL('..', import.meta.url));
 const viteBin = path.join(rootDir, 'node_modules', 'vite', 'bin', 'vite.js');
 
 const steps = [
+  ['Ensure global setting parity', process.execPath, [path.join(rootDir, 'scripts', 'ensure-global-setting-parity.mjs')]],
   ['Verify canonical global prompt schema', process.execPath, [path.join(rootDir, 'scripts', 'check-global-prompt-schema.mjs')]],
   ['Generate OG images', process.execPath, [path.join(rootDir, 'scripts', 'generate-og-images.mjs')]],
   ['Build Vite app', process.execPath, [viteBin, 'build', '--config', path.join(rootDir, 'vite.phrase-theme-build.config.js')]],
