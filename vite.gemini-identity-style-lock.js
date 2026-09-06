@@ -50,6 +50,16 @@ export function geminiIdentityStyleLockPlugin() {
 - 전통 무협 만화풍이면 고정 의상은 그대로 둔 채 무협지 한 장면처럼 연출하세요. 로우/하이 앵글, 사선 구도, 과감한 단축법, 장풍·기운을 연상시키는 먹선과 바람, 잔상·속도선, 절도 있는 무공 자세, 중심축과 손끝의 긴장, 강호 분위기의 여백과 먹 번짐을 사용하세요. 무협풍을 이유로 도복·한복·갑옷으로 바꾸면 안 됩니다.
 - 다른 화풍도 같은 원리입니다. 수묵담채는 여백·붓 방향·절제된 몸짓까지, 크레파스는 장난스러운 아동적 동작까지, 펠트·자수·클레이는 수공예 인형/스톱모션 같은 자세와 소품까지, 열혈 배틀 만화는 극단적 원근과 폭발적 동세까지 화풍에 포함하세요.
 
+[화풍 우선순위 · 문구 테마 격리]
+- 우선순위는 항상 '선택 화풍 → 캐릭터 정체성·의상 → 문구 의미·감정·소품'입니다. 문구나 문구 테마가 선택 화풍을 덮어쓰거나 새로운 화풍을 만들면 실패입니다.
+- 문구 테마는 문장 선택을 위한 분류일 뿐 시각 스타일 지시가 아닙니다. 테마명 자체를 그림의 장르, 시대, 색감, 재질, 카메라 문법, 레터링 스타일로 해석하지 마세요.
+- 문구는 WHAT만 결정합니다: 무슨 감정인지, 무슨 행동인지, 어떤 소품이 필요한지. 선택 화풍은 HOW를 결정합니다: 어떻게 그리고, 어떻게 연기하고, 어떤 카메라와 효과와 글씨 리듬을 사용할지.
+- 문구에서 계절, 음식, 직업, 학교, 게임, 공룡, 눈사람, 여행, 운동 같은 소재가 등장해도 해당 소재의 전형적인 카툰/광고/아동/포스터 화풍으로 전환하지 마세요. 소재는 선택 화풍 안에서 소품·행동·상황으로만 번역하세요.
+- 예: 선택 화풍이 전통 무협 만화풍이고 문구가 '눈사람 만드는 중'이면, 겨울 그림책풍으로 바꾸지 말고 무협 만화의 먹선·동세·카메라·여백을 유지한 채 눈사람을 소품으로 다루세요.
+- 예: '공룡 댄스 타임'이어도 공룡 아동 카툰풍으로 바꾸지 말고, 선택 화풍의 몸짓·원근·효과·레터링을 유지한 채 공룡 모티프만 행동이나 소품으로 사용하세요.
+- 예: '중간고사 기간'이어도 학습 포스터나 학원 광고풍으로 바꾸지 말고, 선택 화풍의 화면 문법 안에서 책·시험지·긴장감만 표현하세요.
+- 최종 결과를 보았을 때 15개 모두 같은 화풍의 한 작품 세계에 속해야 하며, 문구 소재가 달라져도 렌더링·카메라·효과·레터링의 화풍 DNA는 흔들리지 않아야 합니다.
+
 [행동 기반 화각·카메라 선택]
 - 상반신을 기본값으로 사용하지 마세요. 각 문구의 행동을 먼저 판단한 뒤 그 행동이 가장 잘 보이는 화각을 선택하세요.
 - 도약, 달리기, 착지, 재기, 회피, 보법, 전신 자세처럼 다리와 중심 이동이 중요한 행동은 반드시 전신 또는 거의 전신으로 보여주세요.
@@ -81,6 +91,16 @@ export function geminiIdentityStyleLockPlugin() {
 - Preserve phrase meaning while re-staging the action through the selected style's visual grammar. Do not collapse the set into generic frontal bust portraits or standard messenger-sticker poses.
 - For traditional wuxia comic style, KEEP THE FIXED OUTFIT UNCHANGED while using dramatic low/high angles, diagonal framing, bold foreshortening, martial body lines, qi/wind ink strokes, afterimages, speed lines, fingertip and stance tension, jianghu negative space and ink energy. Never replace fixed clothing with robes, martial-arts uniforms or historical costumes.
 - Apply the same principle to every other style: ink-wash controls space and restrained gesture, crayon controls playful childlike acting, felt/embroidery/clay stages tactile handmade or stop-motion movement, and hot-blooded battle manga controls explosive perspective and choreography.
+
+[STYLE PRIORITY & PHRASE-THEME ISOLATION]
+- Priority is always Selected Art Style → Character Identity/Outfit → Phrase Meaning/Emotion/Props. A phrase or phrase theme must never override the selected art style or create a new visual style.
+- Phrase-theme names are only categories used to choose wording. Never interpret the category name as instructions for genre, era, palette, material, camera grammar or lettering style.
+- The phrase controls WHAT: emotion, action and necessary props. The selected style controls HOW: rendering, acting language, camera, effects and typography.
+- Seasonal, food, school, work, game, dinosaur, snowman, travel or sports subjects must not trigger their stereotypical cartoon, advertising, children's-book or poster styles. Translate those subjects only into props, actions and situations inside the selected style.
+- Example: with traditional wuxia comic style, 'making a snowman' remains wuxia in ink, staging, camera and negative space; the snowman is only a prop.
+- Example: a dinosaur-dance phrase must not become a children's dinosaur cartoon. Keep the selected style's movement, perspective, effects and lettering while using dinosaur imagery only as a motif or prop.
+- Example: an exam-period phrase must not become an education poster. Keep the selected style's visual grammar and express only books, papers and tension as content.
+- All 15 stickers must feel as if they belong to one visual world. Phrase subject matter may change, but the style DNA of rendering, camera, effects and typography must remain stable.
 
 [ACTION-DRIVEN FRAMING & CAMERA]
 - Do not use upper-body framing as the default. Choose framing only after deciding what part of the body the action needs.
