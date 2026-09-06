@@ -9,6 +9,7 @@ import { mainAdCleanupPlugin } from './vite.main-ad-cleanup-plugin.js'
 import { bulkSaveLayoutPlugin } from './vite.bulk-save-layout-plugin.js'
 import { defaultArtStyleFallbackPlugin } from './vite.default-art-style-fallback.js'
 import { styleFiveAxisPresetsV2Plugin } from './vite.style-five-axis-presets-v2.js'
+import { cute2DFullBodyVividLockPlugin } from './vite.cute-2d-fullbody-vivid-lock.js'
 import { gptStyleDirectorLockPlugin } from './vite.gpt-style-director-lock.js'
 import { modelPromptPriorityV4Plugin } from './vite.model-prompt-priority-v4.js'
 import { grokStyleDirectorLockPlugin } from './vite.grok-style-director-lock.js'
@@ -23,5 +24,5 @@ import { styleFirstSemanticLockV3Plugin } from './vite.style-first-semantic-lock
 
 export default defineConfig({
   ...baseConfig,
-  plugins: [transparentSheetAspectPlugin(), safeWhiteSheetRoutingPlugin(), defaultArtStyleFallbackPlugin(), styleFiveAxisPresetsV2Plugin(), gptStyleDirectorLockPlugin(), modelPromptPriorityV4Plugin(), grokStyleDirectorLockPlugin(), geminiIdentityStyleLockPlugin(), geminiLayoutInstanceLockPlugin(), geminiStyleSceneLockPlugin(), geminiFinalExecutionLockPlugin(), bulkSaveLayoutPlugin(), mainAdCleanupPlugin(), adsensePlacementPlugin(), photoReferencePromptStructure(), phraseThemeExpansionV2(), phraseThemeExpansionV3(), goldenComboRebuildV2(), ...(baseConfig.plugins || []), sceneTypographyDirectionV5Plugin(), styleFirstSemanticLockV3Plugin()],
+  plugins: [transparentSheetAspectPlugin(), safeWhiteSheetRoutingPlugin(), defaultArtStyleFallbackPlugin(), styleFiveAxisPresetsV2Plugin(), cute2DFullBodyVividLockPlugin(), gptStyleDirectorLockPlugin(), modelPromptPriorityV4Plugin(), grokStyleDirectorLockPlugin(), geminiIdentityStyleLockPlugin(), geminiLayoutInstanceLockPlugin(), geminiStyleSceneLockPlugin(), geminiFinalExecutionLockPlugin(), bulkSaveLayoutPlugin(), mainAdCleanupPlugin(), adsensePlacementPlugin(), photoReferencePromptStructure(), phraseThemeExpansionV2(), phraseThemeExpansionV3(), goldenComboRebuildV2(), ...(baseConfig.plugins || []), sceneTypographyDirectionV5Plugin(), styleFirstSemanticLockV3Plugin()],
 })
