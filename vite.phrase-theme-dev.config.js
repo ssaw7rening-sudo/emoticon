@@ -8,7 +8,7 @@ import { adsensePlacementPlugin } from './vite.adsense-placement-plugin.js'
 import { mainAdCleanupPlugin } from './vite.main-ad-cleanup-plugin.js'
 import { bulkSaveLayoutPlugin } from './vite.bulk-save-layout-plugin.js'
 import { defaultArtStyleFallbackPlugin } from './vite.default-art-style-fallback.js'
-import { styleFiveAxisPresetsPlugin } from './vite.style-five-axis-presets.js'
+import { styleFiveAxisPresetsV2Plugin } from './vite.style-five-axis-presets-v2.js'
 import { gptStyleDirectorLockPlugin } from './vite.gpt-style-director-lock.js'
 import { modelPromptPriorityV4Plugin } from './vite.model-prompt-priority-v4.js'
 import { grokStyleDirectorLockPlugin } from './vite.grok-style-director-lock.js'
@@ -21,5 +21,5 @@ import { transparentSheetAspectPlugin } from './vite.transparent-sheet-aspect-pl
 
 export default defineConfig({
   ...baseConfig,
-  plugins: [transparentSheetAspectPlugin(), safeWhiteSheetRoutingPlugin(), defaultArtStyleFallbackPlugin(), styleFiveAxisPresetsPlugin(), gptStyleDirectorLockPlugin(), modelPromptPriorityV4Plugin(), grokStyleDirectorLockPlugin(), geminiIdentityStyleLockPlugin(), geminiLayoutInstanceLockPlugin(), geminiStyleSceneLockPlugin(), geminiFinalExecutionLockPlugin(), bulkSaveLayoutPlugin(), mainAdCleanupPlugin(), adsensePlacementPlugin(), photoReferencePromptStructure(), phraseThemeExpansionV2(), phraseThemeExpansionV3(), goldenComboRebuildV2(), ...(baseConfig.plugins || [])],
+  plugins: [transparentSheetAspectPlugin(), safeWhiteSheetRoutingPlugin(), defaultArtStyleFallbackPlugin(), styleFiveAxisPresetsV2Plugin(), gptStyleDirectorLockPlugin(), modelPromptPriorityV4Plugin(), grokStyleDirectorLockPlugin(), geminiIdentityStyleLockPlugin(), geminiLayoutInstanceLockPlugin(), geminiStyleSceneLockPlugin(), geminiFinalExecutionLockPlugin(), bulkSaveLayoutPlugin(), mainAdCleanupPlugin(), adsensePlacementPlugin(), photoReferencePromptStructure(), phraseThemeExpansionV2(), phraseThemeExpansionV3(), goldenComboRebuildV2(), ...(baseConfig.plugins || [])],
 })
