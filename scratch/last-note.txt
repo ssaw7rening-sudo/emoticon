@@ -1,1 +1,0 @@
-Use GitHub connector to patch vite.config.js next.
