@@ -20,6 +20,7 @@ import { geminiFinalExecutionLockPlugin } from './vite.gemini-final-execution-lo
 import { safeWhiteSheetRoutingPlugin } from './vite.safe-white-sheet-routing-plugin.js'
 import { transparentSheetAspectPlugin } from './vite.transparent-sheet-aspect-plugin.js'
 import { sceneTypographyDirectionV5Plugin } from './vite.scene-typography-direction-v5.js'
+import { textContrastBackingLockV1Plugin } from './vite.text-contrast-backing-lock-v1.js'
 import { styleFirstSemanticLockV3Plugin } from './vite.style-first-semantic-lock-v3.js'
 import { slotIsolationLockPlugin } from './vite.slot-isolation-lock.js'
 import { semanticPropDirectorV1Plugin } from './vite.semantic-prop-director-v1.js'
@@ -27,5 +28,5 @@ import { repairPromptV3Plugin } from './vite.repair-prompt-v3.js'
 
 export default defineConfig({
   ...baseConfig,
-  plugins: [repairPromptV3Plugin(), transparentSheetAspectPlugin(), safeWhiteSheetRoutingPlugin(), defaultArtStyleFallbackPlugin(), styleFiveAxisPresetsV2Plugin(), cute2DFullBodyVividLockPlugin(), gptStyleDirectorLockPlugin(), modelPromptPriorityV4Plugin(), grokStyleDirectorLockPlugin(), geminiIdentityStyleLockPlugin(), geminiLayoutInstanceLockPlugin(), geminiStyleSceneLockPlugin(), geminiFinalExecutionLockPlugin(), bulkSaveLayoutPlugin(), mainAdCleanupPlugin(), adsensePlacementPlugin(), photoReferencePromptStructure(), phraseThemeExpansionV2(), phraseThemeExpansionV3(), goldenComboRebuildV2(), slotIsolationLockPlugin(), semanticPropDirectorV1Plugin(), ...(baseConfig.plugins || []), sceneTypographyDirectionV5Plugin(), styleFirstSemanticLockV3Plugin()],
+  plugins: [repairPromptV3Plugin(), transparentSheetAspectPlugin(), safeWhiteSheetRoutingPlugin(), defaultArtStyleFallbackPlugin(), styleFiveAxisPresetsV2Plugin(), cute2DFullBodyVividLockPlugin(), gptStyleDirectorLockPlugin(), modelPromptPriorityV4Plugin(), grokStyleDirectorLockPlugin(), geminiIdentityStyleLockPlugin(), geminiLayoutInstanceLockPlugin(), geminiStyleSceneLockPlugin(), geminiFinalExecutionLockPlugin(), bulkSaveLayoutPlugin(), mainAdCleanupPlugin(), adsensePlacementPlugin(), photoReferencePromptStructure(), phraseThemeExpansionV2(), phraseThemeExpansionV3(), goldenComboRebuildV2(), slotIsolationLockPlugin(), semanticPropDirectorV1Plugin(), ...(baseConfig.plugins || []), sceneTypographyDirectionV5Plugin(), textContrastBackingLockV1Plugin(), styleFirstSemanticLockV3Plugin()],
 })
