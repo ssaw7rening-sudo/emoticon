@@ -1,1 +1,0 @@
-Hook vite.global-canonical-prompt-schema-v1.js into vite.config.js, run build, inspect all four locale previews, then merge.
