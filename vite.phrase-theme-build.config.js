@@ -23,9 +23,9 @@ import { sceneTypographyDirectionV5Plugin } from './vite.scene-typography-direct
 import { styleFirstSemanticLockV3Plugin } from './vite.style-first-semantic-lock-v3.js'
 import { slotIsolationLockPlugin } from './vite.slot-isolation-lock.js'
 import { semanticPropDirectorV1Plugin } from './vite.semantic-prop-director-v1.js'
-import { repairPromptV2Plugin } from './vite.repair-prompt-v2.js'
+import { repairPromptV3Plugin } from './vite.repair-prompt-v3.js'
 
 export default defineConfig({
   ...baseConfig,
-  plugins: [transparentSheetAspectPlugin(), safeWhiteSheetRoutingPlugin(), defaultArtStyleFallbackPlugin(), styleFiveAxisPresetsV2Plugin(), cute2DFullBodyVividLockPlugin(), gptStyleDirectorLockPlugin(), modelPromptPriorityV4Plugin(), grokStyleDirectorLockPlugin(), geminiIdentityStyleLockPlugin(), geminiLayoutInstanceLockPlugin(), geminiStyleSceneLockPlugin(), geminiFinalExecutionLockPlugin(), bulkSaveLayoutPlugin(), mainAdCleanupPlugin(), adsensePlacementPlugin(), photoReferencePromptStructure(), phraseThemeExpansionV2(), phraseThemeExpansionV3(), goldenComboRebuildV2(), slotIsolationLockPlugin(), semanticPropDirectorV1Plugin(), ...(baseConfig.plugins || []), sceneTypographyDirectionV5Plugin(), styleFirstSemanticLockV3Plugin(), repairPromptV2Plugin()],
+  plugins: [repairPromptV3Plugin(), transparentSheetAspectPlugin(), safeWhiteSheetRoutingPlugin(), defaultArtStyleFallbackPlugin(), styleFiveAxisPresetsV2Plugin(), cute2DFullBodyVividLockPlugin(), gptStyleDirectorLockPlugin(), modelPromptPriorityV4Plugin(), grokStyleDirectorLockPlugin(), geminiIdentityStyleLockPlugin(), geminiLayoutInstanceLockPlugin(), geminiStyleSceneLockPlugin(), geminiFinalExecutionLockPlugin(), bulkSaveLayoutPlugin(), mainAdCleanupPlugin(), adsensePlacementPlugin(), photoReferencePromptStructure(), phraseThemeExpansionV2(), phraseThemeExpansionV3(), goldenComboRebuildV2(), slotIsolationLockPlugin(), semanticPropDirectorV1Plugin(), ...(baseConfig.plugins || []), sceneTypographyDirectionV5Plugin(), styleFirstSemanticLockV3Plugin()],
 })
