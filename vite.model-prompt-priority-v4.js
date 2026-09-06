@@ -34,29 +34,91 @@ export function modelPromptPriorityV4Plugin() {
     const textEnabled = model === 'gemini' ? geminiTextMode === 'text' : grokTextMode === 'text';
     let base = String(prompt || '');
 
+    // Keep phrase/theme data semantic-only. Legacy pose/typography prescriptions are
+    // normalized so the selected art style retains full directing authority.
+    base = base
+      .replaceAll('[HIGH-PRECISION KOREAN HANDWRITTEN STICKER TYPOGRAPHY]', '[HIGH-PRECISION KOREAN TEXT ACCURACY — TYPOGRAPHY SUBORDINATE TO SELECTED STYLE]')
+      .replaceAll(
+        '2. Place each phrase beside or above its character in readable, bold 2D pop-art sticker lettering with neat print-style Korean handwriting. Keep it warm and naturally hand-drawn; do not replace it with a mechanical Gothic/sans-serif typeface and do not use connected cursive strokes.',
+        '2. Place each phrase beside or above its character with clear readability. Letterform, stroke material, weight, tilt, spacing, color, outline, shadow, motion and finish are decided by the selected art style. Do not impose generic pop-art, cute handwriting, Gothic/sans-serif, or stock sticker lettering.'
+      )
+      .replaceAll(
+        '2. Place it beside or above the character in readable, bold 2D pop-art sticker lettering with neat print-style Korean handwriting. Keep it warm and naturally hand-drawn; do not replace it with a mechanical Gothic/sans-serif typeface and do not use connected cursive strokes.',
+        '2. Place it beside or above the character with clear readability. Letterform, stroke material, weight, tilt, spacing, color, outline, shadow, motion and finish are decided by the selected art style. Do not impose generic pop-art, cute handwriting, Gothic/sans-serif, or stock sticker lettering.'
+      )
+      .replaceAll(
+        '5. Add a crisp, thick pure-white die-cut outline outside the complete lettering and a subtle shadow without covering internal Hangul strokes.',
+        '5. Preserve internal Hangul strokes clearly. Outline, border, shadow and edge treatment are optional and must follow the selected art style rather than a mandatory white die-cut treatment.'
+      )
+      .replaceAll(
+        '6. Use at most one small emotion-matching accent per phrase, such as a heart, crown, thumbs-up, confetti, bouquet, sweat drop, sparkle, or zZ. It must not touch or obscure any glyph.',
+        '6. Use an accent only when the phrase meaning genuinely needs one, and render it through the selected art style rather than as a stock sticker icon.'
+      )
+      .replaceAll(
+        '- Preserve a cute, warm handwritten feeling, but use neat, clearly separated print-style handwriting rather than cursive or connected writing.',
+        '- Preserve correct, clearly separated Hangul glyph anatomy. Do not impose a cute or warm handwriting mood; the selected art style determines the lettering character and material.'
+      )
+      .replaceAll(
+        '- Apply the white sticker outline outside each complete glyph only. Never fill or merge the internal spaces, short vowel strokes, or final consonants.',
+        '- If the selected art style uses an outline, apply it outside each complete glyph without filling or merging internal spaces, short vowel strokes, or final consonants. Do not force a white sticker outline when it conflicts with the style.'
+      )
+      .replaceAll(
+        '1. Render each text in a clean 2D commercial messenger pop sticker font.',
+        '1. Render each text with exact spelling and clear readability while inheriting the selected art style’s typography language. Do not impose a generic 2D commercial messenger font.'
+      )
+      .replaceAll(
+        '2. Text Style: Bold handwritten font filled with vibrant color (yellow, pink, red, mint, orange, purple, sky blue) + crisp inner stroke + heavy white die-cut sticker outline around the entire text.',
+        '2. Text Style: Letterform, stroke, color, material, outline, shadow and motion are decided by the selected art style. Do not force a bright preset palette, bold handwriting, inner stroke, or white die-cut outline.'
+      )
+      .replaceAll(
+        '5. Cute Accent Icons: Use at most one matching mini comic icon/effect beside the lettering without touching any glyph.',
+        '5. Accent: Add at most one accent only if semantically necessary, and render it entirely through the selected art style rather than as a generic cute comic icon.'
+      )
+      .replaceAll(
+        '각 문구에서 바로 이해할 수 있는 표정 하나와 서로 다른 전신 자세 하나를 구성하세요. 셀마다 보조 소품과 만화 효과는 각각 최대 하나만 사용하고 자세를 반복하지 마세요.',
+        '각 문구는 말의 의미, 감정의 방향, 행동 목적과 상황적 맥락만 제공합니다. 구체적인 표정, 시선, 자세, 무게중심, 카메라 거리·앵글·원근, 효과, 소품의 시각화 방식과 문자 연출은 선택 화풍이 결정합니다. 15개 표현은 의미상 충분히 구별하되 특정 전신 포즈나 범용 이모티콘 자세를 미리 강제하지 마세요.'
+      )
+      .replaceAll('[문구·표정·동작]', '[문구 의미 — 연출 권한 없음]')
+      .replaceAll('동일한 크기의 셀 15개에 완전한 캐릭터 한 명씩 배치하고', '15개의 보이지 않는 슬롯 각각에 하나의 완결된 캐릭터 표현을 배치하고')
+      .replaceAll('잘린 신체', '의도치 않은 신체 절단·부자연스러운 크롭');
+
+    base = base.split('\\n').map((line) => {
+      if (line.startsWith('- 감정/동작:')) {
+        return '- 의미/감정/상황: 원문에서 자연스럽게 해석합니다. 구체적인 표정·포즈·카메라·효과·문자 연출은 선택 화풍이 결정합니다.';
+      }
+      if (line.includes(' | 동작=') && line.includes(' | 타이포=')) {
+        const head = line.split(' | 동작=')[0];
+        return head + ' | 의미=원문 의미·감정·상황만 전달; HOW는 선택 화풍이 결정';
+      }
+      if (line.startsWith('Sticker ') && line.includes(' – ')) {
+        return line.split(' – ')[0] + ' – semantic meaning/emotion/context only; pose, camera, effects and typography are decided by the selected art style';
+      }
+      return line;
+    }).join('\\n');
+
     const geminiLayoutV51 = \
 \`[LAYOUT & STRICT SPATIAL RULES — HIGHEST PRIORITY]
 
 - Canvas Orientation: WIDE LANDSCAPE format.
 - Grid Format: A wide landscape sticker sheet strictly arranged in a 5-column by 3-row grid (5 columns × 3 rows = exactly 15 stickers).
 - Absolute Quantity Constraint: Exactly 15 stickers. Never 12, never 14, never 16. Total sticker count MUST be exactly 15.
-- Size vs. Count Priority: If horizontal or vertical space is limited, ALWAYS REDUCE THE SIZE OF EACH CHARACTER. Never reduce, remove, merge, combine, overlap, or crop the number of stickers under any circumstances.
+- Size vs. Count Priority: If horizontal or vertical space is limited, ALWAYS REDUCE THE SIZE OF EACH CHARACTER. Never reduce, remove, merge, combine, or overlap the number of stickers under any circumstances.
 - Position Mapping (Left to Right, Top to Bottom):
   * Row 1 (Top): Stickers 01, 02, 03, 04, 05
   * Row 2 (Middle): Stickers 06, 07, 08, 09, 10
   * Row 3 (Bottom): Stickers 11, 12, 13, 14, 15
-- Slot Rule: Each of the 15 positions must contain ONE AND ONLY ONE complete character sticker.
+- Slot Rule: Each of the 15 positions must contain ONE AND ONLY ONE character performance.
 - Numbering Rule: Sticker numbers 01–15 are INTERNAL LAYOUT REFERENCES ONLY. Do NOT render these numbers, row labels, grid labels, position markers, or guide text anywhere in the final image.
-- Visual Structure: Maintain strict 5×3 spatial alignment while giving each character a distinct pose, expression, gesture, and action.
-- Character Visibility: Every character must be fully visible inside the canvas with sufficient separation from neighboring stickers.
-- Sticker Style: Each character must appear as an independent die-cut sticker with a clean white outline around the figure.
-- Background: Use a plain PURE WHITE background.
+- Visual Structure: Maintain strict 5×3 spatial alignment while letting the selected art style decide pose, expression, gesture, camera and effects for each phrase meaning.
+- Character Visibility: Keep each sticker composition safely inside its slot. Full, medium and close framing are allowed when native to the selected style; avoid only accidental clipping or broken anatomy.
+- Sticker Separation: Each character performance must remain visually independent. Edge treatment and outline style are decided by the selected art style rather than a mandatory white die-cut outline.
+- Background: Use the background mode requested elsewhere in the prompt.
 - Borderless Composition: NO comic panels. NO framing boxes. NO rectangular cards. NO grid lines. NO dividing lines. NO visible layout guides.
-- Forbidden Layouts: NO 3×4 grid. NO 4×3 grid. NO 4-column layout. NO portrait composition. NO missing stickers. NO duplicated stickers. NO merged characters. NO cropped characters.
+- Forbidden Layouts: NO 3×4 grid. NO 4×3 grid. NO 4-column layout. NO portrait composition. NO missing stickers. NO duplicated stickers. NO merged characters. NO accidental crop that damages identity or anatomy.
 
 [FINAL COMPOSITION CHECK]
-Wide Landscape Canvas → Top Row: exactly 5 stickers → Middle Row: exactly 5 stickers → Bottom Row: exactly 5 stickers → 5 + 5 + 5 = EXACTLY 15 complete stickers.
-The 5-column × 3-row structure and the total count of exactly 15 stickers take priority over character size, decorative detail, pose scale, and empty spacing.\`;
+Wide Landscape Canvas → Top Row: exactly 5 stickers → Middle Row: exactly 5 stickers → Bottom Row: exactly 5 stickers → 5 + 5 + 5 = EXACTLY 15 sticker performances.
+The 5-column × 3-row structure and the total count of exactly 15 take priority over decorative detail, but they must not replace the selected art style’s directing language.\`;
 
     if (!isSingle) {
       base = base.replace(/\\n\\[종료 검증\\]\\n[\\s\\S]*?(?=\\n\\n\\[제외 조건\\])/, '');
@@ -65,28 +127,28 @@ The 5-column × 3-row structure and the total count of exactly 15 stickers take 
         base = geminiLayoutV51 + '\\n\\n' + base;
         base = base.replace(
           /\\[구도 및 배경\\]\\n- 16:9 와이드 가로형 캔버스,[\\s\\S]*?- 배경: ([^\\n]+)/,
-          '[시트 구성 및 배경]\\n- 정확히 15개의 독립 스티커를 가로형 5열 × 3행으로 고정 배치하세요. 각 행은 반드시 5개이며 5+5+5=15를 유지하세요.\\n- 공간이 부족하면 캐릭터 크기를 줄이되 수량을 줄이거나 합치거나 겹치지 마세요.\\n- 각 스티커는 완전히 노출되고 서로 분리된 다이컷 형태여야 하며, 사각 패널·카드 프레임·격자선은 만들지 마세요.\\n- 배경: 순수한 흰색'
+          '[시트 구성 및 배경]\\n- 정확히 15개의 독립 스티커 표현을 가로형 5열 × 3행으로 고정 배치하세요. 각 행은 반드시 5개이며 5+5+5=15를 유지하세요.\\n- 공간이 부족하면 전체 스케일과 장식을 줄이되 수량을 줄이거나 합치거나 겹치지 마세요.\\n- 각 슬롯은 독립적으로 유지하되 근접·반신·전신 등 구체 화각과 가장자리 처리는 선택 화풍이 결정합니다. 사각 패널·카드 프레임·격자선은 만들지 마세요.\\n- 배경: $1'
         );
         base = base.replace(
           /\\[COMPOSITION & BACKGROUND\\]\\n- 16:9 wide landscape canvas,[\\s\\S]*?- Background: ([^\\n]+)/,
-          '[SHEET COMPOSITION & BACKGROUND]\\n- Arrange exactly 15 independent stickers in a strict 5-column × 3-row landscape layout. Every row must contain exactly five stickers.\\n- If space is limited, reduce character scale rather than count. Never merge, overlap, crop, omit, or duplicate stickers.\\n- Keep every sticker fully visible and isolated as a die-cut figure with no panels, card frames, grid lines, or cell containers.\\n- Background: pure white'
+          '[SHEET COMPOSITION & BACKGROUND]\\n- Arrange exactly 15 independent sticker performances in a strict 5-column × 3-row landscape layout. Every row must contain exactly five.\\n- If space is limited, reduce overall scale and decoration rather than count. Never merge, overlap, omit, or duplicate stickers.\\n- Keep each slot independent, while framing and edge treatment remain decisions of the selected art style. No panels, card frames, grid lines, or cell containers.\\n- Background: $1'
         );
         base = base.replace(
           /SHEET COMPOSITION:\\n[\\s\\S]*?(?=\\nTEXT:)/,
-          'SHEET COMPOSITION:\\nUse a strict landscape 5-column × 3-row arrangement with exactly 15 independent stickers. Each row contains exactly five stickers. Reduce character scale if needed, never the sticker count. Keep all stickers fully visible, separated, borderless, and free of grid/card containers.\\n'
+          'SHEET COMPOSITION:\\nUse a strict landscape 5-column × 3-row arrangement with exactly 15 independent sticker performances. Each row contains exactly five. Reduce overall scale if needed, never the sticker count. Framing and edge treatment must still follow the selected art style.\\n'
         );
       } else {
         base = base.replace(
           /\\[구도 및 배경\\]\\n- 16:9 와이드 가로형 캔버스,[\\s\\S]*?- 배경: ([^\\n]+)/,
-          '[시트 구성 및 배경]\\n- 총 15개의 독립 스티커를 가로형 캔버스에 5개씩 3줄로 자연스럽게 배치하세요.\\n- 격자선이나 카드 프레임 없이 하나의 자유로운 스티커 시트처럼 보이게 하고, 스티커마다 크기·포즈·화각을 자연스럽게 달리하세요.\\n- 서로 겹치지 않을 정도의 여백을 두고 상반신·반신·전신 구도를 섞어 시각적 리듬을 만드세요.\\n- 배경: $1'
+          '[시트 구성 및 배경]\\n- 총 15개의 독립 스티커 표현을 가로형 캔버스에 5개씩 3줄로 자연스럽게 배치하세요.\\n- 격자선이나 카드 프레임 없이 하나의 자유로운 스티커 시트처럼 보이게 하되, 크기·포즈·화각·실루엣은 문구가 아니라 선택 화풍이 문구 의미를 해석해 결정합니다.\\n- 서로 겹치지 않을 정도의 여백만 유지하고 근접·반신·전신의 비율은 화풍 고유의 카메라 문법에 맡기세요.\\n- 배경: $1'
         );
         base = base.replace(
           /\\[COMPOSITION & BACKGROUND\\]\\n- 16:9 wide landscape canvas,[\\s\\S]*?- Background: ([^\\n]+)/,
-          '[SHEET COMPOSITION & BACKGROUND]\\n- Arrange exactly 15 independent stickers on one landscape sheet, five per row across three natural rows.\\n- Make it feel like a free sticker sheet rather than boxed cards: vary scale, pose, crop, and silhouette while keeping comfortable separation.\\n- Mix upper-body, half-body, and full-body acting for visual rhythm.\\n- Background: $1'
+          '[SHEET COMPOSITION & BACKGROUND]\\n- Arrange exactly 15 independent sticker performances on one landscape sheet, five per row across three natural rows.\\n- Keep it free of boxed cards; scale, pose, framing and silhouette are chosen by the selected art style while interpreting each phrase meaning.\\n- Preserve comfortable separation; let the style decide the mix of close, medium and full framing.\\n- Background: $1'
         );
         base = base.replace(
           /SHEET COMPOSITION:\\n[\\s\\S]*?(?=\\nTEXT:)/,
-          'SHEET COMPOSITION:\\nArrange exactly 15 independent stickers on one landscape sheet, five per row across three natural rows. Keep the overall reading order clear while allowing varied scale, pose, crop, and silhouette. Use comfortable negative space so the result feels like a lively sticker sheet rather than a boxed card grid.\\n'
+          'SHEET COMPOSITION:\\nArrange exactly 15 independent sticker performances on one landscape sheet, five per row across three natural rows. Keep the overall reading order clear while the selected art style decides scale, pose, framing and silhouette for each phrase meaning.\\n'
         );
       }
 
@@ -98,53 +160,56 @@ The 5-column × 3-row structure and the total count of exactly 15 stickers take 
 
     base = base.replace(
       '캐릭터 정체성 → 선택 태그/테마 융합 → 선택 화풍 → 문구 정확도 → 스티커 디자인 완성도 순으로 모두 충족했는지 확인하세요.',
-      '문구 정확도 → 캐릭터 정체성·의상 → 15개 수량 → 화풍·행동 → 레터링 완성도 순으로 확인하세요.'
+      '캐릭터 정체성·의상 → 선택 화풍 → 문구 정확도·15개 수량 → 레이아웃 기술 조건 순으로 확인하세요. 문구 테마는 의미 데이터이며 화풍을 변경하지 않습니다.'
     );
 
+    const koSemantics = '[테마/문구 = 의미 데이터 — 연출 권한 없음]\\n- 문구와 문구 테마는 말의 의미, 감정의 방향, 행동 목적, 상황적 맥락, 의미상 필요한 대상·소품의 존재 여부만 제공합니다.\\n- 구체적인 포즈, 표정의 그림 방식, 시선, 무게중심, 카메라 거리·화각·앵글·원근·단축, 효과 재료, 색상·채색, 문자 서체·획·색·외곽선·배치는 지정하지 않습니다.\\n- 모든 HOW 요소는 현재 선택 화풍의 Rendering + Acting + Camera + Effects + Typography가 결정합니다.\\n- 문구 테마명은 문구 묶음 선택을 위한 분류/의미 맥락일 뿐 두 번째 장르나 화풍 지시가 아닙니다.\\n- 불변 레이어는 캐릭터 정체성·고정 의상이며, 연출 우선순위는 선택 화풍 > 문구 의미 > 레이아웃·기술 제약입니다.';
+    const enSemantics = '[PHRASE/THEME = SEMANTIC DATA — NO DIRECTING AUTHORITY]\\n- A phrase and its phrase-theme provide verbal meaning, emotional direction, action purpose, situational context, and only the existence of an object/prop when semantically necessary.\\n- They do not prescribe concrete pose, facial rendering, gaze, weight, camera distance/angle/perspective/foreshortening, effect material, color treatment, or typography style.\\n- Every HOW decision belongs to the selected art style’s Rendering + Acting + Camera + Effects + Typography.\\n- Phrase-theme names are classification/semantic context for choosing phrase sets, not a second genre or art style.\\n- Immutable layer: character identity + fixed outfit. Direction priority: selected art style > phrase meaning > layout/technical constraints.';
+
     const koText = textEnabled
-      ? '[텍스트 정확성 — 최우선]\\n- 따옴표 안의 지정 한글 문구를 원문 철자와 띄어쓰기 그대로 사용하고, 각 스티커에 해당 문구를 정확히 한 번만 표시하세요.\\n- 자연스러운 1줄을 우선하고 긴 문구만 단어·의미 단위로 2줄까지 구성하세요.\\n- 기존 선택적 Glyph Lock/음절·자모 정보는 오타 방지를 위한 내부 철자 검증용입니다. 실제 이미지에는 따옴표 안의 완성형 한글 문구만 출력하세요.\\n- 문자 정확성과 가독성이 레터링 장식보다 우선합니다.'
-      : '[텍스트 미포함] 문구는 표정·행동의 의미 맥락으로만 사용하고 결과 이미지는 문자 없는 스티커 아트로 구성하세요.';
+      ? '[텍스트 정확성]\\n- 따옴표 안의 지정 한글 문구를 원문 철자와 띄어쓰기 그대로 사용하고, 각 스티커에 해당 문구를 정확히 한 번만 표시하세요.\\n- 자연스러운 1줄을 우선하고 긴 문구만 단어·의미 단위로 2줄까지 구성하세요.\\n- 기존 선택적 Glyph Lock/음절·자모 정보는 오타 방지를 위한 내부 철자 검증용입니다. 실제 이미지에는 따옴표 안의 완성형 한글 문구만 출력하세요.\\n- 문자 정확성과 최소 가독성만 고정하며, 문자의 시각적 연출은 선택 화풍의 Typography가 결정합니다.'
+      : '[텍스트 미포함] 문구는 의미·감정·상황 맥락으로만 사용하고 결과 이미지는 문자 없는 스티커 아트로 구성하세요.';
 
     const enText = textEnabled
-      ? '[TEXT ACCURACY — HIGHEST PRIORITY] Render each quoted Korean source phrase exactly once on its assigned sticker, preserving spelling and spacing. Prefer one natural line and use at most two semantic lines for longer phrases. Existing selective Glyph Lock / syllable-jamo data is internal spelling verification only; render only the completed Hangul phrase inside quotation marks. Text accuracy and readability outrank decorative lettering.'
-      : '[NO-TEXT MODE] Use the phrases only as acting context and keep the final sticker artwork free of rendered text.';
+      ? '[TEXT ACCURACY] Render each quoted Korean source phrase exactly once on its assigned sticker, preserving spelling and spacing. Prefer one natural line and use at most two semantic lines for longer phrases. Existing selective Glyph Lock / syllable-jamo data is internal spelling verification only; render only the completed Hangul phrase inside quotation marks. Only accuracy and minimum readability are fixed; visual lettering direction belongs to the selected art style.'
+      : '[NO-TEXT MODE] Use the phrases only as semantic/emotional context and keep the final sticker artwork free of rendered text.';
 
     const koIdentity = '[정체성·의상] 참고 사진이 있으면 얼굴·헤어·안경 등 식별 특징과 실제 착장을 15개 전체에서 일관되게 유지하세요. 고정 정보에 별도 의상이 지정된 경우 그 의상을 기준으로 합니다. 화풍은 선·채색·질감·표현 방식에 적용하고 캐릭터 정체성과 의상 자체는 유지하세요.';
     const enIdentity = '[IDENTITY & OUTFIT] When a reference photo is present, keep recognizable facial features, hair, glasses and the actual outfit consistent across the set. If fixed character information specifies an outfit, use that outfit. Apply art style to rendering language rather than redesigning identity or clothing.';
 
     const koSheet = isSingle
-      ? '[구도] 문구의 행동이 얼굴뿐 아니라 손·상체·몸짓에서도 읽히도록 상반신 이상의 자연스러운 화각을 우선하세요.'
+      ? '[구도] 구체적인 화각을 미리 고정하지 않습니다. 문구 의미가 읽히는 범위에서 근접·반신·전신, 앵글과 원근은 선택 화풍의 Camera가 결정합니다.'
       : model === 'gemini'
-        ? '[15개 시트 — Gemini v5.1] 정확히 15개의 독립 스티커를 가로형 5열 × 3행으로 고정하세요. 각 행은 반드시 5개이며 5+5+5=15입니다. 공간이 부족하면 캐릭터 크기와 장식을 줄이고 수량은 절대 줄이지 마세요. 각 슬롯에는 하나의 완전한 캐릭터만 배치하고, 겹침·잘림·누락·중복·병합 없이 다이컷 형태로 분리하세요. 실제 격자선, 사각 패널, 카드 박스는 표시하지 마세요.'
-        : '[15개 시트] 정확히 15개의 독립 스티커를 5개씩 3줄로 자연스럽게 배치하세요. 실제 격자나 카드 프레임처럼 보이지 않게 하고, 각 스티커의 크기·포즈·화각·실루엣은 문구에 맞춰 자유롭게 변화시키세요. 상반신·반신·전신 동작을 섞고 서로 겹치지 않을 정도의 여백을 유지하세요.';
+        ? '[15개 시트 — Gemini v5.1] 정확히 15개의 독립 표현을 가로형 5열 × 3행으로 고정하세요. 각 행은 반드시 5개이며 5+5+5=15입니다. 공간이 부족하면 전체 스케일과 장식을 줄이고 수량은 절대 줄이지 마세요. 각 슬롯은 하나의 캐릭터 표현만 담고 겹침·누락·중복·병합 없이 분리하세요. 근접·반신·전신 등 화각과 가장자리 처리는 선택 화풍이 결정하며 실제 격자선·사각 패널·카드 박스는 표시하지 마세요.'
+        : '[15개 시트] 정확히 15개의 독립 표현을 5개씩 3줄로 자연스럽게 배치하세요. 실제 격자나 카드 프레임처럼 보이지 않게 하고, 각 표현의 크기·포즈·화각·실루엣은 선택 화풍이 문구 의미를 해석해 결정합니다. 서로 겹치지 않을 정도의 여백을 유지하세요.';
     const enSheet = isSingle
-      ? '[FRAMING] Prefer upper-body or wider acting so the phrase is communicated through hands, torso and body language as well as the face.'
+      ? '[FRAMING] Do not pre-lock one framing type. Let the selected art style choose close, medium or full framing, angle and perspective while keeping the phrase meaning readable.'
       : model === 'gemini'
-        ? '[15-STICKER SHEET — GEMINI v5.1] Lock the composition to exactly 15 independent stickers in a strict landscape 5-column × 3-row layout. Each row must contain exactly five stickers, for 5+5+5=15. If space becomes tight, reduce character scale and decoration before sacrificing count. Each slot contains one complete character only; never overlap, crop, omit, duplicate, or merge stickers. Keep die-cut separation with no visible grid lines, rectangular panels, card boxes, or cell containers.'
-        : '[15-STICKER SHEET] Create exactly 15 independent stickers, naturally arranged five per row across three rows. Keep the sheet visually free and lively rather than boxed; vary scale, pose, framing and silhouette to fit each phrase, mixing upper-body, half-body and full-body acting with comfortable separation.';
+        ? '[15-STICKER SHEET — GEMINI v5.1] Lock the composition to exactly 15 independent performances in a strict landscape 5-column × 3-row layout. Each row must contain exactly five. If space becomes tight, reduce overall scale and decoration before sacrificing count. Each slot contains one character performance only; never overlap, omit, duplicate, or merge. Framing and edge treatment remain style decisions; show no visible grid lines, rectangular panels, card boxes, or cell containers.'
+        : '[15-STICKER SHEET] Create exactly 15 independent performances, naturally arranged five per row across three rows. Keep the sheet visually free rather than boxed; the selected art style decides scale, pose, framing and silhouette while interpreting each phrase meaning.';
 
-    const koActing = '[화풍·행동] 선택한 화풍의 핵심 선·채색·질감을 유지하면서 메신저 이모티콘처럼 감정과 행동이 즉시 읽히게 연출하세요. 각 문구는 표정, 시선, 손동작, 몸의 방향과 필요한 소품·효과로 의미를 직접 연기하고, 같은 흉상 포즈의 반복을 피하세요.';
-    const enActing = '[STYLE & ACTING] Preserve the essential line, color and texture language of the selected style while keeping messenger-sticker emotion immediately readable. Let each phrase drive expression, gaze, hand gesture, body direction and only the props/effects that help communicate its meaning.';
+    const koActing = '[화풍 연기] 문구는 의미·감정·상황만 전달하고, 그 의미를 어떤 표정·시선·손동작·몸의 방향·무게중심·긴장감으로 연기할지는 선택 화풍이 결정합니다. 범용 손하트·엄지척·점프·고개 숙임 같은 메신저 스티커 클리셰를 자동 기본값으로 사용하지 마세요.';
+    const enActing = '[STYLE-DIRECTED ACTING] The phrase provides meaning, emotion and situation only. The selected art style decides expression, gaze, gesture, body direction, weight and tension. Do not default to stock messenger poses such as heart hands, thumbs-up, jumping or bowing.';
 
     const koLettering = textEnabled
-      ? '[레터링] 전체 시트는 하나의 레터링 패밀리로 통일하되 문구의 감정과 상황에 따라 색상, 굵기, 기울기, 크기 리듬, 붓터치와 작은 장식 효과를 자연스럽게 변주하세요. 고정 팔레트에 억지로 맞추지 말고 배경에서 즉시 읽히는 대비를 확보하세요.'
+      ? '[화풍 종속 레터링] 철자 정확성과 최소 가독성만 고정합니다. 글자 형태, 획 재료, 굵기, 기울기, 자간, baseline, 크기 대비, 색상, 외곽선, 그림자, 배치와 주변 효과는 모두 선택 화풍의 Typography가 결정합니다. 고정 팝아트 팔레트·귀여운 손글씨·흰색 다이컷 외곽선을 기본값으로 강제하지 마세요.'
       : '';
     const enLettering = textEnabled
-      ? '[LETTERING] Keep one coherent lettering family across the sheet, while naturally varying color, weight, tilt, scale rhythm, brush character and small accents according to each phrase. Do not force a rigid theme palette; choose contrast that stays immediately readable against the selected background.'
+      ? '[STYLE-SUBORDINATE LETTERING] Only spelling accuracy and minimum readability are fixed. Letterform, stroke material, weight, tilt, spacing, baseline, scale contrast, color, outline, shadow, placement and surrounding effects are all decided by the selected art style’s Typography. Do not force a generic pop palette, cute handwriting or white die-cut outline.'
       : '';
 
     const koModel = model === 'gemini'
-      ? '[Gemini 실행 — v5.1] 최우선 순서는 ① 가로형 5열 × 3행 구조 ② 정확히 15개 수량 ③ 한글 정확도와 참고 사진 충실도 ④ 각 캐릭터의 완전 노출과 다이컷 분리 ⑤ 포즈·레터링 완성도입니다. 공간이 부족하면 캐릭터 크기·장식·여백을 먼저 줄이고 15개 수량과 5×3 구조는 절대 바꾸지 마세요.'
-      : '[Grok 실행] 정확한 문구·정체성·15개 수량을 유지한 상태에서 손·상체·전신의 동세, 실루엣과 그래픽 임팩트를 더 과감하게 사용할 수 있습니다.';
+      ? '[Gemini 실행 — v5.1] 5열 × 3행과 정확히 15개 수량을 기술적으로 유지하되, 그 기술 조건이 선택 화풍의 작화·연기·카메라·효과·문자 문법을 평균화해서는 안 됩니다. 공간이 부족하면 전체 스케일과 장식을 줄이세요.'
+      : '[Grok 실행] 정확한 문구·정체성·15개 수량을 유지하되, 동세·실루엣·그래픽 임팩트의 구체 방식은 문구가 아니라 선택 화풍의 Acting·Camera·Effects가 결정합니다.';
     const enModel = model === 'gemini'
-      ? '[GEMINI EXECUTION — v5.1] Priority order: (1) strict landscape 5-column × 3-row structure, (2) exactly 15 stickers, (3) Korean text accuracy and reference fidelity, (4) complete visibility and die-cut separation, then (5) acting and lettering polish. When space is tight, reduce character scale, decoration, and empty spacing before changing count or the 5×3 structure.'
-      : '[GROK EXECUTION] Keep exact text, identity and sticker count fixed, then push motion, silhouette and graphic impact more boldly through hands, torso and full-body action.';
+      ? '[GEMINI EXECUTION — v5.1] Preserve the technical 5-column × 3-row structure and exactly 15 outputs, but these constraints must not average away the selected style’s rendering, acting, camera, effects or typography grammar. Reduce overall scale/decoration if space is tight.'
+      : '[GROK EXECUTION] Keep exact text, identity and count fixed, while the selected art style—not the phrase—decides the concrete motion, silhouette and graphic-impact language.';
 
     const blocks = lang === 'ko'
-      ? [koText, koIdentity, koSheet, koActing, koLettering, koModel].filter(Boolean)
-      : [enText, enIdentity, enSheet, enActing, enLettering, enModel].filter(Boolean);
+      ? [koSemantics, koText, koIdentity, koSheet, koActing, koLettering, koModel].filter(Boolean)
+      : [enSemantics, enText, enIdentity, enSheet, enActing, enLettering, enModel].filter(Boolean);
 
-    const versionLabel = model === 'gemini' ? '[Gemini 모델 최적화 v5.1]' : '[Grok 모델 최적화 v4]';
+    const versionLabel = model === 'gemini' ? '[Gemini 모델 최적화 v5.2 — 화풍 우선]' : '[Grok 모델 최적화 v5 — 화풍 우선]';
     return base + '\\n\\n' + versionLabel + '\\n' + blocks.join('\\n\\n');
   };
 
