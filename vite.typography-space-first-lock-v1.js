@@ -5,7 +5,7 @@ const countOccurrences = (source, marker) => source.split(marker).length - 1
 export function typographySpaceFirstLockV1Plugin() {
   return {
     name: 'typography-space-first-lock-v1',
-    enforce: 'post',
+    enforce: 'pre',
     transform(code, id) {
       if (!id.replace(/\\/g, '/').endsWith(TARGET)) return null
 
