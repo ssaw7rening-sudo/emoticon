@@ -12,7 +12,7 @@ const replaceOnce = (source, marker, replacement, label) => {
 export function styleFirstSemanticLockV3Plugin() {
   return {
     name: 'style-first-semantic-lock-v3',
-    enforce: 'post',
+    enforce: 'pre',
     transform(code, id) {
       if (!id.replace(/\\/g, '/').endsWith(TARGET)) return null;
 
