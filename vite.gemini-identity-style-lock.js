@@ -38,57 +38,67 @@ export function geminiIdentityStyleLockPlugin() {
 
     const koLock = \
 \`[정체성·의상 고정 — 최우선]
-- [캐릭터 고정 정보]에 적힌 외형과 의상은 15개 전체에서 변경 금지입니다. 의상 항목에 지정된 옷의 종류, 색상, 실루엣, 길이, 주요 디테일을 모든 스티커에서 동일하게 유지하세요.
-- 감정, 행동, 직업, 장소, 소품 또는 상황이 다른 복장을 암시하더라도 절대 의상을 바꾸지 마세요. 격투·운동 동작이어도 도복이나 운동복으로, 업무 상황이어도 정장으로, 휴식 상황이어도 잠옷으로 자동 변경하지 마세요.
-- 참고 사진과 별도 의상 지정이 함께 있으면 별도 지정 의상을 우선하고, 얼굴·헤어·안경 등 정체성 특징만 참고 사진에서 유지하세요.
-- 한 스티커만 다른 의상을 쓰거나 색을 바꾸는 변형도 금지합니다. 15개 모두 같은 캐릭터, 같은 기본 의상이어야 합니다.
-- 감정과 포즈는 크게 바꿔도 되지만 캐릭터 정체성과 고정 의상은 바꾸지 마세요.\`;
+- [캐릭터 고정 정보]의 외형과 의상은 15개 전체에서 변경 금지입니다. 옷의 종류, 색상, 실루엣, 길이, 재질과 주요 디테일을 동일하게 유지하세요.
+- 감정, 액션, 장소, 직업이나 화풍이 다른 복장을 암시해도 의상을 교체하지 마세요. 격투 동작이어도 도복으로, 업무 상황이어도 정장으로, 휴식 상황이어도 잠옷으로 바꾸지 마세요.
+- 참고 사진과 별도 의상 지정이 함께 있으면 지정 의상이 착장을 결정하고 참고 사진은 얼굴·헤어·안경 등 정체성을 결정합니다.
+- 한 스티커만 다른 옷이나 색으로 바꾸는 변형도 금지합니다. 감정과 포즈만 크게 바꾸고 정체성과 의상은 고정하세요.\`;
 
     const koStyleDirector = \
 \`[선택 화풍 = 전체 연출 감독 — 최우선]
-- [최우선 화풍]은 선·색·질감만 바꾸는 필터가 아닙니다. 포즈, 몸의 선, 손동작, 시선, 카메라 앵글, 원근 과장, 소품, 속도감, 효과선, 여백, 감정 연기와 레터링까지 지배하는 전체 연출 지침입니다.
-- 각 문구의 의미는 유지하되 행동 자체를 선택 화풍의 시각 문법으로 다시 연기하세요. 일반적인 엄지척, 정면 서기, 단순 손흔들기 같은 메신저 스티커 기본 포즈로 평준화하지 마세요.
-- 선택 화풍에 고유한 동작 언어가 있으면 적극적으로 사용하고, 정적인 감정도 그 화풍에 맞는 자세·호흡·시선·실루엣·화면 구도로 표현하세요.
-- 전통 무협 만화풍이면 고정 의상은 그대로 둔 채 무협지 한 장면처럼 연출하세요. 낮은 시점·높은 시점·사선 구도·과감한 원근, 장풍과 기운을 연상시키는 먹선과 바람, 잔상·속도선, 절도 있는 무공 자세, 검객 같은 중심축과 손끝의 긴장, 강호 분위기의 여백과 먹 번짐을 사용하세요. 무협풍을 이유로 도복·한복·갑옷으로 의상을 바꾸면 안 됩니다.
-- 수묵담채/동양화는 여백·붓 방향·먹 번짐·절제된 동작·서예적 화면 리듬까지, 크레파스 그림책은 장난스럽고 단순한 몸짓과 손그림 리듬까지, 펠트·자수·클레이는 실제 수공예 인형이나 스톱모션 세트 같은 포즈와 소품까지, 열혈 배틀 만화는 극단적 원근·폭발적 동세·충돌 직전의 긴장까지 적용하세요.
-- 화풍 차이가 표면 질감에만 남고 포즈·카메라·효과·레터링이 평범하면 실패입니다.
+- [최우선 화풍]은 선·색·질감만 바꾸는 필터가 아닙니다. 포즈, 몸의 선, 손동작, 시선, 카메라, 원근, 소품, 속도감, 효과, 여백, 감정 연기와 레터링까지 지배합니다.
+- 문구 의미는 유지하되 행동 자체를 선택 화풍의 시각 문법으로 다시 연기하세요. 정면 흉상, 평범한 엄지척, 단순 손흔들기 같은 메신저 스티커 기본 포즈로 평준화하지 마세요.
+- 전통 무협 만화풍이면 고정 의상은 그대로 둔 채 무협지 한 장면처럼 연출하세요. 로우/하이 앵글, 사선 구도, 과감한 단축법, 장풍·기운을 연상시키는 먹선과 바람, 잔상·속도선, 절도 있는 무공 자세, 중심축과 손끝의 긴장, 강호 분위기의 여백과 먹 번짐을 사용하세요. 무협풍을 이유로 도복·한복·갑옷으로 바꾸면 안 됩니다.
+- 다른 화풍도 같은 원리입니다. 수묵담채는 여백·붓 방향·절제된 몸짓까지, 크레파스는 장난스러운 아동적 동작까지, 펠트·자수·클레이는 수공예 인형/스톱모션 같은 자세와 소품까지, 열혈 배틀 만화는 극단적 원근과 폭발적 동세까지 화풍에 포함하세요.
 
-[감정형 레터링 — 딱딱한 템플릿 금지]
-- 따옴표 안의 한글 철자와 띄어쓰기는 정확히 유지하되, 글자 자체도 캐릭터처럼 감정을 연기해야 합니다.
-- 모든 문구를 같은 폰트, 같은 굵기, 같은 크기, 같은 외곽선, 같은 직선 정렬로 반복하지 마세요.
-- 감정에 따라 글자의 크기 변화, 기울기, 자간, 줄의 높낮이, 획의 강약, 흔들림, 튀는 리듬, 눌리는 리듬, 작은 효과를 자연스럽게 달리하세요.
-- 웃음·신남은 통통 튀고 약간 비틀리거나 상승하는 손글씨 리듬, 놀람·당황은 크기 차와 불안정한 기울기, 분노·격정은 거칠고 빠른 획과 강한 방향성, 슬픔·미안함은 힘이 빠지고 처지는 흐름, 감동·따뜻함은 부드럽고 여유 있는 획과 넓은 호흡처럼 감정별 성격을 다르게 주세요.
-- 전통 무협 만화풍도 모든 문구를 무겁고 각진 서예 제목처럼 만들지 마세요. 붓의 기세·먹의 강약·검획 느낌은 화풍의 맛으로 사용하되, 문구의 감정에 따라 유쾌하고 가볍게 튀거나, 작게 머뭇거리거나, 크게 폭발하는 등 리듬을 자유롭게 바꾸세요.
-- 문자는 캐릭터 주변의 빈 공간에 자연스럽게 떠 있어야 하며 포스터 제목, 간판, 로고, 배지처럼 정형화하지 마세요.
-- 문자 뒤에 사각형·둥근 사각형·라벨판·배너·캡션 박스 같은 배경판을 만들지 마세요. 글자는 흰 캔버스 위에 직접 배치하세요.
-- 정확성과 가독성은 유지하되, 가장 중요한 목표는 각 문구의 감정과 선택 화풍이 동시에 느껴지는 살아있는 손맛입니다.\`;
+[행동 기반 화각·카메라 선택]
+- 상반신을 기본값으로 사용하지 마세요. 각 문구의 행동을 먼저 판단한 뒤 그 행동이 가장 잘 보이는 화각을 선택하세요.
+- 도약, 달리기, 착지, 재기, 회피, 보법, 전신 자세처럼 다리와 중심 이동이 중요한 행동은 반드시 전신 또는 거의 전신으로 보여주세요.
+- 장풍, 점혈, 주먹, 손끝, 밀치기처럼 팔과 몸통의 방향성이 중요한 행동은 반신 또는 3/4 신체와 강한 단축법을 사용하세요.
+- 눈빛, 미세한 당황, 억눌린 분노처럼 얼굴이 핵심인 경우에만 상반신/클로즈업을 사용하세요.
+- 15개 전체가 가슴 위 초상처럼 보이면 실패입니다. 시트 전체에 최소 4개의 전신/거의 전신, 최소 4개의 반신·3/4 신체를 포함하고, 순수 상반신/클로즈업은 최대 5개까지만 사용하세요.
+- 카메라 역시 반복하지 마세요. 정면 눈높이만 반복하지 말고 로우 앵글, 하이 앵글, 사선, 측면, 뒤돌아보는 구도, 전경으로 튀어나오는 손·발의 단축법을 행동에 맞춰 섞으세요.
+
+[감정형 레터링 — 글자도 연기]
+- 따옴표 안 한글 철자와 띄어쓰기는 정확히 유지하되, 글자 자체도 감정을 연기해야 합니다.
+- 같은 폰트, 같은 굵기, 같은 크기, 같은 외곽선, 같은 직선 정렬을 15개에 반복하지 마세요.
+- 웃음·신남은 통통 튀거나 올라가는 리듬, 놀람·당황은 크기와 기울기가 살짝 흔들리는 리듬, 분노는 빠르고 거친 방향성, 슬픔·체념은 힘이 빠져 처지는 흐름, 따뜻함·감동은 부드럽고 여유 있는 호흡처럼 감정에 따라 크기·기울기·자간·baseline·획의 힘을 바꾸세요.
+- 전통 무협풍도 모든 문구를 무거운 서예 제목으로 만들지 마세요. 붓의 기세와 먹의 강약은 재료일 뿐이며, 웃기는 문구는 가볍게 튀고 머뭇거리는 문구는 작고 불안정하게, 폭발하는 문구는 크게 터지듯 표현하세요.
+- 한 글자씩 세로로 기계적으로 쌓는 조판, 세로 간판형 조판, 포스터 제목형 정렬을 기본값으로 사용하지 마세요. 문구 의미상 꼭 필요한 경우가 아니면 자연스러운 한 덩어리의 자유로운 손글씨 구성을 우선하세요.
+- 글자는 캐릭터의 몸짓과 시선 방향을 따라 곡선·사선·비대칭으로 자연스럽게 배치할 수 있으며, 캐릭터와 함께 하나의 동세를 만들어야 합니다.
+- 문자는 캐릭터 주변 흰 공간에 직접 떠 있어야 합니다. 사각형·둥근 사각형·라벨·배너·캡션 박스·명패 같은 배경판은 절대 만들지 마세요.
+- 정확성과 가독성은 유지하되, 포스터나 정보 라벨보다 살아있는 손글씨 감정 표현을 우선하세요.\`;
 
     const enLock = \
 \`[IDENTITY & OUTFIT LOCK — HIGHEST PRIORITY]
-- Treat the appearance and outfit written in [FIXED CHARACTER INFORMATION] as immutable across all 15 stickers. Preserve clothing type, colors, silhouette, length and defining details in every sticker.
-- Never substitute clothing to match an action, emotion, occupation, location, prop or situation. Fighting must not create martial-arts uniforms, office scenes must not create suits, and resting must not create sleepwear unless explicitly selected.
-- If both a reference photo and a separately specified outfit exist, the specified outfit controls clothing while the reference photo controls identity features such as face, hair and glasses.
-- Do not create one-off costume changes or recolors. All 15 stickers depict the same character in the same base outfit.
-- Expressions and poses may vary strongly, but identity and fixed clothing must remain unchanged.\`;
+- Keep the appearance and outfit in [FIXED CHARACTER INFORMATION] immutable across all 15 stickers, including clothing type, color, silhouette, length, material and defining details.
+- Never substitute clothing to match action, emotion, occupation, setting or art style. Fighting must not create martial-arts uniforms, office scenes must not create suits, and resting must not create sleepwear unless explicitly selected.
+- If both a reference photo and a separate outfit are specified, the outfit controls clothing while the photo controls identity features such as face, hair and glasses.
+- Do not create one-off costume or color changes. Vary expression and pose strongly while keeping identity and outfit fixed.\`;
 
     const enStyleDirector = \
 \`[SELECTED ART STYLE = COMPLETE ART DIRECTION — HIGHEST PRIORITY]
-- The exact text under [HIGHEST PRIORITY ART STYLE] is not merely a surface filter. It directs pose, gesture, gaze, body line, camera angle, foreshortening, props, motion, effects, negative space, emotional staging and typography across all 15 stickers.
-- Preserve each phrase meaning but re-stage its action through the selected style's visual grammar. Do not collapse phrases into generic messenger-sticker poses.
-- When a style has a recognizable movement language, use it actively. Even quiet emotions inherit that style's posture, silhouette, framing and screen rhythm.
-- For traditional wuxia comic style, KEEP THE FIXED OUTFIT UNCHANGED while staging each sticker like a classic martial-arts comic frame: dramatic low/high angles, diagonal composition, bold foreshortening, disciplined martial poses, swordplay-like body lines, qi/wind through ink strokes, afterimages, speed lines, fingertip and stance tension, jianghu negative space and ink energy. Never replace fixed clothing with robes, martial-arts uniforms, armor or historical clothing.
-- Ink-wash styles also control negative space and gesture restraint; crayon picture-book styles control playful childlike acting; felt, embroidery and clay styles stage like tactile handmade figures; hot-blooded battle manga pushes extreme perspective and explosive choreography.
-- If style appears only as surface texture while pose, camera, effects and typography remain generic, the result is a failure.
+- [HIGHEST PRIORITY ART STYLE] directs not only rendering but pose, body line, gesture, gaze, camera, foreshortening, props, motion, effects, negative space, emotional staging and typography.
+- Preserve phrase meaning while re-staging the action through the selected style's visual grammar. Do not collapse the set into generic frontal bust portraits or standard messenger-sticker poses.
+- For traditional wuxia comic style, KEEP THE FIXED OUTFIT UNCHANGED while using dramatic low/high angles, diagonal framing, bold foreshortening, martial body lines, qi/wind ink strokes, afterimages, speed lines, fingertip and stance tension, jianghu negative space and ink energy. Never replace fixed clothing with robes, martial-arts uniforms or historical costumes.
+- Apply the same principle to every other style: ink-wash controls space and restrained gesture, crayon controls playful childlike acting, felt/embroidery/clay stages tactile handmade or stop-motion movement, and hot-blooded battle manga controls explosive perspective and choreography.
 
-[EMOTION-DRIVEN LETTERING — NO RIGID TEMPLATE]
-- Preserve the exact Korean spelling and spacing, but the lettering itself must act out the emotion.
-- Do not repeat one font, weight, size, outline, baseline or rigid alignment across all phrases.
-- Vary scale, tilt, spacing, baseline rhythm, stroke pressure, wobble and small accents according to emotion.
-- Laughter and excitement can bounce and rise; surprise and awkwardness can become uneven and hesitant; anger can use fast forceful strokes; sadness can droop and soften; warmth and gratitude can breathe with gentler wider strokes.
-- Even in traditional wuxia style, do not turn every phrase into a heavy formal calligraphy title. Use brush energy, ink pressure and sword-stroke flavor as stylistic ingredients while allowing each emotion to remain playful, shy, explosive, soft or light as appropriate.
-- Lettering should float naturally around the character, not behave like a poster headline, logo, badge or sign.
-- Do NOT place text on rectangular or rounded-rectangle plaques, banners, labels, caption boxes or background cards. Put the lettering directly on the plain canvas.
-- Keep spelling and readability exact while prioritizing lively emotional rhythm and hand-made character.\`;
+[ACTION-DRIVEN FRAMING & CAMERA]
+- Do not use upper-body framing as the default. Choose framing only after deciding what part of the body the action needs.
+- Jumps, runs, landings, recoveries, evasions, footwork and stance-driven actions must be full-body or near-full-body.
+- Palm strikes, pressure-point gestures, punches and hand-led actions should use half-body or three-quarter framing with meaningful foreshortening.
+- Use bust close-ups only when eyes or subtle facial emotion are genuinely the main action.
+- A sheet dominated by chest-up portraits is a failure. Across 15 stickers include at least 4 full/near-full-body shots and at least 4 half/three-quarter-body shots; use no more than 5 pure bust/close-up shots.
+- Vary the camera according to action: low angle, high angle, diagonal/Dutch framing, profile, over-shoulder turn, and hands/feet projecting into the foreground. Do not repeat eye-level frontal framing.
+
+[EMOTION-DRIVEN LETTERING — LETTERS MUST ACT]
+- Preserve exact Korean spelling and spacing, but make the lettering itself perform the emotion.
+- Do not repeat one font, weight, size, outline, baseline or rigid alignment across the set.
+- Excitement may bounce or rise; surprise may wobble with uneven scale; anger may slash forward with fast forceful strokes; sadness may droop and soften; warmth may breathe with gentler wider spacing.
+- Even in wuxia style, do not turn every phrase into heavy formal calligraphy. Brush energy and ink pressure are ingredients; playful phrases can bounce, hesitant phrases can shrink and wobble, explosive phrases can burst outward.
+- Do not default to one-character-per-line vertical stacks, signboard columns or poster-title typography. Prefer one lively hand-lettered phrase block unless the phrase itself truly needs another arrangement.
+- Lettering may curve, tilt and follow gaze or body motion so character and text share one visual rhythm.
+- Put lettering directly on the plain white canvas. Never place it on rectangular or rounded plaques, labels, banners, caption boxes or signboards.
+- Keep spelling and readability exact while prioritizing expressive hand-made emotional rhythm over information-label typography.\`;
 
     return base + '\\n\\n' + (lang === 'ko' ? koLock + '\\n\\n' + koStyleDirector : enLock + '\\n\\n' + enStyleDirector);
   };
