@@ -1,1 +1,0 @@
-Canonical plugin created on branch; integration pending.
