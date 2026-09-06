@@ -9,10 +9,11 @@ import { mainAdCleanupPlugin } from './vite.main-ad-cleanup-plugin.js'
 import { bulkSaveLayoutPlugin } from './vite.bulk-save-layout-plugin.js'
 import { modelPromptPriorityV3Plugin } from './vite.model-prompt-priority-v3.js'
 import { themeAwareLetteringPlugin } from './vite.theme-aware-lettering-plugin.js'
+import { sheetLayoutLockPlugin } from './vite.sheet-layout-lock-plugin.js'
 import { safeWhiteSheetRoutingPlugin } from './vite.safe-white-sheet-routing-plugin.js'
 import { transparentSheetAspectPlugin } from './vite.transparent-sheet-aspect-plugin.js'
 
 export default defineConfig({
   ...baseConfig,
-  plugins: [transparentSheetAspectPlugin(), safeWhiteSheetRoutingPlugin(), modelPromptPriorityV3Plugin(), themeAwareLetteringPlugin(), bulkSaveLayoutPlugin(), mainAdCleanupPlugin(), adsensePlacementPlugin(), photoReferencePromptStructure(), phraseThemeExpansionV2(), phraseThemeExpansionV3(), goldenComboRebuildV2(), ...(baseConfig.plugins || [])],
+  plugins: [transparentSheetAspectPlugin(), safeWhiteSheetRoutingPlugin(), modelPromptPriorityV3Plugin(), themeAwareLetteringPlugin(), sheetLayoutLockPlugin(), bulkSaveLayoutPlugin(), mainAdCleanupPlugin(), adsensePlacementPlugin(), photoReferencePromptStructure(), phraseThemeExpansionV2(), phraseThemeExpansionV3(), goldenComboRebuildV2(), ...(baseConfig.plugins || [])],
 })
