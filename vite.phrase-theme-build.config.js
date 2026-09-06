@@ -22,8 +22,9 @@ import { transparentSheetAspectPlugin } from './vite.transparent-sheet-aspect-pl
 import { sceneTypographyDirectionV5Plugin } from './vite.scene-typography-direction-v5.js'
 import { styleFirstSemanticLockV3Plugin } from './vite.style-first-semantic-lock-v3.js'
 import { slotIsolationLockPlugin } from './vite.slot-isolation-lock.js'
+import { semanticPropDirectorV1Plugin } from './vite.semantic-prop-director-v1.js'
 
 export default defineConfig({
   ...baseConfig,
-  plugins: [transparentSheetAspectPlugin(), safeWhiteSheetRoutingPlugin(), defaultArtStyleFallbackPlugin(), styleFiveAxisPresetsV2Plugin(), cute2DFullBodyVividLockPlugin(), gptStyleDirectorLockPlugin(), modelPromptPriorityV4Plugin(), grokStyleDirectorLockPlugin(), geminiIdentityStyleLockPlugin(), geminiLayoutInstanceLockPlugin(), geminiStyleSceneLockPlugin(), geminiFinalExecutionLockPlugin(), bulkSaveLayoutPlugin(), mainAdCleanupPlugin(), adsensePlacementPlugin(), photoReferencePromptStructure(), phraseThemeExpansionV2(), phraseThemeExpansionV3(), goldenComboRebuildV2(), slotIsolationLockPlugin(), ...(baseConfig.plugins || []), sceneTypographyDirectionV5Plugin(), styleFirstSemanticLockV3Plugin()],
+  plugins: [transparentSheetAspectPlugin(), safeWhiteSheetRoutingPlugin(), defaultArtStyleFallbackPlugin(), styleFiveAxisPresetsV2Plugin(), cute2DFullBodyVividLockPlugin(), gptStyleDirectorLockPlugin(), modelPromptPriorityV4Plugin(), grokStyleDirectorLockPlugin(), geminiIdentityStyleLockPlugin(), geminiLayoutInstanceLockPlugin(), geminiStyleSceneLockPlugin(), geminiFinalExecutionLockPlugin(), bulkSaveLayoutPlugin(), mainAdCleanupPlugin(), adsensePlacementPlugin(), photoReferencePromptStructure(), phraseThemeExpansionV2(), phraseThemeExpansionV3(), goldenComboRebuildV2(), slotIsolationLockPlugin(), semanticPropDirectorV1Plugin(), ...(baseConfig.plugins || []), sceneTypographyDirectionV5Plugin(), styleFirstSemanticLockV3Plugin()],
 })
