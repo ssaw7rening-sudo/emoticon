@@ -26,8 +26,9 @@ import { slotIsolationLockPlugin } from './vite.slot-isolation-lock.js'
 import { semanticPropDirectorV1Plugin } from './vite.semantic-prop-director-v1.js'
 import { repairPromptV3Plugin } from './vite.repair-prompt-v3.js'
 import { inlineTagAccordionV1Plugin } from './vite.inline-tag-accordion-v1.js'
+import { globalCanonicalPromptSchemaV1Plugin } from './vite.global-canonical-prompt-schema-v1.js'
 
 export default defineConfig({
   ...baseConfig,
-  plugins: [repairPromptV3Plugin(), transparentSheetAspectPlugin(), safeWhiteSheetRoutingPlugin(), defaultArtStyleFallbackPlugin(), styleFiveAxisPresetsV2Plugin(), cute2DFullBodyVividLockPlugin(), gptStyleDirectorLockPlugin(), modelPromptPriorityV4Plugin(), grokStyleDirectorLockPlugin(), geminiIdentityStyleLockPlugin(), geminiLayoutInstanceLockPlugin(), geminiStyleSceneLockPlugin(), geminiFinalExecutionLockPlugin(), bulkSaveLayoutPlugin(), mainAdCleanupPlugin(), adsensePlacementPlugin(), photoReferencePromptStructure(), phraseThemeExpansionV2(), phraseThemeExpansionV3(), goldenComboRebuildV2(), slotIsolationLockPlugin(), semanticPropDirectorV1Plugin(), ...(baseConfig.plugins || []), sceneTypographyDirectionV5Plugin(), textContrastBackingLockV1Plugin(), styleFirstSemanticLockV3Plugin(), inlineTagAccordionV1Plugin()],
+  plugins: [repairPromptV3Plugin(), transparentSheetAspectPlugin(), safeWhiteSheetRoutingPlugin(), defaultArtStyleFallbackPlugin(), styleFiveAxisPresetsV2Plugin(), cute2DFullBodyVividLockPlugin(), gptStyleDirectorLockPlugin(), modelPromptPriorityV4Plugin(), grokStyleDirectorLockPlugin(), geminiIdentityStyleLockPlugin(), geminiLayoutInstanceLockPlugin(), geminiStyleSceneLockPlugin(), geminiFinalExecutionLockPlugin(), bulkSaveLayoutPlugin(), mainAdCleanupPlugin(), adsensePlacementPlugin(), photoReferencePromptStructure(), phraseThemeExpansionV2(), phraseThemeExpansionV3(), goldenComboRebuildV2(), slotIsolationLockPlugin(), semanticPropDirectorV1Plugin(), ...(baseConfig.plugins || []), sceneTypographyDirectionV5Plugin(), textContrastBackingLockV1Plugin(), styleFirstSemanticLockV3Plugin(), inlineTagAccordionV1Plugin(), globalCanonicalPromptSchemaV1Plugin()],
 })
