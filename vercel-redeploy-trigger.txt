@@ -1,4 +1,4 @@
-Vercel redeploy trigger for style-first prompt update.
-Date: 2026-09-06 21:17 KST
-Purpose: trigger a fresh production deployment after applying the vivid full-body cute/default 2D style lock.
-Source commit before redeploy: 4ae39cf36f86db303cfbd9a416420d80ebc5c1e2
+Vercel redeploy trigger for inline tag accordion UI update.
+Date: 2026-09-07 KST
+Purpose: trigger a fresh production deployment after converting the tag category picker to an inline row accordion while preserving all existing tag data and selection logic.
+Source commit before redeploy: 0064292d131ce1b1bde79f77a6a5d0c33c3de08d
