@@ -1,7 +1,9 @@
 import fs from 'node:fs';
 
 const canonicalPath = 'vite.global-canonical-prompt-schema-v1.js';
+const wrapperPath = 'vite.global-canonical-scene-wrapper-v1.js';
 const canonical = fs.readFileSync(canonicalPath, 'utf8');
+const wrapper = fs.readFileSync(wrapperPath, 'utf8');
 
 for (const locale of ['ko-KR', 'en-US', 'ja-JP', 'zh-CN']) {
   if (!canonical.includes(locale)) throw new Error(`${canonicalPath}: missing ${locale}`);
@@ -42,16 +44,23 @@ if (!canonical.includes('日本語は文字数を機械的に固定せず')) {
 if (!canonical.includes('简体中文不要套用韩文字符数规则')) {
   throw new Error('Chinese wrapping policy missing');
 }
+if (!wrapper.includes('scenePlugin.transform.call(this')) {
+  throw new Error('scene wrapper must explicitly chain the scene transform before canonical normalization');
+}
+if (!wrapper.includes('canonicalPlugin.transform.call(this')) {
+  throw new Error('scene wrapper must explicitly run canonical normalization on the scene-transformed source');
+}
 
 for (const configPath of ['vite.phrase-theme-build.config.js', 'vite.phrase-theme-dev.config.js']) {
   const config = fs.readFileSync(configPath, 'utf8');
-  if (!config.includes("import { globalCanonicalPromptSchemaV1Plugin }")) {
-    throw new Error(`${configPath}: canonical plugin import missing`);
+  if (!config.includes("import { globalCanonicalSceneWrapperV1Plugin }")) {
+    throw new Error(`${configPath}: canonical scene wrapper import missing`);
   }
-  const pluginPos = config.lastIndexOf('globalCanonicalPromptSchemaV1Plugin()');
-  const inlinePos = config.lastIndexOf('inlineTagAccordionV1Plugin()');
-  if (pluginPos < 0 || pluginPos < inlinePos) {
-    throw new Error(`${configPath}: canonical plugin must run after existing prompt decorators`);
+  if (!config.includes('globalCanonicalSceneWrapperV1Plugin(sceneTypographyDirectionV5Plugin())')) {
+    throw new Error(`${configPath}: scene transform must be wrapped by the canonical normalizer`);
+  }
+  if (config.includes('inlineTagAccordionV1Plugin()')) {
+    throw new Error(`${configPath}: stale inline tag accordion transform must not remain in the active build pipeline`);
   }
 }
 
