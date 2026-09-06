@@ -57,11 +57,28 @@ export function geminiLayoutInstanceLockPlugin() {
 - Props, hearts, sweat drops, motion lines, stars, symbols, and graphic effects are allowed, but they must NEVER resemble additional human bodies or mini figures.
 - If space is tight, uniformly reduce the scale of all 15 primary stickers together. Never spawn smaller secondary characters and never reduce the count.
 - Keep every primary character fully visible, separated, and uncropped.
-- Use clean white die-cut margins around each sticker on a PURE WHITE background.
-- Borderless canvas only: NO comic panels, NO framing boxes, NO rectangular card borders, NO grid lines, NO cell containers.
+
+[ORGANIC DIE-CUT SHAPE — NO CARD CONTAINERS]
+- Every sticker must read as an irregular, organic die-cut built from the natural silhouette of the character, pose, props and small effects.
+- The white die-cut margin must HUG the irregular contour. It must NOT form a rectangle, rounded rectangle, square, capsule, card, tile, panel, badge, label, plaque, banner, caption strip or speech-box container.
+- Do NOT place the character and text together inside one enclosing white shape or one boxed sticker card.
+- Text must float directly on the pure white canvas near the character. Do NOT put any solid white, colored, outlined or shadowed rectangular plate behind the text.
+- The 5×3 structure is an invisible placement guide only. It must never become visible cells, boxes, tiles, separators or card silhouettes.
+- Neighboring stickers must be separated by open white negative space, not by rectangular boundaries.
+- If a die-cut outline is used around text, it should follow the individual letter shapes loosely and organically, never connect into a rectangular label.
+
+[TEXT SINGLE-INSTANCE LOCK]
+- The assigned phrase appears exactly ONCE in its slot.
+- Use one text block only, placed above or beside the character according to the composition.
+- NO duplicated header/footer text, NO repeated phrase at the bottom, NO repeated word as a second label, and NO top-and-bottom split repetition.
+- Preserve exact spelling and spacing while keeping the lettering fully readable.
+
+[BACKGROUND]
+- Entire canvas background: PURE SOLID WHITE (#FFFFFF).
+- NO panels, NO cards, NO framing boxes, NO rounded-rectangle backplates, NO caption boxes, NO grid lines, NO cell containers, NO decorative tiles.
 
 [FINAL STRUCTURE CHECK]
-Wide 16:9 landscape → exactly 5 stickers across the top row → exactly 5 across the middle row → exactly 5 across the bottom row → exactly 15 primary character figures total.\`;
+Wide 16:9 landscape → exactly 5 stickers across the top row → exactly 5 across the middle row → exactly 5 across the bottom row → exactly 15 primary character figures total → all stickers remain free-floating organic die-cuts with no rectangular enclosure.\`;
 
     return lock + '\\n\\n' + base;
   };
