@@ -34,7 +34,6 @@ export function modelPromptPriorityV4Plugin() {
     const textEnabled = model === 'gemini' ? geminiTextMode === 'text' : grokTextMode === 'text';
     let base = String(prompt || '');
 
-    // 이전의 강제 셀/카드형 표현은 논리적 15개 순서만 남기고 자유로운 스티커 시트 구성으로 압축합니다.
     if (!isSingle) {
       base = base.replace(/\\n\\[종료 검증\\]\\n[\\s\\S]*?(?=\\n\\n\\[제외 조건\\])/, '');
       base = base.replace(
@@ -79,7 +78,7 @@ export function modelPromptPriorityV4Plugin() {
       : '[15-STICKER SHEET] Create exactly 15 independent stickers, naturally arranged five per row across three rows. Keep the sheet visually free and lively rather than boxed; vary scale, pose, framing and silhouette to fit each phrase, mixing upper-body, half-body and full-body acting with comfortable separation.';
 
     const koActing = '[화풍·행동] 선택한 화풍의 핵심 선·채색·질감을 유지하면서 메신저 이모티콘처럼 감정과 행동이 즉시 읽히게 연출하세요. 각 문구는 표정, 시선, 손동작, 몸의 방향과 필요한 소품·효과로 의미를 직접 연기하고, 같은 흉상 포즈의 반복을 피하세요.';
-    const enActing = '[STYLE & ACTING] Preserve the selected style\'s essential line, color and texture language while keeping messenger-sticker emotion immediately readable. Let each phrase drive expression, gaze, hand gesture, body direction and only the props/effects that help communicate its meaning.';
+    const enActing = '[STYLE & ACTING] Preserve the essential line, color and texture language of the selected style while keeping messenger-sticker emotion immediately readable. Let each phrase drive expression, gaze, hand gesture, body direction and only the props/effects that help communicate its meaning.';
 
     const koLettering = textEnabled
       ? '[레터링] 전체 시트는 하나의 레터링 패밀리로 통일하되 문구의 감정과 상황에 따라 색상, 굵기, 기울기, 크기 리듬, 붓터치와 작은 장식 효과를 자연스럽게 변주하세요. 고정 팔레트에 억지로 맞추지 말고 배경에서 즉시 읽히는 대비를 확보하세요.'
