@@ -53,14 +53,19 @@ export function sceneTypographyDirectionV5Plugin() {
 
     const textKo = [
       '[문자 가독성 보호 — 화풍 유지형 HARD CONSTRAINT]',
+      '- [생성 순서 잠금] 캐릭터를 먼저 완성한 뒤 남는 공간에 문자를 넣지 마세요. 각 셀은 반드시 문구의 위치·줄 수·크기·Text Safe Zone을 먼저 확정한 뒤 캐릭터 점유 영역, 카메라, Acting과 Effects를 설계하세요.',
       '- 문자는 장면의 보조 설명이 아니라 캐릭터와 함께 화면을 구성하는 두 번째 주연 요소이며, 작은 메신저 화면에서도 즉시 읽혀야 합니다.',
-      '- 문자 위치는 캐릭터를 다 그린 뒤 남은 공간에 끼워 넣지 말고 포즈·카메라·효과를 설계하는 순간부터 함께 확보하세요.',
-      '- 각 셀에서 충분한 Text Safe Zone과 Negative Space를 확보하고, 글자 바로 뒤에는 얼굴·손·복잡한 의상 주름·강한 먹비산·속도선·장풍·고대비 효과를 배치하지 마세요.',
+      '- 각 셀에서 문자와 주변 여백을 위한 시각 공간을 처음부터 충분히 선점하세요. 일반적으로 셀 면적의 약 20~30%를 문자 가용 영역으로 확보하되, 긴 문구나 시각 밀도가 높은 화풍은 필요한 만큼 더 넓게 확보하세요.',
+      '- 문자 안전영역 안에는 얼굴·손·소품·복잡한 의상 주름·강한 명암 덩어리·패턴·스크린톤·픽셀 장식·먹비산·속도선·장풍·광선·잔상·고대비 효과 등 높은 시각 밀도의 요소를 두지 마세요.',
+      '- 캐릭터나 효과가 문자 공간과 충돌하면 문자를 줄이거나 밀어내지 말고 캐릭터의 크기·위치·포즈·카메라 또는 효과량을 다시 설계하세요. 문자 가독성을 희생해 캐릭터 화면 점유율을 키우는 것은 금지합니다.',
+      '- 문자 바로 뒤 영역은 같은 셀의 다른 부분보다 시각 밀도를 낮게 유지하세요. 필요한 분리는 선택 화풍 고유의 농담, Negative Space, 워시, 밑칠, 역상 획, 외곽 붓질, 그림자 또는 재료 대비로 해결하세요.',
+      '- 먹선·스크린톤·민화 문양·픽셀·그래피티·네온·자수·크레파스처럼 본래 시각 밀도가 높은 화풍일수록 Text Safe Zone 주변의 효과 밀도를 더 적극적으로 낮추되, 문자 획과 재료감 자체는 반드시 해당 화풍의 Typography DNA를 유지하세요.',
       '- 장풍·기류·먹선·잔상·빛·충격·반짝임 등 화풍 효과는 문자와 충돌하지 말고 문자 주변으로 갈라지거나 비켜가며 흐르도록 연출하세요.',
       '- 문자와 효과가 같은 방향성을 공유할 수는 있지만 서로 겹쳐 읽기 어려워져서는 안 됩니다. 기본 시각 위계는 배경 효과 → 캐릭터 → 문자이며 문자가 최종 전경에서 명확히 읽히게 하세요.',
-      '- 문자와 주변의 명도·색·밀도가 비슷하면 선택 화풍 내부의 방법으로 대비를 확보하세요. 먹 농담 분리, 옅은 워시, 역상 획, 외곽 붓질, 화풍 고유의 그림자·밑칠 등은 허용합니다.',
       '- 범용 사각 텍스트 박스나 획일적인 기본 스티커 폰트로 가독성을 해결하지 마세요. 고정적인 순백색 다이컷 외곽선도 강제하지 말고 필요한 분리는 선택 화풍의 재료 언어로 해결하세요.',
       '- 문자의 화풍성보다 철자 정확성과 순간 가독성이 우선하며, 가독성을 확보하는 방법 자체는 선택 화풍이 결정합니다.',
+      '- 생성 직전 각 셀을 다시 검사하세요: 문구 전체가 작은 메신저 화면에서 즉시 읽히는가, 어떤 효과선도 글자를 관통하지 않는가, 자모가 배경과 합쳐지지 않는가. 하나라도 아니면 캐릭터·효과 구도를 먼저 수정한 뒤 렌더링하세요.',
+      '- 충돌 시 우선순위는 캐릭터 정체성·고정 의상 유지 → 선택 화풍 유지 → 문자 철자 정확성·순간 가독성 → 문구 의미 연출 → 캐릭터 화면 점유율·효과량 순입니다.',
       '- 캐릭터·효과·문자는 서로 경쟁하는 세 요소가 아니라 같은 장면의 하나의 방향과 리듬을 공유해야 합니다.'
     ].join('\\n');
 
@@ -77,14 +82,19 @@ export function sceneTypographyDirectionV5Plugin() {
 
     const textEn = [
       '[TYPOGRAPHY LEGIBILITY LOCK — STYLE-PRESERVING HARD CONSTRAINT]',
+      '- [GENERATION-ORDER LOCK] Never finish the character first and place lettering in leftover space. For every cell, establish phrase position, line count, scale and Text Safe Zone first; only then design character occupancy, camera, Acting and Effects.',
       '- Lettering is a second lead in the scene, not a late caption, and must read instantly on a small messenger screen.',
-      '- Reserve lettering space while designing pose, camera and effects; never squeeze the phrase into leftover space after the character is finished.',
-      '- Give every phrase a clear Text Safe Zone and negative space. Do not place faces, hands, dense clothing folds, heavy splashes, speed lines, energy bursts or other high-contrast detail directly behind the glyphs.',
+      '- Reserve meaningful visual area for lettering from the start. As a general target, keep roughly 20–30% of each cell available for the phrase and its breathing room, expanding it for long phrases or visually dense styles.',
+      '- Keep faces, hands, props, dense clothing folds, heavy value masses, patterns, screentones, pixel ornaments, ink splashes, speed lines, energy bursts, light rays and other high-density detail out of the lettering safe zone.',
+      '- If the character or effects collide with the lettering zone, do not shrink or push away the text. Restage character scale, position, pose, camera or effect amount first. Never sacrifice instant readability to maximize character occupancy.',
+      '- Keep the area directly behind lettering visually calmer than the rest of the cell. Create separation using style-native value control, negative space, wash, underpainting, reverse strokes, edge brushwork, shadow or material contrast.',
+      '- In inherently dense styles such as ink manga, screentone comics, folk painting, pixel art, graffiti, neon, embroidery or crayon, reduce effect density around the Text Safe Zone more aggressively while preserving that style’s native Typography DNA in the glyphs themselves.',
       '- Style-native effects may share the lettering direction, but they must split, bend or flow around the letters rather than crossing through them and reducing readability.',
       '- Default visual order is background effects → character → lettering, with the lettering clearly readable in the final foreground.',
-      '- When value, color or texture contrast is weak, create separation using methods native to the selected style: density shifts, pale wash, reverse strokes, edge brushwork, style-native shadow or underpainting.',
       '- Do not solve readability with generic rectangular text boxes, one uniform stock sticker font, or a mandatory pure-white die-cut outline. Separation itself must inherit the selected style’s material language.',
       '- Exact spelling and instant readability take priority over decorative complexity, while the selected style decides how that readability is achieved.',
+      '- Immediately before rendering each cell, verify that the complete phrase reads instantly at messenger size, no effect line crosses the glyphs, and no consonant, vowel or final stroke merges into the background. If any check fails, revise character/effect composition before rendering.',
+      '- Conflict priority: preserve character identity/fixed outfit → preserve selected art style → exact spelling and instant lettering readability → phrase meaning performance → character occupancy and effect amount.',
       '- Character, effects and lettering must share one scene rhythm without competing for the same visual space.'
     ].join('\\n');
 
