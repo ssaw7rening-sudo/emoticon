@@ -89,7 +89,7 @@ export function themeActionExpressionPlugin() {
         `  };`,
         ``,
         helperMarker,
-      ].join('\\n');
+      ].join('\n');
       out = replaceOnce(out, helperMarker, helper, 'helper injection');
 
       const geminiMarker = `enhanceModelLetteringPrompt(generateGeminiPrompt(phraseOverride), 'gemini')`;
