@@ -1,4 +1,5 @@
-Vercel redeploy trigger for global setting parity update.
+Vercel production redeploy retry for global setting parity update.
 Date: 2026-09-07 KST
-Purpose: trigger a fresh production deployment for the current main branch after applying cross-locale setting parity so Korea, US, Japan, and China preserve the same setup values and art-style behavior.
-Source commit before redeploy: 6b6f17823829e8379bdf5a0d484054ce62df0a1d
+Purpose: retry production deployment for the current main branch after the previous Vercel Hobby build-rate limit response. Preserve identical setup values and art-style behavior across Korea, US, Japan, and China.
+Source main commit before retry: b883c2efcd9b087ab77dbf5255baf177194125a8
+Retry: 1
