@@ -33,6 +33,7 @@ export function sceneTypographyDirectionV5Plugin() {
       : model === 'gemini'
         ? geminiTextMode === 'text'
         : grokTextMode === 'text';
+    const isSingle = generationMode === 'individual' || generationMode === 'batch';
 
     const isKoPrompt = base.includes('[화풍 =')
       || base.includes('[목표]')
@@ -40,22 +41,33 @@ export function sceneTypographyDirectionV5Plugin() {
       || base.includes('[구도 및 배경]')
       || base.includes('[시트 구성 및 배경]');
 
-    const sceneKo = [
-      '[장면 연출 = 하나의 완결된 장면으로 설계]',
-      '- 각 셀을 단순한 캐릭터 포즈 + 문자의 조합으로 만들지 말고, 선택 화풍 안에서 하나의 완결된 만화 장면으로 연출하세요.',
-      '- 문구의 감정 강도와 행동 목적을 해석한 뒤 몸의 축, 손발 방향, 시선, 머리카락과 의상의 흐름, 카메라 거리와 원근, 효과를 하나의 동세로 연결하세요.',
-      '- 15개 장면이 정면 상반신 위주로 반복되지 않도록 전신·반신·근접, 정면·사선·로우·하이앵글, 전경 손발과 과감한 단축을 선택 화풍의 카메라 문법 안에서 적극적으로 변화시키세요.',
-      '- 강한 감정은 화면 점유율과 동세를 키우고, 억눌리거나 지친 감정은 몸을 압축하거나 여백을 넓히는 등 감정에 따라 화면 에너지와 무게중심까지 변화시키세요.',
-      '- 캐릭터를 셀 중앙에 항상 고정하지 말고 좌·우·상·하의 비대칭 구도를 적극 활용하세요. 빈 공간도 감정과 동세를 만드는 연출 요소로 사용하세요.',
-      '- 특정 예시 포즈를 복제하지 마세요. 손하트·엄지척·점프·고개 숙임 같은 범용 스티커 클리셰를 미리 답으로 정하지 말고, 감정별 화면 에너지·카메라 변화·전신 활용·비대칭 구도라는 연출 원리만 적용하세요.',
-      '- 별도의 시각 효과를 사용자가 지정하지 않았더라도 Acting과 Camera를 완성하는 데 필요한 효과는 선택 화풍이 자율적으로 사용할 수 있습니다. 효과의 양과 강도는 문구 테마가 아니라 선택 화풍과 장면의 감정 강도가 결정합니다.'
-    ].join('\\n');
+    const sceneKo = (isSingle ? [
+      '[공통 이모티콘 구도 감독 — 모든 화풍 공통 HARD CONSTRAINT]',
+      '- 이 규칙은 특정 화풍을 정의하거나 약화하지 않습니다. 선택 화풍의 Rendering + Acting + Camera + Effects + Typography를 그대로 유지하면서 메신저 이모티콘으로서의 화면 구성만 안정화합니다.',
+      '- 하나의 복잡한 만화 컷이나 포스터처럼 만들지 말고, 하나의 감정과 하나의 중심 행동이 즉시 읽히는 독립형 이모티콘 장면으로 구성하세요.',
+      '- 전신 또는 3/4 전신을 우선하고, 얼굴 근접·극단 원근·전경 손발 확대는 의미 전달에 꼭 필요한 경우에만 사용하세요.',
+      '- 캐릭터와 문구가 서로 경쟁하지 않게 독립적인 여백을 먼저 확보하세요. 캐릭터 동세가 한쪽으로 향하면 문구는 반대쪽이나 상단·측면의 Negative Space를 우선 사용하세요.',
+      '- 선택 화풍의 효과는 캐릭터 뒤쪽·외곽·동세 방향을 중심으로 사용하고 얼굴과 문구를 가리지 마세요. 효과로 화면 전체를 채우지 마세요.',
+      '- 화풍의 강도는 장면 복잡도로 증명하지 않습니다. 선·형태·동작·카메라·효과·문자에서 화풍 DNA가 명확하면 충분하며 불필요한 배경·효과·원근은 추가하지 마세요.'
+    ] : [
+      '[공통 이모티콘 구도 감독 — 모든 화풍 공통 HARD CONSTRAINT]',
+      '- 이 규칙은 특정 화풍을 정의하거나 약화하지 않습니다. 선택 화풍의 Rendering + Acting + Camera + Effects + Typography를 그대로 유지하면서 메신저 이모티콘으로서의 화면 구성만 안정화합니다.',
+      '- 각 셀은 복잡한 만화 컷이나 포스터가 아니라 하나의 감정과 하나의 중심 행동이 즉시 읽히는 독립형 이모티콘 장면으로 설계하세요.',
+      '- 15개 시트에서는 전신 또는 3/4 전신을 기본 구도로 우선하고, 얼굴 근접·극단 원근·전경 손발 확대는 감정 전달에 꼭 필요한 소수 장면에서만 사용하세요.',
+      '- 캐릭터는 일반적으로 셀의 약 55~70% 범위에서 배치하고, 문구와 숨 쉴 여백을 위해 약 25~35%의 독립 공간을 확보하세요. 문구 길이에 따라 자연스럽게 조정하되 캐릭터가 문자 공간을 압박하지 않게 하세요.',
+      '- 캐릭터의 동세가 한쪽으로 향하면 문구는 반대쪽 또는 상단·측면의 Negative Space를 우선 사용하세요. 캐릭터와 문자를 억지로 겹치거나 문자를 캐릭터 위에 덮는 구도를 기본값으로 삼지 마세요.',
+      '- 각 셀에는 하나의 중심 행동만 강하게 표현하세요. 복수의 사건·복수 포즈·과도한 전경 오브젝트·복잡한 배경 서사를 동시에 넣지 마세요.',
+      '- 카메라는 선택 화풍이 결정하지만 다양성을 위해 무조건 극단적으로 만들지 마세요. 먼저 실루엣 → 표정 → 행동 → 문구가 읽혀야 하며, 정면 상반신 위주의 반복도 피하세요.',
+      '- 선택 화풍의 효과는 캐릭터 뒤쪽·외곽·동세 방향을 중심으로 사용하고 얼굴과 문구를 가리지 마세요. 효과가 셀 전체를 메우지 않게 하며, 장면 복잡도를 화풍 강도의 증거로 사용하지 마세요.',
+      '- 15개 전체는 포즈와 카메라가 달라도 캐릭터 크기·문구 비중·시각 밀도를 일정 범위 안에서 유지해 하나의 통일된 이모티콘 세트처럼 보이게 하세요. 강한 감정은 일부 확대하고 지침·허탈한 감정은 여백을 늘릴 수 있지만 전체 균형은 유지하세요.',
+      '- 화풍의 강도는 장면 복잡도로 증명하지 않습니다. 선·형태·동작·카메라·효과·문자에서 화풍 DNA가 명확하면 충분하며 불필요한 배경·효과·원근은 추가하지 마세요.'
+    ]).join('\\n');
 
     const textKo = [
       '[문자 가독성 보호 — 화풍 유지형 HARD CONSTRAINT]',
       '- [생성 순서 잠금] 캐릭터를 먼저 완성한 뒤 남는 공간에 문자를 넣지 마세요. 각 셀은 반드시 문구의 위치·줄 수·크기·Text Safe Zone을 먼저 확정한 뒤 캐릭터 점유 영역, 카메라, Acting과 Effects를 설계하세요.',
       '- 문자는 장면의 보조 설명이 아니라 캐릭터와 함께 화면을 구성하는 두 번째 주연 요소이며, 작은 메신저 화면에서도 즉시 읽혀야 합니다.',
-      '- 각 셀에서 문자와 주변 여백을 위한 시각 공간을 처음부터 충분히 선점하세요. 일반적으로 셀 면적의 약 20~30%를 문자 가용 영역으로 확보하되, 긴 문구나 시각 밀도가 높은 화풍은 필요한 만큼 더 넓게 확보하세요.',
+      '- 15개 시트에서는 일반적으로 셀 면적의 약 25~35%를 문구와 주변 여백의 가용 영역으로 확보하세요. 긴 문구나 시각 밀도가 높은 화풍은 필요한 만큼 더 넓게 확보하고, 단일 이모티콘에서도 문구가 숨 쉴 독립 공간을 충분히 확보하세요.',
       '- 문자 안전영역 안에는 얼굴·손·소품·복잡한 의상 주름·강한 명암 덩어리·패턴·스크린톤·픽셀 장식·먹비산·속도선·장풍·광선·잔상·고대비 효과 등 높은 시각 밀도의 요소를 두지 마세요.',
       '- 캐릭터나 효과가 문자 공간과 충돌하면 문자를 줄이거나 밀어내지 말고 캐릭터의 크기·위치·포즈·카메라 또는 효과량을 다시 설계하세요. 문자 가독성을 희생해 캐릭터 화면 점유율을 키우는 것은 금지합니다.',
       '- 문자 바로 뒤 영역은 같은 셀의 다른 부분보다 시각 밀도를 낮게 유지하세요. 필요한 분리는 선택 화풍 고유의 농담, Negative Space, 워시, 밑칠, 역상 획, 외곽 붓질, 그림자 또는 재료 대비로 해결하세요.',
@@ -69,22 +81,33 @@ export function sceneTypographyDirectionV5Plugin() {
       '- 캐릭터·효과·문자는 서로 경쟁하는 세 요소가 아니라 같은 장면의 하나의 방향과 리듬을 공유해야 합니다.'
     ].join('\\n');
 
-    const sceneEn = [
-      '[SCENE DIRECTION = DESIGN ONE COMPLETE PERFORMANCE]',
-      '- Do not build each slot as a generic character pose with text pasted on later. Stage it as one complete mini-scene inside the selected art style.',
-      '- Interpret emotional intensity and purpose, then connect body axis, limbs, gaze, hair/clothing flow, camera distance, perspective and effects into one directional rhythm.',
-      '- Avoid repeating front-facing bust shots. Vary full, medium and close framing, frontal and diagonal views, low/high angles, foreground limbs and bold foreshortening through the selected style’s own camera grammar.',
-      '- Let strong emotions occupy more visual energy; compress the body or open negative space for restrained, tired or subdued emotions. Vary screen occupancy and center of gravity with the emotion.',
-      '- Do not center the character by default. Use asymmetrical left/right/top/bottom placement and treat empty space as part of the directing language.',
-      '- Do not copy fixed example poses. Avoid pre-solving phrases with stock heart-hands, thumbs-up, jumps or bows; preserve only the directing principles of energy variation, camera variation, full-body use and asymmetrical composition.',
-      '- If the user did not explicitly choose a visual effect, the selected style may autonomously use effects needed to complete Acting and Camera. Effect amount and intensity are decided by the selected style and scene emotion, not the phrase theme.'
-    ].join('\\n');
+    const sceneEn = (isSingle ? [
+      '[GLOBAL STICKER COMPOSITION DIRECTOR — ALL ART STYLES HARD CONSTRAINT]',
+      '- This rule does not define or weaken any art style. Preserve the selected style’s Rendering + Acting + Camera + Effects + Typography and stabilize only the composition needed for a readable messenger sticker.',
+      '- Do not turn the sticker into a complex comic panel or poster. Build one immediately readable emotion and one primary action.',
+      '- Prefer full-body or three-quarter-body framing. Use close face crops, extreme perspective or enlarged foreground limbs only when the meaning truly benefits from them.',
+      '- Reserve independent breathing room for character and lettering before staging. When motion leans one way, place lettering primarily in opposite-side, upper or side Negative Space.',
+      '- Keep style-native effects mainly behind or around the character and along the motion direction. Never let them cover the face or lettering, and do not fill the entire frame with effects.',
+      '- Style strength is not proven by scene complexity. If line, shape, acting, camera, effects and typography clearly carry the style DNA, do not add unnecessary background, effects or perspective.'
+    ] : [
+      '[GLOBAL STICKER COMPOSITION DIRECTOR — ALL ART STYLES HARD CONSTRAINT]',
+      '- This rule does not define or weaken any art style. Preserve the selected style’s Rendering + Acting + Camera + Effects + Typography and stabilize only the composition needed for a readable messenger-sticker sheet.',
+      '- Each slot is an independent sticker scene with one immediately readable emotion and one primary action, not a dense comic panel or poster.',
+      '- On the 15-sticker sheet, prefer full-body or three-quarter-body framing as the default. Use close crops, extreme perspective and enlarged foreground limbs only for a small number of scenes where they materially improve the emotion.',
+      '- As a general composition target, keep the character around 55–70% of the slot and reserve about 25–35% as independent phrase/breathing space. Adjust naturally for phrase length without letting the character pressure the lettering zone.',
+      '- When character motion leans toward one side, place lettering primarily in opposite-side, upper or side Negative Space. Do not make character-text overlap the default solution.',
+      '- Give each slot one strong primary action. Avoid combining multiple events, multiple simultaneous poses, excessive foreground objects or complex background narrative in one sticker.',
+      '- Camera choices belong to the selected style, but do not make shots extreme merely for variety. Readability order is silhouette → expression → action → phrase, while also avoiding repetitive front-facing bust shots.',
+      '- Keep style-native effects mainly behind/around the character and along the motion direction. Do not cover the face or lettering, do not fill the entire slot with effects, and never use scene complexity as proof of style strength.',
+      '- Across all 15 stickers, allow pose and camera variety while keeping character scale, lettering share and visual density within a coherent range so the sheet reads as one unified set. Strong emotions may expand and tired/subdued scenes may use more space, but preserve overall balance.',
+      '- Style strength is not proven by complexity. If line, shape, acting, camera, effects and typography clearly carry the style DNA, do not add unnecessary background, effects or perspective.'
+    ]).join('\\n');
 
     const textEn = [
       '[TYPOGRAPHY LEGIBILITY LOCK — STYLE-PRESERVING HARD CONSTRAINT]',
       '- [GENERATION-ORDER LOCK] Never finish the character first and place lettering in leftover space. For every cell, establish phrase position, line count, scale and Text Safe Zone first; only then design character occupancy, camera, Acting and Effects.',
       '- Lettering is a second lead in the scene, not a late caption, and must read instantly on a small messenger screen.',
-      '- Reserve meaningful visual area for lettering from the start. As a general target, keep roughly 20–30% of each cell available for the phrase and its breathing room, expanding it for long phrases or visually dense styles.',
+      '- On a 15-sticker sheet, generally reserve about 25–35% of each slot for the phrase and its breathing room. Expand it for long phrases or visually dense styles; on single stickers, still reserve enough independent breathing room for the phrase.',
       '- Keep faces, hands, props, dense clothing folds, heavy value masses, patterns, screentones, pixel ornaments, ink splashes, speed lines, energy bursts, light rays and other high-density detail out of the lettering safe zone.',
       '- If the character or effects collide with the lettering zone, do not shrink or push away the text. Restage character scale, position, pose, camera or effect amount first. Never sacrifice instant readability to maximize character occupancy.',
       '- Keep the area directly behind lettering visually calmer than the rest of the cell. Create separation using style-native value control, negative space, wash, underpainting, reverse strokes, edge brushwork, shadow or material contrast.',
@@ -100,8 +123,8 @@ export function sceneTypographyDirectionV5Plugin() {
 
     const sceneBlock = isKoPrompt ? sceneKo : sceneEn;
     const textBlock = isKoPrompt ? textKo : textEn;
-    const sceneLockKo = '[장면 연출 = 하나의 완결된 장면으로 설계]';
-    const sceneLockEn = '[SCENE DIRECTION = DESIGN ONE COMPLETE PERFORMANCE]';
+    const sceneLockKo = '[공통 이모티콘 구도 감독 — 모든 화풍 공통 HARD CONSTRAINT]';
+    const sceneLockEn = '[GLOBAL STICKER COMPOSITION DIRECTOR — ALL ART STYLES HARD CONSTRAINT]';
     const textLockKo = '[문자 가독성 보호 — 화풍 유지형 HARD CONSTRAINT]';
     const textLockEn = '[TYPOGRAPHY LEGIBILITY LOCK — STYLE-PRESERVING HARD CONSTRAINT]';
     const markers = isKoPrompt
