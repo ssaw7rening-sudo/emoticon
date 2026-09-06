@@ -48,9 +48,13 @@ ${helperMarker}`;
       const gptReplacement = String.raw`    return (isKo ? ko : en) + '\n\n' + base + '\n\n' + (isKo ? finalKo : finalEn) + '\n\n' + getUniversalStyleFirstTranslationLock(isKo);`;
       out = replaceOnce(out, gptReturn, gptReplacement, 'GPT style-first final lock');
 
-      const modelReturn = String.raw`    return base + '\n\n' + versionLabel + '\n' + blocks.join('\n\n');`;
-      const modelReplacement = String.raw`    return base + '\n\n' + versionLabel + '\n' + blocks.join('\n\n') + '\n\n' + getUniversalStyleFirstTranslationLock(lang === 'ko');`;
-      out = replaceOnce(out, modelReturn, modelReplacement, 'Gemini/Grok style-first final lock');
+      const koBlocks = `[koSemantics, koText, koIdentity, koSheet, koActing, koLettering, koModel].filter(Boolean)`;
+      const koBlocksReplacement = `[koSemantics, koText, koIdentity, koSheet, koActing, koLettering, koModel, getUniversalStyleFirstTranslationLock(true)].filter(Boolean)`;
+      out = replaceOnce(out, koBlocks, koBlocksReplacement, 'Gemini/Grok Korean style-first block');
+
+      const enBlocks = `[enSemantics, enText, enIdentity, enSheet, enActing, enLettering, enModel].filter(Boolean)`;
+      const enBlocksReplacement = `[enSemantics, enText, enIdentity, enSheet, enActing, enLettering, enModel, getUniversalStyleFirstTranslationLock(false)].filter(Boolean)`;
+      out = replaceOnce(out, enBlocks, enBlocksReplacement, 'Gemini/Grok English style-first block');
 
       return { code: out, map: null };
     },
