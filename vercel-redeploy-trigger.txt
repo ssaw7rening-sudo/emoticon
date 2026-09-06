@@ -1,4 +1,4 @@
-Vercel redeploy trigger for inline tag accordion UI update.
+Vercel redeploy trigger for global setting parity update.
 Date: 2026-09-07 KST
-Purpose: trigger a fresh production deployment for the current main branch, including the inline tag category accordion UI and latest prompt updates.
-Source commit before redeploy: 862eea916ed82fb1b09866a6306664cf3fa5e9a8
+Purpose: trigger a fresh production deployment for the current main branch after applying cross-locale setting parity so Korea, US, Japan, and China preserve the same setup values and art-style behavior.
+Source commit before redeploy: 6b6f17823829e8379bdf5a0d484054ce62df0a1d
