@@ -17,7 +17,7 @@ export function textCharacterInvariancePlugin() {
       const normalizedId = id.replace(/\\/g, '/');
       if (!normalizedId.endsWith(TARGET)) return null;
 
-      const marker = `    return \`${'${prompt}'}\\n\\n${'${exactBlock}'}\\n\\n${'${modelBlock}'}\`;`;
+      const marker = `    return \`${'${prompt}'}\\n\\n${'${exactBlock}'}\\n\\n${'${duplicateBlock}'}\\n\\n${'${modelBlock}'}\`;`;
       const replacement = [
         `    const characterInvariantBlock = lang === 'ko'`,
         `      ? \`[문구-캐릭터 분리 원칙 — 최우선]`,
@@ -29,7 +29,7 @@ export function textCharacterInvariancePlugin() {
         `      : \`[TEXT / CHARACTER SEPARATION — HIGHEST PRIORITY]`,
         `Text inclusion must not change the character's face, expression, body shape, body proportions, outfit, pose, art style, identity, key props, or effects. First construct the character exactly as you would in the no-text version, then add lettering only as an independent graphic layer. Do not resize, reposition, re-pose, restyle, or redesign the character merely to make room for text. Place lettering only in existing negative space around the already-defined character composition. With the same input settings, keep text-on and text-off results as visually identical as possible except for the presence of lettering.\`;`,
         ``,
-        `    return \`${'${prompt}'}\\n\\n${'${characterInvariantBlock}'}\\n\\n${'${exactBlock}'}\\n\\n${'${modelBlock}'}\`;`,
+        `    return \`${'${prompt}'}\\n\\n${'${characterInvariantBlock}'}\\n\\n${'${exactBlock}'}\\n\\n${'${duplicateBlock}'}\\n\\n${'${modelBlock}'}\`;`,
       ].join('\n');
 
       const out = replaceOnce(code, marker, replacement, 'enhanced prompt return');
@@ -38,6 +38,9 @@ export function textCharacterInvariancePlugin() {
       }
       if (!out.includes('[TEXT / CHARACTER SEPARATION — HIGHEST PRIORITY]')) {
         throw new Error('[text-character-invariance] English character invariance block missing');
+      }
+      if (!out.includes('${duplicateBlock}')) {
+        throw new Error('[text-character-invariance] duplicate text block was dropped');
       }
       return { code: out, map: null };
     },

@@ -60,6 +60,25 @@ export function modelLetteringPromptPlugin() {
         `      : \`[EXACT SOURCE TEXT FOR ALL 15 STICKERS — HIGHEST PRIORITY]`,
         `Use all 15 supplied source phrases in order, one exact phrase per sticker, exactly once each. Do not translate, paraphrase, shorten, correct, respell, merge, add, or remove characters or spaces. The list numbers and Sticker 1–15 labels are instructions only and must never appear in the image. If decoration conflicts with text accuracy, preserve the exact source text first.\`;`,
         ``,
+        `    const duplicateKo = isSingle`,
+        `      ? \`[문구 중복 출력 금지 — 매우 중요]`,
+        `- 이 스티커에는 지정된 문구의 시각적 인스턴스를 정확히 1회만 렌더링하세요.`,
+        `- 같은 문구를 제목+하단 캡션, 위+아래 반복, 말풍선+본문, 라벨, 자막, 장식용 에코 텍스트 등 어떤 형태로도 두 번 표시하지 마세요.`,
+        `- 문구 전체뿐 아니라 문구 일부를 다른 위치에 복제하거나 다시 쓰는 것도 금지합니다.`,
+        `- 문구가 한 번 배치되면 스티커 안의 다른 모든 텍스트 영역은 비워 두세요.\``,
+        `      : \`[15개 시트 문구 중복 출력 금지 — 매우 중요]`,
+        `- 각 스티커에는 배정된 문구의 시각적 인스턴스를 정확히 1회만 렌더링하세요.`,
+        `- 같은 문구를 제목+하단 캡션, 위+아래 반복, 말풍선+본문, 라벨, 자막, 장식용 에코 텍스트 등 어떤 형태로도 두 번 표시하지 마세요.`,
+        `- 문구 전체뿐 아니라 문구 일부를 같은 스티커 안의 다른 위치에 복제하거나 다시 쓰는 것도 금지합니다.`,
+        `- 문구가 한 번 배치되면 해당 스티커 안의 다른 모든 텍스트 영역은 비워 두세요.`,
+        `- 전체 15개 스티커 = 15개 원문 문구 = 총 15개의 텍스트 인스턴스만 존재해야 합니다. 각 스티커당 정확히 1개입니다.\`;`,
+        ``,
+        `    const duplicateEn = isSingle`,
+        `      ? \`[SINGLE TEXT INSTANCE — CRITICAL]`,
+        `Render exactly ONE visual instance of the assigned phrase in this sticker. Never repeat it as a title, subtitle, top caption, bottom caption, speech bubble, label, echo text, or decorative duplicate. Do not repeat any part of the phrase elsewhere. Once the phrase is rendered, leave every other text area empty.\``,
+        `      : \`[SINGLE TEXT INSTANCE FOR ALL 15 STICKERS — CRITICAL]`,
+        `Render exactly ONE visual instance of the assigned phrase per sticker. Never repeat the same phrase as a title, subtitle, top caption, bottom caption, speech bubble, label, echo text, or decorative duplicate. Do not repeat any part of a phrase elsewhere in the same sticker. Once the assigned phrase is rendered, leave all other text areas empty. Across the complete sheet there must be exactly 15 text instances total: 15 stickers = 15 source phrases = one phrase once per sticker.\`;`,
+        ``,
         `    const geminiKo = \`[Gemini 전용 한글 만화 레터링 — 이전 타이포그래피 지시보다 우선]`,
         `- 문구를 일반 고딕체, 인쇄체, UI 폰트, 자막형 텍스트처럼 만들지 마세요.`,
         `- 한국 만화 이모티콘에 직접 그린 듯한 굵고 친근한 손글씨·붓펜·마커 레터링으로 그리세요.`,
@@ -87,11 +106,12 @@ export function modelLetteringPromptPlugin() {
         `Integrate the supplied phrase text into the sticker as bold hand-drawn comic lettering, using deep black/ink-like brush or marker strokes with a thick crisp pure-white die-cut outline. Keep one lettering family across the set, with dynamic but controlled scale, tilt, and spacing. Effects may visually support the lettering but must never alter, obscure, or replace glyphs. Avoid generic printed fonts, thin sans-serif, UI text, and subtitle styling. Exact source text and readability always outrank graphic decoration.\`;`,
         ``,
         `    const exactBlock = lang === 'ko' ? exactKo : exactEn;`,
+        `    const duplicateBlock = lang === 'ko' ? duplicateKo : duplicateEn;`,
         `    const modelBlock = lang === 'ko'`,
         `      ? (model === 'gemini' ? geminiKo : grokKo)`,
         `      : (model === 'gemini' ? geminiEn : grokEn);`,
         ``,
-        `    return \`${'${prompt}'}\\n\\n${'${exactBlock}'}\\n\\n${'${modelBlock}'}\`;`,
+        `    return \`${'${prompt}'}\\n\\n${'${exactBlock}'}\\n\\n${'${duplicateBlock}'}\\n\\n${'${modelBlock}'}\`;`,
         `  };`,
         ``,
         helperMarker,
@@ -111,6 +131,12 @@ export function modelLetteringPromptPlugin() {
       }
       if (!out.includes('[Grok 전용 한글 그래픽 레터링')) {
         throw new Error('[model-lettering] Grok Korean lettering block missing');
+      }
+      if (!out.includes('[15개 시트 문구 중복 출력 금지')) {
+        throw new Error('[model-lettering] duplicate text prevention block missing');
+      }
+      if (!out.includes('exactly 15 text instances total')) {
+        throw new Error('[model-lettering] English duplicate text prevention block missing');
       }
       if (!out.includes("enhanceModelLetteringPrompt(generateGeminiPrompt(phraseOverride), 'gemini')")) {
         throw new Error('[model-lettering] Gemini prompt enhancer not connected');
