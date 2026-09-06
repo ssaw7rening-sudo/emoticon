@@ -10,6 +10,7 @@ import { bulkSaveLayoutPlugin } from './vite.bulk-save-layout-plugin.js'
 import { defaultArtStyleFallbackPlugin } from './vite.default-art-style-fallback.js'
 import { gptStyleDirectorLockPlugin } from './vite.gpt-style-director-lock.js'
 import { modelPromptPriorityV4Plugin } from './vite.model-prompt-priority-v4.js'
+import { grokStyleDirectorLockPlugin } from './vite.grok-style-director-lock.js'
 import { geminiIdentityStyleLockPlugin } from './vite.gemini-identity-style-lock.js'
 import { geminiLayoutInstanceLockPlugin } from './vite.gemini-layout-instance-lock.js'
 import { geminiStyleSceneLockPlugin } from './vite.gemini-style-scene-lock.js'
@@ -19,5 +20,5 @@ import { transparentSheetAspectPlugin } from './vite.transparent-sheet-aspect-pl
 
 export default defineConfig({
   ...baseConfig,
-  plugins: [transparentSheetAspectPlugin(), safeWhiteSheetRoutingPlugin(), defaultArtStyleFallbackPlugin(), gptStyleDirectorLockPlugin(), modelPromptPriorityV4Plugin(), geminiIdentityStyleLockPlugin(), geminiLayoutInstanceLockPlugin(), geminiStyleSceneLockPlugin(), geminiFinalExecutionLockPlugin(), bulkSaveLayoutPlugin(), mainAdCleanupPlugin(), adsensePlacementPlugin(), photoReferencePromptStructure(), phraseThemeExpansionV2(), phraseThemeExpansionV3(), goldenComboRebuildV2(), ...(baseConfig.plugins || [])],
+  plugins: [transparentSheetAspectPlugin(), safeWhiteSheetRoutingPlugin(), defaultArtStyleFallbackPlugin(), gptStyleDirectorLockPlugin(), modelPromptPriorityV4Plugin(), grokStyleDirectorLockPlugin(), geminiIdentityStyleLockPlugin(), geminiLayoutInstanceLockPlugin(), geminiStyleSceneLockPlugin(), geminiFinalExecutionLockPlugin(), bulkSaveLayoutPlugin(), mainAdCleanupPlugin(), adsensePlacementPlugin(), photoReferencePromptStructure(), phraseThemeExpansionV2(), phraseThemeExpansionV3(), goldenComboRebuildV2(), ...(baseConfig.plugins || [])],
 })
